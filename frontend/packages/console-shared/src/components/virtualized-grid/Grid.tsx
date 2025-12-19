@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useContext } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Item, GridChildrenProps } from './types';
@@ -10,7 +11,7 @@ type GridProps = {
   width: number;
   scrollTop: number;
   items: Item[];
-  children: (props: GridChildrenProps) => React.ReactNode;
+  children: (props: GridChildrenProps) => ReactNode;
 };
 
 const Grid: Snail.FCC<GridProps> = ({ height, width, scrollTop, items, children }) => {
@@ -21,7 +22,7 @@ const Grid: Snail.FCC<GridProps> = ({ height, width, scrollTop, items, children 
     className,
     overscanRowCount,
     estimatedCellHeight,
-  } = React.useContext(CellMeasurementContext);
+  } = useContext(CellMeasurementContext);
   const itemCount = items.length;
   const idealItemWidth = cellWidth + cellMargin;
   const columnCount = Math.max(1, Math.floor(width / idealItemWidth));

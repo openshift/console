@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Form } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
@@ -23,9 +24,9 @@ type DeleteHPAModalProps = ModalComponentProps & {
   workload: K8sResourceCommon;
 };
 
-const DeleteHPAModal: React.FC<DeleteHPAModalProps> = ({ close, hpa, workload }) => {
-  const [submitError, setSubmitError] = React.useState<string>(null);
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, hpa, workload }) => {
+  const [submitError, setSubmitError] = useState<string>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { t } = useTranslation();
   const hpaName = hpa.metadata.name;
   const workloadName = workload.metadata.name;

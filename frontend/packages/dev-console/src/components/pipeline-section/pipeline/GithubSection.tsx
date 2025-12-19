@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Content } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { ConfigMapKind } from '@console/internal/module/k8s/types';
@@ -8,7 +8,7 @@ type GithubSectionProps = {
   pac: ConfigMapKind;
 };
 
-const GithubSection: React.FC<GithubSectionProps> = ({ pac }) => {
+const GithubSection: FC<GithubSectionProps> = ({ pac }) => {
   const { t } = useTranslation();
   const appLink = pac?.data?.['app-link'] ?? '';
   return (

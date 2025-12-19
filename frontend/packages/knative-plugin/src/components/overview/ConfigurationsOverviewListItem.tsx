@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -9,7 +9,7 @@ export type ConfigurationsOverviewListItemProps = {
   configuration: K8sResourceKind;
 };
 
-const ConfigurationsOverviewListItem: React.FC<ConfigurationsOverviewListItemProps> = ({
+const ConfigurationsOverviewListItem: FC<ConfigurationsOverviewListItemProps> = ({
   configuration: {
     metadata: { name, namespace },
     status: { latestCreatedRevisionName, latestReadyRevisionName },

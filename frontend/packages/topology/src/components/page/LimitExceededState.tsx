@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   EmptyState,
@@ -14,7 +14,7 @@ type LimitExceededStateProps = {
   onShowTopologyAnyway: () => void;
 };
 
-export const LimitExceededState: React.FC<LimitExceededStateProps> = ({ onShowTopologyAnyway }) => {
+export const LimitExceededState: FC<LimitExceededStateProps> = ({ onShowTopologyAnyway }) => {
   const { t } = useTranslation();
   return (
     <EmptyState

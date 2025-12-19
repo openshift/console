@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { Spinner } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
@@ -94,10 +94,10 @@ export const useOperatorCatalogItems = () => {
     authenticationLoadError,
   ] = useClusterAuthenticationConfig();
 
-  const [updateChannel, setUpdateChannel] = React.useState('');
-  const [updateVersion, setUpdateVersion] = React.useState('');
+  const [updateChannel, setUpdateChannel] = useState('');
+  const [updateVersion, setUpdateVersion] = useState('');
 
-  const loaded = React.useMemo(
+  const loaded = useMemo(
     () =>
       operatorGroupsLoaded &&
       operatorHubPackageManifestsLoaded &&
@@ -117,7 +117,7 @@ export const useOperatorCatalogItems = () => {
     ],
   );
 
-  const loadError = React.useMemo(
+  const loadError = useMemo(
     () =>
       strConcat(
         operatorGroupsLoadError,
@@ -143,7 +143,7 @@ export const useOperatorCatalogItems = () => {
   const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
   const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     if (!loaded || loadError) {
       return [];
     }

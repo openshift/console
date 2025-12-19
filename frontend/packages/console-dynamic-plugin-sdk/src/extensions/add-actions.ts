@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
@@ -21,7 +21,7 @@ export type AddAction = ExtensionDeclaration<
     /** A callback that performs an action on click */
     callback?: CodeRef<(props: Record<string, any>) => void>;
     /** The perspective display icon. If possible, use a PatternFly icon for consistent icon colours and styling. */
-    icon?: CodeRef<React.ReactNode>;
+    icon?: CodeRef<ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: AccessReviewResourceAttributes[];
   }
@@ -42,7 +42,7 @@ export type AddActionGroup = ExtensionDeclaration<
     /** ID of action group after which this group should be placed */
     insertAfter?: string;
     /** The perspective display icon. */
-    icon?: CodeRef<React.ReactNode> | string;
+    icon?: CodeRef<ReactNode> | string;
   }
 >;
 

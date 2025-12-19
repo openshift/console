@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash';
 import {
   Button,
@@ -22,7 +23,7 @@ import {
 import { RequireCreatePermission } from '../../utils/rbac';
 import { transformGroupVersionKindToReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 
-const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
+const CreateWithPermissions: FC<CreateWithPermissionsProps> = ({
   createAccessReview,
   children,
 }) => {
@@ -36,7 +37,7 @@ const CreateWithPermissions: React.FC<CreateWithPermissionsProps> = ({
   );
 };
 
-export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = ({
+export const ListPageCreateLink: FC<ListPageCreateLinkProps> = ({
   to,
   createAccessReview,
   children,
@@ -50,7 +51,7 @@ export const ListPageCreateLink: React.FC<ListPageCreateLinkProps> = ({
   </CreateWithPermissions>
 );
 
-export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
+export const ListPageCreateButton: FC<ListPageCreateButtonProps> = ({
   createAccessReview,
   ...rest
 }) => (
@@ -59,13 +60,13 @@ export const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
   </CreateWithPermissions>
 );
 
-export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
+export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = ({
   items,
   createAccessReview,
   children,
   onClick,
 }) => {
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setOpen] = useState(false);
 
   const listCreateDropdownItems = Object.keys(items).map((key) => {
     return (
@@ -80,13 +81,13 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
   });
 
   return (
-    <CreateWithPermissions createAccessReview={createAccessReview}>
+    (<CreateWithPermissions createAccessReview={createAccessReview}>
       <Dropdown
         isOpen={isOpen}
         onSelect={() => setOpen(false)}
         onOpenChange={() => setOpen(!isOpen)}
         popperProps={{ position: 'right' }}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             onClick={() => setOpen(!isOpen)}
@@ -100,11 +101,11 @@ export const ListPageCreateDropdown: React.FC<ListPageCreateDropdownProps> = ({
       >
         <DropdownList>{listCreateDropdownItems}</DropdownList>
       </Dropdown>
-    </CreateWithPermissions>
+    </CreateWithPermissions>)
   );
 };
 
-const ListPageCreate: React.FC<ListPageCreateProps> = ({
+const ListPageCreate: FC<ListPageCreateProps> = ({
   createAccessReview,
   groupVersionKind,
   children,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
+import { useCallback } from 'react';
 import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
@@ -9,13 +10,13 @@ import { history } from '@console/internal/components/utils/router';
 
 export type ActionMenuItemProps = {
   action: Action;
-  component?: React.ComponentType<DropdownItemProps>;
+  component?: ComponentType<DropdownItemProps>;
   autoFocus?: boolean;
   onClick?: () => void;
   onEscape?: () => void;
 };
 
-const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
+const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   action,
   onClick,
   onEscape,
@@ -28,7 +29,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   const isDisabled = !isAllowed || disabled;
   const classes = css({ 'pf-m-disabled': isDisabled });
 
-  const handleClick = React.useCallback(
+  const handleClick = useCallback(
     (event) => {
       event.preventDefault();
       if (_.isFunction(cta)) {
@@ -85,7 +86,7 @@ const AccessReviewActionItem = connect(impersonateStateToProps)(
   },
 );
 
-const ActionMenuItem: React.FC<ActionMenuItemProps> = (props) => {
+const ActionMenuItem: FC<ActionMenuItemProps> = (props) => {
   const { action } = props;
   let item;
 

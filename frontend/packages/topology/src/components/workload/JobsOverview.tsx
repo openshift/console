@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ import './JobsOverview.scss';
 const kind: string = 'Job';
 const MAX_JOBS: number = 3;
 
-const JobOverviewItem: React.FC<JobOverviewItemProps> = ({ job }) => {
+const JobOverviewItem: FC<JobOverviewItemProps> = ({ job }) => {
   const {
     metadata: { name, namespace },
   } = job;
@@ -49,7 +49,7 @@ type JobOverviewItemProps = {
   job: JobKind;
 };
 
-const JobsOverviewList: React.FC<JobsOverviewListProps> = ({ jobs }) => (
+const JobsOverviewList: FC<JobsOverviewListProps> = ({ jobs }) => (
   <List isPlain isBordered>
     {jobs?.map((job) => (
       <JobOverviewItem key={job.metadata.uid} job={job} />
@@ -59,7 +59,7 @@ const JobsOverviewList: React.FC<JobsOverviewListProps> = ({ jobs }) => (
 
 JobsOverviewList.displayName = 'JobsOverviewList';
 
-export const JobsOverview: React.FC<JobsOverviewProps> = ({
+export const JobsOverview: FC<JobsOverviewProps> = ({
   jobs,
   obj,
   allJobsLink,

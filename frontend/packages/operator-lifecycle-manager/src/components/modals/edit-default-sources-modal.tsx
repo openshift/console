@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { Alert, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from '@console/internal/components/checkbox';
@@ -14,7 +15,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { OperatorHubModel } from '../../models';
 import { OperatorHubKind } from '../operator-hub';
 
-const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
+const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   cancel,
   close,
   operatorHub,
@@ -25,7 +26,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
   const [
     userSelectedDefaultSourceToggleState,
     setUserSelectedDefaultSourceToggleState,
-  ] = React.useState(
+  ] = useState(
     (operatorHub.spec.sources ?? []).reduce(
       (acc, source) => ({
         ...acc,
@@ -35,8 +36,8 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
     ),
   );
 
-  const submit = React.useCallback(
-    (event: React.FormEvent<EventTarget>): void => {
+  const submit = useCallback(
+    (event: FormEvent<EventTarget>): void => {
       event.preventDefault();
       const patch = [
         {
@@ -57,7 +58,7 @@ const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
     [close, handlePromise, operatorHub, userSelectedDefaultSourceToggleState],
   );
 
-  const onToggle = React.useCallback((sourceName, checked) => {
+  const onToggle = useCallback((sourceName, checked) => {
     setUserSelectedDefaultSourceToggleState((currState) => ({
       ...currState,
       [sourceName]: !checked,

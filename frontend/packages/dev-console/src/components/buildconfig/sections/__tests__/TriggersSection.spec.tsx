@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import userEvent from '../../__tests__/user-event';
 import TriggersSection, { TriggersSectionFormData } from '../TriggersSection';
 
-const Wrapper: React.FC<FormikConfig<TriggersSectionFormData>> = ({
+const Wrapper: FC<FormikConfig<TriggersSectionFormData>> = ({
   children,
   ...formikConfig
 }) => (

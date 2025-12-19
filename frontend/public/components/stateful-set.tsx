@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
@@ -24,7 +25,7 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import { StatefulSetModel } from '../models';
 import { useWorkloadColumns, getWorkloadDataViewRows } from './workload-table';
 
-const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
+const StatefulSetDetails: FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -55,7 +56,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   );
 };
 
-const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => (
+const EnvironmentPage: FC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...props}
@@ -63,7 +64,7 @@ const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
+const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
     rawEnvData={props.obj.spec.template.spec}
@@ -76,7 +77,7 @@ const StatefulSetsList: Snail.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
   const columns = useWorkloadColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={StatefulSetModel.labelPlural}
@@ -88,7 +89,7 @@ const StatefulSetsList: Snail.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
         }
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
@@ -104,11 +105,11 @@ export const StatefulSetsPage: Snail.FCC<StatefulSetsPageProps> = (props) => {
   );
 };
 
-const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
+const StatefulSetPods: FC<StatefulSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
 );
 
-export const StatefulSetsDetailsPage: React.FC = (props) => {
+export const StatefulSetsDetailsPage: FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);

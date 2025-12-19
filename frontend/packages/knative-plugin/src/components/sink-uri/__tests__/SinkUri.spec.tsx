@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';
 import SinkUri from '../SinkUri';
@@ -35,7 +35,7 @@ jest.mock('../SinkUriModal', () => ({
   default: jest.fn(() => null),
 }));
 
-type SinkUriProps = React.ComponentProps<typeof SinkUri>;
+type SinkUriProps = ComponentProps<typeof SinkUri>;
 
 describe('SinkUri', () => {
   const sinkUriObj = {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Edge, EdgeTerminalType, observer } from '@patternfly/react-topology';
 import BaseEdge from './BaseEdge';
 
@@ -8,7 +8,7 @@ type AggregateEdgeProps = {
   element: Edge;
 };
 
-const AggregateEdge: React.FC<AggregateEdgeProps> = ({ element, ...others }) => {
+const AggregateEdge: FC<AggregateEdgeProps> = ({ element, ...others }) => {
   const { bidirectional } = element.getData();
 
   const endTerminalType =

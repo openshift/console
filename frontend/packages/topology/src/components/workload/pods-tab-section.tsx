@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
@@ -14,17 +15,17 @@ import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
-const PodsTabSection: React.FC<{
+const PodsTabSection: FC<{
   id: string;
   podAdapter: AdapterDataType<PodsAdapterDataType<PodKind>>;
   podAdapterExtensionResolved: boolean;
 }> = ({ id, podAdapter, podAdapterExtensionResolved }) => {
-  const [{ data: podsData, loaded: podsDataLoaded }, setPodData] = React.useState<{
+  const [{ data: podsData, loaded: podsDataLoaded }, setPodData] = useState<{
     data?: PodsAdapterDataType<PodKind>;
     loaded: boolean;
   }>({ loaded: false });
 
-  const handleAdapterResolved = React.useCallback(
+  const handleAdapterResolved = useCallback(
     (data) => {
       if (podAdapter?.resource?.kind === 'CronJob') {
         // Fixes the issue of Topology page crashing.
@@ -58,7 +59,7 @@ export const usePodsSideBarTabSection: DetailsTabSectionExtensionHook = (element
   const [podAdapterExtension, podAdapterExtensionResolved] = useResolvedExtensions<PodAdapter>(
     isPodAdapter,
   );
-  const podAdapter = React.useMemo(
+  const podAdapter = useMemo(
     () =>
       getDataFromAdapter<AdapterDataType<PodsAdapterDataType<PodKind>>, PodAdapter>(element, [
         podAdapterExtension,

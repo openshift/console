@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
@@ -30,13 +29,13 @@ let store;
 interface WrapperProps {
   children?: ReactNode;
 }
-const Wrapper: React.FC<WrapperProps> = ({ children }) => (
+const Wrapper: FC<WrapperProps> = ({ children }) => (
   <Provider store={store}>{children}</Provider>
 );
 
 // Object under test
 const resourceUpdate = jest.fn();
-const WatchResource: React.FC<{ initResources: WatchK8sResources<{}> }> = ({ initResources }) => {
+const WatchResource: FC<{ initResources: WatchK8sResources<{}> }> = ({ initResources }) => {
   resourceUpdate(useK8sWatchResources(initResources));
   return null;
 };

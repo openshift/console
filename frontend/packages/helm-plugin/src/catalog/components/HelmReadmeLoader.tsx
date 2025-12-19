@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -10,16 +11,16 @@ type HelmReadmeLoaderProps = {
   chartIndexEntry: string;
 };
 
-const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({
+const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({
   chartURL,
   namespace,
   chartIndexEntry,
 }) => {
   const { t } = useTranslation();
-  const [readme, setReadme] = React.useState<string>();
-  const [loaded, setLoaded] = React.useState<boolean>(false);
+  const [readme, setReadme] = useState<string>();
+  const [loaded, setLoaded] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let unmounted = false;
 
     const fetchReadme = async () => {

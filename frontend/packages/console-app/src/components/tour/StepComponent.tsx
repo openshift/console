@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useContext } from 'react';
 import { ModalVariant } from '@patternfly/react-core';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry } from '@console/shared/src';
@@ -16,12 +17,12 @@ type StepComponentProps = {
   nextButtonText: string;
   backButtonText: string;
   expandableSelector?: string;
-  introBannerLight?: React.ReactNode;
-  introBannerDark?: React.ReactNode;
+  introBannerLight?: ReactNode;
+  introBannerDark?: ReactNode;
   modalVariant?: ModalVariant;
 };
 
-const StepComponent: React.FC<StepComponentProps> = ({
+const StepComponent: FC<StepComponentProps> = ({
   heading,
   content,
   expandableSelector,
@@ -36,7 +37,7 @@ const StepComponent: React.FC<StepComponentProps> = ({
 }) => {
   const fireTelemetryEvent = useTelemetry();
   const [activePerspective] = useActivePerspective();
-  const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = React.useContext(
+  const { tourDispatch, totalSteps, tourState: { stepNumber: step } = {} } = useContext(
     TourContext,
   );
   return (

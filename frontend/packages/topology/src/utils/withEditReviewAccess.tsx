@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer } from 'mobx-react';
 import {
   WithEditReviewAccess,
@@ -9,7 +9,7 @@ import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResource } from './topology-utils';
 
 export const withEditReviewAccess: WithEditReviewAccess = (verb) => (WrappedComponent) => {
-  const Component: React.FC<WithEditReviewAccessComponentProps> = (props) => {
+  const Component: FC<WithEditReviewAccessComponentProps> = (props) => {
     const resourceObj = getResource(props.element);
     const resourceModel = modelFor(referenceFor(resourceObj));
     const editAccess = useAccessReview({

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   Node,
   observer,
@@ -20,14 +20,14 @@ export type EventSourceProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const EventSource: React.FC<EventSourceProps> = ({
+const EventSource: FC<EventSourceProps> = ({
   element,
   onShowCreateConnector,
   children,

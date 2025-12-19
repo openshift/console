@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useEffect } from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsRendererFunction } from './QuickSearchDetails';
@@ -14,11 +15,11 @@ interface QuickSearchModalProps {
   searchCatalog: (searchTerm: string) => QuickSearchData;
   searchPlaceholder: string;
   limitItemCount?: number;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   detailsRenderer?: DetailsRendererFunction;
 }
 
-const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
+const QuickSearchModal: FC<QuickSearchModalProps> = ({
   isOpen,
   namespace,
   closeModal,
@@ -30,10 +31,10 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   detailsRenderer,
 }) => {
   const { t } = useTranslation();
-  const ref = React.useRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>();
 
   // close the modal when clicking outside of it
-  React.useEffect(() => {
+  useEffect(() => {
     const handleOnClick = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         closeModal();

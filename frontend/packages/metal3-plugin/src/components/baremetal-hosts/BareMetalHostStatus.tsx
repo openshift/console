@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -40,7 +40,7 @@ export const hostStatusActions = (t: TFunction) => ({
   ),
 });
 
-const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
+const BareMetalHostStatus: FC<BareMetalHostStatusProps> = ({
   status,
   titleKey,
   descriptionKey,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
@@ -11,7 +11,7 @@ type EventPubSubExpandButtonProps = {
   rowSelected: boolean;
 };
 
-const EventPubSubExpandButton: React.FC<EventPubSubExpandButtonProps> = ({
+const EventPubSubExpandButton: FC<EventPubSubExpandButtonProps> = ({
   rowSelected,
   onClick,
 }) => {

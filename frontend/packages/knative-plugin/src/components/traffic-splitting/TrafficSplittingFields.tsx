@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { pickBy, size } from 'lodash';
@@ -13,7 +13,7 @@ interface TrafficSplittingFieldProps {
 
 type Props = FormikProps<FormikValues> & TrafficSplittingFieldProps;
 
-const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
+const TrafficSplittingFields: FC<Props> = ({ revisionItems, values }) => {
   const { t } = useTranslation();
   const selectedRevisions: string[] = values.trafficSplitting.map(
     (traffic) => traffic.revisionName,

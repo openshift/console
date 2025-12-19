@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FCC, ReactNode } from 'react';
 import { FormFieldGroupExpandable, FormFieldGroupHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +6,7 @@ interface AdvancedConfigurationProps {
   children?: ReactNode;
 }
 
-export const AdvancedConfiguration: React.FCC<AdvancedConfigurationProps> = ({ children }) => {
+export const AdvancedConfiguration: FCC<AdvancedConfigurationProps> = ({ children }) => {
   const { t } = useTranslation();
   return (
     <FormFieldGroupExpandable

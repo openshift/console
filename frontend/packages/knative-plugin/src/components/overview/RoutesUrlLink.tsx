@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils';
 
@@ -7,7 +7,7 @@ export type RoutesUrlLinkProps = {
   title?: string;
 };
 
-const RoutesUrlLink: React.FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
+const RoutesUrlLink: FC<RoutesUrlLinkProps> = ({ urls = [], title }) =>
   urls.length > 0 && (
     <>
       {title && <span className="pf-v6-u-text-color-subtle">{title}: </span>}

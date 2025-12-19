@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { FormikProps, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ interface ConfigMapFormEditorProps {
   handleCancel: () => void;
 }
 
-export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEditorProps> = ({
+export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps> = ({
   values,
   status,
   handleSubmit,
@@ -66,7 +67,7 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
     />
   );
 
-  const onReload = React.useCallback(() => {
+  const onReload = useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
     if (editorType === EditorType.Form) {
@@ -77,7 +78,7 @@ export const ConfigMapFormEditor: React.FC<FormikProps<any> & ConfigMapFormEdito
     setFieldValue('formReloadCount', formReloadCount + 1);
   }, [setErrors, setFieldValue, setStatus, configMap, editorType, formData, formReloadCount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setStatus({ submitError: null });
     setSubmitting(false);
   }, [setStatus, setSubmitting, editorType, formData, yamlData]);

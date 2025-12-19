@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { ClipboardCopy, ClipboardCopyVariant, DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -24,7 +25,7 @@ type BuildSpecSectionProps = {
   path: string;
 };
 
-const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) => {
+const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) => {
   const { t } = useTranslation();
 
   if (!buildSpec) {
@@ -49,7 +50,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
     : buildSpec?.paramValues?.find((param) => param?.name === 'builder-image')?.value;
 
   return (
-    <DescriptionList>
+    (<DescriptionList>
       {buildSpec.strategy ? (
         <DetailsItem label={t('shipwright-plugin~Strategy')} obj={obj} path={`${path}.strategy`}>
           {buildSpec.strategy.kind === 'ClusterBuildStrategy' ? (
@@ -72,7 +73,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           )}
         </DetailsItem>
       ) : null}
-
       {url ? (
         <DetailsItem
           label={t('shipwright-plugin~Source URL')}
@@ -82,7 +82,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           <ExternalLinkWithCopy text={url} href={url} />
         </DetailsItem>
       ) : null}
-
       {contextDir ? (
         <DetailsItem
           label={t('shipwright-plugin~Context dir')}
@@ -92,7 +91,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>{contextDir}</ClipboardCopy>
         </DetailsItem>
       ) : null}
-
       {credentials ? (
         <DetailsItem
           label={t('shipwright-plugin~Source credentials')}
@@ -110,19 +108,17 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           />
         </DetailsItem>
       ) : null}
-
       {isV1Alpha1Resource(obj) && buildSpec?.sources?.length ? (
         <DetailsItem label={t('shipwright-plugin~Sources')} obj={obj} path={`${path}.sources`}>
           {buildSpec.sources?.map((source) => (
-            <React.Fragment key={source.name}>
+            <Fragment key={source.name}>
               {source.name}:<br />
               <ExternalLinkWithCopy href={source.url} text={source.url} />
               <br />
-            </React.Fragment>
+            </Fragment>
           ))}
         </DetailsItem>
       ) : null}
-
       {dockerFile ? (
         <DetailsItem
           label={t('shipwright-plugin~Dockerfile')}
@@ -136,7 +132,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>{dockerFile}</ClipboardCopy>
         </DetailsItem>
       ) : null}
-
       {builderImage ? (
         <DetailsItem
           label={t('shipwright-plugin~Builder image')}
@@ -150,7 +145,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>{builderImage}</ClipboardCopy>
         </DetailsItem>
       ) : null}
-
       {buildSpec.output?.image ? (
         <DetailsItem
           label={t('shipwright-plugin~Output image')}
@@ -160,7 +154,6 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           <BuildOutput buildSpec={buildSpec} />
         </DetailsItem>
       ) : null}
-
       {outputCredentials ? (
         <DetailsItem
           label={t('shipwright-plugin~Output credentials')}
@@ -178,7 +171,7 @@ const BuildSpecSection: React.FC<BuildSpecSectionProps> = ({ obj, buildSpec, pat
           />
         </DetailsItem>
       ) : null}
-    </DescriptionList>
+    </DescriptionList>)
   );
 };
 

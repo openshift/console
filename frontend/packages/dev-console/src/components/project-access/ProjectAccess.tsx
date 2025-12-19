@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
@@ -36,7 +36,7 @@ export interface ProjectAccessProps {
   fullFormView?: boolean;
 }
 
-const ProjectAccess: React.FC<ProjectAccessProps> = ({
+const ProjectAccess: FC<ProjectAccessProps> = ({
   namespace,
   roleBindings,
   roles,

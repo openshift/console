@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkUriModal from '../SinkUriModal';
@@ -36,7 +36,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-type SinkUriModalProps = React.ComponentProps<typeof SinkUriModal>;
+type SinkUriModalProps = ComponentProps<typeof SinkUriModal>;
 
 describe('SinkUriModal Form', () => {
   let formProps: SinkUriModalProps;

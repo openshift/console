@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useState, useMemo, memo, useEffect } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -65,7 +66,7 @@ type PinnedResourcesConfigurationProps = {
   allK8sModels: ImmutableMap<string, K8sModel>;
 };
 
-const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> = ({
+const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
   readonly,
   allK8sModels,
   groupVersionMap,
@@ -73,12 +74,12 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const perspectiveExtensions = usePerspectives();
-  const [pinnedResources, setPinnedResources] = React.useState<PerspectivePinnedResource[]>();
-  const [perspectiveData, setPerspectiveData] = React.useState<Perspective[]>();
-  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] = React.useState<
+  const [pinnedResources, setPinnedResources] = useState<PerspectivePinnedResource[]>();
+  const [perspectiveData, setPerspectiveData] = useState<Perspective[]>();
+  const [pinnedResourcesConfigured, setPinnedResourcesConfigured] = useState<
     PerspectivePinnedResource[]
   >();
-  const defaultPins: DefaultPins = React.useMemo(
+  const defaultPins: DefaultPins = useMemo(
     () =>
       perspectiveExtensions.reduce(
         (acc, e) => ({
@@ -90,7 +91,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     [perspectiveExtensions],
   );
 
-  const resources = React.useMemo(() => {
+  const resources = useMemo(() => {
     return allK8sModels
       ?.filter(({ apiGroup, apiVersion, kind, verbs }) => {
         if (skipGroups.has(apiGroup) || skipResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
@@ -121,7 +122,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
 
   type ItemProps = { title?: string; model?: K8sKind };
 
-  const Item: React.FC<ItemProps> = React.memo(({ model }) => (
+  const Item: FC<ItemProps> = memo(({ model }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
@@ -144,7 +145,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     </div>
   ));
 
-  const InvalidItem: React.FC<ItemProps> = React.memo(({ title }) => (
+  const InvalidItem: FC<ItemProps> = memo(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
         <Tooltip position="top" content={t('devconsole~Resource not found')}>
@@ -163,8 +164,8 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     PerspectivesConsoleConfig
   >();
 
-  const [configuredPerspectives, setConfiguredPerspectives] = React.useState<Perspective[]>();
-  React.useEffect(() => {
+  const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
       const perspectiveDetails = consoleConfig?.spec?.customization?.perspectives;
       const devPerspective = perspectiveDetails?.find((p) => p.id === 'dev');
@@ -197,7 +198,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     }
   }, [configuredPerspectives, consoleConfig, consoleConfigLoaded, defaultPins]);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     return resources
       .map((model: K8sKind) => {
         return <Item title={model.labelKey ? t(model.labelKey) : model.kind} model={model} />;
@@ -205,7 +206,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
       .toArray();
   }, [resources, t, Item]);
 
-  const availableResources = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const availableResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded) {
       return [];
     }
@@ -223,7 +224,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
       : [];
   }, [consoleConfigLoaded, items, pinnedResources]);
 
-  const prePinnedResources = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const prePinnedResources = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded) {
       return [];
     }
@@ -241,7 +242,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     return configuredResources || [];
   }, [consoleConfigLoaded, items, pinnedResources, InvalidItem]);
 
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Pre-pinned navigation items',
@@ -269,8 +270,8 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
 
   const onListChange = (
     _event,
-    newEnabledOptions: React.ReactElement<ItemProps>[],
-    newDisabledOptions: React.ReactElement<ItemProps>[],
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     const validResources = newDisabledOptions.filter((item) => item?.props?.model);
     const newPinnedResources = validResources?.map((resource) => {
@@ -300,7 +301,7 @@ const PinnedResourcesConfiguration: React.FC<PinnedResourcesConfigurationProps> 
     save();
   };
 
-  const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
     return fuzzy(input?.toLocaleLowerCase(), option?.props?.title.toLocaleLowerCase());
   };
 

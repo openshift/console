@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -16,7 +16,7 @@ export type RevisionsOverviewListItemProps = {
   service: K8sResourceKind;
 };
 
-const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
+const RevisionsOverviewListItem: FC<RevisionsOverviewListItemProps> = ({
   revision,
   service,
 }) => {

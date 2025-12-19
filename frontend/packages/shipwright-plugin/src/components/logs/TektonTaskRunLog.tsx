@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useEffect } from 'react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { LoadingInline } from '@console/internal/components/utils';
 import { TaskRunKind } from '../../types';
@@ -20,11 +21,11 @@ type TektonTaskRunLogProps = {
   setCurrentLogsGetter: (getter: () => string) => void;
 };
 
-export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
+export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({
   taskRun,
   setCurrentLogsGetter,
 }) => {
-  const scrollPane = React.useRef<HTMLDivElement>();
+  const scrollPane = useRef<HTMLDivElement>();
   const taskName = taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-';
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
     taskRun.metadata.namespace,
@@ -32,11 +33,11 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
     taskRun.metadata?.annotations?.['results.tekton.dev/record'],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentLogsGetter(() => scrollPane.current?.innerText);
   }, [setCurrentLogsGetter]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!trError && trLoaded && scrollPane.current && trResults) {
       scrollPane.current.scrollTop = scrollPane.current.scrollHeight;
     }

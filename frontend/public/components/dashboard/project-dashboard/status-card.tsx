@@ -7,19 +7,20 @@ import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { Status } from '@console/shared/src/components/status/Status';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { Card, CardHeader, CardTitle, Gallery } from '@patternfly/react-core';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
 import { ProjectDashboardContext } from './project-dashboard-context';
 
 import { DashboardNamespacedAlerts } from '../dashboards-page/cluster-dashboard/status-card';
 
-export const StatusCard: React.FC = () => {
-  const { obj } = React.useContext(ProjectDashboardContext);
+export const StatusCard: FC = () => {
+  const { obj } = useContext(ProjectDashboardContext);
   const [subsystemExtensions, extensionsResolved] = useResolvedExtensions<
     DashboardsOverviewHealthResourceSubsystem
   >(isDashboardsOverviewHealthResourceSubsystem);
-  const subsystem = React.useMemo(
+  const subsystem = useMemo(
     () => subsystemExtensions.find((s) => s.properties.title === 'Image Vulnerabilities'),
     [subsystemExtensions],
   );

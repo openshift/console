@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   DEFAULT_LAYER,
@@ -23,7 +24,7 @@ import { getKindStringAndAbbreviation } from './nodeUtils';
 import '../../../svg/SvgResourceIcon.scss';
 import './BaseNode.scss';
 
-const BaseNode: React.FC<BaseNodeProps> = ({
+const BaseNode: FC<BaseNodeProps> = ({
   className,
   innerRadius,
   icon,
@@ -39,7 +40,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   alertVariant,
   ...rest
 }) => {
-  const [hoverChange, setHoverChange] = React.useState<boolean>(false);
+  const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
   const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
   const { width, height } = element.getDimensions();
@@ -66,7 +67,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
       })
     : '';
-  React.useEffect(() => {
+  useEffect(() => {
     if (!createConnectorDrag) {
       setHoverChange((prev) => !prev);
     }

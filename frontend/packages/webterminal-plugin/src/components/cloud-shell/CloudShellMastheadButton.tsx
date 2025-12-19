@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
 import { css } from '@patternfly/react-styles';

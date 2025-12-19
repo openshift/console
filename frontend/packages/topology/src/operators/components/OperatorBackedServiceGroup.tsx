@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useCallback } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import {
@@ -43,7 +44,7 @@ type OperatorBackedServiceGroupProps = {
   WithDndDropProps &
   WithDragNodeProps;
 
-const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
+const OperatorBackedServiceGroup: FC<OperatorBackedServiceGroupProps> = ({
   element,
   selected,
   editAccess,
@@ -59,7 +60,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   onContextMenu,
   contextMenuOpen,
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [innerHover, innerHoverRef] = useHover();
@@ -70,7 +71,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
   const showLabel = useShowLabel(hover || innerHover);
   const { x, y, width, height } = element.getBounds();
-  useAnchor(React.useCallback((node: Node) => new RectAnchor(node, 1.5), []));
+  useAnchor(useCallback((node: Node) => new RectAnchor(node, 1.5), []));
 
   return (
     <g

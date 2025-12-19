@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { PodModel } from '@console/internal/models';
@@ -12,7 +12,7 @@ export type TaskRunLogProps = {
   obj: TaskRunKind;
 };
 
-const BuildRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
+const BuildRunLog: FC<TaskRunLogProps> = ({ obj }) => {
   const { t } = useTranslation();
   if (obj?.status?.podName) {
     const podResources = {

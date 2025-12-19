@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import {
   EventTriggerObj,
@@ -42,7 +42,7 @@ jest.mock('../SinkPubsubModal', () => ({
   default: 'SinkPubsubModal',
 }));
 
-type SinkPubsubProps = React.ComponentProps<typeof SinkPubsub>;
+type SinkPubsubProps = ComponentProps<typeof SinkPubsub>;
 
 describe('SinkPubsub', () => {
   const formProps: SinkPubsubProps = {

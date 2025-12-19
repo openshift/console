@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -22,7 +23,7 @@ const PipelineChangeAlert = (alertMessage: string) => (
   </>
 );
 
-const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
+const BuilderImageSelector: FC<BuilderImageSelectorProps> = ({
   loadingImageStream,
   builderImages,
   existingPipeline,
@@ -35,11 +36,11 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
     validateForm,
   } = useFormikContext<FormikValues>();
   const { selected, recommended, isRecommending, couldNotRecommend, tag } = image;
-  const [showPipelineWarning, setShowPipelineWarning] = React.useState(false);
+  const [showPipelineWarning, setShowPipelineWarning] = useState(false);
 
   const isPipelineAttached = !_.isEmpty(existingPipeline);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selected && !tag) {
       setFieldValue('image.tag', builderImages?.[selected]?.recentTag?.name ?? '');
       setFieldTouched('image.tag', true);

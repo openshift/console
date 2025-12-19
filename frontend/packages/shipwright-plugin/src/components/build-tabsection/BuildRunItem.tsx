@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -16,7 +16,7 @@ type BuildRunItemProps = {
   buildRun: BuildRun;
 };
 
-const BuildRunItem: React.FC<BuildRunItemProps> = ({ buildRun }) => {
+const BuildRunItem: FC<BuildRunItemProps> = ({ buildRun }) => {
   const { t } = useTranslation();
   const {
     metadata: { name, namespace, creationTimestamp },

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { RefObject, ComponentProps, FC } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Menu, Popper, MenuContent, MenuList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action } from '@console/dynamic-plugin-sdk';
@@ -12,20 +13,20 @@ import { ActionMenuVariant } from './types';
 type LazyMenuRendererProps = {
   isOpen: boolean;
   actions: Action[];
-  menuRef: React.RefObject<HTMLDivElement>;
-  toggleRef: React.RefObject<HTMLButtonElement>;
-} & React.ComponentProps<typeof ActionMenuContent>;
+  menuRef: RefObject<HTMLDivElement>;
+  toggleRef: RefObject<HTMLButtonElement>;
+} & ComponentProps<typeof ActionMenuContent>;
 
 export const KEBAB_COLUMN_CLASS = 'pf-v6-c-table__action';
 
-const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
+const LazyMenuRenderer: FC<LazyMenuRendererProps> = ({
   isOpen,
   actions,
   menuRef,
   toggleRef,
   ...restProps
 }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     // Check access after loading actions from service over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
@@ -51,22 +52,22 @@ const LazyMenuRenderer: React.FC<LazyMenuRendererProps> = ({
   return <Popper triggerRef={toggleRef} popper={menu} placement="bottom-end" isVisible={isOpen} />;
 };
 
-const LazyActionMenu: React.FC<LazyActionMenuProps> = ({
+const LazyActionMenu: FC<LazyActionMenuProps> = ({
   context,
   variant = ActionMenuVariant.KEBAB,
   label,
   isDisabled,
 }) => {
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [initActionLoader, setInitActionLoader] = React.useState<boolean>(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-  const toggleRef = React.useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [initActionLoader, setInitActionLoader] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   const hideMenu = () => {
     setIsOpen(false);
   };
 
-  const handleHover = React.useCallback(() => {
+  const handleHover = useCallback(() => {
     setInitActionLoader(true);
   }, []);
 

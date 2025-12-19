@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,7 +14,7 @@ import AvailabilityRequirement from './AvailabilityRequirement';
 import { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
 
-export const PodDisruptionBudgetField: React.FC<PodDisruptionBudgetFieldProps> = ({ obj }) => {
+export const PodDisruptionBudgetField: FC<PodDisruptionBudgetFieldProps> = ({ obj }) => {
   const { t } = useTranslation();
   const [pdbResources] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
     groupVersionKind: {

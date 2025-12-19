@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { InputHTMLAttributes, ReactNode } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 
 export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupProps) => {
@@ -22,11 +22,11 @@ export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupP
   });
   return (
     // use div.pf-v6-c-form instead of Form to avoid additional form element
-    <div className="pf-v6-c-form">
+    (<div className="pf-v6-c-form">
       <FormGroup role="radiogroup" fieldId={label ?? 'pf-radio-group'} label={label} isStack>
         {radios}
       </FormGroup>
-    </div>
+    </div>)
   );
 };
 
@@ -35,13 +35,13 @@ export type RadioGroupProps = {
   id?: string;
   items: RadioGroupItems;
   label?: string;
-  onChange: React.InputHTMLAttributes<any>['onChange'];
+  onChange: InputHTMLAttributes<any>['onChange'];
 };
 
 export type RadioGroupItems = {
   name: string;
   value: string;
-  label: React.ReactNode;
-  description?: React.ReactNode;
+  label: ReactNode;
+  description?: ReactNode;
   disabled?: boolean;
 }[];

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
@@ -8,17 +8,17 @@ interface TypedResourceBadgeCellProps {
   kind: string;
   imageClass?: string;
   typeIconClass?: string;
-  typeIcon?: React.ReactNode;
+  typeIcon?: ReactNode;
 }
 
-const TypedResourceBadgeCell: React.FC<TypedResourceBadgeCellProps> = ({
+const TypedResourceBadgeCell: FC<TypedResourceBadgeCellProps> = ({
   typeIconClass,
   typeIcon,
   imageClass,
   kind,
 }) => {
-  let itemIcon: React.ReactNode;
-  let iconType: React.ReactNode;
+  let itemIcon: ReactNode;
+  let iconType: ReactNode;
   if (imageClass) {
     itemIcon = (
       <image

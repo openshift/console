@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -93,7 +94,7 @@ const getLatestBuild = (builds) => {
   }, builds[0]);
 };
 
-export const BuildConfigsDetailsPage: React.FC<DetailsPageProps> = (props) => {
+export const BuildConfigsDetailsPage: FC<DetailsPageProps> = (props) => {
   const buildModel = referenceForModel(BuildModel);
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
     kind: buildModel,
@@ -216,7 +217,7 @@ const getBuildStatus = (buildConfig: BuildConfig) => {
 
 const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -289,7 +290,7 @@ export const BuildConfigsList: Snail.FCC<BuildConfigsListProps> = ({ data, loade
     isList: true,
   });
 
-  const buildData = React.useMemo<CustomData>(
+  const buildData = useMemo<CustomData>(
     () => ({
       builds: {
         latestByBuildName: builds.reduce<Record<string, K8sResourceKind>>((acc, build) => {
@@ -320,7 +321,7 @@ export const BuildConfigsList: Snail.FCC<BuildConfigsListProps> = ({ data, loade
     : [];
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={BuildConfigModel.labelPlural}
@@ -330,13 +331,13 @@ export const BuildConfigsList: Snail.FCC<BuildConfigsListProps> = ({ data, loade
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
 BuildConfigsList.displayName = 'BuildConfigsList';
 
-export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
+export const BuildConfigsPage: FC<BuildConfigsPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const allStrategies = [

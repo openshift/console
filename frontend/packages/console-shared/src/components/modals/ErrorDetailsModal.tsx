@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Modal,
@@ -15,7 +16,7 @@ import { ClusterVersionKind } from '@console/internal/module/k8s/types';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 
-export const ErrorDetailsBlock: React.FC<ErrorBoundaryFallbackProps> = (props) => {
+export const ErrorDetailsBlock: FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation('console-shared');
   return (
     <>
@@ -43,12 +44,12 @@ export const ErrorDetailsBlock: React.FC<ErrorBoundaryFallbackProps> = (props) =
 };
 
 type ErrorDetailsModalProps = ErrorBoundaryFallbackProps & {
-  buttonProps?: Partial<React.ComponentProps<typeof Button>>;
+  buttonProps?: Partial<ComponentProps<typeof Button>>;
 };
 
-export const ErrorDetailsModal: React.FC<ErrorDetailsModalProps> = ({ buttonProps, ...props }) => {
+export const ErrorDetailsModal: FC<ErrorDetailsModalProps> = ({ buttonProps, ...props }) => {
   const { t } = useTranslation('console-shared');
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setOpen] = useState(false);
   const clusterVersion: ClusterVersionKind = useClusterVersion();
 
   // destructure to undefined if we're not in a redux context

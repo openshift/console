@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
@@ -32,7 +33,7 @@ const OperatorHealthLevel: { [key: string]: number } = {
 
 type OperatorHealthType = {
   message: string;
-  icon: React.ReactNode | undefined;
+  icon: ReactNode | undefined;
   level: number;
 };
 
@@ -114,9 +115,9 @@ const useOperatorHealth = (t: TFunction, name: string): OperatorHealthType => {
   };
 };
 
-export const VSphereOperatorStatuses: React.FC = () => {
+export const VSphereOperatorStatuses: FC = () => {
   const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const kubeControllerManager = useOperatorHealth(t, 'kube-controller-manager');
   const kubeApiServer = useOperatorHealth(t, 'kube-apiserver');

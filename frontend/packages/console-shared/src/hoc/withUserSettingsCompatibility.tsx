@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
 import { useUserSettingsCompatibility } from '../hooks';
 
 export type WithUserSettingsCompatibilityProps<T> = {
@@ -15,8 +15,8 @@ export const withUserSettingsCompatibility = <
   defaultvalue?: T,
   sync: boolean = false,
 ) => (
-  WrappedComponent: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => {
+  WrappedComponent: ComponentType<Props>,
+): FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => {
   const Component = (props: Props) => {
     const [state, setState, loaded] = useUserSettingsCompatibility(
       configStorageKey,

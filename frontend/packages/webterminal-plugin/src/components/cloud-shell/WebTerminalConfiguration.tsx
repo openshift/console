@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactEventHandler } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Button,
   Checkbox,
@@ -33,14 +34,14 @@ const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [operatorNamespace] = useCloudShellNamespace();
-  const [unit, setUnit] = React.useState<string>('m');
-  const [value, setValue] = React.useState<number>(0);
-  const [image, setImage] = React.useState('');
-  const [timeoutCheckBox, setTimeoutCheckBox] = React.useState(false);
-  const [imageCheckBox, setImageCheckBox] = React.useState(false);
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [unit, setUnit] = useState<string>('m');
+  const [value, setValue] = useState<number>(0);
+  const [image, setImage] = useState('');
+  const [timeoutCheckBox, setTimeoutCheckBox] = useState(false);
+  const [imageCheckBox, setImageCheckBox] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
 
-  const webTerminalExecResource: WatchK8sResource = React.useMemo(() => {
+  const webTerminalExecResource: WatchK8sResource = useMemo(() => {
     return {
       kind: referenceForModel(DevWorkspaceTemplateModel),
       namespaced: true,
@@ -50,7 +51,7 @@ const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }
     };
   }, [operatorNamespace]);
 
-  const webTerminalToolingResource: WatchK8sResource = React.useMemo(() => {
+  const webTerminalToolingResource: WatchK8sResource = useMemo(() => {
     return {
       kind: referenceForModel(DevWorkspaceTemplateModel),
       namespaced: true,
@@ -81,7 +82,7 @@ const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }
     iswebTerminalToolingLoaded &&
     !webTerminalToolingloadError &&
     webTerminalTooling?.spec?.components?.find((e) => e.name === 'web-terminal-tooling');
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoaded && !loadError && terminalExecResource) {
       const terminalExecComponent = terminalExecResource?.container?.env?.find(
         (e) => e.name === 'WEB_TERMINAL_IDLE_TIMEOUT',
@@ -101,7 +102,7 @@ const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }
     }
   }, [webTerminalExec, isLoaded, loadError, terminalExecResource]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (iswebTerminalToolingLoaded && !webTerminalToolingloadError && terminalToolingResource) {
       if (terminalToolingResource?.container?.image) {
         setImage(terminalToolingResource.container.image);
@@ -127,7 +128,7 @@ const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }
     ms: t('webterminal-plugin~Milliseconds'),
   };
 
-  const onValueChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const onValueChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setSaveStatus({ status: null });
     setValue(parseInt(event.currentTarget.value, 10));
   };

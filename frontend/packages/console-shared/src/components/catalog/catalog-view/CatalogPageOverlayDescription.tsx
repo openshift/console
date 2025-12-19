@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { FlexItem } from '@patternfly/react-core';
 
 type CatalogPageOverlayDescriptionProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const CatalogPageOverlayDescription: React.FC<CatalogPageOverlayDescriptionProps> = ({
+const CatalogPageOverlayDescription: FC<CatalogPageOverlayDescriptionProps> = ({
   children,
 }) => (
   <FlexItem

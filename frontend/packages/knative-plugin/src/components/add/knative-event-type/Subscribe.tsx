@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
@@ -23,7 +23,7 @@ interface SubscribeProps {
   target?: K8sResourceKind;
 }
 
-const Subscribe: React.FC<SubscribeProps> = ({ source, target = { metadata: { name: '' } } }) => {
+const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: '' } } }) => {
   const { t } = useTranslation();
   const {
     apiVersion: sourceApiVersion,

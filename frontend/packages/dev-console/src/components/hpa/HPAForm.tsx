@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { FormikProps } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ type HPAFormProps = {
   targetResource: K8sResourceCommon;
 };
 
-const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
+const HPAForm: FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   errors,
   handleReset,
   handleSubmit,
@@ -47,7 +48,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   );
   const customMetrics = false;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setStatus({ submitError: null });
     if (values.editorType === EditorType.Form) {
       // Force validation against the new data that was adjusted in the YAML

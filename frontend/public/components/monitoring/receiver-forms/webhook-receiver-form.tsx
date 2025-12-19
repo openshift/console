@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { AdvancedConfiguration } from './advanced-configuration';
 
-export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) => {
+export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>

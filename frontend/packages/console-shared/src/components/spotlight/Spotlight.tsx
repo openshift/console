@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo } from 'react';
 import InteractiveSpotlight from './InteractiveSpotlight';
 import StaticSpotlight from './StaticSpotlight';
 
@@ -22,8 +23,8 @@ type SpotlightProps = {
   interactive?: boolean;
 };
 
-const Spotlight: React.FC<SpotlightProps> = ({ expandableSelector, selector, interactive }) => {
-  React.useEffect(() => {
+const Spotlight: FC<SpotlightProps> = ({ expandableSelector, selector, interactive }) => {
+  useEffect(() => {
     if (expandableSelector) {
       const expandableElement = document.querySelector(expandableSelector);
       const ariaExpanded = expandableElement?.getAttribute('aria-expanded');
@@ -34,7 +35,7 @@ const Spotlight: React.FC<SpotlightProps> = ({ expandableSelector, selector, int
   }, [expandableSelector]);
 
   // if target element is a hidden one return null
-  const element = React.useMemo(() => {
+  const element = useMemo(() => {
     const highlightElement = document.querySelector(selector);
     let hiddenElement = highlightElement;
     while (hiddenElement && interactive) {

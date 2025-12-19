@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
@@ -75,7 +75,7 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
 
 const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
@@ -147,7 +147,7 @@ const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
   const columns = usePDBColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PodDisruptionBudgetKind>
         {...props}
         label={PodDisruptionBudgetModel.labelPlural}
@@ -157,7 +157,7 @@ const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

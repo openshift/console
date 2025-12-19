@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 interface ShortcutTableProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const ShortcutTable: Snail.FCC<ShortcutTableProps> = ({ children }) => (

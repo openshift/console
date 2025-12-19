@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
@@ -12,7 +12,7 @@ import {
 } from '@console/shared/src/components/getting-started';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 
-export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
+export const DeveloperFeaturesGettingStartedCard: FC = () => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const isHelmEnabled = useFlag('OPENSHIFT_HELM');

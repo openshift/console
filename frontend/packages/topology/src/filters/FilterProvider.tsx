@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useState, useEffect, useCallback, createContext } from 'react';
 import { useUserSettingsCompatibility } from '@console/shared';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
 import { DisplayFilters } from '../topology-types';
@@ -42,17 +43,17 @@ const useFilterContextValues = (): [
     TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
     getAppliedFilters(DEFAULT_TOPOLOGY_FILTERS),
   );
-  const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
-  const [filters, setFilters] = React.useState<DisplayFilters>([]);
+  const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);
+  const [filters, setFilters] = useState<DisplayFilters>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (appliedFiltersLoaded && !filtersLoaded) {
       setFilters(getTopologyFilters(appliedFilters));
       setFiltersLoaded(true);
     }
   }, [appliedFilters, appliedFiltersLoaded, filtersLoaded]);
 
-  const setTopologyFilters = React.useCallback(
+  const setTopologyFilters = useCallback(
     (displayFilters: DisplayFilters) => {
       setFilters(displayFilters);
       setAppliedFilters(getAppliedFilters(displayFilters));
@@ -69,10 +70,10 @@ type FilterContextType = {
   setTopologyFilters?: SetTopologyFilters;
 };
 
-export const FilterContext = React.createContext<FilterContextType>({});
+export const FilterContext = createContext<FilterContextType>({});
 
 interface FilterProviderProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export const FilterProvider: Snail.FCC<FilterProviderProps> = ({ children }) => {

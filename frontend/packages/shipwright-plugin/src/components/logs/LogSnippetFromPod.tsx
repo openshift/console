@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { coFetchText } from '@console/internal/co-fetch';
@@ -7,14 +8,14 @@ import { PodModel } from '@console/internal/models';
 import { resourceURL } from '@console/internal/module/k8s';
 
 type LogSnippetFromPodProps = {
-  children: (logSnippet: string) => React.ReactNode;
+  children: (logSnippet: string) => ReactNode;
   containerName: string;
   namespace: string;
   podName: string;
   title: string;
 };
 
-const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
+const LogSnippetFromPod: FC<LogSnippetFromPodProps> = ({
   children,
   containerName,
   namespace,
@@ -22,10 +23,10 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   title,
 }) => {
   const { t } = useTranslation();
-  const [logSnippet, setLogSnippet] = React.useState<string>(null);
-  const [logError, setLogError] = React.useState<string>(null);
+  const [logSnippet, setLogSnippet] = useState<string>(null);
+  const [logError, setLogError] = useState<string>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const urlOpts = {
       ns: namespace,
       name: podName,

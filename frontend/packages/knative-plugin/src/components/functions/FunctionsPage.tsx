@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -22,7 +22,7 @@ import { KnativeServiceTypeContext } from './ServiceTypeContext';
 
 import './FunctionsPage.scss';
 
-const FunctionList: React.FC<{ namespace: string }> = (props) => {
+const FunctionList: FC<{ namespace: string }> = (props) => {
   const { t } = useTranslation();
   return (
     <KnativeServiceTypeContext.Provider value={ServiceTypeValue.Function}>
@@ -43,7 +43,7 @@ const FunctionList: React.FC<{ namespace: string }> = (props) => {
   );
 };
 
-const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
+const FunctionsListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
   const { ns } = useParams();
   const [perspective] = useActivePerspective();
@@ -67,7 +67,7 @@ const FunctionsListPage: React.FC<React.ComponentProps<typeof ListPage>> = (prop
 
 const PageContentsWithStartGuide = withStartGuide(FunctionsListPage);
 
-const FunctionsPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
+const FunctionsPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <PageContentsWithStartGuide {...props} />

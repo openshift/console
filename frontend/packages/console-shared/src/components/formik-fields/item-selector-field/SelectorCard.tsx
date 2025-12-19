@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { css } from '@patternfly/react-styles';
@@ -13,7 +13,7 @@ interface SelectorCardProps {
   onChange: (name: string) => void;
 }
 
-const SelectorCard: React.FC<SelectorCardProps> = ({
+const SelectorCard: FC<SelectorCardProps> = ({
   title,
   iconUrl,
   name,

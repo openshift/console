@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -19,7 +19,7 @@ type BuildRunSectionProps = {
   buildRun: BuildRun;
 };
 
-const BuildRunSection: React.FC<BuildRunSectionProps> = ({ buildRun }) => {
+const BuildRunSection: FC<BuildRunSectionProps> = ({ buildRun }) => {
   const { t } = useTranslation();
   const buildModel = isV1Alpha1Resource(buildRun) ? BuildModelV1Alpha1 : BuildModel;
 

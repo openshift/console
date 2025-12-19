@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +13,7 @@ import { useDevfileServer, useDevfileSource, useSelectedDevfileSample } from './
 import DevfileInfo from './DevfileInfo';
 import './DevfileStrategySection.scss';
 
-const DevfileStrategySection: React.FC = () => {
+const DevfileStrategySection: FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fireTelemetryEvent = useTelemetry();
@@ -24,11 +25,11 @@ const DevfileStrategySection: React.FC = () => {
   const [, devfileParseError] = useDevfileServer(values, setFieldValue);
   useDevfileSource();
   const selectedSample = useSelectedDevfileSample();
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
   const searchParams = new URLSearchParams(window.location.search);
   const importType = searchParams.get('importType');
 
-  const devfileInfo = React.useMemo(() => {
+  const devfileInfo = useMemo(() => {
     let info;
     if (selectedSample) {
       info = selectedSample;
@@ -44,7 +45,7 @@ const DevfileStrategySection: React.FC = () => {
     return info;
   }, [selectedSample, devfile.devfileContent, setFieldValue]);
 
-  const handleDevfileChange = React.useCallback(async () => {
+  const handleDevfileChange = useCallback(async () => {
     const gitService = getGitService(url, type, ref, dir, secretResource, devfile.devfilePath);
     const devfileContents = gitService && (await gitService.getDevfileContent());
     if (!devfileContents) {
@@ -75,7 +76,7 @@ const DevfileStrategySection: React.FC = () => {
     url,
   ]);
 
-  const helpText = React.useMemo(() => {
+  const helpText = useMemo(() => {
     if (validated === ValidatedOptions.success) {
       return t('devconsole~Validated');
     }
@@ -90,7 +91,7 @@ const DevfileStrategySection: React.FC = () => {
     );
   }, [t, type, validated]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       importType !== ImportTypes.devfile &&
       recommendedStrategy &&
@@ -111,7 +112,7 @@ const DevfileStrategySection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (importType === ImportTypes.devfile || selectedStrategy.type === ImportStrategy.DEVFILE) &&
       devfile.devfilePath &&
       handleDevfileChange();

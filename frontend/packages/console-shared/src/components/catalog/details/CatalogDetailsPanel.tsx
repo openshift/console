@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ type CatalogDetailsPanelProps = {
   item: CatalogItem;
 };
 
-const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
+const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
   const { t } = useTranslation();
   const { description, provider, creationTimestamp, supportUrl, documentationUrl, details } = item;
   const created = Date.parse(creationTimestamp) ? (

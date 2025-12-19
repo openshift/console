@@ -1,7 +1,7 @@
 // TODO file should be renamed replica-set.jsx to match convention
 
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage } from './factory/details';
@@ -200,7 +200,7 @@ const getDataViewRows = (data, columns) => {
 
 const useReplicaSetsColumns = () => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -268,7 +268,7 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
   const columns = useReplicaSetsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ReplicaSetModel.labelPlural}
@@ -278,7 +278,7 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 const ReplicaSetsPage = (props) => {

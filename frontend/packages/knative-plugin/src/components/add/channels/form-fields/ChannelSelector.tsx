@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +13,7 @@ type ChannelSelectorProps = {
   defaultConfiguredChannel: string;
 } & Omit<DropdownFieldProps, 'name'>;
 
-const ChannelSelector: React.FC<ChannelSelectorProps> = ({
+const ChannelSelector: FC<ChannelSelectorProps> = ({
   channels,
   onChange,
   defaultConfiguredChannel,
@@ -35,14 +36,14 @@ const ChannelSelector: React.FC<ChannelSelectorProps> = ({
     return acc;
   }, {});
 
-  const getGenericChannel = React.useCallback((): string => {
+  const getGenericChannel = useCallback((): string => {
     return (
       filteredChannels.find((ch) => getChannelKind(ch) === EVENTING_CHANNEL_KIND) ||
       filteredChannels[0]
     );
   }, [filteredChannels]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!selected.value && filteredChannels.length > 0) {
       const channel = getGenericChannel();
       onChange && onChange(channel);

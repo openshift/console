@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -30,7 +30,7 @@ interface StateProps {
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: React.FC<Props> = ({
+const DeployImage: FC<Props> = ({
   namespace,
   projects,
   activeApplication,

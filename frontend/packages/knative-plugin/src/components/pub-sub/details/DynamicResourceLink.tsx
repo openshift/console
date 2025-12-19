@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -16,7 +16,7 @@ interface DynamicResourceLinkProps {
   kind: string;
 }
 
-const DynamicResourceLink: React.FC<DynamicResourceLinkProps> = ({
+const DynamicResourceLink: FC<DynamicResourceLinkProps> = ({
   title,
   name,
   namespace,

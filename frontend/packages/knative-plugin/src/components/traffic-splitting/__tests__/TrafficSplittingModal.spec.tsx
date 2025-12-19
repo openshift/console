@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import {
@@ -24,7 +24,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-type TrafficSplittingModalProps = React.ComponentProps<typeof TrafficSplittingModal>;
+type TrafficSplittingModalProps = ComponentProps<typeof TrafficSplittingModal>;
 
 describe('TrafficSplittingModal', () => {
   let formProps: TrafficSplittingModalProps;

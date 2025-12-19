@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
-const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
+const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
   onSubmit,
   onClose,
   isDisabled,

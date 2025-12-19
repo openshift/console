@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ export interface SinkPubsubModalProps {
 
 type Props = FormikProps<FormikValues> & SinkPubsubModalProps;
 
-const SinkPubsubModal: React.FC<Props> = ({
+const SinkPubsubModal: FC<Props> = ({
   resourceName,
   resourceDropdown,
   labelTitle,
@@ -37,7 +38,7 @@ const SinkPubsubModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
-  const onSinkChange = React.useCallback(
+  const onSinkChange = useCallback(
     (selectedValue, target) => {
       const modelResource = target?.props?.model;
       if (selectedValue) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen, render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import * as Router from 'react-router-dom-v5-compat';
@@ -6,8 +6,8 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseDetails, { LoadedHelmReleaseDetails } from '../HelmReleaseDetails';
 
-let helmReleaseDetailsProps: React.ComponentProps<typeof HelmReleaseDetails>;
-let loadedHelmReleaseDetailsProps: React.ComponentProps<typeof LoadedHelmReleaseDetails>;
+let helmReleaseDetailsProps: ComponentProps<typeof HelmReleaseDetails>;
+let loadedHelmReleaseDetailsProps: ComponentProps<typeof LoadedHelmReleaseDetails>;
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

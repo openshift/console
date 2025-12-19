@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
@@ -21,7 +22,7 @@ export interface EditBuildConfigProps {
   buildConfig: BuildConfig;
 }
 
-const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
+const EditBuildConfig: FC<EditBuildConfigProps> = ({
   heading,
   namespace,
   name,
@@ -29,7 +30,7 @@ const EditBuildConfig: React.FC<EditBuildConfigProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [initialValues] = React.useState<BuildConfigFormikValues>(() => {
+  const [initialValues] = useState<BuildConfigFormikValues>(() => {
     const values = convertBuildConfigToFormData(watchedBuildConfig);
     values.yamlData = safeJSToYAML(watchedBuildConfig, '', { skipInvalid: true });
     values.resourceVersion = watchedBuildConfig?.metadata?.resourceVersion;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -6,9 +6,9 @@ import './ProjectListPage.scss';
 
 export type ProjectListPageProps = {
   title: string;
-  listComponent?: React.ComponentType<any>;
-  badge?: React.ReactNode;
-  helpText?: React.ReactNode;
+  listComponent?: ComponentType<any>;
+  badge?: ReactNode;
+  helpText?: ReactNode;
 };
 const ProjectListPage: Snail.FCC<ProjectListPageProps> = ({
   badge,

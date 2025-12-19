@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
@@ -30,12 +31,12 @@ import {
 import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
 import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
-const DynamicPlugins: React.FC = () => {
+const DynamicPlugins: FC = () => {
   const { t } = useTranslation();
   const pluginInfoEntries = usePluginInfo();
-  const [items, setItems] = React.useState([]);
+  const [items, setItems] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
       a.metadata.name.localeCompare(b.metadata.name),
@@ -62,10 +63,10 @@ const DynamicPlugins: React.FC = () => {
   );
 };
 
-const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
-  const [kubernetesVersion, setKubernetesVersion] = React.useState('');
+const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
+  const [kubernetesVersion, setKubernetesVersion] = useState('');
   const { t } = useTranslation();
-  React.useEffect(() => {
+  useEffect(() => {
     k8sVersion()
       .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion(t('public~unknown')));
@@ -160,7 +161,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
 };
 AboutModalItems.displayName = 'AboutModalItems';
 
-export const AboutModal: React.FC<AboutModalProps> = (props) => {
+export const AboutModal: FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
   const { t } = useTranslation();
   const { productName } = getBrandingDetails();

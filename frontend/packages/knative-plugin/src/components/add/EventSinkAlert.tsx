@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +8,7 @@ interface EventSinkAlertProps {
   createSinkAccess: boolean;
 }
 
-const EventSinkAlert: React.FC<EventSinkAlertProps> = ({
+const EventSinkAlert: FC<EventSinkAlertProps> = ({
   isValidSink,
   createSinkAccessLoading,
   createSinkAccess,

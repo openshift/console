@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { FormikProps, FormikValues } from 'formik/dist/types';
@@ -26,13 +27,13 @@ const NameValueEditorComponent = (props) => (
   />
 );
 
-const RequestPane: React.FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) => {
+const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) => {
   const { t } = useTranslation();
-  const [showCustomHeaders, setShowCustomHeaders] = React.useState(false);
+  const [showCustomHeaders, setShowCustomHeaders] = useState(false);
   const {
     request: { customHeaders, format: invokeFormat, contentType, isAdvancedSettingsExpanded },
   } = values;
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(isAdvancedSettingsExpanded);
+  const [isExpanded, setIsExpanded] = useState<boolean>(isAdvancedSettingsExpanded);
 
   const onToggle = (_event, expanded: boolean) => {
     setIsExpanded(expanded);

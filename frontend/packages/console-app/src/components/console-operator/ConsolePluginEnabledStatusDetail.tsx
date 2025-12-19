@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
@@ -8,13 +9,13 @@ import {
   useConsoleOperatorConfigData,
 } from './ConsoleOperatorConfig';
 
-const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({ obj }) => {
+const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }) => {
   const pluginInfoEntries = usePluginInfo();
   const { consoleOperatorConfig, consoleOperatorConfigLoaded } = useConsoleOperatorConfigData();
 
-  const pluginName = React.useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
+  const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginInfo = React.useMemo(
+  const pluginInfo = useMemo(
     () =>
       pluginInfoEntries.find((entry) =>
         entry.status === 'loaded'
@@ -23,7 +24,7 @@ const ConsolePluginEnabledStatusDetail: React.FC<DetailsItemComponentProps> = ({
       ),
     [pluginInfoEntries, pluginName],
   );
-  const enabledPlugins = React.useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [
+  const enabledPlugins = useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [
     consoleOperatorConfig?.spec?.plugins,
   ]);
 

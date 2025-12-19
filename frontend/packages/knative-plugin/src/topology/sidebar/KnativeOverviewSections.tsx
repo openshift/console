@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -25,7 +25,7 @@ type SubscriptionsOverviewList = {
   subscriptions: Subscriber[];
 };
 
-export const EventSourcesOverviewList: React.FC<OverviewListProps> = ({ items }) => {
+export const EventSourcesOverviewList: FC<OverviewListProps> = ({ items }) => {
   const { t } = useTranslation();
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
@@ -34,7 +34,7 @@ export const EventSourcesOverviewList: React.FC<OverviewListProps> = ({ items })
   ) : null;
 };
 
-export const SubscriptionsOverviewList: React.FC<SubscriptionsOverviewList> = ({
+export const SubscriptionsOverviewList: FC<SubscriptionsOverviewList> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
@@ -48,7 +48,7 @@ export const SubscriptionsOverviewList: React.FC<SubscriptionsOverviewList> = ({
   ) : null;
 };
 
-export const TriggersOverviewList: React.FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
+export const TriggersOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
   const { t } = useTranslation();
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
@@ -57,7 +57,7 @@ export const TriggersOverviewList: React.FC<SubscriptionsOverviewList> = ({ subs
   ) : null;
 };
 
-export const DomainMappingsOverviewList: React.FC<OverviewListProps> = ({ items }) => {
+export const DomainMappingsOverviewList: FC<OverviewListProps> = ({ items }) => {
   const { t } = useTranslation();
   return items?.length > 0 ? (
     <TopologySideBarTabSection>
@@ -69,7 +69,7 @@ export const DomainMappingsOverviewList: React.FC<OverviewListProps> = ({ items 
   ) : null;
 };
 
-export const KnativeOverviewRevisionPodsRing: React.FC<KnativeOverviewDetailsProps> = ({
+export const KnativeOverviewRevisionPodsRing: FC<KnativeOverviewDetailsProps> = ({
   item,
 }) => {
   const { obj } = item;
@@ -87,7 +87,7 @@ export const KnativeOverviewRevisionPodsRing: React.FC<KnativeOverviewDetailsPro
   );
 };
 
-export const KnativeOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({ item }) => {
+export const KnativeOverviewDetails: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { obj } = item;
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
@@ -104,7 +104,7 @@ export const KnativeOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({ 
   );
 };
 
-export const KnativeEventSinkPodRing: React.FC<KnativeOverviewDetailsProps> = ({ item }) => {
+export const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { revisions, obj } = item as { obj: K8sResourceKind; revisions: K8sResourceKind[] };
   const { pods } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid),
@@ -124,7 +124,7 @@ export const KnativeEventSinkPodRing: React.FC<KnativeOverviewDetailsProps> = ({
   );
 };
 
-export const KnativeEventSinkOverviewDetails: React.FC<KnativeOverviewDetailsProps> = ({
+export const KnativeEventSinkOverviewDetails: FC<KnativeOverviewDetailsProps> = ({
   item,
 }) => {
   const { obj } = item;

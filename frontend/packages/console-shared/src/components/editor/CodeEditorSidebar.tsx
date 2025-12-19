@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { MutableRefObject, FC } from 'react';
+import { useCallback } from 'react';
 import { JSONSchema7 } from 'json-schema';
 import { Range, Selection } from 'monaco-editor';
 import { CodeEditorRef } from '@console/dynamic-plugin-sdk';
@@ -8,7 +9,7 @@ import { Sample } from '../../utils';
 import { downloadYaml } from './yaml-download-utils';
 
 type CodeEditorSidebarProps = {
-  editorRef: React.MutableRefObject<CodeEditorRef>;
+  editorRef: MutableRefObject<CodeEditorRef>;
   model?: K8sKind;
   samples?: Sample[];
   schema?: JSONSchema7;
@@ -18,7 +19,7 @@ type CodeEditorSidebarProps = {
   toggleSidebar: () => void;
 };
 
-export const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
+export const CodeEditorSidebar: FC<CodeEditorSidebarProps> = ({
   editorRef,
   model,
   samples,
@@ -30,7 +31,7 @@ export const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
 }) => {
   const editor = editorRef.current?.editor;
 
-  const insertYamlContent = React.useCallback(
+  const insertYamlContent = useCallback(
     (id: string = 'default', yamlContent: string = '', kind) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
 
@@ -70,7 +71,7 @@ export const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
     [editor, sanitizeYamlContent],
   );
 
-  const replaceYamlContent = React.useCallback(
+  const replaceYamlContent = useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string) => {
       const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;
       editor?.setValue(yaml);
@@ -78,7 +79,7 @@ export const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
     [editor, sanitizeYamlContent],
   );
 
-  const downloadYamlContent = React.useCallback(
+  const downloadYamlContent = useCallback(
     (id: string = 'default', yamlContent: string = '', kind: string) => {
       try {
         const yaml = sanitizeYamlContent ? sanitizeYamlContent(id, yamlContent, kind) : yamlContent;

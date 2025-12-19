@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveListFooter from '../ProgressiveListFooter';
@@ -6,7 +6,7 @@ import ProgressiveListFooter from '../ProgressiveListFooter';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const Footer: Snail.FCC<{ children?: React.ReactNode }> = ({ children }) => {
+const Footer: Snail.FCC<{ children?: ReactNode }> = ({ children }) => {
   return <div>Click on the names to access advanced options for {children}.</div>;
 };
 

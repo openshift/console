@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
@@ -13,7 +13,7 @@ export interface SinkPubsubProps {
   close?: () => void;
 }
 
-const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }) => {
+const SinkPubsub: FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }) => {
   const { t } = useTranslation();
   const {
     metadata: { namespace, name },

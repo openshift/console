@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { connect } from 'react-redux';
@@ -21,7 +22,7 @@ interface StateProps {
   namespace: string;
 }
 
-const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
+const SecretKeySelector: FC<SecretKeySelectorProps & StateProps> = ({
   name,
   label,
   namespace,
@@ -29,7 +30,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(name);
-  const [secrets, setSecrets] = React.useState({});
+  const [secrets, setSecrets] = useState({});
   const launchModal = useOverlay();
   const fieldId = getFieldId(name, 'secret-key-input');
   const isValid = !(touched && error);
@@ -47,7 +48,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
 
   useFormikValidationFix(field.value);
 
-  React.useEffect(() => {
+  useEffect(() => {
     k8sGet(SecretModel, null, namespace)
       .then((nsSecrets) => {
         setSecrets(nsSecrets);

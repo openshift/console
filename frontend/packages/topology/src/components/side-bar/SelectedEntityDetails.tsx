@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement, isEdge, isNode } from '@patternfly/react-topology';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
@@ -17,7 +17,7 @@ export const isSidebarRenderable = (selectedEntity: GraphElement): boolean => {
   return false;
 };
 
-export const SelectedEntityDetails: React.FC<{ selectedEntity: GraphElement }> = ({
+export const SelectedEntityDetails: FC<{ selectedEntity: GraphElement }> = ({
   selectedEntity,
 }) => {
   if (!selectedEntity) {

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   CpuCellComponentProps,
   MemoryCellComponentProps,
@@ -27,13 +27,13 @@ import {
   PodRingSetProps,
 } from '../extensions/topology-types';
 
-export const CpuCellComponent: React.FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
+export const CpuCellComponent: FC<CpuCellComponentProps> = require('@console/topology/src/components/list-view/cells/CpuCell')
   .CpuCellComponent;
 
-export const MemoryCellComponent: React.FC<MemoryCellComponentProps> = require('@console/topology/src/components/list-view/cells/MemoryCell')
+export const MemoryCellComponent: FC<MemoryCellComponentProps> = require('@console/topology/src/components/list-view/cells/MemoryCell')
   .MemoryCellComponent;
 
-export const TopologyListViewNode: React.FC<TopologyListViewNodeProps> = require('@console/topology/src/components/list-view/TopologyListViewNode')
+export const TopologyListViewNode: FC<TopologyListViewNodeProps> = require('@console/topology/src/components/list-view/TopologyListViewNode')
   .default;
 
 export const useOverviewMetrics: UseOverviewMetrics = require('@console/topology/src/utils/useOverviewMetrics')
@@ -81,13 +81,13 @@ export const CreateConnector: CreateConnectorProps = require('@console/topology/
 export const createConnectorCallback = require('@console/topology/src/components/graph-view')
   .createConnectorCallback;
 
-export const WorkloadNode: React.FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view')
+export const WorkloadNode: FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view')
   .WorkloadNode;
 
-export const PodSet: React.FC<PodSetProps> = require('@console/topology/src/components/graph-view')
+export const PodSet: FC<PodSetProps> = require('@console/topology/src/components/graph-view')
   .PodSet;
 
-export const BaseNode: React.FC<BaseNodeProps> = require('@console/topology/src/components/graph-view')
+export const BaseNode: FC<BaseNodeProps> = require('@console/topology/src/components/graph-view')
   .BaseNode;
 
 export const withContextMenu: WithContextMenu = require('@console/topology/src/components/graph-view')
@@ -99,5 +99,5 @@ export const withCreateConnector: WithCreateConnector = require('@console/topolo
 export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
   .OdcBaseNode;
 
-export const PodRingSet: React.FC<PodRingSetProps> = require('@console/shared/src/components/pod/PodRingSet')
+export const PodRingSet: FC<PodRingSetProps> = require('@console/shared/src/components/pod/PodRingSet')
   .default;

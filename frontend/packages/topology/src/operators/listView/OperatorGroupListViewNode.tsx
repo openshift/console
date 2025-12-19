@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Node, observer } from '@patternfly/react-topology';
 import { TypedResourceBadgeCell } from '../../components/list-view/cells';
 import TopologyListViewNode from '../../components/list-view/TopologyListViewNode';
@@ -8,10 +8,10 @@ interface OperatorGroupListViewNodeProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const OperatorGroupListViewNode: React.FC<OperatorGroupListViewNodeProps> = ({
+const OperatorGroupListViewNode: FC<OperatorGroupListViewNodeProps> = ({
   item,
   selectedIds,
   onSelect,

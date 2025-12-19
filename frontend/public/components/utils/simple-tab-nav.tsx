@@ -1,10 +1,11 @@
-import * as React from 'react';
+import type { FunctionComponent, ReactElement, FC } from 'react';
+import { isValidElement, createElement } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Tabs, Tab as PfTab, TabTitleText } from '@patternfly/react-core';
 
 export type Tab = {
   name: string;
-  component: React.FunctionComponent<{}> | React.ReactElement;
+  component: FunctionComponent<{}> | ReactElement;
 };
 
 type SimpleTabNavProps = {
@@ -19,7 +20,7 @@ type SimpleTabNavProps = {
   noInset?: boolean;
 };
 
-export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
+export const SimpleTabNav: FC<SimpleTabNavProps> = ({
   onClickTab,
   selectedTab,
   tabProps = null,
@@ -34,7 +35,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
 
   // the div wrapper prevents the tabs from collapsing in a flexbox
   return (
-    <div>
+    (<div>
       <Tabs
         onSelect={handleTabClick}
         className={css({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
@@ -44,8 +45,8 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
       >
         {tabs.map((tab) => {
           const content =
-            !React.isValidElement(tab.component) && !Array.isArray(tab.component)
-              ? React.createElement(tab.component as React.FunctionComponent, tabProps)
+            !isValidElement(tab.component) && !Array.isArray(tab.component)
+              ? createElement(tab.component as FunctionComponent, tabProps)
               : tab.component;
 
           return (
@@ -60,6 +61,6 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
           );
         })}
       </Tabs>
-    </div>
+    </div>)
   );
 };

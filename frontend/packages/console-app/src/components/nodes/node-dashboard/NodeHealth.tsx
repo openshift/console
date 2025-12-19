@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useContext } from 'react';
 import { Gallery, GalleryItem, Alert, Stack, StackItem } from '@patternfly/react-core';
 import i18next from 'i18next';
 import * as _ from 'lodash';
@@ -33,7 +34,7 @@ import { NodeDashboardContext } from './NodeDashboardContext';
 
 import './node-health.scss';
 
-export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
+export const HealthChecksPopup: FC<HealthChecksPopupProps> = ({
   conditions = [],
   machineHealthChecks,
   disabledAlert,
@@ -235,12 +236,12 @@ export const getMachineHealth = (
 type HealthChecksItemProps = {
   disabledAlert?: {
     title: string;
-    message: React.ReactNode;
+    message: ReactNode;
   };
 };
 
-export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAlert }) => {
-  const { obj, setHealthCheck } = React.useContext(NodeDashboardContext);
+export const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) => {
+  const { obj, setHealthCheck } = useContext(NodeDashboardContext);
   const [name, namespace] = getNodeMachineNameAndNamespace(obj);
   const { t } = useTranslation();
   const machine = useK8sWatchResource<MachineKind>(
@@ -291,8 +292,8 @@ export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAler
   );
 };
 
-const NodeHealth: React.FC = () => {
-  const { obj } = React.useContext(NodeDashboardContext);
+const NodeHealth: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
   return (
     <HealthBody>
       <Gallery className="co-overview-status__health" hasGutter>
@@ -326,6 +327,6 @@ type HealthChecksPopupProps = {
   machineHealthChecks: MachineHealthCheckKind[];
   disabledAlert?: {
     title: string;
-    message: React.ReactNode;
+    message: ReactNode;
   };
 };

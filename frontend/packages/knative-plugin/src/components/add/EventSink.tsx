@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ interface EventSinkProps {
   kameletSink?: K8sResourceKind;
 }
 
-const EventSink: React.FC<EventSinkProps> = ({
+const EventSink: FC<EventSinkProps> = ({
   namespace,
   normalizedSink,
   contextSource,

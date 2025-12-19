@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
 import * as History from 'history';
 import { Link } from 'react-router-dom-v5-compat';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 
-const LinkStatus: React.FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) =>
+const LinkStatus: FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) =>
   linkTo ? (
     <Link to={linkTo} title={linkTitle}>
       <StatusIconAndText {...other} />
@@ -12,7 +12,7 @@ const LinkStatus: React.FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) 
     <StatusIconAndText {...other} />
   );
 
-type LinkStatusProps = React.ComponentProps<typeof StatusIconAndText> & {
+type LinkStatusProps = ComponentProps<typeof StatusIconAndText> & {
   linkTitle?: string;
   linkTo?: History.LocationDescriptor;
 };

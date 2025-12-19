@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -257,7 +258,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps> = ({ obj }) => {
+const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({ obj }) => {
   const { t } = useTranslation();
   switch (getMachineConfigPoolUpdateStatus(obj)) {
     case MCPUpdateStatus.Paused:
@@ -306,7 +307,7 @@ const tableColumnInfo = [
 
 const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<MachineConfigPoolKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -394,7 +395,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data,
   });
 };
 
-const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
+const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   data,
   loaded,
   loadError,
@@ -402,23 +403,21 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
 }) => {
   const columns = useMachineConfigPoolColumns();
 
-  return (
-    <>
-      <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
-      <React.Suspense fallback={<LoadingBox />}>
-        <ConsoleDataView<MachineConfigPoolKind, Action[]>
-          {...props}
-          label={MachineConfigPoolModel.labelPlural}
-          data={data}
-          loaded={loaded}
-          loadError={loadError}
-          columns={columns}
-          getDataViewRows={getDataViewRows}
-          hideColumnManagement={true}
-        />
-      </React.Suspense>
-    </>
-  );
+  return (<>
+    <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<MachineConfigPoolKind, Action[]>
+        {...props}
+        label={MachineConfigPoolModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement={true}
+      />
+    </Suspense>
+  </>);
 };
 
 export const MachineConfigPoolPage: Snail.FCC<any> = (props) => (

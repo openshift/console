@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import {
   Select,
   SelectList,
@@ -23,11 +24,11 @@ type NameLabelFilterDropdownProps = {
   labelFilterInput: string;
 };
 
-const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) => {
+const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
   const { data, onChange, nameFilterInput, labelFilterInput, isDisabled } = props;
 
-  const [isOpen, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(NameLabelFilterValues.Name);
+  const [isOpen, setOpen] = useState(false);
+  const [selected, setSelected] = useState(NameLabelFilterValues.Name);
 
   const { t } = useTranslation();
 
@@ -38,7 +39,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
     onChange(selected, value, false);
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       id="toggle-id"
       ref={toggleRef}

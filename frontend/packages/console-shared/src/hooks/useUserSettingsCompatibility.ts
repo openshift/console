@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+import { useEffect } from 'react';
 import { deserializeData } from '../utils/user-settings';
 import { useUserSettings } from './useUserSettings';
 
@@ -7,7 +8,7 @@ export const useUserSettingsCompatibility = <T>(
   storageKey: string,
   defaultValue?: T,
   sync: boolean = false,
-): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
+): [T, Dispatch<SetStateAction<T>>, boolean] => {
   const [settings, setSettings, loaded] = useUserSettings<T>(
     key,
     localStorage.getItem(storageKey) !== null
@@ -16,7 +17,7 @@ export const useUserSettingsCompatibility = <T>(
     sync,
   );
 
-  React.useEffect(
+  useEffect(
     () => () => {
       if (loaded) {
         localStorage.removeItem(storageKey);

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -12,7 +13,7 @@ import { FieldSet, FormField } from './fields';
 import { UiSchemaOptionsWithDependency } from './types';
 import { useSchemaLabel } from './utils';
 
-export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
+export const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
   children,
   id,
   label,
@@ -37,7 +38,7 @@ export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
   );
 };
 
-const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({
+const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({
   properties,
 }) => {
   const { t } = useTranslation();
@@ -50,11 +51,11 @@ const AdvancedProperties: React.FC<Pick<ObjectFieldTemplateProps, 'properties'>>
     </ExpandCollapse>
   );
 };
-export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
+export const FieldTemplate: FC<FieldTemplateProps> = (props) => {
   const { hidden, schema = {}, children, uiSchema = {}, formContext = {} } = props;
   const type = getSchemaType(schema);
-  const [dependencyMet, setDependencyMet] = React.useState(true);
-  React.useEffect(() => {
+  const [dependencyMet, setDependencyMet] = useState(true);
+  useEffect(() => {
     const { dependency } = getUiOptions(uiSchema ?? {}) as UiSchemaOptionsWithDependency; // Type defs for this function are awful
     if (dependency) {
       setDependencyMet(
@@ -75,7 +76,7 @@ export const FieldTemplate: React.FC<FieldTemplateProps> = (props) => {
   return isGroup ? children : <AtomicFieldTemplate {...props} />;
 };
 
-export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({
+export const ObjectFieldTemplate: FC<ObjectFieldTemplateProps> = ({
   idSchema,
   properties,
   required,
@@ -103,7 +104,7 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({
   ) : null;
 };
 
-export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
+export const ArrayFieldTemplate: FC<ArrayFieldTemplateProps> = ({
   idSchema,
   items,
   onAddClick,
@@ -158,7 +159,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
   );
 };
 
-export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => {
+export const ErrorTemplate: FC<{ errors: string[] }> = ({ errors }) => {
   const { t } = useTranslation();
   return (
     <Alert

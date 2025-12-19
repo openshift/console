@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
@@ -20,7 +20,7 @@ const Footer = ({ children }) => {
 const List: Snail.FCC = () => {
   const { t } = useTranslation();
 
-  const [visibleItems, setVisibleItems] = React.useState([]);
+  const [visibleItems, setVisibleItems] = useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };

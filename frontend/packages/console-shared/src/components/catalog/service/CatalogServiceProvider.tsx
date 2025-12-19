@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import {
   CatalogCategory,
@@ -22,7 +23,7 @@ type CatalogServiceProviderProps = {
   catalogId: string;
   catalogType?: string;
   showAlreadyLoadedItemsAfter?: number;
-  children: (service: CatalogService) => React.ReactNode;
+  children: (service: CatalogService) => ReactNode;
 };
 
 /**
@@ -30,15 +31,15 @@ type CatalogServiceProviderProps = {
  * Restarts the timer when the timeout changes.
  */
 const useTimeout = (timeout: number) => {
-  const [timeIsUp, setTimeIsUp] = React.useState(false);
-  React.useEffect(() => {
+  const [timeIsUp, setTimeIsUp] = useState(false);
+  useEffect(() => {
     const t = timeout > 0 ? setTimeout(() => setTimeIsUp(true), timeout) : null;
     return () => clearTimeout(t);
   }, [timeout]);
   return timeIsUp;
 };
 
-const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
+const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
   namespace,
   catalogId,
   catalogType,
@@ -55,12 +56,12 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
-  const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
-  const [extItemsErrorMap, setItemsErrorMap] = React.useState<{ [uid: string]: Error }>({});
-  const [categoryProviderMap, setCategoryProviderMap] = React.useState<{
+  const [extItemsMap, setExtItemsMap] = useState<{ [uid: string]: CatalogItem[] }>({});
+  const [extItemsErrorMap, setItemsErrorMap] = useState<{ [uid: string]: Error }>({});
+  const [categoryProviderMap, setCategoryProviderMap] = useState<{
     [id: string]: CatalogCategory[];
   }>({});
-  const [metadataProviderMap, setMetadataProviderMap] = React.useState<{
+  const [metadataProviderMap, setMetadataProviderMap] = useState<{
     [type: string]: { [id: string]: CatalogItemMetadataProviderFunction };
   }>({});
 
@@ -76,7 +77,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   const enabledCatalogProviderExtensions = catalogProviderExtensions.filter((item) => {
     return !disabledSubCatalogs?.includes(item?.properties?.type);
   });
-  const preCatalogItems = React.useMemo(() => {
+  const preCatalogItems = useMemo(() => {
     if (!loaded) {
       return [];
     }
@@ -96,14 +97,14 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     return _.sortBy(Object.values(itemMap), 'name');
   }, [extItemsMap, loaded, enabledCatalogProviderExtensions, catalogFilterExtensions]);
 
-  const catalogItems = React.useMemo(() => {
+  const catalogItems = useMemo(() => {
     if (!loaded) {
       return preCatalogItems;
     }
     return applyCatalogItemMetadata(preCatalogItems, metadataProviderMap);
   }, [loaded, preCatalogItems, metadataProviderMap]);
 
-  const onCategoryValueResolved = React.useCallback((newCategories, id) => {
+  const onCategoryValueResolved = useCallback((newCategories, id) => {
     setCategoryProviderMap((prev) => {
       if (_.isEqual(prev[id], newCategories)) {
         return prev;
@@ -112,29 +113,29 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     });
   }, []);
 
-  const onValueResolved = React.useCallback((items, uid) => {
+  const onValueResolved = useCallback((items, uid) => {
     setExtItemsMap((prev) => ({ ...prev, [uid]: items }));
   }, []);
 
-  const onValueError = React.useCallback((error, uid) => {
+  const onValueError = useCallback((error, uid) => {
     setItemsErrorMap((prev) => ({ ...prev, [uid]: error }));
   }, []);
 
-  const onMetadataValueResolved = React.useCallback((provider, uid, type) => {
+  const onMetadataValueResolved = useCallback((provider, uid, type) => {
     setMetadataProviderMap((prev) => ({
       ...prev,
       [type]: { ...(prev?.[type] ?? {}), [uid]: provider },
     }));
   }, []);
 
-  const searchCatalog = React.useCallback(
+  const searchCatalog = useCallback(
     (query: string) => {
       return keywordCompare(query, catalogItems);
     },
     [catalogItems],
   );
 
-  const catalogItemsMap = React.useMemo(() => {
+  const catalogItemsMap = useMemo(() => {
     const result: { [type: string]: CatalogItem[] } = {};
     catalogProviderExtensions.forEach((e) => {
       result[e.properties.type] = [];
@@ -165,7 +166,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       ? new Error('failed loading catalog data')
       : new IncompleteDataError(failedExtensions);
 
-  const categories = React.useMemo(
+  const categories = useMemo(
     () => _.uniqBy(_.flatten(Object.values(categoryProviderMap)), 'id'),
     [categoryProviderMap],
   );

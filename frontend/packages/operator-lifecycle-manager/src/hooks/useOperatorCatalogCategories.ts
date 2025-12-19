@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -9,7 +9,7 @@ import { useOperatorHubPackageManifests } from './useOperatorHubPackageManifests
 const useOperatorCatalogCategories = (): CatalogCategory[] => {
   const [activeNamespace] = useActiveNamespace();
   const [packageManifests, loaded, loadError] = useOperatorHubPackageManifests(activeNamespace);
-  return React.useMemo<CatalogCategory[]>(() => {
+  return useMemo<CatalogCategory[]>(() => {
     if (!loaded) {
       return [];
     }

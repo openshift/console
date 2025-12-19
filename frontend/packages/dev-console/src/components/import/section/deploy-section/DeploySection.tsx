@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ type DeploySectionProps = {
   appResources?: AppResources;
 };
 
-export const DeploySection: React.FC<DeploySectionProps> = ({ values, appResources }) => {
+export const DeploySection: FC<DeploySectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
   return (
     <FormSection title={t('devconsole~Deploy')} fullWidth>

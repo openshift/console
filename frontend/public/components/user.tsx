@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import {
@@ -123,7 +124,7 @@ const NoDataEmptyMsg = () => {
 
 const useUsersColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -170,7 +171,7 @@ export const UserList: Snail.FCC<UserListProps> = (props) => {
   }
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<UserKind>
         {...props}
         data={data}
@@ -180,11 +181,11 @@ export const UserList: Snail.FCC<UserListProps> = (props) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-export const UserPage: React.FC<UserPageProps> = (props) => {
+export const UserPage: FC<UserPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage
@@ -199,7 +200,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
   );
 };
 
-const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
+const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
     staticFilters={[{ 'role-binding-user': obj.metadata.name }]}
@@ -208,7 +209,7 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
+const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
@@ -231,7 +232,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-export const UserDetailsPage: React.FC = (props) => {
+export const UserDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}

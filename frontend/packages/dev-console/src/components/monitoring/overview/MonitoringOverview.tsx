@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -31,11 +32,11 @@ type MonitoringOverviewProps = {
   monitoringAlerts: Alert[];
 };
 
-const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
+const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
   const { t } = useTranslation();
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
-  const [expanded, setExpanded] = React.useState([
+  const [expanded, setExpanded] = useState([
     'metrics',
     ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
   ]);

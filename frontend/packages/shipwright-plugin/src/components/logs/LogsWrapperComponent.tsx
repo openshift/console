@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CompressIcon, DownloadIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
 import { css } from '@patternfly/react-styles';
@@ -20,7 +21,7 @@ type LogsWrapperComponentProps = {
   resource?: WatchK8sResource;
 };
 
-const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
+const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   resource,
   taskRun,
   taskName,
@@ -29,11 +30,11 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const resourceRef = React.useRef(null);
+  const resourceRef = useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [fullscreenRef, fullscreenToggle, isFullscreen] = useFullscreen();
-  const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
-  const currentLogGetterRef = React.useRef<() => string>();
+  const [downloadAllStatus, setDownloadAllStatus] = useState(false);
+  const currentLogGetterRef = useRef<() => string>();
 
   if (loaded && !error && resource.name === obj.metadata.name) {
     resourceRef.current = obj;
@@ -49,7 +50,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
     });
     saveAs(blob, `${taskName}.log`);
   };
-  const setLogGetter = React.useCallback((getter) => (currentLogGetterRef.current = getter), []);
+  const setLogGetter = useCallback((getter) => (currentLogGetterRef.current = getter), []);
 
   const startDownloadAll = () => {
     setDownloadAllStatus(true);

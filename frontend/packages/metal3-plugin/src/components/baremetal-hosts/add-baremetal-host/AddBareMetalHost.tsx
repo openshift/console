@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -57,13 +58,13 @@ type AddBareMetalHostProps = {
   enablePowerMgmt: boolean;
 };
 
-const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
+const AddBareMetalHost: FC<AddBareMetalHostProps> = ({
   namespace,
   name,
   enablePowerMgmt,
 }) => {
   const { t } = useTranslation();
-  const bmhResource = React.useMemo<WatchK8sResource>(
+  const bmhResource = useMemo<WatchK8sResource>(
     () =>
       name
         ? {
@@ -74,7 +75,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
         : undefined,
     [name, namespace],
   );
-  const bmhResources = React.useMemo<WatchK8sResource>(
+  const bmhResources = useMemo<WatchK8sResource>(
     () =>
       !name
         ? {
@@ -89,7 +90,7 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   const [hosts, hostsLoaded, hostsError] = useK8sWatchResource<BareMetalHostKind[]>(bmhResources);
 
   const credentialsName = host?.spec?.bmc?.credentialsName;
-  const secretResource = React.useMemo<WatchK8sResource>(
+  const secretResource = useMemo<WatchK8sResource>(
     () =>
       credentialsName
         ? {
@@ -102,8 +103,8 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
   );
   const [secret, secretLoaded, secretError] = useK8sWatchResource<SecretKind>(secretResource);
 
-  const [reload, setReload] = React.useState<boolean>(false);
-  React.useEffect(() => {
+  const [reload, setReload] = useState<boolean>(false);
+  useEffect(() => {
     if (reload) {
       setReload(false);
     }

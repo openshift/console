@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Content, Title, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,7 +8,7 @@ import {
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
-const AvailabilityRequirementPopover: React.FC = () => {
+const AvailabilityRequirementPopover: FC = () => {
   const { t } = useTranslation();
   return (
     <FieldLevelHelp>

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
@@ -67,7 +68,7 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
 
 const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<MachineHealthCheckKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -106,7 +107,7 @@ const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] =
   return columns;
 };
 
-const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
+const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
   data,
   loaded,
   loadError,
@@ -115,7 +116,7 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
   const columns = useMachineHealthCheckColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineHealthCheckKind>
         {...props}
         label={MachineHealthCheckModel.labelPlural}
@@ -126,11 +127,11 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
+const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   const { t } = useTranslation();
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('public~Unhealthy conditions')} />
@@ -156,7 +157,7 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
   );
 };
 
-const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
+const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -199,7 +200,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   );
 };
 
-export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (props) => (
+export const MachineHealthCheckPage: FC<MachineHealthCheckPageProps> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineHealthCheckList}
@@ -209,7 +210,7 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC = (props) => (
+export const MachineHealthCheckDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={machineHealthCheckReference}

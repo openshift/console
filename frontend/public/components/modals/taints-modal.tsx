@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -19,12 +20,12 @@ import {
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 const TaintsModal = (props: TaintsModalProps) => {
-  const [taints, setTaints] = React.useState(props.resource.spec.taints || []);
+  const [taints, setTaints] = useState(props.resource.spec.taints || []);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation('public');
 
-  const submit = (e: React.FormEvent<EventTarget>): void => {
+  const submit = (e: FormEvent<EventTarget>): void => {
     e.preventDefault();
 
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail

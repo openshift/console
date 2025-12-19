@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ProjectHelmChartRepositoryModel } from '../../models';
 import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 
-const ProjectHelmChartRepositoryListPage: React.FC<React.ComponentProps<typeof ListPage>> = (
+const ProjectHelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (
   props,
 ) => {
   const { t } = useTranslation();

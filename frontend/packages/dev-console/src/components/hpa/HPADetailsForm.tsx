@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
 import { Alert, AlertActionCloseButton, Flex, Grid, GridItem } from '@patternfly/react-core';
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { getMetricByType } from './hpa-utils';
 import HPAUtilizationField from './HPAUtilizationField';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
-const HPADetailsForm: React.FC = () => {
+const HPADetailsForm: FC = () => {
   const { t } = useTranslation();
   const name = 'formData';
   const [field] = useField<HorizontalPodAutoscalerKind>(name);
@@ -21,7 +21,7 @@ const HPADetailsForm: React.FC = () => {
   } = useFormikContext<HPAFormValues>();
 
   const updateField = (type: SupportedMetricTypes) => (
-    _event: React.FormEvent<HTMLInputElement>,
+    _event: FormEvent<HTMLInputElement>,
     value: string,
   ) => {
     const hpa: HorizontalPodAutoscalerKind = field.value;

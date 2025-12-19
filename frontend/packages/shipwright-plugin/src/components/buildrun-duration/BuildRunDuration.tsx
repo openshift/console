@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import i18next from 'i18next';
 import { BuildRun } from '../../types';
 
@@ -58,7 +58,7 @@ export const getBuildRunDuration = (buildRun: BuildRun): string => {
   return getDuration(seconds, true);
 };
 
-const BuildRunDuration: React.FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
+const BuildRunDuration: FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
   return <>{getBuildRunDuration(buildRun)}</>;
 };
 

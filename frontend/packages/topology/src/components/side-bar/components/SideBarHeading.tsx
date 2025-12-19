@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel } from '@console/internal/models';
@@ -8,7 +8,7 @@ import { useDetailsResourceLink } from '../providers/useDetailsResourceLink';
 import SideBarAlerts from './SideBarAlerts';
 import './SideBarHeading.scss';
 
-const SideBarHeading: React.FC<{ element: GraphElement }> = ({ element }) => {
+const SideBarHeading: FC<{ element: GraphElement }> = ({ element }) => {
   const resourceLabel = element.getLabel();
   const resourceLink = useDetailsResourceLink(element);
   const resourceKind = element.getData()?.resource?.kind;

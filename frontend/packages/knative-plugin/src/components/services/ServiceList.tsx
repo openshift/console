@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from '@console/internal/components/factory';
 import ServiceHeader from './ServiceHeader';
 import ServiceRow from './ServiceRow';
 
-const ServiceList: React.FC<TableProps> = (props) => {
+const ServiceList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Table

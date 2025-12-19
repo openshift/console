@@ -1,15 +1,15 @@
-import * as React from 'react';
+import type { FC, ChangeEvent } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
+const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
   enabled,
   onChange: setEnabled,
   name,
 }) => {
   const { t } = useTranslation();
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const onChange = (e: ChangeEvent<HTMLInputElement>) =>
     setEnabled(e.currentTarget.value === 'enabled');
   return (
     <FormGroup isStack>

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentProps, FC, SetStateAction, Dispatch, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/document-listener';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
@@ -23,10 +24,10 @@ const suggestionBoxKeyHandler = {
 type SuggestionLineProps = {
   suggestion: string;
   onClick: (param: string) => void;
-  color: React.ComponentProps<typeof Label>['color'];
+  color: ComponentProps<typeof Label>['color'];
 };
 
-const SuggestionLine: React.FC<SuggestionLineProps> = ({ suggestion, onClick, color }) => {
+const SuggestionLine: FC<SuggestionLineProps> = ({ suggestion, onClick, color }) => {
   return (
     <div>
       <Label
@@ -47,14 +48,14 @@ type AutocompleteInputProps = {
   suggestionCount?: number;
   showSuggestions?: boolean;
   textValue: string;
-  setTextValue: React.Dispatch<React.SetStateAction<String>>;
+  setTextValue: Dispatch<SetStateAction<String>>;
   color?: SuggestionLineProps['color'];
   data?: any;
   labelPath?: string;
 };
 
-const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
-  const [suggestions, setSuggestions] = React.useState<string[]>();
+const AutocompleteInput: FC<AutocompleteInputProps> = (props) => {
+  const [suggestions, setSuggestions] = useState<string[]>();
   const { visible, setVisible, ref } = useDocumentListener<HTMLDivElement>(suggestionBoxKeyHandler);
   const {
     textValue,
@@ -80,7 +81,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
     }
   };
 
-  const handleInput = (event: React.FormEvent<HTMLInputElement>, input: string) => {
+  const handleInput = (event: FormEvent<HTMLInputElement>, input: string) => {
     if (input) {
       setVisible(true);
     } else {
@@ -89,7 +90,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
     setTextValue(input);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (textValue && visible && showSuggestions) {
       const processed = labelParser(data, labelPath);
       // User input without whitespace

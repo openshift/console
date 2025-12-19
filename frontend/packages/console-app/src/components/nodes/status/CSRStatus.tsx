@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Alert,
@@ -39,14 +40,14 @@ type CSRPopoverContentProps = {
   onPatch?: VoidFunction;
 };
 
-export const CSRPopoverContent: React.FC<CSRPopoverContentProps> = ({
+export const CSRPopoverContent: FC<CSRPopoverContentProps> = ({
   csr,
   serverCSR,
   onPatch,
 }) => {
   const { t } = useTranslation();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState<string>();
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState<string>();
   const updateCSR = async (approve: boolean) => {
     setError(null);
     setInProgress(true);
@@ -131,7 +132,7 @@ type StatusTitleProps = {
   title?: string;
 };
 
-const StatusTitle: React.FC<StatusTitleProps> = ({ title }) => {
+const StatusTitle: FC<StatusTitleProps> = ({ title }) => {
   const { t } = useTranslation();
   return (
     <StatusIconAndText
@@ -141,11 +142,11 @@ const StatusTitle: React.FC<StatusTitleProps> = ({ title }) => {
   );
 };
 
-export const ServerCSRPopoverContent: React.FC<NodePopoverContentProps<NodeStatusResources>> = ({
+export const ServerCSRPopoverContent: FC<NodePopoverContentProps<NodeStatusResources>> = ({
   node,
   resources,
 }) => {
-  const [isExpanded, setExpanded] = React.useState(true);
+  const [isExpanded, setExpanded] = useState(true);
   const serverCSR = getNodeServerCSR(resources.csrs.data, node);
   return (
     <ExpandableSection
@@ -162,9 +163,9 @@ type ClientCSRStatusProps = CSRPopoverContentProps & {
   title: string;
 };
 
-const ClientCSRStatus: React.FC<ClientCSRStatusProps> = ({ title, ...rest }) => {
+const ClientCSRStatus: FC<ClientCSRStatusProps> = ({ title, ...rest }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>

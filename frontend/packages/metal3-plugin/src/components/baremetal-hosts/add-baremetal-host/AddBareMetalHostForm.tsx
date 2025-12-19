@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -19,7 +19,7 @@ type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues> & {
   showUpdated: boolean;
 };
 
-const AddBareMetalHostForm: React.FC<AddBareMetalHostFormProps> = ({
+const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
   errors,
   handleSubmit,
   handleReset,

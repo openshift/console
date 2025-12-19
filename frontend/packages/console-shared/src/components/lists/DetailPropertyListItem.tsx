@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { ReactNode } from 'react';
 import { ListItem } from '@patternfly/react-core';
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Firehose } from '@console/internal/components/utils/firehose';
@@ -28,7 +28,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   menuClassName?: string;
 }
 
-const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
+const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
   label,
   helpText,
   required,

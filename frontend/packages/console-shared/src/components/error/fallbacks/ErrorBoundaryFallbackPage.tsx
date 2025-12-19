@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ErrorState } from '@patternfly/react-component-groups';
 import {
   ActionList,
@@ -14,7 +14,7 @@ import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDe
 /**
  * Standard fallback catch -- expected to take up the whole page.
  */
-const ErrorBoundaryFallbackPage: React.FC<ErrorBoundaryFallbackProps> = (props) => {
+const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ErrorState

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -21,16 +22,16 @@ type ResourceSectionProps = {
   flags: FlagsObject;
 };
 
-const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
+const ResourceSection: FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const fieldName = 'resources';
   const { values, setFieldValue } = useFormikContext<FormikValues>();
-  const invalidTypes = React.useMemo(() => field.value || [], [field]);
+  const invalidTypes = useMemo(() => field.value || [], [field]);
 
   const [resourceType] = useResourceType();
 
-  React.useEffect(() => {
+  useEffect(() => {
     !['edit', 'knatify', 'serverlessFunction'].includes(values.formType) &&
       setFieldValue('resources', resourceType);
   }, [resourceType, setFieldValue, values.formType]);
@@ -51,7 +52,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
 
   const [, setResourceType] = useResourceType();
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableResourcesNames, (name) => t(name) === selection);
       setResourceType(value);
@@ -60,7 +61,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     [setFieldValue, setResourceType, t],
   );
 
-  const selectInputOptions = React.useMemo(() => {
+  const selectInputOptions = useMemo(() => {
     const options: SelectInputOption[] = [];
     if (!invalidTypes.includes(Resources.Kubernetes)) {
       options.push({

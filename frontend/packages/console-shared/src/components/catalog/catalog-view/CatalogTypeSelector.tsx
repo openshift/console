@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { VerticalTabs } from '@patternfly/react-catalog-view-extension';
 import { Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -12,14 +13,14 @@ interface CatalogTypeSelectorProps {
   catalogTypeCounts: CatalogTypeCounts;
 }
 
-const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
+const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({
   catalogTypes,
   catalogTypeCounts,
 }) => {
   const { t } = useTranslation();
   const { pathname, search } = useLocation();
 
-  const typeDescriptions = React.useMemo(
+  const typeDescriptions = useMemo(
     () =>
       catalogTypes.map(
         (type) =>

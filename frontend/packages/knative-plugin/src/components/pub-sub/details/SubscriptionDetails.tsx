@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ interface SubscriptionDetails {
   obj: K8sResourceKind;
 }
 
-const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription }) => {
+const SubscriptionDetails: FC<SubscriptionDetails> = ({ obj: subscription }) => {
   const { t } = useTranslation();
   return (
     <>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -8,7 +8,7 @@ type TopologyApplicationResourceListProps = {
   resources: K8sResourceKind[];
 };
 
-const TopologyApplicationResourceList: React.FC<TopologyApplicationResourceListProps> = ({
+const TopologyApplicationResourceList: FC<TopologyApplicationResourceListProps> = ({
   resources,
 }) => {
   return (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import HelmReleaseNotesEmptyState from '../components/details-page/notes/HelmReleaseNotesEmptyState';
 
@@ -6,7 +6,7 @@ type TopologyHelmReleaseNotesPanelProps = {
   releaseNotes: string;
 };
 
-const TopologyHelmReleaseNotesPanel: React.FC<TopologyHelmReleaseNotesPanelProps> = ({
+const TopologyHelmReleaseNotesPanel: FC<TopologyHelmReleaseNotesPanelProps> = ({
   releaseNotes,
 }) =>
   releaseNotes ? (

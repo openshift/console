@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 
@@ -32,21 +33,21 @@ const NameValueEditorComponent = (props) => (
 
 // This form is done a little odd since it is used in both its own page and as
 // a sub form inside the attach storage page.
-export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
-  const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
-  const [storageClass, setStorageClass] = React.useState('');
-  const [volumeAttributesClass, setVolumeAttributesClass] = React.useState('');
-  const [pvcName, setPvcName] = React.useState('');
-  const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
-  const [volumeMode, setVolumeMode] = React.useState('Filesystem');
-  const [requestSizeValue, setRequestSizeValue] = React.useState('');
-  const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
-  const [useSelector, setUseSelector] = React.useState(false);
-  const [nameValuePairs, setNameValuePairs] = React.useState([['', '']]);
-  const [storageProvisioner, setStorageProvisioner] = React.useState('');
+export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
+  const [accessModeHelp, setAccessModeHelp] = useState('Permissions to the mounted drive.');
+  const [storageClass, setStorageClass] = useState('');
+  const [volumeAttributesClass, setVolumeAttributesClass] = useState('');
+  const [pvcName, setPvcName] = useState('');
+  const [accessMode, setAccessMode] = useState('ReadWriteOnce');
+  const [volumeMode, setVolumeMode] = useState('Filesystem');
+  const [requestSizeValue, setRequestSizeValue] = useState('');
+  const [requestSizeUnit, setRequestSizeUnit] = useState('Gi');
+  const [useSelector, setUseSelector] = useState(false);
+  const [nameValuePairs, setNameValuePairs] = useState([['', '']]);
+  const [storageProvisioner, setStorageProvisioner] = useState('');
   const { namespace, onChange } = props;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getSelector = () => {
       if (!useSelector) {
         return null;
@@ -141,15 +142,15 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     setRequestSizeUnit(obj.unit);
   };
 
-  const handleUseSelector: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handleUseSelector: ReactEventHandler<HTMLInputElement> = (event) => {
     setUseSelector(event.currentTarget.checked);
   };
 
-  const handlePvcName: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handlePvcName: ReactEventHandler<HTMLInputElement> = (event) => {
     setPvcName(event.currentTarget.value.trim());
   };
 
-  const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
+  const onlyPvcSCs = useCallback((sc: StorageClass) => !isObjectSC(sc), []);
 
   return (
     <div>
@@ -259,16 +260,16 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   );
 };
 
-export const CreatePVCPage: React.FC<CreatePVCPageProps> = (props) => {
+export const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [error, setError] = React.useState('');
-  const [inProgress, setInProgress] = React.useState(false);
-  const [pvcObj, setPvcObj] = React.useState(null);
+  const [error, setError] = useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [pvcObj, setPvcObj] = useState(null);
   const { namespace } = props;
   const title = t('public~Create PersistentVolumeClaim');
 
-  const save = (e: React.FormEvent<EventTarget>) => {
+  const save = (e: FormEvent<EventTarget>) => {
     e.preventDefault();
     setInProgress(true);
     k8sCreate(PersistentVolumeClaimModel, pvcObj).then(

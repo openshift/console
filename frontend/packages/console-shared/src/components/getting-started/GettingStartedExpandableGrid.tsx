@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNodeArray, ReactNode, FC } from 'react';
 import {
   Button,
   Card,
@@ -16,18 +16,18 @@ import { GettingStartedShowState } from './useGettingStartedShowState';
 import './GettingStartedExpandableGrid.scss';
 
 interface GettingStartedExpandableGridProps {
-  children?: React.ReactNodeArray;
+  children?: ReactNodeArray;
   isOpen?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   setShowState?: (showState: GettingStartedShowState) => void;
   /** Optional title content. Defaults to "Getting started" */
-  title?: React.ReactNode;
+  title?: ReactNode;
   /** Optional tooltip content placed after the title. Has default content. */
-  titleTooltip?: React.ReactNode | false;
+  titleTooltip?: ReactNode | false;
   /** Optional header content */
-  headerContent?: React.ReactNode;
+  headerContent?: ReactNode;
   /** Optional footer content */
-  footerContent?: React.ReactNode;
+  footerContent?: ReactNode;
 }
 
 const TitleContent = () => {
@@ -47,7 +47,7 @@ const TitlePopoverContent = () => {
   );
 };
 
-export const GettingStartedExpandableGrid: React.FC<GettingStartedExpandableGridProps> = ({
+export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps> = ({
   children,
   isOpen,
   setIsOpen,

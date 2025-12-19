@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -18,7 +18,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-export const PageContents: React.FC = () => {
+export const PageContents: FC = () => {
   const params = useParams();
   const { t } = useTranslation();
   const activeNamespace = params.ns;

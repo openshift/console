@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ReactText, ReactNode, ComponentType } from 'react';
+import { memo, useMemo, useState, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   TableGridBreakpoint,
@@ -101,7 +102,7 @@ export const sorts = {
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
-export const TableRow: React.FC<TableRowProps> = ({
+export const TableRow: FC<TableRowProps> = ({
   id,
   index,
   trKey,
@@ -125,7 +126,7 @@ export const TableRow: React.FC<TableRowProps> = ({
 TableRow.displayName = 'TableRow';
 
 export type TableRowProps = {
-  id: React.ReactText;
+  id: ReactText;
   index: number;
   title?: string;
   trKey: string;
@@ -179,7 +180,7 @@ const isColumnVisible = (
   return true;
 };
 
-export const TableData: React.FC<TableDataProps> = ({
+export const TableData: FC<TableDataProps> = ({
   className,
   columnID,
   columns,
@@ -195,7 +196,7 @@ export const TableData: React.FC<TableDataProps> = ({
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
   className?: string;
   columnID?: string;
   columns?: Set<string>;
@@ -204,11 +205,11 @@ export type TableDataProps = {
   showNamespaceOverride?: boolean;
 };
 
-const RowMemo = React.memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(
+const RowMemo = memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(
   ({ Row, ...props }) => <Row {...props} />,
 );
 
-const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
+const VirtualBody: FC<VirtualBodyProps> = (props) => {
   const {
     customData,
     Row,
@@ -287,7 +288,7 @@ export type RowFunctionArgs<T = any, C = any> = {
 
 export type VirtualBodyProps = {
   customData?: any;
-  Row: React.FC<RowFunctionArgs>;
+  Row: FC<RowFunctionArgs>;
   height: number;
   isScrolling: boolean;
   onChildScroll: (params: Scroll) => void;
@@ -411,7 +412,7 @@ const StandardTable: Snail.FCC<StandardTableProps> = ({
   selectedResourcesForKind,
   sortBy,
 }) => {
-  const rows = React.useMemo<IRow[]>(
+  const rows = useMemo<IRow[]>(
     () =>
       Rows({
         componentProps: { data, filters, selected, kindObj },
@@ -450,7 +451,7 @@ const StandardTable: Snail.FCC<StandardTableProps> = ({
   );
 };
 
-export const Table: React.FC<TableProps> = ({
+export const Table: FC<TableProps> = ({
   onSelect,
   filters: initFilters,
   selected,
@@ -492,8 +493,8 @@ export const Table: React.FC<TableProps> = ({
   const navigate = useNavigate();
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-  const [sortBy, setSortBy] = React.useState({});
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [sortBy, setSortBy] = useState({});
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
 
   const { currentSortField, currentSortFunc, currentSortOrder, data, listId } = useTableData({
@@ -513,7 +514,7 @@ export const Table: React.FC<TableProps> = ({
     sorts,
   });
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () =>
       getActiveColumns(
         windowWidth,
@@ -536,7 +537,7 @@ export const Table: React.FC<TableProps> = ({
     ],
   );
 
-  const applySort = React.useCallback(
+  const applySort = useCallback(
     (sortField, sortFunc, direction, columnTitle) => {
       dispatch(UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction));
       const url = new URL(window.location.href);
@@ -548,7 +549,7 @@ export const Table: React.FC<TableProps> = ({
     [currentSortFunc, dispatch, listId, navigate],
   );
 
-  const onSort = React.useCallback(
+  const onSort = useCallback(
     (event, index, direction) => {
       event.preventDefault();
       const sortColumn = columns[index - columnShift];
@@ -561,7 +562,7 @@ export const Table: React.FC<TableProps> = ({
     [applySort, columnShift, columns],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSortBy((currentSortBy) => {
       if (!currentSortBy) {
         if (currentSortField && currentSortOrder) {
@@ -581,7 +582,7 @@ export const Table: React.FC<TableProps> = ({
     });
   }, [columnShift, columns, currentSortField, currentSortFunc, currentSortOrder, sortBy]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = _.debounce(() => setWindowWidth(window.innerWidth), 100);
     const sp = new URLSearchParams(window.location.search);
     const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
@@ -683,13 +684,13 @@ export type TableProps = Partial<ComponentProps> & {
   showNamespaceOverride?: boolean;
   Header: HeaderFunc;
   loadError?: string | Object;
-  Row?: React.FC<RowFunctionArgs>;
+  Row?: FC<RowFunctionArgs>;
   Rows?: (args: RowsArgs) => IRow[];
   'aria-label': string;
   onSelect?: OnSelect;
   virtualize?: boolean;
-  NoDataEmptyMsg?: React.ComponentType<{}>;
-  EmptyMsg?: React.ComponentType<{}>;
+  NoDataEmptyMsg?: ComponentType<{}>;
+  EmptyMsg?: ComponentType<{}>;
   loaded?: boolean;
   reduxID?: string;
   reduxIDs?: string[];

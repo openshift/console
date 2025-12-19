@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentType } from 'react';
 import { EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
@@ -8,11 +8,11 @@ type AddCardSectionEmptyStateProps = {
   accessCheckFailed?: boolean;
 };
 
-const AddCardSectionEmptyState: React.FC<AddCardSectionEmptyStateProps> = ({
+const AddCardSectionEmptyState: FC<AddCardSectionEmptyStateProps> = ({
   accessCheckFailed,
 }) => {
   const { t } = useTranslation();
-  const Icon: React.ComponentType<any> = accessCheckFailed ? LockIcon : ExclamationCircleIcon;
+  const Icon: ComponentType<any> = accessCheckFailed ? LockIcon : ExclamationCircleIcon;
   const title: string = accessCheckFailed
     ? t('devconsole~Access permissions needed')
     : t('devconsole~Unable to load');

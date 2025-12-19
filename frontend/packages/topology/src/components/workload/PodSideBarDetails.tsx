@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { PodDetailsList, PodResourceSummary } from '@console/internal/components/pod';
@@ -11,7 +11,7 @@ type PodSideBarDetailsProps = {
   pod: PodKind;
 };
 
-const PodSideBarDetails: React.FC<PodSideBarDetailsProps> = ({ pod }) => {
+const PodSideBarDetails: FC<PodSideBarDetailsProps> = ({ pod }) => {
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__pod-counts">

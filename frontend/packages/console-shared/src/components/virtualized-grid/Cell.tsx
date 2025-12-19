@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { CSSProperties, FC } from 'react';
+import { useContext } from 'react';
 import { CellMeasurer } from 'react-virtualized';
 import { RenderCell, RenderHeader, GridChildrenProps, Item, CellItem } from './types';
 import { CellMeasurementContext } from './utils';
@@ -6,10 +7,10 @@ import { CellMeasurementContext } from './utils';
 type CellProps = {
   renderCell: RenderCell;
   renderHeader?: RenderHeader;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 } & GridChildrenProps;
 
-const Cell: React.FC<CellProps> = ({
+const Cell: FC<CellProps> = ({
   data,
   columnCount,
   items,
@@ -18,7 +19,7 @@ const Cell: React.FC<CellProps> = ({
   renderCell,
   renderHeader,
 }) => {
-  const { cache, cellMargin } = React.useContext(CellMeasurementContext);
+  const { cache, cellMargin } = useContext(CellMeasurementContext);
   const { key, columnIndex, rowIndex, parent } = data;
   const index = rowIndex * columnCount + columnIndex;
   const item: CellItem = items[index];

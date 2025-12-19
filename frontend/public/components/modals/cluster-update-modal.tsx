@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FormEvent, FormEventHandler } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Radio, Content, ContentVariants } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -54,7 +55,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const currentMinorVersionPatchUpdate = availableSortedUpdates?.find(
     (update) => !isMinorVersionNewer(currentVersion, update.version),
   );
-  const [desiredVersion, setDesiredVersion] = React.useState(
+  const [desiredVersion, setDesiredVersion] = useState(
     (clusterUpgradeableFalse
       ? currentMinorVersionPatchUpdate?.version
       : availableSortedUpdates[0]?.version) || '',
@@ -65,12 +66,12 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
     isList: true,
     kind: referenceForModel(MachineConfigPoolModel),
   });
-  const [error, setError] = React.useState('');
-  const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = React.useState<string[]>([]);
-  const [upgradeType, setUpgradeType] = React.useState<upgradeTypes>(upgradeTypes.Full);
-  const [includeNotRecommended, setIncludeNotRecommended] = React.useState(false);
+  const [error, setError] = useState('');
+  const [machineConfigPoolsToPause, setMachineConfigPoolsToPause] = useState<string[]>([]);
+  const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
+  const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
   const { t } = useTranslation();
-  React.useEffect(() => {
+  useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
       .map((mcp) => mcp.metadata.name);
@@ -84,7 +85,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const handleUpgradeTypeChange = (value: typeof upgradeType) => {
     setUpgradeType(value);
   };
-  const handleMCPSelectionChange = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const handleMCPSelectionChange = (event: FormEvent<HTMLInputElement>, checked: boolean) => {
     const checkedItems = [...machineConfigPoolsToPause];
     checked
       ? checkedItems.push(event.currentTarget.id)
@@ -102,7 +103,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const desiredNotRecommendedUpdateConditions = getNotRecommendedUpdateCondition(
     desiredNotRecommendedUpdate?.conditions,
   );
-  const submit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
+  const submit: FormEventHandler<HTMLFormElement> = useCallback(
     (e) => {
       e.preventDefault();
       if (!desiredRecommendedUpdate && !desiredNotRecommendedUpdate) {
@@ -197,7 +198,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   }
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
+    (<form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
       <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
@@ -243,10 +244,10 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
                 <Content component={ContentVariants.p}>
                   <LinkifyExternal>
                     {desiredNotRecommendedUpdateConditions.message.split('\n').map((item) => (
-                      <React.Fragment key={item}>
+                      <Fragment key={item}>
                         {item}
                         <br />
-                      </React.Fragment>
+                      </Fragment>
                     ))}
                   </LinkifyExternal>
                 </Content>
@@ -333,7 +334,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
         }
       />
-    </form>
+    </form>)
   );
 };
 

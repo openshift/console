@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
 import { ActionContext } from '../api/internal-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
@@ -96,7 +96,7 @@ export type Action = {
   /** A unique identifier for this action. */
   id: string;
   /** The label to display in the UI. */
-  label: React.ReactNode;
+  label: ReactNode;
   /** Subtext for the menu item */
   description?: string;
   /** Executable callback or href.
@@ -110,7 +110,7 @@ export type Action = {
   /** The disabled tooltip for this action. */
   disabledTooltip?: string;
   /** The icon for this action. */
-  icon?: string | React.ReactNode;
+  icon?: string | ReactNode;
   /** A `/` separated string where each segment denotes
    * Eg. `add-to-project`, `menu-1/menu-2`
    * */
@@ -149,5 +149,5 @@ export enum MenuOptionType {
 
 export type ActionServiceProviderProps = {
   context: ActionContext;
-  children: (service: ActionService) => React.ReactNode;
+  children: (service: ActionService) => ReactNode;
 };

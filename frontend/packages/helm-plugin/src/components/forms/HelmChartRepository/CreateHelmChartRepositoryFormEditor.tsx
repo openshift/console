@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -30,7 +30,7 @@ type CreateHelmChartRepositoryFormEditorProps = {
   existingRepo: HelmChartRepositoryType;
 };
 
-const CreateHelmChartRepositoryFormEditor: React.FC<CreateHelmChartRepositoryFormEditorProps> = ({
+const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEditorProps> = ({
   showScopeType,
   existingRepo,
 }) => {

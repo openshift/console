@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -91,7 +92,7 @@ import {
   getClusterServiceVersionPlugins,
 } from './operator-hub-utils';
 
-const InputField: React.FC<InputFieldProps> = ({
+const InputField: FC<InputFieldProps> = ({
   label,
   helpText,
   placeholder,
@@ -121,7 +122,7 @@ const InputField: React.FC<InputFieldProps> = ({
   );
 };
 
-export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
+export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const navigate = useNavigate();
   const [activeNamespace] = useActiveNamespace();
@@ -130,53 +131,53 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     packageManifest?.status ?? {};
 
   const { pathname: url } = useLocation();
-  const [roleARNText, setRoleARNText] = React.useState('');
-  const [azureTenantId, setAzureTenantId] = React.useState('');
-  const [azureClientId, setAzureClientId] = React.useState('');
-  const [azureSubscriptionId, setAzureSubscriptionId] = React.useState('');
-  const [gcpProjectNumber, setGcpProjectNumber] = React.useState('');
-  const [gcpPoolId, setGcpPoolId] = React.useState('');
-  const [gcpProviderId, setGcpProviderId] = React.useState('');
-  const [gcpServiceAcctEmail, setGcpServiceAcctEmail] = React.useState('');
-  const [targetNamespace, setTargetNamespace] = React.useState(null);
-  const [installMode, setInstallMode] = React.useState(null);
+  const [roleARNText, setRoleARNText] = useState('');
+  const [azureTenantId, setAzureTenantId] = useState('');
+  const [azureClientId, setAzureClientId] = useState('');
+  const [azureSubscriptionId, setAzureSubscriptionId] = useState('');
+  const [gcpProjectNumber, setGcpProjectNumber] = useState('');
+  const [gcpPoolId, setGcpPoolId] = useState('');
+  const [gcpProviderId, setGcpProviderId] = useState('');
+  const [gcpServiceAcctEmail, setGcpServiceAcctEmail] = useState('');
+  const [targetNamespace, setTargetNamespace] = useState(null);
+  const [installMode, setInstallMode] = useState(null);
   const { catalog, catalogNamespace, channel, pkg, tokenizedAuth, version } = getURLSearchParams();
 
   const defaultChannel = defaultChannelNameFor(packageManifest);
-  const [updateChannelName, setUpdateChannelName] = React.useState(channel || defaultChannel);
+  const [updateChannelName, setUpdateChannelName] = useState(channel || defaultChannel);
   const { currentCSVDesc } = channels.find((ch) => ch.name === updateChannelName) ?? {};
   const { installModes = [], version: currentLatestVersion } = currentCSVDesc ?? {};
 
-  const [updateVersion, setUpdateVersion] = React.useState(version || currentLatestVersion);
+  const [updateVersion, setUpdateVersion] = useState(version || currentLatestVersion);
 
-  const [approval, setApproval] = React.useState(
+  const [approval, setApproval] = useState(
     updateVersion !== currentLatestVersion
       ? InstallPlanApproval.Manual
       : InstallPlanApproval.Automatic,
   );
 
-  const [cannotResolve, setCannotResolve] = React.useState(false);
-  const [suggestedNamespaceExists, setSuggestedNamespaceExists] = React.useState(false);
-  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = React.useState(
+  const [cannotResolve, setCannotResolve] = useState(false);
+  const [suggestedNamespaceExists, setSuggestedNamespaceExists] = useState(false);
+  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = useState(
     true,
   );
   const [
     useSuggestedNSForSingleInstallMode,
     setUseSuggestedNSForSingleInstallMode,
-  ] = React.useState(true);
+  ] = useState(true);
 
   const defaultEnableMonitoring =
     packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
     currentCSVDesc.annotations?.['console.openshift.io/operator-monitoring-default'] === 'true';
-  const [enableMonitoring, setEnableMonitoring] = React.useState(defaultEnableMonitoring);
+  const [enableMonitoring, setEnableMonitoring] = useState(defaultEnableMonitoring);
 
-  const [error, setError] = React.useState('');
+  const [error, setError] = useState('');
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>({
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
-  const [enabledPlugins, setEnabledPlugins] = React.useState<string[]>([]);
+  const [enabledPlugins, setEnabledPlugins] = useState<string[]>([]);
   const { t } = useTranslation();
 
   const {
@@ -190,7 +191,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     deprecatedChannel?.deprecation ||
     deprecatedVersion?.deprecation;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setDeprecatedPackage(_.pick(packageManifest?.status, 'deprecation'));
   }, [packageManifest?.status, setDeprecatedPackage]);
 
@@ -240,7 +241,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   });
   const csvPlugins = getClusterServiceVersionPlugins(currentCSVDesc?.annotations);
 
-  const initializationResourceReference = React.useMemo(
+  const initializationResourceReference = useMemo(
     () => (initializationResource ? referenceFor(initializationResource) : null),
     [initializationResource],
   );
@@ -271,7 +272,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     operatorSuggestedNamespace && operatorSuggestedNamespace === selectedTargetNamespace;
   const showSuggestedNamespaceDetails =
     !suggestedNamespaceExistsInFlight && isSuggestedNamespaceSelected;
-  React.useEffect(() => {
+  useEffect(() => {
     if (!operatorSuggestedNamespace) {
       setSuggestedNamespaceExistsInFlight(false);
       return;
@@ -288,7 +289,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       });
   }, [operatorSuggestedNamespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     k8sListPartialMetadata(PackageManifestModel, {
       ns: selectedTargetNamespace,
       fieldSelector: `metadata.name=${pkgName}`,
@@ -307,7 +308,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     selectedTargetNamespace,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setEnabledPlugins(isCatalogSourceTrusted(catalogSource) ? csvPlugins : []);
     // Use the JSON string directly from the annotation so the dependency is compared using string comparison
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -318,7 +319,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     selectedTargetNamespace,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       version !== currentLatestVersion ||
       manualSubscriptionsInNamespace?.length > 0 ||
@@ -339,7 +340,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
   const supportsGlobal = globalInstallMode && globalInstallMode.supported;
 
-  const navigateToInstallPage = React.useCallback(
+  const navigateToInstallPage = useCallback(
     (csvName: string) => {
       history.push(
         `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
@@ -1222,7 +1223,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   );
 };
 
-const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) => (
+const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
   <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
     <OperatorHubSubscribeForm {...props} />
   </StatusBox>

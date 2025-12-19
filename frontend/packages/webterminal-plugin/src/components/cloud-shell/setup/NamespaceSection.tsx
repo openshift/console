@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
@@ -21,7 +21,7 @@ const NamespaceSection: Snail.FCC<NamespaceSectionProps> = ({ flags }) => {
 
   useFormikValidationFix(namespace.value);
 
-  const onDropdownChange = React.useCallback(
+  const onDropdownChange = useCallback(
     (key: string) => {
       setFieldTouched('namespace', true);
       setFieldValue('namespace', key);

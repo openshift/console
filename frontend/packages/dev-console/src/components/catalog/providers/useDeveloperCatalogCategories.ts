@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { defaultCatalogCategories } from '@console/shared/src/utils/default-categories';
 
 export const useDeveloperCatalogCategories = (): CatalogCategory[] =>
-  React.useMemo<CatalogCategory[]>(() => {
+  useMemo<CatalogCategory[]>(() => {
     try {
       const categoriesString = window.SERVER_FLAGS.developerCatalogCategories;
       if (!categoriesString) {

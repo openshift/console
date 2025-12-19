@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -16,7 +17,7 @@ type HelmReadmeModalProps = {
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, theme, close }) => {
+const HelmReadmeModal: FunctionComponent<Props> = ({ readme, theme, close }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">
@@ -38,7 +39,7 @@ const HelmReadmeModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useHelmReadmeModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(HelmReadmeModalProvider, props), [
+  return useCallback(() => launcher<Props>(HelmReadmeModalProvider, props), [
     launcher,
     props,
   ]);

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { CatalogCategory } from '@console/dynamic-plugin-sdk/src/extensions';
 
@@ -8,14 +9,14 @@ type CatalogCategoryProviderResolverProps = {
   onValueResolved: (value: CatalogCategory[], id: string) => void;
 };
 
-const CatalogCategoryProviderResolver: React.FC<CatalogCategoryProviderResolverProps> = ({
+const CatalogCategoryProviderResolver: FC<CatalogCategoryProviderResolverProps> = ({
   id,
   useValue,
   onValueResolved,
 }) => {
   const value = useValue({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     onValueResolved(value, id);
     // unnecessary to run effect again if the onValueResolved callback changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

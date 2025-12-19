@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ type EventPubSubResourcesProps = {
   };
 };
 
-export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProps> = ({
+export const PubSubResourceOverviewList: FC<PubSubResourceOverviewListProps> = ({
   items,
   title,
 }) => {
@@ -60,7 +60,7 @@ export const PubSubResourceOverviewList: React.FC<PubSubResourceOverviewListProp
   );
 };
 
-const EventPubSubResources: React.FC<EventPubSubResourcesProps> = ({ item }) => {
+const EventPubSubResources: FC<EventPubSubResourcesProps> = ({ item }) => {
   const { t } = useTranslation();
   const {
     obj,

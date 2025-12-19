@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -29,7 +29,7 @@ export type TriggersSectionFormData = {
   };
 };
 
-const TriggersSection: React.FC<{ namespace: string }> = ({ namespace }) => {
+const TriggersSection: FC<{ namespace: string }> = ({ namespace }) => {
   const { t } = useTranslation();
   const [{ value: buildFromType }] = useField<ImageOptionType>('formData.images.buildFrom.type');
 

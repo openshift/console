@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,7 +16,7 @@ interface TrafficSplittingModalProps {
 
 type Props = FormikProps<FormikValues> & TrafficSplittingModalProps & ModalComponentProps;
 
-const TrafficSplittingModal: React.FC<Props> = (props) => {
+const TrafficSplittingModal: FC<Props> = (props) => {
   const { t } = useTranslation();
   const { handleSubmit, cancel, isSubmitting, status } = props;
   return (

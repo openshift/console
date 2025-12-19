@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
@@ -8,7 +8,7 @@ import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
 import TextColumnItem from './TextColumnItem';
 import TextColumnItemWithDnd from './TextColumnItemWithDnd';
 
-const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
+const TextColumnField: FC<TextColumnFieldProps> = (props) => {
   const {
     required,
     name,

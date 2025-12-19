@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -11,7 +11,7 @@ import PushSecretDropdown from './PushSecretDropdown';
 const CREATE_PULL_SECRET = 'create-pull-secret';
 const CLEAR_PULL_SECRET = 'clear-pull-secret';
 
-const PushSecretSelector: React.FC<{
+const PushSecretSelector: FC<{
   formContextField?: string;
   namespace: string;
 }> = ({ formContextField, namespace }) => {

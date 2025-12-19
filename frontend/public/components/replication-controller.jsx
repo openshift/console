@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
@@ -216,7 +216,7 @@ const getDataViewRows = (data, columns) => {
 
 const useReplicationControllersColumns = () => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -283,7 +283,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
   const columns = useReplicationControllersColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ReplicationControllerModel.labelPlural}
@@ -293,7 +293,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

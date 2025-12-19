@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { useScrollDirection, ScrollDirection } from '@console/shared';
@@ -13,26 +14,26 @@ type MultiStreamLogsProps = {
   setCurrentLogsGetter?: (getter: () => string) => void;
 };
 
-export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
+export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   resource,
   taskName,
   setCurrentLogsGetter,
 }) => {
-  const scrollPane = React.useRef<HTMLDivElement>();
-  const completedRef = React.useRef<boolean[]>([]);
-  const [renderToCount, setRenderToCount] = React.useState(0);
+  const scrollPane = useRef<HTMLDivElement>();
+  const completedRef = useRef<boolean[]>([]);
+  const [renderToCount, setRenderToCount] = useState(0);
   const [scrollDirection, handleScrollCallback] = useScrollDirection();
   const { containers, stillFetching } = getRenderContainers(resource);
-  const dataRef = React.useRef<ContainerSpec[]>(null);
+  const dataRef = useRef<ContainerSpec[]>(null);
   dataRef.current = containers;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentLogsGetter(() => {
       return scrollPane.current?.innerText;
     });
   }, [setCurrentLogsGetter]);
 
-  const handleComplete = React.useCallback((containerName) => {
+  const handleComplete = useCallback((containerName) => {
     const index = dataRef.current.findIndex(({ name }) => name === containerName);
     completedRef.current[index] = true;
     const newRenderTo = dataRef.current.findIndex((c, i) => completedRef.current[i] !== true);

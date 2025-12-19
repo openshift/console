@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Table, Tr, Tbody, Td, Thead, Th } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ type FilterTableProps = {
   paddingLeft?: boolean;
 };
 
-const FilterTable: React.FC<FilterTableProps> = ({
+const FilterTable: FC<FilterTableProps> = ({
   filters,
   bordered = true,
   paddingLeft = false,

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
 import { StrategyFieldProps } from './utils/types';
 
-const CustomStrategy: React.FC<StrategyFieldProps> = ({ resourceObj }) => {
+const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {
   const { t } = useTranslation();
   const {
     values: {

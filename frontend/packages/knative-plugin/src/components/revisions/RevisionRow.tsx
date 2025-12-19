@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
@@ -14,7 +14,7 @@ import { tableColumnClasses } from './revision-table';
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);
 
-const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
+const RevisionRow: FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;

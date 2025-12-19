@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import SelectorInputField from '@console/shared/src/components/formik-fields/SelectorInputField';
 import FormSection from '../section/FormSection';
 
-const LabelSection: React.FC = () => {
+const LabelSection: FC = () => {
   const { t } = useTranslation();
 
   return (

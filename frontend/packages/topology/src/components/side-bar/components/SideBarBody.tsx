@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,7 +9,7 @@ import { RootState } from '@console/internal/redux';
 import { useQueryParams } from '@console/shared/src';
 import SideBarTabLoader from '../providers/SideBarTabLoader';
 
-const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
+const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const { t } = useTranslation();
   const selectedTab = useSelector<RootState, string>(({ UI }) =>
     UI.getIn(['overview', 'selectedDetailsTab']),
@@ -16,7 +17,7 @@ const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const dispatch = useDispatch();
   const queryParams = useQueryParams();
   const selectTabParam = queryParams.get('selectTab');
-  const handleClickTab = React.useCallback(
+  const handleClickTab = useCallback(
     (name) => {
       dispatch(UIActions.selectOverviewDetailsTab(name));
     },
@@ -32,7 +33,7 @@ const SimpleTabNavWrapper: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
   );
 };
 
-const SideBarBody: React.FC<{ element: GraphElement }> = ({ element }) => {
+const SideBarBody: FC<{ element: GraphElement }> = ({ element }) => {
   const uid = element.getId();
   return (
     <SideBarTabLoader key={uid} element={element}>

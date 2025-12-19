@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import {
   Drawer,
   DrawerActions,
@@ -22,7 +23,7 @@ import { MultiTabbedTerminal } from '@console/webterminal-plugin/src/components/
 import './CloudShellDrawer.scss';
 
 interface CloudShellDrawerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   open?: boolean;
   onClose?: () => void;
 }
@@ -41,8 +42,8 @@ export const CloudShellDrawer: Snail.FCC<CloudShellDrawerProps> = ({
   onClose = () => undefined,
   children,
 }) => {
-  const [expanded, setExpanded] = React.useState<boolean>(true);
-  const [height, setHeight] = React.useState<number>(385);
+  const [expanded, setExpanded] = useState<boolean>(true);
+  const [height, setHeight] = useState<number>(385);
   const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
 

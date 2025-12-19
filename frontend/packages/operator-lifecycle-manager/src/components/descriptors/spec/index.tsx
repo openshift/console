@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Button,
   Switch,
@@ -30,7 +31,7 @@ import { ResourceRequirementsModalLink } from './resource-requirements';
 
 import './index.scss';
 
-const PodCount: React.FC<SpecCapabilityProps<number>> = ({
+const PodCount: FC<SpecCapabilityProps<number>> = ({
   description,
   descriptor,
   label,
@@ -59,7 +60,7 @@ const PodCount: React.FC<SpecCapabilityProps<number>> = ({
   );
 };
 
-const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
+const Endpoints: FC<SpecCapabilityProps<EndpointListProps['endpoints']>> = ({
   description,
   label,
   obj,
@@ -71,7 +72,7 @@ const Endpoints: React.FC<SpecCapabilityProps<EndpointListProps['endpoints']>> =
   </DetailsItem>
 );
 
-const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
+const Label: FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
   description,
   label,
   model,
@@ -88,7 +89,7 @@ const Label: React.FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
   </DetailsItem>
 );
 
-const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
+const NamespaceSelector: FC<SpecCapabilityProps<{ matchNames: string[] }>> = ({
   description,
   label,
   obj,
@@ -107,7 +108,7 @@ const NamespaceSelector: React.FC<SpecCapabilityProps<{ matchNames: string[] }>>
   );
 };
 
-const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
+const ResourceRequirements: FC<SpecCapabilityProps> = ({
   description,
   descriptor,
   label,
@@ -135,7 +136,7 @@ const ResourceRequirements: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-const BasicSelector: React.FC<SpecCapabilityProps<SelectorType>> = ({
+const BasicSelector: FC<SpecCapabilityProps<SelectorType>> = ({
   capability,
   description,
   label,
@@ -151,7 +152,7 @@ const BasicSelector: React.FC<SpecCapabilityProps<SelectorType>> = ({
   );
 };
 
-const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
+const BooleanSwitch: FC<SpecCapabilityProps<boolean>> = ({
   model,
   obj,
   description,
@@ -162,9 +163,9 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   value,
 }) => {
   const { t } = useTranslation();
-  const [checked, setChecked] = React.useState(Boolean(value));
-  const [confirmed, setConfirmed] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [checked, setChecked] = useState(Boolean(value));
+  const [confirmed, setConfirmed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const errorCb = (err: Error): void => {
     setConfirmed(false);
@@ -223,7 +224,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps<boolean>> = ({
   );
 };
 
-const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
+const CheckboxUIComponent: FC<SpecCapabilityProps<boolean>> = ({
   description,
   descriptor,
   label,
@@ -233,8 +234,8 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
   value,
 }) => {
   const { t } = useTranslation();
-  const [checked, setChecked] = React.useState(Boolean(value));
-  const [confirmed, setConfirmed] = React.useState(false);
+  const [checked, setChecked] = useState(Boolean(value));
+  const [confirmed, setConfirmed] = useState(false);
 
   const patchFor = (val: boolean) => [
     { op: 'add', path: `/spec/${getPatchPathFromDescriptor(descriptor)}`, value: val },
@@ -275,7 +276,7 @@ const CheckboxUIComponent: React.FC<SpecCapabilityProps<boolean>> = ({
 };
 
 // TODO [tech debt] Create a type definition for udpate strategy api and use it here
-const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
+const UpdateStrategy: FC<SpecCapabilityProps> = ({
   description,
   descriptor,
   label,
@@ -305,14 +306,14 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
   );
 };
 
-export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = ({
+export const SpecDescriptorDetailsItem: FC<SpecCapabilityProps> = ({
   className,
   ...props
 }) => {
   const [capability] =
     getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value) ?? [];
 
-  const Component = React.useMemo(() => {
+  const Component = useMemo(() => {
     if (capability?.startsWith(SpecCapability.k8sResourcePrefix)) {
       return K8sResourceLinkCapability;
     }

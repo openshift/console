@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import SourceResources from './form-fields/SourceResources';
@@ -8,7 +8,7 @@ interface SourceSectionProps {
   fullWidth?: boolean;
 }
 
-const SourceSection: React.FC<SourceSectionProps> = ({ namespace, fullWidth }) => {
+const SourceSection: FC<SourceSectionProps> = ({ namespace, fullWidth }) => {
   const { t } = useTranslation();
   return (
     <FormSection

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 
 type StepHeaderProps = {

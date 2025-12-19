@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { memo, useState } from 'react';
 import * as _ from 'lodash-es';
 import {
   ClipboardCopyButton,
@@ -8,9 +9,9 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo(
+export const CopyToClipboard: FC<CopyToClipboardProps> = memo(
   ({ value, visibleValue, id = 'id' }) => {
-    const [copied, setCopied] = React.useState(false);
+    const [copied, setCopied] = useState(false);
     const { t } = useTranslation();
 
     const clipboardCopyFunc = (event, text) => {
@@ -59,7 +60,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo(
 
 export type CopyToClipboardProps = {
   value: string;
-  visibleValue?: React.ReactNode;
+  visibleValue?: ReactNode;
   id?: string;
 };
 

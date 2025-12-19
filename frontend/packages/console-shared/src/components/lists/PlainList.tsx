@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 
 const PlainList: Snail.FCC<PlainListProps> = ({ items }) =>

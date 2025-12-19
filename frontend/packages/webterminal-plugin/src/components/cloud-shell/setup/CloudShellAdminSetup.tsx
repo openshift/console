@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useState } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,7 @@ type Props = {
   operatorNamespace: string;
 };
 
-const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
+const CloudShellAdminSetup: FunctionComponent<Props> = ({
   onSubmit,
   onCancel,
   workspaceModel,
@@ -45,7 +46,7 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({
 
   const { t } = useTranslation();
 
-  const [initError, setInitError] = React.useState<string>();
+  const [initError, setInitError] = useState<string>();
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
     async function namespaceExists(): Promise<boolean> {

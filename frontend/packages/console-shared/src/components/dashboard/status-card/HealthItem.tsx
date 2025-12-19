@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { cloneElement, memo, Children } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
@@ -6,16 +7,16 @@ import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-ty
 import { SecondaryStatus } from '../../status';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
-const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => {
+const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {
   const Icon = (healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).icon;
   return (
-    <div data-test={dataTest} className="co-dashboard-icon">
-      {React.cloneElement(Icon, { size: 'heading_2xl' })}
-    </div>
+    (<div data-test={dataTest} className="co-dashboard-icon">
+      {cloneElement(Icon, { size: 'heading_2xl' })}
+    </div>)
   );
 };
 
-const HealthItem: React.FC<HealthItemProps> = React.memo(
+const HealthItem: FC<HealthItemProps> = memo(
   ({
     className,
     state,
@@ -34,7 +35,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
     const detailMessage = details || healthStateMessage(state, t);
 
     return (
-      <div
+      (<div
         className={css('co-status-card__health-item', className)}
         data-item-id={`${title}-health-item`}
       >
@@ -50,7 +51,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
         )}
         <div>
           <span className="co-status-card__health-item-text">
-            {(React.Children.toArray(children).length || popupBodyContent) &&
+            {(Children.toArray(children).length || popupBodyContent) &&
             state !== HealthState.LOADING ? (
               <Popover
                 className={popupClassname}
@@ -82,7 +83,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
             />
           )}
         </div>
-      </div>
+      </div>)
     );
   },
 );

@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import './status-card.scss';
 
 interface HealthBodyProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const HealthBody: Snail.FCC<HealthBodyProps> = ({ children }) => (

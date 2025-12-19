@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import {
   TextInputTypes,
   FormGroup,
@@ -29,7 +30,7 @@ interface ContainerSourceSectionProps {
   fullWidth?: boolean;
 }
 
-const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, fullWidth }) => {
+const ContainerSourceSection: FC<ContainerSourceSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const {
@@ -46,8 +47,8 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
     },
   } = values;
   const initialEnvValues = !_.isEmpty(envs) ? _.map(envs, (env) => _.values(env)) : [['', '']];
-  const [nameValue, setNameValue] = React.useState(initialEnvValues);
-  const handleNameValuePairs = React.useCallback(
+  const [nameValue, setNameValue] = useState(initialEnvValues);
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
         nameValuePairs.map(([name, value]) => (value.length ? { name, value } : null)),

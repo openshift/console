@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
 import { useTelemetry } from '../hooks';
 
 type WithTelemetryProps = {
@@ -6,8 +6,8 @@ type WithTelemetryProps = {
 };
 
 export const withTelemetry = <Props extends WithTelemetryProps>(
-  WrappedComponent: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithTelemetryProps>> => {
+  WrappedComponent: ComponentType<Props>,
+): FC<Omit<Props, keyof WithTelemetryProps>> => {
   const Component = (props: Props) => {
     const fireTelemetryEvent = useTelemetry();
     return <WrappedComponent {...props} fireTelemetryEvent={fireTelemetryEvent} />;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { useCloudShellCommandDispatch } from '@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers';
@@ -12,15 +13,15 @@ type ExecuteSnippetProps = {
   docContext: HTMLDocument;
 };
 
-export const ExecuteSnippet: React.FC<ExecuteSnippetProps> = ({
+export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({
   element,
   rootSelector,
   docContext,
 }) => {
   const { t } = useTranslation();
   const setCloudShellCommand = useCloudShellCommandDispatch();
-  const [showRunning, setShowRunning] = React.useState<boolean>(false);
-  const textToExecute = React.useMemo(() => {
+  const [showRunning, setShowRunning] = useState<boolean>(false);
+  const textToExecute = useMemo(() => {
     const executeTextId = element.getAttribute(MARKDOWN_EXECUTE_BUTTON_ID);
     return (docContext.querySelector(
       `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${executeTextId}"]`,
@@ -30,7 +31,7 @@ export const ExecuteSnippet: React.FC<ExecuteSnippetProps> = ({
   useEventListener(
     element,
     'click',
-    React.useCallback(() => {
+    useCallback(() => {
       setCloudShellCommand(textToExecute);
       setShowRunning(true);
       element.setAttribute('data-executed', '');
@@ -60,7 +61,7 @@ type MarkdownExecuteCommandProps = {
   rootSelector: string;
 };
 
-const MarkdownExecuteSnippet: React.FC<MarkdownExecuteCommandProps> = ({
+const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({
   docContext,
   rootSelector,
 }) => {

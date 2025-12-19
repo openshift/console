@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, Stack, StackItem, ExpandableSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,12 +17,12 @@ type NodeStatusResources = {};
 export const isUnschedulableActive: IsNodeStatusActive<NodeStatusResources> = (node) =>
   !!node.spec.unschedulable;
 
-export const MarkAsSchedulablePopover: React.FC<NodePopoverContentProps<NodeStatusResources>> = ({
+export const MarkAsSchedulablePopover: FC<NodePopoverContentProps<NodeStatusResources>> = ({
   node,
 }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
-  const [isExpanded, setExpanded] = React.useState(true);
+  const [isExpanded, setExpanded] = useState(true);
 
   const onClickMarkAsSchedulable = async () => {
     try {

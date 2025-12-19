@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import {
   Button,
   EmptyState,
@@ -14,7 +15,7 @@ type TopologyEmptyStateProps = {
   setIsQuickSearchOpen: (isOpen: boolean) => void;
 };
 
-const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen }) => {
+const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen }) => {
   const { t } = useTranslation();
 
   return (
@@ -54,4 +55,4 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
   );
 };
 
-export default React.memo(TopologyEmptyState);
+export default memo(TopologyEmptyState);

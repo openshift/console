@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useCallback } from 'react';
 import {
   MenuToggle,
   MenuToggleElement,
@@ -16,7 +17,7 @@ import {
   usePreferredPerspective,
 } from './usePreferredPerspective';
 
-const PreferredPerspectiveSelectOptions: React.FC<PreferredPerspectiveSelectOptionsProps> = ({
+const PreferredPerspectiveSelectOptions: FC<PreferredPerspectiveSelectOptionsProps> = ({
   perspectives,
 }) => (
   <>
@@ -38,11 +39,11 @@ const PreferredPerspectiveSelectOptions: React.FC<PreferredPerspectiveSelectOpti
   </>
 );
 
-const PreferrredPerspectiveSelect: React.FC = () => {
+const PreferrredPerspectiveSelect: FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const lastViewed = t('console-app~Last viewed');
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [
     preferredPerspectiveID,
     setPreferredPerspectiveID,
@@ -52,7 +53,7 @@ const PreferrredPerspectiveSelect: React.FC = () => {
   const perspectives = usePerspectives();
 
   const onToggle = () => setIsOpen((current) => !current);
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (_, selection) => {
       if (selection !== preferredPerspectiveID) {
         setPreferredPerspectiveID(selection === lastViewed ? null : selection);
@@ -66,8 +67,8 @@ const PreferrredPerspectiveSelect: React.FC = () => {
     [fireTelemetryEvent, lastViewed, preferredPerspectiveID, setPreferredPerspectiveID],
   );
 
-  const menuToggle = React.useCallback(
-    (toggleRef: React.Ref<MenuToggleElement>) => (
+  const menuToggle = useCallback(
+    (toggleRef: Ref<MenuToggleElement>) => (
       <MenuToggle
         id="console.preferredPerspective"
         data-test="console.preferredPerspective"

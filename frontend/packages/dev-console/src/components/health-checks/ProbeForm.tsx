@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { TextInputTypes, InputGroupText } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -33,13 +34,13 @@ interface ProbeFormProps {
   probeType: string;
 }
 
-const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
+const ProbeForm: FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) => {
   const { t } = useTranslation();
   const {
     values: { healthChecks },
     errors,
   } = useFormikContext<FormikValues>();
-  const { viewOnly } = React.useContext(HealthCheckContext);
+  const { viewOnly } = useContext(HealthCheckContext);
   const RequestTypeOptions = {
     httpGet: t('devconsole~HTTP GET'),
     command: t('devconsole~Container command'),

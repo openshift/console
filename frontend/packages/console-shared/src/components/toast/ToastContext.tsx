@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, ElementType, ComponentType } from 'react';
+import { createContext } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 
 export const ToastVariant = AlertVariant;
@@ -11,7 +12,7 @@ export type ToastOptions = {
   // The toast variant, one of: success, danger, warning, info, default
   variant: AlertVariant;
   // The toast content.
-  content: React.ReactNode;
+  content: ReactNode;
   // Optional actions to display in the toast.
   actions?: {
     // The action label.
@@ -21,7 +22,7 @@ export type ToastOptions = {
     // If `true`, executing this action will dismiss the toast.
     dismiss?: boolean;
     // Sets the base component to render. defaults to button
-    component?: React.ElementType<any> | React.ComponentType<any>;
+    component?: ElementType<any> | ComponentType<any>;
     // The data test id
     dataTest?: string;
   }[];
@@ -45,4 +46,4 @@ export type ToastContextType = {
   removeToast: (id: string) => void;
 };
 
-export default React.createContext<ToastContextType>({} as any);
+export default createContext<ToastContextType>({} as any);

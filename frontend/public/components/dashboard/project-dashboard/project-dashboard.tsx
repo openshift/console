@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -49,7 +50,7 @@ export const getNamespaceDashboardConsoleLinks = (
   });
 };
 
-export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
+export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
@@ -65,7 +66,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({ obj }) => {
 
   const hasNamespaceLinks = !!namespaceLinks.length;
 
-  const rc = React.useMemo(
+  const rc = useMemo(
     () => (hasNamespaceLinks ? [{ Card: LauncherCard }, ...rightCards] : rightCards),
     [hasNamespaceLinks],
   );

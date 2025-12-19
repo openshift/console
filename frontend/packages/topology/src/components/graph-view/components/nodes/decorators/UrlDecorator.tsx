@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { Node } from '@patternfly/react-topology';
@@ -14,8 +15,8 @@ interface DefaultDecoratorProps {
   y: number;
 }
 
-const UrlDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = React.useRef();
+const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = useRef();
   const { t } = useTranslation();
   const resourceObj = getResource(element);
   const url = useRoutesURL(resourceObj);

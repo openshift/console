@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import { HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryFormEditor';
 import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';
 
-const CreateHelmChartRepositoryForm: React.FC<
+const CreateHelmChartRepositoryForm: FC<
   FormikProps<FormikValues> & {
     namespace: string;
     handleCancel: () => void;

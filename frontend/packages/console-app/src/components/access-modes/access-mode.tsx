@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref, CSSProperties } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   FormGroup,
   Select,
@@ -28,7 +29,7 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
     [] as any[],
   );
 
-export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => {
+export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
   const {
     className,
     pvcResource,
@@ -47,10 +48,10 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     : availableAccessModes;
   const volumeMode: string = pvcResource?.spec?.volumeMode ?? '';
 
-  const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
-  const [accessMode, setAccessMode] = React.useState<string>();
+  const [allowedAccessModes, setAllowedAccessModes] = useState<string[]>();
+  const [accessMode, setAccessMode] = useState<string>();
 
-  const changeAccessMode = React.useCallback(
+  const changeAccessMode = useCallback(
     (mode: string) => {
       setAccessMode(mode);
       onChange(mode);
@@ -58,8 +59,8 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     [onChange],
   );
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>(
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState<string>(
     getAccessModeOptions().find((mode) => mode.value === pvcInitialAccessMode[0])?.title ?? '',
   );
 
@@ -86,7 +87,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     );
   });
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={onToggleClick}
@@ -94,14 +95,14 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       style={
         {
           width: '200px',
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       {selected}
     </MenuToggle>
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       setAllowedAccessModes(
         getAccessModeForProvisioner(
@@ -113,7 +114,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     }
   }, [filterByVolumeMode, ignoreReadOnly, loaded, provisioner, volumeMode]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Make sure the default or already checked option button value is from any one of allowed the access mode
     if (allowedAccessModes) {
       if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {

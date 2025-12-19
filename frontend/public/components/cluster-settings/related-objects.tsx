@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   referenceForModel,
@@ -24,7 +25,7 @@ import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extension
 
 const columnIds = [{ id: 'name' }, { id: 'resource' }, { id: 'group' }, { id: 'namespace' }];
 
-const ResourceObjectName: React.FC<ResourceObjectNameProps> = ({ gsv, name, namespace }) => {
+const ResourceObjectName: FC<ResourceObjectNameProps> = ({ gsv, name, namespace }) => {
   if (!name) {
     return <>{DASH}</>;
   }
@@ -79,7 +80,7 @@ const getRelatedObjectsDataViewRows = (
 
 const useRelatedObjectsColumns = (): TableColumn<ClusterOperatorObjectReference>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -123,7 +124,7 @@ const getObjectMetadata = (object: ClusterOperatorObjectReference): ResourceMeta
   return { name: object.name };
 };
 
-const RelatedObjects: React.FC<RelatedObjectsProps> = ({ data }) => {
+const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   const { findModel } = useModelFinder();
   const { t } = useTranslation();
   const columns = useRelatedObjectsColumns();
@@ -133,7 +134,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = ({ data }) => {
   };
 
   return (
-    <React.Suspense fallback={<div className="loading-skeleton--table" />}>
+    (<Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<ClusterOperatorObjectReference, RelatedObjectsRowData, RelatedObjectsFilters>
         label={t('public~Related objects')}
         data={data}
@@ -146,11 +147,11 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = ({ data }) => {
         hideNameLabelFilters={false}
         hideLabelFilter={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-const RelatedObjectsPage: React.FC<RelatedObjectsPageProps> = (props) => {
+const RelatedObjectsPage: FC<RelatedObjectsPageProps> = (props) => {
   const relatedObject: ClusterOperatorObjectReference[] = props.obj?.status?.relatedObjects;
   const data: ClusterOperatorObjectReference[] =
     relatedObject?.filter(({ resource }) => resource) || [];

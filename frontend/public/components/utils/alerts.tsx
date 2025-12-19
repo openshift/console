@@ -1,11 +1,12 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash-es';
 import { Alert, AlertVariant, Button, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant }) => {
+export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
   const alertCount = alerts.length;
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const alertContent =
     alertCount > 1 ? (
       <List>
@@ -38,6 +39,6 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant })
 };
 
 type CustomAlertProps = {
-  alerts: React.ReactNode[];
+  alerts: ReactNode[];
   variant: AlertVariant;
 };

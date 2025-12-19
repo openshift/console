@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentType } from 'react';
+import { Fragment } from 'react';
 import {
   ChartBar,
   ChartLabel,
@@ -22,7 +23,7 @@ import { CustomDataSource } from '@console/dynamic-plugin-sdk/src/extensions/das
 const DEFAULT_BAR_WIDTH = 10;
 const PADDING_RATIO = 1 / 3;
 
-export const BarChart: React.FC<BarChartProps> = ({
+export const BarChart: FC<BarChartProps> = ({
   barSpacing = 15,
   barWidth = DEFAULT_BAR_WIDTH,
   data = [],
@@ -47,12 +48,12 @@ export const BarChart: React.FC<BarChartProps> = ({
   };
 
   return (
-    <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
+    (<PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
       <PrometheusGraphLink query={noLink ? undefined : query}>
         {data.length ? (
           <div data-test="bar-chart" role="img" aria-label={title}>
             {data.map((datum, index) => (
-              <React.Fragment key={index}>
+              <Fragment key={index}>
                 <div className="graph-bar__label" data-test={`bar-label-${index}`}>
                   {LabelComponent ? (
                     <LabelComponent title={datum.x} metric={datum.metric} />
@@ -75,18 +76,18 @@ export const BarChart: React.FC<BarChartProps> = ({
                     padding={padding}
                   />
                 </div>
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
         ) : (
           <GraphEmpty loading={loading} />
         )}
       </PrometheusGraphLink>
-    </PrometheusGraph>
+    </PrometheusGraph>)
   );
 };
 
-export const Bar: React.FC<BarProps> = ({
+export const Bar: FC<BarProps> = ({
   barSpacing,
   barWidth,
   delay = undefined,
@@ -133,7 +134,7 @@ type BarChartProps = {
   barSpacing?: number;
   barWidth?: number;
   data?: DataPoint[];
-  LabelComponent?: React.ComponentType<LabelComponentProps>;
+  LabelComponent?: ComponentType<LabelComponentProps>;
   loading?: boolean;
   noLink?: boolean;
   query?: string;
@@ -147,7 +148,7 @@ type BarProps = {
   barWidth?: number;
   delay?: number;
   humanize?: Humanize;
-  LabelComponent?: React.ComponentType<LabelComponentProps>;
+  LabelComponent?: ComponentType<LabelComponentProps>;
   metric: string;
   namespace?: string;
   noLink?: boolean;

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 import './launcher-card.scss';
 
 interface LauncherBodyProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const LauncherBody: Snail.FCC<LauncherBodyProps> = ({ children }) => (

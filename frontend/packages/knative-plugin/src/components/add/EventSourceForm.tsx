@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -22,11 +22,11 @@ import { EventSourceSyncFormData } from './import-types';
 
 interface OwnProps {
   namespace: string;
-  eventSourceMetaDescription: React.ReactNode;
+  eventSourceMetaDescription: ReactNode;
   kameletSource?: K8sResourceKind;
 }
 
-const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
+const EventSourceForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   errors,
   values,
   handleSubmit,

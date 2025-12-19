@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCard from '../AddCard';
 import { addActionExtensions } from './add-page-test-data';
 
 describe('AddCard', () => {
-  type AddCardProps = React.ComponentProps<typeof AddCard>;
+  type AddCardProps = ComponentProps<typeof AddCard>;
   let props: AddCardProps;
 
   beforeEach(() => {

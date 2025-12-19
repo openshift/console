@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
-import * as React from 'react';
+import { Suspense, useEffect, useMemo, useState, useCallback } from 'react';
+
 import * as _ from 'lodash-es';
-import { useEffect, useMemo, useState, useCallback } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { css } from '@patternfly/react-styles';
 import {
@@ -427,7 +427,7 @@ export const NamespacesList = (props) => {
   }
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={NamespaceModel.labelPlural}
@@ -441,7 +441,7 @@ export const NamespacesList = (props) => {
           getNamespaceDataViewRows(rowData, tableColumns, namespaceMetrics, t)
         }
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
@@ -703,7 +703,7 @@ export const ProjectsTable = (props) => {
   const columns = useProjectsColumns({ showMetrics: false, showActions: false });
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ProjectModel.labelPlural}
@@ -713,7 +713,7 @@ export const ProjectsTable = (props) => {
         }
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
@@ -809,7 +809,7 @@ export const ProjectList = (props) => {
   }
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ProjectModel.labelPlural}
@@ -824,7 +824,7 @@ export const ProjectList = (props) => {
         }
         NoDataEmptyMsg={OpenShiftGettingStarted}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

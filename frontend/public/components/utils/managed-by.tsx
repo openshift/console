@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +53,7 @@ export const ManagedByOperatorLink: Snail.FCC<ManagedByLinkProps> = ({ obj, clas
   const { t } = useTranslation();
   const [data, setData] = useSafetyFirst<ClusterServiceVersionKind[] | undefined>(undefined);
   const namespace = obj.metadata.namespace;
-  React.useEffect(() => {
+  useEffect(() => {
     if (!namespace) {
       return;
     }

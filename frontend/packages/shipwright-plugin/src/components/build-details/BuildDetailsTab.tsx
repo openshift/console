@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
@@ -11,7 +11,7 @@ type BuildDetailsTabProps = {
   obj: Build;
 };
 
-const BuildDetailsTab: React.FC<BuildDetailsTabProps> = ({ obj: build }) => {
+const BuildDetailsTab: FC<BuildDetailsTabProps> = ({ obj: build }) => {
   const { t } = useTranslation();
 
   return (

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,7 @@ import {
   removeDuplicateDomainMappings,
 } from './serverless-utils';
 
-const ServerlessRouteSection: React.FC = () => {
+const ServerlessRouteSection: FC = () => {
   const { t } = useTranslation();
   const {
     setFieldValue,
@@ -26,7 +27,7 @@ const ServerlessRouteSection: React.FC = () => {
       serverless,
     },
   } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
-  const resource: WatchK8sResource = React.useMemo(
+  const resource: WatchK8sResource = useMemo(
     () => ({
       kind: referenceForModel(DomainMappingModel),
       isList: true,
@@ -38,7 +39,7 @@ const ServerlessRouteSection: React.FC = () => {
   const [data, domainMappingLoaded, domainMappingLoadErr] = useK8sWatchResource<K8sResourceKind[]>(
     resource,
   );
-  const domainMappingResources = React.useMemo(() => {
+  const domainMappingResources = useMemo(() => {
     return domainMappingLoaded && !domainMappingLoadErr
       ? data.map((dm) => {
           const ksvc = getOtherKsvcFromDomainMapping(dm, name);
@@ -50,7 +51,7 @@ const ServerlessRouteSection: React.FC = () => {
       : [];
   }, [domainMappingLoaded, domainMappingLoadErr, data, name]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (domainMappingLoaded && !domainMappingLoadErr && data?.length) {
       const mappedDomain = data
         .filter((domainRes) => domainRes.spec?.ref?.name === name)

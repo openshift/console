@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { InputField, getFieldId } from '@console/shared';
 
-const SinkUri: React.FC = () => {
+const SinkUri: FC = () => {
   const { t } = useTranslation();
   return (
     <FormGroup fieldId={getFieldId('sink-name', 'uri')} isRequired>

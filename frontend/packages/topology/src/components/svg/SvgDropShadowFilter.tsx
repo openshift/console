@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { t_color_black as globalBlack1000 } from '@patternfly/react-tokens';
 import { SVGDefs } from '@patternfly/react-topology';
 
@@ -13,7 +13,7 @@ interface SvgDropShadowFilterProps {
   floodColor?: string;
 }
 
-const SvgDropShadowFilter: React.FC<SvgDropShadowFilterProps> = ({
+const SvgDropShadowFilter: FC<SvgDropShadowFilterProps> = ({
   id,
   dx = 0,
   dy = 1,

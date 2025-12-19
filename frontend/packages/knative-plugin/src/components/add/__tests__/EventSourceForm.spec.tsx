@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { kameletSourceTelegram } from '../../../utils/__tests__/knative-eventing-data';
@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: any) => Component,
 }));
 
-let eventSourceFormProps: React.ComponentProps<typeof EventSourceForm>;
+let eventSourceFormProps: ComponentProps<typeof EventSourceForm>;
 
 describe('EventSourceForm', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
@@ -11,7 +11,7 @@ import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
+const EventSourceRow: FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;

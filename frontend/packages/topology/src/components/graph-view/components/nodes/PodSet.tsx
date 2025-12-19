@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { RevisionModel } from '@console/knative-plugin/src/models';
@@ -46,7 +47,7 @@ export const podSetInnerRadius = (size: number, data?: PodRCData) => {
   return radius - innerStrokeWidth - podStatusInset;
 };
 
-const PodSet: React.FC<PodSetProps> = React.memo(function PodSet({
+const PodSet: FC<PodSetProps> = memo(function PodSet({
   size,
   data,
   x = 0,

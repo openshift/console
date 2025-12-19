@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -20,7 +20,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 const { editYaml, events } = navFactory;
 
-const Details: React.FC<DetailsProps> = ({ obj }) => {
+const Details: FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
@@ -43,7 +43,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-export const VolumeSnapshotClassDetailsPage: React.FC<DetailsPageProps> = (props) => {
+export const VolumeSnapshotClassDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [
     {
       href: '',

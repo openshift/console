@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { Grid, GridItem, Radio } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +25,7 @@ const getApprovalStrategy = (obj: InstallPlanKind | SubscriptionKind): InstallPl
   (obj as InstallPlanKind)?.spec?.approval ??
   InstallPlanApproval.Automatic;
 
-export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> = ({
+export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   cancel,
   close,
   k8sUpdate,
@@ -32,11 +33,11 @@ export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> =
 }) => {
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [selectedApprovalStrategy, setSelectedApprovalStrategy] = React.useState(
+  const [selectedApprovalStrategy, setSelectedApprovalStrategy] = useState(
     getApprovalStrategy(obj),
   );
-  const submit = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>): void => {
+  const submit = useCallback(
+    (event: FormEvent<HTMLFormElement>): void => {
       event.preventDefault();
       const updatedObj = _.cloneDeep(obj);
       if (referenceFor(updatedObj) === referenceForModel(SubscriptionModel)) {

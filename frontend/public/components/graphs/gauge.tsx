@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ChartDonutThreshold,
   ChartDonutUtilization,
@@ -18,7 +18,7 @@ import { DataPoint } from '.';
 
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 
-export const GaugeChart: React.FC<GaugeChartProps> = ({
+export const GaugeChart: FC<GaugeChartProps> = ({
   data,
   error,
   humanize = humanizePercentage,
@@ -80,7 +80,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   );
 };
 
-export const Gauge: React.FC<GaugeProps> = ({
+export const Gauge: FC<GaugeProps> = ({
   humanize = humanizePercentage,
   invert,
   namespace,

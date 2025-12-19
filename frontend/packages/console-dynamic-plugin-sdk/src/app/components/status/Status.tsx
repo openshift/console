@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   BanIcon,
   ClipboardListIcon,
@@ -16,7 +16,7 @@ import StatusIconAndText from './StatusIconAndText';
 
 export type StatusProps = StatusComponentProps & {
   status: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 /**
@@ -33,7 +33,7 @@ export type StatusProps = StatusComponentProps & {
  * <Status status='Warning' />
  * ```
  */
-const Status: React.FC<StatusProps> = ({
+const Status: FC<StatusProps> = ({
   status,
   title,
   children,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo, useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { DataList } from '@patternfly/react-core';
 import {
   observer,
@@ -36,7 +37,7 @@ interface TopologyGraphViewProps {
   unassignedItems: Node[];
 }
 
-const TopologyListViewComponent: React.FC<TopologyGraphViewProps> = React.memo(
+const TopologyListViewComponent: FC<TopologyGraphViewProps> = memo(
   function TopologyListViewComponent({
     visualizationReady,
     visualization,
@@ -133,7 +134,7 @@ interface TopologyListViewProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const ConnectedTopologyListView: React.FC<
+const ConnectedTopologyListView: FC<
   TopologyListViewProps & TopologyListViewPropsFromDispatch & TopologyListViewPropsFromState
 > = observer(function TopologyListView({
   model,
@@ -146,7 +147,7 @@ const ConnectedTopologyListView: React.FC<
 }) {
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
-  const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
+  const [visualizationReady, setVisualizationReady] = useState<boolean>(false);
 
   const createVisualization = () => {
     const newVisualization = new Visualization();
@@ -155,20 +156,20 @@ const ConnectedTopologyListView: React.FC<
     return newVisualization;
   };
 
-  const visualizationRef = React.useRef<Visualization>();
+  const visualizationRef = useRef<Visualization>();
   if (!visualizationRef.current) {
     visualizationRef.current = createVisualization();
   }
 
   const visualization = visualizationRef.current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visualization) {
       setVisualization(visualization);
     }
   }, [setVisualization, visualization]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (model) {
       // Clear out any layout that might have been saved
       if (model.graph?.layout) {
@@ -193,7 +194,7 @@ const ConnectedTopologyListView: React.FC<
     (n) => n.getType() !== TYPE_APPLICATION_GROUP && isGraph(n.getParent()) && n.isVisible(),
   );
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (visualizationReady && selectedId) {
       const element = document.getElementById(selectedId);
       if (element) {
@@ -202,7 +203,7 @@ const ConnectedTopologyListView: React.FC<
     }
   }, [selectedId, visualizationReady]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getFlattenedItems = (): Node[] => {
       const flattened = [];
       const addFlattenedNode = (node: Node) => {
@@ -302,7 +303,7 @@ const ConnectedTopologyListView: React.FC<
     };
   }, [visualization, selectedId, applicationGroups, unassignedItems, onSelect]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const clearMetricsInterval = subscribeOverviewMetrics(namespace, metrics, updateMetrics);
     const clearAlertsInterval = subscribeOverviewAlerts(namespace, updateMonitoringAlerts);
 
@@ -338,7 +339,7 @@ const TopologyListView = withFallback(
   connect<TopologyListViewPropsFromState, TopologyListViewPropsFromDispatch, TopologyListViewProps>(
     stateToProps,
     dispatchToProps,
-  )(React.memo(ConnectedTopologyListView)),
+  )(memo(ConnectedTopologyListView)),
   ErrorBoundaryFallbackPage,
 );
 

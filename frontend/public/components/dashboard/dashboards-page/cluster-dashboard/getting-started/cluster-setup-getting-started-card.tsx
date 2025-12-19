@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCheckIcon } from '@patternfly/react-icons/dist/esm/icons/clipboard-check-icon';
 
@@ -15,12 +16,12 @@ import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';
 import { documentationURLs, getDocumentationURL, isManaged } from '../../../../utils/documentation';
 import { TourActions, TourContext } from '@console/app/src/components/tour';
 
-export const ClusterSetupGettingStartedCard: React.FC = () => {
+export const ClusterSetupGettingStartedCard: FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const canUpgrade = useCanClusterUpgrade();
 
-  const { tourDispatch, tour } = React.useContext(TourContext);
+  const { tourDispatch, tour } = useContext(TourContext);
 
   const identityProviderLink = useIdentityProviderLink();
   const alertReceiverLink = useAlertReceiverLink();

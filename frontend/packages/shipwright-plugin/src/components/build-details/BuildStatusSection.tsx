@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
@@ -9,7 +9,7 @@ type BuildStatusSectionProps = {
   buildStatus: BuildStatus;
 };
 
-const BuildStatusSection: React.FC<BuildStatusSectionProps> = ({ obj, buildStatus }) => {
+const BuildStatusSection: FC<BuildStatusSectionProps> = ({ obj, buildStatus }) => {
   const { t } = useTranslation();
 
   if (!buildStatus) {

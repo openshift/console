@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, CSSProperties } from 'react';
 import { Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
@@ -9,10 +9,10 @@ const SecondaryHeading: Snail.FCC<SecondaryHeadingProps> = ({ children, classNam
 );
 
 export type SecondaryHeadingProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   id?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
 export default SecondaryHeading;

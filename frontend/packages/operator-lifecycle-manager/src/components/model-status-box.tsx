@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { GroupVersionKind, kindForReference } from '@console/internal/module/k8s';
@@ -6,7 +6,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 type ModelStatusBoxProps = {
   groupVersionKind: GroupVersionKind;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 const ModelStatusBox: Snail.FCC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {

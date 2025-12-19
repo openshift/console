@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -61,7 +61,7 @@ import { iconFor, InstallPlanReview } from './index';
 
 import './operator-install-page.scss';
 
-const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ namespace }) => {
+const ViewInstalledOperatorsButton: FC<ViewOperatorButtonProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const singleNamespaceText = t('olm~View installed Operators in Namespace {{namespace}}', {
     namespace,
@@ -79,7 +79,7 @@ const ViewInstalledOperatorsButton: React.FC<ViewOperatorButtonProps> = ({ names
   );
 };
 
-const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
+const InstallFailedMessage: FC<InstallFailedMessageProps> = ({ namespace, csvName, obj }) => {
   const { t } = useTranslation();
   const hasInitializationResource =
     obj?.metadata?.annotations?.[OLMAnnotation.InitializationResource];
@@ -107,7 +107,7 @@ const InstallFailedMessage: React.FC<InstallFailedMessageProps> = ({ namespace, 
   );
 };
 
-const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = ({
+const InstallNeedsApprovalMessage: FC<InstallNeedsApprovalMessageProps> = ({
   namespace,
   subscriptionObj,
   installObj,
@@ -158,7 +158,7 @@ const InstallNeedsApprovalMessage: React.FC<InstallNeedsApprovalMessageProps> = 
   );
 };
 
-export const CreateInitializationResourceButton: React.FC<InitializationResourceButtonProps> = ({
+export const CreateInitializationResourceButton: FC<InitializationResourceButtonProps> = ({
   disabled,
   initializationResource,
   obj,
@@ -190,7 +190,7 @@ export const CreateInitializationResourceButton: React.FC<InitializationResource
   );
 };
 
-const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequiredMessageProps> = ({
+const InitializationResourceRequiredMessage: FC<InitializationResourceRequiredMessageProps> = ({
   initializationResource,
   obj,
 }) => {
@@ -219,7 +219,7 @@ const InitializationResourceRequiredMessage: React.FC<InitializationResourceRequ
   );
 };
 
-const InitializationLinkButton: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
+const InitializationLinkButton: FC<{ disabled?: boolean }> = ({ disabled }) => {
   const { t } = useTranslation();
   return (
     <Button aria-disabled={disabled} isDisabled={disabled} variant="primary">
@@ -227,7 +227,7 @@ const InitializationLinkButton: React.FC<{ disabled?: boolean }> = ({ disabled }
     </Button>
   );
 };
-const InitializationLink: React.FC<InitializationLinkProps> = ({ to, disabled }) => {
+const InitializationLink: FC<InitializationLinkProps> = ({ to, disabled }) => {
   if (!to) {
     return null;
   }
@@ -243,7 +243,7 @@ const InitializationLink: React.FC<InitializationLinkProps> = ({ to, disabled })
   );
 };
 
-const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
+const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({
   namespace,
   csvName,
   obj,
@@ -294,7 +294,7 @@ const InstallSucceededMessage: React.FC<InstallSuccededMessageProps> = ({
   );
 };
 
-const InstallingMessage: React.FC<InstallingMessageProps> = ({ namespace, obj }) => {
+const InstallingMessage: FC<InstallingMessageProps> = ({ namespace, obj }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const reason = (obj as ClusterServiceVersionKind)?.status?.reason || '';
@@ -392,7 +392,7 @@ const OperatorInstallLogo = ({ subscription }) => {
   );
 };
 
-const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }) => {
+const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
@@ -516,7 +516,7 @@ const OperatorInstallStatus: React.FC<OperatorInstallPageProps> = ({ resources }
   );
 };
 
-export const OperatorInstallStatusPage: React.FC<OperatorInstallPageProps> = () => {
+export const OperatorInstallStatusPage: FC<OperatorInstallPageProps> = () => {
   const { pkg, currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
 
   const installPageResources = [

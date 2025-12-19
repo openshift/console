@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FCC } from 'react';
+import { useState } from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
@@ -11,8 +12,8 @@ type Props = {
 const warning = 'perform a React state update on an unmounted component.';
 
 describe('When calling setter from `useState()` hook in an unsafe React component', () => {
-  const Unsafe: React.FCC<Props> = (props) => {
-    const [inFlight, setInFlight] = React.useState(true);
+  const Unsafe: FCC<Props> = (props) => {
+    const [inFlight, setInFlight] = useState(true);
 
     const onClick = () => props.loader().then(() => setInFlight(false));
 
@@ -51,7 +52,7 @@ describe('When calling setter from `useState()` hook in an unsafe React componen
 });
 
 describe('useSafetyFirst hook', () => {
-  const Safe: React.FCC<Props> = (props) => {
+  const Safe: FCC<Props> = (props) => {
     const [inFlight, setInFlight] = useSafetyFirst(true);
 
     const onClick = () => props.loader().then(() => setInFlight(false));

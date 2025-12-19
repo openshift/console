@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { Fragment } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +7,7 @@ import { MetricsTooltipProps } from '@console/dynamic-plugin-sdk/src/extensions/
 import { truncateMiddle } from '@console/internal/components/utils';
 import { useIsMobile } from '@console/shared';
 
-const MetricsTooltip: React.FC<MetricsTooltipProps & { children?: React.ReactNode }> = ({
+const MetricsTooltip: FC<MetricsTooltipProps & { children?: ReactNode }> = ({
   metricLabel,
   byPod,
   children,
@@ -23,9 +24,9 @@ const MetricsTooltip: React.FC<MetricsTooltipProps & { children?: React.ReactNod
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [
-        <React.Fragment key="no-metrics">
+        <Fragment key="no-metrics">
           {t('topology~No {{metricLabel}} metrics available.', { metricLabel })}
-        </React.Fragment>,
+        </Fragment>,
       ]
     : _.concat(
         <div className="odc-topology-list-view__metrics-cell__tooltip-title" key="#title">

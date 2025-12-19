@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { RouteLinkAndCopy } from '@console/shared/src/components/utils/routes';
@@ -8,7 +8,7 @@ interface ImportToastContentProps {
   route?: RouteKind;
 }
 
-const ImportToastContent: React.FC<ImportToastContentProps> = ({
+const ImportToastContent: FC<ImportToastContentProps> = ({
   deployedResources = [],
   route,
 }) => {

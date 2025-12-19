@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
 import { useUserSettings } from '../hooks';
 
 export type WithUserSettingsProps<T> = {
@@ -10,8 +10,8 @@ export const withUserSettings = <Props extends WithUserSettingsProps<T>, T = str
   configStorageKey: string,
   defaultvalue?: T,
 ) => (
-  WrappedComponent: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithUserSettingsProps<T>>> => {
+  WrappedComponent: ComponentType<Props>,
+): FC<Omit<Props, keyof WithUserSettingsProps<T>>> => {
   const Component = (props: Props) => {
     const [state, setState, loaded] = useUserSettings(configStorageKey, defaultvalue);
     return loaded ? (

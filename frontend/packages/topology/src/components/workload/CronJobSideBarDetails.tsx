@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -13,7 +13,7 @@ type CronJobSideBarDetailsProps = {
   cronjob: CronJobKind;
 };
 
-const CronJobSideBarDetails: React.FC<CronJobSideBarDetailsProps> = ({ cronjob }) => {
+const CronJobSideBarDetails: FC<CronJobSideBarDetailsProps> = ({ cronjob }) => {
   const { t } = useTranslation();
 
   return (

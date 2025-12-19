@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Title, TitleSizes } from '@patternfly/react-core';
 
 type CatalogPageHeadingProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const CatalogPageHeading: Snail.FCC<CatalogPageHeadingProps> = ({ children }) => (

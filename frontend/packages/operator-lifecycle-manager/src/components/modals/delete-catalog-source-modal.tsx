@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, KeyboardEvent, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
@@ -11,7 +12,7 @@ import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s'
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
+const DeleteCatalogSourceModal: FC<DeleteCatalogSourceModalProps> = ({
   kind,
   resource,
   close,
@@ -19,13 +20,13 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
 }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
-  const [confirmed, setConfirmed] = React.useState<boolean>(false);
-  const isConfirmed = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const [confirmed, setConfirmed] = useState<boolean>(false);
+  const isConfirmed = (e: KeyboardEvent<HTMLInputElement>) => {
     setConfirmed(e.currentTarget.value === resource.metadata.name);
   };
 
-  const submit = React.useCallback(
-    (event: React.FormEvent<EventTarget>): void => {
+  const submit = useCallback(
+    (event: FormEvent<EventTarget>): void => {
       event.preventDefault();
       handlePromise(k8sKill(kind, resource))
         .then(() => {

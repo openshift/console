@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils';
@@ -11,10 +12,10 @@ interface TopologyDataRendererProps {
   viewType: TopologyViewType;
 }
 
-const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
+const TopologyDataRenderer: FC<TopologyDataRendererProps> = observer(
   function TopologyDataRenderer({ viewType }) {
     const { t } = useTranslation();
-    const { namespace, model, loaded, loadError } = React.useContext<ExtensibleModel>(ModelContext);
+    const { namespace, model, loaded, loadError } = useContext<ExtensibleModel>(ModelContext);
 
     return (
       <StatusBox

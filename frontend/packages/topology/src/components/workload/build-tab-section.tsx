@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
@@ -13,7 +14,7 @@ import { BuildOverview } from './BuildOverview';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
-const BuildTabSection: React.FC<{
+const BuildTabSection: FC<{
   id: string;
   buildAdapter: AdapterDataType<BuildConfigData>;
   extensionsResolved: boolean;
@@ -21,11 +22,11 @@ const BuildTabSection: React.FC<{
   const [
     { data: buildConfigs, loaded: buildConfigsDataLoaded },
     setBuildConfigsData,
-  ] = React.useState<{
+  ] = useState<{
     data?: BuildConfigData;
     loaded: boolean;
   }>({ loaded: false });
-  const handleAdapterResolved = React.useCallback((data) => {
+  const handleAdapterResolved = useCallback((data) => {
     setBuildConfigsData({ data, loaded: true });
   }, []);
 
@@ -50,7 +51,7 @@ export const useBuildsSideBarTabSection: DetailsTabSectionExtensionHook = (
   const [buildAdapterExtensions, extensionsResolved] = useResolvedExtensions<BuildAdapter>(
     isBuildAdapter,
   );
-  const buildAdapter = React.useMemo(
+  const buildAdapter = useMemo(
     () =>
       getDataFromAdapter<AdapterDataType<BuildConfigData>, BuildAdapter>(element, [
         buildAdapterExtensions,

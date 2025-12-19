@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC, FormEvent } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
@@ -22,11 +23,11 @@ interface QuickSearchModalBodyProps {
   namespace: string;
   closeModal: () => void;
   limitItemCount?: number;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   detailsRenderer?: DetailsRendererFunction;
 }
 
-const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
+const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
   searchCatalog,
   namespace,
   closeModal,
@@ -36,20 +37,20 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   icon,
   detailsRenderer,
 }) => {
-  const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
-  const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
-  const [searchTerm, setSearchTerm] = React.useState<string>(
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(null);
+  const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>(
     getQueryArgument('catalogSearch') || '',
   );
-  const [selectedItemId, setSelectedItemId] = React.useState<string>('');
-  const [selectedItem, setSelectedItem] = React.useState<CatalogItem>(null);
-  const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
-  const [items, setItems] = React.useState<number>(limitItemCount);
-  const ref = React.useRef<HTMLInputElement>();
+  const [selectedItemId, setSelectedItemId] = useState<string>('');
+  const [selectedItem, setSelectedItem] = useState<CatalogItem>(null);
+  const [viewAll, setViewAll] = useState<CatalogLinkData[]>(null);
+  const [items, setItems] = useState<number>(limitItemCount);
+  const ref = useRef<HTMLInputElement>();
   const fireTelemetryEvent = useTelemetry();
   const listCatalogItems = limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (searchTerm) {
       const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(searchTerm);
       setCatalogItems(filteredItems);
@@ -59,15 +60,15 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchCatalog]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (catalogItems && !selectedItemId) {
       setSelectedItemId(catalogItems[0]?.uid);
       setSelectedItem(catalogItems[0]);
     }
   }, [catalogItems, selectedItemId]);
 
-  const onSearch = React.useCallback(
-    (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const onSearch = useCallback(
+    (_event: FormEvent<HTMLInputElement>, value: string) => {
       setSearchTerm(value);
       if (value) {
         const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(value);
@@ -85,7 +86,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     [searchCatalog],
   );
 
-  const onCancel = React.useCallback(() => {
+  const onCancel = useCallback(() => {
     const searchInput = ref?.current as HTMLInputElement;
     if (searchInput?.value) {
       document.activeElement !== searchInput && searchInput.focus();
@@ -95,12 +96,12 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     }
   }, [closeModal, onSearch]);
 
-  const getIndexOfSelectedItem = React.useCallback(
+  const getIndexOfSelectedItem = useCallback(
     () => listCatalogItems?.findIndex((item) => item.uid === selectedItemId),
     [listCatalogItems, selectedItemId],
   );
 
-  const onEnter = React.useCallback(
+  const onEnter = useCallback(
     (e) => {
       const { id } = document.activeElement;
       const activeViewAllLink = viewAll?.find((link) => link.catalogType === id);
@@ -113,14 +114,14 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     [closeModal, fireTelemetryEvent, selectedItem, viewAll],
   );
 
-  const selectPrevious = React.useCallback(() => {
+  const selectPrevious = useCallback(() => {
     let index = getIndexOfSelectedItem();
     if (index === 0) index = listCatalogItems?.length;
     setSelectedItemId(listCatalogItems?.[index - 1]?.uid);
     setSelectedItem(listCatalogItems?.[index - 1]);
   }, [listCatalogItems, getIndexOfSelectedItem]);
 
-  const selectNext = React.useCallback(() => {
+  const selectNext = useCallback(() => {
     const index = getIndexOfSelectedItem();
     setSelectedItemId(listCatalogItems?.[index + 1]?.uid);
     setSelectedItem(listCatalogItems?.[index + 1]);
@@ -130,7 +131,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     setItems(i);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       switch (e.code) {
         case 'Escape': {

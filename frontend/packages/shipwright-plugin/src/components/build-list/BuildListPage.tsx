@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage, ListPageProps } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -20,7 +20,7 @@ const getBuildStatus = (build: Build): string => {
   return 'Unknown';
 };
 
-const BuildListPage: React.FC<BuildListPageProps> = (props) => {
+const BuildListPage: FC<BuildListPageProps> = (props) => {
   const { t } = useTranslation();
 
   const filters: RowFilter<Build>[] = [

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { FormikProps, FormikValues } from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
@@ -9,7 +9,7 @@ jest.mock('@console/dev-console/src/components/import/advanced/ResourceLimitSect
   default: () => null,
 }));
 
-type ResourceLimitsModalProps = React.ComponentProps<typeof ResourceLimitsModal>;
+type ResourceLimitsModalProps = ComponentProps<typeof ResourceLimitsModal>;
 
 describe('ResourceLimitsModal Form', () => {
   let formProps: ResourceLimitsModalProps;

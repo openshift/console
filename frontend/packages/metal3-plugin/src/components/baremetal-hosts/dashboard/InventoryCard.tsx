@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useMemo, useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -16,11 +17,11 @@ import { BareMetalHostModel } from '../../../models';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
-const PodInventoryItem: React.FC = () => {
-  const { node, loaded } = React.useContext(BareMetalHostDashboardContext);
+const PodInventoryItem: FC = () => {
+  const { node, loaded } = useContext(BareMetalHostDashboardContext);
   const nodeName = getName(node);
 
-  const podResource = React.useMemo(
+  const podResource = useMemo(
     () =>
       loaded && nodeName
         ? {
@@ -52,14 +53,14 @@ const PodInventoryItem: React.FC = () => {
   );
 };
 
-const InventoryCard: React.FC = () => {
+const InventoryCard: FC = () => {
   const { t } = useTranslation();
-  const { obj } = React.useContext(BareMetalHostDashboardContext);
+  const { obj } = useContext(BareMetalHostDashboardContext);
 
   const namespace = getNamespace(obj);
   const hostName = getName(obj);
 
-  const NICTitleComponent = React.useCallback(
+  const NICTitleComponent = useCallback(
     ({ children }) => (
       <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/nics`}>
         {children}
@@ -68,7 +69,7 @@ const InventoryCard: React.FC = () => {
     [hostName, namespace],
   );
 
-  const DiskTitleComponent = React.useCallback(
+  const DiskTitleComponent = useCallback(
     ({ children }) => (
       <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/disks`}>
         {children}

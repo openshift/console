@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { isValidElement } from 'react';
 import { Card, SimpleList, Title } from '@patternfly/react-core';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
@@ -12,10 +13,10 @@ type AddCardProps = {
   title: string;
   items: ResolvedExtension<AddAction>[];
   namespace: string;
-  icon?: CodeRef<React.ReactNode> | string;
+  icon?: CodeRef<ReactNode> | string;
 };
 
-const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace, icon }) => {
+const AddCard: FC<AddCardProps> = ({ id, title, items, namespace, icon }) => {
   const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
@@ -28,7 +29,7 @@ const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace, icon }) 
         />
       );
     }
-    if (typeof icon !== 'string' && React.isValidElement(icon)) {
+    if (typeof icon !== 'string' && isValidElement(icon)) {
       return (
         <span className="odc-add-card__icon" aria-hidden="true">
           {icon}

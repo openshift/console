@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -47,7 +48,7 @@ const getReadyReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource?.status?.readyReplicas || 0;
 };
 
-const ControlPlaneMachineSetCounts: React.FC<ControlPlaneMachineSetCountsProps> = ({
+const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({
   resource,
 }) => {
   const { t } = useTranslation();
@@ -179,7 +180,7 @@ const ControlPlaneMachineSetDetails: Snail.FCC<ControlPlaneMachineSetDetailsProp
   );
 };
 
-export const MachineTabPage: React.FC<MachineTabPageProps> = ({ obj }) => (
+export const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
   <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
 );
 
@@ -190,7 +191,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const ControlPlaneMachineSetDetailsPage: React.FC<any> = (props) => (
+export const ControlPlaneMachineSetDetailsPage: FC<any> = (props) => (
   <DetailsPage {...props} kind={controlPlaneMachineSetReference} pages={pages} />
 );
 
@@ -205,7 +206,7 @@ const tableColumnInfo = [
 
 const useControlPlaneMachineSetColumns = (): TableColumn<ControlPlaneMachineSetKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<ControlPlaneMachineSetKind>[] = React.useMemo(() => {
+  const columns: TableColumn<ControlPlaneMachineSetKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -324,7 +325,7 @@ const getDataViewRows: GetDataViewRows<ControlPlaneMachineSetKind> = (data, colu
   });
 };
 
-const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = ({
+const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
   data,
   loaded,
   loadError,
@@ -333,7 +334,7 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = ({
   const columns = useControlPlaneMachineSetColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ControlPlaneMachineSetKind>
         {...props}
         label={ControlPlaneMachineSetModel.labelPlural}
@@ -344,11 +345,11 @@ const ControlPlaneMachineSetList: React.FC<ControlPlaneMachineSetListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-export const ControlPlaneMachineSetListPage: React.FC<any> = (props) => (
+export const ControlPlaneMachineSetListPage: FC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={ControlPlaneMachineSetList}

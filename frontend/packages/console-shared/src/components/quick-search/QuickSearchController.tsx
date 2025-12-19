@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchModal from './QuickSearchModal';
@@ -11,14 +12,14 @@ type QuickSearchControllerProps = {
   searchPlaceholder: string;
   allItemsLoaded: boolean;
   isOpen: boolean;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   limitItemCount?: number;
   disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
   detailsRenderer?: DetailsRendererFunction;
 };
 
-const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
+const QuickSearchController: FC<QuickSearchControllerProps> = ({
   namespace,
   quickSearchProviders,
   searchPlaceholder,
@@ -33,7 +34,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   const { t } = useTranslation();
 
   const isLimitedList = limitItemCount > 0;
-  const searchCatalog = React.useCallback(
+  const searchCatalog = useCallback(
     (searchTerm: string): QuickSearchData => {
       return quickSearchProviders.reduce(
         (acc, quickSearchProvider) => {
@@ -70,7 +71,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
     [isLimitedList, namespace, quickSearchProviders, t],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       const { nodeName } = e.target as Element;
       if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {

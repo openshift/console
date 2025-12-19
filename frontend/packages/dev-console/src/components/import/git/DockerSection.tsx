@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { FormikValues, useFormikContext } from 'formik';
@@ -9,7 +10,7 @@ import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHe
 import { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';
 
-const DockerSection: React.FC = () => {
+const DockerSection: FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched } = useFormikContext<
     FormikValues & GitImportFormData
@@ -21,9 +22,9 @@ const DockerSection: React.FC = () => {
     docker,
     formType,
   } = values;
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
 
-  const handleDockerfileChange = React.useCallback(async () => {
+  const handleDockerfileChange = useCallback(async () => {
     const gitService = getGitService(
       url,
       type,
@@ -43,7 +44,7 @@ const DockerSection: React.FC = () => {
     }
   }, [dir, docker.dockerfilePath, ref, secretResource, setFieldValue, type, url]);
 
-  const helpText = React.useMemo(() => {
+  const helpText = useMemo(() => {
     if (validated === ValidatedOptions.success) {
       return t('devconsole~Validated');
     }
@@ -55,7 +56,7 @@ const DockerSection: React.FC = () => {
     );
   }, [t, validated]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (recommendedStrategy && recommendedStrategy.type !== ImportStrategy.DOCKERFILE) {
       const dockerfileStrategy = strategies.find((s) => s.type === ImportStrategy.DOCKERFILE);
       if (dockerfileStrategy) {
@@ -71,7 +72,7 @@ const DockerSection: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recommendedStrategy, setFieldValue, strategies]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const gitService =
       url && getGitService(url, type, ref, dir, secretResource, null, docker.dockerfilePath);
     gitService &&

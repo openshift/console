@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -12,7 +12,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
 
 const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
 
-const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {
+const helmReleaseOverviewProps: ComponentProps<typeof HelmReleaseOverview> = {
   obj: {
     kind: 'Secret',
     apiVersion: 'v1',

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   DescriptionList,
@@ -16,7 +16,7 @@ type UnderMaintenancePopoverContentProps = {
   nodeMaintenance: K8sResourceKind;
 };
 
-const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentProps> = ({
+const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = ({
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();

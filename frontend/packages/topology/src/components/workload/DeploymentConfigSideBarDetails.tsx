@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -22,7 +22,7 @@ type DeploymentConfigSideBarDetailsProps = {
   dc: K8sResourceKind;
 };
 
-const DeploymentConfigSideBarDetails: React.FC<DeploymentConfigSideBarDetailsProps> = ({ dc }) => {
+const DeploymentConfigSideBarDetails: FC<DeploymentConfigSideBarDetailsProps> = ({ dc }) => {
   const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">

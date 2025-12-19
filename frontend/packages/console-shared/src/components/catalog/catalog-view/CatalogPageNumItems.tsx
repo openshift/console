@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { FlexItem } from '@patternfly/react-core';
 
 type CatalogPageNumItemsProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const CatalogPageNumItems: Snail.FCC<CatalogPageNumItemsProps> = ({ children }) => (

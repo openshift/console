@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   ChartArea,
   ChartAxis,
@@ -27,7 +28,7 @@ const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 2;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
-export const StackChart: React.FC<AreaChartProps> = ({
+export const StackChart: FC<AreaChartProps> = ({
   className,
   data = [],
   formatDate = timeFormatter.format,
@@ -49,7 +50,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
   const theme = getCustomTheme(ChartThemeColor.multiUnordered, areaTheme);
   const [containerRef, width] = useRefWidth();
 
-  const [processedData, unit] = React.useMemo(() => {
+  const [processedData, unit] = useMemo(() => {
     if (byteDataType) {
       const result = processFrame(data, byteDataType);
       return [result.processedData, result.unit];
@@ -57,12 +58,12 @@ export const StackChart: React.FC<AreaChartProps> = ({
     return [data, ''];
   }, [byteDataType, data]);
 
-  const tickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
+  const tickFormat = useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
   ]);
 
-  const getLabel = React.useCallback(
+  const getLabel = useCallback(
     (prop, includeDate = true) => {
       const { x, y } = prop.datum as DataPoint<Date>;
       const value = humanize(y, unit, unit).string;
@@ -74,7 +75,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
 
   const multiLine = processedData?.length > 1;
 
-  const container = React.useMemo(() => {
+  const container = useMemo(() => {
     if (multiLine) {
       const legendData = processedData.map((d) => ({
         childName: d[0]?.description,
@@ -142,7 +143,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
   );
 };
 
-export const Stack: React.FC<StackProps> = ({
+export const Stack: FC<StackProps> = ({
   namespace,
   query,
   samples = DEFAULT_SAMPLES,

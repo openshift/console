@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { useRef, useState, useMemo, memo } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -27,9 +28,9 @@ interface PodStatusProps {
   data: ExtPodKind[];
   showTooltip?: boolean;
   title?: string;
-  titleComponent?: React.ReactElement;
+  titleComponent?: ReactElement;
   subTitle?: string;
-  subTitleComponent?: React.ReactElement;
+  subTitleComponent?: ReactElement;
 }
 
 const { podStatusInnerRadius, podStatusOuterRadius } = calculateRadius(130); // default value of size is 130
@@ -43,7 +44,7 @@ const podStatusIsNumeric = (podStatusValue: string) => {
   );
 };
 
-const PodStatus: React.FC<PodStatusProps> = ({
+const PodStatus: FC<PodStatusProps> = ({
   innerRadius = podStatusInnerRadius,
   outerRadius = podStatusOuterRadius,
   x,
@@ -57,12 +58,12 @@ const PodStatus: React.FC<PodStatusProps> = ({
   subTitleComponent,
   data,
 }) => {
-  const ref = React.useRef();
-  const [updateOnEnd, setUpdateOnEnd] = React.useState<boolean>(false);
+  const ref = useRef();
+  const [updateOnEnd, setUpdateOnEnd] = useState<boolean>(false);
   const forceUpdate = useForceUpdate();
-  const prevVData = React.useRef<PodData[]>(null);
+  const prevVData = useRef<PodData[]>(null);
 
-  const vData = React.useMemo(() => {
+  const vData = useMemo(() => {
     const updateVData: PodData[] = podStatus.map((pod) => ({
       x: pod,
       y: _.sumBy(data, (d) => +(getPodStatus(d) === pod)) || 0,
@@ -91,7 +92,7 @@ const PodStatus: React.FC<PodStatusProps> = ({
   const truncSubTitle = subTitle
     ? _.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })
     : undefined;
-  const chartDonut = React.useMemo(() => {
+  const chartDonut = useMemo(() => {
     return (
       <ChartDonut
         ariaTitle={`${title}${subTitle && ` ${subTitle}`}`}
@@ -175,4 +176,4 @@ const PodStatus: React.FC<PodStatusProps> = ({
   return chartDonut;
 };
 
-export default React.memo((props: PodStatusProps) => <PodStatus {...props} />);
+export default memo((props: PodStatusProps) => <PodStatus {...props} />);

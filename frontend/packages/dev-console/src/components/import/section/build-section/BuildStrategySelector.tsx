@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,7 @@ type BuildStrategySelectorProps = {
   importStrategy: ImportStrategy;
 };
 
-export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
+export const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({
   formType,
   importStrategy,
 }) => {
@@ -24,7 +25,7 @@ export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
   const [strategy, strategyLoaded] = useClusterBuildStrategy();
   const { setFieldValue } = useFormikContext<FormikValues>();
 
-  const clusterBuildStrategyOptions = React.useMemo(() => {
+  const clusterBuildStrategyOptions = useMemo(() => {
     const options: SelectInputOption[] = [];
     if (strategy.buildah && importStrategy === ImportStrategy.DOCKERFILE) {
       options.push({
@@ -41,7 +42,7 @@ export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
     return options;
   }, [strategy, importStrategy, t]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (formType !== 'edit') {
       if (importStrategy === ImportStrategy.S2I) {
         setFieldValue('build.clusterBuildStrategy', ClusterBuildStrategy.S2I);
@@ -51,7 +52,7 @@ export const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({
     }
   }, [setFieldValue, importStrategy, formType]);
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableClusterBuildStrategies, (name) => t(name) === selection);
       setFieldValue('build.clusterBuildStrategy', value);

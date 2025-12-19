@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
@@ -6,7 +6,7 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { ResourceLimitFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
+const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
   label,
   unitName,
   unitOptions,

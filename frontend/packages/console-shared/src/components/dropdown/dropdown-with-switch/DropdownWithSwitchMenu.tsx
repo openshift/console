@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, MouseEvent, MutableRefObject, ReactNode } from 'react';
 import {
   Divider,
   Menu,
@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import DropdownWithSwitchGroups, { DropdownWithSwitchGroup } from './DropdownWithSwitchGroups';
 
-const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
+const DropdownWithSwitchMenu: FC<DropdownWithSwitchMenuProps> = ({
   menuRef,
   onSelect,
   options,
@@ -23,10 +23,10 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
   switchOnChange,
 }) => {
   return (
-    <Menu
+    (<Menu
       activeItemId={selected}
       isScrollable
-      onSelect={(event: React.MouseEvent, itemId: string) => {
+      onSelect={(event: MouseEvent, itemId: string) => {
         onSelect(event, itemId);
         setOpen(false);
       }}
@@ -50,22 +50,22 @@ const DropdownWithSwitchMenu: React.FC<DropdownWithSwitchMenuProps> = ({
         <Divider />
         <DropdownWithSwitchGroups options={options} selectedKey={selected} />
       </MenuContent>
-    </Menu>
+    </Menu>)
   );
 };
 
 type DropdownWithSwitchMenuProps = {
-  menuRef: React.MutableRefObject<HTMLDivElement>;
-  onSelect: (event: React.MouseEvent, itemId: string) => void;
+  menuRef: MutableRefObject<HTMLDivElement>;
+  onSelect: (event: MouseEvent, itemId: string) => void;
   options: DropdownWithSwitchGroup[];
   selected?: string;
   setOpen: (isOpen: boolean) => void;
   switchIsChecked: boolean;
   switchIsDisabled?: boolean;
   switchLabelIsReversed?: boolean;
-  switchLabel?: React.ReactNode;
+  switchLabel?: ReactNode;
   switchLabelClassName?: string;
-  switchLabelOff?: React.ReactNode;
+  switchLabelOff?: ReactNode;
   switchOnChange: (isChecked: boolean) => void;
 };
 

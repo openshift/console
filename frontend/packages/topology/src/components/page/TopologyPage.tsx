@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -38,7 +39,7 @@ type PageContentsProps = {
   viewType: TopologyViewType;
 };
 
-const PageContents: React.FC<PageContentsProps> = ({ viewType }) => {
+const PageContents: FC<PageContentsProps> = ({ viewType }) => {
   const { t } = useTranslation();
   const { name: namespace } = useParams();
 
@@ -58,7 +59,7 @@ const PageContents: React.FC<PageContentsProps> = ({ viewType }) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const TopologyPage: React.FC<TopologyPageProps> = ({
+export const TopologyPage: FC<TopologyPageProps> = ({
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
@@ -77,7 +78,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
 
   const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
 
-  const topologyViewState = React.useMemo((): TopologyViewType => {
+  const topologyViewState = useMemo((): TopologyViewType => {
     if (!loaded) {
       return null;
     }
@@ -94,7 +95,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   const viewType =
     (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const lastOverviewOpen = JSON.parse(
       sessionStorage.getItem(LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY) ?? '{}',
     );
@@ -103,13 +104,13 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     }
   }, [loaded, namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!queryParams.get('view') && loaded) {
       setQueryArgument('view', topologyViewState || defaultViewType);
     }
   }, [defaultViewType, topologyViewState, queryParams, loaded]);
 
-  const onViewChange = React.useCallback(
+  const onViewChange = useCallback(
     (newViewType: TopologyViewType) => {
       setQueryArgument('view', newViewType);
       setTopologyLastView(newViewType);

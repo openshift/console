@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -99,19 +99,19 @@ const VirtualizedTable: VirtualizedTableFC = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
-  const [sortBy, setSortBy] = React.useState<{
+  const [sortBy, setSortBy] = useState<{
     index: number;
     direction: SortByDirection;
   }>({ index: sortColumnIndex || columnShift, direction: sortDirection || SortByDirection.asc });
 
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     const colIDs = allColumns.map((c) => c.id);
     return allColumns.filter((col) => isColumnVisible(windowWidth, col, colIDs));
   }, [windowWidth, allColumns]);
 
-  const applySort = React.useCallback(
+  const applySort = useCallback(
     (index, direction) => {
       const url = new URL(window.location.href);
       const sp = new URLSearchParams(window.location.search);
@@ -130,7 +130,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
     [columnShift, columns, navigate],
   );
 
-  const sortedData = React.useMemo(() => {
+  const sortedData = useMemo(() => {
     const sortColumn = columns[sortBy.index - columnShift];
     if (!sortColumn?.sort) {
       return data;
@@ -142,7 +142,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
     return sortColumn?.sort(data, sortBy.direction);
   }, [columnShift, columns, data, sortBy.direction, sortBy.index]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = _.debounce(() => setWindowWidth(window.innerWidth), 100);
 
     const sp = new URLSearchParams(window.location.search);
@@ -167,7 +167,7 @@ const VirtualizedTable: VirtualizedTableFC = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onSort = React.useCallback(
+  const onSort = useCallback(
     (event, index, direction) => {
       event.preventDefault();
       applySort(index, direction);

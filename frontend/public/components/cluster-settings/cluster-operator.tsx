@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useLocation } from 'react-router-dom-v5-compat';
 import {
@@ -78,7 +79,7 @@ const getIcon = (status: OperatorStatus) => {
   }[status];
 };
 
-const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({ status }) => {
+const OperatorStatusIconAndLabel: FC<OperatorStatusIconAndLabelProps> = ({ status }) => {
   const icon = getIcon(status);
   return (
     <>
@@ -131,7 +132,7 @@ const getClusterOperatorDataViewRows = (
 
 const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -178,7 +179,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
   return columns;
 };
 
-export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
+export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({
   data,
   loaded,
   ...props
@@ -186,7 +187,7 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
   const { t } = useTranslation();
   const columns = useClusterOperatorColumns();
 
-  const clusterOperatorStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+  const clusterOperatorStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return [
       {
         value: 'Available',
@@ -215,9 +216,9 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
     ];
   }, [t]);
 
-  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -230,14 +231,14 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
     [t, clusterOperatorStatusFilterOptions],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource: ClusterOperator, filters: ClusterOperatorFilters) =>
       filters.status.length === 0 || filters.status.includes(getClusterOperatorStatus(resource)),
     [],
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
         {...props}
         label={ClusterOperatorModel.labelPlural}
@@ -250,11 +251,11 @@ export const ClusterOperatorList: React.FC<ClusterOperatorListProps> = ({
         getDataViewRows={getClusterOperatorDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => {
+const UpdateInProgressAlert: FC<UpdateInProgressAlertProps> = ({ cv }) => {
   const updateCondition = getClusterVersionCondition(
     cv,
     ClusterVersionConditionType.Progressing,
@@ -278,7 +279,7 @@ const UpdateInProgressAlert: React.FC<UpdateInProgressAlertProps> = ({ cv }) => 
   );
 };
 
-export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) => {
+export const ClusterOperatorPage: FC<ClusterOperatorPageProps> = (props) => {
   return (
     <>
       <UpdateInProgressAlert cv={props.cv} />
@@ -294,7 +295,7 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
   );
 };
 
-const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
+const OperandVersions: FC<OperandVersionsProps> = ({ versions }) => {
   const { t } = useTranslation();
   return _.isEmpty(versions) ? (
     <EmptyBox label={t('public~versions')} />
@@ -320,7 +321,7 @@ const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
   );
 };
 
-const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) => {
+const ClusterOperatorDetails: FC<ClusterOperatorDetailsProps> = ({ obj }) => {
   const { status, message } = getStatusAndMessage(obj);
   const versions: OperandVersion[] = _.get(obj, 'status.versions', []);
   const conditions = _.get(obj, 'status.conditions', []);
@@ -372,7 +373,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
   );
 };
 
-export const ClusterOperatorDetailsPage: React.FC = (props) => {
+export const ClusterOperatorDetailsPage: FC = (props) => {
   const { t } = useTranslation();
   const location = useLocation();
   return (

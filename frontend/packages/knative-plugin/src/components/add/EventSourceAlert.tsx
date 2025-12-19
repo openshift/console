@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +8,7 @@ interface EventSourceAlertProps {
   createSourceAccess: boolean;
 }
 
-const EventSourceAlert: React.FC<EventSourceAlertProps> = ({
+const EventSourceAlert: FC<EventSourceAlertProps> = ({
   isValidSource,
   createSourceAccessLoading,
   createSourceAccess,

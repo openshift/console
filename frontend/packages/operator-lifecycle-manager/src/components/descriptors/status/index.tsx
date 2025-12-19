@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
@@ -9,7 +10,7 @@ import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
 import { PodStatusChart, PodStatusChartProps } from './pods';
 
-const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = ({
+const PodStatuses: FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = ({
   description,
   descriptor,
   fullPath,
@@ -18,7 +19,7 @@ const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses'
   value,
 }) => {
   const { t } = useTranslation();
-  const detail = React.useMemo(() => {
+  const detail = useMemo(() => {
     if (!_.isObject(value) || _.some(value, (v) => !_.isArray(v))) {
       return <Invalid path={descriptor.path} />;
     }
@@ -40,7 +41,7 @@ const PodStatuses: React.FC<StatusCapabilityProps<PodStatusChartProps['statuses'
   );
 };
 
-const Link: React.FC<StatusCapabilityProps<string>> = ({
+const Link: FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -59,7 +60,7 @@ const Link: React.FC<StatusCapabilityProps<string>> = ({
   );
 };
 
-const K8sPhase: React.FC<StatusCapabilityProps<string>> = ({
+const K8sPhase: FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -71,7 +72,7 @@ const K8sPhase: React.FC<StatusCapabilityProps<string>> = ({
   </DetailsItem>
 );
 
-const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
+const K8sPhaseReason: FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -92,7 +93,7 @@ const K8sPhaseReason: React.FC<StatusCapabilityProps<string>> = ({
   );
 };
 
-const MainStatus: React.FC<StatusCapabilityProps<string>> = ({
+const MainStatus: FC<StatusCapabilityProps<string>> = ({
   description,
   fullPath,
   label,
@@ -104,14 +105,14 @@ const MainStatus: React.FC<StatusCapabilityProps<string>> = ({
   </DetailsItem>
 );
 
-export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = ({
+export const StatusDescriptorDetailsItem: FC<StatusCapabilityProps> = ({
   className,
   ...props
 }) => {
   const [capability] =
     getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value) ?? [];
 
-  const Component = React.useMemo(() => {
+  const Component = useMemo(() => {
     if (capability?.startsWith(StatusCapability.k8sResourcePrefix)) {
       return K8sResourceLinkCapability;
     }

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
+import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import * as _ from 'lodash-es';
 /* eslint-disable import/named */
@@ -46,7 +47,7 @@ export const viewYamlComponent = (props) => (
   />
 );
 
-class PodsComponentWithTranslation extends React.PureComponent<
+class PodsComponentWithTranslation extends PureComponent<
   PodsComponentProps & WithTranslation
 > {
   render() {
@@ -76,7 +77,7 @@ class PodsComponentWithTranslation extends React.PureComponent<
 
 export const PodsComponent = withTranslation()(PodsComponentWithTranslation);
 
-type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
+type NavFactory = { [name: string]: (c?: ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
   details: (component) => ({
     href: '',
@@ -176,9 +177,9 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
+export const NavBar: FC<NavBarProps> = ({ pages }) => {
   const { t } = useTranslation();
-  const { telemetryPrefix, titlePrefix } = React.useContext(PageTitleContext);
+  const { telemetryPrefix, titlePrefix } = useContext(PageTitleContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -240,15 +241,15 @@ export const NavBar: React.FC<NavBarProps> = ({ pages }) => {
 };
 NavBar.displayName = 'NavBar';
 
-export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
+export const HorizontalNav = memo((props: HorizontalNavProps) => {
   const params = useParams();
 
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
     const content = (
-      <React.Suspense fallback={<LoadingBox blame="HorizontalNav" />}>
+      <Suspense fallback={<LoadingBox blame="HorizontalNav" />}>
         <Routes>{routes}</Routes>
-      </React.Suspense>
+      </Suspense>
     );
 
     const skeletonDetails = (
@@ -297,7 +298,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const horizontalTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
   const navTabExtensions = useExtensions<NavTab>(isTab);
 
-  const pluginPages = React.useMemo(() => {
+  const pluginPages = useMemo(() => {
     const resolvedResourceNavTab = horizontalTabExtensions
       .filter(
         (tab) =>
@@ -368,7 +369,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
  * Component consumed by the dynamic plugin SDK
  * Changes to the underlying component has to support props used in this facade
  */
-export const HorizontalNavFacade: React.FC<HorizontalNavFacadeProps> = ({
+export const HorizontalNavFacade: FC<HorizontalNavFacadeProps> = ({
   resource,
   pages,
   customData,
@@ -405,8 +406,8 @@ export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = 
 };
 
 export type Page<D = any> = Partial<Omit<NavPage, 'component'>> & {
-  component?: React.ComponentType<PageComponentProps & D>;
-  badge?: React.ReactNode;
+  component?: ComponentType<PageComponentProps & D>;
+  badge?: ReactNode;
   pageData?: D;
   nameKey?: string;
 };
@@ -426,7 +427,7 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   pagesFor?: (obj: K8sResourceKind) => Page[];
   resourceKeys?: string[];
   hideNav?: boolean;
-  EmptyMsg?: React.ComponentType<any>;
+  EmptyMsg?: ComponentType<any>;
   customData?: any;
   noStatusBox?: boolean;
 };

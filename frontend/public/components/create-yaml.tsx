@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
@@ -34,17 +34,17 @@ export const CreateYAMLInner = ({
   const { t } = useTranslation();
   const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
-    React.useCallback(
+    useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === kindObj?.kind,
       [kindObj],
     ),
   );
 
-  const yamlTemplates = React.useMemo(() => getYAMLTemplates(templateExtensions), [
+  const yamlTemplates = useMemo(() => getYAMLTemplates(templateExtensions), [
     templateExtensions,
   ]);
 
-  const initialResource = React.useMemo(() => {
+  const initialResource = useMemo(() => {
     if (!kindObj) {
       return {};
     }

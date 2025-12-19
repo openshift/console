@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { MouseIcon } from '@patternfly/react-icons/dist/esm/icons/mouse-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import './Shortcut.scss';
 
 interface ShortcutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   alt?: boolean;
   click?: boolean;
   ctrl?: boolean;
@@ -19,7 +19,7 @@ interface ShortcutProps {
 }
 
 interface ShortcutCommandProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export const ShortcutCommand: Snail.FCC<ShortcutCommandProps> = ({ children }) => (
@@ -30,7 +30,7 @@ export const ShortcutCommand: Snail.FCC<ShortcutCommandProps> = ({ children }) =
 
 export const isMac = window.navigator.platform.includes('Mac');
 
-const Shortcut: React.FC<ShortcutProps> = ({
+const Shortcut: FC<ShortcutProps> = ({
   children,
   alt,
   click,

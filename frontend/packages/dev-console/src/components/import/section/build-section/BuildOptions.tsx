@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ type BuildOptionProps = {
   importStrategy: ImportStrategy;
 };
 
-export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
+export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
@@ -30,7 +31,7 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
 
   const fieldName = 'build.option';
 
-  const selectInputOptions = React.useMemo(() => {
+  const selectInputOptions = useMemo(() => {
     const options: SelectInputOption[] = [];
 
     if (isShipwrightBuildsEnabled && isPreferredStrategyAvailable(importStrategy, strategy)) {
@@ -75,7 +76,7 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
     t,
   ]);
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableBuildOptions, (name) => t(name) === selection);
       setFieldValue(fieldName, value);

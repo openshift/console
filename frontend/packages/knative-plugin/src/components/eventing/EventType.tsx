@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
@@ -19,7 +19,7 @@ const EventTypeHeaders = (t: TFunction) => () => {
   ];
 };
 
-export const EventTypeRow: React.FC<RowFunctionArgs<{ key: string; value: string }>> = ({
+export const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({
   obj,
 }) => {
   return (
@@ -34,7 +34,7 @@ interface EventTypeProps {
   eventType: K8sResourceKind;
 }
 
-const EventType: React.FC<EventTypeProps> = ({ eventType }) => {
+const EventType: FC<EventTypeProps> = ({ eventType }) => {
   const { t } = useTranslation();
 
   const specAttributes = ['type', 'source', 'schema'];

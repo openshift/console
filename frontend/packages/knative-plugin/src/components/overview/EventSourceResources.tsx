@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ type OwnedEventSourcesProps = {
   eventSources: K8sResourceKind[];
 };
 
-export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => {
+export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
   const { t } = useTranslation();
   const {
     metadata: { namespace },
@@ -68,7 +68,7 @@ export const EventSourceTarget: React.FC<EventSourceTargetProps> = ({ obj }) => 
   );
 };
 
-export const EventSourceDeployments: React.FC<EventSourceDeploymentsProps> = ({
+export const EventSourceDeployments: FC<EventSourceDeploymentsProps> = ({
   deploymentObj,
 }) => {
   const { t } = useTranslation();
@@ -92,7 +92,7 @@ export const EventSourceDeployments: React.FC<EventSourceDeploymentsProps> = ({
   );
 };
 
-export const OwnedEventSources: React.FC<OwnedEventSourcesProps> = ({ eventSources }) => (
+export const OwnedEventSources: FC<OwnedEventSourcesProps> = ({ eventSources }) => (
   <>
     {eventSources?.length > 0
       ? eventSources.map((source) => (

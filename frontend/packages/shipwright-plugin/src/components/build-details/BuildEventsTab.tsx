@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import { EventInvolvedObject } from '@console/internal/module/k8s';
@@ -26,7 +26,7 @@ const getFilters = (build: Build) => {
   ];
 };
 
-const BuildEventsTab: React.FC<BuildEventsTabProps> = ({ obj: build }) => {
+const BuildEventsTab: FC<BuildEventsTabProps> = ({ obj: build }) => {
   const { ns: namespace } = useParams();
   return <ResourcesEventStream filters={getFilters(build)} namespace={namespace} />;
 };

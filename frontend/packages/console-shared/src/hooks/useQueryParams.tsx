@@ -1,9 +1,10 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
+import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom-v5-compat';
 
 export const useQueryParams = () => {
   const { search } = useLocation();
-  return React.useMemo(() => new URLSearchParams(search), [search]);
+  return useMemo(() => new URLSearchParams(search), [search]);
 };
 
 export type WithQueryParamsProps = {
@@ -11,8 +12,8 @@ export type WithQueryParamsProps = {
 };
 
 export const withQueryParams = <Props extends WithQueryParamsProps>(
-  Component: React.ComponentType<Props>,
-): React.FC<Omit<Props, keyof WithQueryParamsProps>> => (props: Props) => {
+  Component: ComponentType<Props>,
+): FC<Omit<Props, keyof WithQueryParamsProps>> => (props: Props) => {
   const queryParams = useQueryParams();
   return <Component {...props} queryParams={queryParams} />;
 };

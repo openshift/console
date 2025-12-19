@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ type AddHealthChecksFormProps = {
   currentContainer: string;
 };
 
-const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
+const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({
   resource,
   currentContainer,
 }) => {

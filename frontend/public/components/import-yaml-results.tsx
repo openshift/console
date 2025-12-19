@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Bullseye, Button, Icon, Spinner, Title } from '@patternfly/react-core';
@@ -23,9 +24,9 @@ const reactPropFix = {
   translate: 'no' as 'no',
 };
 
-export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {
+export const ImportYAMLPageStatus: FC<ImportYAMLPageStatusProps> = ({ errors, inFlight }) => {
   const { t } = useTranslation();
-  let StatusBlock: React.ReactNode;
+  let StatusBlock: ReactNode;
 
   if (inFlight) {
     StatusBlock = (
@@ -68,12 +69,12 @@ export const ImportYAMLPageStatus: React.FC<ImportYAMLPageStatusProps> = ({ erro
   return <div className="co-import-yaml-status pf-v6-u-text-align-center">{StatusBlock}</div>;
 };
 
-export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> = ({
+export const ImportYAMLResourceStatus: FC<ImportYAMLResourceStatusProps> = ({
   creating,
   error,
   message,
 }) => {
-  let StatusIcon: React.ReactNode;
+  let StatusIcon: ReactNode;
   if (creating) {
     StatusIcon = <Spinner size="sm" className="co-icon-space-r" />;
   } else if (error) {
@@ -97,23 +98,23 @@ export const ImportYAMLResourceStatus: React.FC<ImportYAMLResourceStatusProps> =
   );
 };
 
-export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
+export const ImportYAMLResults: FC<ImportYAMLResultsProps> = ({
   createResources,
   displayResults,
   importResources,
   retryFailed,
 }) => {
   const { t } = useTranslation();
-  const [importStatus, setImportStatus] = React.useState<ImportYAMLStatus[]>(
+  const [importStatus, setImportStatus] = useState<ImportYAMLStatus[]>(
     importResources.map(() => ({
       creating: true,
       message: t('public~Creating'),
     })),
   );
-  const [inFlight, setInFlight] = React.useState(true);
+  const [inFlight, setInFlight] = useState(true);
   const errors = importStatus.some((s) => s.error);
 
-  React.useEffect(() => {
+  useEffect(() => {
     createResources(importResources).then((results) => {
       setImportStatus(
         results.map((result) => {

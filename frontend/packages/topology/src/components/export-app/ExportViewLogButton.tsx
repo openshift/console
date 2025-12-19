@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useMemo } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { resourcePath, history } from '@console/internal/components/utils';
@@ -14,7 +15,7 @@ interface ExportViewLogButtonProps {
   onViewLog?: () => void;
 }
 
-const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
+const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({
   name,
   namespace,
   onViewLog,
@@ -27,7 +28,7 @@ const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
     isList: false,
   });
 
-  const podResource = React.useMemo(
+  const podResource = useMemo(
     () =>
       jobLoaded && job?.metadata
         ? {
@@ -48,7 +49,7 @@ const ExportViewLogButton: React.FC<ExportViewLogButtonProps> = ({
     podData?.metadata &&
     `${resourcePath(PodModel.kind, podData?.metadata.name, podData?.metadata.namespace)}/logs`;
 
-  const viewLog = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const viewLog = (e: MouseEvent<HTMLButtonElement>) => {
     if (isModifiedEvent(e)) {
       return;
     }

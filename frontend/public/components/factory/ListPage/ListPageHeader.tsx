@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageSection } from '@patternfly/react-core';
@@ -22,22 +21,22 @@ const ListPageHeader: Snail.FCC<ListPageHeaderProps> = ({
   title || children || badge || helpAlert || helpText ? (
     title ? (
       // Render PageHeading if title is present
-      <PageHeading
+      (<PageHeading
         title={title}
         badge={badge}
         hideFavoriteButton={hideFavoriteButton}
         helpText={helpText}
         primaryAction={children}
         helpAlert={helpAlert}
-      />
+      />)
     ) : (
       // Badge rendered from PageHeading only when title is present
-      <PageSection hasBodyWrapper={false}>
+      (<PageSection hasBodyWrapper={false}>
         {children && <div>{children}</div>}
         {badge && <div>{badge}</div>}
         {helpText && <div>{helpText}</div>}
         {helpAlert && <div>{helpAlert}</div>}
-      </PageSection>
+      </PageSection>)
     )
   ) : // Do not produce empty space if no title, children, badge, or help alert
   null;

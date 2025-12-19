@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ChangeEvent } from 'react';
 import {
   FilterSidePanel,
   FilterSidePanelCategory,
@@ -26,7 +26,7 @@ type CatalogFiltersProps = {
   sortFilterGroups?: boolean;
 };
 
-const CatalogFilters: React.FC<CatalogFiltersProps> = ({
+const CatalogFilters: FC<CatalogFiltersProps> = ({
   activeFilters,
   filterGroupCounts,
   filterGroupMap,
@@ -51,17 +51,17 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
     return (
-      <FilterSidePanelCategoryItem
+      (<FilterSidePanelCategoryItem
         key={filterName}
         count={count}
         checked={active}
-        onClick={(e: React.ChangeEvent<HTMLInputElement>) =>
+        onClick={(e: ChangeEvent<HTMLInputElement>) =>
           onFilterChange(groupName, filterName, e.target.checked)
         }
         data-test={`${groupName}-${_.kebabCase(filterName)}`}
       >
         {label}
-      </FilterSidePanelCategoryItem>
+      </FilterSidePanelCategoryItem>)
     );
   };
 

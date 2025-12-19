@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
@@ -9,27 +10,27 @@ const mapCardsToGrid = (
   cards: OverviewGridCard[] = [],
   keyPrefix: string,
   ignoreCardSpan: boolean = false,
-): React.ReactNode[] =>
+): ReactNode[] =>
   cards.map(({ Card, span = 12 }, index) => (
     // eslint-disable-next-line react/no-array-index-key
-    <GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
+    (<GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
       <Card />
-    </GridItem>
+    </GridItem>)
   ));
 
-const DashboardGrid: React.FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
+const DashboardGrid: FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
   const smallGrid = !!width && width <= 992; // 992px is equivalent of --pf-t--global--breakpoint--lg
 
-  const mainGridCards = React.useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
+  const mainGridCards = useMemo(() => mapCardsToGrid(mainCards, 'main', smallGrid), [
     mainCards,
     smallGrid,
   ]);
-  const leftGridCards = React.useMemo(() => mapCardsToGrid(leftCards, 'left', smallGrid), [
+  const leftGridCards = useMemo(() => mapCardsToGrid(leftCards, 'left', smallGrid), [
     leftCards,
     smallGrid,
   ]);
-  const rightGridCards = React.useMemo(() => mapCardsToGrid(rightCards, 'right', smallGrid), [
+  const rightGridCards = useMemo(() => mapCardsToGrid(rightCards, 'right', smallGrid), [
     rightCards,
     smallGrid,
   ]);

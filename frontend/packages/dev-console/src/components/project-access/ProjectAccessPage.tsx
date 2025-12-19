@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
@@ -6,7 +6,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
 
-const ProjectAccessPage: React.FC = (props) => {
+const ProjectAccessPage: FC = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

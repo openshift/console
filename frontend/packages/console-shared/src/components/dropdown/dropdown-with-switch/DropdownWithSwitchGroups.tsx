@@ -1,7 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { Divider, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core';
 
-const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
+const DropdownWithSwitchGroups: FC<DropdownWithSwitchGroupsProps> = ({
   options,
   selectedKey,
 }) => {
@@ -9,7 +10,7 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
   return renderedOptions.length === 0 ? null : (
     <>
       {renderedOptions.map(({ items, key, label }, i) => (
-        <React.Fragment key={key}>
+        <Fragment key={key}>
           {i !== 0 && <Divider />}
           <MenuGroup label={label}>
             <MenuList>
@@ -26,7 +27,7 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
               ))}
             </MenuList>
           </MenuGroup>
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   );

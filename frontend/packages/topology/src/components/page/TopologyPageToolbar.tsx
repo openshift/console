@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { Tooltip, Popover, Button, Icon } from '@patternfly/react-core';
 import { ListIcon } from '@patternfly/react-icons/dist/esm/icons/list-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
@@ -21,13 +22,13 @@ interface TopologyPageToolbarProps {
   onViewChange: (view: TopologyViewType) => void;
 }
 
-const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
+const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(
   function TopologyPageToolbar({ viewType, onViewChange }) {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
-    const { extensions } = React.useContext<FileUploadContextType>(FileUploadContext);
+    const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
     const showGraphView = viewType === TopologyViewType.graph;
-    const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
+    const dataModelContext = useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
     const createResourceAccess: string[] = useAddToProjectAccess(namespace);
     const allImportAccess = createResourceAccess.includes(allImportResourceAccess);

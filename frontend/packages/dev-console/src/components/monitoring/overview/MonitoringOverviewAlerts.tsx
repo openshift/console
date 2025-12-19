@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
@@ -13,7 +13,7 @@ interface MonitoringOverviewAlertsProps {
   alerts: AlertType[];
 }
 
-const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
+const MonitoringOverviewAlerts: FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
   const sortedAlerts = sortMonitoringAlerts(alerts);
 
   return (

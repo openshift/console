@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+
+import { useState, useCallback, useEffect } from 'react';
 import {
   Alert,
   Backdrop,
@@ -64,7 +66,7 @@ const deleteOptions = {
   propagationPolicy: 'Foreground',
 };
 
-export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
+export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   cancel,
   close,
   csv,
@@ -77,17 +79,17 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     operatorUninstallInProgress,
     operatorUninstallErrorMessage,
   ] = usePromiseHandler();
-  const [showInstructions, setShowInstructions] = React.useState(true);
-  const [operatorUninstallFinished, setOperatorUninstallFinished] = React.useState(false);
-  const [deleteOperands, setDeleteOperands] = React.useState(false);
-  const [operandsDeleteInProgress, setOperandsDeleteInProgress] = React.useState(false);
-  const [operandsRemaining, setOperandsRemaining] = React.useState(0);
-  const [operandsDeleteFinished, setOperandsDeleteFinished] = React.useState(false);
-  const [operandDeletionErrors, setOperandDeletionErrors] = React.useState<OperandError[]>([]);
-  const [operandDeletionVerificationError, setOperandDeletionVerificationError] = React.useState(
+  const [showInstructions, setShowInstructions] = useState(true);
+  const [operatorUninstallFinished, setOperatorUninstallFinished] = useState(false);
+  const [deleteOperands, setDeleteOperands] = useState(false);
+  const [operandsDeleteInProgress, setOperandsDeleteInProgress] = useState(false);
+  const [operandsRemaining, setOperandsRemaining] = useState(0);
+  const [operandsDeleteFinished, setOperandsDeleteFinished] = useState(false);
+  const [operandDeletionErrors, setOperandDeletionErrors] = useState<OperandError[]>([]);
+  const [operandDeletionVerificationError, setOperandDeletionVerificationError] = useState(
     false,
   );
-  const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = React.useState(
+  const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = useState(
     '',
   );
 
@@ -140,7 +142,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscriptionNamespace,
   );
 
-  const uninstallOperator = React.useCallback(async () => {
+  const uninstallOperator = useCallback(async () => {
     const patch = removePlugins
       ? getPatchForRemovingPlugins(consoleOperatorConfig, enabledPlugins)
       : null;
@@ -199,7 +201,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     subscription,
   ]);
 
-  const finishVerification = React.useCallback(
+  const finishVerification = useCallback(
     (proceedToUninstallOperator: boolean) => {
       setOperandsDeleteInProgress(false);
       setOperandsDeleteFinished(true);
@@ -213,7 +215,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     [uninstallOperator],
   );
 
-  const pollOperands = React.useCallback((): NodeJS.Timeout => {
+  const pollOperands = useCallback((): NodeJS.Timeout => {
     const url = `${window.SERVER_FLAGS.basePath}api/olm/list-operands?name=${subscriptionName}&namespace=${subscriptionNamespace}`;
     const interval = setInterval(() => {
       coFetchJSON(url)
@@ -231,7 +233,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     return interval;
   }, [finishVerification, subscriptionName, subscriptionNamespace]);
 
-  const closeAndRedirect = React.useCallback(() => {
+  const closeAndRedirect = useCallback(() => {
     close();
     // if url contains subscription name (ex: "codeready-workspaces") or installedCSV version (ex: "crwoperator.v2.9.0")
     // redirect to ClusterServiceVersion "Installed Operators" list page,
@@ -244,13 +246,13 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     }
   }, [close, subscription]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isSubmitFinished && !hasSubmitErrors) {
       closeAndRedirect();
     }
   }, [closeAndRedirect, hasSubmitErrors, isSubmitFinished]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let intervalID;
     if (operandsDeleteInProgress) {
       intervalID = pollOperands();
@@ -262,7 +264,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     };
   }, [operandsDeleteInProgress, pollOperands]);
 
-  const submit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const submit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (isSubmitFinished) {
       closeAndRedirect();
@@ -437,8 +439,8 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   );
 };
 
-export const UninstallOperatorOverlay: React.FC<UninstallOperatorModalProps> = (props) => {
-  const [isOpen, setIsOpen] = React.useState(true);
+export const UninstallOperatorOverlay: FC<UninstallOperatorModalProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
   const closeOverlay = () => setIsOpen(false);
   return isOpen ? (
     <Backdrop>
@@ -449,7 +451,7 @@ export const UninstallOperatorOverlay: React.FC<UninstallOperatorModalProps> = (
   ) : null;
 };
 
-const OperandDeleteProgress: React.FC<{
+const OperandDeleteProgress: FC<{
   total: number;
   remaining: number;
 }> = ({ total, remaining }) => {
@@ -479,7 +481,7 @@ const OperandDeleteProgress: React.FC<{
   );
 };
 
-const OperandsLoadedErrorAlert: React.FC<{ operandsLoadedErrorMessage: string }> = ({
+const OperandsLoadedErrorAlert: FC<{ operandsLoadedErrorMessage: string }> = ({
   operandsLoadedErrorMessage,
 }) => {
   const { t } = useTranslation();
@@ -495,7 +497,7 @@ const OperandsLoadedErrorAlert: React.FC<{ operandsLoadedErrorMessage: string }>
   );
 };
 
-const OperatorUninstallSuccessAlert: React.FC<{ name: string; namespace: string }> = ({
+const OperatorUninstallSuccessAlert: FC<{ name: string; namespace: string }> = ({
   name,
   namespace,
 }) => {
@@ -517,7 +519,7 @@ const OperatorUninstallSuccessAlert: React.FC<{ name: string; namespace: string 
   );
 };
 
-const OperatorUninstallErrorAlert: React.FC<{ errorMessage: string }> = ({ errorMessage }) => {
+const OperatorUninstallErrorAlert: FC<{ errorMessage: string }> = ({ errorMessage }) => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -535,7 +537,7 @@ const OperatorUninstallErrorAlert: React.FC<{ errorMessage: string }> = ({ error
   );
 };
 
-const OperandDeletionErrorAlert: React.FC<{
+const OperandDeletionErrorAlert: FC<{
   operandDeletionErrors: OperandError[];
   csvName: string;
   cancel?: () => void;
@@ -557,7 +559,7 @@ const OperandDeletionErrorAlert: React.FC<{
   );
 };
 
-const OperandDeletionSuccessAlert: React.FC<{ name: string; namespace: string }> = ({
+const OperandDeletionSuccessAlert: FC<{ name: string; namespace: string }> = ({
   name,
   namespace,
 }) => {
@@ -579,7 +581,7 @@ const OperandDeletionSuccessAlert: React.FC<{ name: string; namespace: string }>
   );
 };
 
-const UninstallAlert: React.FC<{ errorMessage: string; name: string; namespace: string }> = ({
+const UninstallAlert: FC<{ errorMessage: string; name: string; namespace: string }> = ({
   errorMessage,
   name,
   namespace,
@@ -590,7 +592,7 @@ const UninstallAlert: React.FC<{ errorMessage: string; name: string; namespace: 
     <OperatorUninstallSuccessAlert name={name} namespace={namespace} />
   );
 
-const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName, cancel }) => {
+const OperandsTable: FC<OperandsTableProps> = ({ operands, loaded, csvName, cancel }) => {
   const { t } = useTranslation();
   return (
     <StatusBox
@@ -639,7 +641,7 @@ const OperandsTable: React.FC<OperandsTableProps> = ({ operands, loaded, csvName
   );
 };
 
-const OperandErrorList: React.FC<OperandErrorListProps> = ({ operandErrors, csvName, cancel }) => {
+const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, cancel }) => {
   const { t } = useTranslation();
   return (
     <ul className="co-operator-uninstall-alert__list">
@@ -674,7 +676,7 @@ const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalPro
 
 export const useUninstallOperatorModal = (props: UninstallOperatorModalProps) => {
   const launcher = useOverlay();
-  return React.useCallback(
+  return useCallback(
     () => launcher<UninstallOperatorModalProviderProps>(UninstallOperatorModalProvider, props),
     [launcher, props],
   );

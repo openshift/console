@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCondition } from '@console/internal/module/k8s';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared/';
@@ -8,7 +8,7 @@ export type GetConditionsForStatusProps = {
   conditions: K8sResourceCondition[];
 };
 
-const GetConditionsForStatus: React.FC<GetConditionsForStatusProps> = ({ conditions }) => {
+const GetConditionsForStatus: FC<GetConditionsForStatusProps> = ({ conditions }) => {
   const successCount = getConditionOKCount(conditions);
   const failureCount = _.size(conditions) - successCount;
   return (

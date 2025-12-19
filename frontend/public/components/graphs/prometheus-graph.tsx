@@ -1,6 +1,7 @@
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ComponentType, ReactNode, Ref } from 'react';
+import { forwardRef } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
@@ -16,7 +17,7 @@ const mapStateToProps = (state: RootState) => ({
   namespace: getActiveNamespace(state),
 });
 
-const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
+const PrometheusGraphLink_: FC<PrometheusGraphLinkProps> = ({
   children,
   query,
   namespace,
@@ -45,9 +46,9 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
 };
 export const PrometheusGraphLink = connect(mapStateToProps)(
   PrometheusGraphLink_,
-) as React.ComponentType<Omit<PrometheusGraphLinkProps, 'namespace'>>;
+) as ComponentType<Omit<PrometheusGraphLinkProps, 'namespace'>>;
 
-export const PrometheusGraph = React.forwardRef<HTMLDivElement, PrometheusGraphProps>(
+export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
   ({ children, className, title }, ref) => (
     <div ref={ref} className={css('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && (
@@ -64,12 +65,12 @@ type PrometheusGraphLinkProps = {
   query: string | string[];
   namespace?: string;
   ariaChartLinkLabel?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 type PrometheusGraphProps = {
   className?: string;
-  ref?: React.Ref<HTMLDivElement>;
+  ref?: Ref<HTMLDivElement>;
   title?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };

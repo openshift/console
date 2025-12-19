@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Tabs, Tab } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -14,18 +14,18 @@ interface MultiTabbedTerminalProps {
 }
 
 export const MultiTabbedTerminal: Snail.FCC<MultiTabbedTerminalProps> = ({ onClose }) => {
-  const [terminalTabs, setTerminalTabs] = React.useState<number[]>([1]);
-  const [activeTabKey, setActiveTabKey] = React.useState<number>(1);
-  const [tickNamespace, setTickNamespace] = React.useState<string>(null);
-  const [tickWorkspace, setTickWorkspace] = React.useState<string>(null);
+  const [terminalTabs, setTerminalTabs] = useState<number[]>([1]);
+  const [activeTabKey, setActiveTabKey] = useState<number>(1);
+  const [tickNamespace, setTickNamespace] = useState<string>(null);
+  const [tickWorkspace, setTickWorkspace] = useState<string>(null);
   const { t } = useTranslation('webterminal-plugin');
   const fireTelemetryEvent = useTelemetry();
 
-  const tick = React.useCallback(() => {
+  const tick = useCallback(() => {
     return tickNamespace && tickWorkspace && sendActivityTick(tickWorkspace, tickNamespace);
   }, [tickWorkspace, tickNamespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let startTime;
     let tickReq;
     const handleTick = (timestamp) => {

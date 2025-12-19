@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback, Suspense } from 'react';
 import {
   EmptyState,
   EmptyStateVariant,
@@ -37,7 +38,7 @@ type HelmReleaseFilters = ResourceFilters & { status: string[] };
 
 export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('helm-plugin~Name'),
@@ -120,15 +121,15 @@ const getObjectMetadata = (release: HelmRelease) => ({
   name: release.name,
 });
 
-const HelmReleaseList: React.FC = () => {
+const HelmReleaseList: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const namespace = params.ns;
-  const secretsCountRef = React.useRef<number>(0);
-  const [releasesLoaded, setReleasesLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>();
-  const [releases, setReleases] = React.useState<HelmRelease[]>([]);
-  const secretResource = React.useMemo(
+  const secretsCountRef = useRef<number>(0);
+  const [releasesLoaded, setReleasesLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>();
+  const [releases, setReleases] = useState<HelmRelease[]>([]);
+  const secretResource = useMemo(
     () => ({
       isList: true,
       namespace,
@@ -148,12 +149,12 @@ const HelmReleaseList: React.FC = () => {
   );
   const newCount = secretsData?.length ?? 0;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setReleasesLoaded(false);
     secretsCountRef.current = 0;
   }, [namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let destroyed = false;
     if (secretsLoaded && !secretsLoadError) {
       if (newCount === 0) {
@@ -186,16 +187,16 @@ const HelmReleaseList: React.FC = () => {
 
   const columns = useHelmReleasesColumns();
 
-  const helmReleaseStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+  const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return SelectedReleaseStatuses.map((status) => ({
       value: status,
       label: HelmReleaseStatusLabels[status],
     }));
   }, []);
 
-  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -208,7 +209,7 @@ const HelmReleaseList: React.FC = () => {
     [helmReleaseStatusFilterOptions, t],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (release: HelmRelease, filters: HelmReleaseFilters) =>
       filters.status.length === 0 ||
       filters.status.includes(
@@ -250,33 +251,31 @@ const HelmReleaseList: React.FC = () => {
     );
   };
 
-  return (
-    <>
-      <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
-      <PaneBody>
-        <React.Suspense fallback={<LoadingBox />}>
-          {hasNoReleases ? (
-            emptyState()
-          ) : (
-            <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
-              label={t('helm-plugin~Helm Releases')}
-              data={releases}
-              loaded={isLoaded}
-              loadError={secretsLoadError || loadError}
-              columns={columns}
-              initialFilters={initialFilters}
-              additionalFilterNodes={additionalFilterNodes}
-              getObjectMetadata={getObjectMetadata}
-              matchesAdditionalFilters={matchesAdditionalFilters}
-              getDataViewRows={getDataViewRows}
-              hideLabelFilter
-              hideColumnManagement
-            />
-          )}
-        </React.Suspense>
-      </PaneBody>
-    </>
-  );
+  return (<>
+    <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
+    <PaneBody>
+      <Suspense fallback={<LoadingBox />}>
+        {hasNoReleases ? (
+          emptyState()
+        ) : (
+          <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
+            label={t('helm-plugin~Helm Releases')}
+            data={releases}
+            loaded={isLoaded}
+            loadError={secretsLoadError || loadError}
+            columns={columns}
+            initialFilters={initialFilters}
+            additionalFilterNodes={additionalFilterNodes}
+            getObjectMetadata={getObjectMetadata}
+            matchesAdditionalFilters={matchesAdditionalFilters}
+            getDataViewRows={getDataViewRows}
+            hideLabelFilter
+            hideColumnManagement
+          />
+        )}
+      </Suspense>
+    </PaneBody>
+  </>);
 };
 
 export default HelmReleaseList;

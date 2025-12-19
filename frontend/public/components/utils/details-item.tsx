@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash-es';
 import { css } from '@patternfly/react-styles';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -20,7 +20,7 @@ import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../mod
 import { LinkifyExternal } from './link';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
-export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({
+export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({
   kind,
   path,
 }) => {
@@ -62,7 +62,7 @@ const EditButton: Snail.FCC<EditButtonProps> = (props) => {
  * A wrapper around PatternFly's `DescriptionListGroup`. This component
  * must be used inside a `DescriptionList`!
  */
-export const DetailsItem: React.FC<DetailsItemProps> = ({
+export const DetailsItem: FC<DetailsItemProps> = ({
   children,
   defaultValue = '-',
   description,
@@ -80,7 +80,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const [model] = useK8sModel(obj ? referenceFor(obj) : '');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description ?? getPropertyDescription(model, path);
-  const value: React.ReactNode = children || _.get(obj, path, defaultValue);
+  const value: ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (
     <DescriptionListGroup>
@@ -141,23 +141,23 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 
 export type DetailsItemProps = {
   canEdit?: boolean;
-  children?: React.ReactNode;
-  defaultValue?: React.ReactNode;
+  children?: ReactNode;
+  defaultValue?: ReactNode;
   description?: string;
   editAsGroup?: boolean;
   hideEmpty?: boolean;
   label: string;
   labelClassName?: string;
   obj?: K8sResourceKind;
-  onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onEdit?: (e: MouseEvent<HTMLButtonElement>) => void;
   path?: string | string[];
   valueClassName?: string;
 };
 
 type EditButtonProps = {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 DetailsItem.displayName = 'DetailsItem';

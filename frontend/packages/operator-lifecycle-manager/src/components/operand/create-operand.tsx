@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +44,7 @@ import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 
-export const CreateOperand: React.FC<CreateOperandProps> = ({
+export const CreateOperand: FC<CreateOperandProps> = ({
   initialEditorType,
   csv,
   loaded,
@@ -67,7 +68,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   );
 
   const [activePerspective] = useActivePerspective();
-  const [helpText, setHelpText] = React.useState(formHelpText);
+  const [helpText, setHelpText] = useState(formHelpText);
   const next =
     activePerspective === 'dev'
       ? '/topology'
@@ -75,12 +76,12 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
           params.plural
         }`;
 
-  const providedAPI = React.useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [
+  const providedAPI = useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [
     csv,
     model,
   ]);
 
-  const baseSchema = React.useMemo(
+  const baseSchema = useMemo(
     () =>
       crd?.spec?.versions?.find?.((version) => version.name === providedAPI?.version)?.schema
         ?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema7),
@@ -92,7 +93,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   // the transition to structural schemas over descriptors. Once structural schemas are required,
   // the fallback will no longer be necessary. If no structural schema is provided after this
   // fallback is fully deprecated, a form will not be generated.
-  const [schema, FormComponent] = React.useMemo(() => {
+  const [schema, FormComponent] = useMemo(() => {
     const useFallback =
       getSchemaErrors(baseSchema).length ||
       hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema7);
@@ -105,11 +106,11 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         ];
   }, [baseSchema]);
 
-  const sample = React.useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
+  const sample = useMemo<K8sResourceKind>(() => exampleForModel(csv, model), [csv, model]);
 
-  const pruneFunc = React.useCallback((data) => prune(data, sample), [sample]);
+  const pruneFunc = useCallback((data) => prune(data, sample), [sample]);
 
-  const onChangeEditorType = React.useCallback(
+  const onChangeEditorType = useCallback(
     (newMethod) => {
       setHelpText(
         newMethod === EditorType.Form
@@ -150,7 +151,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
 type CreateOperandPageRouteParams = RouteParams<'csvName' | 'ns'>;
 
-const CreateOperandPage: React.FC = () => {
+const CreateOperandPage: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const createResourceExtension = useCreateResourceExtension(params.plural);

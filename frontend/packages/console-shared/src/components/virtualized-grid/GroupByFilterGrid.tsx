@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useContext, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
 import { Params, GroupedItems, GridChildrenProps } from './types';
@@ -10,10 +11,10 @@ type GroupByFilterGridProps = {
   width: number;
   scrollTop: number;
   items: GroupedItems;
-  children: (props: GridChildrenProps) => React.ReactNode;
+  children: (props: GridChildrenProps) => ReactNode;
 };
 
-const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
+const GroupByFilterGrid: FC<GroupByFilterGridProps> = ({
   height,
   width,
   scrollTop,
@@ -28,7 +29,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
     overscanRowCount,
     headerHeight,
     estimatedCellHeight,
-  } = React.useContext(CellMeasurementContext);
+  } = useContext(CellMeasurementContext);
   const idealItemWidth = cellWidth + cellMargin;
   const columnCountEstimate = Math.max(1, Math.floor(width / idealItemWidth));
   const { items, rowCount, columnCount, headerRows } = getItemsAndRowCount(
@@ -36,7 +37,7 @@ const GroupByFilterGrid: React.FC<GroupByFilterGridProps> = ({
     columnCountEstimate,
   );
   const cellRenderer = (data: GridCellProps) => children({ data, columnCount, items, rowCount });
-  const getRowHeight = React.useCallback(
+  const getRowHeight = useCallback(
     ({ index }: Params): number => {
       if (headerRows.includes(index)) {
         return headerHeight;

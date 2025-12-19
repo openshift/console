@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Component } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
@@ -23,7 +24,7 @@ type DropdownItemProps = {
   name: string;
 };
 
-const DropdownItem: React.FC<DropdownItemProps> = ({ model, name }) => (
+const DropdownItem: FC<DropdownItemProps> = ({ model, name }) => (
   <span className="co-resource-item">
     <span className="co-resource-icon--fixed-width">
       <ResourceIcon kind={referenceForModel(model)} />
@@ -81,7 +82,7 @@ export interface ResourceDropdownProps {
   appendItems?: ResourceDropdownItems;
 }
 
-class ResourceDropdownInternal extends React.Component<
+class ResourceDropdownInternal extends Component<
   ResourceDropdownProps & { t: TFunction },
   State
 > {

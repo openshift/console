@@ -1,5 +1,5 @@
 /* eslint-disable */
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ActivityItemProps,
   ActivityBodyProps,
@@ -25,49 +25,49 @@ import { UseUserSettings } from '../extensions/console-types';
 export * from './internal-console-api';
 export * from './internal-topology-api';
 
-export const ActivityItem: React.FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
+export const ActivityItem: FC<ActivityItemProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
   .default;
 
-export const ActivityBody: React.FC<ActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
+export const ActivityBody: FC<ActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
   .default;
 
-export const RecentEventsBody: React.FC<RecentEventsBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
+export const RecentEventsBody: FC<RecentEventsBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
   .RecentEventsBody;
 
-export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
+export const OngoingActivityBody: FC<OngoingActivityBodyProps> = require('@console/shared/src/components/dashboard/activity-card/ActivityBody')
   .OngoingActivityBody;
 
-export const AlertsBody: React.FC<AlertsBodyProps> = require('@console/shared/src/components/dashboard/status-card/AlertsBody')
+export const AlertsBody: FC<AlertsBodyProps> = require('@console/shared/src/components/dashboard/status-card/AlertsBody')
   .default;
 
-export const AlertItem: React.FC<AlertItemProps> = require('@console/shared/src/components/dashboard/status-card/AlertItem')
+export const AlertItem: FC<AlertItemProps> = require('@console/shared/src/components/dashboard/status-card/AlertItem')
   .default;
 
-export const HealthItem: React.FC<HealthItemProps> = require('@console/shared/src/components/dashboard/status-card/HealthItem')
+export const HealthItem: FC<HealthItemProps> = require('@console/shared/src/components/dashboard/status-card/HealthItem')
   .default;
 
-export const HealthBody: React.FC = require('@console/shared/src/components/dashboard/status-card/HealthBody')
+export const HealthBody: FC = require('@console/shared/src/components/dashboard/status-card/HealthBody')
   .default;
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryItem')
+export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryItem')
   .ResourceInventoryItem;
 
-export const UtilizationItem: React.FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
+export const UtilizationItem: FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
   .default;
 
-export const UtilizationBody: React.FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
+export const UtilizationBody: FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
   .UtilizationBody;
 
-export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
+export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown')
   .UtilizationDurationDropdown;
 
-export const VirtualizedGrid: React.FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
+export const VirtualizedGrid: FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
   .default;
 
-export const LazyActionMenu: React.FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
+export const LazyActionMenu: FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
   .default;
 
-export const QuickStartsLoader: React.FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
+export const QuickStartsLoader: FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
   .QuickStartsLoader;
 
 export const useUtilizationDuration: UseUtilizationDuration = require('@console/shared/src/hooks/useUtilizationDuration')

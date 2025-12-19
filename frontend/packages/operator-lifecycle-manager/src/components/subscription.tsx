@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
+
+import { useRef, useState, useEffect, useMemo } from 'react';
 import {
   Alert,
   Button,
@@ -135,7 +137,7 @@ export const installPlanForSubscription = (
 ): InstallPlanKind =>
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 
-export const SourceMissingStatus: React.FC = () => {
+export const SourceMissingStatus: FC = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -145,7 +147,7 @@ export const SourceMissingStatus: React.FC = () => {
   );
 };
 
-export const SourceUnhealthyStatus: React.FC = () => {
+export const SourceUnhealthyStatus: FC = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -164,7 +166,7 @@ const tableColumnClasses = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> = ({
+export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({
   subscription,
 }) => {
   const { t } = useTranslation();
@@ -182,7 +184,7 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   );
 };
 
-export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = ({
+export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({
   subscription,
 }) => {
   const { t } = useTranslation();
@@ -216,7 +218,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
   }
 };
 
-export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+export const SubscriptionTableRow: FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -302,7 +304,7 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
   );
 });
 
-export const SubscriptionsPage: React.FC<SubscriptionsPageProps> = (props) => {
+export const SubscriptionsPage: FC<SubscriptionsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <MultiListPage
@@ -414,7 +416,7 @@ const CatalogSourceStatusIconAndText = ({ healthy }) => {
   }
 };
 
-export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
+export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   clusterServiceVersions = [],
   installPlans = [],
   obj,
@@ -556,7 +558,7 @@ const SubscriptionUpgradeStatus = ({ catalogHealth, subscription }) => {
   );
 };
 
-export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
+export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   catalogHealth,
   installedCSV,
   installPlan,
@@ -565,11 +567,11 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
-  const prevInstallPlanApproval = React.useRef(obj?.spec?.installPlanApproval);
-  const prevChannel = React.useRef(obj?.spec?.channel);
-  const [waitingForUpdate, setWaitingForUpdate] = React.useState(false);
+  const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
+  const prevChannel = useRef(obj?.spec?.channel);
+  const [waitingForUpdate, setWaitingForUpdate] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const stillWaiting =
       waitingForUpdate &&
       obj?.spec?.channel === prevChannel.current &&
@@ -587,7 +589,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   const channelModal = () =>
     createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
   const approvalModal = () => createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });
-  const installPlanPhase = React.useMemo(() => {
+  const installPlanPhase = useMemo(() => {
     if (installPlan) {
       switch (installPlan.status?.phase as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval:
@@ -736,7 +738,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
   );
 };
 
-export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (props) => {
+export const SubscriptionDetailsPage: FC<SubscriptionDetailsPageProps> = (props) => {
   const params = useParams();
   return (
     <DetailsPage

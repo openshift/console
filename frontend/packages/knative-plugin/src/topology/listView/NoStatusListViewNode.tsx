@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
 import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import { OdcBaseNode } from '@console/topology/src/elements';
@@ -12,7 +12,7 @@ interface NoStatusListViewNodeProps {
   onSelect: (ids: string[]) => void;
 }
 
-const NoStatusListViewNode: React.FC<NoStatusListViewNodeProps> = (props) => {
+const NoStatusListViewNode: FC<NoStatusListViewNodeProps> = (props) => {
   const kind = getResourceKind(props.item);
   const badgeCell = (
     <TypedResourceBadgeCell key="type-icon" kind={kind} typeIcon={<EventSourceIcon />} />

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
@@ -9,7 +9,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
-const DeployImagePage: React.FunctionComponent = () => {
+const DeployImagePage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

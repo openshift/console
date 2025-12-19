@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { SingleTypeaheadField, SelectInputOption } from '@console/shared';
@@ -8,7 +8,7 @@ interface PortInputFieldProps {
   defaultPort: number;
 }
 
-const PortInputField: React.FC<PortInputFieldProps> = ({ defaultPort }) => {
+const PortInputField: FC<PortInputFieldProps> = ({ defaultPort }) => {
   const { t } = useTranslation();
   const {
     values: {

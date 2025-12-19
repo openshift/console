@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEventListener } from '../../hooks/useEventListener';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -10,14 +11,14 @@ type CopyClipboardProps = {
   docContext: HTMLDocument;
 };
 
-export const CopyClipboard: React.FC<CopyClipboardProps> = ({
+export const CopyClipboard: FC<CopyClipboardProps> = ({
   element,
   rootSelector,
   docContext,
 }) => {
   const { t } = useTranslation();
-  const [showSuccessContent, setShowSuccessContent] = React.useState<boolean>(false);
-  const textToCopy = React.useMemo(() => {
+  const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
+  const textToCopy = useMemo(() => {
     const copyTextId = element.getAttribute(MARKDOWN_COPY_BUTTON_ID);
     return (docContext.querySelector(
       `${rootSelector} [${MARKDOWN_SNIPPET_ID}="${copyTextId}"]`,
@@ -27,7 +28,7 @@ export const CopyClipboard: React.FC<CopyClipboardProps> = ({
   useEventListener(
     element,
     'click',
-    React.useCallback(() => {
+    useCallback(() => {
       navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
@@ -57,7 +58,7 @@ type MarkdownCopyClipboardProps = {
   rootSelector: string;
 };
 
-const MarkdownCopyClipboard: React.FC<MarkdownCopyClipboardProps> = ({
+const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({
   docContext,
   rootSelector,
 }) => {

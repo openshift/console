@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -8,7 +8,7 @@ type HPAOverviewProps = {
   hpas?: HorizontalPodAutoscalerKind[];
 };
 
-export const HPAOverview: React.FC<HPAOverviewProps> = ({ hpas }) => {
+export const HPAOverview: FC<HPAOverviewProps> = ({ hpas }) => {
   if (!hpas?.length) {
     return null;
   }

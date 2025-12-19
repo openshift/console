@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -33,7 +34,7 @@ type EditApplicationModalProps = EditApplicationFormProps & {
   close?: () => void;
 };
 
-const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationFormProps> = ({
+const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormProps> = ({
   resource,
   handleSubmit,
   isSubmitting,
@@ -117,7 +118,7 @@ const EditApplicationModalProvider: OverlayComponent<EditApplicationModalProps> 
 
 export const useEditApplicationModalLauncher = (props) => {
   const launcher = useOverlay();
-  return React.useCallback(
+  return useCallback(
     () => launcher<EditApplicationModalProps>(EditApplicationModalProvider, props),
     [launcher, props],
   );

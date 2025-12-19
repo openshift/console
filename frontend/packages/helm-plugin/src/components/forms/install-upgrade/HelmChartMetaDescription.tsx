@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ type HelmChartMetaDescriptionProps = {
   chart: HelmChart;
 };
 
-const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ chart }) => {
+const HelmChartMetaDescription: FC<HelmChartMetaDescriptionProps> = ({ chart }) => {
   const { t } = useTranslation();
   const chartVersion = chart?.metadata?.version;
   const displayName = _.startCase(chart?.metadata?.name);

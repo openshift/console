@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -40,7 +41,7 @@ const getDisplayName = (clusterRole?: K8sResourceCommon, name?: string) =>
   clusterRole?.metadata.name ||
   name;
 
-const Item: React.FC<ItemProps> = ({ name, clusterRole }) => (
+const Item: FC<ItemProps> = ({ name, clusterRole }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     {clusterRole ? (
       <ResourceIcon groupVersionKind={getGroupVersionKindForModel(ClusterRoleModel)} />
@@ -49,7 +50,7 @@ const Item: React.FC<ItemProps> = ({ name, clusterRole }) => (
   </div>
 );
 
-const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const ProjectAccessRolesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -60,7 +61,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     groupVersionKind: getGroupVersionKindForModel(ClusterRoleModel),
     isList: true,
   });
-  const sortedClusterRoles = React.useMemo(() => {
+  const sortedClusterRoles = useMemo(() => {
     const clusterRoles = allClusterRoles ? [...allClusterRoles] : [];
     clusterRoles.sort((clusterRoleA, clusterRoleB) => {
       const displayNameA = getDisplayName(clusterRoleA);
@@ -74,8 +75,8 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     SoftwareCatalogClusterRolesConfig
   >();
-  const [selectedClusterRoles, setSelectedClusterRoles] = React.useState<string[]>();
-  React.useEffect(() => {
+  const [selectedClusterRoles, setSelectedClusterRoles] = useState<string[]>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !selectedClusterRoles) {
       setSelectedClusterRoles(
         consoleConfig?.spec?.customization?.projectAccess?.availableClusterRoles || [],
@@ -84,7 +85,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   }, [selectedClusterRoles, consoleConfig, consoleConfigLoaded]);
 
   // Calculate options
-  const availableOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const availableOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (
       !consoleConfigLoaded ||
       !allClusterRolesLoaded ||
@@ -111,7 +112,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
     selectedClusterRoles,
     consoleConfigLoaded,
   ]);
-  const chosenOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const chosenOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!selectedClusterRoles) {
       return [];
     }
@@ -130,7 +131,7 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   }, [allClusterRoles, selectedClusterRoles]);
 
   // Save the latest value (disabled string array)
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Project Access cluster roles',
@@ -155,15 +156,15 @@ const ProjectAccessRolesConfiguration: React.FC<{ readonly: boolean }> = ({ read
   // Extract disabled string array from Items
   const onListChange = (
     _event,
-    newEnabledOptions: React.ReactElement<ItemProps>[],
-    newDisabledOptions: React.ReactElement<ItemProps>[],
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     setSelectedClusterRoles(newDisabledOptions.map((node) => node.props.name));
     setSaveStatus({ status: 'pending' });
     save();
   };
 
-  const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
     const displayName = getDisplayName(option.props.clusterRole, option.props.name);
     return fuzzy(input.toLocaleLowerCase(), displayName.toLocaleLowerCase());
   };

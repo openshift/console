@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ interface AddBrokerProps {
   contextSource?: string;
 }
 
-const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
+const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   const perspectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();

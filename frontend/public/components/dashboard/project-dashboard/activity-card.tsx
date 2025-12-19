@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo, useContext } from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -32,7 +33,7 @@ const getEventsResource = (projectName: string): FirehoseResource => ({
 
 const RecentEvent = withDashboardResources<RecentEventProps>(
   ({ watchK8sResource, stopWatchK8sResource, resources, projectName, viewEvents }) => {
-    React.useEffect(() => {
+    useEffect(() => {
       if (projectName) {
         const eventsResource = getEventsResource(projectName);
         watchK8sResource(eventsResource);
@@ -67,7 +68,7 @@ const OngoingActivity = connect(mapStateToProps)(
         DashboardsOverviewResourceActivity
       >(isDashboardsOverviewResourceActivity);
 
-      const resourceActivities = React.useMemo(
+      const resourceActivities = useMemo(
         () =>
           resourceActivityExtensions.filter((e) => {
             const model = models.get(e.properties.k8sResource.kind);
@@ -76,7 +77,7 @@ const OngoingActivity = connect(mapStateToProps)(
         [resourceActivityExtensions, models],
       );
 
-      React.useEffect(() => {
+      useEffect(() => {
         if (projectName) {
           resourceActivities.forEach((a, index) => {
             watchK8sResource(
@@ -91,7 +92,7 @@ const OngoingActivity = connect(mapStateToProps)(
         }
       }, [watchK8sResource, stopWatchK8sResource, projectName, resourceActivities]);
 
-      const allResourceActivities = React.useMemo(
+      const allResourceActivities = useMemo(
         () =>
           _.flatten(
             resourceActivities.map((a, index) => {
@@ -112,7 +113,7 @@ const OngoingActivity = connect(mapStateToProps)(
         [resourceActivities, resources],
       );
 
-      const resourcesLoaded = React.useMemo(
+      const resourcesLoaded = useMemo(
         () =>
           resourceActivities.every((a, index) =>
             _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
@@ -139,7 +140,7 @@ const RecentEventFooter = withDashboardResources(
     viewEvents,
   }: DashboardItemProps & { projectName: string; viewEvents: string }) => {
     const { t } = useTranslation();
-    React.useEffect(() => {
+    useEffect(() => {
       if (projectName) {
         const eventsResource = getEventsResource(projectName);
         watchK8sResource(eventsResource);
@@ -169,8 +170,8 @@ const RecentEventFooter = withDashboardResources(
   },
 );
 
-export const ActivityCard: React.FC = () => {
-  const { obj } = React.useContext(ProjectDashboardContext);
+export const ActivityCard: FC = () => {
+  const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
   const { t } = useTranslation();

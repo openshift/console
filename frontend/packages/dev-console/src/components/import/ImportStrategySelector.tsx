@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useCallback } from 'react';
 import { FormGroup, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
 import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
@@ -19,7 +20,7 @@ import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src
 
 import './ImportStrategySelector.scss';
 
-const ImportStrategySelector: React.FC = () => {
+const ImportStrategySelector: FC = () => {
   const { t } = useTranslation();
   const {
     values: {
@@ -37,9 +38,9 @@ const ImportStrategySelector: React.FC = () => {
     build: BuildStrategyType | ServerlessBuildStrategyType;
     priority: number;
     detectedFiles: string[];
-    icon: React.ReactNode;
+    icon: ReactNode;
     isDisabled?: boolean;
-    disabledReason?: React.ReactNode;
+    disabledReason?: ReactNode;
   };
 
   const itemList: ItemListType[] = [
@@ -94,7 +95,7 @@ const ImportStrategySelector: React.FC = () => {
     });
   }
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (item) => {
       setFieldValue('import.selectedStrategy.name', item.name);
       setFieldValue('import.selectedStrategy.type', item.type);

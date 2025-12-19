@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
@@ -50,7 +51,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 
-const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
+const ClusterVersion: FC<ClusterVersionProps> = ({ cv }) => {
   const { t } = useTranslation();
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
@@ -104,11 +105,11 @@ export const DetailsCard = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource }: DetailsCardProps) => {
     const { t } = useTranslation();
     const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
-    const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(
+    const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
       ClusterDashboardContext,
     );
-    const [k8sVersion, setK8sVersion] = React.useState<Response>();
-    const [k8sVersionError, setK8sVersionError] = React.useState();
+    const [k8sVersion, setK8sVersion] = useState<Response>();
+    const [k8sVersionError, setK8sVersionError] = useState();
     const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
       ClusterVersionKind
     >(clusterVersionResource);
@@ -119,7 +120,7 @@ export const DetailsCard = withDashboardResources(
       isCustomOverviewDetailItem,
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (flagPending(openshiftFlag)) {
         return;
       }

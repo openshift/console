@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -10,7 +10,7 @@ interface PingSourceSectionProps {
   fullWidth?: boolean;
 }
 
-const PingSourceSection: React.FC<PingSourceSectionProps> = ({ title, fullWidth }) => {
+const PingSourceSection: FC<PingSourceSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   return (
     <FormSection title={title} extraMargin fullWidth={fullWidth}>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import SinkUriResourcesGroup from './form-fields/SinkUriResourcesGroup';
@@ -8,7 +8,7 @@ interface SinkSectionProps {
   fullWidth?: boolean;
 }
 
-const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
+const SinkSection: FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
   const { t } = useTranslation();
   return (
     <FormSection

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Button, Popover } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 
-export const PopoverHelpButton: React.FC<{ content: React.ReactNode }> = ({ content }) => {
+export const PopoverHelpButton: FC<{ content: ReactNode }> = ({ content }) => {
   const { t } = useTranslation('vsphere-plugin');
   return (
     <Popover aria-label={t('Help')} bodyContent={content}>

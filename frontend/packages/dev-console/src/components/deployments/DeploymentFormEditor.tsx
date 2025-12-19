@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -15,11 +16,11 @@ export type EditDeploymentFormEditorProps = {
   resourceObj: K8sResourceKind;
 };
 
-const EditDeploymentFormEditor: React.FC<EditDeploymentFormEditorProps> = ({
+const EditDeploymentFormEditor: FC<EditDeploymentFormEditorProps> = ({
   resourceType,
   resourceObj,
 }) => {
-  const [showYAMLAlert, setShowYAMLAlert] = React.useState<boolean>(true);
+  const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
   return (
     <>
       {resourceObj.kind === DeploymentConfigModel.kind && <DeploymentConfigDeprecationAlert />}

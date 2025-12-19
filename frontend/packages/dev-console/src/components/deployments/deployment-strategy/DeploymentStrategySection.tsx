@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ export type DeploymentStrategySectionProps = {
   resourceObj: K8sResourceKind;
 };
 
-const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
+const DeploymentStrategySection: FC<DeploymentStrategySectionProps> = ({
   resourceType,
   resourceObj,
 }) => {
@@ -37,7 +38,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
-  const deploymentStrategyFields = React.useMemo(() => {
+  const deploymentStrategyFields = useMemo(() => {
     switch (deploymentStrategy.type) {
       case DeploymentStrategyType.recreateParams:
         return <RecreateStrategy resourceType={resourceType} resourceObj={resourceObj} />;
@@ -51,7 +52,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
     }
   }, [deploymentStrategy.type, resourceObj, resourceType]);
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (value: DeploymentStrategyType) => {
       const strategyDefaultValues = getStrategyData(value, {}, resName, resNamespace, resourceType);
       const strategyData = {

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +15,7 @@ import {
 import { K8sKind, k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const UpdateStrategyModal: React.FC<UpdateStrategyModalProps> = ({
+export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,
   close,
   path,
@@ -26,18 +27,18 @@ export const UpdateStrategyModal: React.FC<UpdateStrategyModalProps> = ({
   const { t } = useTranslation();
   const getPath = path.substring(1).replace('/', '.');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [strategyType, setStrategyType] = React.useState(
+  const [strategyType, setStrategyType] = useState(
     _.get(resource, `${getPath}.type`) || defaultValue,
   );
-  const [maxUnavailable, setMaxUnavailable] = React.useState(
+  const [maxUnavailable, setMaxUnavailable] = useState(
     _.get(resource, `${getPath}.rollingUpdate.maxUnavailable`, '25%'),
   );
-  const [maxSurge, setMaxSurge] = React.useState(
+  const [maxSurge, setMaxSurge] = useState(
     _.get(resource, `${getPath}.rollingUpdate.maxSurge`, '25%'),
   );
 
-  const submit = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>): void => {
+  const submit = useCallback(
+    (event: FormEvent<HTMLFormElement>): void => {
       event.preventDefault();
 
       const patch: Patch = { path: `${path}/rollingUpdate`, op: 'remove' };

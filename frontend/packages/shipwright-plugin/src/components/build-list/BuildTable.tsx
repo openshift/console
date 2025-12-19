@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +89,7 @@ export const BuildHeader = () => {
   ];
 };
 
-export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
+export const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
   const buildRunKindReference = isV1Alpha1Resource(build)
@@ -153,7 +154,7 @@ type BuildTableProps = TableProps & {
   namespace: string;
 };
 
-export const BuildTable: React.FC<BuildTableProps> = (props) => {
+export const BuildTable: FC<BuildTableProps> = (props) => {
   const { t } = useTranslation();
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
@@ -165,7 +166,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     isList: true,
   });
 
-  const data = React.useMemo<CustomData>(
+  const data = useMemo<CustomData>(
     () => ({
       buildRuns: {
         latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {

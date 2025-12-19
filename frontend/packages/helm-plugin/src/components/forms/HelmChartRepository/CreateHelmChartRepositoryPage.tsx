@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -19,7 +19,7 @@ import { ALL_NAMESPACES_KEY, useQueryParams } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
-const CreateHelmChartRepositoryPage: React.FC = () => {
+const CreateHelmChartRepositoryPage: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const queryParams = useQueryParams();

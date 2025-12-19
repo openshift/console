@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
@@ -25,7 +26,7 @@ const SampleResource: WatchK8sResource = {
   isList: true,
 };
 
-const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
+const CodeEditorField: FC<CodeEditorFieldProps> = ({
   name,
   label,
   model,
@@ -40,9 +41,9 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
-  const editorRef = React.useRef();
+  const editorRef = useRef();
 
-  const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const [sampleResources, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>(
     SampleResource,
@@ -66,7 +67,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
 
   const [templateExtensions] = useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
 
-  const sanitizeYamlContent = React.useCallback(
+  const sanitizeYamlContent = useCallback(
     (id: string = 'default', yaml: string = '', kind: string) => {
       if (yaml) {
         return yaml;

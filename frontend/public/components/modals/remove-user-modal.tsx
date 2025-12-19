@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FormEventHandler } from 'react';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 
 import { GroupModel } from '../../models';
@@ -17,7 +17,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 export const RemoveUserModal = (props: RemoveUserModalProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const submit: React.FormEventHandler<HTMLFormElement> = (e): void => {
+  const submit: FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
     const value = _.filter(props.group.users, (user: string) => user !== props.user);
     const patch = [{ op: 'replace', path: '/users', value }];

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -18,7 +18,7 @@ type TriggerLastBuildButtonProps = {
   impersonate?;
 };
 
-const TriggerLastBuildButton: React.FC<TriggerLastBuildButtonProps> = ({
+const TriggerLastBuildButton: FC<TriggerLastBuildButtonProps> = ({
   buildRuns,
   resource,
   namespace,

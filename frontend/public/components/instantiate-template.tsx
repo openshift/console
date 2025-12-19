@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -47,7 +48,7 @@ import {
 } from '../module/k8s';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
-const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
+const TemplateResourceDetails: FC<TemplateResourceDetailsProps> = ({ template }) => {
   const resources = _.uniq(_.compact(_.map(template.objects, 'kind'))).sort();
   if (_.isEmpty(resources)) {
     return null;
@@ -67,7 +68,7 @@ const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ templ
 };
 TemplateResourceDetails.displayName = 'TemplateResourceDetails';
 
-const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
+const TemplateInfo: FC<TemplateInfoProps> = ({ template }) => {
   const { t } = useTranslation();
   const annotations = template.metadata.annotations || {};
   const { description } = annotations;
@@ -137,7 +138,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
 };
 TemplateInfo.displayName = 'TemplateInfo';
 
-const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
+const TemplateFormField: FC<TemplateFormFieldProps> = ({
   name,
   value,
   displayName,
@@ -147,7 +148,7 @@ const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
   required,
   helpID,
 }) => {
-  const [isTextArea, setIsTextArea] = React.useState(false);
+  const [isTextArea, setIsTextArea] = useState(false);
   const { t } = useTranslation('public');
 
   const commonFormProps = {
@@ -199,21 +200,21 @@ const TemplateFormField: React.FC<TemplateFormFieldProps> = ({
   );
 };
 
-export const TemplateForm: React.FC<TemplateFormProps> = (props) => {
+export const TemplateForm: FC<TemplateFormProps> = (props) => {
   const { preselectedNamespace: ns = '', obj } = props;
 
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const [activePerspective] = useActivePerspective();
-  const [namespace, setNamespace] = React.useState(ns);
-  const [parameters, setParameters] = React.useState([]);
-  const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const isInitialLoad = React.useRef(true);
+  const [namespace, setNamespace] = useState(ns);
+  const [parameters, setParameters] = useState([]);
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState('');
+  const isInitialLoad = useRef(true);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isInitialLoad.current && obj.loaded) {
       const object = (obj.data.parameters || []).reduce((acc, { name, value }) => {
         acc[name] = value;
@@ -224,7 +225,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = (props) => {
     }
   }, [obj]);
 
-  const onParameterChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const onParameterChanged: ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
     setParameters((prevParams) => ({ ...prevParams, [name]: value }));
   };
@@ -290,7 +291,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = (props) => {
     });
   };
 
-  const save = (event: React.FormEvent<EventTarget>) => {
+  const save = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
     if (!namespace) {
       setError('Please complete all fields.');
@@ -386,7 +387,7 @@ export const TemplateForm: React.FC<TemplateFormProps> = (props) => {
   );
 };
 
-export const InstantiateTemplatePage: React.FC<{}> = (props) => {
+export const InstantiateTemplatePage: FC<{}> = (props) => {
   const title = 'Instantiate Template';
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -435,7 +436,7 @@ type TemplateFormFieldProps = {
   displayName: string;
   description: string;
   required: boolean;
-  onChange: React.ReactEventHandler;
+  onChange: ReactEventHandler;
   placeholder: string;
   helpID: string;
 };

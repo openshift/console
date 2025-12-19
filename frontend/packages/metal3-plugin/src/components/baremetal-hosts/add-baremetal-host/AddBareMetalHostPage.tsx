@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -6,7 +6,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import AddBareMetalHost from './AddBareMetalHost';
 
-const AddBareMetalHostPage: React.FC = () => {
+const AddBareMetalHostPage: FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const { name, ns: namespace } = useParams();

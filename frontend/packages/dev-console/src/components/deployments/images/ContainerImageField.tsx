@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField, InputField } from '@console/shared/src';
 import ImageStream from '../../import/image-search/ImageStream';
 
-const ContainerImageField: React.FC = () => {
+const ContainerImageField: FC = () => {
   const { t } = useTranslation();
   const {
     values: {

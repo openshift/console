@@ -1,11 +1,12 @@
-import * as React from 'react';
+import type { ReactElement, RefObject } from 'react';
+import { useRef, useEffect } from 'react';
 import { MenuToggle, Popper } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
 const NamespaceMenuToggle = (props: {
   disabled: boolean;
-  menu: React.ReactElement;
-  menuRef: React.RefObject<HTMLElement>;
+  menu: ReactElement;
+  menuRef: RefObject<HTMLElement>;
   isOpen: boolean;
   shortCut?: string;
   title: string;
@@ -14,8 +15,8 @@ const NamespaceMenuToggle = (props: {
 }) => {
   const { menu, isOpen, shortCut, title, onToggle, disabled, menuRef, className } = props;
 
-  const toggleRef = React.useRef(null);
-  const containerRef = React.useRef(null);
+  const toggleRef = useRef(null);
+  const containerRef = useRef(null);
 
   const handleMenuKeys = (event) => {
     if (
@@ -56,7 +57,7 @@ const NamespaceMenuToggle = (props: {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keyup', handleMenuKeys);
     window.addEventListener('click', handleMenuClick);
     return () => {

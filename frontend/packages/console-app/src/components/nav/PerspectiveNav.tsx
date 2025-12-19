@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NavGroup, NavList } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
@@ -17,25 +18,25 @@ import { getSortedNavExtensions, isTopLevelNavItem } from './utils';
 
 import './PerspectiveNav.scss';
 
-const PerspectiveNav: React.FC<{}> = () => {
+const PerspectiveNav: FC<{}> = () => {
   const [activePerspective] = useActivePerspective();
   const allNavExtensions = useNavExtensionsForPerspective(activePerspective);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
-  const [validPinnedResources, setValidPinnedResources] = React.useState<string[]>([]);
-  const [isDragged, setIsDragged] = React.useState(false);
+  const [validPinnedResources, setValidPinnedResources] = useState<string[]>([]);
+  const [isDragged, setIsDragged] = useState(false);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const validResources = pinnedResources.filter((res) => !!modelFor(res));
     setValidPinnedResources(validResources);
   }, [setValidPinnedResources, pinnedResources]);
 
-  const orderedNavExtensions = React.useMemo(() => {
+  const orderedNavExtensions = useMemo(() => {
     const topLevelNavExtensions = allNavExtensions.filter(isTopLevelNavItem);
     return getSortedNavExtensions(topLevelNavExtensions);
   }, [allNavExtensions]);
 
-  const getPinnedItems = (): React.ReactElement[] =>
+  const getPinnedItems = (): ReactElement[] =>
     validPinnedResources.map((resource, idx) => (
       <PinnedResource
         key={`${resource}_${idx.toString()}`}

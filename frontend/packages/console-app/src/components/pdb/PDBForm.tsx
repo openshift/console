@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent, Ref } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   ActionGroup,
   Button,
@@ -62,7 +63,7 @@ function checkAvailabilityRequirementValue(formValues: FormValues, replicasCount
   );
 }
 
-const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
+const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   formData,
   onChange,
   existingResource,
@@ -70,15 +71,15 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const initialFormValues = initialValuesFromK8sResource(formData);
-  const [formValues, setFormValues] = React.useState(initialFormValues);
-  const [error, setError] = React.useState('');
-  const [inProgress, setInProgress] = React.useState(false);
-  const [requirement, setRequirement] = React.useState('');
-  const [isDisabled, setDisabled] = React.useState(true);
-  const [labels, setLabels] = React.useState([]);
-  const [matchingSelector, setMatchingSelector] = React.useState<PodDisruptionBudgetKind>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const items: RequirementItems = React.useMemo(
+  const [formValues, setFormValues] = useState(initialFormValues);
+  const [error, setError] = useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [requirement, setRequirement] = useState('');
+  const [isDisabled, setDisabled] = useState(true);
+  const [labels, setLabels] = useState([]);
+  const [matchingSelector, setMatchingSelector] = useState<PodDisruptionBudgetKind>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const items: RequirementItems = useMemo(
     () => ({
       maxUnavailable: t('console-app~maxUnavailable'),
       minAvailable: t('console-app~minAvailable'),
@@ -87,7 +88,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   );
   const selectedRequirement = getSelectedRequirement(formValues.requirement, items);
 
-  const onFormValuesChange = React.useCallback(
+  const onFormValuesChange = useCallback(
     (values) => {
       setFormValues(values);
       onChange(pdbToK8sResource(values, existingResource));
@@ -95,7 +96,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     [onChange, existingResource],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setRequirement(formValues.requirement);
 
     if (formValues.requirement !== i18next.t('console-app~Requirement')) {
@@ -139,7 +140,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
     onFormValuesChange({ ...formValues, [requirement]: value });
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     setInProgress(true);
 
@@ -160,7 +161,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
   };
 
   return (
-    <PaneBody className="co-m-pane__form">
+    (<PaneBody className="co-m-pane__form">
       <Form onSubmit={handleSubmit}>
         <Stack hasGutter>
           <StackItem>
@@ -229,7 +230,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
                   onOpenChange={(open) => setIsOpen(open)}
                   selected={selectedRequirement}
                   onSelect={(_e, value: string) => handleAvailabilityRequirementKeyChange(value)}
-                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                  toggle={(toggleRef: Ref<MenuToggleElement>) => (
                     <MenuToggle
                       ref={toggleRef}
                       isExpanded={isOpen}
@@ -308,7 +309,7 @@ const PDBForm: React.FC<PodDisruptionBudgetFormProps> = ({
           </StackItem>
         </Stack>
       </Form>
-    </PaneBody>
+    </PaneBody>)
   );
 };
 

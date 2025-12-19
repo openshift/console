@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import {
@@ -93,7 +94,7 @@ export interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const ConnectedTopologyView: React.FC<ComponentProps> = ({
+export const ConnectedTopologyView: FC<ComponentProps> = ({
   model,
   namespace,
   viewType,
@@ -107,19 +108,19 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
-  const [filteredModel, setFilteredModel] = React.useState<Model>();
-  const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
-  const [visualization, setVisualization] = React.useState<Visualization>();
-  const [showTopologyAnyway, setShowTopologyAnyway] = React.useState(false);
+  const { setTopologyFilters: onFiltersChange } = useContext(FilterContext);
+  const [filteredModel, setFilteredModel] = useState<Model>();
+  const [selectedEntity, setSelectedEntity] = useState<GraphElement>(null);
+  const [visualization, setVisualization] = useState<Visualization>();
+  const [showTopologyAnyway, setShowTopologyAnyway] = useState(false);
   const displayFilters = useDisplayFilters();
   const filters = useDeepCompareMemoize(displayFilters);
-  const applicationRef = React.useRef<string>(null);
+  const applicationRef = useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
-  const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
+  const [isQuickSearchOpen, setIsQuickSearchOpen] = useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
   );
-  const setIsQuickSearchOpenAndFireEvent = React.useCallback(
+  const setIsQuickSearchOpenAndFireEvent = useCallback(
     (open: boolean) => {
       if (open) {
         fireTelemetryEvent('Quick Search Accessed');
@@ -143,12 +144,12 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     isTopologyRelationshipProvider,
   );
 
-  const [topologyDecorators, setTopologyDecorators] = React.useState<{
+  const [topologyDecorators, setTopologyDecorators] = useState<{
     [key: string]: TopologyDecorator[];
   }>({});
-  const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
+  const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);
   const queryParams = useQueryParams();
-  const { extensions: supportedFileExtensions } = React.useContext<FileUploadContextType>(
+  const { extensions: supportedFileExtensions } = useContext<FileUploadContextType>(
     FileUploadContext,
   );
 
@@ -156,7 +157,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const labelParams = queryParams.get(TOPOLOGY_LABELS_FILTER_KEY);
   const fileTypes = supportedFileExtensions.map((ex) => `.${ex}`).toString();
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (entity?: GraphElement) => {
       // set empty selection when selecting the graph
       const selEntity = isGraph(entity) ? undefined : entity;
@@ -175,7 +176,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [namespace],
   );
 
-  const graphData: GraphData = React.useMemo(
+  const graphData: GraphData = useMemo(
     () => ({
       createResourceAccess,
       namespace,
@@ -197,13 +198,13 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     ],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visualization) {
       visualization.getGraph().setData(graphData);
     }
   }, [visualization, graphData]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (extensionDecoratorsResolved) {
       const allDecorators = extensionDecorators.reduce(
         (acc, extensionDecorator) => {
@@ -228,7 +229,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
   }, [extensionDecorators, extensionDecoratorsResolved]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (displayFilterExtensionsResolved) {
       const updateFilters = [...filters];
       displayFilterExtensions.forEach((extension) => {
@@ -249,7 +250,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayFilterExtensionsResolved, displayFilterExtensions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (filtersLoaded) {
       const newModel = updateModelFromFilters(
         model,
@@ -272,7 +273,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     displayFilterExtensions,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (filters.find((f) => f.type !== TopologyDisplayFilterType.kind)) {
       const updatedFilters = filters.filter((f) => f.type !== TopologyDisplayFilterType.kind);
       onFiltersChange(updatedFilters);
@@ -281,7 +282,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const searchQuery = getTopologySearchQuery();
     if (searchQuery.length > 0) {
       document.body.classList.add(FILTER_ACTIVE_CLASS);
@@ -292,7 +293,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 
   const nodesLength = filteredModel?.nodes?.length ?? 0;
 
-  const viewContent = React.useMemo(
+  const viewContent = useMemo(
     () =>
       nodesLength <= MAX_NODES_LIMIT || showTopologyAnyway ? (
         viewType === TopologyViewType.list ? (

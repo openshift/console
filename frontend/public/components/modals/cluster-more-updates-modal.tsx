@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
@@ -25,7 +25,7 @@ import {
 } from '../cluster-settings/cluster-settings';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 
-export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
+export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();

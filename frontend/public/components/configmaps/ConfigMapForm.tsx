@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -18,7 +19,7 @@ export interface ConfigMapProps {
   isCreateFlow: boolean;
 }
 
-const ConfigmapForm: React.FC<ConfigMapProps> = ({
+const ConfigmapForm: FC<ConfigMapProps> = ({
   name,
   namespace,
   title,
@@ -26,7 +27,7 @@ const ConfigmapForm: React.FC<ConfigMapProps> = ({
   isCreateFlow,
 }) => {
   const navigate = useNavigate();
-  const [initialValues] = React.useState(
+  const [initialValues] = useState(
     getConfigMapInitialValues(namespace, configMap, isCreateFlow),
   );
   const handleSubmit = (

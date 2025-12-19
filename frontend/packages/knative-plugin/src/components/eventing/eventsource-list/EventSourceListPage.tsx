@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -18,11 +19,11 @@ import {
 } from '../../../utils/fetch-dynamic-eventsources-utils';
 import EventSourceList from './EventSourceList';
 
-const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
+const EventSourceListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
   const isKameletEnabled = useFlag(FLAG_CAMEL_KAMELETS);
-  const sourcesModel = React.useMemo(
+  const sourcesModel = useMemo(
     () => (isKameletEnabled ? [...eventSourceModels, CamelKameletBindingModel] : eventSourceModels),
     [isKameletEnabled, eventSourceModels],
   );
@@ -30,7 +31,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
     modelsLoaded
       ? sourcesModel.flatMap((model) => resources[referenceForModel(model)]?.data ?? [])
       : [];
-  const resources = React.useMemo(
+  const resources = useMemo(
     () =>
       modelsLoaded
         ? sourcesModel.map((model) => {
@@ -47,13 +48,13 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
         : [],
     [sourcesModel, modelsLoaded],
   );
-  const getModelId = React.useCallback((obj: K8sResourceCommon) => {
+  const getModelId = useCallback((obj: K8sResourceCommon) => {
     const reference = referenceFor(obj);
     const model = getDynamicEventSourceModel(reference) || modelFor(reference);
     return model.id;
   }, []);
 
-  const eventSourceRowFilters = React.useMemo<RowFilter<K8sResourceCommon>[]>(
+  const eventSourceRowFilters = useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
         filterGroupName: t('knative-plugin~Type'),

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { GraphElement, observer } from '@patternfly/react-topology';
 import {
@@ -14,7 +15,7 @@ import { deserializeData } from '@console/shared/src/utils/user-settings';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
 
-const ResolveResourceAlerts: React.FC<{
+const ResolveResourceAlerts: FC<{
   id?: string;
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
@@ -28,7 +29,7 @@ const ResolveResourceAlerts: React.FC<{
     ) || true,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (cfData && cfLoaded && !cfLoadError) {
       const alertSetting = deserializeData(
         cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
@@ -61,7 +62,7 @@ const ResolveResourceAlerts: React.FC<{
   ) : null;
 });
 
-const SideBarAlerts: React.FC<{ element: GraphElement }> = ({ element }) => {
+const SideBarAlerts: FC<{ element: GraphElement }> = ({ element }) => {
   const [resourceAlertsExtension, resolved] = useResolvedExtensions<DetailsResourceAlert>(
     isDetailsResourceAlert,
   );

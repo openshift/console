@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, memo } from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -23,9 +24,9 @@ const EditAlertmanagerYAML = (props) => (
   />
 );
 
-const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }) => {
-  const [errorMsg, setErrorMsg] = React.useState<string>();
-  const [successMsg, setSuccessMsg] = React.useState<string>();
+const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }) => {
+  const [errorMsg, setErrorMsg] = useState<string>();
+  const [successMsg, setSuccessMsg] = useState<string>();
   const { t } = useTranslation();
 
   const save = (yaml: string) => {
@@ -104,7 +105,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
   );
 };
 
-const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
+const AlertmanagerYAMLEditorWrapper: FC<AlertmanagerYAMLEditorWrapperProps> = memo(
   ({ obj, ...props }) => {
     const { t } = useTranslation();
     return (
@@ -118,7 +119,7 @@ const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps
   },
 );
 
-export const AlertmanagerYAML: React.FC<{}> = () => {
+export const AlertmanagerYAML: FC<{}> = () => {
   const { t } = useTranslation();
 
   const configPath = 'alertmanagerconfig';

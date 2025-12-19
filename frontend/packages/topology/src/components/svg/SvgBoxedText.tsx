@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, MouseEventHandler, FC } from 'react';
 import {
   useSize,
   useHover,
@@ -22,13 +22,13 @@ interface SvgBoxedTextProps {
   cornerRadius?: number;
   kind?: string;
   typeIconClass?: string;
-  typeIcon?: React.ReactNode;
+  typeIcon?: ReactNode;
   typeIconPadding?: number;
   truncate?: number;
   dragRef?: WithDndDragProps['dndDragRef'];
   // TODO remove with 2.0
-  onMouseEnter?: React.MouseEventHandler<SVGGElement>;
-  onMouseLeave?: React.MouseEventHandler<SVGGElement>;
+  onMouseEnter?: MouseEventHandler<SVGGElement>;
+  onMouseLeave?: MouseEventHandler<SVGGElement>;
 }
 
 const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
@@ -36,7 +36,7 @@ const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
 /**
  * Renders a `<text>` component with a `<rect>` box behind.
  */
-const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
+const SvgBoxedText: FC<SvgBoxedTextProps> = ({
   children,
   className,
   paddingX = 0,

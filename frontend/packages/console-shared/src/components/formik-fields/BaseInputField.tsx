@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -11,9 +11,9 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const BaseInputField: React.FC<
+const BaseInputField: FC<
   BaseInputFieldProps & {
-    children: (props) => React.ReactNode;
+    children: (props) => ReactNode;
   }
 > = ({
   label,

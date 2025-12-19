@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { createPath, Navigate, useLocation } from 'react-router-dom-v5-compat';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
@@ -10,7 +10,7 @@ const appendActiveNamespace = (namespace: string, pathname: string): string => {
     : `${basePath}/ns/${namespace}`;
 };
 
-export const NamespaceRedirect: React.FC = () => {
+export const NamespaceRedirect: FC = () => {
   const location = useLocation();
   const [activeNamespace] = useActiveNamespace();
   return (

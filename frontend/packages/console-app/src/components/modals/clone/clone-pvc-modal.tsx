@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -59,14 +60,14 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
   const defaultSize: string[] = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const pvcRequestedSize = humanizeBinaryBytes(baseValue).string;
 
-  const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
-  const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
-  const [cloneAccessMode, setCloneAccessMode] = React.useState(resource?.spec?.accessModes?.[0]);
-  const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
-  const [validSize, setValidSize] = React.useState(true);
+  const [clonePVCName, setClonePVCName] = useState(`${pvcName}-clone`);
+  const [requestedSize, setRequestedSize] = useState(defaultSize[0] || '');
+  const [cloneAccessMode, setCloneAccessMode] = useState(resource?.spec?.accessModes?.[0]);
+  const [requestedUnit, setRequestedUnit] = useState(defaultSize[1] || 'Ti');
+  const [validSize, setValidSize] = useState(true);
   const pvcAccessMode = getPVCAccessModes(resource, 'title');
-  const [pvcSC, setPVCStorageClass] = React.useState('');
-  const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
+  const [pvcSC, setPVCStorageClass] = useState('');
+  const [updatedProvisioner, setUpdatedProvisioner] = useState('');
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
     setPVCStorageClass(getName(updatedStorageClass) || '');
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
@@ -98,7 +99,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
     setValidSize(isValid);
   };
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
+  const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
 
     const pvcCloneObj: PersistentVolumeClaimKind = {

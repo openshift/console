@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ export type ImagesSectionFormData = {
   };
 };
 
-const ImageOption: React.FC<{
+const ImageOption: FC<{
   fieldPrefix: string;
   label: string;
   fallbackTitle: string;
@@ -81,7 +81,7 @@ const ImageOption: React.FC<{
   );
 };
 
-const ImagesSection: React.FC<{}> = () => {
+const ImagesSection: FC<{}> = () => {
   const { t } = useTranslation();
   const [{ value: strategyType }] = useField<BuildStrategyType>('formData.images.strategyType');
 

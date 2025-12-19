@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -18,7 +18,7 @@ const ALL_OPERATORS: MatchExpression['operator'][] = [
   Operator.NotIn,
 ];
 
-const MatchExpression: React.FC<MatchExpressionProps> = ({
+const MatchExpression: FC<MatchExpressionProps> = ({
   expression,
   onChange = () => {},
   allowedOperators = ALL_OPERATORS,
@@ -80,7 +80,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   );
 };
 
-export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
+export const MatchExpressions: FC<MatchExpressionsProps> = ({
   matchExpressions = [],
   onChange = () => {}, // Default to noop
   allowedOperators = ALL_OPERATORS,
@@ -98,7 +98,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
     onChange([...matchExpressions, { key: '', operator: Operator.Exists, values: [] }]);
 
   return (
-    <Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
+    (<Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
       <Thead>
         <Tr>
           <Th>{t('olm~Key')}</Th>
@@ -110,14 +110,14 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
       <Tbody>
         {matchExpressions.map((expression, index) => (
           // Have to use array index in the key bc any other unique id whould have to use editable fields.
-          <MatchExpression
+          (<MatchExpression
             // eslint-disable-next-line react/no-array-index-key
             key={`${uid}-match-expression-${index}`}
             expression={expression}
             allowedOperators={allowedOperators}
             onClickRemove={() => removeExpression(index)}
             onChange={(newExpression) => updateExpression(index, newExpression)}
-          />
+          />)
         ))}
         <Tr>
           <Td>
@@ -132,7 +132,7 @@ export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
           </Td>
         </Tr>
       </Tbody>
-    </Table>
+    </Table>)
   );
 };
 

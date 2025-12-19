@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -14,7 +14,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-const HelmReleaseDetailsPage: React.FC = () => {
+const HelmReleaseDetailsPage: FC = () => {
   return (
     <NamespacedPage
       variant={NamespacedPageVariants.light}

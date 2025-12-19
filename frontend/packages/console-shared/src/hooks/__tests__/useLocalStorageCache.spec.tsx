@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { MutableRefObject } from 'react';
 import { act, render } from '@testing-library/react';
 import { useLocalStorageCache } from '../useLocalStorageCache';
 
@@ -23,7 +23,7 @@ const recordWithTimestamp = { ...record, timestamp: now };
 const expiredRecord = { ...record, timestamp: now - EXPIRATION - 1 };
 
 describe('useLocalStorageCache', () => {
-  const hookRef: React.MutableRefObject<[() => any[], (r: any) => boolean]> = {
+  const hookRef: MutableRefObject<[() => any[], (r: any) => boolean]> = {
     current: undefined,
   };
 

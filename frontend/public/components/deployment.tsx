@@ -4,7 +4,7 @@ import { ActionMenuVariant } from '@console/shared/src/components/actions/types'
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { Status } from '@console/shared/src/components/status/Status';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import * as React from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -228,7 +228,7 @@ export const DeploymentsList: Snail.FCC<DeploymentsListProps> = ({ data, loaded,
   const columns = useWorkloadColumns<DeploymentKind>();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentModel.labelPlural}
@@ -237,7 +237,7 @@ export const DeploymentsList: Snail.FCC<DeploymentsListProps> = ({ data, loaded,
         columns={columns}
         getDataViewRows={getDataViewRows}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 DeploymentsList.displayName = 'DeploymentsList';

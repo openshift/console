@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
@@ -33,7 +34,7 @@ type DisabledQuickStartsConsoleConfig = K8sResourceKind & {
 
 type ItemProps = { id: string; quickStart?: QuickStart };
 
-const Item: React.FC<ItemProps> = ({ id, quickStart }) => (
+const Item: FC<ItemProps> = ({ id, quickStart }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     {quickStart ? (
       <>
@@ -49,7 +50,7 @@ const Item: React.FC<ItemProps> = ({ id, quickStart }) => (
   </div>
 );
 
-const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const QuickStartConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -60,15 +61,15 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     DisabledQuickStartsConsoleConfig
   >();
-  const [disabled, setDisabled] = React.useState<string[]>();
-  React.useEffect(() => {
+  const [disabled, setDisabled] = useState<string[]>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {
       setDisabled(consoleConfig?.spec?.customization?.quickStarts?.disabled || []);
     }
   }, [consoleConfig, consoleConfigLoaded, disabled]);
 
   // Calculate options
-  const enabledOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const enabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded || !allQuickStartsLoaded || allQuickStartsError || !disabled) {
       return [];
     }
@@ -87,7 +88,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
         />
       ));
   }, [allQuickStarts, allQuickStartsError, allQuickStartsLoaded, consoleConfigLoaded, disabled]);
-  const disabledOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const disabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!disabled) {
       return [];
     }
@@ -110,7 +111,7 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   }, [allQuickStarts, disabled]);
 
   // Save the latest value (disabled string array)
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Quick Starts',
@@ -135,15 +136,15 @@ const QuickStartConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) 
   // Extract disabled string array from Items
   const onListChange = (
     _event,
-    newEnabledOptions: React.ReactElement<ItemProps>[],
-    newDisabledOptions: React.ReactElement<ItemProps>[],
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     setDisabled(newDisabledOptions.map((node) => node.props.id));
     setSaveStatus({ status: 'pending' });
     save();
   };
 
-  const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
     const displayName =
       option.props.quickStart?.spec.displayName ||
       option.props.quickStart?.metadata.name ||

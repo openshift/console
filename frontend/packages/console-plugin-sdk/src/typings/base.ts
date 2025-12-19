@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import {
   ExtensionFlags,
   Extension,
@@ -11,7 +11,7 @@ export type { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
 /**
  * Common interface for loading async React components.
  */
-export type LazyLoader<T extends {} = {}> = () => Promise<React.ComponentType<Partial<T>>>;
+export type LazyLoader<T extends {} = {}> = () => Promise<ComponentType<Partial<T>>>;
 
 /**
  * From Console application perspective, a plugin is a list of extensions

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Form } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -29,7 +30,7 @@ type AddHealthChecksProps = {
   currentContainer: string;
 };
 
-const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
+const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
   resource,
   currentContainer,
   handleSubmit,
@@ -43,7 +44,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
 }) => {
   const viewOnly = useViewOnlyAccess(resource);
   const { t } = useTranslation();
-  const [currentKey, setCurrentKey] = React.useState(currentContainer);
+  const [currentKey, setCurrentKey] = useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
   const healthCheckAdded = _.every(
     containers,

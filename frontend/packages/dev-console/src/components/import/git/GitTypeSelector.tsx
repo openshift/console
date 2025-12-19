@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, FormGroup } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
 import {
@@ -20,7 +20,7 @@ type GitTypeSelectorProps = {
   fieldPrefix: string;
 };
 
-const GitTypeSelector: React.FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
+const GitTypeSelector: FC<GitTypeSelectorProps> = ({ fieldPrefix }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
 

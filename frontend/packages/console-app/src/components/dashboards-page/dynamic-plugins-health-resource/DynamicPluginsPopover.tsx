@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
-const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
+const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
   const pluginInfoEntries = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>

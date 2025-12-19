@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
@@ -11,16 +11,16 @@ import { useK8sModels } from '../useK8sModels';
 // Redux wrapper
 let store;
 interface WrapperProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children }) => (
+const Wrapper: FC<WrapperProps> = ({ children }) => (
   <Provider store={store}>{children}</Provider>
 );
 
 // Object under test
 const modelUpdate = jest.fn();
-const WatchModels: React.FC<{}> = () => {
+const WatchModels: FC<{}> = () => {
   modelUpdate(...useK8sModels());
   return null;
 };

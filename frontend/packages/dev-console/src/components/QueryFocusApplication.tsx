@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -13,22 +14,22 @@ type DispatchProps = {
   onSetApp: (application: string) => void;
 };
 type OwnProps = {
-  children: (desiredApplication?: string) => React.ReactNode;
+  children: (desiredApplication?: string) => ReactNode;
 };
 
 type QueryFocusApplicationProps = StateProps & DispatchProps & OwnProps;
 
-const QueryFocusApplication: React.FC<QueryFocusApplicationProps> = ({
+const QueryFocusApplication: FC<QueryFocusApplicationProps> = ({
   children,
   application,
   onSetApp,
 }) => {
-  const originalApp = React.useRef(application);
+  const originalApp = useRef(application);
   const desiredApplication = new URLSearchParams(window.location.search).get(
     QUERY_PROPERTIES.APPLICATION,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const originalApplication = originalApp.current;
     const sanitizedApp = sanitizeApplicationValue(desiredApplication);
     if (sanitizedApp && sanitizedApp !== originalApplication) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { JSONSchema7Type } from 'json-schema';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
@@ -34,7 +34,7 @@ export type UserPreferenceCheckboxField = {
 
 export type UserPreferenceCustomField = {
   type: UserPreferenceFieldType.custom;
-  component?: CodeRef<React.ComponentType>;
+  component?: CodeRef<ComponentType>;
   props?: { [key: string]: JSONSchema7Type };
 };
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -24,7 +24,7 @@ type ConfigMapDropdownProps = Omit<
   name: string;
 };
 
-const ConfigMapDropdown: React.FC<ConfigMapDropdownProps> = (props) => {
+const ConfigMapDropdown: FC<ConfigMapDropdownProps> = (props) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = {

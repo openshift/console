@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { CreateYAML } from '@console/internal/components/create-yaml';
@@ -17,7 +18,7 @@ import { getPDBResource } from './utils/get-pdb-resources';
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.pdbForm.editor.lastView';
 
-export const PDBFormPage: React.FC<{}> = () => {
+export const PDBFormPage: FC<{}> = () => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
@@ -65,10 +66,10 @@ export const PDBFormPage: React.FC<{}> = () => {
     namespace: params.ns,
     selector: { matchLabels: resource?.spec?.template?.metadata?.labels },
   };
-  const [helpText, setHelpText] = React.useState(formHelpText);
+  const [helpText, setHelpText] = useState(formHelpText);
   const k8sObj = pdbToK8sResource(initialPDB);
 
-  const YAMLEditor: React.FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
+  const YAMLEditor: FC<YAMLEditorProps> = ({ onChange, initialYAML = '' }) => {
     const yamlData = mergeInitialYAMLWithExistingResource(initialYAML, existingResource);
 
     return (

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { FormikValues } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
@@ -30,10 +31,10 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
+const List: FC<AdvancedSectionProps> = ({ appResources, values }) => {
   const { t } = useTranslation();
 
-  const [visibleItems, setVisibleItems] = React.useState([]);
+  const [visibleItems, setVisibleItems] = useState([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
@@ -73,7 +74,7 @@ const List: React.FC<AdvancedSectionProps> = ({ appResources, values }) => {
   );
 };
 
-const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources }) => {
+const AdvancedSection: FC<AdvancedSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
   return (
     <FormSection title={t('devconsole~Advanced options')}>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import { ModelBadge } from '@console/dynamic-plugin-sdk/src/extensions/resource-metadata';
 import DevPreviewBadge from './DevPreviewBadge';
 import { InlineDevPreviewBadge, InlineTechPreviewBadge } from './InlineBadge';
@@ -9,7 +9,7 @@ export enum BadgeType {
   TECH = 'Tech Preview',
 }
 
-export const getBadgeFromType = (badge: ModelBadge | BadgeType): React.ReactElement => {
+export const getBadgeFromType = (badge: ModelBadge | BadgeType): ReactElement => {
   switch (badge) {
     case ModelBadge.DEV:
     case BadgeType.DEV:
@@ -22,7 +22,7 @@ export const getBadgeFromType = (badge: ModelBadge | BadgeType): React.ReactElem
   }
 };
 
-export const getInlineBadgeFromType = (badge: ModelBadge | BadgeType): React.ReactElement => {
+export const getInlineBadgeFromType = (badge: ModelBadge | BadgeType): ReactElement => {
   switch (badge) {
     case ModelBadge.DEV:
     case BadgeType.DEV:

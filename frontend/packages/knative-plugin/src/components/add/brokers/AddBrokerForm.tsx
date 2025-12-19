@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -27,7 +27,7 @@ interface AddBrokerFormProps {
   namespace: string;
 }
 
-const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProps> = (
+const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProps> = (
   formikProps,
 ) => {
   const { t } = useTranslation();

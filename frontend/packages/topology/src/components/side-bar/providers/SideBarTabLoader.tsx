@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { Tab } from '@console/internal/components/utils';
 import SideBarTabHookResolver from './SideBarTabHookResolver';
@@ -7,7 +7,7 @@ import { useDetailsTabSection } from './useDetailsTabSection';
 
 type SideBarTabLoaderProps = {
   element: GraphElement;
-  children: (tabs: Tab[], loaded: boolean) => React.ReactElement;
+  children: (tabs: Tab[], loaded: boolean) => ReactElement;
 };
 
 const SideBarTabLoader: Snail.FCC<SideBarTabLoaderProps> = ({ element, children }) => {

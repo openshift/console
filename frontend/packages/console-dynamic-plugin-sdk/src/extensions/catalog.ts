@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { ExtensionHook } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
@@ -12,7 +12,7 @@ export type CatalogItemType = ExtensionDeclaration<
     /** Title for the catalog item. */
     title: string;
     /** Description for the type specific catalog. */
-    catalogDescription?: string | CodeRef<React.ReactNode>;
+    catalogDescription?: string | CodeRef<ReactNode>;
     /** Description for the catalog item type. */
     typeDescription?: string;
     /** Determine if filter groups should be sorted alphabetically. Defaults to true. */
@@ -142,19 +142,19 @@ export type CatalogExtensionHookOptions = {
 export type CatalogItem<T extends any = any> = {
   uid: string;
   type: string;
-  typeLabel?: string | React.ReactNode;
+  typeLabel?: string | ReactNode;
   name: string;
   /** Optional title to render a custom title using ReactNode.
    * Rendered in catalog tile and side panel
    *  */
-  title?: React.ReactNode;
+  title?: ReactNode;
   // Used as the second label next to the provider label in the list result.
-  secondaryLabel?: React.ReactNode;
+  secondaryLabel?: ReactNode;
   provider?: string;
   // Used as the tile description. If provided as a string, the description is truncated to 3 lines.
   // If provided as a ReactNode, the contents will not be truncated.
   // This description will also be shown in the side panel if there are no `details.descriptions`.
-  description?: string | React.ReactNode;
+  description?: string | ReactNode;
   tags?: string[];
   creationTimestamp?: string;
   supportUrl?: string;
@@ -170,7 +170,7 @@ export type CatalogItem<T extends any = any> = {
   icon?: {
     url?: string;
     class?: string;
-    node?: React.ReactNode;
+    node?: ReactNode;
   };
   details?: CatalogItemDetails;
   // Optional text only badges for the catalog item which will be rendered on the tile and details panel.
@@ -201,13 +201,13 @@ export type CatalogItemDetails = {
 
 export type CatalogItemDetailsProperty = {
   label: string;
-  value: string | React.ReactNode;
+  value: string | ReactNode;
   isHidden?: boolean;
 };
 
 export type CatalogItemDetailsDescription = {
   label?: string;
-  value: string | React.ReactNode;
+  value: string | ReactNode;
 };
 
 export type CatalogItemAttribute = {
@@ -221,7 +221,7 @@ export type CatalogItemBadge = {
   text: string;
   tooltip?: string;
   color?: 'blue' | 'teal' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   variant?: 'outline' | 'filled';
 };
 

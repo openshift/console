@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ interface SinkBindingSectionProps {
   fullWidth?: boolean;
 }
 
-const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidth }) => {
+const SinkBindingSection: FC<SinkBindingSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const initVal =
@@ -22,8 +23,8 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
   const initialValueResources = !_.isEmpty(initVal)
     ? _.map(initVal, (key, val) => [val, key])
     : [['', '']];
-  const [nameValue, setNameValue] = React.useState(initialValueResources);
-  const handleNameValuePairs = React.useCallback(
+  const [nameValue, setNameValue] = useState(initialValueResources);
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       let updatedNameValuePairs = {};
       _.forEach(nameValuePairs, ([name, value]) => {
@@ -44,7 +45,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
   const fieldId = getFieldId(values.type, 'subject-matchLabels');
 
   const matchType = values.sinkBindingMatchType;
-  React.useEffect(() => {
+  useEffect(() => {
     if (matchType === 'name') {
       setFieldValue(`formData.data.${EventSources.SinkBinding}.subject.selector`, undefined);
     } else {
@@ -55,7 +56,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
       );
     }
   }, [matchType, setFieldValue, nameValue]);
-  React.useEffect(() => {
+  useEffect(() => {
     if (!matchType) {
       setFieldValue('sinkBindingMatchType', 'labels');
     }

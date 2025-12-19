@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
@@ -28,7 +28,7 @@ const GLOBAL_FIELDS = [
   'pagerduty_severity',
 ];
 
-export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>

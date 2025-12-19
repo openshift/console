@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   useResolvedExtensions,
   NodeStatus,
@@ -10,7 +11,7 @@ import {
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 
 type PopoverContent = {
-  content: React.ReactNode;
+  content: ReactNode;
   uid: string;
 };
 
@@ -24,7 +25,7 @@ export type GetNodeStatusExtensions = (
 export const useNodeStatusExtensions = () => {
   const [nodeStatusExtensions] = useResolvedExtensions<NodeStatus>(isNodeStatus);
 
-  const pluginResources = React.useMemo(() => {
+  const pluginResources = useMemo(() => {
     const resources: { [key: string]: WatchK8sResource } = {};
 
     nodeStatusExtensions.forEach(({ properties, uid }) => {
@@ -39,7 +40,7 @@ export const useNodeStatusExtensions = () => {
 
   const extraResources = useK8sWatchResources(pluginResources);
 
-  return React.useCallback<GetNodeStatusExtensions>(
+  return useCallback<GetNodeStatusExtensions>(
     (node: NodeKind) => {
       const content: PopoverContent[] = [];
       const statuses: string[] = [];

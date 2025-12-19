@@ -1,6 +1,6 @@
-import * as React from 'react';
+import type { HTMLProps, FC, ReactElement } from 'react';
 
-const CheIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): React.ReactElement => {
+const CheIcon: FC<HTMLProps<SVGElement>> = ({ style }): ReactElement => {
   return (
     <svg height="1em" width="1em" version="1.1" viewBox="0 0 47 57" style={style}>
       <g fillRule="evenodd" stroke="none" strokeWidth="1" fill="none">

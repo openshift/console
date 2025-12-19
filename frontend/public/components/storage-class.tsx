@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { TFunction } from 'i18next';
 import {
@@ -124,7 +124,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<StorageClassReso
 const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<StorageClassResourceKind>[] = React.useMemo(
+  const columns: TableColumn<StorageClassResourceKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -159,10 +159,10 @@ const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
 export const StorageClassList: Snail.FCC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useStorageClassColumns();
-  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<StorageClassResourceKind>
         {...props}
         label={StorageClassModel.labelPlural}
@@ -172,7 +172,7 @@ export const StorageClassList: Snail.FCC<StorageClassListProps> = ({ data, loade
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

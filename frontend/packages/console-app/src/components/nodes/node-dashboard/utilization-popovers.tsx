@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
@@ -13,14 +14,14 @@ import ConsumerPopover, {
 } from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { NodeQueries, getTopConsumerQueries } from './queries';
 
-export const NodeUtilizationContext = React.createContext({
+export const NodeUtilizationContext = createContext({
   nodeIP: '',
   nodeName: '',
 });
 
 const useConsumers = (nsQuery: NodeQueries, podQuery: NodeQueries) => {
-  const { nodeIP, nodeName } = React.useContext(NodeUtilizationContext);
-  return React.useMemo(() => {
+  const { nodeIP, nodeName } = useContext(NodeUtilizationContext);
+  return useMemo(() => {
     const queries = getTopConsumerQueries(nodeIP);
     return [
       {
@@ -43,7 +44,7 @@ export type PopoverProps = TopConsumerPopoverProps & {
   position?: PopoverPosition;
 };
 
-export const CPUPopover: React.FC<PopoverProps> = ({ current, position, title, ...rest }) => {
+export const CPUPopover: FC<PopoverProps> = ({ current, position, title, ...rest }) => {
   const consumers = useConsumers(NodeQueries.PROJECTS_BY_CPU, NodeQueries.PODS_BY_CPU);
   const { t } = useTranslation();
   return (
@@ -59,7 +60,7 @@ export const CPUPopover: React.FC<PopoverProps> = ({ current, position, title, .
   );
 };
 
-export const MemoryPopover: React.FC<PopoverProps> = ({ current, position, title, ...rest }) => {
+export const MemoryPopover: FC<PopoverProps> = ({ current, position, title, ...rest }) => {
   const consumers = useConsumers(NodeQueries.PROJECTS_BY_MEMORY, NodeQueries.PODS_BY_MEMORY);
   const { t } = useTranslation();
   return (
@@ -75,7 +76,7 @@ export const MemoryPopover: React.FC<PopoverProps> = ({ current, position, title
   );
 };
 
-export const FilesystemPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const FilesystemPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_FILESYSTEM,
@@ -91,7 +92,7 @@ export const FilesystemPopover: React.FC<TopConsumerPopoverProps> = ({ current }
   );
 };
 
-export const NetworkInPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_NETWORK_IN,
@@ -107,7 +108,7 @@ export const NetworkInPopover: React.FC<TopConsumerPopoverProps> = ({ current })
   );
 };
 
-export const NetworkOutPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     NodeQueries.PROJECTS_BY_NETWORK_OUT,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
@@ -36,19 +37,19 @@ export type ExportApplicationModalProps = ModalComponentProps & {
   exportResource?: K8sResourceKind;
 };
 
-export const ExportApplicationModal: React.FC<ExportApplicationModalProps> = (props) => {
+export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const { cancel, name, namespace, exportResource, toast } = props;
-  const [startTime, setStartTime] = React.useState<string>(null);
-  const [errMessage, setErrMessage] = React.useState<string>('');
+  const [startTime, setStartTime] = useState<string>(null);
+  const [errMessage, setErrMessage] = useState<string>('');
   const [exportAppToast, setExportAppToast] = useUserSettings<ExportAppUserSettings>(
     `${USERSETTINGS_PREFIX}.exportApp`,
     {},
     true,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (exportResource && exportResource.status?.completed !== true) {
       setStartTime(dateTimeFormatter().format(new Date(exportResource.metadata.creationTimestamp)));
     }

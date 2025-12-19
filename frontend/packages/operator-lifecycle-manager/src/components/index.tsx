@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -155,7 +155,7 @@ export const getManualSubscriptionsInNamespace = (
   );
 };
 
-export const OperatorsWithManualApproval: React.FC<OperatorsWithManualApprovalProps> = ({
+export const OperatorsWithManualApproval: FC<OperatorsWithManualApprovalProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
@@ -171,7 +171,7 @@ export const OperatorsWithManualApproval: React.FC<OperatorsWithManualApprovalPr
   );
 };
 
-export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualApprovalProps> = ({
+export const NamespaceIncludesManualApproval: FC<NamespaceIncludesManualApprovalProps> = ({
   subscriptions,
   namespace,
 }) => (
@@ -184,7 +184,7 @@ export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualAp
   </Trans>
 );
 
-const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) =>
+const InstallPlanCSVNames: FC<InstallPlanReviewProps> = ({ installPlan }) =>
   installPlan?.spec.clusterServiceVersionNames
     .sort()
     // eslint-disable-next-line react/no-array-index-key
@@ -192,7 +192,7 @@ const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) 
     // eslint-disable-next-line react/no-array-index-key
     .map((CSVName, i) => (i > 0 ? <span key={`${CSVName}-${i}`}>, {CSVName}</span> : CSVName));
 
-export const InstallPlanReview: React.FC<InstallPlanReviewProps> = ({ installPlan }) => (
+export const InstallPlanReview: FC<InstallPlanReviewProps> = ({ installPlan }) => (
   <p>
     <Trans ns="olm">
       Review the manual install plan for operators <InstallPlanCSVNames installPlan={installPlan} />

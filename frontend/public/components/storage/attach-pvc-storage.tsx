@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
@@ -21,23 +22,23 @@ import { ContainerSelector } from '../container-selector';
 import { PVCDropdown } from '../utils/pvc-dropdown';
 import { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
 
-export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
-  const [obj, setObj] = React.useState(null);
-  const [inProgress, setInProgress] = React.useState(false);
-  const [useContainerSelector, setUseContainerSelector] = React.useState(false);
-  const [claimName, setClaimName] = React.useState('');
-  const [volumeName, setVolumeName] = React.useState('');
-  const [mountPath, setMountPath] = React.useState('');
-  const [devicePath, setDevicePath] = React.useState('');
-  const [subPath, setSubPath] = React.useState('');
-  const [mountAsReadOnly, setMountAsReadOnly] = React.useState(false);
-  const [selectedContainers, setSelectedContainers] = React.useState([]);
-  const [volumeAlreadyMounted, setVolumeAlreadyMounted] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const [showCreatePVC, setShowCreatePVC] = React.useState('existing');
-  const [claimVolumeMode, setClaimVolumeMode] = React.useState('');
-  const [newPVCObj, setNewPVCObj] = React.useState(null);
-  const [selectedPVC, setSelectedPVC] = React.useState<PersistentVolumeClaimKind>(null);
+export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
+  const [obj, setObj] = useState(null);
+  const [inProgress, setInProgress] = useState(false);
+  const [useContainerSelector, setUseContainerSelector] = useState(false);
+  const [claimName, setClaimName] = useState('');
+  const [volumeName, setVolumeName] = useState('');
+  const [mountPath, setMountPath] = useState('');
+  const [devicePath, setDevicePath] = useState('');
+  const [subPath, setSubPath] = useState('');
+  const [mountAsReadOnly, setMountAsReadOnly] = useState(false);
+  const [selectedContainers, setSelectedContainers] = useState([]);
+  const [volumeAlreadyMounted, setVolumeAlreadyMounted] = useState(false);
+  const [error, setError] = useState('');
+  const [showCreatePVC, setShowCreatePVC] = useState('existing');
+  const [claimVolumeMode, setClaimVolumeMode] = useState('');
+  const [newPVCObj, setNewPVCObj] = useState(null);
+  const [selectedPVC, setSelectedPVC] = useState<PersistentVolumeClaimKind>(null);
 
   const { kindObj, resourceName, namespace } = props;
 
@@ -53,12 +54,12 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     'DaemonSet',
   ];
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Get the current resource so we can add to its definition
     k8sGet(kindObj, resourceName, namespace).then(setObj);
   }, [kindObj, resourceName, namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // If the PVC or its name changes, check if there is already a volume with that name
     const newClaimName =
       showCreatePVC === 'existing' ? claimName : _.get(newPVCObj, 'metadata.name', '');
@@ -82,7 +83,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     return;
   }
 
-  const handleShowCreatePVCChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handleShowCreatePVCChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setShowCreatePVC(event.currentTarget.value);
   };
 
@@ -121,7 +122,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   };
 
   // Add logic to check this handler for if a mount path is not unique
-  const handleMountPathChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handleMountPathChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setMountPath(event.currentTarget.value);
     // Look at the existing mount paths so that we can warn if the new value is not unique.
     validateMountPaths(event.currentTarget.value);
@@ -145,11 +146,11 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     }
   };
 
-  const handleDevicePathChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handleDevicePathChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setDevicePath(event.currentTarget.value);
     validateDevicePath(event.currentTarget.value);
   };
-  const handleSubPathChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const handleSubPathChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setSubPath(event.currentTarget.value);
   };
 
@@ -162,7 +163,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     setSelectedPVC(resource);
   };
 
-  const onMountAsReadOnlyChanged: React.ReactEventHandler<HTMLInputElement> = () => {
+  const onMountAsReadOnlyChanged: ReactEventHandler<HTMLInputElement> = () => {
     setMountAsReadOnly(!mountAsReadOnly);
   };
 
@@ -247,7 +248,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
     return patches;
   };
 
-  const save = (event: React.FormEvent<EventTarget>) => {
+  const save = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
     if (useContainerSelector && selectedContainers.length === 0) {
       setError('You must choose at least one container to mount to.');

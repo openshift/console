@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { MemoryCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -13,7 +14,7 @@ type MemoryCellProps = {
   item: Node;
 };
 
-const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
+const MemoryCellComponent: FC<MemoryCellComponentProps> = memo(
   ({ memoryByPod, totalBytes }) => (
     <div className="odc-topology-list-view__metrics-cell__detail--memory">
       <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
@@ -29,7 +30,7 @@ const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
   ),
 );
 
-const MemoryCell: React.FC<MemoryCellProps> = ({ item }) => {
+const MemoryCell: FC<MemoryCellProps> = ({ item }) => {
   const resource = getTopologyResourceObject(item.getData());
   const memoryStats = useMetricStats(resource);
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -29,7 +30,7 @@ interface DispatchProps {
 
 type Props = NamespaceBarApplicationSelectorProps & StateProps & DispatchProps;
 
-const NamespaceBarApplicationSelector: React.FC<Props> = ({
+const NamespaceBarApplicationSelector: FC<Props> = ({
   namespace,
   application,
   onChange,
@@ -44,8 +45,8 @@ const NamespaceBarApplicationSelector: React.FC<Props> = ({
       : application === UNASSIGNED_APPLICATIONS_KEY
       ? noApplicationsTitle
       : application;
-  const [title, setTitle] = React.useState<string>(dropdownTitle);
-  React.useEffect(() => {
+  const [title, setTitle] = useState<string>(dropdownTitle);
+  useEffect(() => {
     if (!disabled) {
       setTitle(dropdownTitle);
     }

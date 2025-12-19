@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import * as React from 'react';
+import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   chart_color_black_100,
@@ -15,7 +15,7 @@ import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { useRefWidth } from '../utils/ref-width-hook';
 import { DataPoint } from '.';
 
-export const DonutChart: React.FC<DonutChartProps> = ({
+export const DonutChart: FC<DonutChartProps> = ({
   data,
   query = '',
   title,

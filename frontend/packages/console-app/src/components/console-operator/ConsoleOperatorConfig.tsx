@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -81,18 +82,18 @@ export const useConsoleOperatorConfigData = () => {
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   });
 
-  return React.useMemo(
+  return useMemo(
     () => ({ consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig }),
     [consoleOperatorConfig, consoleOperatorConfigLoaded, canPatchConsoleOperatorConfig],
   );
 };
 
-export const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({
+export const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({
   status,
   errorMessage,
 }) => <Status status={status} title={status === 'failed' ? errorMessage : undefined} />;
 
-export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProps> = ({
+export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = ({
   pluginName,
   enabled,
 }) => {
@@ -133,7 +134,7 @@ export const ConsolePluginEnabledStatus: React.FC<ConsolePluginEnabledStatusProp
   );
 };
 
-export const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({
+export const ConsolePluginCSPStatus: FC<ConsolePluginCSPStatusProps> = ({
   hasViolations,
 }) => {
   const { t } = useTranslation();
@@ -155,19 +156,19 @@ export const ConsolePluginCSPStatus: React.FC<ConsolePluginCSPStatusProps> = ({
   );
 };
 
-const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
+const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
   const { t } = useTranslation();
 
-  const [sortBy, setSortBy] = React.useState<ISortBy>(() => ({
+  const [sortBy, setSortBy] = useState<ISortBy>(() => ({
     index: 0,
     direction: SortByDirection.asc,
   }));
 
-  const onSort = React.useCallback<OnSort>((_event, index, direction) => {
+  const onSort = useCallback<OnSort>((_event, index, direction) => {
     setSortBy({ index, direction });
   }, []);
 
-  const columns = React.useMemo<TableColumn[]>(
+  const columns = useMemo<TableColumn[]>(
     () => [
       {
         id: 'name',
@@ -200,7 +201,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) 
     [t],
   );
 
-  const compare = React.useCallback<Comparator<ConsolePluginTableRow>>(
+  const compare = useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
       const { index, direction } = sortBy;
       const { id } = columns[index];
@@ -217,7 +218,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) 
     [columns, sortBy],
   );
 
-  const sortedRows = React.useMemo(() => rows.sort(compare), [rows, compare]);
+  const sortedRows = useMemo(() => rows.sort(compare), [rows, compare]);
 
   return (
     <PaneBody>
@@ -299,7 +300,7 @@ const DevPluginsPage: Snail.FCC<ConsoleOperatorConfigPageProps> = (props) => {
     UI.get('pluginCSPViolations'),
   );
 
-  const rows = React.useMemo<ConsolePluginTableRow[]>(
+  const rows = useMemo<ConsolePluginTableRow[]>(
     () =>
       pluginInfo
         .filter((plugin) => plugin.status === 'loaded')
@@ -316,19 +317,19 @@ const DevPluginsPage: Snail.FCC<ConsoleOperatorConfigPageProps> = (props) => {
   return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
-const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
+const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
   const pluginInfo = usePluginInfo();
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
   });
-  const enabledPlugins = React.useMemo(() => props?.obj?.spec?.plugins ?? [], [
+  const enabledPlugins = useMemo(() => props?.obj?.spec?.plugins ?? [], [
     props?.obj?.spec?.plugins,
   ]);
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
-  const rows = React.useMemo<ConsolePluginTableRow[]>(() => {
+  const rows = useMemo<ConsolePluginTableRow[]>(() => {
     if (!consolePluginsLoaded) {
       return [];
     }
@@ -367,11 +368,11 @@ const PluginsPage: React.FC<ConsoleOperatorConfigPageProps> = (props) => {
   return <ConsolePluginsTable {...props} rows={rows} />;
 };
 
-const ConsoleOperatorConfigPluginsPage: React.FC<ConsoleOperatorConfigPageProps> = developmentMode
+const ConsoleOperatorConfigPluginsPage: FC<ConsoleOperatorConfigPageProps> = developmentMode
   ? DevPluginsPage
   : PluginsPage;
 
-export const ConsoleOperatorConfigDetailsPage: React.FC<React.ComponentProps<
+export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<
   typeof DetailsPage
 >> = (props) => {
   const location = useLocation();

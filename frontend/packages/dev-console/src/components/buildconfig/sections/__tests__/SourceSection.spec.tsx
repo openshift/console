@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -41,7 +41,7 @@ jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => (
 const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
 const spyEvaluateFunc = serverlessFxUtils.evaluateFunc as jest.Mock;
 
-const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
+const Wrapper: FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FormEvent, FC } from 'react';
 import {
   FormGroup,
   InputGroup,
@@ -20,11 +20,11 @@ type HPAUtilizationFieldProps = {
   disabled?: boolean;
   hpa: HorizontalPodAutoscalerKind;
   label: string;
-  onUpdate: (event: React.FormEvent<HTMLInputElement>, stringValue: string) => void;
+  onUpdate: (event: FormEvent<HTMLInputElement>, stringValue: string) => void;
   type: SupportedMetricTypes;
 };
 
-const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
+const HPAUtilizationField: FC<HPAUtilizationFieldProps> = ({
   disabled,
   hpa,
   label,

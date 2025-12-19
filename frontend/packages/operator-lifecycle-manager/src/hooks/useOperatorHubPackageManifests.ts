@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { WatchK8sResult } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { strConcat } from '@console/shared/src';
 import { PackageManifestKind } from '../types';
@@ -17,16 +17,16 @@ export const useOperatorHubPackageManifests = (
     marketplacePackageManifestsLoaded,
     marketplacePackageManifestsErr,
   ] = useMarketplacePackageManifests(namespace);
-  const loaded = React.useMemo(() => packageManifestsLoaded && marketplacePackageManifestsLoaded, [
+  const loaded = useMemo(() => packageManifestsLoaded && marketplacePackageManifestsLoaded, [
     packageManifestsLoaded,
     marketplacePackageManifestsLoaded,
   ]);
-  const loadError = React.useMemo(
+  const loadError = useMemo(
     () => strConcat(packageManifestsErr, marketplacePackageManifestsErr),
     [packageManifestsErr, marketplacePackageManifestsErr],
   );
 
-  const operatorHubPackageManifests = React.useMemo(() => {
+  const operatorHubPackageManifests = useMemo(() => {
     if (!loaded || loadError) {
       return [];
     }

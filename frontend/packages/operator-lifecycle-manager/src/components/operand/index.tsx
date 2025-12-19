@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
@@ -145,7 +146,7 @@ const hasAllNamespaces = (csv: ClusterServiceVersionKind) => {
   return managedNamespaces.length === 1 && managedNamespaces[0] === '';
 };
 
-export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
+export const OperandStatus: FC<OperandStatusProps> = ({ operand }) => {
   const status: OperandStatusType = getOperandStatus(operand);
   if (!status) {
     return <>-</>;
@@ -166,7 +167,7 @@ const getOperandStatusText = (operand: K8sResourceKind): string => {
   return status ? `${status.type}: ${status.value}` : '';
 };
 
-export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNamespace }) => {
+export const OperandTableRow: FC<OperandTableRowProps> = ({ obj, showNamespace }) => {
   const objReference = referenceFor(obj);
   const context = { [objReference]: obj, 'operand-actions': { resource: obj } };
   return (
@@ -211,7 +212,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, showNames
 
 const getOperandNamespace = (obj: ClusterServiceVersionKind): string | null => getNamespace(obj);
 
-export const OperandList: React.FC<OperandListProps> = (props) => {
+export const OperandList: FC<OperandListProps> = (props) => {
   const { t } = useTranslation();
   const { noAPIsFound, showNamespace } = props;
 
@@ -274,7 +275,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
     kebabHeader,
   ];
 
-  const data = React.useMemo(
+  const data = useMemo(
     () =>
       props.data?.map?.((obj) => {
         if (obj.apiVersion && obj.kind) {
@@ -360,7 +361,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const [models, inFlight] = useK8sModels();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [apiRefreshed, setAPIRefreshed] = React.useState(false);
+  const [apiRefreshed, setAPIRefreshed] = useState(false);
 
   // Map APIs provided by this CSV to Firehose resources. Exclude APIs that do not have a model.
   const providedAPIs = providedAPIsForCSV(obj);
@@ -369,7 +370,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
   const flatten: Flatten<{
     [key: string]: K8sResourceCommon[];
-  }> = React.useCallback(
+  }> = useCallback(
     (resources) =>
       _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
         ({ kind, metadata }, i, allResources) =>
@@ -399,7 +400,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   // Refresh API definitions if at least one API is missing a model and definitions have not already been refreshed.
   const apiMightBeOutdated =
     !inFlight && Object.keys(watchedResources).length < providedAPIs.length;
-  React.useEffect(() => {
+  useEffect(() => {
     if (!apiRefreshed && apiMightBeOutdated) {
       dispatch(getResources());
       setAPIRefreshed(true);
@@ -416,7 +417,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   const createNavigate = (kind) => navigate(`${location.pathname.replace('instances', kind)}/~new`);
 
-  const data = React.useMemo(() => flatten(resources), [resources, flatten]);
+  const data = useMemo(() => flatten(resources), [resources, flatten]);
 
   const rowFilters =
     Object.keys(watchedResources).length > 1
@@ -478,7 +479,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   );
 };
 
-const DefaultProvidedAPIPage: React.FC<DefaultProvidedAPIPageProps> = (props) => {
+const DefaultProvidedAPIPage: FC<DefaultProvidedAPIPageProps> = (props) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [showOperandsInAllNamespaces] = useShowOperandsInAllNamespaces();
@@ -547,12 +548,12 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   const resourceListPage = useResourceListPage(props.kind);
   const [namespace] = useActiveNamespace();
   const [k8sModel, inFlight] = useK8sModel(props.kind);
-  const [apiRefreshed, setAPIRefreshed] = React.useState(false);
+  const [apiRefreshed, setAPIRefreshed] = useState(false);
   const dispatch = useDispatch();
 
   // Refresh API definitions if model is missing and the definitions have not already been refreshed.
   const apiMightBeOutdated = !inFlight && !k8sModel;
-  React.useEffect(() => {
+  useEffect(() => {
     if (!apiRefreshed && apiMightBeOutdated) {
       dispatch(getResources());
       setAPIRefreshed(true);
@@ -583,7 +584,7 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   );
 };
 
-const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
+const PodStatuses: FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescriptors, schema }) =>
   podStatusDescriptors?.length > 0 ? (
     <Grid hasGutter>
       {podStatusDescriptors.map((statusDescriptor: StatusDescriptor) => {
@@ -605,7 +606,7 @@ const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescri
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
   const { t } = useTranslation();
   const { kind, status } = obj;
-  const [errorMessage, setErrorMessage] = React.useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
 
   // Find the matching CRD spec for the kind of this resource in the CSV.
@@ -744,7 +745,7 @@ const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps)
   const { appName, ns, name, plural } = params;
   const location = useLocation();
   const [csv] = useClusterServiceVersion(appName, ns);
-  const actionItems = React.useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
+  const actionItems = useCallback((resourceModel: K8sKind, resource: K8sResourceKind) => {
     const context = {
       [referenceForModel(resourceModel)]: resource,
       'operand-actions': { resource },

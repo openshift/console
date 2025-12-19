@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +14,7 @@ export type DomainMappingOverviewListProps = {
   domainMappings: K8sResourceKind[];
 };
 
-const DomainMappingOverviewList: React.FC<DomainMappingOverviewListProps> = ({
+const DomainMappingOverviewList: FC<DomainMappingOverviewListProps> = ({
   title,
   domainMappings,
 }) => {

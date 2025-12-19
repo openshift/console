@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ interface ExecNewPodFormProps {
   dataAttribute: string;
 }
 
-const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
+const ExecNewPodForm: FC<ExecNewPodFormProps> = ({
   resourceObj,
   lifecycleHook,
   dataAttribute,

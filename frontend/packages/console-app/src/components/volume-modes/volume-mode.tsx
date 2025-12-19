@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation, Trans } from 'react-i18next';
@@ -10,7 +11,7 @@ import {
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
-export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => {
+export const VolumeModeSelector: FC<VolumeModeSelectorProps> = (props) => {
   const {
     className,
     pvcResource,
@@ -27,13 +28,13 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
     ? pvcResource?.spec?.volumeMode || ''
     : availableVolumeMode || initialVolumeModes[0];
 
-  const [volumeMode, setVolumeMode] = React.useState<string>();
-  const allowedVolumeModes: string[] = React.useMemo(
+  const [volumeMode, setVolumeMode] = useState<string>();
+  const allowedVolumeModes: string[] = useMemo(
     () => (loaded ? getVolumeModeForProvisioner(provisioner, accessMode) : []),
     [loaded, provisioner, accessMode],
   );
 
-  const changeVolumeMode = React.useCallback(
+  const changeVolumeMode = useCallback(
     (mode: string) => {
       setVolumeMode(mode);
       onChange(mode);
@@ -41,7 +42,7 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
     [onChange],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!allowedVolumeModes.length) {
       return;
     }

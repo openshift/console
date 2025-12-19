@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,7 @@ import MetricsTooltip from './MetricsTooltip';
 
 import './MetricsCell.scss';
 
-const CpuCellComponent: React.FC<CpuCellComponentProps> = React.memo(({ cpuByPod, totalCores }) => {
+const CpuCellComponent: FC<CpuCellComponentProps> = memo(({ cpuByPod, totalCores }) => {
   const { t } = useTranslation();
   return (
     <div className="odc-topology-list-view__metrics-cell__detail--cpu">
@@ -31,7 +32,7 @@ type CpuCellProps = {
   item: Node;
 };
 
-const CpuCell: React.FC<CpuCellProps> = ({ item }) => {
+const CpuCell: FC<CpuCellProps> = ({ item }) => {
   const resource = getTopologyResourceObject(item.getData());
   const memoryStats = useMetricStats(resource);
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler, FormEvent, ReactNode } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -20,21 +21,21 @@ const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, Stateful
 const getContainers = (workload: K8sResourceKind) =>
   _.get(workload, 'spec.template.spec.containers') || [];
 
-export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> = (props) => {
+export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
   const { namespace, secretName } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [workloadOptions, setWorkloadOptions] = React.useState({});
-  const [workloadsByUID, setWorkloadsByUID] = React.useState({});
-  const [selectedWorkloadUID, setSelectedWorkloadUID] = React.useState('');
-  const [addAs, setAddAs] = React.useState('environment');
-  const [prefix, setPrefix] = React.useState('');
-  const [mountPath, setMountPath] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [workloadOptions, setWorkloadOptions] = useState({});
+  const [workloadsByUID, setWorkloadsByUID] = useState({});
+  const [selectedWorkloadUID, setSelectedWorkloadUID] = useState('');
+  const [addAs, setAddAs] = useState('environment');
+  const [prefix, setPrefix] = useState('');
+  const [mountPath, setMountPath] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const opts = { ns: namespace };
 
     Promise.all(
@@ -73,7 +74,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
     setSelectedWorkloadUID(selected);
   };
 
-  const onAddAsChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  const onAddAsChange: ReactEventHandler<HTMLInputElement> = (event) => {
     setAddAs(event.currentTarget.value);
   };
 
@@ -134,7 +135,7 @@ export const AddSecretToWorkloadModal: React.FC<AddSecretToWorkloadModalProps> =
     return addAs === 'environment' ? getEnvPatches(obj) : getVolumePatches(obj);
   };
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
+  const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
 
     if (!selectedWorkloadUID) {
@@ -288,7 +289,7 @@ export const useAddSecretToWorkloadModalLauncher = (
 ): ModalCallback => {
   const launcher = useOverlay();
 
-  return React.useCallback(
+  return useCallback(
     () => launcher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalProvider, props),
     [launcher, props],
   );
@@ -311,7 +312,7 @@ export type AddSecretToWorkloadModalState = {
   inProgress: boolean;
   errorMessage: string;
   workloadOptions: {
-    [uid: string]: React.ReactNode;
+    [uid: string]: ReactNode;
   };
   workloadsByUID: {
     [uid: string]: WorkloadItem;

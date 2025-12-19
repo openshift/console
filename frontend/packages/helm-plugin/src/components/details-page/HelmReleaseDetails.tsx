@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +37,7 @@ interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
   };
 }
 
-export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> = ({
+export const LoadedHelmReleaseDetails: FC<LoadedHelmReleaseDetailsProps> = ({
   helmRelease,
   secrets,
 }) => {
@@ -141,13 +142,13 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 };
 
-const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
+const HelmReleaseDetails: FC<HelmReleaseDetailsProps> = () => {
   const params = useParams();
   const namespace = params.ns;
   const helmReleaseName = params.name;
 
-  const [helmReleaseData, setHelmReleaseData] = React.useState<HelmRelease>();
-  const [helmReleaseError, setHelmReleaseError] = React.useState<Error>();
+  const [helmReleaseData, setHelmReleaseData] = useState<HelmRelease>();
+  const [helmReleaseError, setHelmReleaseError] = useState<Error>();
 
   const [secrets, secretLoaded, secretLoadError] = useK8sWatchResource<SecretKind[]>(
     helmReleaseData
@@ -165,7 +166,7 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = () => {
         },
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
 
     const getHelmRelease = async () => {

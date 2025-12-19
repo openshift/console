@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -240,7 +240,7 @@ const getPodsWatcher = (namespace: string) => {
 
 export const CronJobPodsComponent: Snail.FCC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const podFilters = React.useMemo(() => getPodFilters(t), [t]);
+  const podFilters = useMemo(() => getPodFilters(t), [t]);
   return (
     <PaneBody>
       <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
@@ -303,7 +303,7 @@ export const CronJobJobsComponent: Snail.FCC<CronJobJobsComponentProps> = ({ obj
 
 const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<CronJobKind>[] = React.useMemo(() => {
+  const columns: TableColumn<CronJobKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -370,7 +370,7 @@ export const CronJobsList: Snail.FCC<CronJobsListProps> = ({ data, loaded, ...pr
   const columns = useCronJobsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CronJobKind>
         {...props}
         label={CronJobModel.labelPlural}
@@ -380,7 +380,7 @@ export const CronJobsList: Snail.FCC<CronJobsListProps> = ({ data, loaded, ...pr
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

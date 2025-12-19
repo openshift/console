@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
@@ -18,7 +18,7 @@ export interface TrafficSplittingType {
   trafficSplitting: Traffic[];
 }
 
-const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
+const TrafficSplitting: FC<TrafficSplittingProps> = ({
   service,
   revisions,
   cancel,

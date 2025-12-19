@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -8,7 +8,7 @@ import { getResource } from '../../utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { JobsOverview } from './JobsOverview';
 
-const JobsTabSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource }) => {
+const JobsTabSection: FC<{ resource: K8sResourceCommon }> = ({ resource }) => {
   const { jobs } = useJobsForCronJobWatcher(resource);
   return (
     <TopologySideBarTabSection>

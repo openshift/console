@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { useTranslation } from 'react-i18next';

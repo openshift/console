@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { RefObject, SetStateAction, FC } from 'react';
+import { useEffect } from 'react';
 import { MenuToggle } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { useTranslation } from 'react-i18next';
@@ -7,15 +8,15 @@ import { ActionMenuVariant } from '../types';
 type ActionMenuToggleProps = {
   isOpen: boolean;
   isDisabled: boolean;
-  menuRef: React.RefObject<HTMLElement>;
-  toggleRef: React.RefObject<HTMLButtonElement>;
+  menuRef: RefObject<HTMLElement>;
+  toggleRef: RefObject<HTMLButtonElement>;
   toggleVariant?: ActionMenuVariant;
   toggleTitle?: string;
-  onToggleClick: (state: React.SetStateAction<boolean>) => void;
+  onToggleClick: (state: SetStateAction<boolean>) => void;
   onToggleHover: () => void;
 };
 
-const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
+const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
   isOpen,
   isDisabled,
   menuRef,
@@ -54,7 +55,7 @@ const ActionMenuToggle: React.FC<ActionMenuToggleProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       window.addEventListener('keydown', handleMenuKeys);
       window.addEventListener('click', handleClickOutside);

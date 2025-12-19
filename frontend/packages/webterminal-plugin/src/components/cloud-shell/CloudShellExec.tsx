@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
@@ -66,12 +66,12 @@ const CloudShellExec: Snail.FCC<CloudShellExecProps> = ({
   onActivate,
 }) => {
   const fireTelemetryEvent = useTelemetry();
-  const [wsOpen, setWsOpen] = React.useState<boolean>(false);
-  const [wsError, setWsError] = React.useState<string>();
-  const [wsReopening, setWsReopening] = React.useState<boolean>(false);
-  const [customResource, setCustomResource] = React.useState<CloudShellResource>();
-  const ws = React.useRef<WSFactory>();
-  const terminal = React.useRef<ImperativeTerminalType>();
+  const [wsOpen, setWsOpen] = useState<boolean>(false);
+  const [wsError, setWsError] = useState<string>();
+  const [wsReopening, setWsReopening] = useState<boolean>(false);
+  const [customResource, setCustomResource] = useState<CloudShellResource>();
+  const ws = useRef<WSFactory>();
+  const terminal = useRef<ImperativeTerminalType>();
   const { t } = useTranslation();
 
   const onData = (data: string): void => {
@@ -79,23 +79,23 @@ const CloudShellExec: Snail.FCC<CloudShellExecProps> = ({
     fireTelemetryEvent('Web Terminal Command Issued', { sessionId: workspaceId });
   };
 
-  const handleResize = React.useCallback((cols: number, rows: number) => {
+  const handleResize = useCallback((cols: number, rows: number) => {
     const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
     ws.current?.send(`4${data}`);
   }, []);
 
-  const onCommand = React.useCallback((command: string): void => {
+  const onCommand = useCallback((command: string): void => {
     ws.current?.send(`0${Base64.encode(`${command}\n`)}`);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     onActivate(true);
     return () => {
       onActivate(false);
     };
   }, [onActivate]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let unmounted: boolean;
     const usedClient = flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
     const cmd = shcommand || ['sh', '-i', '-c', 'TERM=xterm sh'];

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentType, ReactElement, FunctionComponent, ComponentProps } from 'react';
+import { isValidElement, useState, useRef, useMemo, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   hullPath,
@@ -61,9 +62,9 @@ interface ConnectorComponentProps {
   hover?: boolean;
 }
 
-type CreateConnectorRenderer = React.ComponentType<ConnectorComponentProps>;
+type CreateConnectorRenderer = ComponentType<ConnectorComponentProps>;
 
-type OnCreateResult = ConnectorChoice[] | void | undefined | null | React.ReactElement[];
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement[];
 
 type CreateConnectorWidgetProps = {
   element: Node;
@@ -89,18 +90,18 @@ interface PromptData {
   element: Node;
   target: Node | Graph;
   event: DragEvent;
-  choices: ConnectorChoice[] | React.ReactElement[];
+  choices: ConnectorChoice[] | ReactElement[];
 }
 
 const isReactElementArray = (
-  choices: ConnectorChoice[] | React.ReactElement[],
-): choices is React.ReactElement[] => React.isValidElement(choices[0]);
+  choices: ConnectorChoice[] | ReactElement[],
+): choices is ReactElement[] => isValidElement(choices[0]);
 
 const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
 const DEFAULT_HANDLE_LENGTH = 32;
 
-const CreateConnectorWidget: React.FunctionComponent<CreateConnectorWidgetProps> = observer(
+const CreateConnectorWidget: FunctionComponent<CreateConnectorWidgetProps> = observer(
   (props) => {
     const {
       element,
@@ -115,11 +116,11 @@ const CreateConnectorWidget: React.FunctionComponent<CreateConnectorWidgetProps>
       dragOperation,
       hideConnectorMenu,
     } = props;
-    const [prompt, setPrompt] = React.useState<PromptData | null>(null);
-    const [active, setActive] = React.useState(false);
-    const hintsRef = React.useRef<string[] | undefined>();
+    const [prompt, setPrompt] = useState<PromptData | null>(null);
+    const [active, setActive] = useState(false);
+    const hintsRef = useRef<string[] | undefined>();
 
-    const spec = React.useMemo(() => {
+    const spec = useMemo(() => {
       const dragSourceSpec: DragSourceSpec<
         DragObjectWithType,
         DragSpecOperationType<DragOperationWithType>,
@@ -267,20 +268,20 @@ const CreateConnectorWidget: React.FunctionComponent<CreateConnectorWidgetProps>
 );
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
-  onCreate: React.ComponentProps<typeof CreateConnectorWidget>['onCreate'],
+  onCreate: ComponentProps<typeof CreateConnectorWidget>['onCreate'],
   ConnectorComponent: CreateConnectorRenderer = DefaultCreateConnector,
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
-) => (WrappedComponent: React.ComponentType<Partial<P>>) => {
-  const Component: React.FunctionComponent<Omit<P, keyof WithCreateConnectorProps>> = ({
+) => (WrappedComponent: ComponentType<Partial<P>>) => {
+  const Component: FunctionComponent<Omit<P, keyof WithCreateConnectorProps>> = ({
     children,
     ...props
   }) => {
-    const [show, setShow] = React.useState(false);
-    const [alive, setKeepAlive] = React.useState(false);
-    const onShowCreateConnector = React.useCallback(() => setShow(true), []);
-    const onHideCreateConnector = React.useCallback(() => setShow(false), []);
-    const onKeepAlive = React.useCallback(
+    const [show, setShow] = useState(false);
+    const [alive, setKeepAlive] = useState(false);
+    const onShowCreateConnector = useCallback(() => setShow(true), []);
+    const onHideCreateConnector = useCallback(() => setShow(false), []);
+    const onKeepAlive = useCallback(
       (isAlive: boolean) => {
         setKeepAlive((prev) => {
           if (prev && !isAlive) {

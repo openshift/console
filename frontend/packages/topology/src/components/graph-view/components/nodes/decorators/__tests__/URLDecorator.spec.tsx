@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import { SVGDefsProvider } from '@patternfly/react-topology';
 import { render, screen } from '@testing-library/react';
 import { useRoutesWatcher } from '@console/shared';
@@ -71,7 +71,7 @@ const routes = [
   },
 ];
 
-const renderInSvg = (element: React.ReactElement) => {
+const renderInSvg = (element: ReactElement) => {
   return render(
     <svg>
       <SVGDefsProvider>{element}</SVGDefsProvider>

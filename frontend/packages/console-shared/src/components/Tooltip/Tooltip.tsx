@@ -4,7 +4,7 @@
  * 2. Tooltip component is missing the onShow/OnHide events which are fired when the tooltip open/closed
  * Remove this component once https://github.com/patternfly/patternfly-react/issues/5620 is fixed.
  */
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { TooltipArrow } from '@patternfly/react-core/dist/js/components/Tooltip/TooltipArrow';
 import { TooltipContent } from '@patternfly/react-core/dist/js/components/Tooltip/TooltipContent';
 import { css } from '@patternfly/react-styles';
@@ -25,10 +25,10 @@ type TooltipProps = {
   placement?: TooltipPlacement;
   onShow?: (event: Event) => void;
   onHide?: (event: Event) => void;
-  content: React.ReactNode;
+  content: ReactNode;
 };
 
-export const Tooltip: React.FC<TooltipProps> = ({ content, className, ...rest }) => {
+export const Tooltip: FC<TooltipProps> = ({ content, className, ...rest }) => {
   return (
     <Tippy
       className="ocs-tooltip"

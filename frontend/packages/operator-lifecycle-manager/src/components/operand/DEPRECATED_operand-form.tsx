@@ -1,6 +1,8 @@
 // THIS COMPONENT IS DEPRECATED AND WILL BE REMOVED IN v4.6.
 
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+
+import { useState, useMemo, Fragment } from 'react';
 import {
   Alert,
   ActionGroup,
@@ -458,7 +460,7 @@ const pathToArray = (path: string): (string | number)[] =>
   });
 
 const FieldGroup: Snail.FCC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
-  const [expanded, setExpanded] = React.useState<boolean>(isExpanded);
+  const [expanded, setExpanded] = useState<boolean>(isExpanded);
 
   const onToggle = (event) => {
     event.preventDefault();
@@ -478,7 +480,7 @@ const FieldGroup: Snail.FCC<FieldGroupProps> = ({ children, isExpanded = false, 
 };
 
 // Wrapper for individual operand form inputs
-const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ field, input }) => {
+const OperandFormInputGroup: FC<OperandFormInputGroupProps> = ({ field, input }) => {
   const { description, displayName, path, required } = field;
   const id = idFromPath(path);
   return input ? (
@@ -501,7 +503,7 @@ const OperandFormInputGroup: React.FC<OperandFormInputGroupProps> = ({ field, in
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
+export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
   formData,
   csv,
   schema,
@@ -533,7 +535,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
   };
 
   // Map providedAPI spec descriptors and openAPI spec properties to OperandField[] array
-  const [fields, setFields] = React.useState<OperandField[]>(() => {
+  const [fields, setFields] = useState<OperandField[]>(() => {
     // Get fields from openAPI
     const schemaFields = fieldsForOpenAPI(
       schema?.properties?.spec as JSONSchema6,
@@ -563,12 +565,12 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     return [...schemaFields, ...descriptorFields];
   });
 
-  const labelTags = React.useMemo(() => {
+  const labelTags = useMemo(() => {
     const formValue = immutableFormData.getIn(['metadata', 'labels']);
     return SelectorInput.arrayify(_.isFunction(formValue?.toJS) ? formValue.toJS() : {});
   }, [immutableFormData]);
 
-  const [error, setError] = React.useState<string>();
+  const [error, setError] = useState<string>();
 
   // Group fields into advanced, arrayFieldGroup, fieldGroup, and normal fields for rendering.
   // Note that arrayFieldGroup and fieldGroup fields are still flat after this. The memoized
@@ -579,7 +581,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
     arrayFields = [],
     groupFields = [],
     normalFields = [],
-  ]: OperandField[][] = React.useMemo(
+  ]: OperandField[][] = useMemo(
     (): OperandField[][] =>
       _.reduce(
         fields,
@@ -630,7 +632,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   // Create memoized arrayFieldGroups. Organizes arrayFields into a structure that is easy to map
   // and render.
-  const arrayFieldGroups = React.useMemo(() => {
+  const arrayFieldGroups = useMemo(() => {
     // Group all fields by group name
     const groupedByName = _.groupBy(arrayFields, (field) => {
       const { groupName } = parseGroupDescriptor(field);
@@ -657,7 +659,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
 
   // Create memoized fieldGroups. Map to array of fields grouped by fieldGroup name so that sorting
   // is easy.
-  const fieldGroups = React.useMemo(() => {
+  const fieldGroups = useMemo(() => {
     const groupedByName = _.groupBy(groupFields, (field) => {
       const { groupName } = parseGroupDescriptor(field);
       return groupName;
@@ -1015,9 +1017,9 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       );
 
       return (
-        <FieldGroup id={id} isExpanded={isExpanded} key={id} label={groupDisplayName}>
+        (<FieldGroup id={id} isExpanded={isExpanded} key={id} label={groupDisplayName}>
           {_.map(fieldLists, (fieldList, index) => (
-            <React.Fragment key={`${groupName}-${index}`}>
+            <Fragment key={`${groupName}-${index}`}>
               {index > 0 && <hr />}
               {fieldLists.length > 1 && (
                 <div className="co-array-field-group__remove">
@@ -1035,7 +1037,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               {_.map(fieldList, (field) => (
                 <OperandFormInputGroup key={field.path} field={field} input={inputFor(field)} />
               ))}
-            </React.Fragment>
+            </Fragment>
           ))}
           <div>
             <Button
@@ -1047,7 +1049,7 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
               {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
             </Button>
           </div>
-        </FieldGroup>
+        </FieldGroup>)
       );
     });
 
@@ -1213,7 +1215,7 @@ type OperandFormInputGroupProps = {
 };
 
 type FieldGroupProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
   isExpanded?: boolean;
   id: string;
   label: string;

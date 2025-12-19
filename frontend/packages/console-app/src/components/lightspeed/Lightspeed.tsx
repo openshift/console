@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -39,18 +40,18 @@ const getLightspeedInstallationStatus = async () => {
 export const lightspeedOperatorURL =
   '/catalog?catalogType=operator&keyword=lightspeed&selectedId=lightspeed-operator-redhat-operators-openshift-marketplace';
 
-const Lightspeed: React.FC = () => {
+const Lightspeed: FC = () => {
   const { t } = useTranslation();
   const [hideLightspeed] = useHideLightspeed();
-  const [isReady, setIsReady] = React.useState(false);
-  const [lightspeedIsInstalled, setLightspeedIsInstalled] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [lightspeedIsInstalled, setLightspeedIsInstalled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const fireTelemetryEvent = useTelemetry();
   const canListPackageManifest = useFlag(FLAGS.CAN_LIST_PACKAGE_MANIFEST);
   const canListOperatorGroup = useFlag(FLAGS.CAN_LIST_OPERATOR_GROUP);
   const canInstallLightspeed = canListPackageManifest && canListOperatorGroup;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkIfLightspeedIsInstalled = async () => {
       if (await getLightspeedInstallationStatus()) {
         setLightspeedIsInstalled(true);

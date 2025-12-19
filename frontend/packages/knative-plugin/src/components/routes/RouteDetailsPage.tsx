@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
 import { ClipboardCopy, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -29,7 +29,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
-const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
+const RouteDetails: FC<RoutesDetailsProps> = ({ obj: route }) => {
   const { t } = useTranslation();
   const isPrivateKSVC =
     route?.metadata?.labels?.[PRIVATE_KNATIVE_SERVING_LABEL] === 'cluster-local';
@@ -73,7 +73,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
   );
 };
 
-const RouteDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+const RouteDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj } = props;
   const params = useParams();
   const location = useLocation();

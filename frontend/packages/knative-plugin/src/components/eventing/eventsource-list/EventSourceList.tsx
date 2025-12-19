@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from '@console/internal/components/factory';
 import EventSourceHeaders from './EventSourceHeaders';
 import EventSourceRow from './EventSourceRow';
 
-const EventSourceList: React.FC<TableProps> = (props) => {
+const EventSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Table

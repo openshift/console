@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 
-export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
+export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const { t } = useTranslation('olm');
 
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(
@@ -32,7 +32,7 @@ export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
   );
 };
 
-export const EndpointList: React.FC<EndpointListProps> = (props) => {
+export const EndpointList: FC<EndpointListProps> = (props) => {
   const { t } = useTranslation('olm');
   return (
     <Table aria-label={t('Endpoints')} variant="compact" borders={false}>

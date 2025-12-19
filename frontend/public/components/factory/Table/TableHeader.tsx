@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ISortBy, OnSelect, OnSort, Th, Thead, Tr } from '@patternfly/react-table';
 import { TableColumn as InternalTableColumn } from '../table';

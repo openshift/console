@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ export interface SinkSourceModalProps {
 
 type Props = FormikProps<FormikValues> & SinkSourceModalProps;
 
-const SinkSourceModal: React.FC<Props> = ({
+const SinkSourceModal: FC<Props> = ({
   resourceName,
   namespace,
   handleSubmit,

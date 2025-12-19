@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -56,7 +56,7 @@ interface StateProps {
 
 type Props = EventSourceProps & StateProps;
 
-export const EventSource: React.FC<Props> = ({
+export const EventSource: FC<Props> = ({
   namespace,
   normalizedSource,
   activeApplication,

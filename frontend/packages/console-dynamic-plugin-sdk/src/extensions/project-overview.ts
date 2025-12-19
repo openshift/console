@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 import { Humanize, TopConsumerPopoverProps } from './console-types';
 
@@ -7,7 +7,7 @@ export type ProjectOverviewInventoryItem = ExtensionDeclaration<
   'console.project-overview/inventory-item',
   {
     /** The component to be rendered. */
-    component: CodeRef<React.ComponentType<{ projectName: string }>>;
+    component: CodeRef<ComponentType<{ projectName: string }>>;
   }
 >;
 
@@ -30,7 +30,7 @@ export type ProjectOverviewUtilizationItem = ExtensionDeclaration<
     /** Prometheus limit query. */
     getLimitQuery?: CodeRef<GetProjectQuery>;
     /** Shows Top consumer popover instead of plain value */
-    TopConsumerPopover?: CodeRef<React.ComponentType<TopConsumerPopoverProps>>;
+    TopConsumerPopover?: CodeRef<ComponentType<TopConsumerPopoverProps>>;
   }
 >;
 

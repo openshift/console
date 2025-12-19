@@ -1,6 +1,6 @@
-import * as React from 'react';
+import type { FC } from 'react';
 
-const FormSectionDivider: React.FC = () => (
+const FormSectionDivider: FC = () => (
   <hr
     style={{
       margin: 0,

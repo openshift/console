@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import IconDropdown from '../icon/IconDropdown';
 import FormSection from './FormSection';
 
-const IconSection: React.FC = () => {
+const IconSection: FC = () => {
   const { t } = useTranslation();
   const [runtimeIconField] = useField<string>('runtimeIcon');
   const [customIconField] = useField<string>('customIcon');

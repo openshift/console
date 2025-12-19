@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ export type ConfigurationsOverviewListProps = {
   configurations: K8sResourceKind[];
 };
 
-const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
+const ConfigurationsOverviewList: FC<ConfigurationsOverviewListProps> = ({
   configurations,
 }) => {
   const { t } = useTranslation();

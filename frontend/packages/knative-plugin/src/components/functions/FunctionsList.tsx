@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -10,7 +10,7 @@ import FunctionRow from './FunctionRow';
 
 import './FunctionsPage.scss';
 
-const FunctionsList: React.FC<TableProps> = (props) => {
+const FunctionsList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const { ns } = useParams();
   const EmptyMsg = () => (

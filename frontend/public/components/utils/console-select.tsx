@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
   Divider,
@@ -49,11 +50,11 @@ export type ConsoleSelectProps = {
   /** Whether the dropdown should take full width */
   isFullWidth?: boolean;
   /** The items to be displayed in the dropdown */
-  items: Record<string, React.ReactNode>;
+  items: Record<string, ReactNode>;
   /** Class name for the dropdown menu */
   menuClassName?: string;
   /** Callback when an item is selected */
-  onChange?: (key: string, e: React.MouseEvent) => void;
+  onChange?: (key: string, e: MouseEvent) => void;
   /** Wether the dropdown is a required field */
   required?: boolean;
   /** The currently selected key */
@@ -63,9 +64,9 @@ export type ConsoleSelectProps = {
   /** Key for storing bookmarks in user settings */
   storageKey?: string;
   /** Style for the dropdown */
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
-  title?: React.ReactNode;
+  title?: ReactNode;
   /** Prefix for the title in the dropdown toggle */
   titlePrefix?: string;
   /** User settings id prefix for bookmarks */
@@ -78,7 +79,7 @@ export type ConsoleSelectProps = {
 
 const ConsoleSelectItem: Snail.FCC<{
   itemKey: string;
-  content: React.ReactNode;
+  content: ReactNode;
   selected: boolean;
   isBookmarked?: boolean;
 }> = ({ itemKey, content, selected, isBookmarked }) => (
@@ -96,10 +97,10 @@ const ConsoleSelectItem: Snail.FCC<{
 );
 
 /** Returns true if the given `ref` is inside of the legacy modal container */
-const useInsideLegacyModal = (ref: React.RefObject<HTMLElement>) => {
-  const [insideLegacyModal, setInsideLegacyModal] = React.useState(false);
+const useInsideLegacyModal = (ref: RefObject<HTMLElement>) => {
+  const [insideLegacyModal, setInsideLegacyModal] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const modal = ref.current?.closest('#modal-container');
     setInsideLegacyModal(!!modal);
   }, [ref]);
@@ -138,10 +139,10 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   renderInline = false,
   ...props
 }) => {
-  const [expanded, setExpanded] = React.useState(active ?? false);
-  const [selectedKey, setSelectedKey] = React.useState<string>(props.selectedKey ?? '');
-  const [autocompleteText, setAutocompleteText] = React.useState<string>('');
-  const [items, setItems] = React.useState<Record<string, React.ReactNode>>(props.items);
+  const [expanded, setExpanded] = useState(active ?? false);
+  const [selectedKey, setSelectedKey] = useState<string>(props.selectedKey ?? '');
+  const [autocompleteText, setAutocompleteText] = useState<string>('');
+  const [items, setItems] = useState<Record<string, React.ReactNode>>(props.items);
   const { t } = useTranslation();
 
   /* Dropdown bookmark state and helpers */
@@ -160,7 +161,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
     true,
   );
 
-  const onBookmark = React.useCallback(
+  const onBookmark = useCallback(
     (key: string, isBookmarked: boolean) => {
       setBookmarks((oldBookmarks: Record<string, boolean>) => ({
         ...oldBookmarks,
@@ -171,13 +172,13 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   );
 
   /* Component refs */
-  const dropdownWrapperRef = React.useRef<HTMLDivElement>(null);
+  const dropdownWrapperRef = useRef<HTMLDivElement>(null);
 
   const insideLegacyModal = useInsideLegacyModal(dropdownWrapperRef);
 
   /* Event handlers */
-  const onClick = React.useCallback(
-    (e: React.MouseEvent, clickedKey: string) => {
+  const onClick = useCallback(
+    (e: MouseEvent, clickedKey: string) => {
       onChange && onChange(clickedKey, e);
 
       if (!actionItems || !_.some(actionItems, { actionKey: clickedKey })) {
@@ -189,8 +190,8 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
     [onChange, actionItems],
   );
 
-  const applyTextFilter = React.useCallback(
-    (text: string, itemsToFilter: Record<string, React.ReactNode>) => {
+  const applyTextFilter = useCallback(
+    (text: string, itemsToFilter: Record<string, ReactNode>) => {
       let filteredItems = itemsToFilter;
       if (autocompleteFilter && !_.isEmpty(text)) {
         filteredItems = _.pickBy(itemsToFilter, (item, key) => autocompleteFilter(text, item, key));
@@ -202,18 +203,18 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   );
 
   // Update state when props change
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.selectedKey && props.selectedKey !== selectedKey) {
       setSelectedKey(props.selectedKey);
     }
   }, [props.selectedKey, selectedKey]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     applyTextFilter(autocompleteText, props.items);
   }, [props.items, applyTextFilter, autocompleteText]);
 
   // Clear filter when opening dropdown
-  React.useEffect(() => {
+  useEffect(() => {
     if (expanded) {
       applyTextFilter('', props.items);
     }
@@ -222,7 +223,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   }, [expanded]);
 
   /* Menu content */
-  const renderedActionItems = React.useMemo(() => {
+  const renderedActionItems = useMemo(() => {
     if (!actionItems) {
       return null;
     }
@@ -242,9 +243,9 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
     );
   }, [actionItems, selectedKey]);
 
-  const { rows, bookmarkRows } = React.useMemo(() => {
-    const accRows: React.ReactNode[] = [];
-    const accBookmarkRows: React.ReactNode[] = [];
+  const { rows, bookmarkRows } = useMemo(() => {
+    const accRows: ReactNode[] = [];
+    const accBookmarkRows: ReactNode[] = [];
 
     Object.entries(items).forEach(([key, content]) => {
       const selected = key === selectedKey;
@@ -289,7 +290,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   }, [bookmarks, enableBookmarks, headerBefore, items, selectedKey, spacerBefore]);
 
   return (
-    <div className={className} ref={dropdownWrapperRef}>
+    (<div className={className} ref={dropdownWrapperRef}>
       <Select
         isOpen={expanded}
         onOpenChange={setExpanded}
@@ -297,7 +298,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
         onSelect={onClick}
         selected={selectedKey}
         shouldFocusToggleOnSelect
-        toggle={(toggleRef: React.RefObject<MenuToggleElement>) => (
+        toggle={(toggleRef: RefObject<MenuToggleElement>) => (
           <MenuToggle
             aria-describedby={describedBy}
             aria-label={ariaLabel}
@@ -380,7 +381,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
           ) : null}
         </SelectList>
       </Select>
-    </div>
+    </div>)
   );
 };
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -87,7 +88,7 @@ const componentsTableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
-export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
+export const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
   return (
     <Hint>
       <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
@@ -97,7 +98,7 @@ export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, f
   );
 };
 
-export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
@@ -170,7 +171,7 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   );
 };
 
-const EmptyMsg: React.FC = () => {
+const EmptyMsg: FC = () => {
   const { t } = useTranslation();
   return (
     <ConsoleEmptyState title={t('olm~No InstallPlans found')}>
@@ -237,7 +238,7 @@ const getCatalogSources = (
     ImmutableSet(),
   ).toJS();
 
-export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
+export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const namespace = props.namespace || params?.ns;
@@ -274,15 +275,15 @@ const updateUser = (isOpenShift: boolean, user: UserInfo): string => {
   return user?.username;
 };
 
-export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProps> = ({
+export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = ({
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const user: UserInfo = useSelector<RootState, object>(getUser);
 
-  const [username, setUsername] = React.useState(updateUser(isOpenShift, user));
+  const [username, setUsername] = useState(updateUser(isOpenShift, user));
 
-  React.useEffect(() => {
+  useEffect(() => {
     setUsername(updateUser(isOpenShift, user));
   }, [isOpenShift, user]);
 
@@ -309,7 +310,7 @@ export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProp
   );
 };
 
-export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) => {
+export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const needsApproval =
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
@@ -406,13 +407,13 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
   );
 };
 
-export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
+export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({
   obj,
   hideApprovalBlock,
 }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
-  const [needsApproval, setNeedsApproval] = React.useState(
+  const [needsApproval, setNeedsApproval] = useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
   const subscription = obj?.metadata?.ownerReferences.find(
@@ -546,7 +547,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   );
 };
 
-export const InstallPlanDetailsPage: React.FC = (props) => {
+export const InstallPlanDetailsPage: FC = (props) => {
   const params = useParams();
   return (
     <DetailsPage
@@ -565,9 +566,9 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
 };
 
 type InstallPlanHintProps = {
-  title?: React.ReactNode;
-  body?: React.ReactNode;
-  footer?: React.ReactNode;
+  title?: ReactNode;
+  body?: ReactNode;
+  footer?: ReactNode;
 };
 
 export type InstallPlansListProps = {};

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -17,7 +17,7 @@ interface HelmChartSummaryProps {
   helmRelease: HelmRelease;
 }
 
-const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
+const HelmChartSummary: FC<HelmChartSummaryProps> = ({ obj, helmRelease }) => {
   const { t } = useTranslation();
   if (!helmRelease) return null;
 

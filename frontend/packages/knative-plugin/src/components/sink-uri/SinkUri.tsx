@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ export interface SinkUriProps {
   close?: () => void;
 }
 
-const SinkUri: React.FC<SinkUriProps> = ({ source, eventSourceList, cancel, close }) => {
+const SinkUri: FC<SinkUriProps> = ({ source, eventSourceList, cancel, close }) => {
   const { t } = useTranslation();
   const initialValues = {
     uri: source.spec?.sinkUri ?? '',

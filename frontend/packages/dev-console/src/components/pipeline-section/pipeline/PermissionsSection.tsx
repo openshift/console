@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -10,7 +10,7 @@ type PermissionsSectionProps = {
   formContextField?: string;
 };
 
-const PermissionsSection: React.FC<PermissionsSectionProps> = ({ formContextField }) => {
+const PermissionsSection: FC<PermissionsSectionProps> = ({ formContextField }) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<RepositoryFormValues>();
   const { gitProvider } = _.get(values, formContextField) || values;

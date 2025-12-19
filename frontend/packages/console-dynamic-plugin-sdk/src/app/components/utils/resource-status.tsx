@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Badge } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import './resource-status.scss';
@@ -6,7 +6,7 @@ import './resource-status.scss';
 type ResourceStatusProps = {
   additionalClassNames?: string;
   badgeAlt?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 /**
@@ -23,7 +23,7 @@ type ResourceStatusProps = {
  * )
  * ```
  */
-const ResourceStatus: React.FC<ResourceStatusProps> = ({
+const ResourceStatus: FC<ResourceStatusProps> = ({
   additionalClassNames,
   badgeAlt,
   children,

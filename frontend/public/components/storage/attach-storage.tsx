@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Radio } from '@patternfly/react-core';
@@ -28,16 +29,16 @@ type StorageProviderMap = {
   };
 };
 
-const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
+const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
   const storageProviders = useExtensions<StorageProvider>(isStorageProvider);
-  const [activeProvider, setActiveProvider] = React.useState('0');
+  const [activeProvider, setActiveProvider] = useState('0');
   const memoizedStorageProviders = useDeepCompareMemoize(storageProviders, true);
   const { kindObj, kindsInFlight } = props;
   const params = useParams();
 
   const { t } = useTranslation();
 
-  const storageProvidersMap: StorageProviderMap = React.useMemo(() => {
+  const storageProvidersMap: StorageProviderMap = useMemo(() => {
     const providers = {
       '0': {
         name: t('public~PersistentVolumeClaim'),
@@ -53,7 +54,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
     return providers;
   }, [memoizedStorageProviders, t]);
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (e: FormEvent<HTMLInputElement>) => {
     const id = e?.currentTarget?.id;
     setActiveProvider(id as string);
   };

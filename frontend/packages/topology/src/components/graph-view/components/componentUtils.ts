@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import {
   Modifiers,
   Edge,
@@ -337,7 +337,7 @@ const withContextMenu = <E extends GraphElement>(actions: (element: E) => Action
   );
 };
 
-const createVisualConnector = (source: Node, target: Node | Graph): React.ReactElement[] | null => {
+const createVisualConnector = (source: Node, target: Node | Graph): ReactElement[] | null => {
   if (isGraph(target)) {
     return graphContextMenu(target, source);
   }
@@ -357,7 +357,7 @@ const createConnectorCallback = () => (
   target: Node | Graph,
   event: DragEvent,
   dropHints: string[] | undefined,
-): Promise<React.ReactElement[] | null> => {
+): Promise<ReactElement[] | null> => {
   if (source === target) {
     return null;
   }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
@@ -12,7 +12,7 @@ import EventSourceListPage from './eventsource-list/EventSourceListPage';
 import SubscriptionListPage from './subscription-list/SubscriptionListPage';
 import TriggerListPage from './triggers-list/TriggerListPage';
 
-const EventingListPage: React.FC = () => {
+const EventingListPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];

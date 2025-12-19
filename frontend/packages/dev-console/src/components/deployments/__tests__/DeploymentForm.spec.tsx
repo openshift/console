@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { render, fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
@@ -26,7 +26,7 @@ class ResizeObserver {
 
 window.ResizeObserver = ResizeObserver;
 
-const mockContainerField: React.FC = () => {
+const mockContainerField: FC = () => {
   return <div>Container: xyz</div>;
 };
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC, FocusEvent, ChangeEvent } from 'react';
+import { useRef, useCallback, useMemo, useState, useEffect } from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
 import { isEmpty } from 'lodash';
@@ -70,7 +71,7 @@ export type GitSectionFormData = {
 };
 
 export interface GitSectionProps {
-  title?: React.ReactNode;
+  title?: ReactNode;
   formContextField?: string;
   builderImages?: NormalizedBuilderImages;
   defaultSample?: { url: string; ref?: string; dir?: string };
@@ -82,7 +83,7 @@ export interface GitSectionProps {
   flowType?: ApplicationFlowType;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({
+const GitSection: FC<GitSectionProps> = ({
   title,
   formContextField,
   builderImages,
@@ -95,7 +96,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   flowType,
 }) => {
   const { t } = useTranslation();
-  const inputRef = React.useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>();
 
   const {
     dirty,
@@ -117,13 +118,13 @@ const GitSection: React.FC<GitSectionProps> = ({
   });
 
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
-  const setFieldValue = React.useCallback(
+  const setFieldValue = useCallback(
     (key: string, value: string | boolean | object, shouldValidate?: boolean) => {
       formikSetFieldValue(`${fieldPrefix}${key}` as any, value, shouldValidate);
     },
     [fieldPrefix, formikSetFieldValue],
   );
-  const setFieldTouched = React.useCallback(
+  const setFieldTouched = useCallback(
     (key: string, touched: boolean, shouldValidate?: boolean) => {
       formikSetFieldTouched(`${fieldPrefix}${key}` as any, touched, shouldValidate);
     },
@@ -143,7 +144,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
     defaultSample || {};
-  const defaultSampleTagObj = React.useMemo(
+  const defaultSampleTagObj = useMemo(
     () =>
       defaultSampleURL
         ? {
@@ -166,10 +167,10 @@ const GitSection: React.FC<GitSectionProps> = ({
   } = touched;
   const { git: { url: gitUrlError } = {} } = errors;
 
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
-  const [repoStatus, setRepoStatus] = React.useState<RepoStatus>();
+  const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
+  const [repoStatus, setRepoStatus] = useState<RepoStatus>();
 
-  const handleBuilderImageRecommendation = React.useCallback(
+  const handleBuilderImageRecommendation = useCallback(
     async (detectedBuildTypes: DetectedBuildType[]) => {
       setFieldValue('image.isRecommending', false);
       if (gitUrlError) {
@@ -193,7 +194,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     [builderImages, gitUrlError, setFieldValue],
   );
 
-  const handleDevfileStrategyDetection = React.useCallback(
+  const handleDevfileStrategyDetection = useCallback(
     async (devfilePath: string, gitType: GitProvider) => {
       if (gitUrlError) {
         setFieldValue('devfile.devfileContent', null);
@@ -233,7 +234,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     ],
   );
 
-  const handleGitUrlChange = React.useCallback(
+  const handleGitUrlChange = useCallback(
     async (url: string, ref: string, dir: string) => {
       if (isKnativeServingAvailable && canCreateKnativeServiceLoading) return;
       if (isSubmitting || status?.submitError) return;
@@ -430,7 +431,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange);
 
-  const fillImageStreamTagSample = React.useCallback(() => {
+  const fillImageStreamTagSample = useCallback(() => {
     if (isKnativeServingAvailable && canCreateKnativeServiceLoading) return;
     const url = imageStreamTagSampleRepo;
     const ref = getSampleRef(imageStreamTag);
@@ -450,7 +451,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     canCreateKnativeServiceLoading,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (!dirty || gitDirTouched || gitTypeTouched || formReloadCount || values.git.secretResource) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
@@ -468,7 +469,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     gitTypeTouched,
   ]);
 
-  const helpText = React.useMemo(() => {
+  const helpText = useMemo(() => {
     if (values.git.isUrlValidating) {
       return `${t('devconsole~Validating')}...`;
     }
@@ -512,7 +513,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     return t('devconsole~Repository URL to build and deploy your code from');
   }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
-  const resetFields = React.useCallback(() => {
+  const resetFields = useCallback(() => {
     if (!imageSelectorTouched) {
       setFieldValue('image.selected', '');
       setFieldValue('image.tag', '');
@@ -552,7 +553,7 @@ const GitSection: React.FC<GitSectionProps> = ({
    * 1. ConsoleSample
    * 2. ImageStream samples
    */
-  React.useEffect(() => {
+  useEffect(() => {
     // Skip handling until Knative Service status is unknown!
     if (canCreateKnativeServiceLoading) return;
 
@@ -630,7 +631,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [canCreateKnativeServiceLoading]);
 
   return (
-    <FormSection title={title ?? t('devconsole~Git')}>
+    (<FormSection title={title ?? t('devconsole~Git')}>
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
@@ -639,14 +640,14 @@ const GitSection: React.FC<GitSectionProps> = ({
         helpText={helpText}
         helpTextInvalid={helpText}
         validated={validated}
-        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const trimmedURL = e.target.value.trim();
           if (e.target.value !== trimmedURL) {
             setFieldValue('git.url', trimmedURL);
             debouncedHandleGitUrlChange(trimmedURL, values.git.ref, values.git.dir);
           }
         }}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
           resetFields();
           debouncedHandleGitUrlChange(e.target.value.trim(), values.git.ref, values.git.dir);
         }}
@@ -668,7 +669,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         </>
       )}
       {formType !== 'sample' && <AdvancedGitOptions formContextField={formContextField} />}
-    </FormSection>
+    </FormSection>)
   );
 };
 

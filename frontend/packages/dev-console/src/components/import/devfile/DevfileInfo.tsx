@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Icon } from '@patternfly/react-core';
 import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ export type DevfileInfoProps = {
   devfileSample: DevfileSample;
 };
 
-const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
+const DevfileInfo: FC<DevfileInfoProps> = ({ devfileSample }) => {
   const { t } = useTranslation();
   const { icon, iconClass, displayName, description, git, tags } = devfileSample;
   const iconUrl = iconClass ? getImageForIconClass(iconClass) : icon || '';

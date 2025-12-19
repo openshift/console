@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 type CatalogPageHeaderProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const CatalogPageHeader: Snail.FCC<CatalogPageHeaderProps> = ({ children }) => (

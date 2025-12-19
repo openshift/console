@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -30,14 +31,14 @@ type StateProps = {
   };
 };
 
-export const ConnectedBuildRunDecorator: React.FC<BuildRunDecoratorProps & StateProps> = ({
+export const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
   buildRuns,
   resource,
   radius,
   x,
   y,
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const { latestBuildRun, status } = getLatestBuildRunStatusforDeployment(buildRuns, resource);
 

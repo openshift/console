@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   AllQuickStartStates,
   QuickStart,
@@ -53,7 +53,7 @@ const orderQuickStarts = (
   return orderedQuickStarts;
 };
 
-export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCardProps> = ({
+export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps> = ({
   featured,
   title,
   description,

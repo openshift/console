@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -17,7 +17,7 @@ interface StateProps {
   namespace: string;
 }
 
-const ServiceAccountDropdown: React.FC<ServiceAccountDropdownProps & StateProps> = ({
+const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
   name,
   onLoad,
   namespace,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   ExternalLinkButton,
@@ -9,7 +9,7 @@ type ExternalLinkProps = ExternalLinkButtonProps & {
   /** The URL to link to */
   href?: HTMLAnchorElement['href'];
   /** @deprecated Use `children` instead */
-  text?: React.ReactNode;
+  text?: ReactNode;
   /** `data-test-id` */
   dataTestID?: string;
   /** Whether to stop the click event from propagating */

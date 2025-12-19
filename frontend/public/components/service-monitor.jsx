@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { DASH } from '@console/shared/src/constants/ui';
 
@@ -99,7 +99,7 @@ const getServiceMonitorDataViewRows = (data, columns) => {
 
 const useServiceMonitorColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -152,7 +152,7 @@ export const ServiceMonitorsList = (props) => {
   const columns = useServiceMonitorColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={data}
@@ -162,7 +162,7 @@ export const ServiceMonitorsList = (props) => {
         getDataViewRows={getServiceMonitorDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

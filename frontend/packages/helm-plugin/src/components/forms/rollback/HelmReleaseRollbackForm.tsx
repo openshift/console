@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -16,7 +16,7 @@ interface HelmReleaseRollbackFormProps {
 
 type Props = FormikProps<FormikValues> & HelmReleaseRollbackFormProps;
 
-const HelmReleaseRollbackForm: React.FC<Props> = ({
+const HelmReleaseRollbackForm: FC<Props> = ({
   errors,
   handleSubmit,
   handleReset,
@@ -46,7 +46,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
 
   return (
     // display block so table horizontal scrolling works
-    <Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
+    (<Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
       <FormBody>
         <FormHeader title={title} helpText={formHelpText} />
         <FormGroup
@@ -66,7 +66,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
         resetLabel={t('helm-plugin~Cancel')}
         sticky
       />
-    </Form>
+    </Form>)
   );
 };
 

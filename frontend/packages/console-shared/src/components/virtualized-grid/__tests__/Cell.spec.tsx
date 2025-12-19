@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { CSSProperties } from 'react';
 import { GridCellProps } from 'react-virtualized';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import Cell from '../Cell';
@@ -13,7 +13,7 @@ describe('Grid-cell', () => {
   let data: GridCellProps;
   let renderHeader: RenderHeader;
   let renderCell: RenderCell;
-  let style: React.CSSProperties;
+  let style: CSSProperties;
 
   beforeEach(() => {
     style = {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Flex } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
@@ -18,7 +18,7 @@ const PageBody: Snail.FCC<PageBodyProps> = ({ children, className, ...props }) =
 };
 
 export type PageBodyProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 };
 

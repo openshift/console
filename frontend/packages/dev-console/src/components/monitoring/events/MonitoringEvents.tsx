@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { EventsList } from '@console/internal/components/events';
 
-const MonitoringEvents: React.FC = (props) => {
+const MonitoringEvents: FC = (props) => {
   return <EventsList {...props} />;
 };
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent, KeyboardEvent, Ref } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
@@ -42,26 +43,26 @@ const blacklistResources = ImmutableSet([
 const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [clearItems, setClearItems] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [clearItems, setClearItems] = useState(false);
   const [recentSelected, setRecentSelected] = useUserSettings<string>(
     'console.search.recentlySearched',
     '[]',
     true,
   );
-  const [selectedOptions, setSelectedOptions] = React.useState(selected);
-  const [initialSelectOptions, setInitialSelectOptions] = React.useState<
+  const [selectedOptions, setSelectedOptions] = useState(selected);
+  const [initialSelectOptions, setInitialSelectOptions] = useState<
     ExtendedSelectOptionProps[]
   >([]);
-  const [selectOptions, setSelectOptions] = React.useState<ExtendedSelectOptionProps[]>(
+  const [selectOptions, setSelectOptions] = useState<ExtendedSelectOptionProps[]>(
     initialSelectOptions,
   );
-  const [inputValue, setInputValue] = React.useState<string>('');
-  const [focusedItemIndex, setFocusedItemIndex] = React.useState<number | null>(null);
-  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const placeholderTextDefault = t('public~Resources');
-  const [placeholder, setPlaceholder] = React.useState(placeholderTextDefault);
-  const textInputRef = React.useRef<HTMLInputElement>();
+  const [placeholder, setPlaceholder] = useState(placeholderTextDefault);
+  const textInputRef = useRef<HTMLInputElement>();
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -90,7 +91,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     .toOrderedMap()
     .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const resourcesToOption: SelectOptionProps[] = resources.toArray().map((resource) => {
       const reference = referenceForModel(resource);
       return { value: reference, children: reference, shortNames: resource.shortNames };
@@ -115,7 +116,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedOptions(selected);
     !_.isEmpty(selected) &&
       setRecentSelected(
@@ -130,7 +131,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, setRecentSelected]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let newSelectOptions: SelectOptionProps[] = initialSelectOptions;
 
     // Filter menu items based on the text input value when one exists
@@ -153,7 +154,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, initialSelectOptions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setPlaceholder(
       selectedOptions.length > 0
         ? t('public~Resources ({{total}})', { total: selectedOptions.length })
@@ -275,7 +276,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
       options.push(<Divider key={3} className="co-select-group-divider" />);
     }
     options.push(
-      <React.Fragment key="resource-items">
+      <Fragment key="resource-items">
         {items.length > 0
           ? items
           : [
@@ -287,7 +288,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
                 {t('public~No results found')}
               </SelectOption>,
             ]}
-      </React.Fragment>,
+      </Fragment>,
     );
     return options;
   };
@@ -316,7 +317,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     }
   };
 
-  const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const onTextInputChange = (_event: FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
     resetActiveAndFocusedItem();
   };
@@ -382,7 +383,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     setActiveAndFocusedItem(indexToFocus);
   };
 
-  const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const focusedItem = focusedItemIndex !== null ? selectOptions[focusedItemIndex] : null;
 
     // eslint-disable-next-line default-case
@@ -422,9 +423,9 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
   };
 
   return (
-    <div className={className}>
+    (<div className={className}>
       <Select
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             variant="typeahead"
@@ -473,7 +474,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
           {renderedOptions()}
         </SelectList>
       </Select>
-    </div>
+    </div>)
   );
 };
 

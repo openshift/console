@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import { setUtilsConfig, UtilsConfig } from './configSetup';
@@ -7,7 +8,7 @@ import { InitApiDiscovery } from './k8s/api-discovery/api-discovery-types';
 import { useReduxStore } from './useReduxStore';
 
 type AppInitSDKProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   configurations: {
     apiDiscovery?: InitApiDiscovery;
     appFetch: UtilsConfig['appFetch'];
@@ -34,9 +35,9 @@ type AppInitSDKProps = {
  * )
  * ```
  */
-const AppInitSDK: React.FC<AppInitSDKProps> = ({ children, configurations }) => {
+const AppInitSDK: FC<AppInitSDKProps> = ({ children, configurations }) => {
   const { store, storeContextPresent } = useReduxStore();
-  React.useEffect(() => {
+  useEffect(() => {
     const { appFetch, initPlugins, apiDiscovery = initApiDiscovery } = configurations;
     try {
       setUtilsConfig({ appFetch });

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash-es';
 
 import { Volume } from '../../module/k8s';
 import { getVolumeLocation, getVolumeType } from '../../module/k8s/pods';
 import { ResourceLink } from './resource-link';
 
-export const VolumeType: React.FC<VolumeTypeProps> = ({ volume, namespace }) => {
+export const VolumeType: FC<VolumeTypeProps> = ({ volume, namespace }) => {
   if (volume) {
     if (volume.secret) {
       return <ResourceLink kind="Secret" name={volume.secret.secretName} namespace={namespace} />;

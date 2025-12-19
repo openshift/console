@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ServerlessFunctionType: React.FC = () => {
+const ServerlessFunctionType: FC = () => {
   const { t } = useTranslation();
   return (
     <DescriptionList data-test="serverless-function-type">

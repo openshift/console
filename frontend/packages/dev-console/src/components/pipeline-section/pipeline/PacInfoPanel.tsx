@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import './PacSection.scss';
 
-const InfoPanel: React.FC = () => {
+const InfoPanel: FC = () => {
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
   const {

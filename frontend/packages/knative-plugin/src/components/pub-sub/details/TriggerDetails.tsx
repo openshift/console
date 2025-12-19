@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -24,7 +24,7 @@ interface TriggerDetailsProps {
   obj: K8sResourceKind;
 }
 
-const TriggerDetails: React.FC<TriggerDetailsProps> = ({ obj: trigger }) => {
+const TriggerDetails: FC<TriggerDetailsProps> = ({ obj: trigger }) => {
   const { t } = useTranslation();
   const { filters: filterData } = getTriggerFilters(trigger);
   return (

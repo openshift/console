@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect } from 'react';
 import { WindowScroller, AutoSizer, Size, CellMeasurerCache } from 'react-virtualized';
 import { VirtualizedGridProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { WithScrollContainer } from '@console/internal/components/utils/dom-utils';
@@ -16,7 +17,7 @@ import GroupByFilterGrid from './GroupByFilterGrid';
 import { Item, GroupedItems, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
 
-const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
+const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   items,
   className,
   isItemsGrouped = false,
@@ -29,7 +30,7 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
   renderCell,
   renderHeader,
 }) => {
-  const cache: CellMeasurerCache = React.useMemo(
+  const cache: CellMeasurerCache = useMemo(
     () =>
       new CellMeasurerCache({
         defaultHeight: celldefaultHeight,
@@ -39,7 +40,7 @@ const VirtualizedGrid: React.FC<VirtualizedGridProps> = ({
     [celldefaultHeight],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     cache.clearAll();
   }, [cache, items.length]);
 

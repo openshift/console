@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent } from 'react';
+import { Component } from 'react';
 import * as _ from 'lodash-es';
 import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
@@ -7,7 +8,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
 
-class ListInput_ extends React.Component<ListInputProps, ListInputState> {
+class ListInput_ extends Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
   constructor(props: ListInputProps) {
     super(props);
@@ -51,7 +52,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
-      <div className="form-group" data-test={id}>
+      (<div className="form-group" data-test={id}>
         <label htmlFor={id} className={css({ 'co-required': required })}>
           {label}
         </label>
@@ -63,7 +64,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
                   id={id}
                   type="text"
                   value={v}
-                  onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                  onChange={(e: FormEvent<HTMLInputElement>) =>
                     this.valueChanged(i, e.currentTarget.value)
                   }
                   required={missingValues && i === 0}
@@ -98,7 +99,7 @@ class ListInput_ extends React.Component<ListInputProps, ListInputState> {
         >
           {t('public~Add more')}
         </Button>
-      </div>
+      </div>)
     );
   }
 }

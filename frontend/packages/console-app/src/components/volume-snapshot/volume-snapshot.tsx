@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { useTranslation } from 'react-i18next';
@@ -148,7 +148,7 @@ const useVolumeSnapshotColumns = (
 ): TableColumn<VolumeSnapshotKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<VolumeSnapshotKind>[] = React.useMemo(
+  const columns: TableColumn<VolumeSnapshotKind>[] = useMemo(
     () =>
       [
         {
@@ -222,7 +222,7 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
 
   const columns = useVolumeSnapshotColumns(customRowData);
 
-  const volumeSnapshotStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(
+  const volumeSnapshotStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
         value: 'Ready',
@@ -240,12 +240,12 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
     [t],
   );
 
-  const initialFilters = React.useMemo<VolumeSnapshotFilters>(
+  const initialFilters = useMemo<VolumeSnapshotFilters>(
     () => ({ ...initialFiltersDefault, status: [] }),
     [],
   );
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -258,7 +258,7 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
     [t, volumeSnapshotStatusFilterOptions],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource: VolumeSnapshotKind, filters: VolumeSnapshotFilters) => {
       // Status filter
       if (filters.status.length > 0) {
@@ -274,7 +274,7 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotKind>
         {...props}
         label={VolumeSnapshotModel.labelPlural}
@@ -288,7 +288,7 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 

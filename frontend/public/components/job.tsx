@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -124,7 +125,7 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
   });
 };
 
-export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
+export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -208,10 +209,10 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   );
 };
 
-const JobPods: React.FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
+const JobPods: FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, pods, editYaml, events } = navFactory;
-const JobsDetailsPage: React.FC = (props) => {
+const JobsDetailsPage: FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -239,7 +240,7 @@ const JobsDetailsPage: React.FC = (props) => {
 };
 const useJobsColumns = (): TableColumn<JobKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<JobKind>[] = React.useMemo(() => {
+  const columns: TableColumn<JobKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -309,7 +310,7 @@ const JobsList: Snail.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
   const columns = useJobsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    (<Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<JobKind>
         {...props}
         label={JobModel.labelPlural}
@@ -319,11 +320,11 @@ const JobsList: Snail.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>)
   );
 };
 
-const JobsPage: React.FC<JobsPageProps> = (props) => (
+const JobsPage: FC<JobsPageProps> = (props) => (
   <ListPage
     {...props}
     kind={kind}
