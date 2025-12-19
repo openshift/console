@@ -244,7 +244,7 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders info section', () => {
-    const section = wrapper.find('.co-operand-details__section.co-operand-details__section--info');
+    const section = wrapper.find('[data-test="operand-details__section--info"]');
 
     expect(section.exists()).toBe(true);
   });

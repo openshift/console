@@ -111,11 +111,14 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   const label = descriptor?.displayName || groupSchema?.title || _.startCase(groupPath);
   const arrayGroups = _.pickBy(nested, 'isArrayGroup');
   const primitives = _.omitBy(nested, 'isArrayGroup');
-  const span = _.isEmpty(arrayGroups) || _.isEmpty(primitives) ? 6 : 12;
+  const spanRow = !(_.isEmpty(arrayGroups) || _.isEmpty(primitives));
   return (
-    <GridItem sm={span}>
+    <GridItem style={spanRow ? { gridColumn: '1 / -1' } : undefined}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <DescriptionList className="olm-descriptors__group co-editable-label-group">
+        <DescriptionList
+          className="co-editable-label-group"
+          columnModifier={spanRow ? { default: '2Col' } : undefined}
+        >
           {!_.isEmpty(primitives) &&
             _.map(primitives, ({ descriptor: primitiveDescriptor }) => (
               <DescriptorDetailsItem
