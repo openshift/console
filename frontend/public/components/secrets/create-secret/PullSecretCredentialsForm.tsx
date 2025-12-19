@@ -1,4 +1,4 @@
-import { useState, FCC, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -11,7 +11,7 @@ import {
   newPullSecretCredential,
 } from './utils';
 
-export const PullSecretCredentialsForm: FCC<PullSecretCredentialsFormProps> = ({
+export const PullSecretCredentialsForm: React.FCC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
   onError,
