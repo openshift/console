@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
-
 import { useState, useCallback, useEffect } from 'react';
 import {
   Alert,
@@ -86,12 +85,8 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   const [operandsRemaining, setOperandsRemaining] = useState(0);
   const [operandsDeleteFinished, setOperandsDeleteFinished] = useState(false);
   const [operandDeletionErrors, setOperandDeletionErrors] = useState<OperandError[]>([]);
-  const [operandDeletionVerificationError, setOperandDeletionVerificationError] = useState(
-    false,
-  );
-  const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = useState(
-    '',
-  );
+  const [operandDeletionVerificationError, setOperandDeletionVerificationError] = useState(false);
+  const [clusterServiceVersionExistsError, setClusterServiceVersionExistsError] = useState('');
 
   const canPatchConsoleOperatorConfig = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,

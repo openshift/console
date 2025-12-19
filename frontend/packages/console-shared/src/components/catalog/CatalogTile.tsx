@@ -37,7 +37,7 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
 
   const isDescriptionReactElement = isValidElement(description);
   return (
-    (<PfCatalogTile
+    <PfCatalogTile
       id={uid}
       className="odc-catalog-tile co-catalog-tile"
       onClick={(e: MouseEvent<HTMLElement>) => {
@@ -59,7 +59,7 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
     >
       {isDescriptionReactElement ? description : undefined}
       {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
-    </PfCatalogTile>)
+    </PfCatalogTile>
   );
 };
 

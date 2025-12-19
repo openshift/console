@@ -596,7 +596,7 @@ export const ResourceQuotasList = (props) => {
   const columns = useResourceQuotaColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         data={data}
         loaded={loaded}
@@ -607,7 +607,7 @@ export const ResourceQuotasList = (props) => {
         }
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -667,7 +667,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
   const columns = useAppliedClusterResourceQuotaColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={data}
@@ -679,7 +679,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
         }
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

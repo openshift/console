@@ -17,9 +17,7 @@ export const isSidebarRenderable = (selectedEntity: GraphElement): boolean => {
   return false;
 };
 
-export const SelectedEntityDetails: FC<{ selectedEntity: GraphElement }> = ({
-  selectedEntity,
-}) => {
+export const SelectedEntityDetails: FC<{ selectedEntity: GraphElement }> = ({ selectedEntity }) => {
   if (!selectedEntity) {
     return null;
   }

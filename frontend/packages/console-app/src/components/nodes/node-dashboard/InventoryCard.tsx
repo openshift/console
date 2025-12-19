@@ -14,11 +14,7 @@ import {
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
-export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({
-  nodeName,
-  model,
-  mapper,
-}) => {
+export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
   const resource = useMemo(
     () => ({
       kind: model.crd ? referenceForModel(model) : model.kind,

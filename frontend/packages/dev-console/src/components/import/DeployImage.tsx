@@ -30,12 +30,7 @@ interface StateProps {
 
 type Props = DeployImageProps & StateProps;
 
-const DeployImage: FC<Props> = ({
-  namespace,
-  projects,
-  activeApplication,
-  contextualSource,
-}) => {
+const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contextualSource }) => {
   const postFormCallback = useResourceConnectionHandler();
   const { t } = useTranslation();
   const initialValues: DeployImageFormData = {

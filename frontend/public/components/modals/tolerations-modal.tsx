@@ -28,9 +28,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
       : resource.spec.template.spec.tolerations;
   };
 
-  const [tolerations, setTolerations] = useState<Toleration[]>(
-    getTolerationsFromResource() || [],
-  );
+  const [tolerations, setTolerations] = useState<Toleration[]>(getTolerationsFromResource() || []);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();

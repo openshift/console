@@ -21,10 +21,10 @@ export const useOperatorHubPackageManifests = (
     packageManifestsLoaded,
     marketplacePackageManifestsLoaded,
   ]);
-  const loadError = useMemo(
-    () => strConcat(packageManifestsErr, marketplacePackageManifestsErr),
-    [packageManifestsErr, marketplacePackageManifestsErr],
-  );
+  const loadError = useMemo(() => strConcat(packageManifestsErr, marketplacePackageManifestsErr), [
+    packageManifestsErr,
+    marketplacePackageManifestsErr,
+  ]);
 
   const operatorHubPackageManifests = useMemo(() => {
     if (!loaded || loadError) {

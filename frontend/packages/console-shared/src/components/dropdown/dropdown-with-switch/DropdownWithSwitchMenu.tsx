@@ -23,7 +23,7 @@ const DropdownWithSwitchMenu: FC<DropdownWithSwitchMenuProps> = ({
   switchOnChange,
 }) => {
   return (
-    (<Menu
+    <Menu
       activeItemId={selected}
       isScrollable
       onSelect={(event: MouseEvent, itemId: string) => {
@@ -50,7 +50,7 @@ const DropdownWithSwitchMenu: FC<DropdownWithSwitchMenuProps> = ({
         <Divider />
         <DropdownWithSwitchGroups options={options} selectedKey={selected} />
       </MenuContent>
-    </Menu>)
+    </Menu>
   );
 };
 

@@ -55,7 +55,7 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
   ];
 
   return (
-    (<InputGroup>
+    <InputGroup>
       <InputGroupItem>
         <Select
           isOpen={isOpen}
@@ -91,7 +91,7 @@ export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
           aria-labelledby="search-filter-toggle"
         />
       </InputGroupItem>
-    </InputGroup>)
+    </InputGroup>
   );
 };
 

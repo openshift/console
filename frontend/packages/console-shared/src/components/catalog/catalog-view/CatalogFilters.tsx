@@ -51,7 +51,7 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
     const { label, active } = filter;
     const count = filterGroupCounts[groupName]?.[filterName] ?? 0;
     return (
-      (<FilterSidePanelCategoryItem
+      <FilterSidePanelCategoryItem
         key={filterName}
         count={count}
         checked={active}
@@ -61,7 +61,7 @@ const CatalogFilters: FC<CatalogFiltersProps> = ({
         data-test={`${groupName}-${_.kebabCase(filterName)}`}
       >
         {label}
-      </FilterSidePanelCategoryItem>)
+      </FilterSidePanelCategoryItem>
     );
   };
 

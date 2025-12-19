@@ -52,7 +52,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
     return (
-      (<div className="form-group" data-test={id}>
+      <div className="form-group" data-test={id}>
         <label htmlFor={id} className={css({ 'co-required': required })}>
           {label}
         </label>
@@ -99,7 +99,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
         >
           {t('public~Add more')}
         </Button>
-      </div>)
+      </div>
     );
   }
 }

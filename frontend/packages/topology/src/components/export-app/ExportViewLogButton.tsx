@@ -15,11 +15,7 @@ interface ExportViewLogButtonProps {
   onViewLog?: () => void;
 }
 
-const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({
-  name,
-  namespace,
-  onViewLog,
-}) => {
+const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({ name, namespace, onViewLog }) => {
   const { t } = useTranslation();
   const [job, jobLoaded] = useK8sWatchResource<JobKind>({
     kind: JobModel.kind,

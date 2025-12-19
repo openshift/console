@@ -5,9 +5,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ProjectHelmChartRepositoryModel } from '../../models';
 import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 
-const ProjectHelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (
-  props,
-) => {
+const ProjectHelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
   const createProps = {
     to: `/helm-repositories/ns/${props.namespace || 'default'}/~new/form?kind=${referenceForModel(

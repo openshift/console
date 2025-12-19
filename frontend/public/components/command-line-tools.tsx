@@ -34,7 +34,7 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
     const defaultLinkText = t('Download {{displayName}}', { displayName });
     const sortedLinks = _.sortBy(tool.spec.links, 'text');
     return (
-      (<Fragment key={tool.metadata.uid}>
+      <Fragment key={tool.metadata.uid}>
         {index > 0 && <Divider className="co-divider" />}
         <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
         <SyncMarkdownView content={tool.spec.description} exactHeight />
@@ -55,7 +55,7 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
             ))}
           </ul>
         )}
-      </Fragment>)
+      </Fragment>
     );
   });
 

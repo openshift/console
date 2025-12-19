@@ -18,10 +18,10 @@ const CamelCaseWrap: FC<CamelCaseWrapProps> = ({ value, dataTest }) => {
     <span data-test={dataTest}>
       {words.map((word, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        (<Fragment key={i}>
+        <Fragment key={i}>
           {word}
           {i !== words.length - 1 && <wbr />}
-        </Fragment>)
+        </Fragment>
       ))}
     </span>
   );

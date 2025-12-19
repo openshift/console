@@ -39,9 +39,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
 }) => {
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>(
-    getQueryArgument('catalogSearch') || '',
-  );
+  const [searchTerm, setSearchTerm] = useState<string>(getQueryArgument('catalogSearch') || '');
   const [selectedItemId, setSelectedItemId] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<CatalogItem>(null);
   const [viewAll, setViewAll] = useState<CatalogLinkData[]>(null);

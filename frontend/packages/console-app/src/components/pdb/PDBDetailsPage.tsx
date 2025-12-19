@@ -49,9 +49,7 @@ const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }
   );
 };
 
-export const PodDisruptionBudgetDetailsPage: FC<PodDisruptionBudgetDetailsPageProps> = (
-  props,
-) => {
+export const PodDisruptionBudgetDetailsPage: FC<PodDisruptionBudgetDetailsPageProps> = (props) => {
   return (
     <DetailsPage
       {...props}

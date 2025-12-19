@@ -179,11 +179,7 @@ export type Options = {
   cluster?: string;
 };
 
-export type UseLastNamespace = () => [
-  string,
-  Dispatch<SetStateAction<string>>,
-  boolean,
-];
+export type UseLastNamespace = () => [string, Dispatch<SetStateAction<string>>, boolean];
 
 export type VirtualizedGridProps = {
   items: VirtualizedGridItem[] | VirtualizedGridGroupedItems;

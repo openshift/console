@@ -19,17 +19,9 @@ export interface ConfigMapProps {
   isCreateFlow: boolean;
 }
 
-const ConfigmapForm: FC<ConfigMapProps> = ({
-  name,
-  namespace,
-  title,
-  configMap,
-  isCreateFlow,
-}) => {
+const ConfigmapForm: FC<ConfigMapProps> = ({ name, namespace, title, configMap, isCreateFlow }) => {
   const navigate = useNavigate();
-  const [initialValues] = useState(
-    getConfigMapInitialValues(namespace, configMap, isCreateFlow),
-  );
+  const [initialValues] = useState(getConfigMapInitialValues(namespace, configMap, isCreateFlow));
   const handleSubmit = (
     values: ConfigMapFormInitialValues,
     actions: FormikHelpers<ConfigMapFormInitialValues>,

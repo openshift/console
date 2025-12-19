@@ -36,7 +36,7 @@ const StatusIconAndText: FC<StatusIconAndTextProps> = ({
   }
 
   return (
-    (<span
+    <span
       className={css('co-icon-and-text', className)}
       title={iconOnly && !noTooltip ? title : undefined}
     >
@@ -49,7 +49,7 @@ const StatusIconAndText: FC<StatusIconAndTextProps> = ({
           ),
         })}
       {!iconOnly && <CamelCaseWrap value={title} dataTest="status-text" />}
-    </span>)
+    </span>
   );
 };
 

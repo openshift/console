@@ -166,10 +166,9 @@ const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
       ? new Error('failed loading catalog data')
       : new IncompleteDataError(failedExtensions);
 
-  const categories = useMemo(
-    () => _.uniqBy(_.flatten(Object.values(categoryProviderMap)), 'id'),
-    [categoryProviderMap],
-  );
+  const categories = useMemo(() => _.uniqBy(_.flatten(Object.values(categoryProviderMap)), 'id'), [
+    categoryProviderMap,
+  ]);
 
   const catalogService: CatalogService = {
     type: catalogType,

@@ -47,9 +47,7 @@ export const viewYamlComponent = (props) => (
   />
 );
 
-class PodsComponentWithTranslation extends PureComponent<
-  PodsComponentProps & WithTranslation
-> {
+class PodsComponentWithTranslation extends PureComponent<PodsComponentProps & WithTranslation> {
   render() {
     const {
       metadata: { namespace },

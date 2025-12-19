@@ -472,7 +472,7 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   };
 
   return (
-    (<Suspense fallback={<div className="loading-skeleton--table" />}>
+    <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
         label={t('public~Receivers')}
         data={data}
@@ -485,7 +485,7 @@ const ReceiversTable: FC<ReceiversTableProps> = (props) => {
         hideNameLabelFilters={false}
         hideLabelFilter={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 ReceiversTable.displayName = 'ReceiversTable';
@@ -576,19 +576,17 @@ const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: se
   );
 };
 
-const AlertmanagerConfigWrapper: FC<AlertmanagerConfigWrapperProps> = memo(
-  ({ obj, ...props }) => {
-    const { t } = useTranslation();
-    return (
-      <>
-        <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
-        <StatusBox {...obj}>
-          <AlertmanagerConfiguration {...props} obj={obj.data} />
-        </StatusBox>
-      </>
-    );
-  },
-);
+const AlertmanagerConfigWrapper: FC<AlertmanagerConfigWrapperProps> = memo(({ obj, ...props }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
+      <StatusBox {...obj}>
+        <AlertmanagerConfiguration {...props} obj={obj.data} />
+      </StatusBox>
+    </>
+  );
+});
 
 export const AlertmanagerConfig: FC = () => {
   const { t } = useTranslation();

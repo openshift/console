@@ -113,10 +113,7 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
     return sorted;
   }, [releaseHistory, sortBy, customSortFunctions, customGetColumnIndexById]);
 
-  const defaultRowRenderer = useCallback(
-    (history: HelmRelease[]) => getRevisionRows(history),
-    [],
-  );
+  const defaultRowRenderer = useCallback((history: HelmRelease[]) => getRevisionRows(history), []);
 
   const rowRenderer = customRowRenderer || defaultRowRenderer;
 
@@ -133,7 +130,7 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
   ]);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       {isLoading || !releaseHistory ? (
         <LoadingBox />
       ) : (
@@ -161,7 +158,7 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
           </InnerScrollContainer>
         </DataView>
       )}
-    </Suspense>)
+    </Suspense>
   );
 };
 

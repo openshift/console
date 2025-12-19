@@ -23,10 +23,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   // state to maintain user selection of toggle, maintained as an [] of {defaultCatalogSourceName: <booleanFlagForToggle>}
-  const [
-    userSelectedDefaultSourceToggleState,
-    setUserSelectedDefaultSourceToggleState,
-  ] = useState(
+  const [userSelectedDefaultSourceToggleState, setUserSelectedDefaultSourceToggleState] = useState(
     (operatorHub.spec.sources ?? []).reduce(
       (acc, source) => ({
         ...acc,

@@ -101,171 +101,169 @@ const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
 const DEFAULT_HANDLE_LENGTH = 32;
 
-const CreateConnectorWidget: FunctionComponent<CreateConnectorWidgetProps> = observer(
-  (props) => {
-    const {
-      element,
-      onKeepAlive,
-      onCreate,
-      ConnectorComponent,
-      handleAngle = DEFAULT_HANDLE_ANGLE,
-      handleAngleTop = DEFAULT_HANDLE_ANGLE_TOP,
-      handleLength = DEFAULT_HANDLE_LENGTH,
-      contextMenuClass,
-      dragItem,
-      dragOperation,
-      hideConnectorMenu,
-    } = props;
-    const [prompt, setPrompt] = useState<PromptData | null>(null);
-    const [active, setActive] = useState(false);
-    const hintsRef = useRef<string[] | undefined>();
+const CreateConnectorWidget: FunctionComponent<CreateConnectorWidgetProps> = observer((props) => {
+  const {
+    element,
+    onKeepAlive,
+    onCreate,
+    ConnectorComponent,
+    handleAngle = DEFAULT_HANDLE_ANGLE,
+    handleAngleTop = DEFAULT_HANDLE_ANGLE_TOP,
+    handleLength = DEFAULT_HANDLE_LENGTH,
+    contextMenuClass,
+    dragItem,
+    dragOperation,
+    hideConnectorMenu,
+  } = props;
+  const [prompt, setPrompt] = useState<PromptData | null>(null);
+  const [active, setActive] = useState(false);
+  const hintsRef = useRef<string[] | undefined>();
 
-    const spec = useMemo(() => {
-      const dragSourceSpec: DragSourceSpec<
-        DragObjectWithType,
-        DragSpecOperationType<DragOperationWithType>,
-        GraphElement,
-        CollectProps,
-        CreateConnectorWidgetProps
-      > = {
-        item: dragItem || { type: CREATE_CONNECTOR_DROP_TYPE },
-        operation: dragOperation || { type: CREATE_CONNECTOR_OPERATION },
-        begin: (monitor: DragSourceMonitor, dragProps: any) => {
-          setActive(true);
-          return dragProps.element;
-        },
-        drag: (event: DragEvent, monitor: DragSourceMonitor, p: CreateConnectorWidgetProps) => {
-          p.element.raise();
-        },
-        end: async (
-          dropResult: GraphElement,
-          monitor: DragSourceMonitor,
-          dragProps: CreateConnectorWidgetProps,
-        ) => {
-          const event = monitor.getDragEvent();
-          if ((isNode(dropResult) || isGraph(dropResult)) && event) {
-            const choices = await dragProps.onCreate(
-              dragProps.element,
-              dropResult,
-              event,
-              monitor.getDropHints(),
-            );
-            if (choices && choices.length && !hideConnectorMenu) {
-              setPrompt({ element: dragProps.element, target: dropResult, event, choices });
-              return;
-            }
-          }
-          setActive(false);
-          dragProps.onKeepAlive(false);
-        },
-        collect: (monitor) => ({
-          dragging: !!monitor.getItem(),
-          event: monitor.isDragging() ? monitor.getDragEvent() : undefined,
-          hints: monitor.getDropHints(),
-        }),
-      };
-      return dragSourceSpec;
-    }, [setActive, dragItem, dragOperation, hideConnectorMenu]);
-    const [{ dragging, event, hints }, dragRef] = useDndDrag(spec, props);
-    const [hover, hoverRef] = useHover();
-    const refs = useCombineRefs(dragRef, hoverRef);
-
-    if (!active && dragging && !event) {
-      // another connector is dragging right now
-      return null;
-    }
-
-    if (dragging) {
-      // store the latest hints
-      hintsRef.current = hints;
-    }
-
-    const dragEvent = prompt ? prompt.event : event;
-
-    let startPoint: Point;
-    let endPoint: Point;
-
-    if (dragEvent) {
-      endPoint = new Point(dragEvent.x, dragEvent.y);
-      startPoint = element.getAnchor(AnchorEnd.source).getLocation(endPoint);
-    } else {
-      const bounds = element.getBounds();
-      const isRightLabel = element.getLabelPosition() === LabelPosition.right;
-      const referencePoint = isRightLabel
-        ? new Point(bounds.x + bounds.width / 2, bounds.y)
-        : new Point(
-            bounds.right(),
-            Math.tan(handleAngle) * (bounds.width / 2) + bounds.y + bounds.height / 2,
+  const spec = useMemo(() => {
+    const dragSourceSpec: DragSourceSpec<
+      DragObjectWithType,
+      DragSpecOperationType<DragOperationWithType>,
+      GraphElement,
+      CollectProps,
+      CreateConnectorWidgetProps
+    > = {
+      item: dragItem || { type: CREATE_CONNECTOR_DROP_TYPE },
+      operation: dragOperation || { type: CREATE_CONNECTOR_OPERATION },
+      begin: (monitor: DragSourceMonitor, dragProps: any) => {
+        setActive(true);
+        return dragProps.element;
+      },
+      drag: (event: DragEvent, monitor: DragSourceMonitor, p: CreateConnectorWidgetProps) => {
+        p.element.raise();
+      },
+      end: async (
+        dropResult: GraphElement,
+        monitor: DragSourceMonitor,
+        dragProps: CreateConnectorWidgetProps,
+      ) => {
+        const event = monitor.getDragEvent();
+        if ((isNode(dropResult) || isGraph(dropResult)) && event) {
+          const choices = await dragProps.onCreate(
+            dragProps.element,
+            dropResult,
+            event,
+            monitor.getDropHints(),
           );
-      startPoint = element.getAnchor(AnchorEnd.source).getLocation(referencePoint);
-      endPoint = new Point(
-        Math.cos(isRightLabel ? handleAngleTop : handleAngle) * handleLength + startPoint.x,
-        Math.sin(isRightLabel ? handleAngleTop : handleAngle) * handleLength + startPoint.y,
-      );
-    }
+          if (choices && choices.length && !hideConnectorMenu) {
+            setPrompt({ element: dragProps.element, target: dropResult, event, choices });
+            return;
+          }
+        }
+        setActive(false);
+        dragProps.onKeepAlive(false);
+      },
+      collect: (monitor) => ({
+        dragging: !!monitor.getItem(),
+        event: monitor.isDragging() ? monitor.getDragEvent() : undefined,
+        hints: monitor.getDropHints(),
+      }),
+    };
+    return dragSourceSpec;
+  }, [setActive, dragItem, dragOperation, hideConnectorMenu]);
+  const [{ dragging, event, hints }, dragRef] = useDndDrag(spec, props);
+  const [hover, hoverRef] = useHover();
+  const refs = useCombineRefs(dragRef, hoverRef);
 
-    // bring into the coordinate space of the element
-    element.translateFromParent(startPoint);
-    element.translateFromParent(endPoint);
+  if (!active && dragging && !event) {
+    // another connector is dragging right now
+    return null;
+  }
 
-    const connector = (
-      <g
-        className={css(styles.topologyDefaultCreateConnector)}
-        ref={refs}
-        onMouseEnter={!active ? () => onKeepAlive(true) : undefined}
-        onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
-      >
-        <ConnectorComponent
-          startPoint={startPoint}
-          endPoint={endPoint}
-          dragging={dragging}
-          hints={hintsRef.current || []}
-          hover={hover}
-        />
-        <path
-          d={hullPath(
-            [
-              [startPoint.x, startPoint.y],
-              [endPoint.x, endPoint.y],
-            ],
-            7,
-          )}
-          fillOpacity="0"
-        />
-      </g>
+  if (dragging) {
+    // store the latest hints
+    hintsRef.current = hints;
+  }
+
+  const dragEvent = prompt ? prompt.event : event;
+
+  let startPoint: Point;
+  let endPoint: Point;
+
+  if (dragEvent) {
+    endPoint = new Point(dragEvent.x, dragEvent.y);
+    startPoint = element.getAnchor(AnchorEnd.source).getLocation(endPoint);
+  } else {
+    const bounds = element.getBounds();
+    const isRightLabel = element.getLabelPosition() === LabelPosition.right;
+    const referencePoint = isRightLabel
+      ? new Point(bounds.x + bounds.width / 2, bounds.y)
+      : new Point(
+          bounds.right(),
+          Math.tan(handleAngle) * (bounds.width / 2) + bounds.y + bounds.height / 2,
+        );
+    startPoint = element.getAnchor(AnchorEnd.source).getLocation(referencePoint);
+    endPoint = new Point(
+      Math.cos(isRightLabel ? handleAngleTop : handleAngle) * handleLength + startPoint.x,
+      Math.sin(isRightLabel ? handleAngleTop : handleAngle) * handleLength + startPoint.y,
     );
+  }
 
-    return (
-      <>
-        {active ? <Layer id={TOP_LAYER}>{connector}</Layer> : connector}
-        {prompt && (
-          <ContextMenu
-            reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}
-            className={contextMenuClass}
-            open
-            onRequestClose={() => {
-              setActive(false);
-              onKeepAlive(false);
-            }}
-          >
-            {isReactElementArray(prompt.choices)
-              ? prompt.choices
-              : prompt.choices.map((c: ConnectorChoice) => (
-                  <ContextMenuItem
-                    key={c.label}
-                    onClick={() => {
-                      onCreate(prompt.element, prompt.target, prompt.event, hintsRef.current, c);
-                    }}
-                  >
-                    {c.label}
-                  </ContextMenuItem>
-                ))}
-          </ContextMenu>
+  // bring into the coordinate space of the element
+  element.translateFromParent(startPoint);
+  element.translateFromParent(endPoint);
+
+  const connector = (
+    <g
+      className={css(styles.topologyDefaultCreateConnector)}
+      ref={refs}
+      onMouseEnter={!active ? () => onKeepAlive(true) : undefined}
+      onMouseLeave={!active ? () => onKeepAlive(false) : undefined}
+    >
+      <ConnectorComponent
+        startPoint={startPoint}
+        endPoint={endPoint}
+        dragging={dragging}
+        hints={hintsRef.current || []}
+        hover={hover}
+      />
+      <path
+        d={hullPath(
+          [
+            [startPoint.x, startPoint.y],
+            [endPoint.x, endPoint.y],
+          ],
+          7,
         )}
-      </>
-    );
-  },
-);
+        fillOpacity="0"
+      />
+    </g>
+  );
+
+  return (
+    <>
+      {active ? <Layer id={TOP_LAYER}>{connector}</Layer> : connector}
+      {prompt && (
+        <ContextMenu
+          reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}
+          className={contextMenuClass}
+          open
+          onRequestClose={() => {
+            setActive(false);
+            onKeepAlive(false);
+          }}
+        >
+          {isReactElementArray(prompt.choices)
+            ? prompt.choices
+            : prompt.choices.map((c: ConnectorChoice) => (
+                <ContextMenuItem
+                  key={c.label}
+                  onClick={() => {
+                    onCreate(prompt.element, prompt.target, prompt.event, hintsRef.current, c);
+                  }}
+                >
+                  {c.label}
+                </ContextMenuItem>
+              ))}
+        </ContextMenu>
+      )}
+    </>
+  );
+});
 
 export const withCreateConnector = <P extends WithCreateConnectorProps & ElementProps>(
   onCreate: ComponentProps<typeof CreateConnectorWidget>['onCreate'],

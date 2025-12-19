@@ -8,9 +8,7 @@ type AddCardSectionEmptyStateProps = {
   accessCheckFailed?: boolean;
 };
 
-const AddCardSectionEmptyState: FC<AddCardSectionEmptyStateProps> = ({
-  accessCheckFailed,
-}) => {
+const AddCardSectionEmptyState: FC<AddCardSectionEmptyStateProps> = ({ accessCheckFailed }) => {
   const { t } = useTranslation();
   const Icon: ComponentType<any> = accessCheckFailed ? LockIcon : ExclamationCircleIcon;
   const title: string = accessCheckFailed

@@ -12,10 +12,7 @@ import { tableColumnClasses } from './trigger-table';
 type TriggerRowType = {
   broker?: string;
 };
-const TriggerRow: FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = ({
-  obj,
-  customData,
-}) => {
+const TriggerRow: FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = ({ obj, customData }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
     spec: { subscriber, filter, broker: connectedBroker },

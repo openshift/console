@@ -13,7 +13,7 @@ const HelmReleaseResourcesList: FC<TableProps> = (props) => {
   const columns = useHelmReleaseResourcesColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={props.data}
@@ -24,7 +24,7 @@ const HelmReleaseResourcesList: FC<TableProps> = (props) => {
         hideColumnManagement
         data-test="helm-resources-list"
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

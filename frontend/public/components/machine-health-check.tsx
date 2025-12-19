@@ -116,7 +116,7 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
   const columns = useMachineHealthCheckColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineHealthCheckKind>
         {...props}
         label={MachineHealthCheckModel.labelPlural}
@@ -127,7 +127,7 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

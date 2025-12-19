@@ -13,9 +13,9 @@ const mapCardsToGrid = (
 ): ReactNode[] =>
   cards.map(({ Card, span = 12 }, index) => (
     // eslint-disable-next-line react/no-array-index-key
-    (<GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
+    <GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
       <Card />
-    </GridItem>)
+    </GridItem>
   ));
 
 const DashboardGrid: FC<OverviewGridProps> = ({ mainCards, leftCards, rightCards }) => {

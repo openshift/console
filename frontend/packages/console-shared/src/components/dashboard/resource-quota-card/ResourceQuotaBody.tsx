@@ -4,12 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import './resource-quota-card.scss';
 
-const ResourceQuotaBody: FC<ResourceQuotaBodyProps> = ({
-  error,
-  isLoading,
-  noText,
-  children,
-}) => {
+const ResourceQuotaBody: FC<ResourceQuotaBodyProps> = ({ error, isLoading, noText, children }) => {
   let body: ReactNode;
   const { t } = useTranslation();
   if (error) {

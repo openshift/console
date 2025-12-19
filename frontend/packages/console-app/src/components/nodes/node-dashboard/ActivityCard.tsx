@@ -26,10 +26,10 @@ const nodeEventsFilter = (event: EventKind, uid: string, kind: string, name: str
 const RecentEvent: FC<RecentEventProps> = ({ node }) => {
   const [data, loaded, loadError] = useK8sWatchResource<EventKind[]>(eventsResource);
   const { uid, name } = node.metadata;
-  const eventsFilter = useCallback(
-    (event) => nodeEventsFilter(event, uid, NodeModel.kind, name),
-    [uid, name],
-  );
+  const eventsFilter = useCallback((event) => nodeEventsFilter(event, uid, NodeModel.kind, name), [
+    uid,
+    name,
+  ]);
   return <RecentEventsBody events={{ data, loaded, loadError }} filter={eventsFilter} />;
 };
 

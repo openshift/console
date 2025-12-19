@@ -14,9 +14,7 @@ type HelmReleaseResourceStatusProps = {
   resource: K8sResourceKind;
 };
 
-export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({
-  resource,
-}) => {
+export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({ resource }) => {
   const { t } = useTranslation();
   const kind = referenceFor(resource);
   return resource.status?.replicas ? (

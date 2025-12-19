@@ -10,9 +10,7 @@ export type ConfigurationsOverviewListProps = {
   configurations: K8sResourceKind[];
 };
 
-const ConfigurationsOverviewList: FC<ConfigurationsOverviewListProps> = ({
-  configurations,
-}) => {
+const ConfigurationsOverviewList: FC<ConfigurationsOverviewListProps> = ({ configurations }) => {
   const { t } = useTranslation();
   return (
     <>

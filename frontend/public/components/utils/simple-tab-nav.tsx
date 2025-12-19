@@ -35,7 +35,7 @@ export const SimpleTabNav: FC<SimpleTabNavProps> = ({
 
   // the div wrapper prevents the tabs from collapsing in a flexbox
   return (
-    (<div>
+    <div>
       <Tabs
         onSelect={handleTabClick}
         className={css({ 'pf-v6-u-mb-md': withinSidebar }, additionalClassNames)}
@@ -61,6 +61,6 @@ export const SimpleTabNav: FC<SimpleTabNavProps> = ({
           );
         })}
       </Tabs>
-    </div>)
+    </div>
   );
 };

@@ -113,9 +113,7 @@ export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => 
   );
 };
 
-export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({
-  namespace,
-}) => {
+export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ namespace }) => {
   const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
 
   return (

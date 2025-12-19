@@ -51,11 +51,7 @@ export const GreenCheckCircleIcon: FC<ColoredIconProps> = ({ className, title, s
  * <RedExclamationCircleIcon title="Failed" />
  * ```
  */
-export const RedExclamationCircleIcon: FC<ColoredIconProps> = ({
-  className,
-  title,
-  size,
-}) => {
+export const RedExclamationCircleIcon: FC<ColoredIconProps> = ({ className, title, size }) => {
   const icon = (
     <ExclamationCircleIcon
       className={css('dps-icons__red-exclamation-icon', className)}

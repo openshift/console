@@ -152,7 +152,7 @@ export const ServiceMonitorsList = (props) => {
   const columns = useServiceMonitorColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={data}
@@ -162,7 +162,7 @@ export const ServiceMonitorsList = (props) => {
         getDataViewRows={getServiceMonitorDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

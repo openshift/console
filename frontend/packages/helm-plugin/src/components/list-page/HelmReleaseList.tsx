@@ -251,31 +251,33 @@ const HelmReleaseList: FC = () => {
     );
   };
 
-  return (<>
-    <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
-    <PaneBody>
-      <Suspense fallback={<LoadingBox />}>
-        {hasNoReleases ? (
-          emptyState()
-        ) : (
-          <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
-            label={t('helm-plugin~Helm Releases')}
-            data={releases}
-            loaded={isLoaded}
-            loadError={secretsLoadError || loadError}
-            columns={columns}
-            initialFilters={initialFilters}
-            additionalFilterNodes={additionalFilterNodes}
-            getObjectMetadata={getObjectMetadata}
-            matchesAdditionalFilters={matchesAdditionalFilters}
-            getDataViewRows={getDataViewRows}
-            hideLabelFilter
-            hideColumnManagement
-          />
-        )}
-      </Suspense>
-    </PaneBody>
-  </>);
+  return (
+    <>
+      <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
+      <PaneBody>
+        <Suspense fallback={<LoadingBox />}>
+          {hasNoReleases ? (
+            emptyState()
+          ) : (
+            <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
+              label={t('helm-plugin~Helm Releases')}
+              data={releases}
+              loaded={isLoaded}
+              loadError={secretsLoadError || loadError}
+              columns={columns}
+              initialFilters={initialFilters}
+              additionalFilterNodes={additionalFilterNodes}
+              getObjectMetadata={getObjectMetadata}
+              matchesAdditionalFilters={matchesAdditionalFilters}
+              getDataViewRows={getDataViewRows}
+              hideLabelFilter
+              hideColumnManagement
+            />
+          )}
+        </Suspense>
+      </PaneBody>
+    </>
+  );
 };
 
 export default HelmReleaseList;

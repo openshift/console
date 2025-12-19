@@ -19,10 +19,7 @@ const BuildTabSection: FC<{
   buildAdapter: AdapterDataType<BuildConfigData>;
   extensionsResolved: boolean;
 }> = ({ id, buildAdapter, extensionsResolved }) => {
-  const [
-    { data: buildConfigs, loaded: buildConfigsDataLoaded },
-    setBuildConfigsData,
-  ] = useState<{
+  const [{ data: buildConfigs, loaded: buildConfigsDataLoaded }, setBuildConfigsData] = useState<{
     data?: BuildConfigData;
     loaded: boolean;
   }>({ loaded: false });

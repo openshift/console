@@ -13,7 +13,7 @@ const RepositoriesList: FC<TableProps> = (props) => {
   const columns = useRepositoriesColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={props.data}
@@ -24,7 +24,7 @@ const RepositoriesList: FC<TableProps> = (props) => {
         hideColumnManagement
         data-test="repositories-list"
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

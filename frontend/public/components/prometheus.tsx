@@ -152,7 +152,7 @@ export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: bool
   const columns = usePrometheusColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={data}
@@ -162,7 +162,7 @@ export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: bool
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

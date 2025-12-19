@@ -15,12 +15,7 @@ interface RevisionRouteDecoratorProps {
   y: number;
 }
 
-const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({
-  element,
-  radius,
-  x,
-  y,
-}) => {
+const RevisionRouteDecorator: FC<RevisionRouteDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
   const { t } = useTranslation();
   const resourceObj = getResource(element);

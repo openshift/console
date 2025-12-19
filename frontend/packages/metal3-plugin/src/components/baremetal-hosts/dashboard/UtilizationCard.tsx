@@ -31,9 +31,7 @@ const UtilizationCard: FC = () => {
   const nodeName = getMachineNodeName(machine);
 
   const queries = useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
-  const multilineQueries = useMemo(() => getMultilineUtilizationQueries(nodeName), [
-    nodeName,
-  ]);
+  const multilineQueries = useMemo(() => getMultilineUtilizationQueries(nodeName), [nodeName]);
 
   const humanizePods = useCallback(
     (v) => ({

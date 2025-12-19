@@ -39,10 +39,7 @@ type AddServerlessFunctionProps = {
   forApplication: string;
 };
 
-const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({
-  namespace,
-  forApplication,
-}) => {
+const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forApplication }) => {
   const { t } = useTranslation();
   const postFormCallback = useResourceConnectionHandler();
   const [perspective] = useActivePerspective();

@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-no-undef */
 import type { FC } from 'react';
-
 import { memo } from 'react';
 
 const GuidedTourIntroBanner: FC = (props) => (

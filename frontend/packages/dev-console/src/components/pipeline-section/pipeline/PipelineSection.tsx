@@ -44,11 +44,7 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines;
 };
 
-const PipelineSection: FC<PipelineSectionProps> = ({
-  flags,
-  builderImages,
-  existingPipeline,
-}) => {
+const PipelineSection: FC<PipelineSectionProps> = ({ flags, builderImages, existingPipeline }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
 

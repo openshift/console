@@ -18,12 +18,7 @@ export interface TrafficSplittingType {
   trafficSplitting: Traffic[];
 }
 
-const TrafficSplitting: FC<TrafficSplittingProps> = ({
-  service,
-  revisions,
-  cancel,
-  close,
-}) => {
+const TrafficSplitting: FC<TrafficSplittingProps> = ({ service, revisions, cancel, close }) => {
   const { t } = useTranslation();
   const traffic: Traffic[] = service.spec?.traffic ?? [{ percent: 0, tag: '', revisionName: '' }];
   const latestCreatedRevName = service.status?.latestCreatedRevisionName;

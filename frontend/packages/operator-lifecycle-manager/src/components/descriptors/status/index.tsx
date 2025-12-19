@@ -41,13 +41,7 @@ const PodStatuses: FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = 
   );
 };
 
-const Link: FC<StatusCapabilityProps<string>> = ({
-  description,
-  fullPath,
-  label,
-  obj,
-  value,
-}) => {
+const Link: FC<StatusCapabilityProps<string>> = ({ description, fullPath, label, obj, value }) => {
   const { t } = useTranslation();
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
@@ -105,10 +99,7 @@ const MainStatus: FC<StatusCapabilityProps<string>> = ({
   </DetailsItem>
 );
 
-export const StatusDescriptorDetailsItem: FC<StatusCapabilityProps> = ({
-  className,
-  ...props
-}) => {
+export const StatusDescriptorDetailsItem: FC<StatusCapabilityProps> = ({ className, ...props }) => {
   const [capability] =
     getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value) ?? [];
 

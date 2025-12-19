@@ -122,7 +122,7 @@ export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => 
   const columns = useGroupColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<GroupKind>
         {...props}
         data={data}
@@ -132,7 +132,7 @@ export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => 
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

@@ -775,30 +775,32 @@ const AppContents: FC = () => {
 
   const matches = matchRoutes(namespacedRoutes, location);
 
-  return (<>
-    <PageSection
-      hasBodyWrapper={false}
-      padding={{ default: 'noPadding' }}
-      className="pf-v6-c-page__main-section--no-gap"
-    >
-      <GlobalNotifications />
-      {matches && <NamespaceBar />}
-    </PageSection>
-    <PageSection
-      isFilled={true}
-      hasBodyWrapper={false}
-      padding={{ default: 'noPadding' }}
-      className="pf-v6-c-page__main-section--no-gap pf-v6-u-flex-shrink-1"
-      id="content-scrollable"
-    >
-      <ErrorBoundaryPage>
-        <Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
-          {contentRouter}
-        </Suspense>
-      </ErrorBoundaryPage>
-    </PageSection>
-    <TelemetryNotifier />
-  </>);
+  return (
+    <>
+      <PageSection
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap"
+      >
+        <GlobalNotifications />
+        {matches && <NamespaceBar />}
+      </PageSection>
+      <PageSection
+        isFilled={true}
+        hasBodyWrapper={false}
+        padding={{ default: 'noPadding' }}
+        className="pf-v6-c-page__main-section--no-gap pf-v6-u-flex-shrink-1"
+        id="content-scrollable"
+      >
+        <ErrorBoundaryPage>
+          <Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
+            {contentRouter}
+          </Suspense>
+        </ErrorBoundaryPage>
+      </PageSection>
+      <TelemetryNotifier />
+    </>
+  );
 };
 
 export default AppContents;

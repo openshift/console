@@ -44,9 +44,9 @@ const PrometheusGraphLink_: FC<PrometheusGraphLinkProps> = ({
     </Link>
   );
 };
-export const PrometheusGraphLink = connect(mapStateToProps)(
-  PrometheusGraphLink_,
-) as ComponentType<Omit<PrometheusGraphLinkProps, 'namespace'>>;
+export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_) as ComponentType<
+  Omit<PrometheusGraphLinkProps, 'namespace'>
+>;
 
 export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
   ({ children, className, title }, ref) => (

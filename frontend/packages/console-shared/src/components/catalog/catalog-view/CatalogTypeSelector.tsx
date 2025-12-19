@@ -13,10 +13,7 @@ interface CatalogTypeSelectorProps {
   catalogTypeCounts: CatalogTypeCounts;
 }
 
-const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({
-  catalogTypes,
-  catalogTypeCounts,
-}) => {
+const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catalogTypeCounts }) => {
   const { t } = useTranslation();
   const { pathname, search } = useLocation();
 

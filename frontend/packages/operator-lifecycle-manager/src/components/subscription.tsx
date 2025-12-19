@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-
 import { useRef, useState, useEffect, useMemo } from 'react';
 import {
   Alert,
@@ -166,9 +165,7 @@ const tableColumnClasses = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({
-  subscription,
-}) => {
+export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
   const { t } = useTranslation();
   const to = resourcePathFromModel(
     InstallPlanModel,
@@ -184,9 +181,7 @@ export const UpgradeApprovalLink: FC<{ subscription: SubscriptionKind }> = ({
   );
 };
 
-export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({
-  subscription,
-}) => {
+export const SubscriptionStatus: FC<{ subscription: SubscriptionKind }> = ({ subscription }) => {
   const { t } = useTranslation();
   switch (subscription?.status?.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:

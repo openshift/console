@@ -76,10 +76,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
           params.plural
         }`;
 
-  const providedAPI = useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [
-    csv,
-    model,
-  ]);
+  const providedAPI = useMemo<ProvidedAPI>(() => providedAPIForModel(csv, model), [csv, model]);
 
   const baseSchema = useMemo(
     () =>

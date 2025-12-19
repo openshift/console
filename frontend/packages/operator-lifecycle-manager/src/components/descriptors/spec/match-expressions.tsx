@@ -98,7 +98,7 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
     onChange([...matchExpressions, { key: '', operator: Operator.Exists, values: [] }]);
 
   return (
-    (<Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
+    <Table aria-label={t('olm~Match expressions')} variant="compact" borders={false}>
       <Thead>
         <Tr>
           <Th>{t('olm~Key')}</Th>
@@ -110,14 +110,14 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
       <Tbody>
         {matchExpressions.map((expression, index) => (
           // Have to use array index in the key bc any other unique id whould have to use editable fields.
-          (<MatchExpression
+          <MatchExpression
             // eslint-disable-next-line react/no-array-index-key
             key={`${uid}-match-expression-${index}`}
             expression={expression}
             allowedOperators={allowedOperators}
             onClickRemove={() => removeExpression(index)}
             onChange={(newExpression) => updateExpression(index, newExpression)}
-          />)
+          />
         ))}
         <Tr>
           <Td>
@@ -132,7 +132,7 @@ export const MatchExpressions: FC<MatchExpressionsProps> = ({
           </Td>
         </Tr>
       </Tbody>
-    </Table>)
+    </Table>
   );
 };
 

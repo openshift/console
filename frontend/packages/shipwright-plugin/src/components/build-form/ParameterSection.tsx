@@ -22,7 +22,7 @@ type ParameterFieldsProps = {
 
 const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
   return (
-    (<FieldArray
+    <FieldArray
       name="parameters"
       key="parameters-row"
       render={() =>
@@ -68,7 +68,7 @@ const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
           </FormSection>
         )
       }
-    />)
+    />
   );
 };
 

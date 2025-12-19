@@ -97,11 +97,7 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
   );
 };
 
-const HealthCard: FC<HealthCardProps> = ({
-  watchAlerts,
-  stopWatchAlerts,
-  notificationAlerts,
-}) => {
+const HealthCard: FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
   const { t } = useTranslation();
   const { obj, machine, node, nodeMaintenance } = useContext(BareMetalHostDashboardContext);
 

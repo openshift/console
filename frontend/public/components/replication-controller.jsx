@@ -283,7 +283,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
   const columns = useReplicationControllersColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ReplicationControllerModel.labelPlural}
@@ -293,7 +293,7 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

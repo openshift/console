@@ -2,10 +2,7 @@ import type { FC } from 'react';
 import { Fragment } from 'react';
 import { Divider, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core';
 
-const DropdownWithSwitchGroups: FC<DropdownWithSwitchGroupsProps> = ({
-  options,
-  selectedKey,
-}) => {
+const DropdownWithSwitchGroups: FC<DropdownWithSwitchGroupsProps> = ({ options, selectedKey }) => {
   const renderedOptions = options.filter(({ items }) => items.length > 0);
   return renderedOptions.length === 0 ? null : (
     <>

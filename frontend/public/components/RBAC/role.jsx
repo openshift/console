@@ -275,7 +275,7 @@ const BindingsListComponent = (props) => {
   }, [data, staticFilters]);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={filteredData}
@@ -285,7 +285,7 @@ const BindingsListComponent = (props) => {
         getDataViewRows={getBindingsDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -469,7 +469,7 @@ const RolesList = (props) => {
   );
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       {data.length === 0 ? (
         <ConsoleEmptyState title={t('public~No Roles found')}>
           {t(
@@ -489,7 +489,7 @@ const RolesList = (props) => {
           hideColumnManagement={true}
         />
       )}
-    </Suspense>)
+    </Suspense>
   );
 };
 

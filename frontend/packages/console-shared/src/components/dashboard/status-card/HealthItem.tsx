@@ -10,9 +10,9 @@ import { HealthState, healthStateMapping, healthStateMessage } from './states';
 const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {
   const Icon = (healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).icon;
   return (
-    (<div data-test={dataTest} className="co-dashboard-icon">
+    <div data-test={dataTest} className="co-dashboard-icon">
       {cloneElement(Icon, { size: 'heading_2xl' })}
-    </div>)
+    </div>
   );
 };
 
@@ -35,7 +35,7 @@ const HealthItem: FC<HealthItemProps> = memo(
     const detailMessage = details || healthStateMessage(state, t);
 
     return (
-      (<div
+      <div
         className={css('co-status-card__health-item', className)}
         data-item-id={`${title}-health-item`}
       >
@@ -83,7 +83,7 @@ const HealthItem: FC<HealthItemProps> = memo(
             />
           )}
         </div>
-      </div>)
+      </div>
     );
   },
 );

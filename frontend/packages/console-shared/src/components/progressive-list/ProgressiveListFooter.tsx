@@ -9,11 +9,7 @@ export interface ProgressiveListFooterProps {
   Footer: (children) => ReactElement;
 }
 
-const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
-  items,
-  onShowItem,
-  Footer,
-}) => {
+const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({ items, onShowItem, Footer }) => {
   if (!items || items.length === 0) {
     return null;
   }
@@ -27,7 +23,7 @@ const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
   let lastLen = 0;
 
   return (
-    (<Footer>
+    <Footer>
       <>
         {items.map((item) => {
           const currentIdx = formattedString.indexOf(item);
@@ -46,7 +42,7 @@ const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
           return element;
         })}
       </>
-    </Footer>)
+    </Footer>
   );
 };
 

@@ -68,9 +68,7 @@ export const EventSourceTarget: FC<EventSourceTargetProps> = ({ obj }) => {
   );
 };
 
-export const EventSourceDeployments: FC<EventSourceDeploymentsProps> = ({
-  deploymentObj,
-}) => {
+export const EventSourceDeployments: FC<EventSourceDeploymentsProps> = ({ deploymentObj }) => {
   const { t } = useTranslation();
   return (
     <>

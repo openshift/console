@@ -161,7 +161,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   };
 
   return (
-    (<PaneBody className="co-m-pane__form">
+    <PaneBody className="co-m-pane__form">
       <Form onSubmit={handleSubmit}>
         <Stack hasGutter>
           <StackItem>
@@ -309,7 +309,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
           </StackItem>
         </Stack>
       </Form>
-    </PaneBody>)
+    </PaneBody>
   );
 };
 

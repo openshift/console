@@ -11,11 +11,7 @@ type CopyClipboardProps = {
   docContext: HTMLDocument;
 };
 
-export const CopyClipboard: FC<CopyClipboardProps> = ({
-  element,
-  rootSelector,
-  docContext,
-}) => {
+export const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
   const { t } = useTranslation();
   const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
   const textToCopy = useMemo(() => {
@@ -58,10 +54,7 @@ type MarkdownCopyClipboardProps = {
   rootSelector: string;
 };
 
-const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({
-  docContext,
-  rootSelector,
-}) => {
+const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({ docContext, rootSelector }) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_COPY_BUTTON_ID}]`);
   return elements.length > 0 ? (
     <>

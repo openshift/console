@@ -27,8 +27,5 @@ const SinkPubsubModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useSinkPubsubModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(SinkPubsubModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(SinkPubsubModalProvider, props), [launcher, props]);
 };

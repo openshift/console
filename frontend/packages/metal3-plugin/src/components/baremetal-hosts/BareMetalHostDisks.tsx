@@ -44,11 +44,7 @@ type BareMetalHostDisksProps = {
   loadError?: any;
 };
 
-const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({
-  obj: host,
-  loadError,
-  loaded,
-}) => {
+const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError, loaded }) => {
   const { t } = useTranslation();
   const disks = getHostStorage(host);
   return (

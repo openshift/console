@@ -54,9 +54,7 @@ interface WrapperProps {
   children?: ReactNode;
 }
 
-const Wrapper: FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 beforeEach(() => {
   useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);

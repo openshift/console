@@ -15,22 +15,24 @@ import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
 const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const recommendations = obj?.status?.recommendation?.containerRecommendations ?? [];
-  return (<>
-    {recommendations.length > 0 && <p>{t('console-app~Recommended')}</p>}
-    {recommendations.map((recommendation) => (
-      <Fragment key={recommendation.containerName}>
-        <div>
-          {t('console-app~Container name')}: {recommendation.containerName}
-        </div>
-        <div>
-          {t('console-app~CPU')}: {recommendation.target.cpu}
-        </div>
-        <div>
-          {t('console-app~Memory')}: {recommendation.target.memory}
-        </div>
-      </Fragment>
-    ))}
-  </>);
+  return (
+    <>
+      {recommendations.length > 0 && <p>{t('console-app~Recommended')}</p>}
+      {recommendations.map((recommendation) => (
+        <Fragment key={recommendation.containerName}>
+          <div>
+            {t('console-app~Container name')}: {recommendation.containerName}
+          </div>
+          <div>
+            {t('console-app~CPU')}: {recommendation.target.cpu}
+          </div>
+          <div>
+            {t('console-app~Memory')}: {recommendation.target.memory}
+          </div>
+        </Fragment>
+      ))}
+    </>
+  );
 };
 
 export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({

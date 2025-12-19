@@ -60,10 +60,7 @@ type VSphereConnectionModalAlertProps = {
   error?: { title: string; message: string };
 };
 
-const VSphereConnectionModalAlert: FC<VSphereConnectionModalAlertProps> = ({
-  health,
-  error,
-}) => {
+const VSphereConnectionModalAlert: FC<VSphereConnectionModalAlertProps> = ({ health, error }) => {
   const { t } = useTranslation('vsphere-plugin');
   const { isSubmitting } = useFormikContext();
 

@@ -76,10 +76,7 @@ const GroupNode: FC<GroupNodeProps> = ({
   const width = groupSize ? groupSize.width : 0;
   const height = groupSize ? groupSize.height : 0;
   useAnchor(
-    useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
-      width,
-      height,
-    ]),
+    useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [width, height]),
   );
 
   const getCustomShape = () => () => (

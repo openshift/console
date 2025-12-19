@@ -410,7 +410,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
     });
 
   return (
-    (<DescriptionList>
+    <DescriptionList>
       <DescriptionListGroup>
         <Tooltip
           content={t('olm~Required rules must be met before a pod can be scheduled on a node.')}
@@ -423,14 +423,14 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
           {_.map(requiredRules, (podAffinityTerm, ruleIndex) => (
             // Have to use array index in the key bc any other unique id whould have to use editable fields.
             // eslint-disable-next-line react/no-array-index-key
-            (<PodAffinityRule
+            <PodAffinityRule
               key={`${uid}-pod-affinity-required-${ruleIndex}`}
               rule={{ podAffinityTerm }}
               onChange={(rule) => updateRequiredRules(rule, ruleIndex)}
               onClickRemove={() => removeRequiredRule(ruleIndex)}
               showRemoveButton
               type={AffinityRuleType.Required}
-            />)
+            />
           ))}
           <div>
             <Button
@@ -482,7 +482,7 @@ export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = ''
           </div>
         </DescriptionListDescription>
       </DescriptionListGroup>
-    </DescriptionList>)
+    </DescriptionList>
   );
 };
 

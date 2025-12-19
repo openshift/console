@@ -29,9 +29,7 @@ let store;
 interface WrapperProps {
   children?: ReactNode;
 }
-const Wrapper: FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 // Object under test
 const resourceUpdate = jest.fn();

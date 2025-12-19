@@ -23,11 +23,7 @@ type ResourceStatusProps = {
  * )
  * ```
  */
-const ResourceStatus: FC<ResourceStatusProps> = ({
-  additionalClassNames,
-  badgeAlt,
-  children,
-}) => {
+const ResourceStatus: FC<ResourceStatusProps> = ({ additionalClassNames, badgeAlt, children }) => {
   return (
     <span className={css('dps-resource-item__resource-status', additionalClassNames)}>
       <Badge

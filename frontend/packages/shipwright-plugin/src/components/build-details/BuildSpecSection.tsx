@@ -50,7 +50,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
     : buildSpec?.paramValues?.find((param) => param?.name === 'builder-image')?.value;
 
   return (
-    (<DescriptionList>
+    <DescriptionList>
       {buildSpec.strategy ? (
         <DetailsItem label={t('shipwright-plugin~Strategy')} obj={obj} path={`${path}.strategy`}>
           {buildSpec.strategy.kind === 'ClusterBuildStrategy' ? (
@@ -171,7 +171,7 @@ const BuildSpecSection: FC<BuildSpecSectionProps> = ({ obj, buildSpec, path }) =
           />
         </DetailsItem>
       ) : null}
-    </DescriptionList>)
+    </DescriptionList>
   );
 };
 

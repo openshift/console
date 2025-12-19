@@ -81,7 +81,7 @@ export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = ({
   });
 
   return (
-    (<CreateWithPermissions createAccessReview={createAccessReview}>
+    <CreateWithPermissions createAccessReview={createAccessReview}>
       <Dropdown
         isOpen={isOpen}
         onSelect={() => setOpen(false)}
@@ -101,7 +101,7 @@ export const ListPageCreateDropdown: FC<ListPageCreateDropdownProps> = ({
       >
         <DropdownList>{listCreateDropdownItems}</DropdownList>
       </Dropdown>
-    </CreateWithPermissions>)
+    </CreateWithPermissions>
   );
 };
 

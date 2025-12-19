@@ -22,63 +22,65 @@ const EventPubSubSubscribers: FC<EventPubSubSubscribersProps> = ({
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState('');
 
-  return (<>
-    <SidebarSectionHeading text={title} />
-    {subscribers.length > 0 ? (
-      <List isPlain isBordered className="kn-event-subscriber-list">
-        {subscribers.map((sub) => (
-          <ListItem className="kn-event-subscriber-list-item" key={sub.name}>
-            <ResourceLink kind={referenceFor(sub)} name={sub.name} namespace={sub.namespace} />
-            {sub.data.length > 0 &&
-              sub.data.map((r) => {
-                const onClick = () => {
-                  if ((expanded.length > 0 && expanded !== r.name) || expanded.length === 0) {
-                    setExpanded(r.name);
-                  } else {
-                    setExpanded('');
-                  }
-                };
+  return (
+    <>
+      <SidebarSectionHeading text={title} />
+      {subscribers.length > 0 ? (
+        <List isPlain isBordered className="kn-event-subscriber-list">
+          {subscribers.map((sub) => (
+            <ListItem className="kn-event-subscriber-list-item" key={sub.name}>
+              <ResourceLink kind={referenceFor(sub)} name={sub.name} namespace={sub.namespace} />
+              {sub.data.length > 0 &&
+                sub.data.map((r) => {
+                  const onClick = () => {
+                    if ((expanded.length > 0 && expanded !== r.name) || expanded.length === 0) {
+                      setExpanded(r.name);
+                    } else {
+                      setExpanded('');
+                    }
+                  };
 
-                return (
-                  (<Fragment key={r.name}>
-                    <Grid className="kn-event-subscriber-list__relationship">
-                      <GridItem span={9}>
-                        <ResourceLink
-                          kind={referenceFor(r)}
-                          name={r.name}
-                          namespace={r.namespace}
-                        />
-                      </GridItem>
-                      {r?.filters && r?.filters.length > 0 && (
-                        <GridItem span={3}>
-                          <span className="pf-v6-u-text-align-right">
-                            <EventPubSubExpandButton
-                              rowSelected={expanded.length > 0 && r.name === expanded}
-                              onClick={onClick}
-                            />
-                          </span>
+                  return (
+                    <Fragment key={r.name}>
+                      <Grid className="kn-event-subscriber-list__relationship">
+                        <GridItem span={9}>
+                          <ResourceLink
+                            kind={referenceFor(r)}
+                            name={r.name}
+                            namespace={r.namespace}
+                          />
                         </GridItem>
-                      )}
-                    </Grid>
-                    {r?.filters && expanded === r.name && (
-                      <Grid className="kn-event-subscriber-list__relationship-table">
-                        <GridItem>
-                          <FilterTable filters={r?.filters} paddingLeft />
-                        </GridItem>
+                        {r?.filters && r?.filters.length > 0 && (
+                          <GridItem span={3}>
+                            <span className="pf-v6-u-text-align-right">
+                              <EventPubSubExpandButton
+                                rowSelected={expanded.length > 0 && r.name === expanded}
+                                onClick={onClick}
+                              />
+                            </span>
+                          </GridItem>
+                        )}
                       </Grid>
-                    )}
-                  </Fragment>)
-                );
-              })}
-          </ListItem>
-        ))}
-      </List>
-    ) : (
-      <span className="pf-v6-u-text-color-subtle">
-        {t('knative-plugin~No Subscribers found for this resource.')}
-      </span>
-    )}
-  </>);
+                      {r?.filters && expanded === r.name && (
+                        <Grid className="kn-event-subscriber-list__relationship-table">
+                          <GridItem>
+                            <FilterTable filters={r?.filters} paddingLeft />
+                          </GridItem>
+                        </Grid>
+                      )}
+                    </Fragment>
+                  );
+                })}
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <span className="pf-v6-u-text-color-subtle">
+          {t('knative-plugin~No Subscribers found for this resource.')}
+        </span>
+      )}
+    </>
+  );
 };
 
 export default EventPubSubSubscribers;

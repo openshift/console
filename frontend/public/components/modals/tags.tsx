@@ -32,9 +32,7 @@ const NameValueEditorComponent = (props) => (
 export const TagsModal = (props: TagsModalProps) => {
   // Track tags as an array instead of an object / Map so we can preserve the order during editing and so we can have
   // duplicate keys during editing. However, the ordering and any duplicate keys are lost when the form is submitted.
-  const [tags, setTags] = useState(
-    _.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags),
-  );
+  const [tags, setTags] = useState(_.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags));
   const [localErrorMessage, setLocalErrorMessage] = useState('');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({

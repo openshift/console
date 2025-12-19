@@ -54,8 +54,5 @@ const TestFunctionModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useTestFunctionModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(TestFunctionModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(TestFunctionModalProvider, props), [launcher, props]);
 };

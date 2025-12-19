@@ -198,7 +198,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   }
 
   return (
-    (<form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
+    <form onSubmit={submit} name="form" className="modal-content" data-test="update-cluster-modal">
       <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         {clusterUpgradeableFalse && <ClusterNotUpgradeableAlert onCancel={cancel} cv={cv} />}
@@ -334,7 +334,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
           (upgradeType === upgradeTypes.Partial && machineConfigPoolsToPause.length === 0)
         }
       />
-    </form>)
+    </form>
   );
 };
 

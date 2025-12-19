@@ -8,10 +8,7 @@ interface ImportToastContentProps {
   route?: RouteKind;
 }
 
-const ImportToastContent: FC<ImportToastContentProps> = ({
-  deployedResources = [],
-  route,
-}) => {
+const ImportToastContent: FC<ImportToastContentProps> = ({ deployedResources = [], route }) => {
   const { t } = useTranslation();
   if (!deployedResources || deployedResources.length === 0) {
     return null;

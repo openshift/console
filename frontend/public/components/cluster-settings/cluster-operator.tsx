@@ -179,11 +179,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
   return columns;
 };
 
-export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useClusterOperatorColumns();
 
@@ -238,7 +234,7 @@ export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({
   );
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ClusterOperator, ClusterOperatorRowData, ClusterOperatorFilters>
         {...props}
         label={ClusterOperatorModel.labelPlural}
@@ -251,7 +247,7 @@ export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({
         getDataViewRows={getClusterOperatorDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

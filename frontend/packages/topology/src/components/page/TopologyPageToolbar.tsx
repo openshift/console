@@ -22,65 +22,66 @@ interface TopologyPageToolbarProps {
   onViewChange: (view: TopologyViewType) => void;
 }
 
-const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(
-  function TopologyPageToolbar({ viewType, onViewChange }) {
-    const { t } = useTranslation();
-    const isMobile = useIsMobile();
-    const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
-    const showGraphView = viewType === TopologyViewType.graph;
-    const dataModelContext = useContext<ExtensibleModel>(ModelContext);
-    const { namespace, isEmptyModel } = dataModelContext;
-    const createResourceAccess: string[] = useAddToProjectAccess(namespace);
-    const allImportAccess = createResourceAccess.includes(allImportResourceAccess);
-    const viewChangeTooltipContent = showGraphView
-      ? t('topology~List view')
-      : t('topology~Graph view');
+const TopologyPageToolbar: FC<TopologyPageToolbarProps> = observer(function TopologyPageToolbar({
+  viewType,
+  onViewChange,
+}) {
+  const { t } = useTranslation();
+  const isMobile = useIsMobile();
+  const { extensions } = useContext<FileUploadContextType>(FileUploadContext);
+  const showGraphView = viewType === TopologyViewType.graph;
+  const dataModelContext = useContext<ExtensibleModel>(ModelContext);
+  const { namespace, isEmptyModel } = dataModelContext;
+  const createResourceAccess: string[] = useAddToProjectAccess(namespace);
+  const allImportAccess = createResourceAccess.includes(allImportResourceAccess);
+  const viewChangeTooltipContent = showGraphView
+    ? t('topology~List view')
+    : t('topology~Graph view');
 
-    if (!namespace) {
-      return null;
-    }
+  if (!namespace) {
+    return null;
+  }
 
-    return (
-      <>
-        {!isMobile ? (
-          <Popover
-            aria-label={t('topology~Shortcuts')}
-            bodyContent={getTopologyShortcuts(t, {
-              supportedFileTypes: extensions,
-              isEmptyModel,
-              viewType,
-              allImportAccess,
-            })}
-            position="left"
-            maxWidth="100vw"
-          >
-            <Button
-              type="button"
-              variant="link"
-              className="odc-topology__shortcuts-button"
-              icon={<QuestionCircleIcon />}
-              data-test-id="topology-view-shortcuts"
-            >
-              {t('topology~View shortcuts')}
-            </Button>
-          </Popover>
-        ) : null}
-        <Tooltip position="left" content={viewChangeTooltipContent}>
+  return (
+    <>
+      {!isMobile ? (
+        <Popover
+          aria-label={t('topology~Shortcuts')}
+          bodyContent={getTopologyShortcuts(t, {
+            supportedFileTypes: extensions,
+            isEmptyModel,
+            viewType,
+            allImportAccess,
+          })}
+          position="left"
+          maxWidth="100vw"
+        >
           <Button
-            icon={<Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>}
+            type="button"
             variant="link"
-            aria-label={viewChangeTooltipContent}
-            className="pf-m-plain odc-topology__view-switcher"
-            data-test-id="topology-switcher-view"
-            isDisabled={isEmptyModel}
-            onClick={() =>
-              onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
-            }
-          />
-        </Tooltip>
-      </>
-    );
-  },
-);
+            className="odc-topology__shortcuts-button"
+            icon={<QuestionCircleIcon />}
+            data-test-id="topology-view-shortcuts"
+          >
+            {t('topology~View shortcuts')}
+          </Button>
+        </Popover>
+      ) : null}
+      <Tooltip position="left" content={viewChangeTooltipContent}>
+        <Button
+          icon={<Icon size="md">{showGraphView ? <ListIcon /> : <TopologyIcon />}</Icon>}
+          variant="link"
+          aria-label={viewChangeTooltipContent}
+          className="pf-m-plain odc-topology__view-switcher"
+          data-test-id="topology-switcher-view"
+          isDisabled={isEmptyModel}
+          onClick={() =>
+            onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
+          }
+        />
+      </Tooltip>
+    </>
+  );
+});
 
 export default TopologyPageToolbar;

@@ -161,9 +161,7 @@ export const DescriptorDetailsItems: FC<DescriptorDetailsItemsProps> = ({
   type,
   itemClassName,
 }) => {
-  const groupedDescriptors = useMemo(() => groupDescriptorDetails(descriptors), [
-    descriptors,
-  ]);
+  const groupedDescriptors = useMemo(() => groupDescriptorDetails(descriptors), [descriptors]);
   return (
     <>
       {_.map(groupedDescriptors, (group, groupPath) => {

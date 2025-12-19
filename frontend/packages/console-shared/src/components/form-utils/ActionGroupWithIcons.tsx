@@ -4,11 +4,7 @@ import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
-const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({
-  onSubmit,
-  onClose,
-  isDisabled,
-}) => {
+const ActionGroupWithIcons: FC<ActionGroupWithIconsProps> = ({ onSubmit, onClose, isDisabled }) => {
   return (
     <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right">
       {onSubmit && (

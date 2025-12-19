@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-
 import { useMemo } from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -191,14 +190,7 @@ export const ImagePullPolicyWidget: FC<WidgetProps> = ({ id, value, onChange }) 
   );
 };
 
-export const SelectWidget: FC<WidgetProps> = ({
-  id,
-  label,
-  onChange,
-  options,
-  schema,
-  value,
-}) => {
+export const SelectWidget: FC<WidgetProps> = ({ id, label, onChange, options, schema, value }) => {
   const { t } = useTranslation();
   const { enumOptions = [], title } = options;
   const items = _.reduce(

@@ -43,9 +43,7 @@ enum SupportedRuntime {
   quarkus = 'java',
 }
 
-const AddServerlessFunctionForm: FC<
-  FormikProps<FormikValues> & AddServerlessFunctionFormProps
-> = ({
+const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFunctionFormProps> = ({
   values,
   errors,
   handleSubmit,

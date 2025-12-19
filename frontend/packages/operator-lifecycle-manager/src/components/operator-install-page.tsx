@@ -243,11 +243,7 @@ const InitializationLink: FC<InitializationLinkProps> = ({ to, disabled }) => {
   );
 };
 
-const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({
-  namespace,
-  csvName,
-  obj,
-}) => {
+const InstallSucceededMessage: FC<InstallSuccededMessageProps> = ({ namespace, csvName, obj }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const annotationParserOptions = {

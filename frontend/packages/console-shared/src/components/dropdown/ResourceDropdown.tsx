@@ -82,10 +82,7 @@ export interface ResourceDropdownProps {
   appendItems?: ResourceDropdownItems;
 }
 
-class ResourceDropdownInternal extends Component<
-  ResourceDropdownProps & { t: TFunction },
-  State
-> {
+class ResourceDropdownInternal extends Component<ResourceDropdownProps & { t: TFunction }, State> {
   constructor(props) {
     super(props);
     this.state = {

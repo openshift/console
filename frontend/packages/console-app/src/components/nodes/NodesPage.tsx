@@ -579,47 +579,44 @@ const NodeList: FC<NodeListProps> = ({
     [t, nodeStatusFilterOptions, nodeRoleFilterOptions, nodeArchitectureFilterOptions],
   );
 
-  const matchesAdditionalFilters = useCallback(
-    (resource: NodeRowItem, filters: NodeFilters) => {
-      const isCSR = isCSRResource(resource);
+  const matchesAdditionalFilters = useCallback((resource: NodeRowItem, filters: NodeFilters) => {
+    const isCSR = isCSRResource(resource);
 
-      // Status filter
-      if (filters.status.length > 0) {
-        const status = isCSR ? 'Discovered' : nodeStatus(resource as NodeKind);
-        if (!filters.status.includes(status)) {
-          return false;
-        }
+    // Status filter
+    if (filters.status.length > 0) {
+      const status = isCSR ? 'Discovered' : nodeStatus(resource as NodeKind);
+      if (!filters.status.includes(status)) {
+        return false;
       }
+    }
 
-      // Roles filter
-      if (filters.roles.length > 0) {
-        if (isCSR) {
-          return false;
-        }
-        const nodeRoles = getNodeRoles(resource as NodeKind);
-        if (!filters.roles.some((r) => nodeRoles.includes(r))) {
-          return false;
-        }
+    // Roles filter
+    if (filters.roles.length > 0) {
+      if (isCSR) {
+        return false;
       }
-
-      // Architecture filter
-      if (filters.architecture.length > 0) {
-        if (isCSR) {
-          return false;
-        }
-        const arch = getNodeArchitecture(resource as NodeKind);
-        if (!filters.architecture.includes(arch)) {
-          return false;
-        }
+      const nodeRoles = getNodeRoles(resource as NodeKind);
+      if (!filters.roles.some((r) => nodeRoles.includes(r))) {
+        return false;
       }
+    }
 
-      return true;
-    },
-    [],
-  );
+    // Architecture filter
+    if (filters.architecture.length > 0) {
+      if (isCSR) {
+        return false;
+      }
+      const arch = getNodeArchitecture(resource as NodeKind);
+      if (!filters.architecture.includes(arch)) {
+        return false;
+      }
+    }
+
+    return true;
+  }, []);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<NodeRowItem, NodeFilters>
         label={NodeModel.labelPlural}
         data={data}
@@ -643,7 +640,7 @@ const NodeList: FC<NodeListProps> = ({
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

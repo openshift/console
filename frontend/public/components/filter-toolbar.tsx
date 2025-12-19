@@ -135,9 +135,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
 
   const params = new URLSearchParams(location.search);
   const [isOpen, setIsOpen] = useState(false);
-  const [nameInputText, setNameInputText] = useState(
-    params.get(nameFilterQueryArgumentKey) ?? '',
-  );
+  const [nameInputText, setNameInputText] = useState(params.get(nameFilterQueryArgumentKey) ?? '');
   const [labelInputText, setLabelInputText] = useState('');
 
   const [filterType, setFilterType] = useState(
@@ -354,7 +352,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
 
   const showSearchFiltersDropdown = Object.keys(filterDropdownItems).length > 1;
   return (
-    (<Toolbar
+    <Toolbar
       className="pf-m-toggle-group-container"
       data-test="filter-toolbar"
       id="filter-toolbar"
@@ -518,7 +516,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
           </ToolbarGroup>
         )}
       </ToolbarContent>
-    </Toolbar>)
+    </Toolbar>
   );
 };
 

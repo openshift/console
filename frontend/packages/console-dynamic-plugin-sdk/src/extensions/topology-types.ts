@@ -243,9 +243,7 @@ export type WithEditReviewAccessComponentProps = { element: Node };
 
 export type WithEditReviewAccess = (
   verb: K8sVerb,
-) => (
-  WrappedComponent: ComponentType,
-) => ComponentType<WithEditReviewAccessComponentProps>;
+) => (WrappedComponent: ComponentType) => ComponentType<WithEditReviewAccessComponentProps>;
 
 export type PodStats = {
   name: string;
@@ -426,9 +424,7 @@ export type WithCreateConnector = <P extends WithCreateConnectorProps & ElementP
   ConnectorComponent?: CreateConnectorRenderer,
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
-) => (
-  WrappedComponent: ComponentType<Partial<P>>,
-) => FC<Omit<P, keyof WithCreateConnectorProps>>;
+) => (WrappedComponent: ComponentType<Partial<P>>) => FC<Omit<P, keyof WithCreateConnectorProps>>;
 
 export interface OdcBaseNodeInterface extends Node<OdcNodeModel> {
   resource?: K8sResourceKind;

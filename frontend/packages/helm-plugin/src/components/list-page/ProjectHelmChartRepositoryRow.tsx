@@ -11,10 +11,7 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { ProjectHelmChartRepositoryModel } from '../../models';
 import { tableColumnInfo } from './RepositoriesHeader';
 
-const ProjectNamespaceCell: FC<{ kind: string; namespace: string }> = ({
-  kind,
-  namespace,
-}) => {
+const ProjectNamespaceCell: FC<{ kind: string; namespace: string }> = ({ kind, namespace }) => {
   const { t } = useTranslation();
   return kind === ProjectHelmChartRepositoryModel.kind ? (
     <ResourceLink kind="Namespace" name={namespace} />

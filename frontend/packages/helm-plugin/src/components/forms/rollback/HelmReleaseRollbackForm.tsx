@@ -46,7 +46,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
 
   return (
     // display block so table horizontal scrolling works
-    (<Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
+    <Form onSubmit={handleSubmit} className="pf-v6-u-display-block">
       <FormBody>
         <FormHeader title={title} helpText={formHelpText} />
         <FormGroup
@@ -66,7 +66,7 @@ const HelmReleaseRollbackForm: FC<Props> = ({
         resetLabel={t('helm-plugin~Cancel')}
         sticky
       />
-    </Form>)
+    </Form>
   );
 };
 

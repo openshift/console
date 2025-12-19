@@ -39,8 +39,5 @@ const HelmReadmeModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useHelmReadmeModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(HelmReadmeModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(HelmReadmeModalProvider, props), [launcher, props]);
 };

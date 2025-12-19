@@ -543,7 +543,7 @@ const OperatorHubTile: FC<OperatorHubTileProps> = ({ item, onClick }) => {
   );
 
   return (
-    (<CatalogTile
+    <CatalogTile
       className="co-catalog-tile"
       key={uid}
       id={uid}
@@ -566,7 +566,7 @@ const OperatorHubTile: FC<OperatorHubTileProps> = ({ item, onClick }) => {
         ) : null
       }
       data-test={uid}
-    />)
+    />
   );
 };
 
@@ -579,9 +579,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
-  const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(
-    undefined,
-  );
+  const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(undefined);
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 

@@ -201,8 +201,8 @@ const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = 
 
 export const useMoveConnectionModalLauncher = (props: MoveConnectionModalProps) => {
   const launcher = useOverlay();
-  return useCallback(
-    () => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props),
-    [launcher, props],
-  );
+  return useCallback(() => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props), [
+    launcher,
+    props,
+  ]);
 };

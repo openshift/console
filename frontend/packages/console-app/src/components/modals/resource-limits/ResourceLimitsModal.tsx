@@ -15,13 +15,7 @@ interface ResourceLimitsModalProps {
 
 type Props = FormikProps<FormikValues> & ResourceLimitsModalProps;
 
-const ResourceLimitsModal: FC<Props> = ({
-  handleSubmit,
-  cancel,
-  isSubmitting,
-  status,
-  errors,
-}) => {
+const ResourceLimitsModal: FC<Props> = ({ handleSubmit, cancel, isSubmitting, status, errors }) => {
   const { t } = useTranslation();
   return (
     <form

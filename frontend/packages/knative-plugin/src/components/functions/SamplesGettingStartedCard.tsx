@@ -43,9 +43,7 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
   return orderedCatalogItems;
 };
 
-export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({
-  featured = [],
-}) => {
+export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ featured = [] }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);

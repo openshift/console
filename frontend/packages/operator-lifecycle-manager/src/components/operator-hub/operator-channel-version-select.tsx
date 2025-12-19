@@ -65,35 +65,37 @@ export const OperatorChannelSelect: FC<OperatorChannelSelectProps> = ({
     );
   }, [selectedChannel, channels, setDeprecatedChannel]);
 
-  return (<>
-    <Select
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          onClick={() => setIsChannelSelectOpen((prev) => !prev)}
-          isExpanded={isChannelSelectOpen}
-          isDisabled={!packageManifest}
-          isFullWidth
-          aria-label={t('olm~Select a channel')}
-          className="co-operator-channel__select"
-          data-test="operator-channel-select-toggle"
-        >
-          {getChannelLabel(channels.find((f) => f.name === selectedUpdateChannel))}
-        </MenuToggle>
-      )}
-      onSelect={(event: MouseEvent | ChangeEvent, value: string) => {
-        setUpdateChannel(value);
-        setIsChannelSelectOpen(false);
-        setUpdateVersion('');
-      }}
-      selected={selectedChannel || '-'}
-      onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
-      isOpen={isChannelSelectOpen}
-      isScrollable
-    >
-      <SelectList>{channelSelectOptions}</SelectList>
-    </Select>
-  </>);
+  return (
+    <>
+      <Select
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={() => setIsChannelSelectOpen((prev) => !prev)}
+            isExpanded={isChannelSelectOpen}
+            isDisabled={!packageManifest}
+            isFullWidth
+            aria-label={t('olm~Select a channel')}
+            className="co-operator-channel__select"
+            data-test="operator-channel-select-toggle"
+          >
+            {getChannelLabel(channels.find((f) => f.name === selectedUpdateChannel))}
+          </MenuToggle>
+        )}
+        onSelect={(event: MouseEvent | ChangeEvent, value: string) => {
+          setUpdateChannel(value);
+          setIsChannelSelectOpen(false);
+          setUpdateVersion('');
+        }}
+        selected={selectedChannel || '-'}
+        onOpenChange={(isOpen) => setIsChannelSelectOpen(isOpen)}
+        isOpen={isChannelSelectOpen}
+        isScrollable
+      >
+        <SelectList>{channelSelectOptions}</SelectList>
+      </Select>
+    </>
+  );
 };
 
 type OperatorChannelSelectProps = {
@@ -163,46 +165,48 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
     );
   }, [selectedUpdateVersion, selectedChannelVersions, setDeprecatedVersion]);
 
-  return (<>
-    <Select
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          onClick={() => setIsVersionSelectOpen((prev) => !prev)}
-          isExpanded={isVersionSelectOpen}
-          isDisabled={!packageManifest}
-          isFullWidth
-          aria-label={t('olm~Select a version')}
-          className="co-operator-version__select"
-          data-test="operator-version-select-toggle"
-        >
-          {getVersionLabel(
-            selectedChannelVersions.find((v) => v.version === selectedUpdateVersion),
-          )}
-        </MenuToggle>
-      )}
-      onSelect={(event: MouseEvent | ChangeEvent, value: string) => {
-        setUpdateVersion(value);
-        setIsVersionSelectOpen(false);
-      }}
-      selected={selectedUpdateVersion}
-      onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}
-      isOpen={isVersionSelectOpen}
-      isScrollable
-    >
-      <SelectList>{versionSelectOptions}</SelectList>
-    </Select>
-    {showVersionAlert && selectedUpdateVersion !== defaultVersionForChannel && (
-      <Alert
-        variant="info"
-        isInline
-        className="co-alert co-alert--margin-top co-alert__update-approval"
-        title={t(
-          'olm~Manual update approval is required when not installing the latest version for the selected channel.',
+  return (
+    <>
+      <Select
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={() => setIsVersionSelectOpen((prev) => !prev)}
+            isExpanded={isVersionSelectOpen}
+            isDisabled={!packageManifest}
+            isFullWidth
+            aria-label={t('olm~Select a version')}
+            className="co-operator-version__select"
+            data-test="operator-version-select-toggle"
+          >
+            {getVersionLabel(
+              selectedChannelVersions.find((v) => v.version === selectedUpdateVersion),
+            )}
+          </MenuToggle>
         )}
-      />
-    )}
-  </>);
+        onSelect={(event: MouseEvent | ChangeEvent, value: string) => {
+          setUpdateVersion(value);
+          setIsVersionSelectOpen(false);
+        }}
+        selected={selectedUpdateVersion}
+        onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}
+        isOpen={isVersionSelectOpen}
+        isScrollable
+      >
+        <SelectList>{versionSelectOptions}</SelectList>
+      </Select>
+      {showVersionAlert && selectedUpdateVersion !== defaultVersionForChannel && (
+        <Alert
+          variant="info"
+          isInline
+          className="co-alert co-alert--margin-top co-alert__update-approval"
+          title={t(
+            'olm~Manual update approval is required when not installing the latest version for the selected channel.',
+          )}
+        />
+      )}
+    </>
+  );
 };
 
 type OperatorVersionSelectProps = {

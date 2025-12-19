@@ -12,11 +12,7 @@ interface ExecNewPodFormProps {
   dataAttribute: string;
 }
 
-const ExecNewPodForm: FC<ExecNewPodFormProps> = ({
-  resourceObj,
-  lifecycleHook,
-  dataAttribute,
-}) => {
+const ExecNewPodForm: FC<ExecNewPodFormProps> = ({ resourceObj, lifecycleHook, dataAttribute }) => {
   const { t } = useTranslation();
   const {
     values: {

@@ -11,11 +11,7 @@ type FilterTableProps = {
   paddingLeft?: boolean;
 };
 
-const FilterTable: FC<FilterTableProps> = ({
-  filters,
-  bordered = true,
-  paddingLeft = false,
-}) => {
+const FilterTable: FC<FilterTableProps> = ({ filters, bordered = true, paddingLeft = false }) => {
   const filterRow = (key: string, value: string) => {
     const className = css({ 'kn-filter-table__row--bordered': bordered });
     return {

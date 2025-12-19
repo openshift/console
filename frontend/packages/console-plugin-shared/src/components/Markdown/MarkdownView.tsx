@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { ReactNode, FC } from 'react';
-
 import { useMemo, useRef, useCallback, useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
@@ -163,11 +162,7 @@ const RenderExtension: FC<RenderExtensionProps> = ({
   );
 };
 
-const InlineMarkdownView: FC<InnerSyncMarkdownProps> = ({
-  markup,
-  isEmpty,
-  renderExtension,
-}) => {
+const InlineMarkdownView: FC<InnerSyncMarkdownProps> = ({ markup, isEmpty, renderExtension }) => {
   const id = useMemo(() => _.uniqueId('markdown'), []);
   return (
     <div className={css('co-markdown-view', { 'is-empty': isEmpty })} id={id}>

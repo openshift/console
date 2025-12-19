@@ -57,10 +57,7 @@ const OperatorRow: FC<
   );
 };
 
-export const OperatorsPopup: FC<OperatorsPopupProps> = ({
-  resources,
-  operatorSubsystems,
-}) => {
+export const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems }) => {
   const { t } = useTranslation();
   const sections = [
     ...operatorSubsystems.map((o, index) => {

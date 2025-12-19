@@ -33,14 +33,7 @@ export type StatusProps = StatusComponentProps & {
  * <Status status='Warning' />
  * ```
  */
-const Status: FC<StatusProps> = ({
-  status,
-  title,
-  children,
-  iconOnly,
-  noTooltip,
-  className,
-}) => {
+const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip, className }) => {
   const statusProps = { title: title || status, iconOnly, noTooltip, className };
   switch (status) {
     case 'New':

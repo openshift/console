@@ -166,7 +166,7 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
   const columns = useMachineAutoscalerColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={MachineAutoscalerModel.labelPlural}
@@ -177,7 +177,7 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

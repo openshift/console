@@ -101,7 +101,7 @@ const ClusterConfigurationPage: FC = () => {
   const groupNotFound = !clusterConfigurationGroups.some((group) => group.id === activeTabId);
 
   return (
-    (<div className="co-cluster-configuration-page">
+    <div className="co-cluster-configuration-page">
       <DocumentTitle>{t('console-app~Cluster configuration')}</DocumentTitle>
       <PageHeading
         title={t('console-app~Cluster configuration')}
@@ -143,18 +143,18 @@ const ClusterConfigurationPage: FC = () => {
             </div>
             {groupNotFound ? (
               /* Similar to a TabContent */
-              (<section className="co-cluster-configuration-page pf-v6-c-tab-content">
+              <section className="co-cluster-configuration-page pf-v6-c-tab-content">
                 <Status
                   status={IconStatus.warning}
                   icon={<ExclamationTriangleIcon />}
                   label={t('console-app~{{section}} not found', { section: activeTabId })}
                 />
-              </section>)
+              </section>
             ) : null}
           </>
         )}
       </PageSection>
-    </div>)
+    </div>
   );
 };
 

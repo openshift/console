@@ -306,10 +306,7 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
   );
 };
 
-export const SpecDescriptorDetailsItem: FC<SpecCapabilityProps> = ({
-  className,
-  ...props
-}) => {
+export const SpecDescriptorDetailsItem: FC<SpecCapabilityProps> = ({ className, ...props }) => {
   const [capability] =
     getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value) ?? [];
 

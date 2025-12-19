@@ -407,10 +407,7 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
   );
 };
 
-export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({
-  obj,
-  hideApprovalBlock,
-}) => {
+export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideApprovalBlock }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const [needsApproval, setNeedsApproval] = useState(

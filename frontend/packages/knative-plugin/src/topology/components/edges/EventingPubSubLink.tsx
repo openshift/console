@@ -20,11 +20,7 @@ type EventingPubSubLinkProps = {
   WithTargetDragProps &
   WithContextMenuProps;
 
-const EventingPubSubLink: FC<EventingPubSubLinkProps> = ({
-  element,
-  children,
-  ...others
-}) => {
+const EventingPubSubLink: FC<EventingPubSubLinkProps> = ({ element, children, ...others }) => {
   const resourceSourceObj = getTopologyResourceObject(element.getSource().getData());
   const edgeObj = getTopologyResourceObject(element.getData());
   const edgeHasFilter =

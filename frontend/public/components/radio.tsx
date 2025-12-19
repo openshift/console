@@ -22,11 +22,11 @@ export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupP
   });
   return (
     // use div.pf-v6-c-form instead of Form to avoid additional form element
-    (<div className="pf-v6-c-form">
+    <div className="pf-v6-c-form">
       <FormGroup role="radiogroup" fieldId={label ?? 'pf-radio-group'} label={label} isStack>
         {radios}
       </FormGroup>
-    </div>)
+    </div>
   );
 };
 

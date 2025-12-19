@@ -38,9 +38,7 @@ export const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
   );
 };
 
-const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({
-  properties,
-}) => {
+const AdvancedProperties: FC<Pick<ObjectFieldTemplateProps, 'properties'>> = ({ properties }) => {
   const { t } = useTranslation();
   return (
     <ExpandCollapse

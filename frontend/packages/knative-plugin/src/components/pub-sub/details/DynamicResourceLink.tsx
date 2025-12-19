@@ -16,12 +16,7 @@ interface DynamicResourceLinkProps {
   kind: string;
 }
 
-const DynamicResourceLink: FC<DynamicResourceLinkProps> = ({
-  title,
-  name,
-  namespace,
-  kind,
-}) => (
+const DynamicResourceLink: FC<DynamicResourceLinkProps> = ({ title, name, namespace, kind }) => (
   <div className="kn-resource-link-list kn-resource-link-list--addSpaceBelow">
     <DescriptionList>
       <DescriptionListGroup>

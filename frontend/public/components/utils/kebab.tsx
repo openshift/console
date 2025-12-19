@@ -197,7 +197,7 @@ export const Kebab: KebabComponent = (props) => {
   const menuOptions = kebabOptionsToMenu(options);
 
   return (
-    (<Tooltip
+    <Tooltip
       content={terminatingTooltip}
       trigger={isDisabled && terminatingTooltip ? 'mouseenter' : 'manual'}
     >
@@ -227,7 +227,7 @@ export const Kebab: KebabComponent = (props) => {
       >
         <KebabMenuItems options={menuOptions} onClick={onClick} focusItem={menuOptions[0]} />
       </Dropdown>
-    </Tooltip>)
+    </Tooltip>
   );
 };
 

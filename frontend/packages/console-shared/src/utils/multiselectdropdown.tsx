@@ -25,7 +25,7 @@ export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({
   };
 
   return (
-    (<MultiTypeaheadSelect
+    <MultiTypeaheadSelect
       initialOptions={initialOptions}
       placeholder={placeholder || t('console-shared~Select options')}
       noOptionsFoundMessage={t('console-shared~No results found')}
@@ -40,7 +40,7 @@ export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({
           }
         },
       }}
-    />)
+    />
   );
 };
 

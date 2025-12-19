@@ -41,7 +41,7 @@ const DEFAULT_ROW_RENDERER = ({
 }): ReactNode => {
   const { t } = useTranslation();
   return (
-    (<div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
+    <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
         {Children.map(children, (child: ReactElement, i) => {
           let newProps = child.props;
@@ -51,11 +51,9 @@ const DEFAULT_ROW_RENDERER = ({
             newProps = { ...newProps, name: `${fieldName}.${child.props.name}` };
           }
           return (
-            (<GridItem span={spans[i]} key={fieldName}>
-              <div className="odc-multi-column-field__col">
-                {cloneElement(child, newProps)}
-              </div>
-            </GridItem>)
+            <GridItem span={spans[i]} key={fieldName}>
+              <div className="odc-multi-column-field__col">{cloneElement(child, newProps)}</div>
+            </GridItem>
           );
         })}
       </Grid>
@@ -75,7 +73,7 @@ const DEFAULT_ROW_RENDERER = ({
           </Tooltip>
         </div>
       )}
-    </div>)
+    </div>
   );
 };
 

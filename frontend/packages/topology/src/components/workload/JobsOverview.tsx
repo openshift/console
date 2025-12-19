@@ -59,12 +59,7 @@ const JobsOverviewList: FC<JobsOverviewListProps> = ({ jobs }) => (
 
 JobsOverviewList.displayName = 'JobsOverviewList';
 
-export const JobsOverview: FC<JobsOverviewProps> = ({
-  jobs,
-  obj,
-  allJobsLink,
-  emptyText,
-}) => {
+export const JobsOverview: FC<JobsOverviewProps> = ({ jobs, obj, allJobsLink, emptyText }) => {
   const {
     metadata: { name, namespace },
   } = obj;

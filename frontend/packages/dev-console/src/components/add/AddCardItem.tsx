@@ -46,7 +46,7 @@ const AddCardItem: FC<AddCardItemProps> = ({
   };
 
   return (
-    (<SimpleListItem
+    <SimpleListItem
       component="a"
       componentProps={{
         'data-test': `item ${id}`,
@@ -74,7 +74,7 @@ const AddCardItem: FC<AddCardItemProps> = ({
           {description}
         </Content>
       )}
-    </SimpleListItem>)
+    </SimpleListItem>
   );
 };
 

@@ -11,11 +11,7 @@ type HelmReadmeLoaderProps = {
   chartIndexEntry: string;
 };
 
-const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({
-  chartURL,
-  namespace,
-  chartIndexEntry,
-}) => {
+const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, chartIndexEntry }) => {
   const { t } = useTranslation();
   const [readme, setReadme] = useState<string>();
   const [loaded, setLoaded] = useState<boolean>(false);

@@ -32,11 +32,7 @@ export const RedResourcesFullIcon: FC<ColoredIconProps> = ({ className, title, s
   </Icon>
 );
 
-export const YellowResourcesAlmostFullIcon: FC<ColoredIconProps> = ({
-  className,
-  title,
-  size,
-}) => (
+export const YellowResourcesAlmostFullIcon: FC<ColoredIconProps> = ({ className, title, size }) => (
   <Icon status="warning" size={size}>
     <ResourcesAlmostFullIcon className={className} title={title} />
   </Icon>

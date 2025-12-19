@@ -41,9 +41,7 @@ export type DetailsTabSection = ExtensionDeclaration<
     /** Returns a section for the graph element or undefined if not provided.
      * @deprecated Fallback if no provider is defined. renderNull is a no-op already.
      */
-    section: CodeRef<
-      (element: GraphElement, renderNull?: () => null) => Component | undefined
-    >;
+    section: CodeRef<(element: GraphElement, renderNull?: () => null) => Component | undefined>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -177,7 +175,4 @@ export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
 
-export type DetailsTabSectionExtensionHook = ExtensionHook<
-  ReactElement | undefined,
-  GraphElement
->;
+export type DetailsTabSectionExtensionHook = ExtensionHook<ReactElement | undefined, GraphElement>;

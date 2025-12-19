@@ -48,7 +48,7 @@ export const BarChart: FC<BarChartProps> = ({
   };
 
   return (
-    (<PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
+    <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
       <PrometheusGraphLink query={noLink ? undefined : query}>
         {data.length ? (
           <div data-test="bar-chart" role="img" aria-label={title}>
@@ -83,7 +83,7 @@ export const BarChart: FC<BarChartProps> = ({
           <GraphEmpty loading={loading} />
         )}
       </PrometheusGraphLink>
-    </PrometheusGraph>)
+    </PrometheusGraph>
   );
 };
 

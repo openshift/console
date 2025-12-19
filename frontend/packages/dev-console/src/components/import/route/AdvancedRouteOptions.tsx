@@ -14,10 +14,7 @@ type AdvancedRouteOptionsProps = {
   resources: Resources;
 };
 
-const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({
-  canCreateRoute,
-  resources,
-}) => {
+const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, resources }) => {
   const { t } = useTranslation();
   return (
     <ExpandCollapse

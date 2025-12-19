@@ -249,7 +249,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const isBound = (pvc: PersistentVolumeClaimKind) => pvc?.status?.phase === 'Bound';
 
   return (
-    (<div className="co-volume-snapshot__body">
+    <div className="co-volume-snapshot__body">
       <div className="co-m-pane__form">
         <DocumentTitle>{title}</DocumentTitle>
         <PageHeading
@@ -274,7 +274,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
               </p>
             ) : (
               /* eslint-disable jsx-a11y/label-has-associated-control */
-              (<>
+              <>
                 <label className="co-required" html-for="claimName">
                   {t('console-app~PersistentVolumeClaim')}
                 </label>
@@ -288,7 +288,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                     namespace,
                   })}
                 />
-              </>)
+              </>
             )}
             <div className="form-group co-volume-snapshot__form">
               <label className="co-required" htmlFor="snapshot-name">
@@ -349,7 +349,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
         {selectedPVCName && pvcObj && loaded && <PVCSummary persistentVolumeClaim={pvcObj} />}
         {!loaded && <LoadingComponent />}
       </PaneBody>
-    </div>)
+    </div>
   );
 };
 

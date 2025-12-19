@@ -33,9 +33,7 @@ interface WrapperProps {
   children?: ReactNode;
 }
 
-const Wrapper: FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 describe('processReduxId', () => {
   const k8s = ImmutableMap({
@@ -927,9 +925,7 @@ describe('Firehose together with useK8sWatchResources', () => {
   };
 
   const resourcesUpdate = jest.fn();
-  const WatchResources: FC<{ initResources: WatchK8sResources<{}> }> = ({
-    initResources,
-  }) => {
+  const WatchResources: FC<{ initResources: WatchK8sResources<{}> }> = ({ initResources }) => {
     resourcesUpdate(useK8sWatchResources(initResources));
     return null;
   };

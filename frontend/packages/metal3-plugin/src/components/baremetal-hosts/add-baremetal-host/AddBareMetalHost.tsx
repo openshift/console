@@ -58,11 +58,7 @@ type AddBareMetalHostProps = {
   enablePowerMgmt: boolean;
 };
 
-const AddBareMetalHost: FC<AddBareMetalHostProps> = ({
-  namespace,
-  name,
-  enablePowerMgmt,
-}) => {
+const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePowerMgmt }) => {
   const { t } = useTranslation();
   const bmhResource = useMemo<WatchK8sResource>(
     () =>

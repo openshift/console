@@ -11,11 +11,9 @@ type SinkUriControllerProps = {
   eventSourceList: K8sResourceKind[];
 };
 
-const SinkUriController: FC<SinkUriControllerProps> = ({
-  source,
-  eventSourceList,
-  ...props
-}) => <SinkUri {...props} source={source} eventSourceList={eventSourceList} />;
+const SinkUriController: FC<SinkUriControllerProps> = ({ source, eventSourceList, ...props }) => (
+  <SinkUri {...props} source={source} eventSourceList={eventSourceList} />
+);
 
 type Props = SinkUriControllerProps & ModalComponentProps;
 

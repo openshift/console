@@ -19,9 +19,7 @@ const EventTypeHeaders = (t: TFunction) => () => {
   ];
 };
 
-export const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({
-  obj,
-}) => {
+export const EventTypeRow: FC<RowFunctionArgs<{ key: string; value: string }>> = ({ obj }) => {
   return (
     <>
       <TableData columnID="attributes">{obj.key}</TableData>

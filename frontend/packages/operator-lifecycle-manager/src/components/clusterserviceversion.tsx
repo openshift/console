@@ -504,10 +504,7 @@ export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   );
 };
 
-const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({
-  obj,
-  customData,
-}) => {
+const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, customData }) => {
   const { catalogSources, subscriptions, activeNamespace } = customData;
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
@@ -961,9 +958,7 @@ const InitializationResourceAlert: FC<InitializationResourceAlertProps> = (props
   return null;
 };
 
-export const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (
-  props,
-) => {
+export const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (props) => {
   const { t } = useTranslation();
   const { spec, metadata, status } = props.obj ?? {};
   const { subscription } = props.customData;

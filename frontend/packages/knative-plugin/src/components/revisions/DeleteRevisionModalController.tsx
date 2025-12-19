@@ -215,8 +215,5 @@ const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useDeleteRevisionModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(DeleteRevisionModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(DeleteRevisionModalProvider, props), [launcher, props]);
 };

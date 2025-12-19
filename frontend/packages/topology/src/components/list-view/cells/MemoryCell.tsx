@@ -14,21 +14,19 @@ type MemoryCellProps = {
   item: Node;
 };
 
-const MemoryCellComponent: FC<MemoryCellComponentProps> = memo(
-  ({ memoryByPod, totalBytes }) => (
-    <div className="odc-topology-list-view__metrics-cell__detail--memory">
-      <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
-        <span>
-          <span className="odc-topology-list-view__metrics-cell__metric-value">
-            {formatBytesAsMiB(totalBytes)}
-          </span>
-          &nbsp;
-          <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+const MemoryCellComponent: FC<MemoryCellComponentProps> = memo(({ memoryByPod, totalBytes }) => (
+  <div className="odc-topology-list-view__metrics-cell__detail--memory">
+    <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
+      <span>
+        <span className="odc-topology-list-view__metrics-cell__metric-value">
+          {formatBytesAsMiB(totalBytes)}
         </span>
-      </MetricsTooltip>
-    </div>
-  ),
-);
+        &nbsp;
+        <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+      </span>
+    </MetricsTooltip>
+  </div>
+));
 
 const MemoryCell: FC<MemoryCellProps> = ({ item }) => {
   const resource = getTopologyResourceObject(item.getData());

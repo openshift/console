@@ -13,11 +13,7 @@ type ExecuteSnippetProps = {
   docContext: HTMLDocument;
 };
 
-export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({
-  element,
-  rootSelector,
-  docContext,
-}) => {
+export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
   const { t } = useTranslation();
   const setCloudShellCommand = useCloudShellCommandDispatch();
   const [showRunning, setShowRunning] = useState<boolean>(false);
@@ -61,10 +57,7 @@ type MarkdownExecuteCommandProps = {
   rootSelector: string;
 };
 
-const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({
-  docContext,
-  rootSelector,
-}) => {
+const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({ docContext, rootSelector }) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_EXECUTE_BUTTON_ID}]`);
   const showExecuteButton = useCloudShellAvailable();
   return elements.length > 0 && showExecuteButton ? (

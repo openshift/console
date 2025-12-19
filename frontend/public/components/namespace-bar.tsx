@@ -113,7 +113,7 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
   return (
-    (<div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
+    <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
       {hideProjects ? (
         <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
           {children}
@@ -122,7 +122,7 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
         // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
         // Data is used to determine if the StartGuide should be shown.
         // See NamespaceBarDropdowns_  above.
-        (<Firehose
+        <Firehose
           resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
         >
           <NamespaceBarDropdowns
@@ -132,8 +132,8 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
           >
             {children}
           </NamespaceBarDropdowns>
-        </Firehose>)
+        </Firehose>
       )}
-    </div>)
+    </div>
   );
 };

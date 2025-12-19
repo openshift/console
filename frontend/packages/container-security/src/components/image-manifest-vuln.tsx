@@ -162,9 +162,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
-export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({
-  obj,
-}) => {
+export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
   const { name, namespace } = obj.metadata;
   const queryURL = quayURLFor(obj);
   return (

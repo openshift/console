@@ -268,7 +268,7 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
   const columns = useReplicaSetsColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ReplicaSetModel.labelPlural}
@@ -278,7 +278,7 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 const ReplicaSetsPage = (props) => {

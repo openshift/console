@@ -154,45 +154,47 @@ const PerspectiveVisibilitySelect: FC<{
   const [isOpen, setIsOpen] = useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 
-  return (<>
-    <Select
-      isOpen={isOpen}
-      onSelect={() => setIsOpen(false)}
-      selected={selection}
-      onOpenChange={(open) => setIsOpen(open)}
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          isFullWidth
-          id={toggleId}
-          isDisabled={disabled}
-          ref={toggleRef}
-          onClick={(open) => setIsOpen(open)}
-        >
-          {options.find((option) => option.isSelected)?.title}
-        </MenuToggle>
-      )}
-    >
-      <SelectList>
-        {options.map((option) => (
-          <SelectOption
-            key={option.value}
-            value={option.value}
-            description={option.description}
-            onClick={() => onChange(option)}
+  return (
+    <>
+      <Select
+        isOpen={isOpen}
+        onSelect={() => setIsOpen(false)}
+        selected={selection}
+        onOpenChange={(open) => setIsOpen(open)}
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
+          <MenuToggle
+            isFullWidth
+            id={toggleId}
+            isDisabled={disabled}
+            ref={toggleRef}
+            onClick={(open) => setIsOpen(open)}
           >
-            {option.title}
-          </SelectOption>
-        ))}
-      </SelectList>
-    </Select>
-    {selection === 'Custom' && value?.accessReview && (
-      <ExpandableSection toggleText={t('console-app~Access review rules')}>
-        <CodeBlock>
-          <CodeBlockCode>{safeDump(value.accessReview)}</CodeBlockCode>
-        </CodeBlock>
-      </ExpandableSection>
-    )}
-  </>);
+            {options.find((option) => option.isSelected)?.title}
+          </MenuToggle>
+        )}
+      >
+        <SelectList>
+          {options.map((option) => (
+            <SelectOption
+              key={option.value}
+              value={option.value}
+              description={option.description}
+              onClick={() => onChange(option)}
+            >
+              {option.title}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
+      {selection === 'Custom' && value?.accessReview && (
+        <ExpandableSection toggleText={t('console-app~Access review rules')}>
+          <CodeBlock>
+            <CodeBlockCode>{safeDump(value.accessReview)}</CodeBlockCode>
+          </CodeBlock>
+        </ExpandableSection>
+      )}
+    </>
+  );
 };
 
 const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {

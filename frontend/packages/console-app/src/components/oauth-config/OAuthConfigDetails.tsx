@@ -80,73 +80,75 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
     );
   });
 
-  return (<>
-    <PaneBody>
-      <SectionHeading text={t('console-app~OAuth details')} />
-      <Grid hasGutter>
-        <GridItem md={6}>
-          <ResourceSummary resource={obj}>
-            {tokenConfig && (
-              <DescriptionListGroup>
-                <DescriptionListTerm>{t('console-app~Access token max age')}</DescriptionListTerm>
-                <DescriptionListDescription>
-                  {tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}
-                </DescriptionListDescription>
-              </DescriptionListGroup>
+  return (
+    <>
+      <PaneBody>
+        <SectionHeading text={t('console-app~OAuth details')} />
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <ResourceSummary resource={obj}>
+              {tokenConfig && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~Access token max age')}</DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </ResourceSummary>
+          </GridItem>
+        </Grid>
+      </PaneBody>
+      <PaneBody>
+        <SectionHeading text={t('console-app~Identity providers')} />
+        <p className="co-m-pane__explanation co-m-pane__explanation--alt">
+          {t('console-app~Identity providers determine how users log into the cluster.')}
+        </p>
+        {idpAdded === 'true' && (
+          <Alert
+            isInline
+            className="co-alert"
+            variant="info"
+            title={t('console-app~New identity provider added.')}
+          >
+            <>
+              {t(
+                'console-app~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
+              )}{' '}
+              <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
+                {t('console-app~View authentication conditions for reconfiguration status.')}
+              </Link>
+            </>
+          </Alert>
+        )}
+        <div>
+          <Dropdown
+            isOpen={isIDPOpen}
+            onSelect={() => setIDPOpen(false)}
+            onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
+            toggle={(toggleRef: Ref<MenuToggleElement>) => (
+              <MenuToggle
+                id="idp-dropdown"
+                data-test-id="dropdown-button"
+                ref={toggleRef}
+                onClick={() => setIDPOpen(!isIDPOpen)}
+                isExpanded={isIDPOpen}
+              >
+                {t('console-app~Add')}
+              </MenuToggle>
             )}
-          </ResourceSummary>
-        </GridItem>
-      </Grid>
-    </PaneBody>
-    <PaneBody>
-      <SectionHeading text={t('console-app~Identity providers')} />
-      <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-        {t('console-app~Identity providers determine how users log into the cluster.')}
-      </p>
-      {idpAdded === 'true' && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="info"
-          title={t('console-app~New identity provider added.')}
-        >
-          <>
-            {t(
-              'console-app~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
-            )}{' '}
-            <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
-              {t('console-app~View authentication conditions for reconfiguration status.')}
-            </Link>
-          </>
-        </Alert>
-      )}
-      <div>
-        <Dropdown
-          isOpen={isIDPOpen}
-          onSelect={() => setIDPOpen(false)}
-          onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
-          toggle={(toggleRef: Ref<MenuToggleElement>) => (
-            <MenuToggle
-              id="idp-dropdown"
-              data-test-id="dropdown-button"
-              ref={toggleRef}
-              onClick={() => setIDPOpen(!isIDPOpen)}
-              isExpanded={isIDPOpen}
-            >
-              {t('console-app~Add')}
-            </MenuToggle>
-          )}
-          shouldFocusToggleOnSelect
-          id="idp"
-          popperProps={{}}
-        >
-          <DropdownList>{IDPDropdownItems}</DropdownList>
-        </Dropdown>
-      </div>
+            shouldFocusToggleOnSelect
+            id="idp"
+            popperProps={{}}
+          >
+            <DropdownList>{IDPDropdownItems}</DropdownList>
+          </Dropdown>
+        </div>
 
-      <IdentityProviders obj={obj} identityProviders={identityProviders} />
-    </PaneBody>
-  </>);
+        <IdentityProviders obj={obj} identityProviders={identityProviders} />
+      </PaneBody>
+    </>
+  );
 };
 
 type OAuthDetailsProps = {

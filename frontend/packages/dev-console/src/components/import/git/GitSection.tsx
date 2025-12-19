@@ -631,7 +631,7 @@ const GitSection: FC<GitSectionProps> = ({
   }, [canCreateKnativeServiceLoading]);
 
   return (
-    (<FormSection title={title ?? t('devconsole~Git')}>
+    <FormSection title={title ?? t('devconsole~Git')}>
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
@@ -669,7 +669,7 @@ const GitSection: FC<GitSectionProps> = ({
         </>
       )}
       {formType !== 'sample' && <AdvancedGitOptions formContextField={formContextField} />}
-    </FormSection>)
+    </FormSection>
   );
 };
 

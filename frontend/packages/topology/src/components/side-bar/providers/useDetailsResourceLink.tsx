@@ -7,9 +7,7 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 
-export const useDetailsResourceLink = (
-  element: GraphElement,
-): Component | null | undefined => {
+export const useDetailsResourceLink = (element: GraphElement): Component | null | undefined => {
   const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(
     isDetailsResourceLink,
   );

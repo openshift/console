@@ -34,9 +34,7 @@ export const EventSourcesOverviewList: FC<OverviewListProps> = ({ items }) => {
   ) : null;
 };
 
-export const SubscriptionsOverviewList: FC<SubscriptionsOverviewList> = ({
-  subscriptions,
-}) => {
+export const SubscriptionsOverviewList: FC<SubscriptionsOverviewList> = ({ subscriptions }) => {
   const { t } = useTranslation();
   return subscriptions?.length > 0 ? (
     <TopologySideBarTabSection>
@@ -69,9 +67,7 @@ export const DomainMappingsOverviewList: FC<OverviewListProps> = ({ items }) => 
   ) : null;
 };
 
-export const KnativeOverviewRevisionPodsRing: FC<KnativeOverviewDetailsProps> = ({
-  item,
-}) => {
+export const KnativeOverviewRevisionPodsRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { obj } = item;
   const { pods } = usePodsForRevisions(obj.metadata.uid, obj.metadata.namespace);
   return (
@@ -124,9 +120,7 @@ export const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item 
   );
 };
 
-export const KnativeEventSinkOverviewDetails: FC<KnativeOverviewDetailsProps> = ({
-  item,
-}) => {
+export const KnativeEventSinkOverviewDetails: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { obj } = item;
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">

@@ -24,15 +24,10 @@ type PerspectiveDropdownItemProps = {
   onClick: (perspective: string) => void;
 };
 
-const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({
-  perspective,
-  onClick,
-}) => {
-  const LazyIcon = useMemo(() => lazy(perspective.properties.icon), [
-    perspective.properties.icon,
-  ]);
+const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => {
+  const LazyIcon = useMemo(() => lazy(perspective.properties.icon), [perspective.properties.icon]);
   return (
-    (<SelectOption
+    <SelectOption
       key={perspective.properties.id}
       onClick={(e: MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
@@ -47,7 +42,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
         {perspective.properties.name}
       </Title>
-    </SelectOption>)
+    </SelectOption>
   );
 };
 

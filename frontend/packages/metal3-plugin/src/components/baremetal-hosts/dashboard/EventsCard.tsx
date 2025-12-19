@@ -56,11 +56,7 @@ const getHostEventsFilter = (
   machine: MachineKind,
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
-const EventsCard: FC<EventsCardProps> = ({
-  watchK8sResource,
-  stopWatchK8sResource,
-  resources,
-}) => {
+const EventsCard: FC<EventsCardProps> = ({ watchK8sResource, stopWatchK8sResource, resources }) => {
   const { t } = useTranslation();
   const { obj, machine } = useContext(BareMetalHostDashboardContext);
   useEffect(() => {

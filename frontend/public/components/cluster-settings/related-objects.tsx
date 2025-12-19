@@ -134,7 +134,7 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
   };
 
   return (
-    (<Suspense fallback={<div className="loading-skeleton--table" />}>
+    <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<ClusterOperatorObjectReference, RelatedObjectsRowData, RelatedObjectsFilters>
         label={t('public~Related objects')}
         data={data}
@@ -147,7 +147,7 @@ const RelatedObjects: FC<RelatedObjectsProps> = ({ data }) => {
         hideNameLabelFilters={false}
         hideLabelFilter={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
