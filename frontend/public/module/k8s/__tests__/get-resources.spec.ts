@@ -1,5 +1,5 @@
 import { ModelMetadata } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { pluralizeKind, getModelExtensionMetadata } from '../get-resources';
 
 describe('pluralizeKind', () => {

@@ -1,7 +1,7 @@
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
 import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';
 import { channelIconSVG } from '@console/knative-plugin/src/utils/icons';
 
