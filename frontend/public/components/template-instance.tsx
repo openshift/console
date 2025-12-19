@@ -203,7 +203,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
   );
 };
 
-export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props) => {
+export const TemplateInstancePage: Snail.FCC<TemplateInstancePageProps> = (props) => {
   const { t } = useTranslation();
 
   return (
@@ -218,7 +218,7 @@ export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props
   );
 };
 
-const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
+const TemplateInstanceDetails: Snail.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
@@ -300,7 +300,7 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC = (props) => (
+export const TemplateInstanceDetailsPage: Snail.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={templateInstanceReference}

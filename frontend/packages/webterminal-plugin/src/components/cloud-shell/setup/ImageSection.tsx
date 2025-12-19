@@ -3,7 +3,7 @@ import { FormSection, TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
 
-const ImageSection: React.FCC = () => {
+const ImageSection: Snail.FCC = () => {
   const { t } = useTranslation();
 
   return (

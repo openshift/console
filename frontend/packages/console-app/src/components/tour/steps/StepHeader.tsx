@@ -5,7 +5,7 @@ type StepHeaderProps = {
   children: string;
 };
 
-const StepHeader: React.FCC<StepHeaderProps> = ({ children }) => (
+const StepHeader: Snail.FCC<StepHeaderProps> = ({ children }) => (
   <Title headingLevel="h1" size="md" className="pf-v6-u-mb-sm">
     {children}
   </Title>

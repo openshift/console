@@ -139,7 +139,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   return columns;
 };
 
-const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
+const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
   data,
   loaded,
   ...props

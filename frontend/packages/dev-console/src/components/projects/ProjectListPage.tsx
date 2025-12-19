@@ -10,7 +10,7 @@ export type ProjectListPageProps = {
   badge?: React.ReactNode;
   helpText?: React.ReactNode;
 };
-const ProjectListPage: React.FCC<ProjectListPageProps> = ({
+const ProjectListPage: Snail.FCC<ProjectListPageProps> = ({
   badge,
   title,
   listComponent,

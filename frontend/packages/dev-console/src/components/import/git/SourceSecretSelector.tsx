@@ -13,7 +13,7 @@ import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 const CLEAR_SOURCE_SECRET = 'clear-source-secret';
 
-const SourceSecretSelector: React.FCC<{
+const SourceSecretSelector: Snail.FCC<{
   formContextField?: string;
 }> = ({ formContextField }) => {
   const fieldPrefix = formContextField ? `${formContextField}.` : '';

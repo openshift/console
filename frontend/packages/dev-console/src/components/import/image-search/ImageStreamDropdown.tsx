@@ -8,7 +8,7 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FCC<{
+const ImageStreamDropdown: Snail.FCC<{
   disabled?: boolean;
   formContextField?: string;
   reloadCount?: number;

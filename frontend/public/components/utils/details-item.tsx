@@ -40,7 +40,7 @@ export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> =
   );
 };
 
-const EditButton: React.FCC<EditButtonProps> = (props) => {
+const EditButton: Snail.FCC<EditButtonProps> = (props) => {
   return (
     <Button
       icon={<PencilAltIcon />}

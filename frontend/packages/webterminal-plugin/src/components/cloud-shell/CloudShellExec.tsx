@@ -53,7 +53,7 @@ export type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlags
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-const CloudShellExec: React.FCC<CloudShellExecProps> = ({
+const CloudShellExec: Snail.FCC<CloudShellExecProps> = ({
   workspaceName,
   workspaceId,
   container,

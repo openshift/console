@@ -293,7 +293,7 @@ const ConsolePluginsTable: React.FC<ConsolePluginsTableProps> = ({ obj, rows }) 
   );
 };
 
-const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
+const DevPluginsPage: Snail.FCC<ConsoleOperatorConfigPageProps> = (props) => {
   const pluginInfo = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),

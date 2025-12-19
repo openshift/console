@@ -8,7 +8,7 @@ import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '@console/shared/src/hooks/ols-hook';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
-export const AskOpenShiftLightspeedButton: React.FCC = () => {
+export const AskOpenShiftLightspeedButton: Snail.FCC = () => {
   const { t } = useTranslation('console-shared');
   const openOLS = () => action(ActionType.OpenOLS);
   const showLightspeedButton = useOLSConfig();
@@ -28,7 +28,7 @@ export const AskOpenShiftLightspeedButton: React.FCC = () => {
   ) : null;
 };
 
-export const CodeEditorToolbar: React.FCC<CodeEditorToolbarProps> = ({ toolbarLinks }) => {
+export const CodeEditorToolbar: Snail.FCC<CodeEditorToolbarProps> = ({ toolbarLinks }) => {
   if (!toolbarLinks?.length) return null;
 
   return (

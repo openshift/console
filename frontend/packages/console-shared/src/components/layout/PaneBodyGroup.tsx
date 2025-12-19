@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const PaneBodyGroup: React.FCC<PaneBodyGroupProps> = ({ children, ...props }) => {
+const PaneBodyGroup: Snail.FCC<PaneBodyGroupProps> = ({ children, ...props }) => {
   return (
     <div className="co-m-pane__body-group" {...props}>
       {children}

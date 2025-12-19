@@ -109,7 +109,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
   });
 };
 
-const MachineDetails: React.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
+const MachineDetails: Snail.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
   const instanceType = getMachineInstanceType(obj);
@@ -333,7 +333,7 @@ export const MachinePage: React.FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: React.FCC = (props) => (
+export const MachineDetailsPage: Snail.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}

@@ -39,7 +39,7 @@ export const getJenkinsLogURL = (resource: K8sResourceKind): string =>
 export const getJenkinsBuildURL = (resource: K8sResourceKind): string =>
   _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-build-uri']);
 
-const BuildSummaryStatusIcon: React.FCC<BuildSummaryStatusIconProps> = ({ status }) => {
+const BuildSummaryStatusIcon: Snail.FCC<BuildSummaryStatusIconProps> = ({ status }) => {
   const statusClass = _.lowerCase(status);
   const icon = {
     new: '',
@@ -57,7 +57,7 @@ const BuildSummaryStatusIcon: React.FCC<BuildSummaryStatusIconProps> = ({ status
   ) : null;
 };
 
-export const BuildPipelineLogLink: React.FCC<BuildPipelineLogLinkProps> = ({ obj }) => {
+export const BuildPipelineLogLink: Snail.FCC<BuildPipelineLogLinkProps> = ({ obj }) => {
   const { t } = useTranslation();
   const link = getJenkinsLogURL(obj);
   return link ? (
@@ -65,7 +65,7 @@ export const BuildPipelineLogLink: React.FCC<BuildPipelineLogLinkProps> = ({ obj
   ) : null;
 };
 
-const StagesNotStarted: React.FCC<{}> = () => {
+const StagesNotStarted: Snail.FCC<{}> = () => {
   const { t } = useTranslation();
   return (
     <div className="build-pipeline__stage build-pipeline__stage--none">
@@ -74,13 +74,13 @@ const StagesNotStarted: React.FCC<{}> = () => {
   );
 };
 
-const BuildSummaryTimestamp: React.FCC<BuildSummaryTimestampProps> = ({ timestamp }) => (
+const BuildSummaryTimestamp: Snail.FCC<BuildSummaryTimestampProps> = ({ timestamp }) => (
   <span className="build-pipeline__timestamp pf-v6-u-text-color-subtle">
     {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
   </span>
 );
 
-const BuildPipelineSummary: React.FCC<BuildPipelineSummaryProps> = ({ obj }) => {
+const BuildPipelineSummary: Snail.FCC<BuildPipelineSummaryProps> = ({ obj }) => {
   const { name, namespace } = obj.metadata;
   const buildNumber = getBuildNumber(obj);
   const path: string = resourcePath(obj.kind, name, namespace);
@@ -99,7 +99,7 @@ const BuildPipelineSummary: React.FCC<BuildPipelineSummaryProps> = ({ obj }) => 
   );
 };
 
-const BuildAnimation: React.FCC<BuildAnimationProps> = ({ status }) => (
+const BuildAnimation: Snail.FCC<BuildAnimationProps> = ({ status }) => (
   <div className={`build-pipeline__status-bar build-pipeline__status-bar--${_.kebabCase(status)}`}>
     <div className="build-pipeline__animation-line" />
     <div className="build-pipeline__animation-circle">
@@ -112,7 +112,7 @@ const BuildAnimation: React.FCC<BuildAnimationProps> = ({ status }) => (
   </div>
 );
 
-const JenkinsInputUrl: React.FCC<JenkinsInputUrlProps> = ({ obj, stage }) => {
+const JenkinsInputUrl: Snail.FCC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   const pending = stage.status === 'PAUSED_PENDING_INPUT';
   const { t } = useTranslation();
 
@@ -128,13 +128,13 @@ const JenkinsInputUrl: React.FCC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   );
 };
 
-const BuildStageTimestamp: React.FCC<BuildStageTimestampProps> = ({ timestamp }) => (
+const BuildStageTimestamp: Snail.FCC<BuildStageTimestampProps> = ({ timestamp }) => (
   <div className="build-pipeline__stage-time pf-v6-u-text-color-subtle">
     {fromNow(typeof timestamp === 'string' ? timestamp : timestamp)}
   </div>
 );
 
-const BuildStageName: React.FCC<BuildStageNameProps> = ({ name }) => {
+const BuildStageName: Snail.FCC<BuildStageNameProps> = ({ name }) => {
   return (
     <div title={name} className="build-pipeline__stage-name">
       {name}
@@ -142,7 +142,7 @@ const BuildStageName: React.FCC<BuildStageNameProps> = ({ name }) => {
   );
 };
 
-const BuildStage: React.FCC<BuildStageProps> = ({ obj, stage }) => {
+const BuildStage: Snail.FCC<BuildStageProps> = ({ obj, stage }) => {
   return (
     <div className="build-pipeline__stage">
       <div className="build-pipeline__stage-column">
@@ -155,7 +155,7 @@ const BuildStage: React.FCC<BuildStageProps> = ({ obj, stage }) => {
   );
 };
 
-export const BuildPipeline: React.FCC<BuildPipelineProps> = ({ obj }) => {
+export const BuildPipeline: Snail.FCC<BuildPipelineProps> = ({ obj }) => {
   const jenkinsStatus: any = getJenkinsStatus(obj);
   const stages = getStages(jenkinsStatus);
   return (

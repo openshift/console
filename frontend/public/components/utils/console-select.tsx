@@ -76,7 +76,7 @@ export type ConsoleSelectProps = {
   renderInline?: boolean;
 };
 
-const ConsoleSelectItem: React.FCC<{
+const ConsoleSelectItem: Snail.FCC<{
   itemKey: string;
   content: React.ReactNode;
   selected: boolean;
@@ -112,7 +112,7 @@ const useInsideLegacyModal = (ref: React.RefObject<HTMLElement>) => {
  *
  * Due to this components complexity, prefer `@patternfly/react-templates` components when possible.
  */
-export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
+export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   actionItems,
   active,
   ariaLabel,

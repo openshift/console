@@ -62,7 +62,7 @@ const useDropErrorMessage = (): ((errorCode: DropzoneErrorCode, fileName: string
   );
 };
 
-export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
+export const DroppableEditYAML: Snail.FCC<DroppableEditYAMLProps> = ({
   allowMultiple,
   initialResource,
   create = false,
@@ -171,7 +171,7 @@ export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
 };
 
 // Prevents SDK users from passing additional props
-export const ResourceYAMLEditor: React.FCC<ResourceYAMLEditorProps> = ({
+export const ResourceYAMLEditor: Snail.FCC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,

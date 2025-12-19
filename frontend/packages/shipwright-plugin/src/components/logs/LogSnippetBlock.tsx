@@ -8,7 +8,7 @@ type LogSnippetBlockProps = {
   namespace: string;
 };
 
-const LogSnippetBlock: React.FCC<LogSnippetBlockProps> = ({ children, logDetails, namespace }) => {
+const LogSnippetBlock: Snail.FCC<LogSnippetBlockProps> = ({ children, logDetails, namespace }) => {
   return 'podName' in logDetails ? (
     <LogSnippetFromPod
       containerName={logDetails.containerName}

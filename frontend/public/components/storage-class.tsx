@@ -156,7 +156,7 @@ const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
   return columns;
 };
 
-export const StorageClassList: React.FCC<StorageClassListProps> = ({ data, loaded, ...props }) => {
+export const StorageClassList: Snail.FCC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useStorageClassColumns();
   const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
@@ -176,7 +176,7 @@ export const StorageClassList: React.FCC<StorageClassListProps> = ({ data, loade
   );
 };
 
-const StorageClassDetails: React.FCC<StorageClassDetailsProps> = ({ obj }) => {
+const StorageClassDetails: Snail.FCC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -209,7 +209,7 @@ const StorageClassDetails: React.FCC<StorageClassDetailsProps> = ({ obj }) => {
   );
 };
 
-export const StorageClassPage: React.FCC = ({ ...props }) => {
+export const StorageClassPage: Snail.FCC = ({ ...props }) => {
   const { t } = useTranslation();
 
   const createProps = {
@@ -230,7 +230,7 @@ export const StorageClassPage: React.FCC = ({ ...props }) => {
   );
 };
 
-export const StorageClassDetailsPage: React.FCC<DetailsPageProps> = (props) => {
+export const StorageClassDetailsPage: Snail.FCC<DetailsPageProps> = (props) => {
   const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
   const customActionMenu = (kindObj, obj) => {

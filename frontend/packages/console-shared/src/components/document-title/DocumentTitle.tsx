@@ -4,7 +4,7 @@ import { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensions/c
 /**
  * A component to change the document title of the page.
  */
-export const DocumentTitle: React.FCC<DocumentTitleProps> = ({ children }) => {
+export const DocumentTitle: Snail.FCC<DocumentTitleProps> = ({ children }) => {
   return (
     <Helmet>
       <title>{String(children)}</title>

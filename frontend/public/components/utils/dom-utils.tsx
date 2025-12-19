@@ -5,7 +5,7 @@ type WithScrollContainerProps = {
   children: (scrollContainer: HTMLElement) => React.ReactElement | null;
 };
 
-export const WithScrollContainer: React.FCC<WithScrollContainerProps> = ({ children }) => {
+export const WithScrollContainer: Snail.FCC<WithScrollContainerProps> = ({ children }) => {
   const [scrollContainer, setScrollContainer] = React.useState<HTMLElement>();
   const ref = React.useCallback((node) => {
     if (node) {

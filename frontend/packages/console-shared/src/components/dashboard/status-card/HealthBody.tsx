@@ -5,7 +5,7 @@ interface HealthBodyProps {
   children?: React.ReactNode;
 }
 
-const HealthBody: React.FCC<HealthBodyProps> = ({ children }) => (
+const HealthBody: Snail.FCC<HealthBodyProps> = ({ children }) => (
   <div className="co-status-card__health-body">{children}</div>
 );
 

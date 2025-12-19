@@ -76,7 +76,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-export const PVCStatusComponent: React.FCC<PVCStatusProps> = ({ pvc }) => {
+export const PVCStatusComponent: Snail.FCC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
   const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatus>(isPVCStatus);
 
@@ -230,7 +230,7 @@ const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKin
   return columns;
 };
 
-const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
+const PVCDetails: Snail.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
   const { t } = useTranslation();
 
@@ -416,7 +416,7 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   );
 };
 
-export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps> = ({
+export const PersistentVolumeClaimList: Snail.FCC<PersistentVolumeClaimListProps> = ({
   data,
   loaded,
   ...props
@@ -499,7 +499,7 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
   );
 };
 
-export const PersistentVolumeClaimsPage: React.FCC<PersistentVolumeClaimsPageProps> = ({
+export const PersistentVolumeClaimsPage: Snail.FCC<PersistentVolumeClaimsPageProps> = ({
   namespace,
   ...props
 }) => {
@@ -566,7 +566,7 @@ export const PersistentVolumeClaimsPage: React.FCC<PersistentVolumeClaimsPagePro
   );
 };
 
-export const PersistentVolumeClaimsDetailsPage: React.FCC<DetailsPageProps> = (props) => {
+export const PersistentVolumeClaimsDetailsPage: Snail.FCC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
 
   const customActionMenu = (kindObj, obj) => {

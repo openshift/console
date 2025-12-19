@@ -72,7 +72,7 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
+const StatefulSetsList: Snail.FCC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
   const columns = useWorkloadColumns();
 
   return (
@@ -92,7 +92,7 @@ const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
   );
 };
 
-export const StatefulSetsPage: React.FCC<StatefulSetsPageProps> = (props) => {
+export const StatefulSetsPage: Snail.FCC<StatefulSetsPageProps> = (props) => {
   return (
     <ListPage
       {...props}

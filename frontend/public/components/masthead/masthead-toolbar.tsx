@@ -79,7 +79,7 @@ interface FeedbackModalLocalizedProps {
   reportBugLink: ReturnType<typeof getReportBugLink>;
 }
 
-const FeedbackModalLocalized: React.FCC<FeedbackModalLocalizedProps> = ({
+const FeedbackModalLocalized: Snail.FCC<FeedbackModalLocalizedProps> = ({
   isOpen,
   onClose,
   reportBugLink,
@@ -106,7 +106,7 @@ interface StatusButtonProps {
   };
 }
 
-const SystemStatusButton: React.FCC<StatusButtonProps> = ({ statusPageData }) => {
+const SystemStatusButton: Snail.FCC<StatusButtonProps> = ({ statusPageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statusPageData, 'incidents')) ? (
     <ExternalLinkButton
@@ -147,7 +147,7 @@ const isTroubleshootingPanelPluginActive =
   window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin');
 
 // TODO break this down into smaller components and hooks
-const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
+const MastheadToolbarContents: Snail.FCC<MastheadToolbarContentsProps> = ({
   consoleLinks,
   cv,
   isMastheadStacked,
@@ -866,7 +866,7 @@ interface MastheadToolbarProps {
   isMastheadStacked: boolean;
 }
 
-export const MastheadToolbar: React.FCC<MastheadToolbarProps> = ({ isMastheadStacked }) => {
+export const MastheadToolbar: Snail.FCC<MastheadToolbarProps> = ({ isMastheadStacked }) => {
   const consoleLinkFlag = useFlag(FLAGS.CONSOLE_LINK);
   const clusterVersionFlag = useFlag(FLAGS.CLUSTER_VERSION);
 

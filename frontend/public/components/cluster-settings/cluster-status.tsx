@@ -53,7 +53,7 @@ const cancelUpdate = (
   );
 };
 
-const StatusMessagePopover: React.FCC<CVStatusMessagePopoverProps> = ({
+const StatusMessagePopover: Snail.FCC<CVStatusMessagePopoverProps> = ({
   bodyContent,
   children,
 }) => {

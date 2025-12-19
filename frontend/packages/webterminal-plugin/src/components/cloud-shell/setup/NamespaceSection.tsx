@@ -11,7 +11,7 @@ import './NamespaceSection.scss';
 
 type NamespaceSectionProps = WithFlagsProps;
 
-const NamespaceSection: React.FCC<NamespaceSectionProps> = ({ flags }) => {
+const NamespaceSection: Snail.FCC<NamespaceSectionProps> = ({ flags }) => {
   const canCreateNs = flags[FLAGS.CAN_CREATE_NS];
   const canCreateProject = flags[FLAGS.CAN_CREATE_PROJECT];
   const canCreate = canCreateNs || canCreateProject;

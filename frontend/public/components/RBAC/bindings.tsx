@@ -153,7 +153,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
   );
 };
 
-export const BindingName: React.FCC<BindingProps> = ({ binding }) => (
+export const BindingName: Snail.FCC<BindingProps> = ({ binding }) => (
   <ResourceLink
     kind={binding.kind}
     name={binding.metadata.name}
@@ -161,7 +161,7 @@ export const BindingName: React.FCC<BindingProps> = ({ binding }) => (
   />
 );
 
-export const BindingKebab: React.FCC<BindingProps> = ({ binding }) => {
+export const BindingKebab: Snail.FCC<BindingProps> = ({ binding }) => {
   const context = {
     [referenceFor(binding)]: binding,
   };
@@ -172,7 +172,7 @@ export const BindingKebab: React.FCC<BindingProps> = ({ binding }) => {
   ) : null;
 };
 
-export const RoleLink: React.FCC<BindingProps> = ({ binding }) => {
+export const RoleLink: Snail.FCC<BindingProps> = ({ binding }) => {
   const kind = binding.roleRef.kind;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
@@ -231,7 +231,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
   });
 };
 
-export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
+export const BindingsList: Snail.FCC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation();
   const columns = useRoleBindingsColumns();
 
@@ -333,7 +333,7 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   );
 };
 
-export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
+export const RoleBindingsPage: Snail.FCC<RoleBindingsPageProps> = ({
   namespace = undefined,
   showTitle = true,
   mock = false,
@@ -384,7 +384,7 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   );
 };
 
-const NsRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
+const NsRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const { t } = useTranslation();
 
@@ -413,7 +413,7 @@ const NsRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
   );
 };
 
-const ClusterRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
+const ClusterRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListDropdown
@@ -425,7 +425,7 @@ const ClusterRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
   );
 };
 
-const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
+const BaseEditRoleBinding: Snail.FCC<BaseEditRoleBindingProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -571,7 +571,7 @@ const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
     );
   };
 
-  const RoleDropdown: React.FCC<RoleDropdownProps> =
+  const RoleDropdown: Snail.FCC<RoleDropdownProps> =
     data.kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
   const title = `${props.titleVerbAndKind}`;
@@ -744,7 +744,7 @@ const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
   );
 };
 
-export const CreateRoleBinding: React.FCC = () => {
+export const CreateRoleBinding: Snail.FCC = () => {
   const params = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -782,7 +782,7 @@ const getSubjectIndex = () => {
   return parseInt(subjectIndex, 10);
 };
 
-const BindingLoadingWrapper: React.FCC<BindingLoadingWrapperProps> = (props) => {
+const BindingLoadingWrapper: Snail.FCC<BindingLoadingWrapperProps> = (props) => {
   const [, setActiveNamespace] = useActiveNamespace();
   const fixed: { [key: string]: any } = {};
   _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
@@ -798,7 +798,7 @@ const BindingLoadingWrapper: React.FCC<BindingLoadingWrapperProps> = (props) => 
   );
 };
 
-export const EditRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
+export const EditRoleBinding: Snail.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (
@@ -815,7 +815,7 @@ export const EditRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   );
 };
 
-export const CopyRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
+export const CopyRoleBinding: Snail.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (

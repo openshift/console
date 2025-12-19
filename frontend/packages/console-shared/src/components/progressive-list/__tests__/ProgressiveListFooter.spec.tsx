@@ -6,7 +6,7 @@ import ProgressiveListFooter from '../ProgressiveListFooter';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const Footer: React.FCC<{ children?: React.ReactNode }> = ({ children }) => {
+const Footer: Snail.FCC<{ children?: React.ReactNode }> = ({ children }) => {
   return <div>Click on the names to access advanced options for {children}.</div>;
 };
 

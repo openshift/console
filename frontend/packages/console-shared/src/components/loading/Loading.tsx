@@ -3,7 +3,7 @@ import { Spinner } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import './Loading.scss';
 
-export const Loading: React.FCC<LoadingProps> = ({ className, isInline }) => (
+export const Loading: Snail.FCC<LoadingProps> = ({ className, isInline }) => (
   // the extra div wrapper is needed as `Spinner`'s `className` property
   // is a `SVGAnimatedString`, and not `string`, which breaks tests
   <div

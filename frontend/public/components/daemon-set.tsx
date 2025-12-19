@@ -33,7 +33,7 @@ const getDataViewRows: GetDataViewRows<DaemonSetKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DaemonSetModel);
 };
 
-export const DaemonSetDetailsList: React.FCC<DaemonSetDetailsListProps> = ({ ds }) => {
+export const DaemonSetDetailsList: Snail.FCC<DaemonSetDetailsListProps> = ({ ds }) => {
   const { t } = useTranslation();
   return (
     <DescriptionList>
@@ -52,7 +52,7 @@ export const DaemonSetDetailsList: React.FCC<DaemonSetDetailsListProps> = ({ ds 
   );
 };
 
-const DaemonSetDetails: React.FCC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
+const DaemonSetDetails: Snail.FCC<DaemonSetDetailsProps> = ({ obj: daemonset }) => {
   const { t } = useTranslation();
   const { podData, loaded } = usePodsWatcher(daemonset);
   return (
@@ -95,7 +95,7 @@ const DaemonSetDetails: React.FCC<DaemonSetDetailsProps> = ({ obj: daemonset }) 
   );
 };
 
-const EnvironmentPage: React.FCC<EnvironmentPageProps> = (props) => (
+const EnvironmentPage: Snail.FCC<EnvironmentPageProps> = (props) => (
   <AsyncComponent
     loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
     {...props}
@@ -103,7 +103,7 @@ const EnvironmentPage: React.FCC<EnvironmentPageProps> = (props) => (
 );
 
 const envPath = ['spec', 'template', 'spec', 'containers'];
-const EnvironmentTab: React.FCC<EnvironmentTabProps> = (props) => (
+const EnvironmentTab: Snail.FCC<EnvironmentTabProps> = (props) => (
   <EnvironmentPage
     obj={props.obj}
     rawEnvData={props.obj.spec.template.spec}
@@ -112,7 +112,7 @@ const EnvironmentTab: React.FCC<EnvironmentTabProps> = (props) => (
   />
 );
 
-export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
+export const DaemonSetsList: Snail.FCC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
   const columns = useWorkloadColumns<DaemonSetKind>();
 
   return (
@@ -130,7 +130,7 @@ export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, .
   );
 };
 
-export const DaemonSetsPage: React.FCC<DaemonSetsPageProps> = (props) => (
+export const DaemonSetsPage: Snail.FCC<DaemonSetsPageProps> = (props) => (
   <ListPage
     canCreate={true}
     ListComponent={DaemonSetsList}
@@ -140,11 +140,11 @@ export const DaemonSetsPage: React.FCC<DaemonSetsPageProps> = (props) => (
   />
 );
 
-const DaemonSetPods: React.FCC<DaemonSetPodsProps> = (props) => (
+const DaemonSetPods: Snail.FCC<DaemonSetPodsProps> = (props) => (
   <PodsComponent {...props} showNodes />
 );
 
-export const DaemonSetsDetailsPage: React.FCC = (props) => {
+export const DaemonSetsDetailsPage: Snail.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);

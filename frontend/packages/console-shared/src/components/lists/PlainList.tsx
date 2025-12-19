@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 
-const PlainList: React.FCC<PlainListProps> = ({ items }) =>
+const PlainList: Snail.FCC<PlainListProps> = ({ items }) =>
   items ? (
     <List isPlain>
       {items.map((i) => (

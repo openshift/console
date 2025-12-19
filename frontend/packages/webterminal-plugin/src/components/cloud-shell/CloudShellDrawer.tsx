@@ -36,7 +36,7 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({
+export const CloudShellDrawer: Snail.FCC<CloudShellDrawerProps> = ({
   open = true,
   onClose = () => undefined,
   children,

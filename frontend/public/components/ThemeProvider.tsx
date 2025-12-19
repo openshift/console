@@ -49,7 +49,7 @@ interface ThemeProviderProps {
   children?: ReactNode;
 }
 
-export const ThemeProvider: React.FCC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider: Snail.FCC<ThemeProviderProps> = ({ children }) => {
   const htmlTagElement = document.documentElement;
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserSettings(

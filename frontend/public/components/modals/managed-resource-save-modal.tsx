@@ -7,7 +7,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 
 import { ResourceLink } from '../utils/resource-link';
 
-const ManagedResourceSaveModal: React.FCC<ManagedResourceSaveModalProps> = (props) => {
+const ManagedResourceSaveModal: Snail.FCC<ManagedResourceSaveModalProps> = (props) => {
   const submit = (event) => {
     event.preventDefault();
     props.onSubmit();

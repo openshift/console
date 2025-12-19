@@ -13,7 +13,7 @@ type TopologySideBarProps = {
 
 const DEFAULT_SIDE_BAR_SIZE = 500;
 
-const TopologySideBar: React.FCC<TopologySideBarProps> = ({ children, onClose }) => {
+const TopologySideBar: Snail.FCC<TopologySideBarProps> = ({ children, onClose }) => {
   const [sideBarSize, setSideBarSize, sideBarSizeLoaded] = useUserSettings(
     TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY,
     DEFAULT_SIDE_BAR_SIZE,

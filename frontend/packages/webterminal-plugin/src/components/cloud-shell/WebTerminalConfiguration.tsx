@@ -29,7 +29,7 @@ import { CloudShellResource } from './cloud-shell-utils';
 import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
 
-const WebTerminalConfiguration: React.FCC<{ readonly: boolean }> = ({ readonly }) => {
+const WebTerminalConfiguration: Snail.FCC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [operatorNamespace] = useCloudShellNamespace();

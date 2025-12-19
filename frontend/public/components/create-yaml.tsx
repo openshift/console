@@ -115,7 +115,7 @@ export const CreateYAML = (props) => {
   return <CreateYAML_ {...props} params={params} />;
 };
 
-export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
+export const EditYAMLPage: Snail.FCC<EditYAMLPageProps> = (props) => {
   const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent

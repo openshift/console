@@ -4,7 +4,7 @@ import { ISortBy, OnSelect, OnSort, Th, Thead, Tr } from '@patternfly/react-tabl
 import { TableColumn as InternalTableColumn } from '../table';
 import { TableColumn as SDKTableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-export const TableHeader: React.FCC<TableHeaderProps> = ({
+export const TableHeader: Snail.FCC<TableHeaderProps> = ({
   allRowsSelected,
   canSelectAll,
   columns,

@@ -10,7 +10,7 @@ type ClusterServiceVersionHeaderIconProps = {
   icon: ClusterServiceVersionIcon | string;
 };
 
-export const ClusterServiceVersionHeaderIcon: React.FCC<ClusterServiceVersionHeaderIconProps> = ({
+export const ClusterServiceVersionHeaderIcon: Snail.FCC<ClusterServiceVersionHeaderIconProps> = ({
   icon,
 }) => {
   const imgSrc: string = _.isString(icon)
@@ -40,7 +40,7 @@ type ClusterServiceVersionHeaderTitleProps = {
   version?: string;
 } & DeprecatedOperatorWarning;
 
-export const ClusterServiceVersionHeaderTitle: React.FCC<ClusterServiceVersionHeaderTitleProps> = ({
+export const ClusterServiceVersionHeaderTitle: Snail.FCC<ClusterServiceVersionHeaderTitleProps> = ({
   displayName,
   provider,
   version,
@@ -74,7 +74,7 @@ export const ClusterServiceVersionHeaderTitle: React.FCC<ClusterServiceVersionHe
 export type ClusterServiceVersionLogoProps = ClusterServiceVersionHeaderIconProps &
   ClusterServiceVersionHeaderTitleProps;
 
-export const ClusterServiceVersionLogo: React.FCC<ClusterServiceVersionLogoProps> = ({
+export const ClusterServiceVersionLogo: Snail.FCC<ClusterServiceVersionLogoProps> = ({
   icon,
   displayName,
   provider,

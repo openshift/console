@@ -42,7 +42,7 @@ import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMen
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
-const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
+const MachineConfigSummary: Snail.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
     <DescriptionListGroup>
       <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
@@ -51,7 +51,7 @@ const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) 
   </ResourceSummary>
 );
 
-const MachineConfigDetails: React.FCC<MachineConfigDetailsProps> = ({ obj }) => {
+const MachineConfigDetails: Snail.FCC<MachineConfigDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const files = obj.spec.config?.storage?.files;
 
@@ -126,7 +126,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
+export const MachineConfigDetailsPage: Snail.FCC<any> = (props) => {
   return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
 };
 
@@ -275,7 +275,7 @@ const MachineConfigList: React.FC<MachineConfigListProps> = ({
   );
 };
 
-export const MachineConfigPage: React.FCC<any> = ({ canCreate = true, ...rest }) => (
+export const MachineConfigPage: Snail.FCC<any> = ({ canCreate = true, ...rest }) => (
   <ListPage
     {...rest}
     canCreate={canCreate}

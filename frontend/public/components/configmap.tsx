@@ -126,7 +126,7 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
   );
 };
 
-export const ConfigMaps: React.FCC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
+export const ConfigMaps: Snail.FCC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
   const columns = useConfigMapsColumns();
 
   return (
@@ -144,7 +144,7 @@ export const ConfigMaps: React.FCC<ConfigMapsProps> = ({ data, loaded, ...props 
   );
 };
 
-export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
+export const ConfigMapsPage: Snail.FCC<ConfigMapsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
@@ -160,7 +160,7 @@ export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
   );
 };
 
-export const ConfigMapsDetailsPage: React.FCC = (props) => {
+export const ConfigMapsDetailsPage: Snail.FCC = (props) => {
   const { t } = useTranslation();
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (

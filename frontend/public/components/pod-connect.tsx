@@ -48,7 +48,7 @@ type PodConnectProps = {
   infoMessage?: React.ReactNode;
 };
 
-export const PodConnect: React.FCC<PodConnectProps> = ({
+export const PodConnect: Snail.FCC<PodConnectProps> = ({
   obj,
   attach,
   initialContainer,

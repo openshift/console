@@ -50,7 +50,7 @@ const levels = [
   'Auto Pilot',
 ];
 
-export const CapabilityLevel: React.FCC<CapabilityLevelProps> = ({ capability }) => {
+export const CapabilityLevel: Snail.FCC<CapabilityLevelProps> = ({ capability }) => {
   const { t } = useTranslation();
   const capabilityLevelIndex = levels.indexOf(capability);
 
@@ -84,7 +84,7 @@ type CapabilityLevelProps = {
   capability: string;
 };
 
-const InstalledHint: React.FCC<InstalledHintProps> = ({
+const InstalledHint: Snail.FCC<InstalledHintProps> = ({
   latestVersion,
   subscription,
   installedChannel,
@@ -134,7 +134,7 @@ const InstalledHint: React.FCC<InstalledHintProps> = ({
   );
 };
 
-const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
+const InstallingHint: Snail.FCC<InstallingHintProps> = ({ subscription }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
@@ -169,7 +169,7 @@ const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
   );
 };
 
-const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (props) => {
+const OperatorHubItemDetailsHint: Snail.FCC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation();
   const {
     installed,
@@ -222,7 +222,7 @@ const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (
   return null;
 };
 
-export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
+export const OperatorDescription: Snail.FCC<OperatorDescriptionProps> = ({
   catalogSource,
   description,
   infraFeatures,
@@ -325,7 +325,7 @@ export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
   );
 };
 
-export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
+export const OperatorHubItemDetails: Snail.FCC<OperatorHubItemDetailsProps> = ({
   item,
   updateChannel,
   setUpdateChannel,

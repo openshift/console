@@ -850,7 +850,7 @@ export const ProjectsPage = (props) => {
   );
 };
 
-/** @type {React.FCC<{namespace: K8sResourceKind}>} */
+/** @type {Snail.FCC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);

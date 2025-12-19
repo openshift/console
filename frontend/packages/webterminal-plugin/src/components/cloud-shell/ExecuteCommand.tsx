@@ -6,7 +6,7 @@ type ExecuteCommandProps = {
   onCommand: (command: string) => void;
 };
 
-const ExecuteCommand: React.FCC<ExecuteCommandProps> = ({ onCommand }) => {
+const ExecuteCommand: Snail.FCC<ExecuteCommandProps> = ({ onCommand }) => {
   const command = useGetCloudShellCommand();
   const setCloudShellCommand = useCloudShellCommandDispatch();
 

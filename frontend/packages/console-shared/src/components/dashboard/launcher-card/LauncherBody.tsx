@@ -6,7 +6,7 @@ interface LauncherBodyProps {
   children?: React.ReactNode;
 }
 
-const LauncherBody: React.FCC<LauncherBodyProps> = ({ children }) => (
+const LauncherBody: Snail.FCC<LauncherBodyProps> = ({ children }) => (
   <div className="co-launcher-card__body">{children}</div>
 );
 

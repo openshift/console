@@ -7,11 +7,11 @@ import ProgressiveListItem from '../ProgressiveListItem';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
-const BarComponent: React.FCC = () => <div>Bar Component</div>;
-const FooComponent: React.FCC = () => <div>Foo Component</div>;
+const DummyComponent: Snail.FCC = () => <div>Dummy Component</div>;
+const BarComponent: Snail.FCC = () => <div>Bar Component</div>;
+const FooComponent: Snail.FCC = () => <div>Foo Component</div>;
 
-const Footer: React.FCC<{ children?: React.ReactNode }> = ({ children }) => {
+const Footer: Snail.FCC<{ children?: React.ReactNode }> = ({ children }) => {
   return <div>Click on the names to access advanced options for {children}.</div>;
 };
 

@@ -9,7 +9,7 @@ import { getStrategyType } from '../utils/build-utils';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
-export const BuildStrategy: React.FCC<BuildStrategyProps> = ({ resource, children }) => {
+export const BuildStrategy: Snail.FCC<BuildStrategyProps> = ({ resource, children }) => {
   const dockerfile = _.get(resource, 'spec.source.dockerfile');
   const devfile = _.get(resource, 'spec.source.devfile');
   const jenkinsfile = _.get(resource, 'spec.strategy.jenkinsPipelineStrategy.jenkinsfile');

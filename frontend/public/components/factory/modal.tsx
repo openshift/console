@@ -114,7 +114,7 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
 );
 
 /** @deprecated Use PF modals instead */
-export const ModalBody: React.FCC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: Snail.FCC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
     <div className="modal-body-content">{children}</div>
   </div>

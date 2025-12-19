@@ -7,7 +7,7 @@ interface ToastProviderProps {
   children?: ReactNode;
 }
 
-const ToastProvider: React.FCC<ToastProviderProps> = ({ children }) => {
+const ToastProvider: Snail.FCC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = React.useState<ToastOptions[]>([]);
 
   const removeToast = React.useCallback((id: string) => {

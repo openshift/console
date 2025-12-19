@@ -22,7 +22,7 @@ interface ShortcutCommandProps {
   children?: React.ReactNode;
 }
 
-export const ShortcutCommand: React.FCC<ShortcutCommandProps> = ({ children }) => (
+export const ShortcutCommand: Snail.FCC<ShortcutCommandProps> = ({ children }) => (
   <span className="ocs-shortcut__command">
     <kbd className="co-kbd">{children}</kbd>
   </span>

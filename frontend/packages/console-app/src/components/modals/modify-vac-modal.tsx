@@ -13,7 +13,7 @@ import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const ModifyVACModalComponent: React.FCC<ModifyVACModalComponentProps> = ({
+const ModifyVACModalComponent: Snail.FCC<ModifyVACModalComponentProps> = ({
   resource,
   close,
   cancel,

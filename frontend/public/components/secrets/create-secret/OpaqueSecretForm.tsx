@@ -6,7 +6,7 @@ import { SecretSubFormProps, OpaqueDataEntry } from './types';
 import { OpaqueSecretFormEntry } from './OpaqueSecretFormEntry';
 import { opaqueSecretObjectToArray, newOpaqueSecretEntry, opaqueEntriesToObject } from './utils';
 
-export const OpaqueSecretForm: React.FCC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
+export const OpaqueSecretForm: Snail.FCC<SecretSubFormProps> = ({ onChange, base64StringData }) => {
   const { t } = useTranslation();
   const [opaqueDataEntries, setOpaqueDataEntries] = useState(
     opaqueSecretObjectToArray(base64StringData),

@@ -404,7 +404,7 @@ const getDataViewRows = (
   });
 };
 
-const MachineSetListContent: React.FCC<MachineSetListProps> = ({
+const MachineSetListContent: Snail.FCC<MachineSetListProps> = ({
   data,
   loaded,
   loadError,
@@ -428,7 +428,7 @@ const MachineSetListContent: React.FCC<MachineSetListProps> = ({
   );
 };
 
-export const MachineSetList: React.FCC<MachineSetListProps> = ({
+export const MachineSetList: Snail.FCC<MachineSetListProps> = ({
   data,
   loaded,
   loadError,

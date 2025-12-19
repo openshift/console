@@ -6,7 +6,7 @@ import ProgressiveListItem from '../ProgressiveListItem';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
+const DummyComponent: Snail.FCC = () => <div>Dummy Component</div>;
 
 describe('ProgressiveListItem', () => {
   it('should render the child component correctly', () => {

@@ -142,7 +142,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   );
 };
 
-export const DeploymentConfigDeprecationAlert: React.FCC = () => {
+export const DeploymentConfigDeprecationAlert: Snail.FCC = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -171,7 +171,7 @@ export const DeploymentConfigDeprecationAlert: React.FCC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: React.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+export const DeploymentConfigsDetails: Snail.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -227,7 +227,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicationControllersTab: React.FCC<ReplicationControllersTabProps> = ({ obj }) => {
+const ReplicationControllersTab: Snail.FCC<ReplicationControllersTabProps> = ({ obj }) => {
   const {
     metadata: { namespace, name },
   } = obj;
@@ -258,7 +258,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const DetailsActionMenu: React.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
+const DetailsActionMenu: Snail.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
   const resourceKind = referenceForModel(kindObj);
   const context = { [resourceKind]: obj };
 
@@ -275,7 +275,7 @@ const DetailsActionMenu: React.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) 
   );
 };
 
-export const DeploymentConfigsDetailsPage: React.FCC = (props) => {
+export const DeploymentConfigsDetailsPage: Snail.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
@@ -300,7 +300,7 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
-export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
+export const DeploymentConfigsList: Snail.FCC<DeploymentConfigsListProps> = ({
   data,
   loaded,
   ...props
@@ -323,7 +323,7 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.FCC<DeploymentConfigsPageProps> = (props) => {
+export const DeploymentConfigsPage: Snail.FCC<DeploymentConfigsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new/form`,
   };

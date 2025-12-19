@@ -171,7 +171,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   );
 };
 
-export const ResourcePodCount: React.FCC<ResourcePodCountProps> = ({ resource }) => {
+export const ResourcePodCount: Snail.FCC<ResourcePodCountProps> = ({ resource }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -203,7 +203,7 @@ export const RuntimeClass: React.FC<RuntimeClassProps> = ({ obj, path }) => {
   );
 };
 
-export const UpstreamConfigDetailsItem: React.FCC<UpstreamConfigDetailsItemProps> = ({
+export const UpstreamConfigDetailsItem: Snail.FCC<UpstreamConfigDetailsItemProps> = ({
   resource,
 }) => {
   const { t } = useTranslation();

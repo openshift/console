@@ -14,7 +14,7 @@ interface AccessDeniedProps {
   children?: ReactNode;
 }
 
-export const AccessDenied: React.FCC<AccessDeniedProps> = ({ children }) => {
+export const AccessDenied: Snail.FCC<AccessDeniedProps> = ({ children }) => {
   const { t } = useTranslation('console-shared');
   return (
     <ConsoleEmptyState

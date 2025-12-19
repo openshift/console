@@ -384,7 +384,7 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
   return columns;
 };
 
-export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersListProps> = ({
+export const HorizontalPodAutoscalersList: Snail.FCC<HorizontalPodAutoscalersListProps> = ({
   data,
   loaded,
   ...props

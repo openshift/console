@@ -17,7 +17,7 @@ interface LoadingBoxProps {
   children?: ReactNode;
 }
 
-export const LoadingBox: React.FCC<LoadingBoxProps> = ({ blame = 'LoadingBox', children }) => {
+export const LoadingBox: Snail.FCC<LoadingBoxProps> = ({ blame = 'LoadingBox', children }) => {
   return (
     <ConsoleEmptyState
       data-test="loading-box"

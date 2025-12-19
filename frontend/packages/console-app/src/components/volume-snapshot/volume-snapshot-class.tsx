@@ -120,7 +120,7 @@ const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[]
   return columns;
 };
 
-const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
+const VolumeSnapshotClassTable: Snail.FCC<VolumeSnapshotClassTableProps> = ({
   data,
   loaded,
   ...props
@@ -144,7 +144,7 @@ const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
   );
 };
 
-export const VolumeSnapshotClassPage: React.FCC<VolumeSnapshotClassPageProps> = ({
+export const VolumeSnapshotClassPage: Snail.FCC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,

@@ -84,7 +84,7 @@ export const SupportedPlatformsTable = (props) => {
 
 SupportedPlatformsTable.displayName = 'SupportedPlatformsTable';
 
-export const ImageStreamTagsDetails: React.FCC<ImageStreamTagsDetailsProps> = ({
+export const ImageStreamTagsDetails: Snail.FCC<ImageStreamTagsDetailsProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
@@ -261,7 +261,7 @@ const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
   return { imageStreamName, tag };
 };
 
-const ImageStreamTagHistory: React.FCC<ImageStreamTagHistoryProps> = ({
+const ImageStreamTagHistory: Snail.FCC<ImageStreamTagHistoryProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
@@ -282,7 +282,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamTagHistory),
 ];
-export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPageProps> = (props) => {
+export const ImageStreamTagsDetailsPage: Snail.FCC<ImageStreamTagsDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

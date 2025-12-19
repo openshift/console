@@ -4,7 +4,7 @@ import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon
 import { useTranslation } from 'react-i18next';
 import { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
-const AlertsBody: React.FCC<AlertsBodyProps> = ({ error = false, children }) => {
+const AlertsBody: Snail.FCC<AlertsBodyProps> = ({ error = false, children }) => {
   const { t } = useTranslation();
   return (
     (error || !!React.Children.toArray(children).length) && (

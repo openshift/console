@@ -19,7 +19,7 @@ interface KnativeRevisionListViewNodeProps {
   onSelect: (ids: string[]) => void;
 }
 
-const ObservedKnativeRevisionListViewNode: React.FCC<KnativeRevisionListViewNodeProps> = ({
+const ObservedKnativeRevisionListViewNode: Snail.FCC<KnativeRevisionListViewNodeProps> = ({
   item,
   selectedIds,
   onSelect,

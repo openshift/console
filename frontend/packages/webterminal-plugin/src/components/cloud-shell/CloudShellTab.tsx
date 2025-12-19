@@ -4,7 +4,7 @@ import { MultiTabbedTerminal } from './MultiTabbedTerminal';
 
 import './CloudShellTab.scss';
 
-const CloudShellTab: React.FCC = () => {
+const CloudShellTab: Snail.FCC = () => {
   const { t } = useTranslation('webterminal-plugin');
 
   return (

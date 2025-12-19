@@ -12,7 +12,7 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 
-export const BuildHooks: React.FCC<BuildHooksProps> = ({ resource }) => {
+export const BuildHooks: Snail.FCC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');
   const postCommitCommand = _.get(resource, 'spec.postCommit.command');
   const postCommitScript = _.get(resource, 'spec.postCommit.script');

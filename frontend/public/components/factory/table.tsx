@@ -344,7 +344,7 @@ const getActiveColumns = (
 };
 
 // TODO Replace with ./Table/VirtualizedTable
-const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
+const VirtualizedTable: Snail.FCC<VirtualizedTableProps> = ({
   ariaLabel,
   columns,
   customData,
@@ -397,7 +397,7 @@ const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
   );
 };
 
-const StandardTable: React.FCC<StandardTableProps> = ({
+const StandardTable: Snail.FCC<StandardTableProps> = ({
   columns,
   customData,
   data,

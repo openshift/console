@@ -83,7 +83,7 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
   return null;
 };
 
-const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristicsProps> = ({
+const MachineConfigPoolCharacteristics: Snail.FCC<MachineConfigPoolCharacteristicsProps> = ({
   obj,
 }) => {
   const configuration = _.get(obj, 'status.configuration');
@@ -136,7 +136,7 @@ const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristi
   );
 };
 
-const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
+const MachineConfigPoolCounts: Snail.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -201,7 +201,7 @@ const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj 
   );
 };
 
-const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
+const MachineConfigPoolSummary: Snail.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const { t } = useTranslation();
   return (
@@ -216,7 +216,7 @@ const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ ob
   );
 };
 
-const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
+const MachineConfigList: Snail.FCC<MachineConfigListProps> = ({ obj }) => (
   <MachineConfigPage
     canCreate={false}
     showTitle={false}
@@ -224,7 +224,7 @@ const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
   />
 );
 
-const MachineConfigPoolDetails: React.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
+const MachineConfigPoolDetails: Snail.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
   const { t } = useTranslation();
   return (
@@ -280,7 +280,7 @@ const MachineConfigPoolUpdateStatus: React.FC<MachineConfigPoolUpdateStatusProps
   }
 };
 
-export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
+export const MachineConfigPoolDetailsPage: Snail.FCC<any> = (props) => {
   return (
     <DetailsPage
       {...props}
@@ -421,7 +421,7 @@ const MachineConfigPoolList: React.FC<MachineConfigPoolListProps> = ({
   );
 };
 
-export const MachineConfigPoolPage: React.FCC<any> = (props) => (
+export const MachineConfigPoolPage: Snail.FCC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineConfigPoolList}

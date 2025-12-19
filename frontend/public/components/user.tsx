@@ -159,7 +159,7 @@ const useUsersColumns = () => {
   );
 };
 
-export const UserList: React.FCC<UserListProps> = (props) => {
+export const UserList: Snail.FCC<UserListProps> = (props) => {
   const { t } = useTranslation();
   const columns = useUsersColumns();
   const { data, loaded } = props;

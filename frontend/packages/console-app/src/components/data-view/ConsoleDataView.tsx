@@ -58,11 +58,11 @@ export type ConsoleDataViewProps<
   mock?: boolean;
 };
 
-export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
+export const BodyLoading: Snail.FCC<{ columns: number }> = ({ columns }) => {
   return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
 };
 
-export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+export const BodyEmpty: Snail.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation();
   return (
     <Tbody>

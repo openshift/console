@@ -11,7 +11,7 @@ import { PageSection } from '@patternfly/react-core';
  * - If no <title> is provided, it renders a `PageSection` with the children, badge, helpAlert, and helpText.
  * - If no <title>, <children>, <badge>, <helpAlert>, or <helpText> are provided, it renders nothing.
  */
-const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
+const ListPageHeader: Snail.FCC<ListPageHeaderProps> = ({
   badge,
   children,
   helpAlert,

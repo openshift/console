@@ -6,7 +6,7 @@ type TerminalLoadingBoxProps = {
   message?: string;
 };
 
-const TerminalLoadingBox: React.FCC<TerminalLoadingBoxProps> = ({ message }) => {
+const TerminalLoadingBox: Snail.FCC<TerminalLoadingBoxProps> = ({ message }) => {
   const { t } = useTranslation();
   return (
     <LoadingBox>

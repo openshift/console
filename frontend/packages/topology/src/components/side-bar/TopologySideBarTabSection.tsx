@@ -5,7 +5,7 @@ interface TopologySideBarTabSectionProps {
   children?: React.ReactNode;
 }
 
-const TopologySideBarTabSection: React.FCC<TopologySideBarTabSectionProps> = ({ children }) => {
+const TopologySideBarTabSection: Snail.FCC<TopologySideBarTabSectionProps> = ({ children }) => {
   return <div className="ocs-sidebar-tabsection">{children}</div>;
 };
 

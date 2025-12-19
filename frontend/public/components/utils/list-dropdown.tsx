@@ -51,7 +51,7 @@ export interface ListDropdownProps {
   loadError?: boolean;
 }
 
-const ListDropdown_: React.FCC<ListDropdownProps> = ({
+const ListDropdown_: Snail.FCC<ListDropdownProps> = ({
   desc,
   placeholder,
   loaded,
@@ -198,7 +198,7 @@ const ListDropdown_: React.FCC<ListDropdownProps> = ({
   );
 };
 
-export const ListDropdown: React.FCC<ListDropdownProps> = (props) => {
+export const ListDropdown: Snail.FCC<ListDropdownProps> = (props) => {
   const resources = _.map(props.resources, (resource) =>
     _.assign({ isList: true, prop: resource.kind }, resource),
   );
@@ -224,7 +224,7 @@ export const useProjectOrNamespaceModel = (): [K8sModel, boolean] | [] => {
   return [model, canCreate];
 };
 
-export const NsDropdown: React.FCC<ListDropdownProps> = (props) => {
+export const NsDropdown: Snail.FCC<ListDropdownProps> = (props) => {
   const { t } = useTranslation();
   const createNamespaceModal = useCreateNamespaceModal();
   const createProjectModal = useCreateProjectModal();

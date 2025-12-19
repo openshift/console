@@ -166,7 +166,7 @@ const BuildMetrics = ({ obj }) => {
   ) : null;
 };
 
-const OpenShiftPipelines: React.FCC = () => {
+const OpenShiftPipelines: Snail.FCC = () => {
   const { t } = useTranslation();
   const text = t('public~OpenShift Pipelines based on Tekton');
   return isUpstream() || isManaged() ? (
@@ -176,7 +176,7 @@ const OpenShiftPipelines: React.FCC = () => {
   );
 };
 
-export const PipelineBuildStrategyAlert: React.FCC<BuildsDetailsProps> = () => {
+export const PipelineBuildStrategyAlert: Snail.FCC<BuildsDetailsProps> = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -198,7 +198,7 @@ export const PipelineBuildStrategyAlert: React.FCC<BuildsDetailsProps> = () => {
   );
 };
 
-export const BuildsDetails: React.FCC<BuildsDetailsProps> = ({ obj: build }) => {
+export const BuildsDetails: Snail.FCC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -323,7 +323,7 @@ export const BuildEnvironmentComponent = (props) => {
   );
 };
 
-export const BuildsDetailsPage: React.FCC = (props) => {
+export const BuildsDetailsPage: Snail.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
 
   return (
@@ -454,7 +454,7 @@ const useBuildsColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-export const BuildsList: React.FCC<BuildsListProps> = ({ data, loaded, ...props }) => {
+export const BuildsList: Snail.FCC<BuildsListProps> = ({ data, loaded, ...props }) => {
   const columns = useBuildsColumns();
 
   return (
@@ -478,7 +478,7 @@ export const buildPhase = (build) => build.status.phase;
 
 export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
-export const BuildsPage: React.FCC<BuildsPageProps> = (props) => {
+export const BuildsPage: Snail.FCC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage

@@ -243,7 +243,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   );
 };
 
-export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
+export const PersistentVolumeList: Snail.FCC<PersistentVolumeListProps> = ({
   data,
   loaded,
   ...props
@@ -282,7 +282,7 @@ export const PersistentVolumesPage = (props: ListPageProps) => {
   );
 };
 
-export const PersistentVolumesDetailsPage: React.FCC<DetailsPageProps> = (props) => (
+export const PersistentVolumesDetailsPage: Snail.FCC<DetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={persistentVolumeReference}

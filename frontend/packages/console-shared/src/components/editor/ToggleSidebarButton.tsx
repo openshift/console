@@ -25,7 +25,7 @@ interface ToggleSidebarButtonProps extends Partial<CodeEditorControlProps> {
   alignToEnd?: boolean;
 }
 
-export const ToggleSidebarButton: React.FCC<ToggleSidebarButtonProps> = ({
+export const ToggleSidebarButton: Snail.FCC<ToggleSidebarButtonProps> = ({
   isSidebarOpen,
   toggleSidebar,
   alignToEnd = false,
