@@ -394,6 +394,7 @@ const EventStream = ({
   // Handle websocket setup and teardown when dependent props change
   useEffect(() => {
     ws.current?.destroy();
+    setSortedEvents([]);
     if (!mock) {
       const webSocketID = `${namespace || 'all'}-sysevents`;
       const watchURLOptions = {
