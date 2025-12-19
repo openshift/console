@@ -2,7 +2,7 @@ import { List, ListProps } from '@patternfly/react-core';
 
 import './DetailPropertyList.scss';
 
-const DetailPropertyList: Snail.FCC<ListProps> = ({ children, ...props }) => (
+const DetailPropertyList: React.FCC<ListProps> = ({ children, ...props }) => (
   <List className="co-detail-property-list" {...props}>
     {children}
   </List>

@@ -24,7 +24,7 @@ type ActionsMenuDropdownProps = {
   active?: boolean;
 };
 
-const ActionsMenuDropdown: Snail.FCC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
+const ActionsMenuDropdown: React.FCC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(!!active);
@@ -77,7 +77,7 @@ const ActionsMenuDropdown: Snail.FCC<ActionsMenuDropdownProps> = ({ actions, tit
   );
 };
 
-export const ActionsMenu: Snail.FCC<ActionsMenuProps> = connect(impersonateStateToProps)(
+export const ActionsMenu: React.FCC<ActionsMenuProps> = connect(impersonateStateToProps)(
   ({
     actions,
     impersonate,

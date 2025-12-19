@@ -60,7 +60,7 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
-export const TableData: Snail.FCC<TableDataProps> = ({
+export const TableData: React.FCC<TableDataProps> = ({
   className,
   id,
   activeColumnIDs,

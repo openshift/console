@@ -8,7 +8,7 @@ interface CloudShellProps {
   children: React.ReactNode;
 }
 
-const CloudShell: Snail.FCC<CloudShellProps> = ({ children }) => {
+const CloudShell: React.FCC<CloudShellProps> = ({ children }) => {
   const onClose = useToggleCloudShellExpanded();
   const open = useIsCloudShellExpanded();
   const devWorkspaceAvailable = useFlag(FLAG_DEVWORKSPACE);

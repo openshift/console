@@ -48,9 +48,7 @@ const getReadyReplicas = (resource: ControlPlaneMachineSetKind) => {
   return resource?.status?.readyReplicas || 0;
 };
 
-const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({
-  resource,
-}) => {
+const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ resource }) => {
   const { t } = useTranslation();
 
   const desiredReplicas = getDesiredReplicas(resource);
@@ -138,7 +136,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({
   );
 };
 
-const ControlPlaneMachineSetDetails: Snail.FCC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
+const ControlPlaneMachineSetDetails: React.FCC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -261,7 +259,7 @@ const useControlPlaneMachineSetColumns = (): TableColumn<ControlPlaneMachineSetK
   return columns;
 };
 
-export const MachinesCell: Snail.FCC<MachinesCellProps> = ({
+export const MachinesCell: React.FCC<MachinesCellProps> = ({
   desiredReplicas,
   readyReplicas,
   path,
@@ -334,7 +332,7 @@ const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
   const columns = useControlPlaneMachineSetColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<ControlPlaneMachineSetKind>
         {...props}
         label={ControlPlaneMachineSetModel.labelPlural}
@@ -345,7 +343,7 @@ const ControlPlaneMachineSetList: FC<ControlPlaneMachineSetListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

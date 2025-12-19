@@ -142,7 +142,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
   );
 };
 
-export const DeploymentConfigDeprecationAlert: Snail.FCC = () => {
+export const DeploymentConfigDeprecationAlert: React.FCC = () => {
   const { t } = useTranslation();
   return (
     <Alert
@@ -171,7 +171,7 @@ export const DeploymentConfigDeprecationAlert: Snail.FCC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: Snail.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+export const DeploymentConfigsDetails: React.FCC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -227,7 +227,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicationControllersTab: Snail.FCC<ReplicationControllersTabProps> = ({ obj }) => {
+const ReplicationControllersTab: React.FCC<ReplicationControllersTabProps> = ({ obj }) => {
   const {
     metadata: { namespace, name },
   } = obj;
@@ -258,7 +258,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-const DetailsActionMenu: Snail.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
+const DetailsActionMenu: React.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) => {
   const resourceKind = referenceForModel(kindObj);
   const context = { [resourceKind]: obj };
 
@@ -275,7 +275,7 @@ const DetailsActionMenu: Snail.FCC<DetailsActionMenuProps> = ({ kindObj, obj }) 
   );
 };
 
-export const DeploymentConfigsDetailsPage: Snail.FCC = (props) => {
+export const DeploymentConfigsDetailsPage: React.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     return <DetailsActionMenu kindObj={kindObj} obj={obj} />;
   };
@@ -300,7 +300,7 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
-export const DeploymentConfigsList: Snail.FCC<DeploymentConfigsListProps> = ({
+export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
   data,
   loaded,
   ...props
@@ -308,7 +308,7 @@ export const DeploymentConfigsList: Snail.FCC<DeploymentConfigsListProps> = ({
   const columns = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentConfigModel.labelPlural}
@@ -318,12 +318,12 @@ export const DeploymentConfigsList: Snail.FCC<DeploymentConfigsListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: Snail.FCC<DeploymentConfigsPageProps> = (props) => {
+export const DeploymentConfigsPage: React.FCC<DeploymentConfigsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new/form`,
   };

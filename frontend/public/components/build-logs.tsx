@@ -14,7 +14,7 @@ import { BuildPhase } from '../module/k8s/builds';
 import { PageComponentProps } from './utils/horizontal-nav';
 import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-const PipelineLogMessage: Snail.FCC<{
+const PipelineLogMessage: React.FCC<{
   build: K8sResourceKind;
 }> = ({ build }) => {
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ const buildPhaseToLogSourceStatus = (phase: BuildPhase) => {
   }
 };
 
-export const BuildLogs: Snail.FCC<PageComponentProps> = ({ obj: build }) => {
+export const BuildLogs: React.FCC<PageComponentProps> = ({ obj: build }) => {
   const phase = _.get(build, 'status.phase');
   const status = buildPhaseToLogSourceStatus(phase);
 

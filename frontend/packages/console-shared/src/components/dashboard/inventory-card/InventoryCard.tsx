@@ -12,17 +12,17 @@ interface InventoryItemProps {
   children?: ReactNode;
 }
 
-const InventoryItem: Snail.FCC<InventoryItemProps> = ({ children }) => (
+const InventoryItem: React.FCC<InventoryItemProps> = ({ children }) => (
   <div className="co-inventory-card__item">{children}</div>
 );
 
 export const InventoryItemLoading: FC = () => <div className="skeleton-inventory" />;
 
-export const InventoryItemTitle: Snail.FCC<InventoryItemTitleProps> = ({ children }) => (
+export const InventoryItemTitle: React.FCC<InventoryItemTitleProps> = ({ children }) => (
   <div className="co-inventory-card__item-title">{children}</div>
 );
 
-export const InventoryItemBody: Snail.FCC<InventoryItemBodyProps> = ({ error, children }) => {
+export const InventoryItemBody: React.FCC<InventoryItemBodyProps> = ({ error, children }) => {
   const { t } = useTranslation();
   return (
     <div className="co-inventory-card__item-status">
@@ -35,11 +35,7 @@ export const InventoryItemBody: Snail.FCC<InventoryItemBodyProps> = ({ error, ch
   );
 };
 
-export const InventoryItemStatus: FC<InventoryItemStatusProps> = ({
-  count,
-  icon,
-  linkTo,
-}) => {
+export const InventoryItemStatus: FC<InventoryItemStatusProps> = ({ count, icon, linkTo }) => {
   const body = (
     <>
       <span className="co-inventory-card__status-count">{count}</span> <Icon size="xl">{icon}</Icon>

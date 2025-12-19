@@ -5,7 +5,7 @@ import {
 
 import './status-popup.scss';
 
-export const StatusPopupSection: Snail.FCC<StatusPopupSectionProps> = ({
+export const StatusPopupSection: React.FCC<StatusPopupSectionProps> = ({
   firstColumn,
   secondColumn,
   children,
@@ -19,7 +19,7 @@ export const StatusPopupSection: Snail.FCC<StatusPopupSectionProps> = ({
   </>
 );
 
-const Status: Snail.FCC<StatusPopupItemProps> = ({ value, icon, children }) => (
+const Status: React.FCC<StatusPopupItemProps> = ({ value, icon, children }) => (
   <div className="co-status-popup__row">
     {children}
     {(value || icon) && (

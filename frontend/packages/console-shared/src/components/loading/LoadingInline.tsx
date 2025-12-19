@@ -1,4 +1,4 @@
 import { Loading } from './Loading';
 
-export const LoadingInline: Snail.FCC = () => <Loading isInline />;
+export const LoadingInline: React.FCC = () => <Loading isInline />;
 LoadingInline.displayName = 'LoadingInline';

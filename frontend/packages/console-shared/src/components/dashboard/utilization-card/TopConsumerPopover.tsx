@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode, ReactText } from 'react';
-
 import { memo, useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -270,7 +269,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
   ),
 );
 
-const ListItem: Snail.FCC<ListItemProps> = ({ children, value }) => (
+const ListItem: React.FCC<ListItemProps> = ({ children, value }) => (
   <li className="co-utilization-card-popover__consumer-item">
     {children}
     <div className="co-utilization-card-popover__consumer-value">{value}</div>

@@ -24,7 +24,7 @@ interface MeasureProps {
 /**
  * Limited clone of `react-measure` to measure the bounds of a component
  */
-const MeasureBounds: Snail.FCC<MeasureProps> = ({ onResize, children }) => {
+const MeasureBounds: React.FCC<MeasureProps> = ({ onResize, children }) => {
   const measureRef = useRef<HTMLDivElement>(null);
   const [contentRect, setContentRect] = useState<ContentRect>({
     bounds: { width: 0, height: 0 },

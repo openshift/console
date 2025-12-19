@@ -10,7 +10,7 @@ import { PageSection } from '@patternfly/react-core';
  * - If no <title> is provided, it renders a `PageSection` with the children, badge, helpAlert, and helpText.
  * - If no <title>, <children>, <badge>, <helpAlert>, or <helpText> are provided, it renders nothing.
  */
-const ListPageHeader: Snail.FCC<ListPageHeaderProps> = ({
+const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
   badge,
   children,
   helpAlert,
@@ -21,22 +21,22 @@ const ListPageHeader: Snail.FCC<ListPageHeaderProps> = ({
   title || children || badge || helpAlert || helpText ? (
     title ? (
       // Render PageHeading if title is present
-      (<PageHeading
+      <PageHeading
         title={title}
         badge={badge}
         hideFavoriteButton={hideFavoriteButton}
         helpText={helpText}
         primaryAction={children}
         helpAlert={helpAlert}
-      />)
+      />
     ) : (
       // Badge rendered from PageHeading only when title is present
-      (<PageSection hasBodyWrapper={false}>
+      <PageSection hasBodyWrapper={false}>
         {children && <div>{children}</div>}
         {badge && <div>{badge}</div>}
         {helpText && <div>{helpText}</div>}
         {helpAlert && <div>{helpAlert}</div>}
-      </PageSection>)
+      </PageSection>
     )
   ) : // Do not produce empty space if no title, children, badge, or help alert
   null;

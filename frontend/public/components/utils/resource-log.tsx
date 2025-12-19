@@ -209,7 +209,7 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
 };
 
 // Component for log stream controls
-const LogControls: Snail.FCC<LogControlsProps> = ({
+const LogControls: React.FCC<LogControlsProps> = ({
   dropdown,
   toggleFullscreen,
   currentLogURL,
@@ -502,14 +502,14 @@ const LogControls: Snail.FCC<LogControlsProps> = ({
 };
 
 /** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
-const LogLink: Snail.FCC<{ children: ReactNode; href: string }> = ({ children, href }) => (
+const LogLink: React.FCC<{ children: ReactNode; href: string }> = ({ children, href }) => (
   <ExternalLink component="button" onClick={handleRawLogs(href)}>
     {children}
   </ExternalLink>
 );
 
 // Resource agnostic log component
-export const ResourceLog: Snail.FCC<ResourceLogProps> = ({
+export const ResourceLog: React.FCC<ResourceLogProps> = ({
   bufferSize = DEFAULT_BUFFER_SIZE,
   containerName,
   dropdown,

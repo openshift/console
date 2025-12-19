@@ -158,13 +158,10 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
 
   const [cannotResolve, setCannotResolve] = useState(false);
   const [suggestedNamespaceExists, setSuggestedNamespaceExists] = useState(false);
-  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = useState(
+  const [suggestedNamespaceExistsInFlight, setSuggestedNamespaceExistsInFlight] = useState(true);
+  const [useSuggestedNSForSingleInstallMode, setUseSuggestedNSForSingleInstallMode] = useState(
     true,
   );
-  const [
-    useSuggestedNSForSingleInstallMode,
-    setUseSuggestedNSForSingleInstallMode,
-  ] = useState(true);
 
   const defaultEnableMonitoring =
     packageManifest?.metadata?.labels?.provider?.includes('Red Hat') &&
@@ -1229,7 +1226,7 @@ const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
   </StatusBox>
 );
 
-export const OperatorHubSubscribePage: Snail.FCC = (props) => {
+export const OperatorHubSubscribePage: React.FCC = (props) => {
   return (
     <Firehose
       resources={[

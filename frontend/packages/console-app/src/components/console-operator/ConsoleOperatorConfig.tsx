@@ -88,10 +88,9 @@ export const useConsoleOperatorConfigData = () => {
   );
 };
 
-export const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({
-  status,
-  errorMessage,
-}) => <Status status={status} title={status === 'failed' ? errorMessage : undefined} />;
+export const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ status, errorMessage }) => (
+  <Status status={status} title={status === 'failed' ? errorMessage : undefined} />
+);
 
 export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = ({
   pluginName,
@@ -134,9 +133,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
   );
 };
 
-export const ConsolePluginCSPStatus: FC<ConsolePluginCSPStatusProps> = ({
-  hasViolations,
-}) => {
+export const ConsolePluginCSPStatus: FC<ConsolePluginCSPStatusProps> = ({ hasViolations }) => {
   const { t } = useTranslation();
 
   return hasViolations ? (
@@ -294,7 +291,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
   );
 };
 
-const DevPluginsPage: Snail.FCC<ConsoleOperatorConfigPageProps> = (props) => {
+const DevPluginsPage: React.FCC<ConsoleOperatorConfigPageProps> = (props) => {
   const pluginInfo = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
@@ -372,9 +369,7 @@ const ConsoleOperatorConfigPluginsPage: FC<ConsoleOperatorConfigPageProps> = dev
   ? DevPluginsPage
   : PluginsPage;
 
-export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<
-  typeof DetailsPage
->> = (props) => {
+export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const location = useLocation();
 
   const pages = [

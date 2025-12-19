@@ -84,7 +84,7 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
   return null;
 };
 
-const MachineConfigPoolCharacteristics: Snail.FCC<MachineConfigPoolCharacteristicsProps> = ({
+const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristicsProps> = ({
   obj,
 }) => {
   const configuration = _.get(obj, 'status.configuration');
@@ -137,7 +137,7 @@ const MachineConfigPoolCharacteristics: Snail.FCC<MachineConfigPoolCharacteristi
   );
 };
 
-const MachineConfigPoolCounts: Snail.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
+const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -202,7 +202,7 @@ const MachineConfigPoolCounts: Snail.FCC<MachineConfigPoolCountsProps> = ({ obj 
   );
 };
 
-const MachineConfigPoolSummary: Snail.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
+const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const { t } = useTranslation();
   return (
@@ -217,7 +217,7 @@ const MachineConfigPoolSummary: Snail.FCC<MachineConfigPoolSummaryProps> = ({ ob
   );
 };
 
-const MachineConfigList: Snail.FCC<MachineConfigListProps> = ({ obj }) => (
+const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
   <MachineConfigPage
     canCreate={false}
     showTitle={false}
@@ -225,7 +225,7 @@ const MachineConfigList: Snail.FCC<MachineConfigListProps> = ({ obj }) => (
   />
 );
 
-const MachineConfigPoolDetails: Snail.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
+const MachineConfigPoolDetails: React.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
   const { t } = useTranslation();
   return (
@@ -281,7 +281,7 @@ const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({
   }
 };
 
-export const MachineConfigPoolDetailsPage: Snail.FCC<any> = (props) => {
+export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
   return (
     <DetailsPage
       {...props}
@@ -403,24 +403,26 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
 }) => {
   const columns = useMachineConfigPoolColumns();
 
-  return (<>
-    <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
-    <Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView<MachineConfigPoolKind, Action[]>
-        {...props}
-        label={MachineConfigPoolModel.labelPlural}
-        data={data}
-        loaded={loaded}
-        loadError={loadError}
-        columns={columns}
-        getDataViewRows={getDataViewRows}
-        hideColumnManagement={true}
-      />
-    </Suspense>
-  </>);
+  return (
+    <>
+      <MachineConfigPoolsArePausedAlert machineConfigPools={data} />
+      <Suspense fallback={<LoadingBox />}>
+        <ConsoleDataView<MachineConfigPoolKind, Action[]>
+          {...props}
+          label={MachineConfigPoolModel.labelPlural}
+          data={data}
+          loaded={loaded}
+          loadError={loadError}
+          columns={columns}
+          getDataViewRows={getDataViewRows}
+          hideColumnManagement={true}
+        />
+      </Suspense>
+    </>
+  );
 };
 
-export const MachineConfigPoolPage: Snail.FCC<any> = (props) => (
+export const MachineConfigPoolPage: React.FCC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineConfigPoolList}

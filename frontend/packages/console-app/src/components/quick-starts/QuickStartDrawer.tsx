@@ -7,7 +7,7 @@ interface QuickStartDrawerProps {
   children?: ReactNode;
 }
 
-export const QuickStartDrawer: Snail.FCC<QuickStartDrawerProps> = ({ children }) => (
+export const QuickStartDrawer: React.FCC<QuickStartDrawerProps> = ({ children }) => (
   <QuickStartsLoader>
     {(quickStarts) => (
       <PfQuickStartDrawer quickStarts={quickStarts} className="co-quick-start-drawer">

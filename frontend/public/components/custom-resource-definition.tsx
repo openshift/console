@@ -95,10 +95,7 @@ const EmptyVersionsMsg: FC<{}> = () => {
 const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = useState({ index: 0, direction: SortByDirection.asc });
-  const onSort = useCallback(
-    (_event, index, direction) => setSortBy({ index, direction }),
-    [],
-  );
+  const onSort = useCallback((_event, index, direction) => setSortBy({ index, direction }), []);
   const compare = useCallback(
     (a, b) => {
       const { index, direction } = sortBy;
@@ -122,9 +119,7 @@ const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
     [versions, compare],
   );
 
-  const headers = useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [
-    t,
-  ]);
+  const headers = useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [t]);
 
   return versionRows.length > 0 ? (
     <PfTable variant={TableVariant.compact} aria-label={t('public~CRD versions')}>
@@ -279,7 +274,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
   return columns;
 };
 
-const IsNamespaced: Snail.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
+const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   const { t } = useTranslation();
   return namespaced(obj) ? t('public~Yes') : t('public~No');
 };
@@ -334,7 +329,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
   });
 };
 
-export const CustomResourceDefinitionsList: Snail.FCC<CustomResourceDefinitionsListProps> = ({
+export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsListProps> = ({
   data,
   loaded,
   ...props
@@ -342,7 +337,7 @@ export const CustomResourceDefinitionsList: Snail.FCC<CustomResourceDefinitionsL
   const columns = useCustomResourceDefinitionsColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
@@ -352,7 +347,7 @@ export const CustomResourceDefinitionsList: Snail.FCC<CustomResourceDefinitionsL
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

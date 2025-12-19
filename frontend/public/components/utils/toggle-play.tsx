@@ -10,7 +10,7 @@ export interface TogglePlayProps {
   onClick: ButtonProps['onClick'];
 }
 
-export const TogglePlay: Snail.FCC<TogglePlayProps> = ({ active, className, onClick }) => {
+export const TogglePlay: React.FCC<TogglePlayProps> = ({ active, className, onClick }) => {
   const { t } = useTranslation();
 
   return (

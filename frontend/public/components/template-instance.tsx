@@ -140,11 +140,7 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   return columns;
 };
 
-export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useTemplateInstanceColumns();
 
@@ -187,7 +183,7 @@ export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({
   );
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
         label={TemplateInstanceModel.labelPlural}
@@ -200,11 +196,11 @@ export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({
         getDataViewRows={getTemplateInstanceDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const TemplateInstancePage: Snail.FCC<TemplateInstancePageProps> = (props) => {
+export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props) => {
   const { t } = useTranslation();
 
   return (
@@ -219,7 +215,7 @@ export const TemplateInstancePage: Snail.FCC<TemplateInstancePageProps> = (props
   );
 };
 
-const TemplateInstanceDetails: Snail.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
+const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
@@ -301,7 +297,7 @@ const TemplateInstanceDetails: Snail.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: Snail.FCC = (props) => (
+export const TemplateInstanceDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={templateInstanceReference}

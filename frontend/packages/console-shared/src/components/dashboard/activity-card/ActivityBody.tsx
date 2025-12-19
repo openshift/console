@@ -18,7 +18,7 @@ import EventItem from './EventItem';
 
 import './activity-card.scss';
 
-export const Activity: Snail.FCC<ActivityProps> = ({ timestamp, children }) => {
+export const Activity: React.FCC<ActivityProps> = ({ timestamp, children }) => {
   const { t } = useTranslation();
   return (
     <div className="co-activity-item__ongoing" data-test="activity">
@@ -164,11 +164,11 @@ export const OngoingActivityBody: FC<OngoingActivityBodyProps> = ({
   } else {
     const allActivities = prometheusActivities.map(({ results, component: Component }, idx) => (
       // eslint-disable-next-line react/no-array-index-key
-      (<Activity key={idx}>
+      <Activity key={idx}>
         <ErrorBoundaryInline>
           <Component results={results} />
         </ErrorBoundaryInline>
-      </Activity>)
+      </Activity>
     ));
     resourceActivities
       .sort((a, b) => +b.timestamp - +a.timestamp)
@@ -201,7 +201,7 @@ export const OngoingActivityBody: FC<OngoingActivityBodyProps> = ({
   );
 };
 
-const ActivityBody: Snail.FCC<ActivityBodyProps> = ({ children, className }) => (
+const ActivityBody: React.FCC<ActivityBodyProps> = ({ children, className }) => (
   <div className={css('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>

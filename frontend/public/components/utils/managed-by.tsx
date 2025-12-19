@@ -17,7 +17,7 @@ import { findOwner, matchOwnerAndCSV } from '../../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 
-export const ManagedByOperatorResourceLink: Snail.FCC<ManagerLinkProps> = ({
+export const ManagedByOperatorResourceLink: React.FCC<ManagerLinkProps> = ({
   csvName,
   namespace,
   owner,
@@ -49,7 +49,7 @@ export const ManagedByOperatorResourceLink: Snail.FCC<ManagerLinkProps> = ({
   );
 };
 
-export const ManagedByOperatorLink: Snail.FCC<ManagedByLinkProps> = ({ obj, className }) => {
+export const ManagedByOperatorLink: React.FCC<ManagedByLinkProps> = ({ obj, className }) => {
   const { t } = useTranslation();
   const [data, setData] = useSafetyFirst<ClusterServiceVersionKind[] | undefined>(undefined);
   const namespace = obj.metadata.namespace;

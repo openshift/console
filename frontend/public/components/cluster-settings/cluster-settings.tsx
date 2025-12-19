@@ -298,7 +298,7 @@ const ChannelHeader: FC<{}> = () => {
   );
 };
 
-const Channel: Snail.FCC<ChannelProps> = ({ children, endOfLife }) => {
+const Channel: React.FCC<ChannelProps> = ({ children, endOfLife }) => {
   return (
     <div
       className={css('co-channel', {
@@ -311,11 +311,11 @@ const Channel: Snail.FCC<ChannelProps> = ({ children, endOfLife }) => {
   );
 };
 
-const ChannelLine: Snail.FCC<ChannelLineProps> = ({ children, start }) => {
+const ChannelLine: React.FCC<ChannelLineProps> = ({ children, start }) => {
   return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
-export const ChannelName: Snail.FCC<ChannelNameProps> = ({ children, current }) => {
+export const ChannelName: React.FCC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={css('co-channel-name', {
@@ -328,7 +328,7 @@ export const ChannelName: Snail.FCC<ChannelNameProps> = ({ children, current }) 
   );
 };
 
-const ChannelPath: Snail.FCC<ChannelPathProps> = ({ children, current }) => {
+const ChannelPath: React.FCC<ChannelPathProps> = ({ children, current }) => {
   return (
     <ul
       className={css('co-channel-path', {
@@ -340,11 +340,7 @@ const ChannelPath: Snail.FCC<ChannelPathProps> = ({ children, current }) => {
   );
 };
 
-export const ChannelVersion: FC<ChannelVersionProps> = ({
-  children,
-  current,
-  updateBlocked,
-}) => {
+export const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
   const test = 'cv-channel-version';
   return (
     <span
@@ -377,11 +373,7 @@ export const UpdateBlockedLabel = () => {
   );
 };
 
-const ChannelVersionDot: FC<ChannelVersionDotProps> = ({
-  current,
-  updateBlocked,
-  version,
-}) => {
+const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked, version }) => {
   const releaseNotesLink = getReleaseNotesLink(version);
   const { t } = useTranslation();
   const test = 'cv-channel-version-dot';
@@ -427,11 +419,11 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({
   );
 };
 
-const UpdatesBar: Snail.FCC<UpdatesBarProps> = ({ children }) => {
+const UpdatesBar: React.FCC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-export const UpdatesGroup: Snail.FCC<UpdatesGroupProps> = ({ children, divided }) => {
+export const UpdatesGroup: React.FCC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={css('co-cluster-settings__updates-group', {
@@ -444,7 +436,7 @@ export const UpdatesGroup: Snail.FCC<UpdatesGroupProps> = ({ children, divided }
   );
 };
 
-export const UpdatesProgress: Snail.FCC<UpdatesProgressProps> = ({ children }) => {
+export const UpdatesProgress: React.FCC<UpdatesProgressProps> = ({ children }) => {
   return (
     <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
       {children}
@@ -452,7 +444,7 @@ export const UpdatesProgress: Snail.FCC<UpdatesProgressProps> = ({ children }) =
   );
 };
 
-const UpdatesType: Snail.FCC<UpdatesTypeProps> = ({ children }) => {
+const UpdatesType: React.FCC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 
@@ -770,7 +762,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
   const nextMajorMinorVersion = `${newerUpdateParsed?.major}.${newerUpdateParsed?.minor}`;
 
   return (
-    (<Alert
+    <Alert
       variant="warning"
       isInline
       title={
@@ -797,14 +789,14 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
             )}
             {notUpgradeableCSVsPresent && (
               // TODO:  update link to include filter once installed Operators filters are updated
-              (<FlexItem>
+              <FlexItem>
                 <Link
                   onClick={onCancel}
                   to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}
                 >
                   {t('public~View installed Operators')}
                 </Link>
-              </FlexItem>)
+              </FlexItem>
             )}
           </Flex>
         )
@@ -816,7 +808,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
         inline
         options={{ simplifiedAutoLink: true }}
       />
-    </Alert>)
+    </Alert>
   );
 };
 

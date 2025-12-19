@@ -1,7 +1,6 @@
 // THIS COMPONENT IS DEPRECATED AND WILL BE REMOVED IN v4.6.
 
 import type { FC, ReactNode } from 'react';
-
 import { useState, useMemo, Fragment } from 'react';
 import {
   Alert,
@@ -459,7 +458,7 @@ const pathToArray = (path: string): (string | number)[] =>
     return /^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath;
   });
 
-const FieldGroup: Snail.FCC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
+const FieldGroup: React.FCC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
 
   const onToggle = (event) => {
@@ -1017,7 +1016,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
       );
 
       return (
-        (<FieldGroup id={id} isExpanded={isExpanded} key={id} label={groupDisplayName}>
+        <FieldGroup id={id} isExpanded={isExpanded} key={id} label={groupDisplayName}>
           {_.map(fieldLists, (fieldList, index) => (
             <Fragment key={`${groupName}-${index}`}>
               {index > 0 && <hr />}
@@ -1049,7 +1048,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
               {t('olm~Add {{item}}', { item: singularGroupDisplayName })}
             </Button>
           </div>
-        </FieldGroup>)
+        </FieldGroup>
       );
     });
 

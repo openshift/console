@@ -102,14 +102,7 @@ export const sorts = {
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
-export const TableRow: FC<TableRowProps> = ({
-  id,
-  index,
-  trKey,
-  style,
-  className,
-  ...props
-}) => {
+export const TableRow: FC<TableRowProps> = ({ id, index, trKey, style, className, ...props }) => {
   return (
     <Tr
       {...props}
@@ -205,9 +198,9 @@ export type TableDataProps = {
   showNamespaceOverride?: boolean;
 };
 
-const RowMemo = memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(
-  ({ Row, ...props }) => <Row {...props} />,
-);
+const RowMemo = memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(({ Row, ...props }) => (
+  <Row {...props} />
+));
 
 const VirtualBody: FC<VirtualBodyProps> = (props) => {
   const {
@@ -345,7 +338,7 @@ const getActiveColumns = (
 };
 
 // TODO Replace with ./Table/VirtualizedTable
-const VirtualizedTable: Snail.FCC<VirtualizedTableProps> = ({
+const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
   ariaLabel,
   columns,
   customData,
@@ -398,7 +391,7 @@ const VirtualizedTable: Snail.FCC<VirtualizedTableProps> = ({
   );
 };
 
-const StandardTable: Snail.FCC<StandardTableProps> = ({
+const StandardTable: React.FCC<StandardTableProps> = ({
   columns,
   customData,
   data,

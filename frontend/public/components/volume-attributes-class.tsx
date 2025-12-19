@@ -127,7 +127,7 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
   });
 };
 
-export const VolumeAttributesClassList: Snail.FCC<VolumeAttributesClassListProps> = ({
+export const VolumeAttributesClassList: React.FCC<VolumeAttributesClassListProps> = ({
   data,
   loaded,
   loadError,
@@ -153,7 +153,7 @@ export const VolumeAttributesClassList: Snail.FCC<VolumeAttributesClassListProps
   );
 };
 
-export const VolumeAttributesClassPage: Snail.FCC<ListPageProps> = (props) => {
+export const VolumeAttributesClassPage: React.FCC<ListPageProps> = (props) => {
   return (
     <ListPage
       {...props}
@@ -165,7 +165,7 @@ export const VolumeAttributesClassPage: Snail.FCC<ListPageProps> = (props) => {
   );
 };
 
-const VolumeAttributesClassDetails: Snail.FCC<VolumeAttributesClassDetailsProps> = ({ obj }) => {
+const VolumeAttributesClassDetails: React.FCC<VolumeAttributesClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   const parameters = obj?.parameters ?? {};
@@ -201,7 +201,7 @@ const VolumeAttributesClassDetails: Snail.FCC<VolumeAttributesClassDetailsProps>
   );
 };
 
-export const VolumeAttributesClassDetailsPage: Snail.FCC<VolumeAttributesClassDetailsPageProps> = ({
+export const VolumeAttributesClassDetailsPage: React.FCC<VolumeAttributesClassDetailsPageProps> = ({
   ...restProps
 }) => {
   const customActionMenu = (kindObj, obj) => {

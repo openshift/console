@@ -7,7 +7,7 @@ import { getProjectResource, BuilderImagesNamespace } from '../../../utils/image
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamNsDropdown: Snail.FCC<{
+const ImageStreamNsDropdown: React.FCC<{
   disabled?: boolean;
   formContextField?: string;
   className?: string;

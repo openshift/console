@@ -64,7 +64,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const Completions: Snail.FCC<CompletionsCellProps> = ({ obj, completions }) => {
+const Completions: React.FCC<CompletionsCellProps> = ({ obj, completions }) => {
   const { t } = useTranslation();
   return (
     <Link to={`/k8s/ns/${obj.metadata.namespace}/jobs/${obj.metadata.name}/pods`} title="pods">
@@ -306,11 +306,11 @@ const useJobsColumns = (): TableColumn<JobKind>[] => {
   return columns;
 };
 
-const JobsList: Snail.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
+const JobsList: React.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
   const columns = useJobsColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<JobKind>
         {...props}
         label={JobModel.labelPlural}
@@ -320,7 +320,7 @@ const JobsList: Snail.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

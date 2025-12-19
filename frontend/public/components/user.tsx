@@ -160,7 +160,7 @@ const useUsersColumns = () => {
   );
 };
 
-export const UserList: Snail.FCC<UserListProps> = (props) => {
+export const UserList: React.FCC<UserListProps> = (props) => {
   const { t } = useTranslation();
   const columns = useUsersColumns();
   const { data, loaded } = props;
@@ -171,7 +171,7 @@ export const UserList: Snail.FCC<UserListProps> = (props) => {
   }
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<UserKind>
         {...props}
         data={data}
@@ -181,7 +181,7 @@ export const UserList: Snail.FCC<UserListProps> = (props) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

@@ -20,10 +20,7 @@ import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../mod
 import { LinkifyExternal } from './link';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
-export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({
-  kind,
-  path,
-}) => {
+export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
   const pathArray: string[] = _.toPath(path);
   return (
     <Breadcrumb>
@@ -40,7 +37,7 @@ export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({
   );
 };
 
-const EditButton: Snail.FCC<EditButtonProps> = (props) => {
+const EditButton: React.FCC<EditButtonProps> = (props) => {
   return (
     <Button
       icon={<PencilAltIcon />}

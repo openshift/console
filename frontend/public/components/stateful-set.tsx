@@ -73,11 +73,11 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-const StatefulSetsList: Snail.FCC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
+const StatefulSetsList: React.FCC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
   const columns = useWorkloadColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={StatefulSetModel.labelPlural}
@@ -89,11 +89,11 @@ const StatefulSetsList: Snail.FCC<StatefulSetsListProps> = ({ data, loaded, ...p
         }
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const StatefulSetsPage: Snail.FCC<StatefulSetsPageProps> = (props) => {
+export const StatefulSetsPage: React.FCC<StatefulSetsPageProps> = (props) => {
   return (
     <ListPage
       {...props}
@@ -105,9 +105,7 @@ export const StatefulSetsPage: Snail.FCC<StatefulSetsPageProps> = (props) => {
   );
 };
 
-const StatefulSetPods: FC<StatefulSetPodsProps> = (props) => (
-  <PodsComponent {...props} showNodes />
-);
+const StatefulSetPods: FC<StatefulSetPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 
 export const StatefulSetsDetailsPage: FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();

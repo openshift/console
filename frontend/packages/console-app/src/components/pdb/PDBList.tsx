@@ -139,7 +139,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   return columns;
 };
 
-const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
+const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
   data,
   loaded,
   ...props
@@ -147,7 +147,7 @@ const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
   const columns = usePDBColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PodDisruptionBudgetKind>
         {...props}
         label={PodDisruptionBudgetModel.labelPlural}
@@ -157,7 +157,7 @@ const PodDisruptionBudgetList: Snail.FCC<PodDisruptionBudgetsListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

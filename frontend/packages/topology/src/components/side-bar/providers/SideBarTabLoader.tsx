@@ -10,7 +10,7 @@ type SideBarTabLoaderProps = {
   children: (tabs: Tab[], loaded: boolean) => ReactElement;
 };
 
-const SideBarTabLoader: Snail.FCC<SideBarTabLoaderProps> = ({ element, children }) => {
+const SideBarTabLoader: React.FCC<SideBarTabLoaderProps> = ({ element, children }) => {
   const tabExtensions = useDetailsTab();
   const [tabSectionExtensions, tabSectionExtensionsResolved] = useDetailsTabSection();
 

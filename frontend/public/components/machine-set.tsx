@@ -404,7 +404,7 @@ const getDataViewRows = (
   });
 };
 
-const MachineSetListContent: Snail.FCC<MachineSetListProps> = ({
+const MachineSetListContent: React.FCC<MachineSetListProps> = ({
   data,
   loaded,
   loadError,
@@ -413,7 +413,7 @@ const MachineSetListContent: Snail.FCC<MachineSetListProps> = ({
   const columns = useMachineSetColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineSetKind>
         {...props}
         label={MachineSetModel.labelPlural}
@@ -424,11 +424,11 @@ const MachineSetListContent: Snail.FCC<MachineSetListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const MachineSetList: Snail.FCC<MachineSetListProps> = ({
+export const MachineSetList: React.FCC<MachineSetListProps> = ({
   data,
   loaded,
   loadError,

@@ -40,7 +40,7 @@ const blacklistResources = ImmutableSet([
   'events.k8s.io/v1beta1.Event',
 ]);
 
-const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
+const ResourceListDropdown_: React.FCC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -51,9 +51,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
     true,
   );
   const [selectedOptions, setSelectedOptions] = useState(selected);
-  const [initialSelectOptions, setInitialSelectOptions] = useState<
-    ExtendedSelectOptionProps[]
-  >([]);
+  const [initialSelectOptions, setInitialSelectOptions] = useState<ExtendedSelectOptionProps[]>([]);
   const [selectOptions, setSelectOptions] = useState<ExtendedSelectOptionProps[]>(
     initialSelectOptions,
   );
@@ -423,7 +421,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
   };
 
   return (
-    (<div className={className}>
+    <div className={className}>
       <Select
         toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
@@ -474,7 +472,7 @@ const ResourceListDropdown_: Snail.FCC<ResourceListDropdownProps> = (props) => {
           {renderedOptions()}
         </SelectList>
       </Select>
-    </div>)
+    </div>
   );
 };
 

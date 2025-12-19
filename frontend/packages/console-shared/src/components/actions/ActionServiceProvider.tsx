@@ -14,7 +14,7 @@ import ActionsLoader from './loader/ActionsLoader';
 import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
-const ActionServiceProvider: Snail.FCC<ActionServiceProviderProps> = ({ context, children }) => {
+const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context, children }) => {
   const [contextMap, setContextMap] = useState<ActionContext>(context);
   const [actionsMap, setActionsMap] = useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = useState<any>();

@@ -109,7 +109,7 @@ export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = 
   const columns = useLimitRangeColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         data={data}
         loaded={loaded}
@@ -118,7 +118,7 @@ export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = 
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -132,7 +132,7 @@ export const LimitRangeListPage: FC<LimitRangeListPageProps> = (props) => (
   />
 );
 
-export const LimitRangeDetailsRow: Snail.FCC<LimitRangeDetailsRowProps> = ({
+export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
   limitType,
   resource,
   limit,
@@ -150,7 +150,7 @@ export const LimitRangeDetailsRow: Snail.FCC<LimitRangeDetailsRowProps> = ({
   );
 };
 
-const LimitRangeDetailsRows: Snail.FCC<LimitRangeDetailsRowsProps> = ({ limit }) => {
+const LimitRangeDetailsRows: React.FCC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];
   const resources = {};
   _.each(properties, (property) => {

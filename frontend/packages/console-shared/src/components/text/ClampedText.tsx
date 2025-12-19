@@ -9,7 +9,7 @@ type ClampedTextProps = {
   lineClamp?: number;
 };
 
-const ClampedText: Snail.FCC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
+const ClampedText: React.FCC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
   const [isContentClamped, setContentClamped] = useState<boolean>(false);
   const measureRef = useRef<HTMLDivElement>(null);
   const debouncedSetContentClamped = useDebounceCallback(() => {

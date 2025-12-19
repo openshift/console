@@ -3,7 +3,7 @@ import { CRDAdditionalPrinterColumn, K8sResourceKind } from '@console/internal/m
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DASH } from '../../constants';
 
-export const AdditionalPrinterColumnValue: Snail.FCC<AdditionalPrinterColumnValueProps> = ({
+export const AdditionalPrinterColumnValue: React.FCC<AdditionalPrinterColumnValueProps> = ({
   col,
   obj,
 }) => {

@@ -385,7 +385,7 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
   return columns;
 };
 
-export const HorizontalPodAutoscalersList: Snail.FCC<HorizontalPodAutoscalersListProps> = ({
+export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersListProps> = ({
   data,
   loaded,
   ...props
@@ -393,7 +393,7 @@ export const HorizontalPodAutoscalersList: Snail.FCC<HorizontalPodAutoscalersLis
   const columns = useHorizontalPodAutoscalersColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
         label={HorizontalPodAutoscalerModel.labelPlural}
@@ -403,14 +403,12 @@ export const HorizontalPodAutoscalersList: Snail.FCC<HorizontalPodAutoscalersLis
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
-export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps> = (
-  props,
-) => (
+export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps> = (props) => (
   <ListPage
     {...props}
     kind={HorizontalPodAutoscalersReference}

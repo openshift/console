@@ -14,7 +14,7 @@ type GridProps = {
   children: (props: GridChildrenProps) => ReactNode;
 };
 
-const Grid: Snail.FCC<GridProps> = ({ height, width, scrollTop, items, children }) => {
+const Grid: React.FCC<GridProps> = ({ height, width, scrollTop, items, children }) => {
   const {
     cache,
     cellWidth,

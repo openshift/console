@@ -59,11 +59,11 @@ export type ConsoleDataViewProps<
   mock?: boolean;
 };
 
-export const BodyLoading: Snail.FCC<{ columns: number }> = ({ columns }) => {
+export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
   return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
 };
 
-export const BodyEmpty: Snail.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation();
   return (
     <Tbody>
@@ -135,10 +135,10 @@ export const ConsoleDataView = <
     dataViewColumns.length,
   ]);
 
-  const bodyEmpty = useMemo(
-    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
-    [dataViewColumns.length, label],
-  );
+  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
+    dataViewColumns.length,
+    label,
+  ]);
 
   const activeState = useMemo(() => {
     if (!loaded) {

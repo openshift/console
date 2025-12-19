@@ -5,7 +5,7 @@ type CatalogPageNumItemsProps = {
   children: ReactNode;
 };
 
-const CatalogPageNumItems: Snail.FCC<CatalogPageNumItemsProps> = ({ children }) => (
+const CatalogPageNumItems: React.FCC<CatalogPageNumItemsProps> = ({ children }) => (
   <FlexItem className="co-catalog-page__num-items">{children}</FlexItem>
 );
 

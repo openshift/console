@@ -77,7 +77,7 @@ export type ConsoleSelectProps = {
   renderInline?: boolean;
 };
 
-const ConsoleSelectItem: Snail.FCC<{
+const ConsoleSelectItem: React.FCC<{
   itemKey: string;
   content: ReactNode;
   selected: boolean;
@@ -113,7 +113,7 @@ const useInsideLegacyModal = (ref: RefObject<HTMLElement>) => {
  *
  * Due to this components complexity, prefer `@patternfly/react-templates` components when possible.
  */
-export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
+export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
   actionItems,
   active,
   ariaLabel,
@@ -290,7 +290,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
   }, [bookmarks, enableBookmarks, headerBefore, items, selectedKey, spacerBefore]);
 
   return (
-    (<div className={className} ref={dropdownWrapperRef}>
+    <div className={className} ref={dropdownWrapperRef}>
       <Select
         isOpen={expanded}
         onOpenChange={setExpanded}
@@ -381,7 +381,7 @@ export const ConsoleSelect: Snail.FCC<ConsoleSelectProps> = ({
           ) : null}
         </SelectList>
       </Select>
-    </div>)
+    </div>
   );
 };
 

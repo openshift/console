@@ -90,16 +90,3 @@ declare interface Window {
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
 declare type Diff<T, K> = Omit<T, keyof K>;
-
-declare namespace Snail {
-    // Type def for a childless FunctionComponent
-  interface FCC<P = {}> {
-    (props: P, context?: any): ReactElement | null;
-    propTypes?: FunctionComponent<P>['propTypes'];
-    contextTypes?: FunctionComponent<P>['contextTypes'];
-    defaultProps?: FunctionComponent<P>['defaultProps'];
-    displayName?: FunctionComponent<P>['displayName'];
-  }
-  }
-export = Snail;
-export as namespace Snail;

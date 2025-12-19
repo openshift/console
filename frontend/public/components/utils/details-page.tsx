@@ -36,9 +36,9 @@ export const pluralize = (
 };
 
 export const detailsPage = <T extends {}>(Component: ComponentType<T>) =>
-  (function DetailsPage(props: T) {
+  function DetailsPage(props: T) {
     return <Component {...props} />;
-  });
+  };
 
 const getTolerationsPath = (obj: K8sResourceKind): string => {
   // FIXME: Is this correct for all types (jobs, cron jobs)? It would be better for the embedding page to pass in the path.
@@ -171,7 +171,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
   );
 };
 
-export const ResourcePodCount: Snail.FCC<ResourcePodCountProps> = ({ resource }) => {
+export const ResourcePodCount: React.FCC<ResourcePodCountProps> = ({ resource }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -203,7 +203,7 @@ export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
   );
 };
 
-export const UpstreamConfigDetailsItem: Snail.FCC<UpstreamConfigDetailsItemProps> = ({
+export const UpstreamConfigDetailsItem: React.FCC<UpstreamConfigDetailsItemProps> = ({
   resource,
 }) => {
   const { t } = useTranslation();

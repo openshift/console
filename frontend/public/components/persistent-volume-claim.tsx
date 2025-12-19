@@ -76,7 +76,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-export const PVCStatusComponent: Snail.FCC<PVCStatusProps> = ({ pvc }) => {
+export const PVCStatusComponent: React.FCC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
   const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatus>(isPVCStatus);
 
@@ -230,7 +230,7 @@ const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKin
   return columns;
 };
 
-const PVCDetails: Snail.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
+const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
   const { t } = useTranslation();
 
@@ -416,7 +416,7 @@ const PVCDetails: Snail.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   );
 };
 
-export const PersistentVolumeClaimList: Snail.FCC<PersistentVolumeClaimListProps> = ({
+export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps> = ({
   data,
   loaded,
   ...props
@@ -425,10 +425,7 @@ export const PersistentVolumeClaimList: Snail.FCC<PersistentVolumeClaimListProps
   const columns = usePersistentVolumeClaimColumns();
   const pvcMetrics = useSelector<RootState, PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
-  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [
-    t,
-    pvcMetrics,
-  ]);
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
   const pvcStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
@@ -482,7 +479,7 @@ export const PersistentVolumeClaimList: Snail.FCC<PersistentVolumeClaimListProps
   );
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeClaimKind>
         {...props}
         label={t('public~PersistentVolumeClaims')}
@@ -495,11 +492,11 @@ export const PersistentVolumeClaimList: Snail.FCC<PersistentVolumeClaimListProps
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const PersistentVolumeClaimsPage: Snail.FCC<PersistentVolumeClaimsPageProps> = ({
+export const PersistentVolumeClaimsPage: React.FCC<PersistentVolumeClaimsPageProps> = ({
   namespace,
   ...props
 }) => {
@@ -566,7 +563,7 @@ export const PersistentVolumeClaimsPage: Snail.FCC<PersistentVolumeClaimsPagePro
   );
 };
 
-export const PersistentVolumeClaimsDetailsPage: Snail.FCC<DetailsPageProps> = (props) => {
+export const PersistentVolumeClaimsDetailsPage: React.FCC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
 
   const customActionMenu = (kindObj, obj) => {

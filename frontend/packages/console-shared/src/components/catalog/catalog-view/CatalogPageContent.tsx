@@ -5,7 +5,7 @@ type CatalogPageContentProps = {
   children: ReactNode;
 };
 
-const CatalogPageContent: Snail.FCC<CatalogPageContentProps> = ({ children }) => (
+const CatalogPageContent: React.FCC<CatalogPageContentProps> = ({ children }) => (
   <FlexItem
     className="co-catalog-page__content"
     grow={{ default: 'grow' }}

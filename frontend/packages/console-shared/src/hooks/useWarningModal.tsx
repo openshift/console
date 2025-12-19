@@ -5,7 +5,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.
  */
-const ControlledWarningModal: Snail.FCC<WarningModalProps> = (props) => {
+const ControlledWarningModal: React.FCC<WarningModalProps> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const onClose: WarningModalProps['onClose'] = (e) => {

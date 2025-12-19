@@ -85,7 +85,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const BooleanDisplay: Snail.FCC<{ value?: boolean }> = ({ value }) => {
+const BooleanDisplay: React.FCC<{ value?: boolean }> = ({ value }) => {
   const { t } = useTranslation();
   return value ? t('public~True') : t('public~False');
 };
@@ -139,7 +139,7 @@ const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
   });
 };
 
-const CronJobDetails: Snail.FCC<CronJobDetailsProps> = ({ obj: cronjob }) => {
+const CronJobDetails: React.FCC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   const job = cronjob.spec.jobTemplate;
   const { t } = useTranslation();
   return (
@@ -238,7 +238,7 @@ const getPodsWatcher = (namespace: string) => {
   ];
 };
 
-export const CronJobPodsComponent: Snail.FCC<CronJobPodsComponentProps> = ({ obj }) => {
+export const CronJobPodsComponent: React.FCC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
   const podFilters = useMemo(() => getPodFilters(t), [t]);
   return (
@@ -280,7 +280,7 @@ export type CronJobJobsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobJobsComponent: Snail.FCC<CronJobJobsComponentProps> = ({ obj }) => (
+export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj }) => (
   <PaneBody>
     <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
@@ -366,11 +366,11 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   return columns;
 };
 
-export const CronJobsList: Snail.FCC<CronJobsListProps> = ({ data, loaded, ...props }) => {
+export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...props }) => {
   const columns = useCronJobsColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CronJobKind>
         {...props}
         label={CronJobModel.labelPlural}
@@ -380,11 +380,11 @@ export const CronJobsList: Snail.FCC<CronJobsListProps> = ({ data, loaded, ...pr
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const CronJobsPage: Snail.FCC<CronJobsPageProps> = (props) => (
+export const CronJobsPage: React.FCC<CronJobsPageProps> = (props) => (
   <ListPage
     {...props}
     ListComponent={CronJobsList}
@@ -394,7 +394,7 @@ export const CronJobsPage: Snail.FCC<CronJobsPageProps> = (props) => (
   />
 );
 
-export const CronJobsDetailsPage: Snail.FCC = (props) => {
+export const CronJobsDetailsPage: React.FCC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };

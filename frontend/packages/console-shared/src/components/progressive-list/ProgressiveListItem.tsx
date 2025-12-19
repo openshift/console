@@ -8,7 +8,7 @@ export interface ProgressiveListItemProps {
   name: string;
 }
 
-const ProgressiveListItem: Snail.FCC<ProgressiveListItemProps> = ({ children }) => {
+const ProgressiveListItem: React.FCC<ProgressiveListItemProps> = ({ children }) => {
   const element = useRef<HTMLDivElement>();
   useEffect(() => {
     element.current.scrollIntoView({ behavior: 'smooth' });

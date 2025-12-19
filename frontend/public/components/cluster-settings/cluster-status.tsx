@@ -27,9 +27,7 @@ import { resourcePathFromModel } from '../utils/resource-link';
 import { truncateMiddle } from '../utils/truncate-middle';
 import { ErrorModal, ErrorModalProps } from '../modals/error-modal';
 
-export const ClusterVersionConditionsLink: FC<ClusterVersionConditionsLinkProps> = ({
-  cv,
-}) => {
+export const ClusterVersionConditionsLink: FC<ClusterVersionConditionsLinkProps> = ({ cv }) => {
   const { t } = useTranslation();
   return (
     <HashLink
@@ -53,7 +51,7 @@ const cancelUpdate = (
   );
 };
 
-const StatusMessagePopover: Snail.FCC<CVStatusMessagePopoverProps> = ({
+const StatusMessagePopover: React.FCC<CVStatusMessagePopoverProps> = ({
   bodyContent,
   children,
 }) => {

@@ -40,7 +40,7 @@ import { WorkloadTableHeader, getWorkloadDataViewRows, useWorkloadColumns } from
 
 const kind = referenceForModel(DeploymentModel);
 
-export const DeploymentDetailsList: Snail.FCC<DeploymentDetailsListProps> = ({ deployment }) => {
+export const DeploymentDetailsList: React.FCC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
   return (
     <DescriptionList>
@@ -95,7 +95,7 @@ export const DeploymentDetailsList: Snail.FCC<DeploymentDetailsListProps> = ({ d
 };
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
-const DeploymentDetails: Snail.FCC<DeploymentDetailsProps> = ({ obj: deployment }) => {
+const DeploymentDetails: React.FCC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   const { t } = useTranslation();
 
   return (
@@ -158,7 +158,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicaSetsTab: Snail.FCC<ReplicaSetsTabProps> = ({ obj }) => {
+const ReplicaSetsTab: React.FCC<ReplicaSetsTabProps> = ({ obj }) => {
   const {
     metadata: { namespace },
     spec: { selector },
@@ -175,7 +175,7 @@ const ReplicaSetsTab: Snail.FCC<ReplicaSetsTabProps> = ({ obj }) => {
   );
 };
 
-export const DeploymentsDetailsPage: Snail.FCC = (props) => {
+export const DeploymentsDetailsPage: React.FCC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -224,11 +224,11 @@ const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentModel);
 };
 
-export const DeploymentsList: Snail.FCC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
+export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
   const columns = useWorkloadColumns<DeploymentKind>();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentModel.labelPlural}
@@ -237,12 +237,12 @@ export const DeploymentsList: Snail.FCC<DeploymentsListProps> = ({ data, loaded,
         columns={columns}
         getDataViewRows={getDataViewRows}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: Snail.FCC<DeploymentsPageProps> = (props) => {
+export const DeploymentsPage: React.FCC<DeploymentsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deployments/~new/form`,
   };

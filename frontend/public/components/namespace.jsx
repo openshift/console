@@ -427,7 +427,7 @@ export const NamespacesList = (props) => {
   }
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={NamespaceModel.labelPlural}
@@ -441,7 +441,7 @@ export const NamespacesList = (props) => {
           getNamespaceDataViewRows(rowData, tableColumns, namespaceMetrics, t)
         }
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -703,7 +703,7 @@ export const ProjectsTable = (props) => {
   const columns = useProjectsColumns({ showMetrics: false, showActions: false });
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ProjectModel.labelPlural}
@@ -713,7 +713,7 @@ export const ProjectsTable = (props) => {
         }
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -809,7 +809,7 @@ export const ProjectList = (props) => {
   }
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={ProjectModel.labelPlural}
@@ -824,7 +824,7 @@ export const ProjectList = (props) => {
         }
         NoDataEmptyMsg={OpenShiftGettingStarted}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -850,7 +850,7 @@ export const ProjectsPage = (props) => {
   );
 };
 
-/** @type {Snail.FCC<{namespace: K8sResourceKind}>} */
+/** @type {React.FCC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);

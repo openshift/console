@@ -90,7 +90,7 @@ const useConfigResources = () => {
   return [adjustedConfigResources, clusterOperatorConfigResources];
 };
 
-export const GlobalConfigPage: Snail.FCC = () => {
+export const GlobalConfigPage: React.FCC = () => {
   const { t } = useTranslation();
   const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
   const [configResources, clusterOperatorConfigResources] = useConfigResources();

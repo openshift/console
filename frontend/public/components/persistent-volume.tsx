@@ -243,7 +243,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   );
 };
 
-export const PersistentVolumeList: Snail.FCC<PersistentVolumeListProps> = ({
+export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
   data,
   loaded,
   ...props
@@ -253,7 +253,7 @@ export const PersistentVolumeList: Snail.FCC<PersistentVolumeListProps> = ({
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeKind>
         {...props}
         label={PersistentVolumeModel.labelPlural}
@@ -263,7 +263,7 @@ export const PersistentVolumeList: Snail.FCC<PersistentVolumeListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -282,7 +282,7 @@ export const PersistentVolumesPage = (props: ListPageProps) => {
   );
 };
 
-export const PersistentVolumesDetailsPage: Snail.FCC<DetailsPageProps> = (props) => (
+export const PersistentVolumesDetailsPage: React.FCC<DetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={persistentVolumeReference}

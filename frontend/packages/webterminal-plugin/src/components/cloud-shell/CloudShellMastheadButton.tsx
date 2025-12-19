@@ -7,7 +7,7 @@ import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dis
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import { useCloudShellAvailable } from './useCloudShellAvailable';
 
-export const CloudShellMastheadButton: Snail.FCC = () => {
+export const CloudShellMastheadButton: React.FCC = () => {
   const terminalAvailable = useCloudShellAvailable();
   const fireTelemetryEvent = useTelemetry();
   const open = useIsCloudShellExpanded();

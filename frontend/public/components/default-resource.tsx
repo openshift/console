@@ -81,17 +81,13 @@ type ResourceActionsMenuProps = {
   resource: K8sResourceKind;
 } & Pick<ComponentProps<typeof ActionMenu>, 'variant' | 'appendTo'>;
 
-const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({
-  resource,
-  variant,
-  appendTo,
-}) => {
+const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, appendTo }) => {
   const common = useCommonResourceActions(kindObj(referenceFor(resource)), resource);
   const menuActions = [...common];
   return <ActionMenu actions={menuActions} variant={variant} appendTo={appendTo} />;
 };
 
-const NamespaceCell: Snail.FCC<NamespaceCellProps> = ({ namespace }) => {
+const NamespaceCell: React.FCC<NamespaceCellProps> = ({ namespace }) => {
   const { t } = useTranslation();
   return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
 };
@@ -377,9 +373,7 @@ export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponent'>> = (
-  props,
-) => (
+export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponent'>> = (props) => (
   <ListPage
     {...props}
     ListComponent={DefaultList}

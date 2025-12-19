@@ -40,9 +40,7 @@ export const CreateYAMLInner = ({
     ),
   );
 
-  const yamlTemplates = useMemo(() => getYAMLTemplates(templateExtensions), [
-    templateExtensions,
-  ]);
+  const yamlTemplates = useMemo(() => getYAMLTemplates(templateExtensions), [templateExtensions]);
 
   const initialResource = useMemo(() => {
     if (!kindObj) {
@@ -115,7 +113,7 @@ export const CreateYAML = (props) => {
   return <CreateYAML_ {...props} params={params} />;
 };
 
-export const EditYAMLPage: Snail.FCC<EditYAMLPageProps> = (props) => {
+export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
   const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent

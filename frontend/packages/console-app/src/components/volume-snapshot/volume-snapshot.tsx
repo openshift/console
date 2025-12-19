@@ -212,7 +212,7 @@ const useVolumeSnapshotColumns = (
   return columns;
 };
 
-const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
+const VolumeSnapshotTable: React.FCC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
 
@@ -274,7 +274,7 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
   );
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotKind>
         {...props}
         label={VolumeSnapshotModel.labelPlural}
@@ -288,11 +288,11 @@ const VolumeSnapshotTable: Snail.FCC<VolumeSnapshotTableProps> = ({ data, loaded
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const VolumeSnapshotPage: Snail.FCC<VolumeSnapshotPageProps> = ({
+export const VolumeSnapshotPage: React.FCC<VolumeSnapshotPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
@@ -340,7 +340,7 @@ const checkPVCSnapshot = (
       getNamespace(snapshot) === getNamespace(pvc),
   );
 
-export const VolumeSnapshotPVCPage: Snail.FCC<VolumeSnapshotPVCPage> = ({ ns, obj }) => {
+export const VolumeSnapshotPVCPage: React.FCC<VolumeSnapshotPVCPage> = ({ ns, obj }) => {
   const params = useParams();
   const namespace = ns || params?.ns;
 

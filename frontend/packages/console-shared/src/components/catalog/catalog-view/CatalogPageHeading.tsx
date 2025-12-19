@@ -5,7 +5,7 @@ type CatalogPageHeadingProps = {
   children: ReactNode;
 };
 
-const CatalogPageHeading: Snail.FCC<CatalogPageHeadingProps> = ({ children }) => (
+const CatalogPageHeading: React.FCC<CatalogPageHeadingProps> = ({ children }) => (
   <Title
     headingLevel="h2"
     size={TitleSizes.lg}

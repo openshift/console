@@ -38,7 +38,7 @@ export const ResourceItemDeleting = () => {
   );
 };
 
-export const ActionButtons: Snail.FCC<ActionButtonsProps> = ({ actionButtons }) => (
+export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) => (
   <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
@@ -192,7 +192,7 @@ export const ConnectedPageHeading = connectToModel(
   },
 );
 
-export const SectionHeading: Snail.FCC<SectionHeadingProps> = ({
+export const SectionHeading: React.FCC<SectionHeadingProps> = ({
   text,
   children,
   style,
@@ -211,7 +211,7 @@ export const SectionHeading: Snail.FCC<SectionHeadingProps> = ({
   </SecondaryHeading>
 );
 
-export const SidebarSectionHeading: Snail.FCC<SidebarSectionHeadingProps> = ({
+export const SidebarSectionHeading: React.FCC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,

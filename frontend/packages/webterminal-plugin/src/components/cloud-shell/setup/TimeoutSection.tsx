@@ -2,7 +2,7 @@ import { FormSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLimitField } from '@console/shared';
 
-const TimeoutSection: Snail.FCC = () => {
+const TimeoutSection: React.FCC = () => {
   const { t } = useTranslation();
 
   const TimeoutUnits = {

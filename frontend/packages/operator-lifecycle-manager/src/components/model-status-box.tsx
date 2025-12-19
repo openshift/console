@@ -9,7 +9,7 @@ type ModelStatusBoxProps = {
   children?: ReactNode;
 };
 
-const ModelStatusBox: Snail.FCC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
+const ModelStatusBox: React.FCC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
   const { t } = useTranslation();
   const [model, inFlight] = useK8sModel(groupVersionKind);
 

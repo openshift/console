@@ -120,7 +120,7 @@ const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[]
   return columns;
 };
 
-const VolumeSnapshotClassTable: Snail.FCC<VolumeSnapshotClassTableProps> = ({
+const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
   data,
   loaded,
   ...props
@@ -130,7 +130,7 @@ const VolumeSnapshotClassTable: Snail.FCC<VolumeSnapshotClassTableProps> = ({
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotClassKind>
         {...props}
         label={VolumeSnapshotClassModel.labelPlural}
@@ -140,11 +140,11 @@ const VolumeSnapshotClassTable: Snail.FCC<VolumeSnapshotClassTableProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const VolumeSnapshotClassPage: Snail.FCC<VolumeSnapshotClassPageProps> = ({
+export const VolumeSnapshotClassPage: React.FCC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,

@@ -8,7 +8,7 @@ type DetailPropertyListItemProps = {
   children?: ReactNode;
 };
 
-const DetailPropertyListItem: Snail.FCC<DetailPropertyListItemProps> = ({ title, children }) => (
+const DetailPropertyListItem: React.FCC<DetailPropertyListItemProps> = ({ title, children }) => (
   <ListItem>
     {title && <span className="co-detail-property-list__item-title">{title}: </span>}
     {children}

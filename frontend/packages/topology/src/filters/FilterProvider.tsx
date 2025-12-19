@@ -76,7 +76,7 @@ interface FilterProviderProps {
   children?: ReactNode;
 }
 
-export const FilterProvider: Snail.FCC<FilterProviderProps> = ({ children }) => {
+export const FilterProvider: React.FCC<FilterProviderProps> = ({ children }) => {
   const [filters, appliedFilters, loaded, setTopologyFilters] = useFilterContextValues();
   return (
     <FilterContext.Provider value={{ filters, appliedFilters, setTopologyFilters }}>

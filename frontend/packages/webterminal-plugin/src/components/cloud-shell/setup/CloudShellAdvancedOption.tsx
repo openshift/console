@@ -17,7 +17,7 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: Snail.FCC = () => {
+const List: React.FCC = () => {
   const { t } = useTranslation();
 
   const [visibleItems, setVisibleItems] = useState([]);
@@ -41,7 +41,7 @@ const List: Snail.FCC = () => {
   );
 };
 
-const CloudShellAdvancedSection: Snail.FCC = () => {
+const CloudShellAdvancedSection: React.FCC = () => {
   return (
     <FormSection style={{ marginTop: 'var(--pf-t--global--spacer--md)' }}>
       <div>

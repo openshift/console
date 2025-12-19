@@ -95,7 +95,7 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
   });
 };
 
-const SecretDetails: Snail.FCC<{ obj: SecretKind }> = ({ obj }) => {
+const SecretDetails: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
   const { t } = useTranslation();
   const { data, type } = obj;
   return (
@@ -179,7 +179,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
   return columns;
 };
 
-const SecretsList: Snail.FCC<SecretsListProps> = ({ data, loaded, ...props }) => {
+const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) => {
   const columns = useSecretsColumns();
 
   return (
@@ -198,7 +198,7 @@ const SecretsList: Snail.FCC<SecretsListProps> = ({ data, loaded, ...props }) =>
 };
 SecretsList.displayName = 'SecretsList';
 
-const SecretsPage: Snail.FCC<SecretsPageProps> = (props) => {
+const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
   const { t } = useTranslation();
   const createItems = {
     generic: t('public~Key/value secret'),
@@ -260,7 +260,7 @@ const SecretsPage: Snail.FCC<SecretsPageProps> = (props) => {
   );
 };
 
-const SecretsDetailsPage: Snail.FCC<SecretDetailsPageProps> = (props) => {
+const SecretsDetailsPage: React.FCC<SecretDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name: secretName, namespace, kindObj } = props;
 

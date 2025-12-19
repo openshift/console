@@ -5,7 +5,7 @@ type CatalogPageTabsProps = {
   children: ReactNode;
 };
 
-const CatalogPageTabs: Snail.FCC<CatalogPageTabsProps> = ({ children }) => (
+const CatalogPageTabs: React.FCC<CatalogPageTabsProps> = ({ children }) => (
   <FlexItem className="co-catalog-page__tabs" order={{ default: '2', md: '1' }}>
     {children}
   </FlexItem>

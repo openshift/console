@@ -9,7 +9,7 @@ type MinimizeRestoreButtonProps = Omit<ButtonProps, 'onClick'> & {
   onClick: (minimized: boolean) => void;
 };
 
-export const MinimizeRestoreButton: Snail.FCC<MinimizeRestoreButtonProps> = ({
+export const MinimizeRestoreButton: React.FCC<MinimizeRestoreButtonProps> = ({
   minimizeText,
   restoreText,
   minimize = true,

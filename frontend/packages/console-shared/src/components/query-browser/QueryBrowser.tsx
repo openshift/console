@@ -89,7 +89,7 @@ const Error: FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
   </Alert>
 );
 
-const GraphEmptyState: Snail.FCC<GraphEmptyStateProps> = ({ children, title }) => (
+const GraphEmptyState: React.FCC<GraphEmptyStateProps> = ({ children, title }) => (
   <div className="query-browser__wrapper graph-empty-state">
     <EmptyState
       headingLevel="h2"
@@ -139,55 +139,57 @@ const SpanControls: FC<SpanControlsProps> = memo(
       </DropdownItem>
     ));
 
-    return (<>
-      <InputGroup className="query-browser__span">
-        <InputGroupItem isFill>
-          <TextInput
-            aria-label={t('public~graph timespan')}
-            className="query-browser__span-text"
-            validated={isValid ? 'default' : 'error'}
-            onChange={(_event, v) => setSpan(v, true)}
-            type="text"
-            value={text}
+    return (
+      <>
+        <InputGroup className="query-browser__span">
+          <InputGroupItem isFill>
+            <TextInput
+              aria-label={t('public~graph timespan')}
+              className="query-browser__span-text"
+              validated={isValid ? 'default' : 'error'}
+              onChange={(_event, v) => setSpan(v, true)}
+              type="text"
+              value={text}
+            />
+          </InputGroupItem>
+          <InputGroupItem>
+            <Dropdown
+              isOpen={isOpen}
+              onSelect={setClosed}
+              toggle={(toggleRef: Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={setIsOpen}
+                  isExpanded={isOpen}
+                  aria-label={t('public~graph timespan')}
+                />
+              )}
+              popperProps={{ position: 'right' }}
+            >
+              <DropdownList>{dropdownItems}</DropdownList>
+            </Dropdown>
+          </InputGroupItem>
+        </InputGroup>
+        <Button
+          className="query-browser__inline-control"
+          onClick={() => setSpan(defaultSpanText)}
+          type="button"
+          variant="tertiary"
+        >
+          {t('public~Reset zoom')}
+        </Button>
+        {hasReducedResolution && (
+          <Alert
+            isInline
+            isPlain
+            className="query-browser__reduced-resolution"
+            title={t('public~Displaying with reduced resolution due to large dataset.')}
+            variant="info"
+            truncateTitle={1}
           />
-        </InputGroupItem>
-        <InputGroupItem>
-          <Dropdown
-            isOpen={isOpen}
-            onSelect={setClosed}
-            toggle={(toggleRef: Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={setIsOpen}
-                isExpanded={isOpen}
-                aria-label={t('public~graph timespan')}
-              />
-            )}
-            popperProps={{ position: 'right' }}
-          >
-            <DropdownList>{dropdownItems}</DropdownList>
-          </Dropdown>
-        </InputGroupItem>
-      </InputGroup>
-      <Button
-        className="query-browser__inline-control"
-        onClick={() => setSpan(defaultSpanText)}
-        type="button"
-        variant="tertiary"
-      >
-        {t('public~Reset zoom')}
-      </Button>
-      {hasReducedResolution && (
-        <Alert
-          isInline
-          isPlain
-          className="query-browser__reduced-resolution"
-          title={t('public~Displaying with reduced resolution due to large dataset.')}
-          variant="info"
-          truncateTitle={1}
-        />
-      )}
-    </>);
+        )}
+      </>
+    );
   },
 );
 
@@ -207,14 +209,7 @@ type TooltipSeries = {
 };
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
-const TooltipWrapped: FC<TooltipProps> = ({
-  activePoints,
-  center,
-  height,
-  style,
-  width,
-  x,
-}) => {
+const TooltipWrapped: FC<TooltipProps> = ({ activePoints, center, height, style, width, x }) => {
   const time = activePoints?.[0]?.x;
 
   if (!_.isDate(time) || !_.isFinite(x)) {
@@ -449,7 +444,7 @@ const Graph: FC<GraphProps> = memo(
     const colors = queryBrowserTheme.line.colorScale;
 
     return (
-      (<Chart
+      <Chart
         containerComponent={graphContainer}
         ariaTitle={t('public~query browser chart')}
         domain={domain}
@@ -486,13 +481,13 @@ const Graph: FC<GraphProps> = memo(
             return (
               // We need to use the `name` prop to prevent an error in VictorySharedEvents when
               // dynamically removing and then adding back data series
-              (<ChartComponent
+              <ChartComponent
                 data={values}
                 groupComponent={<g />}
                 key={_.map(labels, (v, k) => `${k}=${v}`).join(',')}
                 name={`series-${i}`}
                 style={style}
-              />)
+              />
             );
           })}
         </GroupComponent>
@@ -512,7 +507,7 @@ const Graph: FC<GraphProps> = memo(
             symbolSpacer={4}
           />
         )}
-      </Chart>)
+      </Chart>
     );
   },
 );

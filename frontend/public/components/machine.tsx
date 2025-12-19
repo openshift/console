@@ -110,7 +110,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
   });
 };
 
-const MachineDetails: Snail.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
+const MachineDetails: React.FCC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
   const instanceType = getMachineInstanceType(obj);
@@ -275,7 +275,7 @@ export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...
   const columns = useMachineColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineKind>
         {...props}
         label={MachineModel.labelPlural}
@@ -286,7 +286,7 @@ export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -334,7 +334,7 @@ export const MachinePage: FC<MachinePageProps> = ({
   );
 };
 
-export const MachineDetailsPage: Snail.FCC = (props) => (
+export const MachineDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}

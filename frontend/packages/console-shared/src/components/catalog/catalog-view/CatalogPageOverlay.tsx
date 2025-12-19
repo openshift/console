@@ -5,7 +5,7 @@ type CatalogPageOverlayProps = {
   children: ReactNode;
 };
 
-const CatalogPageOverlay: Snail.FCC<CatalogPageOverlayProps> = ({ children }) => (
+const CatalogPageOverlay: React.FCC<CatalogPageOverlayProps> = ({ children }) => (
   <Flex
     className="pf-v6-u-mt-md"
     alignItems={{ md: 'alignItemsFlexStart' }}

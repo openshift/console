@@ -18,7 +18,7 @@ const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
   );
 };
 
-const VolumeAttributesClassDropdownEntry: Snail.FCC<{
+const VolumeAttributesClassDropdownEntry: React.FCC<{
   kindLabel: string;
   name: string;
   driverName?: string;
@@ -42,7 +42,7 @@ const VolumeAttributesClassDropdownEntry: Snail.FCC<{
   );
 };
 
-export const VolumeAttributesClassDropdownInner: Snail.FCC<VolumeAttributesClassDropdownInnerProps> = ({
+export const VolumeAttributesClassDropdownInner: React.FCC<VolumeAttributesClassDropdownInnerProps> = ({
   id,
   loaded,
   loadError,
@@ -204,7 +204,7 @@ export const VolumeAttributesClassDropdownInner: Snail.FCC<VolumeAttributesClass
   );
 };
 
-export const VolumeAttributesClassDropdown: Snail.FCC<VolumeAttributesClassDropdownProps> = (
+export const VolumeAttributesClassDropdown: React.FCC<VolumeAttributesClassDropdownProps> = (
   props,
 ) => {
   const isVACSupported = useFlag(FLAGS.VAC_PLATFORM_SUPPORT);

@@ -54,7 +54,7 @@ export interface ButtonBarProps {
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-export const ButtonBar: Snail.FCC<ButtonBarProps> = ({
+export const ButtonBar: React.FCC<ButtonBarProps> = ({
   children,
   className,
   errorMessage,

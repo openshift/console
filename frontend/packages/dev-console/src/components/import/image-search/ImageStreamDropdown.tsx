@@ -8,7 +8,7 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: Snail.FCC<{
+const ImageStreamDropdown: React.FCC<{
   disabled?: boolean;
   formContextField?: string;
   reloadCount?: number;
@@ -21,9 +21,7 @@ const ImageStreamDropdown: Snail.FCC<{
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream, formType } = _.get(values, formContextField) || values;
   const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
-  const { state, dispatch, hasImageStreams, setHasImageStreams } = useContext(
-    ImageStreamContext,
-  );
+  const { state, dispatch, hasImageStreams, setHasImageStreams } = useContext(ImageStreamContext);
   const { accessLoading, loading } = state;
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;

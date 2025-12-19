@@ -18,7 +18,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
-export const OpenShiftGettingStarted: Snail.FCC<OpenShiftGettingStartedProps> = () => {
+export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = () => {
   const { t } = useTranslation();
   const [, setActiveNamespace] = useActiveNamespace();
   const [perspective] = useActivePerspective();

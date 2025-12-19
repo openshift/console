@@ -84,7 +84,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-export const ReplicasCount: Snail.FCC<ReplicasCountProps> = ({ obj, kind }) => {
+export const ReplicasCount: React.FCC<ReplicasCountProps> = ({ obj, kind }) => {
   const { t } = useTranslation();
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">

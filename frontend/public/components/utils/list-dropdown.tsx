@@ -52,7 +52,7 @@ export interface ListDropdownProps {
   loadError?: boolean;
 }
 
-const ListDropdown_: Snail.FCC<ListDropdownProps> = ({
+const ListDropdown_: React.FCC<ListDropdownProps> = ({
   desc,
   placeholder,
   loaded,
@@ -74,12 +74,9 @@ const ListDropdown_: Snail.FCC<ListDropdownProps> = ({
   const [selectedKey, setSelectedKey] = useState<string | undefined>(
     props.selectedKey ? getKey(props.selectedKey, props.selectedKeyKind) : undefined,
   );
-  const [title, setTitle] = useState<React.ReactNode>(
-    loaded ? placeholder : <LoadingInline />,
-  );
+  const [title, setTitle] = useState<React.ReactNode>(loaded ? placeholder : <LoadingInline />);
 
-  const autocompleteFilter = (text: string, item: ReactElement) =>
-    fuzzy(text, item.props.name);
+  const autocompleteFilter = (text: string, item: ReactElement) => fuzzy(text, item.props.name);
 
   const handleOnChange = useCallback(
     (key: string) => {
@@ -199,7 +196,7 @@ const ListDropdown_: Snail.FCC<ListDropdownProps> = ({
   );
 };
 
-export const ListDropdown: Snail.FCC<ListDropdownProps> = (props) => {
+export const ListDropdown: React.FCC<ListDropdownProps> = (props) => {
   const resources = _.map(props.resources, (resource) =>
     _.assign({ isList: true, prop: resource.kind }, resource),
   );
@@ -225,7 +222,7 @@ export const useProjectOrNamespaceModel = (): [K8sModel, boolean] | [] => {
   return [model, canCreate];
 };
 
-export const NsDropdown: Snail.FCC<ListDropdownProps> = (props) => {
+export const NsDropdown: React.FCC<ListDropdownProps> = (props) => {
   const { t } = useTranslation();
   const createNamespaceModal = useCreateNamespaceModal();
   const createProjectModal = useCreateProjectModal();

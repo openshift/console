@@ -13,7 +13,7 @@ interface MultiTabbedTerminalProps {
   onClose?: () => void;
 }
 
-export const MultiTabbedTerminal: Snail.FCC<MultiTabbedTerminalProps> = ({ onClose }) => {
+export const MultiTabbedTerminal: React.FCC<MultiTabbedTerminalProps> = ({ onClose }) => {
   const [terminalTabs, setTerminalTabs] = useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = useState<number>(1);
   const [tickNamespace, setTickNamespace] = useState<string>(null);

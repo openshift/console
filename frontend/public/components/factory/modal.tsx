@@ -31,12 +31,7 @@ export const createModal: CreateModal = (getModalElement) => {
 };
 
 /** @deprecated Use PF modals instead */
-export const ModalWrapper: FC<ModalWrapperProps> = ({
-  blocking,
-  className,
-  children,
-  onClose,
-}) => {
+export const ModalWrapper: FC<ModalWrapperProps> = ({ blocking, className, children, onClose }) => {
   const { t } = useTranslation();
   const parentSelector = useCallback(() => document.querySelector('#modal-container'), []);
   return (
@@ -115,7 +110,7 @@ export const ModalTitle: FC<ModalTitleProps> = ({
 );
 
 /** @deprecated Use PF modals instead */
-export const ModalBody: Snail.FCC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: React.FCC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
     <div className="modal-body-content">{children}</div>
   </div>

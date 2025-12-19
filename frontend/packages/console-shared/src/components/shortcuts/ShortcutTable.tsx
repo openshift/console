@@ -4,7 +4,7 @@ interface ShortcutTableProps {
   children?: ReactNode;
 }
 
-const ShortcutTable: Snail.FCC<ShortcutTableProps> = ({ children }) => (
+const ShortcutTable: React.FCC<ShortcutTableProps> = ({ children }) => (
   <table>
     <tbody>{children}</tbody>
   </table>

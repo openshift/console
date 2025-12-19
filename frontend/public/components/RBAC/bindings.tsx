@@ -153,7 +153,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
   );
 };
 
-export const BindingName: Snail.FCC<BindingProps> = ({ binding }) => (
+export const BindingName: React.FCC<BindingProps> = ({ binding }) => (
   <ResourceLink
     kind={binding.kind}
     name={binding.metadata.name}
@@ -161,18 +161,18 @@ export const BindingName: Snail.FCC<BindingProps> = ({ binding }) => (
   />
 );
 
-export const BindingKebab: Snail.FCC<BindingProps> = ({ binding }) => {
+export const BindingKebab: React.FCC<BindingProps> = ({ binding }) => {
   const context = {
     [referenceFor(binding)]: binding,
   };
 
   return binding.subjects ? (
     // key ensures that the action menu is re-rendered when the binding changes
-    (<LazyActionMenu context={context} key={binding.metadata?.uid || binding.metadata?.name} />)
+    <LazyActionMenu context={context} key={binding.metadata?.uid || binding.metadata?.name} />
   ) : null;
 };
 
-export const RoleLink: Snail.FCC<BindingProps> = ({ binding }) => {
+export const RoleLink: React.FCC<BindingProps> = ({ binding }) => {
   const kind = binding.roleRef.kind;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
@@ -231,7 +231,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
   });
 };
 
-export const BindingsList: Snail.FCC<BindingsListTableProps> = (props) => {
+export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation();
   const columns = useRoleBindingsColumns();
 
@@ -316,7 +316,7 @@ export const BindingsList: Snail.FCC<BindingsListTableProps> = (props) => {
   }, [data, staticFilters]);
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<BindingKind, undefined, BindingFilters>
         {...props}
         data={filteredData}
@@ -329,11 +329,11 @@ export const BindingsList: Snail.FCC<BindingsListTableProps> = (props) => {
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const RoleBindingsPage: Snail.FCC<RoleBindingsPageProps> = ({
+export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   namespace = undefined,
   showTitle = true,
   mock = false,
@@ -384,7 +384,7 @@ export const RoleBindingsPage: Snail.FCC<RoleBindingsPageProps> = ({
   );
 };
 
-const NsRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
+const NsRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const { t } = useTranslation();
 
@@ -413,7 +413,7 @@ const NsRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
   );
 };
 
-const ClusterRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
+const ClusterRoleDropdown: React.FCC<RoleDropdownProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListDropdown
@@ -425,7 +425,7 @@ const ClusterRoleDropdown: Snail.FCC<RoleDropdownProps> = (props) => {
   );
 };
 
-const BaseEditRoleBinding: Snail.FCC<BaseEditRoleBindingProps> = (props) => {
+const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -571,7 +571,7 @@ const BaseEditRoleBinding: Snail.FCC<BaseEditRoleBindingProps> = (props) => {
     );
   };
 
-  const RoleDropdown: Snail.FCC<RoleDropdownProps> =
+  const RoleDropdown: React.FCC<RoleDropdownProps> =
     data.kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
 
   const title = `${props.titleVerbAndKind}`;
@@ -744,7 +744,7 @@ const BaseEditRoleBinding: Snail.FCC<BaseEditRoleBindingProps> = (props) => {
   );
 };
 
-export const CreateRoleBinding: Snail.FCC = () => {
+export const CreateRoleBinding: React.FCC = () => {
   const params = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -782,7 +782,7 @@ const getSubjectIndex = () => {
   return parseInt(subjectIndex, 10);
 };
 
-const BindingLoadingWrapper: Snail.FCC<BindingLoadingWrapperProps> = (props) => {
+const BindingLoadingWrapper: React.FCC<BindingLoadingWrapperProps> = (props) => {
   const [, setActiveNamespace] = useActiveNamespace();
   const fixed: { [key: string]: any } = {};
   _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
@@ -798,7 +798,7 @@ const BindingLoadingWrapper: Snail.FCC<BindingLoadingWrapperProps> = (props) => 
   );
 };
 
-export const EditRoleBinding: Snail.FCC<EditRoleBindingProps> = ({ kind }) => {
+export const EditRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (
@@ -815,7 +815,7 @@ export const EditRoleBinding: Snail.FCC<EditRoleBindingProps> = ({ kind }) => {
   );
 };
 
-export const CopyRoleBinding: Snail.FCC<EditRoleBindingProps> = ({ kind }) => {
+export const CopyRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
   return (

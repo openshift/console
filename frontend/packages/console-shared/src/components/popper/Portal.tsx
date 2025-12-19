@@ -12,7 +12,7 @@ type PortalProps = {
 const getContainer = (container: GetContainer): Element | null | undefined =>
   typeof container === 'function' ? container() : container;
 
-const Portal: Snail.FCC<PortalProps> = ({ children, container }) => {
+const Portal: React.FCC<PortalProps> = ({ children, container }) => {
   const [containerNode, setContainerNode] = useState<Element>();
 
   useLayoutEffect(() => {

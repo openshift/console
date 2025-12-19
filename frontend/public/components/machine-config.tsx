@@ -43,7 +43,7 @@ import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMen
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
-const MachineConfigSummary: Snail.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
+const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
     <DescriptionListGroup>
       <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
@@ -52,7 +52,7 @@ const MachineConfigSummary: Snail.FCC<MachineConfigSummaryProps> = ({ obj, t }) 
   </ResourceSummary>
 );
 
-const MachineConfigDetails: Snail.FCC<MachineConfigDetailsProps> = ({ obj }) => {
+const MachineConfigDetails: React.FCC<MachineConfigDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const files = obj.spec.config?.storage?.files;
 
@@ -127,7 +127,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigDetailsPage: Snail.FCC<any> = (props) => {
+export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
   return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
 };
 
@@ -252,16 +252,11 @@ const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   return columns;
 };
 
-const MachineConfigList: FC<MachineConfigListProps> = ({
-  data,
-  loaded,
-  loadError,
-  ...props
-}) => {
+const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineConfigColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineConfigKind>
         {...props}
         label={MachineConfigModel.labelPlural}
@@ -272,11 +267,11 @@ const MachineConfigList: FC<MachineConfigListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
-export const MachineConfigPage: Snail.FCC<any> = ({ canCreate = true, ...rest }) => (
+export const MachineConfigPage: React.FCC<any> = ({ canCreate = true, ...rest }) => (
   <ListPage
     {...rest}
     canCreate={canCreate}

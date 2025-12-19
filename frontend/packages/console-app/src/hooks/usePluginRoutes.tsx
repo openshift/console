@@ -9,7 +9,7 @@ import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>
   (extension.properties.perspective ?? activePerspective) === activePerspective;
 
-const LazyDynamicRoutePage: Snail.FCC<LazyDynamicRoutePageProps> = ({ component }) => {
+const LazyDynamicRoutePage: React.FCC<LazyDynamicRoutePageProps> = ({ component }) => {
   const LazyComponent = useMemo(
     () =>
       lazy(async () => {
@@ -22,11 +22,11 @@ const LazyDynamicRoutePage: Snail.FCC<LazyDynamicRoutePageProps> = ({ component 
   return <LazyComponent />;
 };
 
-const LazyRoutePage: Snail.FCC<LazyRoutePageProps> = ({ extension }) => {
+const LazyRoutePage: React.FCC<LazyRoutePageProps> = ({ extension }) => {
   return <LazyDynamicRoutePage component={extension.properties.component} />;
 };
 
-const InactiveRoutePage: Snail.FCC<InactiveRoutePageProps> = ({
+const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
   extension,
   path,
   setActivePerspective,
@@ -37,7 +37,7 @@ const InactiveRoutePage: Snail.FCC<InactiveRoutePageProps> = ({
   return null;
 };
 
-const RoutePage: Snail.FCC<RoutePageProps> = ({
+const RoutePage: React.FCC<RoutePageProps> = ({
   extension,
   activePerspective,
   setActivePerspective,

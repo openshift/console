@@ -31,7 +31,7 @@ import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
 
-const Details: Snail.FCC<DetailsProps> = (props) => {
+const Details: React.FCC<DetailsProps> = (props) => {
   const alertManager = props.obj;
   const { metadata, spec } = alertManager;
   const launchModal = useConfigureCountModal({
@@ -217,11 +217,11 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-const AlertManagersList: Snail.FCC<AlertManagersListProps> = ({ data, loaded, ...props }) => {
+const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ...props }) => {
   const columns = useAlertManagerColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={AlertmanagerModel.labelPlural}
@@ -231,7 +231,7 @@ const AlertManagersList: Snail.FCC<AlertManagersListProps> = ({ data, loaded, ..
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 

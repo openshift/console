@@ -99,7 +99,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
-const ImageStreamTagsRow: Snail.FCC<ImageStreamTagsRowProps> = ({
+const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   imageStream,
   specTag,
   statusTag,
@@ -165,7 +165,7 @@ const ImageStreamTagsRow: Snail.FCC<ImageStreamTagsRowProps> = ({
   );
 };
 
-export const ExampleDockerCommandPopover: Snail.FCC<ImageStreamManipulationHelpProps> = ({
+export const ExampleDockerCommandPopover: React.FCC<ImageStreamManipulationHelpProps> = ({
   imageStream,
   tag,
 }) => {
@@ -222,7 +222,7 @@ export const ExampleDockerCommandPopover: Snail.FCC<ImageStreamManipulationHelpP
   );
 };
 
-export const ImageStreamsDetails: Snail.FCC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
+export const ImageStreamsDetails: React.FCC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
   const { t } = useTranslation();
 
   const getImportErrors = (): string[] => {
@@ -248,7 +248,7 @@ export const ImageStreamsDetails: Snail.FCC<ImageStreamsDetailsProps> = ({ obj: 
   const importErrors = getImportErrors();
 
   return (
-    (<div>
+    <div>
       <PaneBody>
         {!_.isEmpty(importErrors) && (
           <ExpandableAlert
@@ -312,11 +312,11 @@ export const ImageStreamsDetails: Snail.FCC<ImageStreamsDetailsProps> = ({ obj: 
           </PfTable>
         )}
       </PaneBody>
-    </div>)
+    </div>
   );
 };
 
-const ImageStreamHistory: Snail.FCC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
+const ImageStreamHistory: React.FCC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
   const imageStreamStatusTags = _.get(imageStream, 'status.tags');
   return (
     <ImageStreamTimeline
@@ -333,7 +333,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamHistory),
 ];
-export const ImageStreamsDetailsPage: Snail.FCC = (props) => (
+export const ImageStreamsDetailsPage: React.FCC = (props) => (
   <DetailsPage {...props} kind={referenceForModel(ImageStreamModel)} pages={pages} />
 );
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
@@ -431,11 +431,11 @@ const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-export const ImageStreamsList: Snail.FCC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
+export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
   const columns: TableColumn<K8sResourceKind>[] = useImageStreamColumns();
 
   return (
-    (<Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={ImageStreamModel.labelPlural}
@@ -445,7 +445,7 @@ export const ImageStreamsList: Snail.FCC<ImageStreamsListProps> = ({ data, loade
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </Suspense>)
+    </Suspense>
   );
 };
 
@@ -453,7 +453,7 @@ ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const buildPhase = (build) => build.status.phase;
 
-export const ImageStreamsPage: Snail.FCC<ImageStreamsPageProps> = (props) => {
+export const ImageStreamsPage: React.FCC<ImageStreamsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage

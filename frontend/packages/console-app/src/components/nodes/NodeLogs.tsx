@@ -169,7 +169,7 @@ const LogControls: React.FC<LogControlsProps> = ({
   );
 };
 
-const HeaderBanner: Snail.FCC<{ lineCount: number }> = ({ lineCount }) => {
+const HeaderBanner: React.FCC<{ lineCount: number }> = ({ lineCount }) => {
   const { t } = useTranslation('public');
   const count = lineCount === 0 ? lineCount : lineCount - 1;
   const headerText = t('{{count}} line', { count });
