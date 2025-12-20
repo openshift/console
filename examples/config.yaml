@@ -6,8 +6,7 @@ clusterInfo:
   consoleBaseAddress: http://localhost:9000
   masterPublicURL: https://127.0.0.1:8443
 auth:
+  authType: openshift
   clientID: console-oauth-client
   clientSecretFile: examples/console-client-secret
-  issuerURL: https://127.0.0.1:8443
-customization:
-  branding: okd
+  oauthEndpointCAFile: examples/ca.crt
