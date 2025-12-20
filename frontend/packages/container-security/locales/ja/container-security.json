@@ -21,7 +21,7 @@
   "Name": "名前",
   "Package": "パッケージ",
   "Source": "ソース",
-  "Current version": "現在のクラスター",
+  "Current version": "現在のバージョン",
   "Fixed in version": "修正済みバージョン",
   "Vulnerability type": "脆弱性のタイプ",
   "All vulnerabilities": "すべての脆弱性",
