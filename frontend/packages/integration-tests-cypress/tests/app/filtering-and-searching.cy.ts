@@ -6,6 +6,9 @@ import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 
+const SEARCH_NAMESPACE = 'openshift-authentication-operator';
+const SEARCH_DEPLOYMENT_NAME = 'authentication-operator';
+
 describe('Filtering and Searching', () => {
   let WORKLOAD_NAME;
   let WORKLOAD_LABEL;
@@ -50,14 +53,13 @@ describe('Filtering and Searching', () => {
     cy.deleteProjectWithCLI(testName);
   });
 
-  // disabled as listPage.rows.shouldExist isn't a valid test
-  xit('filters Pod from object detail', () => {
+  it('filters Pod from object detail', () => {
     cy.visit(`/k8s/ns/${testName}/deployments`);
-    listPage.rows.shouldExist(WORKLOAD_NAME);
+    listPage.dvRows.shouldExist(WORKLOAD_NAME);
     cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(WORKLOAD_NAME);
-    listPage.rows.shouldExist(WORKLOAD_NAME);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(WORKLOAD_NAME);
+    listPage.dvRows.countShouldBe(3);
   });
 
   it('filters invalid Pod from object detail', () => {
@@ -68,12 +70,28 @@ describe('Filtering and Searching', () => {
       cy.get('.pf-v6-l-bullseye').should('contain', 'No Pods found');
     });
   });
-  // disabled as listPage.rows.shouldExist isn't a valid test
-  xit('filters from Pods list', () => {
+
+  it('filters from Pods list', () => {
     cy.visit(`/k8s/all-namespaces/pods`);
-    listPage.rows.shouldBeLoaded();
-    listPage.filter.byName(WORKLOAD_NAME);
-    listPage.rows.shouldExist(WORKLOAD_NAME);
+    listPage.dvRows.shouldBeLoaded();
+    listPage.dvFilter.byName(WORKLOAD_NAME);
+    listPage.dvRows.countShouldBe(3);
+  });
+
+  it('displays namespace on Search when All Namespaces is selected', () => {
+    cy.visit(
+      `/search/all-namespaces?kind=apps~v1~Deployment&page=1&perPage=50&name=${SEARCH_DEPLOYMENT_NAME}`,
+    );
+    listPage.dvRows.countShouldBe(1);
+    cy.get(`[data-test-id="${SEARCH_NAMESPACE}"]`).should('exist');
+  });
+
+  it('does not display namespace on Search when namespace is selected', () => {
+    cy.visit(
+      `/search/ns/${SEARCH_NAMESPACE}?kind=apps~v1~Deployment&page=1&perPage=50&name=${SEARCH_DEPLOYMENT_NAME}`,
+    );
+    listPage.dvRows.countShouldBe(1);
+    cy.get(`[data-test-id="${SEARCH_NAMESPACE}"]`).should('not.exist');
   });
 
   it('searches for object by kind and label', () => {
@@ -81,11 +99,10 @@ describe('Filtering and Searching', () => {
     listPage.dvRows.shouldExist(WORKLOAD_NAME);
   });
 
-  // disabled as listPage.rows.shouldExist isn't a valid test
-  xit('searches for object by kind, label, and name', () => {
+  it('searches for object by kind, label, and name', () => {
     cy.visit(`/search/all-namespaces`, {
       qs: { kind: 'Pod', q: 'app=name', name: WORKLOAD_NAME },
     });
-    listPage.rows.shouldExist(WORKLOAD_NAME);
+    listPage.dvRows.countShouldBe(3);
   });
 });
