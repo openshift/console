@@ -35,8 +35,8 @@ export const applyConsoleHeaders = (url, options) => {
   return options;
 };
 
-// TODO: url can be url or path, but shouldLogout only handles paths
-export const shouldLogout = (url: string): boolean => {
+// TODO: url can be url or path, but isK8sURL only handles paths
+export const isK8sURL = (url: string): boolean => {
   const k8sRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/`);
   // 401 from k8s. show logout screen
   if (k8sRegex.test(url)) {
@@ -62,7 +62,12 @@ export const validateStatus = async (
   method: string,
   retry: boolean,
 ) => {
+  const isK8sRequest = isK8sURL(url);
   if (response.ok || response.status === 304) {
+    // Reset redirect counter on successful k8s request
+    if (isK8sRequest) {
+      authSvc.resetRedirectCount();
+    }
     return response;
   }
 
@@ -70,9 +75,9 @@ export const validateStatus = async (
     throw new RetryError();
   }
 
-  if (response.status === 401 && shouldLogout(url)) {
+  if (response.status === 401 && isK8sRequest) {
     const next = window.location.pathname + window.location.search + window.location.hash;
-    authSvc.logout(next);
+    authSvc.handle401(next);
   }
 
   const contentType = response.headers.get('content-type');
