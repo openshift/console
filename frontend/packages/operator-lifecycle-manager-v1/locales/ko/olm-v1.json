@@ -1,11 +1,15 @@
 {
-  "Extension Catalog": "확장 카탈로그",
-  "Installed Extensions": "설치된 확장 프로그램",
-  "Extension Catalog Items": "확장 카탈로그 항목",
-  "Source": "소스",
-  "Provider": "공급자",
-  "Capability level": "기능 수준",
-  "Infrastructure features": "인프라 기능",
-  "Valid subscription": "유효한 서브스크립션",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Red Hat에서 선별한 Kubernetes 커뮤니티 및 Red Hat 파트너의 Operator를 검색합니다. 클러스터에 Operator를 설치하여 개발자에게 선택적 추가 옵션 및 공유 서비스를 제공할 수 있습니다."
+  "Installed Operators": "설치된 Operator",
+  "Operators": "Operator",
+  "OLMv1 Catalog": "OLMv1 카탈로그",
+  "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "OLMv1 카탈로그 환경을 활성화합니다. OLMv1은 업데이트된 Operator 카탈로그 인터페이스를 제공하는 기술 프리뷰 기능입니다.",
+  "Enable OLMv1 catalog": "OLMv1 카탈로그 활성화",
+  "Operator Lifecycle Management version 1": "Operator Lifecycle Management 버전 1",
+  "Learn more about OLMv1": "OLMv1에 대해 자세히 알아보기",
+  "With OLMv1, you'll get a much simpler API that's easier to work with and understand. Plus, you have more direct control over updates. You can define update ranges and decide exactly how they are rolled out.": "OLMv1을 사용하면 작업 및 이해하기가 훨씬 더 간단한 API를 사용할 수 있습니다. 또한 업데이트에 대해 보다 직접적인 제어가 가능합니다. 업데이트 범위를 정의하고, 정확히 어떻게 배포될지 결정할 수 있습니다.",
+  "Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.": "OLMv0의 간소화된 기능인 OLMv1(기술 프리뷰)을 사용할 수 있습니다. OLMv1은 선언적 API, 향상된 보안 및 GitOps 친화적인 업그레이드를 통해 operator 관리를 단순화합니다.",
+  "Enable OLMv1": "OLMv1 활성화",
+  "Toggle OLMv1 UI": "OLMv1 UI 전환",
+  "Tech Preview": "기술 프리뷰",
+  "OLMv1 information": "OLMv1 정보"
 }

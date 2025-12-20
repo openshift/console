@@ -7,6 +7,9 @@
   "Graph": "그래프",
   "List": "목록",
   "Move connector": "커넥터 이동",
+  "Delete Connector?": "커넥터를 삭제하시겠습니까?",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "비주얼 커넥터를 삭제하면 리소스에서`connects-to` 주석이 제거됩니다. 비주얼 커넥터를 삭제하시겠습니까?",
+  "Delete": "삭제",
   "Delete connector": "커넥터 삭제",
   "Edit application grouping": "애플리케이션 그룹 편집",
   "View all {{size}}": "{{size}} 모두 보기",
@@ -164,9 +167,6 @@
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "<1>{{nodeLabel}}</1>을 에서{{sourceLabel}}에서 {{targetLabel}}(으)로 이동하시겠습니까?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "<1>{{nodeLabel}}</1>에서 {{sourceLabel}}을(를) 삭제하시겠습니까?",
   "Remove": "삭제",
-  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "비주얼 커넥터를 삭제하면 리소스에서`connects-to` 주석이 제거됩니다. 비주얼 커넥터를 삭제하시겠습니까?",
-  "Delete Connector?": "커넥터를 삭제하시겠습니까?",
-  "Delete": "삭제",
   "Unable to update application, invalid resource type: {{kind}}": "애플리케이션을 업데이트할 수 없습니다. 잘못된 리소스 유형: {{kind}}",
   "Can not create a connection from a node to itself.": "노드 자체에서 연결을 만들 수 없습니다."
 }

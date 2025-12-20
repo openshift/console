@@ -7,6 +7,9 @@
   "Graph": "グラフ",
   "List": "一覧",
   "Move connector": "コネクターの移動",
+  "Delete Connector?": "コネクターを削除しますか?",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "ビジュアルコネクターを削除すると、リソースから 'connects-to' アノテーションが削除されます。ビジュアルコネクターを削除してもよいですか?",
+  "Delete": "削除",
   "Delete connector": "コネクターの削除",
   "Edit application grouping": "アプリケーションのグループ化の編集",
   "View all {{size}}": "すべての {{size}} を表示",
@@ -164,9 +167,6 @@
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "<1>{{nodeLabel}}</1> を {{sourceLabel}} から {{targetLabel}} に移動してもよいですか?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "<1>{{nodeLabel}}</1> を {{sourceLabel}} から削除してもよいですか?",
   "Remove": "削除",
-  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "ビジュアルコネクターを削除すると、リソースから 'connects-to' アノテーションが削除されます。ビジュアルコネクターを削除してもよいですか?",
-  "Delete Connector?": "コネクターを削除しますか?",
-  "Delete": "削除",
   "Unable to update application, invalid resource type: {{kind}}": "アプリケーションを更新できません。無効なリソースタイプ: {{kind}}",
   "Can not create a connection from a node to itself.": "ノードからそれ自体への接続を作成できません。"
 }

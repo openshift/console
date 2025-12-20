@@ -7,6 +7,9 @@
   "Graph": "Gráfico",
   "List": "Lista",
   "Move connector": "Mover conector",
+  "Delete Connector?": "¿Eliminar conector?",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Al eliminar el conector visual, se quitará la anotación \"se conecta a\" de los recursos. ¿Está seguro de que desea eliminar el conector visual?",
+  "Delete": "Eliminar",
   "Delete connector": "Eliminar conector",
   "Edit application grouping": "Editar agrupación de aplicaciones",
   "View all {{size}}": "Ver todo {{size}}",
@@ -164,9 +167,6 @@
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "¿Está seguro de que quiere mover <1>{{nodeLabel}}</1> de {{sourceLabel}} a {{targetLabel}}?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "¿Está seguro de que desea quitar <1>{{nodeLabel}}</1> de {{sourceLabel}}?",
   "Remove": "Eliminar",
-  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Al eliminar el conector visual, se quitará la anotación \"se conecta a\" de los recursos. ¿Está seguro de que desea eliminar el conector visual?",
-  "Delete Connector?": "¿Eliminar conector?",
-  "Delete": "Eliminar",
   "Unable to update application, invalid resource type: {{kind}}": "No se puede actualizar la aplicación; tipo de recurso no válido: {{kind}}",
   "Can not create a connection from a node to itself.": "No se puede crear una conexión desde un nodo consigo mismo."
 }
