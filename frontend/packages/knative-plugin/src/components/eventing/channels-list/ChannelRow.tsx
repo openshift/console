@@ -43,7 +43,7 @@ const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
       <TableData className={Kebab.columnClass}>
-        <LazyActionMenu context={context} />;
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );
