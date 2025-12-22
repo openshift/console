@@ -469,7 +469,9 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	handle(packageManifestEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, packageManifestEndpoint),
-		authHandler(olmHandler.CheckPackageManifest),
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			olmHandler.CheckPackageManifest(user, w, r)
+		}),
 	))
 
 	handle(operandsListEndpoint, http.StripPrefix(
