@@ -27,10 +27,10 @@ const PerspectiveSwitcherTourText: FC = () => {
   const { t } = useTranslation();
   return (
     <>
-      <p>{t('devconsole~Switch between the Developer and Administrator perspectives.')}</p>
+      <p>{t('devconsole~Switch between the Developer and Core platform perspectives.')}</p>
       <p>
         {t(
-          'devconsole~Use the Administrator perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.',
+          'devconsole~Use the Core platform perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.',
         )}
       </p>
       <p>
