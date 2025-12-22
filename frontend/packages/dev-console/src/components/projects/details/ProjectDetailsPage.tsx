@@ -110,7 +110,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
   );
 };
 
-const PageContentsWithStartGuide = withStartGuide(PageContents);
+const PageContentsWithStartGuide = withStartGuide<MonitoringPageProps>(PageContents);
 
 export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();

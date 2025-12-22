@@ -86,10 +86,10 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
       </ModalTitle>
       <ModalBody className="modal-body">
         <div>
-          <Trans t={t} ns="public">
+          <Trans t={t} ns="public" values={{ resourceName, volumeName, label }}>
             Are you sure you want to remove volume{' '}
-            <strong className="co-break-word">{{ volumeName }}</strong> from{' '}
-            <strong>{{ label }}</strong>: <strong>{{ resourceName }}</strong>?
+            <strong className="co-break-word">{'{{ volumeName }}'}</strong> from{' '}
+            <strong>{'{{ label }}'}</strong>: <strong>{'{{ resourceName }}'}</strong>?
           </Trans>
         </div>
         {type && (

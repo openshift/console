@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
@@ -76,7 +77,7 @@ const {
 } = submitUtils;
 
 describe('Import Submit Utils', () => {
-  const t = jest.fn();
+  const t = (jest.fn() as unknown) as TFunction;
 
   describe('createDeployment tests', () => {
     beforeAll(() => {

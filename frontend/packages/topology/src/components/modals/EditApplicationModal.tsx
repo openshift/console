@@ -49,9 +49,9 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       <ModalTitle>{t('topology~Edit application grouping')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          <Trans ns="topology">
-            Select an Application group to add the component{' '}
-            <strong>{{ resourceName: resource.metadata.name }}</strong> to
+          <Trans ns="topology" values={{ resourceName: resource.metadata.name }}>
+            Select an Application group to add the component <strong>{'{{ resourceName }}'}</strong>{' '}
+            to
           </Trans>
         </Title>
         <div className="pf-v6-c-form">

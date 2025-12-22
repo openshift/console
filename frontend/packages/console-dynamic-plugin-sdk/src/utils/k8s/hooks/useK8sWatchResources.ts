@@ -1,9 +1,10 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { Map as ImmutableMap, Iterable as ImmutableIterable } from 'immutable';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
+import type { SDKDispatch, SDKStoreState } from '../../../app/redux-types';
 import { UseK8sWatchResources } from '../../../extensions/console-types';
 import {
   transformGroupVersionKindToReference,
@@ -38,9 +39,9 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
-  const allK8sModels = useSelector<OpenShiftReduxRootState, ImmutableMap<string, K8sModel>>(
-    (state: OpenShiftReduxRootState) => state.k8s.getIn(['RESOURCES', 'models']),
-  );
+  const allK8sModels = useSelector<SDKStoreState>((state) =>
+    state.k8s.getIn(['RESOURCES', 'models']),
+  ) as ImmutableMap<string, K8sModel>;
 
   const prevK8sModels = usePrevious(allK8sModels);
   const prevResources = usePrevious(resources);
@@ -98,7 +99,7 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
     [k8sModels, modelsLoaded, resources],
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<SDKDispatch>();
   useEffect(() => {
     const reduxIDKeys = Object.keys(reduxIDs || {});
     reduxIDKeys.forEach((k) => {

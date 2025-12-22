@@ -7,7 +7,11 @@ import userEvent from '../../__tests__/user-event';
 import { BuildConfigRunPolicy } from '../../types';
 import PolicySection, { PolicySectionFormData } from '../PolicySection';
 
-const Wrapper: React.FC<FormikConfig<PolicySectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<PolicySectionFormData> {
+  children?: React.ReactNode;
+}
+
+const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

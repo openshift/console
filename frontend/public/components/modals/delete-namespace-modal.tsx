@@ -83,16 +83,15 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
       />
       <ModalBody>
         <Content component={ContentVariants.p}>
-          <Trans t={t} ns="public">
+          <Trans t={t} ns="public" values={{ name: resource.metadata.name }}>
             This action cannot be undone. It will destroy all pods, services and other objects in
-            the namespace{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
+            the namespace <strong className="co-break-word">{'{{ name }}'}</strong>.
           </Trans>
         </Content>
         <Content component={ContentVariants.p}>
-          <Trans t={t} ns="public">
-            Confirm deletion by typing{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+          <Trans t={t} ns="public" values={{ name: resource.metadata.name }}>
+            Confirm deletion by typing <strong className="co-break-word">{'{{ name }}'}</strong>{' '}
+            below:
           </Trans>
         </Content>
         <span className="pf-v6-c-form-control">

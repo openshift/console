@@ -20,14 +20,21 @@ interface DataModelExtensionProps {
 
 const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory, pluginID }) => {
   const dataModelContext = useContext<ExtensibleModel>(ModelContext);
-  const {
-    id,
-    priority,
-    resources: rawResources,
-    getDataModel,
-    isResourceDepicted,
-    getDataModelReconciler,
-  } = dataModelFactory;
+
+  // Destructure and memoize to ensure stable references
+  // CRITICAL: These are used in useEffect dependencies and must be stable
+  const { id } = dataModelFactory;
+  const { priority } = dataModelFactory;
+  const rawResources = dataModelFactory.resources;
+  const getDataModel = useMemo(() => dataModelFactory.getDataModel, [
+    dataModelFactory.getDataModel,
+  ]);
+  const isResourceDepicted = useMemo(() => dataModelFactory.isResourceDepicted, [
+    dataModelFactory.isResourceDepicted,
+  ]);
+  const getDataModelReconciler = useMemo(() => dataModelFactory.getDataModelReconciler, [
+    dataModelFactory.getDataModelReconciler,
+  ]);
   const workloadKeys = useDeepCompareMemoize(dataModelFactory.workloadKeys);
 
   // Convert WatchK8sResourcesGeneric to WatchK8sResources with namespace injection

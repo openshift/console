@@ -134,9 +134,9 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
       <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
       <ModalBody>
         <p>
-          <Trans t={t} ns="console-app">
-            When restore action for snapshot <strong>{{ snapshotName }}</strong> is finished a new
-            crash-consistent PVC copy will be created.
+          <Trans t={t} ns="console-app" values={{ snapshotName }}>
+            When restore action for snapshot <strong>{'{{ snapshotName }}'}</strong> is finished a
+            new crash-consistent PVC copy will be created.
           </Trans>
         </p>
         <FormGroup

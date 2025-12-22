@@ -4,6 +4,7 @@ import { Alert, AlertStates, RuleStates, SilenceStates } from '@console/dynamic-
 
 import { ActionType, ObserveAction } from '../actions/observe';
 import { isSilenced } from '../components/monitoring/utils';
+import { INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
 
 const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
 
@@ -114,7 +115,13 @@ export default (state: ObserveState, action: ObserveAction): ObserveState => {
 
     case ActionType.DashboardsVariableOptionsLoaded: {
       const { key, newOptions, perspective } = action.payload;
-      const { options, value } = state.getIn(['dashboards', perspective, 'variables', key]).toJS();
+      // Cache toJS() result to avoid creating new objects on every action
+      // CRITICAL for React 18/Redux 8.x performance
+      const variable = state.getIn(['dashboards', perspective, 'variables', key]);
+      if (!variable[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL]) {
+        variable[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL] = variable.toJS();
+      }
+      const { options, value } = variable[INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL];
       const patch = _.isEqual(options, newOptions)
         ? { isLoading: false }
         : {

@@ -267,8 +267,8 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
           <form onSubmit={create}>
             {pvcName ? (
               <p>
-                <Trans ns="console-app">
-                  Creating snapshot for claim <strong>{{ pvcName }}</strong>
+                <Trans ns="console-app" values={{ pvcName }}>
+                  Creating snapshot for claim <strong>{'{{ pvcName }}'}</strong>
                 </Trans>
               </p>
             ) : (

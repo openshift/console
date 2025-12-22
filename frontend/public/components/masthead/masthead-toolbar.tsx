@@ -1,7 +1,8 @@
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash-es';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useConsoleDispatch } from '@console/app/src/hooks/redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
@@ -160,7 +161,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();

@@ -122,18 +122,30 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
       });
 
     case K8sActionType.ReceivedResources:
-      // Flip all flags to false to signify that we did not see them
-      _.each(CRDs, (v) => (state = state.set(v, false)));
+      // Batch mutations to avoid creating intermediate ImmutableMap instances
+      // which would trigger unnecessary re-renders in React Redux 8.x
+      return state.withMutations((nextState) => {
+        // Flip all flags to false to signify that we did not see them
+        _.each(CRDs, (v) => {
+          // Only set if value is changing to avoid unnecessary mutations
+          if (nextState.get(v) !== false) {
+            nextState.set(v, false);
+          }
+        });
 
-      return action.payload.resources.models
-        .filter((model) => CRDs[referenceForModel(model)] !== undefined)
-        .reduce((nextState, model) => {
-          const flag = CRDs[referenceForModel(model)];
-          // eslint-disable-next-line no-console
-          console.log(`${flag} was detected.`);
-
-          return nextState.set(flag, true);
-        }, state);
+        // Set detected model flags to true
+        action.payload.resources.models
+          .filter((model) => CRDs[referenceForModel(model)] !== undefined)
+          .forEach((model) => {
+            const flag = CRDs[referenceForModel(model)];
+            // Only set if value is changing to avoid unnecessary mutations
+            if (nextState.get(flag) !== true) {
+              // eslint-disable-next-line no-console
+              console.log(`${flag} was detected.`);
+              nextState.set(flag, true);
+            }
+          });
+      });
 
     default:
       return state;

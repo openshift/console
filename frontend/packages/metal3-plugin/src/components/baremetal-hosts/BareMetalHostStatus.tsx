@@ -61,33 +61,51 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
         />
       );
     case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
-      return (
-        <ProgressStatus title={statusTitle} className={className}>
+      return descriptionKey || action ? (
+        <PopoverStatus
+          title={statusTitle}
+          statusBody={<ProgressStatus title={statusTitle} className={className} />}
+        >
           {descriptionKey && t(descriptionKey)}
           {action}
-        </ProgressStatus>
+        </PopoverStatus>
+      ) : (
+        <ProgressStatus title={statusTitle} className={className} />
       );
     case HOST_ERROR_STATES.includes(status):
       return (
-        <ErrorStatus title={statusTitle} className={className}>
+        <PopoverStatus
+          title={statusTitle}
+          statusBody={<ErrorStatus title={statusTitle} className={className} />}
+        >
           <p>{t(descriptionKey)}</p>
           <p>{getHostErrorMessage(host)}</p>
           {action}
-        </ErrorStatus>
+        </PopoverStatus>
       );
     case HOST_SUCCESS_STATES.includes(status):
-      return (
-        <SuccessStatus title={statusTitle} className={className}>
+      return descriptionKey || action ? (
+        <PopoverStatus
+          title={statusTitle}
+          statusBody={<SuccessStatus title={statusTitle} className={className} />}
+        >
           {descriptionKey && t(descriptionKey)}
           {action}
-        </SuccessStatus>
+        </PopoverStatus>
+      ) : (
+        <SuccessStatus title={statusTitle} className={className} />
       );
     case HOST_INFO_STATES.includes(status):
-      return (
-        <InfoStatus title={statusTitle} className={className}>
+      return descriptionKey || action ? (
+        <PopoverStatus
+          title={statusTitle}
+          statusBody={<InfoStatus title={statusTitle} className={className} />}
+        >
           {descriptionKey && t(descriptionKey)}
           {action}
-        </InfoStatus>
+        </PopoverStatus>
+      ) : (
+        <InfoStatus title={statusTitle} className={className} />
       );
     default: {
       const statusBody = <Status status={status} title={statusTitle} className={className} />;

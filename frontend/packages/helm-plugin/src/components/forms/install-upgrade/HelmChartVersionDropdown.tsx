@@ -81,15 +81,15 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     const message = (
       <>
         <p>
-          <Trans t={t} ns="helm-plugin">
+          <Trans t={t} ns="helm-plugin" values={{ newVersion, currentVersion }}>
             Are you sure you want to change the chart version from{' '}
-            <strong>{{ currentVersion }}</strong> to <strong>{{ newVersion }}</strong>?{' '}
+            <strong>{'{{ currentVersion }}'}</strong> to <strong>{'{{ newVersion }}'}</strong>?{' '}
           </Trans>
         </p>
         <p>
           <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
-          <Trans t={t} ns="helm-plugin">
-            All data entered for version <strong>{{ currentVersion }}</strong> will be reset
+          <Trans t={t} ns="helm-plugin" values={{ currentVersion }}>
+            All data entered for version <strong>{'{{ currentVersion }}'}</strong> will be reset
           </Trans>
         </p>
       </>

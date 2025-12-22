@@ -49,9 +49,9 @@ const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
           )}
         </p>
         <p>
-          <Trans ns="olm">
-            Confirm deletion by typing{' '}
-            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+          <Trans ns="olm" values={{ name: resource.metadata.name }}>
+            Confirm deletion by typing <strong className="co-break-word">{'{{ name }}'}</strong>{' '}
+            below:
           </Trans>
         </p>
         <span className="pf-v6-c-form-control">

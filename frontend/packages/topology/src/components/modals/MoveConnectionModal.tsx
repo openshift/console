@@ -89,8 +89,8 @@ const MoveConnectionForm: React.FC<
       <ModalTitle>{t('topology~Move connector')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          <Trans ns="topology" t={t}>
-            Connect <strong>{{ sourceLabel }}</strong> to
+          <Trans ns="topology" t={t} values={{ sourceLabel }}>
+            Connect <strong>{'{{ sourceLabel }}'}</strong> to
           </Trans>
         </Title>
         <div className="pf-v6-c-form">

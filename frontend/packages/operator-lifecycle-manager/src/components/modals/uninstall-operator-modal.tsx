@@ -397,9 +397,9 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         {showInstructions && (
           <>
             <p>
-              <Trans t={t} ns="olm">
-                Operator <strong>{{ name }}</strong> will be removed from{' '}
-                <strong>{{ namespace }}</strong>.
+              <Trans t={t} ns="olm" values={{ name, namespace }}>
+                Operator <strong>{'{{ name }}'}</strong> will be removed from{' '}
+                <strong>{'{{ namespace }}'}</strong>.
               </Trans>
             </p>
             {!optedOut && <>{instructions}</>}
@@ -508,9 +508,9 @@ const OperatorUninstallSuccessAlert: React.FC<{ name: string; namespace: string 
       isInline
     >
       <p>
-        <Trans t={t} ns="olm">
-          Operator <strong>{{ name }}</strong> successfully uninstalled from{' '}
-          <strong>{{ namespace }}</strong>.
+        <Trans t={t} ns="olm" values={{ name, namespace }}>
+          Operator <strong>{'{{ name }}'}</strong> successfully uninstalled from{' '}
+          <strong>{'{{ namespace }}'}</strong>.
         </Trans>
       </p>
     </Alert>
@@ -570,9 +570,9 @@ const OperandDeletionSuccessAlert: React.FC<{ name: string; namespace: string }>
       isInline
     >
       <p>
-        <Trans t={t} ns="olm">
-          All Operand instances for Operator <strong>{{ name }}</strong> in{' '}
-          <strong>{{ namespace }}</strong> have been deleted.
+        <Trans t={t} ns="olm" values={{ name, namespace }}>
+          All Operand instances for Operator <strong>{'{{ name }}'}</strong> in{' '}
+          <strong>{'{{ namespace }}'}</strong> have been deleted.
         </Trans>
       </p>
     </Alert>

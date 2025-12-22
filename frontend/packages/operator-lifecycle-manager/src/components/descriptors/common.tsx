@@ -15,8 +15,8 @@ export const Invalid: React.FC<{ path: string }> = ({ path }) => {
     <span className="pf-v6-u-text-color-subtle pf-v6-u-display-inline-block pf-v6-u-mb-xl">
       <YellowExclamationTriangleIcon />
       &nbsp;&nbsp;
-      <Trans ns="olm">
-        The field <code className="co-code">{{ path }}</code> is invalid.
+      <Trans ns="olm" values={{ path }}>
+        The field <code className="co-code">{'{{ path }}'}</code> is invalid.
       </Trans>
     </span>
   );

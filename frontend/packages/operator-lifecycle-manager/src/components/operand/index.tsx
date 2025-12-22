@@ -5,8 +5,8 @@ import { sortable } from '@patternfly/react-table';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useConsoleDispatch } from '@console/app/src/hooks/redux';
 import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
@@ -359,7 +359,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   } = props;
   const [models, inFlight] = useK8sModels();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
 
   // Map APIs provided by this CSV to Firehose resources. Exclude APIs that do not have a model.
@@ -548,7 +548,7 @@ export const ProvidedAPIPage = (props: ProvidedAPIPageProps) => {
   const [namespace] = useActiveNamespace();
   const [k8sModel, inFlight] = useK8sModel(props.kind);
   const [apiRefreshed, setAPIRefreshed] = React.useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // Refresh API definitions if model is missing and the definitions have not already been refreshed.
   const apiMightBeOutdated = !inFlight && !k8sModel;

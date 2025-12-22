@@ -104,50 +104,65 @@ const sdkK8sReducers = (state: K8sState, action: K8sAction): K8sState => {
     case ActionType.GetResourcesInFlight:
       return state.setIn(['RESOURCES', 'inFlight'], true);
 
-    case ActionType.ReceivedResources:
-      return (
-        action.payload.resources.models
-          .filter((model) => !state.getIn(['RESOURCES', 'models']).has(getReferenceForModel(model)))
-          .filter((model) => {
-            const existingModel = state.getIn(['RESOURCES', 'models', model.kind]);
-            return (
-              !existingModel || getReferenceForModel(existingModel) !== getReferenceForModel(model)
-            );
-          })
-          .map((model) => {
-            model.namespaced
-              ? getNamespacedResources().add(getReferenceForModel(model))
-              : getNamespacedResources().delete(getReferenceForModel(model));
-            return model;
-          })
-          .reduce((prevState, newModel) => {
-            // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
-            const [modelRef, model] = allModels().findEntry(
-              (staticModel) => getReferenceForModel(staticModel) === getReferenceForModel(newModel),
-            ) || [getReferenceForModel(newModel), newModel];
-            // Verbs and short names are not part of the static model definitions, so use the values found during discovery.
-            return prevState.updateIn(['RESOURCES', 'models'], (models) =>
-              models.set(modelRef, {
-                ...model,
-                verbs: newModel.verbs,
-                shortNames: newModel.shortNames,
-              }),
-            );
-          }, state)
-          // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
-          .setIn(['RESOURCES', 'allResources'], action.payload.resources.allResources)
-          .setIn(['RESOURCES', 'safeResources'], action.payload.resources.safeResources)
-          .setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources)
-          .setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources)
-          .setIn(
-            ['RESOURCES', 'clusterOperatorConfigResources'],
-            action.payload.resources.clusterOperatorConfigResources,
-          )
-          .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
-          .setIn(['RESOURCES', 'groupToVersionMap'], action.payload.resources.groupVersionMap)
-          .setIn(['RESOURCES', 'inFlight'], false)
-          .setIn(['RESOURCES', 'loaded'], true)
-      );
+    case ActionType.ReceivedResources: {
+      // Batch all mutations to avoid creating intermediate ImmutableMap instances
+      // which would trigger unnecessary re-renders in React Redux 8.x
+      const modelsToAdd = action.payload.resources.models
+        .filter((model) => !state.getIn(['RESOURCES', 'models']).has(getReferenceForModel(model)))
+        .filter((model) => {
+          const existingModel = state.getIn(['RESOURCES', 'models', model.kind]);
+          return (
+            !existingModel || getReferenceForModel(existingModel) !== getReferenceForModel(model)
+          );
+        })
+        .map((model) => {
+          model.namespaced
+            ? getNamespacedResources().add(getReferenceForModel(model))
+            : getNamespacedResources().delete(getReferenceForModel(model));
+          return model;
+        });
+
+      return state.withMutations((nextState) => {
+        // Add new models
+        modelsToAdd.forEach((newModel) => {
+          // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
+          const [modelRef, model] = allModels().findEntry(
+            (staticModel) => getReferenceForModel(staticModel) === getReferenceForModel(newModel),
+          ) || [getReferenceForModel(newModel), newModel];
+          // Verbs and short names are not part of the static model definitions, so use the values found during discovery.
+          nextState.updateIn(['RESOURCES', 'models'], (models) =>
+            models.set(modelRef, {
+              ...model,
+              verbs: newModel.verbs,
+              shortNames: newModel.shortNames,
+            }),
+          );
+        });
+
+        // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
+        nextState.setIn(['RESOURCES', 'allResources'], action.payload.resources.allResources);
+        nextState.setIn(['RESOURCES', 'safeResources'], action.payload.resources.safeResources);
+        nextState.setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources);
+        nextState.setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources);
+        nextState.setIn(
+          ['RESOURCES', 'clusterOperatorConfigResources'],
+          action.payload.resources.clusterOperatorConfigResources,
+        );
+        nextState.setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet);
+        nextState.setIn(
+          ['RESOURCES', 'groupToVersionMap'],
+          action.payload.resources.groupVersionMap,
+        );
+
+        // Only set if value is changing to avoid unnecessary mutations
+        if (nextState.getIn(['RESOURCES', 'inFlight']) !== false) {
+          nextState.setIn(['RESOURCES', 'inFlight'], false);
+        }
+        if (nextState.getIn(['RESOURCES', 'loaded']) !== true) {
+          nextState.setIn(['RESOURCES', 'loaded'], true);
+        }
+      });
+    }
 
     case ActionType.StartWatchK8sObject:
       return state.set(

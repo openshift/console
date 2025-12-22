@@ -149,6 +149,7 @@ export type FireManProps = {
   helpAlert?: React.ReactNode;
   title?: string;
   autoFocus?: boolean;
+  children?: React.ReactNode;
 };
 
 export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }> = (props) => {

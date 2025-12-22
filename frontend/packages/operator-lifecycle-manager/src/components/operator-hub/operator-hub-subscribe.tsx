@@ -652,7 +652,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           )}
         >
           <p>
-            <Trans t={t} ns="olm">
+            <Trans t={t} ns="olm" values={{ selectedTargetNamespace }}>
               Remove the{' '}
               <Link
                 to={resourcePathFromModel(SubscriptionModel, packageName, selectedTargetNamespace)}
@@ -660,7 +660,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 existing Subscription
               </Link>{' '}
               in order to install this Operator in Namespace {'"'}
-              {{ selectedTargetNamespace }}
+              {'{{ selectedTargetNamespace }}'}
               {'"'}
             </Trans>
           </p>
@@ -712,13 +712,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         }
       >
         {suggestedNamespaceExists ? (
-          <Trans ns="olm">
-            Namespace <b>{{ operatorSuggestedNamespace }}</b> already exists and will be used. Other
-            users can already have access to this namespace.
+          <Trans ns="olm" values={{ operatorSuggestedNamespace }}>
+            Namespace <b>{'{{ operatorSuggestedNamespace }}'}</b> already exists and will be used.
+            Other users can already have access to this namespace.
           </Trans>
         ) : (
-          <Trans ns="olm">
-            Namespace <b>{{ operatorSuggestedNamespace }}</b> does not exist and will be created.
+          <Trans ns="olm" values={{ operatorSuggestedNamespace }}>
+            Namespace <b>{'{{ operatorSuggestedNamespace }}'}</b> does not exist and will be
+            created.
           </Trans>
         )}
       </Alert>
@@ -1140,13 +1141,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       variant="info"
                       title={t('olm~Manual approval applies to all operators in a namespace')}
                     >
-                      <Trans ns="olm">
+                      <Trans ns="olm" values={{ selectedTargetNamespace }}>
                         Installing an operator with manual approval causes all operators installed
-                        in namespace <strong>{{ selectedTargetNamespace }}</strong> to function as
-                        manual approval strategy and will be updated altogether. Install operators
-                        into separate namespaces for handling their updates independently. To allow
-                        automatic approval, all operators installed in the namespace must use
-                        automatic approval strategy.
+                        in namespace <strong>{'{{ selectedTargetNamespace }}'}</strong> to function
+                        as manual approval strategy and will be updated altogether. Install
+                        operators into separate namespaces for handling their updates independently.
+                        To allow automatic approval, all operators installed in the namespace must
+                        use automatic approval strategy.
                       </Trans>
                     </Alert>
                   )}
