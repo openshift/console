@@ -12,7 +12,10 @@ import {
   useSamples,
 } from '../../../utils/samples';
 
-export const normalizeConsoleSamples = (activeNamespace: string, t: TFunction) => {
+export const normalizeConsoleSamples = (
+  activeNamespace: string,
+  t: TFunction | ((key: string) => string),
+) => {
   const createLabel = t('devconsole~Create');
 
   return (sample: ConsoleSample): CatalogItem<ConsoleSample> | null => {

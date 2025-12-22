@@ -1,5 +1,4 @@
 import { safeLoad, dump } from 'js-yaml';
-import { TFunction } from 'react-i18next';
 import {
   k8sCreate,
   k8sGet,
@@ -15,6 +14,7 @@ import {
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
 import { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
+import { TranslationFunction } from './getVSphereHealth';
 import { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
 import { encodeBase64, getErrorMessage } from './utils';
 
@@ -92,7 +92,7 @@ const getPersistSecretOp = async (
 };
 
 const getPatchKubeControllerManagerOp = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: TranslationFunction,
   kubeControllerManagerModel: K8sModel,
 ): Promise<PersistOp> => {
   let cm: KubeControllerManager;
@@ -129,7 +129,7 @@ const getPatchKubeControllerManagerOp = async (
 };
 
 const updateYamlFormat = (
-  t: TFunction<'vsphere-plugin'>,
+  t: TranslationFunction,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
   cloudProviderConfig: ConfigMap,
@@ -249,7 +249,7 @@ const getUpdatedConfigMapResourcePool = (
 };
 
 const updateIniFormat = (
-  t: TFunction<'vsphere-plugin'>,
+  t: TranslationFunction,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
   cloudProviderConfig: ConfigMap,
@@ -360,7 +360,7 @@ const fixConfigMap = (values: ConnectionFormFormikValues) => {
 };
 
 const getPersistProviderConfigMapOp = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: TranslationFunction,
   configMapModel: K8sModel,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
@@ -551,7 +551,7 @@ const runPatches = async ({
   addTaints,
   queryParams,
 }: {
-  t: TFunction<'vsphere-plugin'>;
+  t: TranslationFunction;
   persistSecret: PersistOp;
   persistKubeControllerManager: PersistOp;
   persistProviderCM: PersistOp;
@@ -599,7 +599,7 @@ const runPatches = async ({
 };
 
 export const persist = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: TranslationFunction,
   {
     secretModel,
     configMapModel,

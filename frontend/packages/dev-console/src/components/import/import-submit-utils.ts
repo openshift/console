@@ -778,7 +778,7 @@ export const createDevfileResources = async (
 };
 
 export const createOrUpdateResources = async (
-  t: TFunction,
+  t: TFunction | ((key: string) => string),
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   createNewProject?: boolean,

@@ -102,18 +102,18 @@ const ContainerTerminatedAt: FC<ContainerTerminatedAtProps> = ({ finishedAt }) =
 
 const ContainerTerminatedExitCode: FC<ContainerTerminatedExitCodeProps> = ({ exitCode }) => {
   const { t } = useTranslation();
-  return exitCode ? t('public~with exit code {{exitCode}} ', { exitCode }) : null;
+  return exitCode ? <>{t('public~with exit code {{exitCode}} ', { exitCode })}</> : null;
 };
 
 const ContainerTerminatedReason: FC<ContainerTerminatedReasonProps> = ({ reason }) => {
   const { t } = useTranslation();
-  return reason ? t('public~({{reason}})', { reason }) : null;
+  return reason ? <>{t('public~({{reason}})', { reason })}</> : null;
 };
 
 export const ContainerLastState: FC<ContainerLastStateProps> = ({ containerLastState }) => {
   const { t } = useTranslation();
   if (containerLastState?.waiting) {
-    return t('public~Waiting {{reason}}', { reason: containerLastState.waiting?.reason });
+    return <>{t('public~Waiting {{reason}}', { reason: containerLastState.waiting?.reason })}</>;
   } else if (containerLastState?.running) {
     return (
       <Trans t={t} ns="public">

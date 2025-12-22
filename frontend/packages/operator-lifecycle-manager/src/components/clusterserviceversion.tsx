@@ -215,12 +215,12 @@ const ManagedNamespaces: FC<ManagedNamespacesProps> = ({ obj }) => {
 
   switch (managedNamespaces.length) {
     case 0:
-      return t('olm~All Namespaces');
+      return <>{t('olm~All Namespaces')}</>;
     case 1:
       return managedNamespaces[0] ? (
         <ResourceLink kind="Namespace" title={managedNamespaces[0]} name={managedNamespaces[0]} />
       ) : (
-        t('olm~All Namespaces')
+        <>{t('olm~All Namespaces')}</>
       );
     default:
       return (

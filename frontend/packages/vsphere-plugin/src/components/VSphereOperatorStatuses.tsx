@@ -9,7 +9,6 @@ import {
   t_color_green_50 as okColor,
   t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -20,6 +19,7 @@ import {
 import { ClusterOperator } from '@console/internal/module/k8s';
 import { CONSOLE_PREFIX_CLUSTER_OPERATOR, getCondition } from '../resources';
 import { K8sResourceConditionStatus } from '../resources/k8sResource';
+import { TranslationFunction } from './getVSphereHealth';
 
 let ohlCounter = 0;
 const OperatorHealthLevel: { [key: string]: number } = {
@@ -48,7 +48,7 @@ const getWorstIconState = (states: OperatorHealthType[]): OperatorHealthType['ic
   return worst.icon;
 };
 
-const useOperatorHealth = (t: TFunction, name: string): OperatorHealthType => {
+const useOperatorHealth = (t: TranslationFunction, name: string): OperatorHealthType => {
   const [operator, isLoaded, error] = useK8sWatchResource<ClusterOperator>({
     groupVersionKind: { group: 'config.openshift.io', version: 'v1', kind: 'ClusterOperator' },
     name,

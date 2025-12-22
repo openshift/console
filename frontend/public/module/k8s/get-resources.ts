@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { plural } from 'pluralize';
-import i18next, { TFunction } from 'i18next';
+import i18next from 'i18next';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
@@ -103,7 +103,7 @@ export const getModelExtensionMetadata = (
   version?: string,
   kind?: string,
 ) => {
-  const tcb: TFunction = (value: string) =>
+  const tcb = (value: string) =>
     isTranslatableString(value) ? i18next.t(getTranslationKey(value)) : value;
   const translatedExtensions = extensions.map((e) => translateExtension(e, tcb));
   const groupVersionKindMetadata = translatedExtensions

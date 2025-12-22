@@ -76,7 +76,8 @@ const {
 } = submitUtils;
 
 describe('Import Submit Utils', () => {
-  const t = jest.fn();
+  const mockFn = jest.fn();
+  const t = mockFn;
 
   describe('createDeployment tests', () => {
     beforeAll(() => {

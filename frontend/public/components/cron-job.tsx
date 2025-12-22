@@ -87,7 +87,7 @@ const tableColumnInfo = [
 
 const BooleanDisplay: React.FCC<{ value?: boolean }> = ({ value }) => {
   const { t } = useTranslation();
-  return value ? t('public~True') : t('public~False');
+  return <>{value ? t('public~True') : t('public~False')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {

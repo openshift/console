@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 import { toInteger } from 'lodash';
 import {
   HealthState,
@@ -9,13 +8,15 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../resources';
 
+export type TranslationFunction = (key: string, options?: Record<string, unknown>) => string;
+
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],
   reason: string,
 ): PrometheusValue | undefined => prometheusResult.find((r) => r.metric.reason === reason)?.value;
 
 export const getVSphereHealth = (
-  t: TFunction,
+  t: TranslationFunction,
   responses: PrometheusHealthPopupProps['responses'],
   configMapResult: PrometheusHealthPopupProps['k8sResult'],
 ): SubsystemHealth => {
