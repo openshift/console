@@ -7,7 +7,7 @@ import {
   PrometheusHealthHandler,
 } from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../../resources';
-import { getVSphereHealth } from '../getVSphereHealth';
+import { getVSphereHealth, TranslationFunction } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';
 import { VSphereOperatorStatuses } from '../VSphereOperatorStatuses';
 import './VSphereStatus.css';
@@ -54,7 +54,8 @@ const VSphereStatus: FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sRes
 };
 
 export const healthHandler: PrometheusHealthHandler = (responses, t, additionalResource) => {
-  const health = getVSphereHealth(t || (() => ''), responses, additionalResource);
+  const fallbackT: TranslationFunction = (key: string) => key;
+  const health = getVSphereHealth(t || fallbackT, responses, additionalResource);
   const { state } = health;
 
   let message: string | undefined;

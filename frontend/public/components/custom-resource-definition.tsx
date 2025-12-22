@@ -276,7 +276,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
 
 const IsNamespaced: React.FCC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
   const { t } = useTranslation();
-  return namespaced(obj) ? t('public~Yes') : t('public~No');
+  return <>{namespaced(obj) ? t('public~Yes') : t('public~No')}</>;
 };
 
 const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, columns) => {
