@@ -128,7 +128,8 @@ func (m *Metrics) MonitorPlugins(dynamicClient dynamic.Interface) {
 }
 
 // ConsolePlugins are monitored with a slow interval (see updateConsolePluginInterval).
-// So this gauge can go up and down and it is required to set missing values to 0.
+// When plugin state changes (e.g., enabled -> disabled), we must delete the old label
+// combination to avoid having stale time series in Prometheus.
 func (m *Metrics) updatePluginMetric(dynamicClient dynamic.Interface) {
 	klog.Info("serverconfig.Metrics: Update ConsolePlugin metrics...\n")
 	startTime := time.Now()
@@ -138,7 +139,24 @@ func (m *Metrics) updatePluginMetric(dynamicClient dynamic.Interface) {
 		klog.Errorf("serverconfig.Metrics: Failed to get all installed ConsolePlugins: %v\n", err)
 	}
 
-	pluginInfo := m.calculatePluginInfo(consolePlugins, m.lastPluginInfo)
+	pluginInfo := m.calculatePluginInfo(consolePlugins)
+
+	// Delete stale label combinations from the previous run that are no longer present
+	if m.lastPluginInfo != nil {
+		for lastPluginName, lastPluginStates := range *m.lastPluginInfo {
+			for lastPluginState := range lastPluginStates {
+				// Check if this label combination still exists in the new pluginInfo
+				if newStates, exists := (*pluginInfo)[lastPluginName]; !exists {
+					// Plugin was removed entirely - delete the old series
+					m.pluginsInfo.DeleteLabelValues(string(lastPluginName), string(lastPluginState))
+				} else if _, stateExists := newStates[lastPluginState]; !stateExists {
+					// Plugin exists but state changed - delete the old state series
+					m.pluginsInfo.DeleteLabelValues(string(lastPluginName), string(lastPluginState))
+				}
+			}
+		}
+	}
+
 	m.lastPluginInfo = pluginInfo
 	klog.Infof("serverconfig.Metrics: Update ConsolePlugin metrics: %v (took %v)\n",
 		pluginInfo,
@@ -164,23 +182,12 @@ func (m *Metrics) getConsolePlugins(dynamicClient dynamic.Interface) (*[]unstruc
 	return &resp.Items, err
 }
 
-// Create a new plugin info map that is based on the last report to report also removed ConsolePlugins.
+// Create a new plugin info map containing only the current state of each plugin.
+// Stale label combinations are handled by updatePluginMetric which deletes them.
 func (m *Metrics) calculatePluginInfo(
 	consolePlugins *[]unstructured.Unstructured,
-	lastPluginInfo *map[MappedPluginName]map[PluginState]int,
 ) *map[MappedPluginName]map[PluginState]int {
 	pluginInfo := make(map[MappedPluginName]map[PluginState]int)
-
-	if lastPluginInfo != nil {
-		for lastPluginName, lastPluginStates := range *lastPluginInfo {
-			for lastPluginState := range lastPluginStates {
-				if pluginInfo[lastPluginName] == nil {
-					pluginInfo[lastPluginName] = make(map[PluginState]int)
-				}
-				pluginInfo[lastPluginName][lastPluginState] = 0
-			}
-		}
-	}
 
 	consolePluginNames := make(map[string]bool)
 
