@@ -130,6 +130,10 @@ export const TopologyPage: FC<TopologyPageProps> = ({
       : NamespacedPageVariants.light
     : NamespacedPageVariants.light;
 
+  if (!viewType) {
+    return null;
+  }
+
   return (
     <FilterProvider>
       <DataModelProvider namespace={namespace}>
