@@ -1787,5 +1787,14 @@
   "Delete {{kind}}": "Delete {{kind}}",
   "Disable": "Disable",
   "Disabled": "Disabled",
-  "Enabled": "Enabled"
+  "Enabled": "Enabled",
+  "Failed to load kubecontrollermanager": "Failed to load kubecontrollermanager",
+  "Failed to parse cloud provider config {{cm}}": "Failed to parse cloud provider config {{cm}}",
+  "The following content was expected to be defined in the configMap: {{ expectedValues }}": "The following content was expected to be defined in the configMap: {{ expectedValues }}",
+  "Failed to persist {{secret}}": "Failed to persist {{secret}}",
+  "Failed to patch kubecontrollermanager": "Failed to patch kubecontrollermanager",
+  "Failed to patch cloud provider config": "Failed to patch cloud provider config",
+  "Failed to add taint to nodes": "Failed to add taint to nodes",
+  "Failed to patch infrastructure spec": "Failed to patch infrastructure spec",
+  "Unexpected error": "Unexpected error"
 }
