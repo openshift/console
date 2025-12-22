@@ -25,15 +25,27 @@ describe('Create key/value secrets', () => {
   const binarySecretName = `key-value-binary-secret-${testName}`;
   const asciiSecretName = `key-value-ascii-secret-${testName}`;
   const unicodeSecretName = `key-value-unicode-secret-${testName}`;
+  const tlsSecretName = `key-value-tls-secret-${testName}`;
   const binaryFilename = 'binarysecret.bin';
   const asciiFilename = 'asciisecret.txt';
   const unicodeFilename = 'unicodesecret.utf8';
   const secretKey = `secretkey`;
   const modifiedSecretKey = 'modifiedsecretkey';
+  const tlsSecretYaml = `
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${tlsSecretName}
+type: kubernetes.io/tls
+data:
+  tls.crt: QUFBCg==
+  tls.key: QkJCCg==
+`;
 
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
+    cy.exec(`echo '${tlsSecretYaml}' | oc create -f - -n ${testName}`);
   });
 
   beforeEach(() => {
@@ -131,5 +143,13 @@ describe('Create key/value secrets', () => {
         expect(unicodeSecret).toEqual(value.stdout);
       });
     });
+  });
+
+  it('Validate tls secret is editable', () => {
+    cy.visit(`/k8s/ns/${testName}/secrets/${tlsSecretName}/edit`);
+    secrets.addKeyValue('keyfortest', 'valuefortest');
+    secrets.save();
+    secrets.detailsPageIsLoaded(tlsSecretName);
+    secrets.checkKeyValueExist('keyfortest', 'valuefortest');
   });
 });
