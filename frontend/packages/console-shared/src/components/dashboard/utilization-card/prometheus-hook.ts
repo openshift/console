@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from 'react';
 import { Map as ImmutableMap } from 'immutable';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
@@ -8,11 +7,12 @@ import {
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboard-results';
-import { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 /** @deprecated use usePrometheusPoll() instead */
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   useEffect(() => {
     dispatch(watchPrometheusQuery(query));
     return () => {
@@ -20,9 +20,9 @@ export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
     };
   }, [dispatch, query]);
 
-  const queryResult = useSelector<RootState, ImmutableMap<string, any>>(({ dashboards }) =>
+  const queryResult = useConsoleSelector(({ dashboards }) =>
     dashboards.getIn([RESULTS_TYPE.PROMETHEUS, query]),
-  );
+  ) as ImmutableMap<string, any>;
   const results = useMemo<[HumanizeResult, any, number]>(() => {
     if (!queryResult || !queryResult.get('data')) {
       return [{}, null, null] as [HumanizeResult, any, number];
