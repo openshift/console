@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Label, Alert, Tooltip, AlertActionCloseButton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -27,7 +28,7 @@ export const findDeprecatedOperator = (
   };
 };
 
-export const DeprecatedOperatorWarningBadge: React.FC<DeprecatedOperatorWarningBadge> = ({
+export const DeprecatedOperatorWarningBadge: FC<DeprecatedOperatorWarningBadge> = ({
   deprecation,
   className,
 }) => {
@@ -47,7 +48,7 @@ export const DeprecatedOperatorWarningBadge: React.FC<DeprecatedOperatorWarningB
   );
 };
 
-export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarningIcon> = ({
+export const DeprecatedOperatorWarningIcon: FC<DeprecatedOperatorWarningIcon> = ({
   deprecation,
   dataTest,
 }) => {
@@ -60,14 +61,14 @@ export const DeprecatedOperatorWarningIcon: React.FC<DeprecatedOperatorWarningIc
   );
 };
 
-export const DeprecatedOperatorWarningAlert: React.FC<DeprecatedOperatorWarningProps> = ({
+export const DeprecatedOperatorWarningAlert: FC<DeprecatedOperatorWarningProps> = ({
   deprecatedPackage,
   deprecatedChannel,
   deprecatedVersion,
   dismissible,
 }) => {
   const { t } = useTranslation();
-  const [alertVisible, setAlertVisible] = React.useState<boolean>(true);
+  const [alertVisible, setAlertVisible] = useState<boolean>(true);
 
   return (
     alertVisible && (

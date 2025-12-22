@@ -1,13 +1,14 @@
-import * as React from 'react';
+import type { ReactElement, ComponentType, FC } from 'react';
+import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { getResizeObserver } from '@patternfly/react-core';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 
 type MasonryLayoutProps = {
   columnWidth: number;
-  children: React.ReactElement[];
+  children: ReactElement[];
   loading?: boolean;
-  LoadingComponent?: React.ComponentType<any>;
+  LoadingComponent?: ComponentType<any>;
   /**
    * This threshold ensures that the resize doesn't happen to often.
    * It is set to 30 pixels by default to ensure that the column count is not
@@ -18,16 +19,16 @@ type MasonryLayoutProps = {
   resizeThreshold?: number;
 };
 
-export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
+export const MasonryLayout: FC<MasonryLayoutProps> = ({
   columnWidth,
   children,
   loading,
   LoadingComponent,
   resizeThreshold = 30,
 }) => {
-  const measureRef = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = React.useState<number>(0);
-  const handleResize = React.useCallback(() => {
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number>(0);
+  const handleResize = useCallback(() => {
     const newWidth = measureRef.current.getBoundingClientRect().width;
     if (newWidth) {
       setWidth((oldWidth) =>
@@ -35,12 +36,12 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
       );
     }
   }, [resizeThreshold]);
-  const columnCount = React.useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
+  const columnCount = useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
     columnWidth,
     width,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleResize();
 
     // change the column count if the window is resized
@@ -48,7 +49,7 @@ export const MasonryLayout: React.FC<MasonryLayoutProps> = ({
     return () => observer();
   }, [handleResize]);
 
-  const columns: React.ReactElement[] =
+  const columns: ReactElement[] =
     loading && LoadingComponent
       ? Array.from({ length: columnCount }, (_, i) => <LoadingComponent key={i.toString()} />)
       : children;

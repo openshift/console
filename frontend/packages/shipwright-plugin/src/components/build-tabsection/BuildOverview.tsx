@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -26,7 +26,7 @@ type BuildsOverviewProps = {
   };
 };
 
-const BuildsOverview: React.FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, obj } }) => {
+const BuildsOverview: FC<BuildsOverviewProps> = ({ item: { builds, buildRuns, obj } }) => {
   const { t } = useTranslation();
   const resourceLabel = obj.metadata?.labels?.[BUILDRUN_TO_RESOURCE_MAP_LABEL];
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')

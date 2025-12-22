@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ChangeEvent, FocusEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -21,14 +22,14 @@ interface ApplicationSelectorProps {
   subPath?: string;
 }
 
-const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
+const ApplicationSelector: FC<ApplicationSelectorProps> = ({
   namespace,
   noProjectsAvailable,
   subPath,
 }) => {
   const { t } = useTranslation();
-  const [applicationsAvailable, setApplicationsAvailable] = React.useState(true);
-  const availableApplications = React.useRef<string[]>([]);
+  const [applicationsAvailable, setApplicationsAvailable] = useState(true);
+  const availableApplications = useRef<string[]>([]);
   const projectsAvailable = !noProjectsAvailable;
 
   const [selectedKey, { touched, error }] = useField(
@@ -36,8 +37,8 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   );
   const [nameField] = useField(subPath ? `${subPath}.application.name` : 'application.name');
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [applicationExists, setApplicationExists] = React.useState<boolean>(false);
-  const applicationNameInputRef = React.useRef<HTMLInputElement>();
+  const [applicationExists, setApplicationExists] = useState<boolean>(false);
+  const applicationNameInputRef = useRef<HTMLInputElement>();
   const fieldId = getFieldId('application-name', 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
@@ -76,11 +77,11 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     },
   ];
 
-  const handleAppChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAppChange = (event: ChangeEvent<HTMLInputElement>) => {
     setApplicationExists(availableApplications.current.includes(event.target.value.trim()));
   };
 
-  const handleAppBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleAppBlur = (event: FocusEvent<HTMLInputElement>) => {
     const trimmedApplicationName = event.target.value.trim();
     setFieldValue(nameField.name, trimmedApplicationName);
   };
@@ -90,7 +91,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     ? t('topology~Warning: the application grouping already exists.')
     : t('topology~A unique name given to the application grouping to label your resources.');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedKey.value === CREATE_APPLICATION_KEY) {
       applicationNameInputRef.current?.focus();
     }

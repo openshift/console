@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { Edge } from '@patternfly/react-topology';
 import * as _ from 'lodash';
@@ -15,7 +15,7 @@ type TopologyEdgeResourcesPanelProps = {
   edge: Edge;
 };
 
-const TopologyEdgeResourcesPanel: React.FC<TopologyEdgeResourcesPanelProps> = ({ edge }) => {
+const TopologyEdgeResourcesPanel: FC<TopologyEdgeResourcesPanelProps> = ({ edge }) => {
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, MouseEvent, ReactElement } from 'react';
 import { Button } from '@patternfly/react-core';
 import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
@@ -38,7 +38,7 @@ export type DragItem = {
   type: string;
 };
 
-const DraggableButton: React.FC<DraggableButtonProps> = ({ dragRef }) => {
+const DraggableButton: FC<DraggableButtonProps> = ({ dragRef }) => {
   const { t } = useTranslation();
   return (
     <Button
@@ -52,10 +52,10 @@ const DraggableButton: React.FC<DraggableButtonProps> = ({ dragRef }) => {
   );
 };
 
-const RemoveButton: React.FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
+const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
   const { t } = useTranslation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(navResources, onChange);
-  const unPin = (e: React.MouseEvent<HTMLButtonElement>, navItem: string) => {
+  const unPin = (e: MouseEvent<HTMLButtonElement>, navItem: string) => {
     e.preventDefault();
     e.stopPropagation();
     confirmNavUnpinModal(navItem);
@@ -78,7 +78,7 @@ const reorder = (list: string[], startIndex: number, destIndex: number) => {
   return result;
 };
 
-const PinnedResource: React.FC<PinnedResourceProps> = ({
+const PinnedResource: FC<PinnedResourceProps> = ({
   resourceRef,
   onChange,
   navResources,
@@ -136,7 +136,7 @@ const PinnedResource: React.FC<PinnedResourceProps> = ({
   };
   const label = getLabelForResourceRef(resourceRef);
   const duplicates = navResources.filter((res) => getLabelForResourceRef(res) === label).length > 1;
-  const previewRef = draggable ? (node: React.ReactElement) => preview(drop(node)) : null;
+  const previewRef = draggable ? (node: ReactElement) => preview(drop(node)) : null;
   return (
     <NavItemResource
       key={`pinned-${resourceRef}`}

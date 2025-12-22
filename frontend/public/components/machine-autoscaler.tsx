@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +38,7 @@ import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMen
 
 const machineAutoscalerReference = referenceForModel(MachineAutoscalerModel);
 
-const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
+const MachineAutoscalerTargetLink: FC<MachineAutoscalerTargetLinkProps> = ({ obj }) => {
   const targetAPIVersion: string = _.get(obj, 'spec.scaleTargetRef.apiVersion');
   const targetKind: string = _.get(obj, 'spec.scaleTargetRef.kind');
   const targetName: string = _.get(obj, 'spec.scaleTargetRef.name');
@@ -101,7 +102,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<K8sResourceKind>[] = React.useMemo(() => {
+  const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -156,7 +157,7 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-const MachineAutoscalerList: React.FC<MachineAutoscalerListProps> = ({
+const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
   data,
   loaded,
   loadError,
@@ -165,7 +166,7 @@ const MachineAutoscalerList: React.FC<MachineAutoscalerListProps> = ({
   const columns = useMachineAutoscalerColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={MachineAutoscalerModel.labelPlural}
@@ -176,11 +177,11 @@ const MachineAutoscalerList: React.FC<MachineAutoscalerListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
+const MachineAutoscalerDetails: FC<MachineAutoscalerDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -215,7 +216,7 @@ const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({ obj
   );
 };
 
-export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (props) => (
+export const MachineAutoscalerPage: FC<MachineAutoscalerPageProps> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineAutoscalerList}
@@ -225,7 +226,7 @@ export const MachineAutoscalerPage: React.FC<MachineAutoscalerPageProps> = (prop
   />
 );
 
-export const MachineAutoscalerDetailsPage: React.FC = (props) => (
+export const MachineAutoscalerDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={machineAutoscalerReference}

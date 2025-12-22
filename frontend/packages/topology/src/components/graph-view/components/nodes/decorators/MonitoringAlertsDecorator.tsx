@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -30,21 +31,21 @@ interface MonitoringAlertsDecoratorProps {
 
 type MonitoringAlertsDecoratorType = MonitoringAlertsDecoratorProps & DispatchProps;
 
-const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
+const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
   element,
   radius,
   x,
   y,
   showMonitoringOverview,
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const workloadData = element.getData().data;
   const { monitoringAlerts } = workloadData;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const severityAlertType = getSeverityAlertType(firingAlerts);
 
-  const showSidebar = (e: React.MouseEvent) => {
+  const showSidebar = (e: MouseEvent) => {
     e.stopPropagation();
     showMonitoringOverview();
     element.getGraph().getController().fireEvent(SELECTION_EVENT, [element.getId()]);

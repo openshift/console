@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-up-icon';
@@ -23,7 +24,7 @@ interface PodRingProps {
   enableScaling?: boolean;
 }
 
-const PodRing: React.FC<PodRingProps> = ({
+const PodRing: FC<PodRingProps> = ({
   pods,
   obj,
   resourceKind,
@@ -32,7 +33,7 @@ const PodRing: React.FC<PodRingProps> = ({
   rc,
   enableScaling = true,
 }) => {
-  const [clickCount, setClickCount] = React.useState(obj.spec.replicas);
+  const [clickCount, setClickCount] = useState(obj.spec.replicas);
   const { t } = useTranslation();
   const isAccessScalingAllowed = usePodScalingAccessStatus(
     obj,
@@ -42,7 +43,7 @@ const PodRing: React.FC<PodRingProps> = ({
     impersonate,
   );
 
-  React.useEffect(
+  useEffect(
     () => {
       if (clickCount !== obj.spec.replicas) {
         setClickCount(obj.spec.replicas);

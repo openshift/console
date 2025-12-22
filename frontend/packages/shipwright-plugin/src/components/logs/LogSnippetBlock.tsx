@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { CombinedErrorDetails } from './log-snippet-types';
 import LogSnippetFromPod from './LogSnippetFromPod';
 
 type LogSnippetBlockProps = {
-  children: (logSnippet: string) => React.ReactNode;
+  children: (logSnippet: string) => ReactNode;
   logDetails: CombinedErrorDetails;
   namespace: string;
 };

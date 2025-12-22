@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -18,7 +18,7 @@ type RepositoriesPageProps = {
   };
 };
 
-const RepositoriesPage: React.FC<RepositoriesPageProps> = ({
+const RepositoriesPage: FC<RepositoriesPageProps> = ({
   title,
   canCreate = false,
   createButtonText,

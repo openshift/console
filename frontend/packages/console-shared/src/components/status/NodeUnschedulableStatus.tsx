@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { StatusComponentProps } from '@console/dynamic-plugin-sdk';
 import { WarningStatus } from './statuses';
 
-const NodeUnschedulableStatus: React.FC<NodeUnschedulableStatusProps> = ({
+const NodeUnschedulableStatus: FC<NodeUnschedulableStatusProps> = ({
   status,
   title,
   iconOnly,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -64,7 +65,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -103,12 +104,12 @@ const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
   );
 };
 
-export const LimitRangeList: React.FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
+export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const columns = useLimitRangeColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         data={data}
         loaded={loaded}
@@ -117,11 +118,11 @@ export const LimitRangeList: React.FC<{ data: K8sResourceKind[]; loaded: boolean
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const LimitRangeListPage: React.FC<LimitRangeListPageProps> = (props) => (
+export const LimitRangeListPage: FC<LimitRangeListPageProps> = (props) => (
   <ListPage
     {...props}
     kind={LimitRangeReference}

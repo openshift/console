@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +47,7 @@ type MonitoringDashboardGraphProps = {
 const DEFAULT_TIME_SPAN = 30 * 60 * 1000;
 const DEFAULT_SAMPLES = 30;
 
-export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
+export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
   query,
   namespace,
   title,
@@ -57,7 +58,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const onZoom = React.useCallback(
+  const onZoom = useCallback(
     (from, to) => {
       dispatch(dashboardsSetEndTime(to, 'dev'));
       dispatch(dashboardsSetTimespan(to - from, 'dev'));

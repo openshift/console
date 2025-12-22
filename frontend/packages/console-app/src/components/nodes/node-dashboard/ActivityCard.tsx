@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback, useContext } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -22,18 +23,18 @@ const nodeEventsFilter = (event: EventKind, uid: string, kind: string, name: str
   return objectUID === uid && objectKind === kind && objectName === name;
 };
 
-const RecentEvent: React.FC<RecentEventProps> = ({ node }) => {
+const RecentEvent: FC<RecentEventProps> = ({ node }) => {
   const [data, loaded, loadError] = useK8sWatchResource<EventKind[]>(eventsResource);
   const { uid, name } = node.metadata;
-  const eventsFilter = React.useCallback(
-    (event) => nodeEventsFilter(event, uid, NodeModel.kind, name),
-    [uid, name],
-  );
+  const eventsFilter = useCallback((event) => nodeEventsFilter(event, uid, NodeModel.kind, name), [
+    uid,
+    name,
+  ]);
   return <RecentEventsBody events={{ data, loaded, loadError }} filter={eventsFilter} />;
 };
 
-const ActivityCard: React.FC = () => {
-  const { obj } = React.useContext(NodeDashboardContext);
+const ActivityCard: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
   const eventsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/events`;
   const { t } = useTranslation();
   return (

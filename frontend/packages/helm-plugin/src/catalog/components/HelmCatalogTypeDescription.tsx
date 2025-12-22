@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ProjectHelmChartRepositoryModel } from '../../models';
 
-const LinkToCreatePHCR: React.FC = () => {
+const LinkToCreatePHCR: FC = () => {
   const [namespace] = useActiveNamespace();
   const [isAllowed] = useAccessReview({
     group: ProjectHelmChartRepositoryModel.apiGroup,
@@ -30,7 +30,7 @@ const LinkToCreatePHCR: React.FC = () => {
   return isAllowed ? createPHCR : null;
 };
 
-const HelmCatalogTypeDescription: React.FC = () => {
+const HelmCatalogTypeDescription: FC = () => {
   return (
     <>
       <Trans ns="helm-plugin">

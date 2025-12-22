@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ interface ApiServerSectionProps {
   fullWidth?: boolean;
 }
 
-const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
+const ApiServerSection: FC<ApiServerSectionProps> = ({ title, fullWidth }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const defaultInitvalue = values?.formData?.data?.[EventSources.ApiServerSource] || {};
@@ -22,8 +23,8 @@ const ApiServerSection: React.FC<ApiServerSectionProps> = ({ title, fullWidth })
   const initialValueResources = !_.isEmpty(initVal)
     ? initVal.map((val) => _.values(val))
     : [['', '']];
-  const [nameValue, setNameValue] = React.useState(initialValueResources);
-  const handleNameValuePairs = React.useCallback(
+  const [nameValue, setNameValue] = useState(initialValueResources);
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
         nameValuePairs.map(([name, value]) => {

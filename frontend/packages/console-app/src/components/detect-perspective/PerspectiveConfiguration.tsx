@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FormGroup,
   FormSection,
@@ -68,7 +69,7 @@ type PerspectiveVisibilitySelectOptions = {
   isSelected: boolean;
 };
 
-const PerspectiveVisibilitySelect: React.FC<{
+const PerspectiveVisibilitySelect: FC<{
   toggleId: string;
   disabled: boolean;
   value?: PerspectiveVisibility;
@@ -150,7 +151,7 @@ const PerspectiveVisibilitySelect: React.FC<{
     });
   }
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 
   return (
@@ -160,7 +161,7 @@ const PerspectiveVisibilitySelect: React.FC<{
         onSelect={() => setIsOpen(false)}
         selected={selection}
         onOpenChange={(open) => setIsOpen(open)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             isFullWidth
             id={toggleId}
@@ -196,7 +197,7 @@ const PerspectiveVisibilitySelect: React.FC<{
   );
 };
 
-const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const PerspectiveConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -207,15 +208,15 @@ const PerspectiveConfiguration: React.FC<{ readonly: boolean }> = ({ readonly })
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     PerspectivesConsoleConfig
   >();
-  const [configuredPerspectives, setConfiguredPerspectives] = React.useState<Perspective[]>();
-  React.useEffect(() => {
+  const [configuredPerspectives, setConfiguredPerspectives] = useState<Perspective[]>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !configuredPerspectives) {
       setConfiguredPerspectives(consoleConfig?.spec?.customization?.perspectives);
     }
   }, [configuredPerspectives, consoleConfig, consoleConfigLoaded]);
 
   // Save the latest changes
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     setSaveStatus({ status: 'in-progress' });
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import {
   Skeleton,
   EmptyState,
@@ -37,7 +38,7 @@ type OptionItem = {
   key: string;
 };
 
-const NamespaceDropdown: React.FC = () => {
+const NamespaceDropdown: FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
@@ -54,12 +55,12 @@ const NamespaceDropdown: React.FC = () => {
     preferredNamespaceLoaded,
   ] = usePreferredNamespace();
 
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [filterText, setFilterText] = React.useState('');
-  const menuRef = React.useRef(null);
-  const filterRef = React.useRef<HTMLInputElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [filterText, setFilterText] = useState('');
+  const menuRef = useRef(null);
+  const filterRef = useRef<HTMLInputElement>(null);
 
-  const optionItems: OptionItem[] = React.useMemo(() => {
+  const optionItems: OptionItem[] = useMemo(() => {
     if (!optionsLoaded) {
       return [];
     }
@@ -73,7 +74,7 @@ const NamespaceDropdown: React.FC = () => {
 
   const loaded: boolean = model && preferredNamespaceLoaded && optionsLoaded;
 
-  const filteredOptions: OptionItem[] = React.useMemo(() => {
+  const filteredOptions: OptionItem[] = useMemo(() => {
     const lowerCaseFilterText = filterText.toLowerCase();
     return optionItems.filter((option: OptionItem) =>
       fuzzysearch(lowerCaseFilterText, option.title.toLowerCase()),
@@ -85,7 +86,7 @@ const NamespaceDropdown: React.FC = () => {
     key: '##lastViewed##',
   };
 
-  const onCreateNamespace = React.useCallback(() => {
+  const onCreateNamespace = useCallback(() => {
     createNamespaceOrProjectModal({
       onSubmit: (newProject) => {
         setPreferredNamespace(newProject?.metadata?.name || '');

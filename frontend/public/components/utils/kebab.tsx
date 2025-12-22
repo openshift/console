@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, MouseEvent, Ref, ReactNode, ComponentProps, ComponentType } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -60,7 +61,7 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
   return menuOptions;
 };
 
-const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
+const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
   option,
   onClick,
   autoFocus,
@@ -96,7 +97,7 @@ export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuO
   return Array.isArray((option as KebabSubMenuOption).children);
 };
 
-export const KebabItem: React.FC<KebabItemProps> = (props) => {
+export const KebabItem: FC<KebabItemProps> = (props) => {
   const { option } = props;
   let item;
 
@@ -118,12 +119,12 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
 
 type KebabMenuItemsProps = {
   options: KebabMenuOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };
 
-export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
+export const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
   const { t } = useTranslation();
 
   return (
@@ -150,7 +151,7 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({ options, onClick
   );
 };
 
-export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => {
+export const KebabItems: FC<KebabItemsProps> = ({ options, ...props }) => {
   const menuOptions = kebabOptionsToMenu(options);
   return <KebabMenuItems {...props} options={menuOptions} />;
 };
@@ -159,7 +160,7 @@ export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
-  const [active, setActive] = React.useState(false);
+  const [active, setActive] = useState(false);
 
   const hide = () => {
     setActive(false);
@@ -209,7 +210,7 @@ export const Kebab: KebabComponent = (props) => {
           position: 'right',
         }}
         style={{ overflow: 'inherit' }} // allow ContextSubMenuItem to work
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             data-test-id="kebab-button"
@@ -232,7 +233,7 @@ export const Kebab: KebabComponent = (props) => {
 
 export type KebabOption = {
   hidden?: boolean;
-  label?: React.ReactNode;
+  label?: ReactNode;
   labelKey?: string;
   labelKind?: { [key: string]: string | string[] };
   href?: string;
@@ -245,7 +246,7 @@ export type KebabOption = {
   // Eg. `Menu 1/Menu 2/Menu 3`
   path?: string;
   pathKey?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 };
 
 export type KebabAction = (
@@ -283,11 +284,11 @@ type KebabProps = {
 
 type KebabItemProps = {
   option: KebabOption;
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   autoFocus?: boolean;
-  Component?: React.ComponentType<
+  Component?: ComponentType<
     Pick<
-      React.ComponentProps<typeof DropdownItem>,
+      ComponentProps<typeof DropdownItem>,
       'onClick' | 'isDisabled' | 'autoFocus' | 'children' | 'icon'
     >
   >;
@@ -295,12 +296,12 @@ type KebabItemProps = {
 
 export type KebabItemsProps = {
   options: KebabOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };
 
 export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
-type KebabComponent = React.FC<KebabProps>;
+type KebabComponent = FC<KebabProps>;
 KebabItems.displayName = 'KebabItems';

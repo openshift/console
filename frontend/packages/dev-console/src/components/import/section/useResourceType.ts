@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+import { useEffect } from 'react';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import { useUserSettings, useFlag } from '@console/shared';
 import {
@@ -9,7 +10,7 @@ import { Resources } from '../import-types';
 
 const LAST_USED_RESOURCE_KEY = 'latest';
 
-export const useResourceType = (): [string, React.Dispatch<React.SetStateAction<string>>] => {
+export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] => {
   const isKnSvcEnabled = useFlag(FLAG_KNATIVE_SERVING_SERVICE);
   const defaultResourceType = isKnSvcEnabled ? Resources.KnativeService : Resources.Kubernetes;
 
@@ -24,7 +25,7 @@ export const useResourceType = (): [string, React.Dispatch<React.SetStateAction<
     defaultResourceType,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isKnSvcEnabled) {
       if (
         preferredResourceTypeLoaded &&
@@ -51,7 +52,7 @@ export const useResourceType = (): [string, React.Dispatch<React.SetStateAction<
     setResourceType,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (preferredResourceTypeLoaded && preferredResourceType !== LAST_USED_RESOURCE_KEY) {
       setResourceType(preferredResourceType);
     }

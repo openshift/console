@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import { ResourceLink, CopyToClipboard } from '@console/internal/components/util
 import { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
-const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
+const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">

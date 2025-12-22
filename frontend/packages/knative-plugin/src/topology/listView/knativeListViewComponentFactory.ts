@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { Node } from '@patternfly/react-topology';
 import {
   TYPE_KNATIVE_SERVICE,
@@ -19,7 +19,7 @@ import { SinkUriListViewNode } from './SinkUriListViewNode';
 export const knativeListViewNodeComponentFactory = (
   type,
 ):
-  | React.ComponentType<{
+  | ComponentType<{
       item: Node;
       selectedIds: string[];
       onSelect: (ids: string[]) => void;

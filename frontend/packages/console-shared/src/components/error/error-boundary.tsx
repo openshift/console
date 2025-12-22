@@ -1,10 +1,11 @@
-import * as React from 'react';
+import type { ComponentType, ReactNode, FC } from 'react';
+import { Component } from 'react';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils/router';
 
 type ErrorBoundaryProps = {
-  FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
-  children?: React.ReactNode;
+  FallbackComponent?: ComponentType<ErrorBoundaryFallbackProps>;
+  children?: ReactNode;
 };
 
 /** Needed for tests -- should not be imported by application logic */
@@ -14,9 +15,9 @@ export type ErrorBoundaryState = {
   errorInfo: { componentStack: string };
 };
 
-const DefaultFallback: React.FC = () => <div />;
+const DefaultFallback: FC = () => <div />;
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   unlisten: () => void = () => {};
 
   readonly defaultState: ErrorBoundaryState = {

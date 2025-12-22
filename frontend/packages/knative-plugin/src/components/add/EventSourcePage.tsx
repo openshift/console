@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -13,7 +13,7 @@ import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';
 
-const EventSourcePage: React.FC = () => {
+const EventSourcePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils/headings';
@@ -10,7 +10,7 @@ type NodeDetailsImagesProps = {
   node: NodeKind;
 };
 
-const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
+const NodeDetailsImages: FC<NodeDetailsImagesProps> = ({ node }) => {
   const images = _.filter(node.status.images, 'names');
   const { t } = useTranslation();
   return (

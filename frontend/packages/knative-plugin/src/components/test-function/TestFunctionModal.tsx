@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, Title, TitleSizes } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { FormikProps, FormikValues } from 'formik';
@@ -18,10 +19,10 @@ interface TestFunctionModalProps {
 
 type Props = FormikProps<FormikValues> & TestFunctionModalProps & ModalComponentProps;
 
-const TestFunctionModal: React.FC<Props> = (props) => {
+const TestFunctionModal: FC<Props> = (props) => {
   const { t } = useTranslation();
   const { handleSubmit, cancel, close, isSubmitting } = props;
-  const [currentView, setCurrentView] = React.useState(ModalPanel.Request);
+  const [currentView, setCurrentView] = useState(ModalPanel.Request);
   const header = (
     <>
       <Title id="modal-custom-header-label" headingLevel="h1" size={TitleSizes['2xl']}>

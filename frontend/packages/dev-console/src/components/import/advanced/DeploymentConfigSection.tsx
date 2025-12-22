@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src';
@@ -14,7 +14,7 @@ export interface DeploymentConfigSectionProps {
   showHeader?: boolean;
 }
 
-const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
+const DeploymentConfigSection: FC<DeploymentConfigSectionProps> = ({
   namespace,
   resource,
   showHeader,

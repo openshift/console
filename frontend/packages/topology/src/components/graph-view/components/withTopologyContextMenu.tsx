@@ -1,13 +1,14 @@
-import * as React from 'react';
+import type { ComponentProps, MouseEvent, ComponentType, FC } from 'react';
+import { useContext, useState, useCallback } from 'react';
 import { GraphElement, ElementContext, ContextMenu } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
 import { ActionContext, ActionServiceProvider } from '@console/shared';
 import { createContextMenuItems } from '../../../actions';
 
-type Reference = React.ComponentProps<typeof ContextMenu>['reference'];
+type Reference = ComponentProps<typeof ContextMenu>['reference'];
 
 export interface WithContextMenuProps {
-  onContextMenu: (e: React.MouseEvent) => void;
+  onContextMenu: (e: MouseEvent) => void;
   contextMenuOpen: boolean;
 }
 
@@ -16,11 +17,11 @@ const withContextMenu = <E extends GraphElement>(
   container?: Element | null | undefined | (() => Element),
   className?: string,
   atPoint: boolean = true,
-) => <P extends WithContextMenuProps>(WrappedComponent: React.ComponentType<Partial<P>>) => {
-  const Component: React.FC<Omit<P, keyof WithContextMenuProps>> = (props) => {
-    const element = React.useContext(ElementContext);
-    const [reference, setReference] = React.useState<Reference | null>(null);
-    const onContextMenu = React.useCallback((e: React.MouseEvent) => {
+) => <P extends WithContextMenuProps>(WrappedComponent: ComponentType<Partial<P>>) => {
+  const Component: FC<Omit<P, keyof WithContextMenuProps>> = (props) => {
+    const element = useContext(ElementContext);
+    const [reference, setReference] = useState<Reference | null>(null);
+    const onContextMenu = useCallback((e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       setReference(

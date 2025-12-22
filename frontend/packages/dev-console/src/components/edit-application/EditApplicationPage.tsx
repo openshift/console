@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
@@ -21,7 +22,7 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind | PipelineKind[];
 };
 
-const EditApplicationPage: React.FunctionComponent = () => {
+const EditApplicationPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
@@ -34,7 +35,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
     kind = referenceForModel(ServiceModel);
   }
 
-  const watchedEditResource = React.useMemo(
+  const watchedEditResource = useMemo(
     () => ({
       kind,
       name: appName,
@@ -48,7 +49,7 @@ const EditApplicationPage: React.FunctionComponent = () => {
     K8sResourceKind
   >(watchedEditResource);
 
-  const watchedResources = React.useMemo(() => {
+  const watchedResources = useMemo(() => {
     const nameLabel =
       isEditResDataLoaded &&
       !editResDataLoadError &&

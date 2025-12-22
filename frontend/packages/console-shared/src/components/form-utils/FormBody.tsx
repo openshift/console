@@ -1,15 +1,15 @@
-import * as React from 'react';
+import type { ReactNode, CSSProperties, HTMLProps, FC } from 'react';
 import { css } from '@patternfly/react-styles';
 
 type FormBodyProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   flexLayout?: boolean;
   disablePaneBody?: boolean;
 };
 
-const FormBody: React.FC<FormBodyProps & React.HTMLProps<HTMLDivElement>> = ({
+const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
   children,
   className,
   style,

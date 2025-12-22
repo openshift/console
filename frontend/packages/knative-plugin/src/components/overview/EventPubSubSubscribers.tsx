@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, Fragment } from 'react';
 import { Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
@@ -14,12 +15,12 @@ type EventPubSubSubscribersProps = {
   subscribers?: Subscriber[];
 };
 
-const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
+const EventPubSubSubscribers: FC<EventPubSubSubscribersProps> = ({
   subscribers,
   title = 'Subscribers',
 }) => {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = React.useState('');
+  const [expanded, setExpanded] = useState('');
 
   return (
     <>
@@ -40,7 +41,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
                   };
 
                   return (
-                    <React.Fragment key={r.name}>
+                    <Fragment key={r.name}>
                       <Grid className="kn-event-subscriber-list__relationship">
                         <GridItem span={9}>
                           <ResourceLink
@@ -67,7 +68,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
                           </GridItem>
                         </Grid>
                       )}
-                    </React.Fragment>
+                    </Fragment>
                   );
                 })}
             </ListItem>

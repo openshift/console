@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ export interface BuilderImageTagSelectorProps {
   showImageInfo?: boolean;
 }
 
-const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
+const BuilderImageTagSelector: FC<BuilderImageTagSelectorProps> = ({
   selectedBuilderImage,
   selectedImageTag,
   showImageInfo = true,
@@ -59,7 +60,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
 
   const k8sGet = useSafeK8s();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFieldValue('image.tagObj', imageTag);
     k8sGet(ImageStreamTagModel, `${imageName}:${selectedImageTag}`, imageStreamNamespace)
       .then((imageStreamTag: K8sResourceKind) => {

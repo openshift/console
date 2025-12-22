@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button, List, ListItem } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Trans, useTranslation } from 'react-i18next';
@@ -84,7 +84,7 @@ const BuildStatus = ({ build }: { build: K8sResourceKind }) => {
   return unsuccessful ? <LogSnippet message={message} logSnippet={logSnippet} /> : null;
 };
 
-const BuildOverviewItem: React.FC<BuildOverviewListItemProps> = ({ build }) => {
+const BuildOverviewItem: FC<BuildOverviewListItemProps> = ({ build }) => {
   const {
     metadata: { creationTimestamp },
     status: { completionTimestamp, startTimestamp, phase },
@@ -122,7 +122,7 @@ const BuildOverviewItem: React.FC<BuildOverviewListItemProps> = ({ build }) => {
   );
 };
 
-const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) => {
+const BuildOverviewList: FC<BuildOverviewListProps> = ({ buildConfig }) => {
   const {
     metadata: { name, namespace },
     builds,
@@ -186,7 +186,7 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
     </List>
   );
 };
-export const BuildOverview: React.FC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {
+export const BuildOverview: FC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {
   const { t } = useTranslation();
   if (!(buildConfigs?.length > 0)) {
     return null;

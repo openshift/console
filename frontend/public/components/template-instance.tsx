@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -97,7 +98,7 @@ const getTemplateInstanceDataViewRows = (
 
 const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -139,15 +140,11 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   return columns;
 };
 
-export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useTemplateInstanceColumns();
 
-  const templateInstanceStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return [
       {
         value: 'Ready',
@@ -164,9 +161,9 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
     ];
   }, [t]);
 
-  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -179,14 +176,14 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
     [t, templateInstanceStatusFilterOptions],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource: TemplateInstanceKind, filters: TemplateInstanceFilters) =>
       filters.status.length === 0 || filters.status.includes(getTemplateInstanceStatus(resource)),
     [],
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
         label={TemplateInstanceModel.labelPlural}
@@ -199,7 +196,7 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
         getDataViewRows={getTemplateInstanceDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

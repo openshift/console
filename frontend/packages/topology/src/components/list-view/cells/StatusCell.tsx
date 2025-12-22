@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ type StatusCellResourceLinkProps = {
   resource: K8sResourceKind;
 };
 
-const StatusCellResourceLink: React.FC<StatusCellResourceLinkProps> = ({
+const StatusCellResourceLink: FC<StatusCellResourceLinkProps> = ({
   desired = 0,
   ready = 0,
   resource,
@@ -36,7 +36,7 @@ interface StatusCellResourceStatus {
   podData: PodRCData;
 }
 
-const StatusCellResourceStatus: React.FC<StatusCellResourceStatus> = ({ obj, podData }) => {
+const StatusCellResourceStatus: FC<StatusCellResourceStatus> = ({ obj, podData }) => {
   const { t } = useTranslation();
   if (obj.kind === DaemonSetModel.kind) {
     return (
@@ -71,7 +71,7 @@ type StatusProps = {
   item: Node;
 };
 
-const StatusCell: React.FC<StatusProps> = ({ item }) => {
+const StatusCell: FC<StatusProps> = ({ item }) => {
   const resource = getTopologyResourceObject(item.getData());
   const { podData, loaded, loadError } = usePodsWatcher(resource);
 

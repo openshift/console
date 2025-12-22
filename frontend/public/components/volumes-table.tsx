@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +76,7 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
   return data;
 };
 
-const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
+const ContainerLink: FC<ContainerLinkProps> = ({ name, pod }) => (
   <span className="co-resource-item co-resource-item--inline">
     <ResourceIcon kind="Container" />
     <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
@@ -11,7 +11,7 @@ type NodeDetailsConditionsProps = {
   node: NodeKind;
 };
 
-const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) => {
+const NodeDetailsConditions: FC<NodeDetailsConditionsProps> = ({ node }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>

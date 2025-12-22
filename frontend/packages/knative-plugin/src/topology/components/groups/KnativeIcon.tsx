@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { t_color_white as globalWhite } from '@patternfly/react-tokens';
 import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -12,7 +13,7 @@ type KnativeIconProps = {
 
 const FILTER_ID = 'KnativeIconOutlineFilterId';
 
-const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
+const KnativeIcon: FC<KnativeIconProps> = ({ x, y, width, height }) => (
   <>
     <SVGDefs id={FILTER_ID}>
       <filter id={FILTER_ID}>
@@ -46,4 +47,4 @@ const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
   </>
 );
 
-export default React.memo(KnativeIcon);
+export default memo(KnativeIcon);

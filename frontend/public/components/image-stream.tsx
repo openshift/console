@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Fragment, Suspense } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
@@ -254,7 +254,7 @@ export const ImageStreamsDetails: React.FCC<ImageStreamsDetailsProps> = ({ obj: 
           <ExpandableAlert
             variant={AlertVariant.warning}
             alerts={_.map(importErrors, (error, i) => (
-              <React.Fragment key={i}>{error}</React.Fragment>
+              <Fragment key={i}>{error}</Fragment>
             ))}
           />
         )}
@@ -383,7 +383,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<K8sResourceKind>[] = React.useMemo(() => {
+  const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -435,7 +435,7 @@ export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loade
   const columns: TableColumn<K8sResourceKind>[] = useImageStreamColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         label={ImageStreamModel.labelPlural}
@@ -445,7 +445,7 @@ export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loade
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

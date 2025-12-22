@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -113,7 +113,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
 const usePersistentVolumeColumns = (): TableColumn<PersistentVolumeKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<PersistentVolumeKind>[] = React.useMemo(
+  const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -250,10 +250,10 @@ export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = usePersistentVolumeColumns();
-  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeKind>
         {...props}
         label={PersistentVolumeModel.labelPlural}
@@ -263,7 +263,7 @@ export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

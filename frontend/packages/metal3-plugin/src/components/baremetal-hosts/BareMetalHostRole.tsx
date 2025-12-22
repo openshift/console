@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { DASH, getNodeRoles, getMachineRole } from '@console/shared';
 
@@ -7,7 +7,7 @@ type BareMetalHostRoleProps = {
   node?: NodeKind;
 };
 
-const BareMetalHostRole: React.FC<BareMetalHostRoleProps> = ({ machine, node }) => (
+const BareMetalHostRole: FC<BareMetalHostRoleProps> = ({ machine, node }) => (
   <>{getNodeRoles(node).sort().join(', ') || getMachineRole(machine) || DASH}</>
 );
 

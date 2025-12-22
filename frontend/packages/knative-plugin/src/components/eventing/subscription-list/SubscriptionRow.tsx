@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -11,7 +11,7 @@ import { tableColumnClasses } from './subscription-table';
 type SubscriptionRowType = {
   channel?: string;
 };
-const SubscriptionRow: React.FC<RowFunctionArgs<EventSubscriptionKind, SubscriptionRowType>> = ({
+const SubscriptionRow: FC<RowFunctionArgs<EventSubscriptionKind, SubscriptionRowType>> = ({
   obj,
   customData,
 }) => {

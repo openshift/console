@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Firehose } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
@@ -9,7 +10,7 @@ type MonitoringTabProps = {
   item: OverviewItem;
 };
 
-const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
+const MonitoringTab: FC<MonitoringTabProps> = ({ item }) => {
   const { monitoringAlerts } = item;
   const {
     kind,
@@ -17,7 +18,7 @@ const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
   } = item.obj;
   const { podData, loadError, loaded } = usePodsWatcher(item.obj, item.obj.kind, namespace);
 
-  const resources = React.useMemo(() => {
+  const resources = useMemo(() => {
     const res = [
       {
         isList: true,

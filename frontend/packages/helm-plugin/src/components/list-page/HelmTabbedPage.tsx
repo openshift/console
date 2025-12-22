@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -16,7 +16,7 @@ import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
-const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) => {
+const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
   const { t } = useTranslation();
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
@@ -114,7 +114,7 @@ const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) =>
   );
 };
 
-export const PageContents: React.FC = () => {
+export const PageContents: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [activePerspective] = useActivePerspective();
@@ -135,7 +135,7 @@ export const PageContents: React.FC = () => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const HelmTabbedPage: React.FC = (props) => {
+const HelmTabbedPage: FC = (props) => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <PageContentsWithStartGuide {...props} />

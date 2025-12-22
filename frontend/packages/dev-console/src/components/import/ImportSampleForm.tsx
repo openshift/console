@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -15,7 +15,7 @@ type ImportSampleFormProps = {
 
 type Props = FormikProps<FormikValues> & ImportSampleFormProps;
 
-const ImportSampleForm: React.FC<Props> = ({
+const ImportSampleForm: FC<Props> = ({
   values,
   errors,
   handleSubmit,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Node, observer } from '@patternfly/react-topology';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
 import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
@@ -9,10 +9,10 @@ interface KnativeServiceListViewNodeProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const ObservedKnativeServiceListViewNode: React.FC<KnativeServiceListViewNodeProps> = ({
+const ObservedKnativeServiceListViewNode: FC<KnativeServiceListViewNodeProps> = ({
   item,
   selectedIds,
   onSelect,

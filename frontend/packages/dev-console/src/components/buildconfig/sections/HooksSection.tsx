@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField, DropdownField, TextColumnField } from '@console/shared';
@@ -15,7 +15,7 @@ type HookFormData = {
 
 export type HooksSectionFormData = { formData: { hooks: HookFormData } };
 
-const HooksSection: React.FC<{}> = () => {
+const HooksSection: FC<{}> = () => {
   const { t } = useTranslation();
 
   const [

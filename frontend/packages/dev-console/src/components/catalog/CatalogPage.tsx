@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -13,7 +13,7 @@ import {
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
-const PageContents: React.FC = () => {
+const PageContents: FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
@@ -46,7 +46,7 @@ const PageContents: React.FC = () => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const CatalogPage: React.FC = () => {
+const CatalogPage: FC = () => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const isCatalogEnabled = isCatalogTypeEnabled(catalogType);

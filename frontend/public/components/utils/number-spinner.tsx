@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC, HTMLProps } from 'react';
 import { ButtonProps, NumberInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
+export const NumberSpinner: FC<NumberSpinnerProps> = ({
   className,
   changeValueBy,
   min,
@@ -36,4 +36,4 @@ type NumberSpinnerProps = {
   className?: string;
   changeValueBy: (operation: number) => void;
   min?: number;
-} & React.HTMLProps<HTMLInputElement>;
+} & HTMLProps<HTMLInputElement>;

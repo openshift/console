@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { kindForReference, K8sResourceKind } from '@console/internal/module/k8s';
 import { isValidUrl } from '@console/shared';
 import {
@@ -21,7 +21,7 @@ import sinkBindingSourceImg from '../imgs/logos/sinkbindingsource.svg';
 import { TYPE_EVENT_SINK } from '../topology/const';
 import { eventSinkIconSVG, eventSourceIconSVG } from './icons';
 
-const getEventSourceIconFromKind = (kind: string, nodeType?: string): React.ReactNode | string => {
+const getEventSourceIconFromKind = (kind: string, nodeType?: string): ReactNode | string => {
   switch (kindForReference(kind)) {
     case EVENT_SOURCE_API_SERVER_KIND:
       return apiServerSourceImg;
@@ -46,7 +46,7 @@ export const getEventSourceIcon = (
   kind: string,
   obj?: K8sResourceKind,
   nodeType?: string,
-): React.ReactNode | string => {
+): ReactNode | string => {
   const objAnnotations = obj?.metadata?.annotations;
   return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])
     ? objAnnotations?.[EVENT_SOURCE_ICON]

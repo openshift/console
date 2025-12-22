@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom-v5-compat';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -69,7 +70,7 @@ const clusterBuildStrategyTab = (model: K8sModel): Page => {
   };
 };
 
-const ShipwrightTabListPage: React.FC = () => {
+const ShipwrightTabListPage: FC = () => {
   const { t } = useTranslation();
   const { '*': currentTab } = useParams();
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ const ShipwrightTabListPage: React.FC = () => {
   }
 
   /* Do not show empty page when no tab is selected */
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentTab !== '') {
       return;
     }

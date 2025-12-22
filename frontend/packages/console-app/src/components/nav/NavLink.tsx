@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { Ref, ReactNode } from 'react';
 import { Link, LinkProps } from 'react-router-dom-v5-compat';
 
 export const NavLink: React.FCC<NavLinkProps> = ({ children, dragRef, ...linkProps }) => {
@@ -11,6 +10,6 @@ export const NavLink: React.FCC<NavLinkProps> = ({ children, dragRef, ...linkPro
 };
 
 export type NavLinkProps = LinkProps & {
-  dragRef?: React.Ref<any>;
+  dragRef?: Ref<any>;
   children?: ReactNode;
 };

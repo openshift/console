@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   Checkbox,
@@ -15,7 +15,7 @@ type ClusterConfigurationCheckboxFieldProps = {
   field: ClusterConfigurationCheckboxField;
 };
 
-const ClusterConfigurationCheckboxField: React.FC<ClusterConfigurationCheckboxFieldProps> = ({
+const ClusterConfigurationCheckboxField: FC<ClusterConfigurationCheckboxFieldProps> = ({
   item,
 }) => (
   <FormGroup fieldId={item.id} label={item.label} data-test={`${item.id} field`}>

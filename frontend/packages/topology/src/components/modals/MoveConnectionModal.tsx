@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useCallback } from 'react';
 import {
   FormGroup,
   Title,
@@ -54,7 +55,7 @@ const nodeItem = (node: Node) => (
   </span>
 );
 
-const MoveConnectionForm: React.FC<
+const MoveConnectionForm: FC<
   FormikProps<FormikValues> & MoveConnectionModalProps & { setTranslator: (t: TFunction) => void }
 > = ({
   handleSubmit,
@@ -67,11 +68,11 @@ const MoveConnectionForm: React.FC<
   status,
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setOpen] = React.useState<boolean>(false);
+  const [isOpen, setOpen] = useState<boolean>(false);
   const isDirty = values.target.getId() !== edge.getTarget().getId();
   setTranslator(t);
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       id="toggle-id"
       ref={toggleRef}
@@ -200,8 +201,8 @@ const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = 
 
 export const useMoveConnectionModalLauncher = (props: MoveConnectionModalProps) => {
   const launcher = useOverlay();
-  return React.useCallback(
-    () => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props),
-    [launcher, props],
-  );
+  return useCallback(() => launcher<MoveConnectionModalProps>(MoveConnectionModalProvider, props), [
+    launcher,
+    props,
+  ]);
 };

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -149,7 +150,7 @@ const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 
-const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
+const SubscriptionStatus: FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
   muted = false,
   subscription,
 }) => {
@@ -174,7 +175,7 @@ const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: Subscription
   );
 };
 
-const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = ({
+const ClusterServiceVersionStatus: FC<ClusterServiceVersionStatusProps> = ({
   obj,
   subscription,
 }) => {
@@ -196,7 +197,7 @@ const ClusterServiceVersionStatus: React.FC<ClusterServiceVersionStatusProps> = 
   ) : null;
 };
 
-const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
+const ManagedNamespaces: FC<ManagedNamespacesProps> = ({ obj }) => {
   const { t } = useTranslation();
   const managedNamespaces = targetNamespacesFor(obj)?.split(',') || [];
   if (isCopiedCSV(obj)) {
@@ -237,7 +238,7 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
   }
 };
 
-const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
+const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -297,7 +298,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
   );
 };
 
-const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) => {
+const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) => {
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -441,7 +442,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   },
 );
 
-export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
+export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   activeNamespace,
   catalogSourceMissing,
   obj,
@@ -503,10 +504,7 @@ export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({
   );
 };
 
-const InstalledOperatorTableRow: React.FC<InstalledOperatorTableRowProps> = ({
-  obj,
-  customData,
-}) => {
+const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, customData }) => {
   const { catalogSources, subscriptions, activeNamespace } = customData;
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
@@ -582,7 +580,7 @@ const CSVListNoDataEmptyMsg = () => {
   return <ConsoleEmptyState title={t('olm~No Operators found')}>{detail}</ConsoleEmptyState>;
 };
 
-export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps> = ({
+export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   data,
@@ -701,7 +699,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
   };
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
 
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       catalogoperators: catalogSources?.data ?? [],
       subscriptions: subscriptions?.data ?? [],
@@ -731,7 +729,7 @@ export const ClusterServiceVersionList: React.FC<ClusterServiceVersionListProps>
   );
 };
 
-export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
+export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
   const [canListAllSubscriptions] = useAccessReview({
     group: SubscriptionModel.apiGroup,
@@ -849,12 +847,12 @@ export const MarkdownView = (props: {
   );
 };
 
-export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
+export const CRDCard: FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
   const { t } = useTranslation();
   const reference = referenceForProvidedAPI(crd);
   const [model] = useK8sModel(reference);
   const canCreate = rest.canCreate ?? model?.verbs?.includes?.('create');
-  const createRoute = React.useMemo(
+  const createRoute = useMemo(
     () =>
       csv
         ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`
@@ -913,7 +911,7 @@ export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
   );
 };
 
-const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = (props) => {
+const InitializationResourceAlert: FC<InitializationResourceAlertProps> = (props) => {
   const { t } = useTranslation();
   const { initializationResource, csv } = props;
 
@@ -960,16 +958,14 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
   return null;
 };
 
-export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetailsProps> = (
-  props,
-) => {
+export const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (props) => {
   const { t } = useTranslation();
   const { spec, metadata, status } = props.obj ?? {};
   const { subscription } = props.customData;
   const providedAPIs = providedAPIsForCSV(props.obj);
   const marketplaceSupportWorkflow = metadata?.annotations?.[OLMAnnotation.SupportWorkflow] || '';
   const initializationLink = getInitializationLink(metadata?.annotations);
-  const initializationResource = React.useMemo(
+  const initializationResource = useMemo(
     () =>
       !initializationLink &&
       getInitializationResource(metadata?.annotations, {
@@ -981,7 +977,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
     [metadata?.annotations, initializationLink],
   );
 
-  const supportWorkflowUrl = React.useMemo(() => {
+  const supportWorkflowUrl = useMemo(() => {
     if (marketplaceSupportWorkflow) {
       try {
         const url = new URL(marketplaceSupportWorkflow);
@@ -1226,7 +1222,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
   );
 };
 
-export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customData, ...rest }) => {
+export const CSVSubscription: FC<CSVSubscriptionProps> = ({ obj, customData, ...rest }) => {
   const { t } = useTranslation();
   const { subscription, subscriptions, subscriptionsLoaded, subscriptionsLoadError } =
     customData ?? {};
@@ -1253,7 +1249,7 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({ obj, customDat
   );
 };
 
-export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
+export const ClusterServiceVersionDetailsPage: FC = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
@@ -1277,14 +1273,14 @@ export const ClusterServiceVersionDetailsPage: React.FC = (props) => {
     verb: 'list',
   });
 
-  const subscription = React.useMemo(
+  const subscription = useMemo(
     () => (subscriptions ?? []).find((s) => s.status.installedCSV === csv?.metadata?.name),
     [csv, subscriptions],
   );
 
   const { deprecatedPackage } = findDeprecatedOperator(subscription);
 
-  const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => {
+  const pagesFor = useCallback((obj: ClusterServiceVersionKind) => {
     const providedAPIs = providedAPIsForCSV(obj);
     return [
       navFactory.details(ClusterServiceVersionDetails),

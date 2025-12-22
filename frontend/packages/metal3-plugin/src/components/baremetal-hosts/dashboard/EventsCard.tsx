@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useEffect } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -55,14 +56,10 @@ const getHostEventsFilter = (
   machine: MachineKind,
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
-const EventsCard: React.FC<EventsCardProps> = ({
-  watchK8sResource,
-  stopWatchK8sResource,
-  resources,
-}) => {
+const EventsCard: FC<EventsCardProps> = ({ watchK8sResource, stopWatchK8sResource, resources }) => {
   const { t } = useTranslation();
-  const { obj, machine } = React.useContext(BareMetalHostDashboardContext);
-  React.useEffect(() => {
+  const { obj, machine } = useContext(BareMetalHostDashboardContext);
+  useEffect(() => {
     watchK8sResource(eventsResource);
     return () => {
       stopWatchK8sResource(eventsResource);

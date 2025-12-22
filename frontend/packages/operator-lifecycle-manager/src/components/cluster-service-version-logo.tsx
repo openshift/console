@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

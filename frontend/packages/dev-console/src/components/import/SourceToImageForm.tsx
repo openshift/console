@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import NamespaceSection from './NamespaceSection';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-export const SourceToImageForm: React.FC<
+export const SourceToImageForm: FC<
   FormikProps<FormikValues & GitImportFormData> & SourceToImageFormProps
 > = ({
   values,

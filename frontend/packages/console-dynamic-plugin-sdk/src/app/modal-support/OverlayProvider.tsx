@@ -1,12 +1,12 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
+import { createContext, useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { UnknownProps } from '../common-types';
 
 type CloseOverlay = () => void;
 type CloseOverlayContextValue = (id: string) => void;
 
-export type OverlayComponent<P = UnknownProps> = React.FC<P & { closeOverlay: CloseOverlay }>;
+export type OverlayComponent<P = UnknownProps> = FC<P & { closeOverlay: CloseOverlay }>;
 
 export type LaunchOverlay = <P = UnknownProps>(
   component: OverlayComponent<P>,
@@ -18,7 +18,7 @@ type OverlayContextValue = {
   closeOverlay: CloseOverlayContextValue;
 };
 
-export const OverlayContext = React.createContext<OverlayContextValue>({
+export const OverlayContext = createContext<OverlayContextValue>({
   launchOverlay: () => {},
   closeOverlay: () => {},
 });
@@ -34,10 +34,10 @@ interface OverlayProviderProps {
   children?: ReactNode;
 }
 
-export const OverlayProvider: React.FC<OverlayProviderProps> = ({ children }) => {
-  const [componentsMap, setComponentsMap] = React.useState<ComponentMap>({});
+export const OverlayProvider: FC<OverlayProviderProps> = ({ children }) => {
+  const [componentsMap, setComponentsMap] = useState<ComponentMap>({});
 
-  const launchOverlay = React.useCallback<LaunchOverlay>((component, componentProps) => {
+  const launchOverlay = useCallback<LaunchOverlay>((component, componentProps) => {
     const id = _.uniqueId('plugin-overlay-');
     setComponentsMap((components) => ({
       ...components,
@@ -45,7 +45,7 @@ export const OverlayProvider: React.FC<OverlayProviderProps> = ({ children }) =>
     }));
   }, []);
 
-  const closeOverlay = React.useCallback<CloseOverlayContextValue>((id) => {
+  const closeOverlay = useCallback<CloseOverlayContextValue>((id) => {
     setComponentsMap((components) => _.omit(components, id));
   }, []);
 

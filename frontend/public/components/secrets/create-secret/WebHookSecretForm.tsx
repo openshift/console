@@ -1,4 +1,4 @@
-import { FCC, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { SecretSubFormProps } from './types';
 
-export const WebHookSecretForm: FCC<SecretSubFormProps> = ({ onChange, stringData }) => {
+export const WebHookSecretForm: React.FCC<SecretSubFormProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation();
 
   const handleWebHookSecretChange = (newSecret: string) => {

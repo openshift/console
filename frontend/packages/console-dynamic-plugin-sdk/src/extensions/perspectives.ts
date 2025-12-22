@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 // Align type with React.lazy
-type LazyComponent = { default: React.ComponentType };
+type LazyComponent = { default: ComponentType };
 
 /** This extension contributes a new perspective to the console which enables customization of the navigation menu. */
 export type Perspective = ExtensionDeclaration<

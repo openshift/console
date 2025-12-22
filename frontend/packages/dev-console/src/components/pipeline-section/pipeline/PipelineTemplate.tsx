@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Alert, ExpandableSection, Tooltip } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import i18next from 'i18next';
@@ -56,14 +57,14 @@ type PipelineTemplateProps = {
   existingPipeline?: PipelineKind;
 };
 
-const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
+const PipelineTemplate: FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
   const { t } = useTranslation();
-  const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
-  const [isPacRepo, setIsPacRepo] = React.useState(false);
-  const [isPipelineTypeChanged, setIsPipelineTypeChanged] = React.useState(false);
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const [pipelineTemplates, setPipelineTemplates] = React.useState([]);
-  const pipelineStorageRef = React.useRef<{ [image: string]: PipelineKind[] }>({});
+  const [noTemplateForRuntime, setNoTemplateForRuntime] = useState(false);
+  const [isPacRepo, setIsPacRepo] = useState(false);
+  const [isPipelineTypeChanged, setIsPipelineTypeChanged] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [pipelineTemplates, setPipelineTemplates] = useState([]);
+  const pipelineStorageRef = useRef<{ [image: string]: PipelineKind[] }>({});
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
 
   const {
@@ -89,7 +90,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       .sort()
       .join(',');
 
-  const handlePipelineTypeChange = React.useCallback(async () => {
+  const handlePipelineTypeChange = useCallback(async () => {
     const gitService = url && getGitService(url, type, ref, dir, secretResource);
     const disallowedPacGitTypes = [GitProvider.GITEA];
     const isPacRepository =
@@ -113,11 +114,11 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     setIsPipelineTypeChanged(true);
   }, [url, type, ref, dir, secretResource, isRepositoryEnabled, setFieldValue]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     pipelineStorageRef.current = {};
   }, [selectedStrategy]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setFieldValue('pac.pipelineEnabled', !!pipeline.enabled);
     // Added setTimeout to re-validate yup validation after onchange event
     setTimeout(() => {
@@ -125,14 +126,14 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     }, 0);
   }, [pipeline.enabled, setFieldValue, setFieldTouched]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (buildOption === BuildOptions.PIPELINES) {
       setFieldValue('pipeline.enabled', true);
       setFieldValue('pac.pipelineEnabled', true);
     }
   }, [buildOption, setFieldValue]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
 
     const builderPipelineLabel = { [PIPELINE_RUNTIME_LABEL]: image.selected };
@@ -224,7 +225,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     isPipelineTypeChanged,
   ]);
 
-  const pipelineTemplateItems = React.useMemo(() => {
+  const pipelineTemplateItems = useMemo(() => {
     const items = {};
     for (const img of pipelineTemplates) {
       const { name } = img.metadata;

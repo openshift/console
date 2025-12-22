@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { css } from '@patternfly/react-styles';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
@@ -13,7 +14,7 @@ import { tableColumnClasses } from './route-table';
 const routeReference = referenceForModel(RouteModel);
 const revisionReference = referenceForModel(RevisionModel);
 
-const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
+const RouteRow: FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
   const objReference = referenceFor(obj);
   const context = { [objReference]: obj };
   return (
@@ -43,7 +44,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
       <TableData className={tableColumnClasses[5]}>
         {obj.status && obj.status.traffic
           ? obj.status.traffic.map((t, i) => (
-              <React.Fragment key={t.revisionName}>
+              <Fragment key={t.revisionName}>
                 {i > 0 ? ', ' : ''}
                 {`${t.percent}% → `}
                 <ResourceLink
@@ -53,7 +54,7 @@ const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => {
                   inline
                   hideIcon
                 />
-              </React.Fragment>
+              </Fragment>
             ))
           : '-'}
       </TableData>

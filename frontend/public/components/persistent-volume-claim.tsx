@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import i18next, { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -174,7 +174,7 @@ const getDataViewRowsCreator: (
 const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<PersistentVolumeClaimKind>[] = React.useMemo(
+  const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -425,12 +425,9 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
   const columns = usePersistentVolumeClaimColumns();
   const pvcMetrics = useSelector<RootState, PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
-  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [
-    t,
-    pvcMetrics,
-  ]);
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
-  const pvcStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(
+  const pvcStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
         value: 'Pending',
@@ -448,12 +445,12 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
     [t],
   );
 
-  const initialFilters = React.useMemo<PersistentVolumeClaimFilters>(
+  const initialFilters = useMemo<PersistentVolumeClaimFilters>(
     () => ({ ...initialFiltersDefault, status: [] }),
     [],
   );
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -466,7 +463,7 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
     [t, pvcStatusFilterOptions],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource: PersistentVolumeClaimKind, filters: PersistentVolumeClaimFilters) => {
       // Status filter
       if (filters.status.length > 0) {
@@ -482,7 +479,7 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PersistentVolumeClaimKind>
         {...props}
         label={t('public~PersistentVolumeClaims')}
@@ -495,7 +492,7 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

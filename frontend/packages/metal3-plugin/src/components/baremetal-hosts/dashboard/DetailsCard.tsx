@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +13,9 @@ import BareMetalHostRole from '../BareMetalHostRole';
 import NodeLink from '../NodeLink';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
-const DetailsCard: React.FC<DetailsCardProps> = () => {
+const DetailsCard: FC<DetailsCardProps> = () => {
   const { t } = useTranslation();
-  const { obj, machine, node } = React.useContext(BareMetalHostDashboardContext);
+  const { obj, machine, node } = useContext(BareMetalHostDashboardContext);
   const hostName = getName(obj);
   const nodeCell = <NodeLink nodeName={getName(node)} />;
   const hostRole = <BareMetalHostRole machine={machine} node={node} />;

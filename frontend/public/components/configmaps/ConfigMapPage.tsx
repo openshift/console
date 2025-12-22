@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -8,7 +8,7 @@ import { StatusBox } from '../utils/status-box';
 import ConfigMapForm from './ConfigMapForm';
 import { ConfigMap } from './types';
 
-export const ConfigMapPage: React.FC = () => {
+export const ConfigMapPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
   const isCreateFlow: boolean = !name;

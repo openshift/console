@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useField } from 'formik';
@@ -8,7 +9,7 @@ import RadioButtonField from './RadioButtonField';
 
 import './RadioGroupField.scss';
 
-const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
+const RadioGroupField: FC<RadioGroupFieldProps> = ({
   label,
   labelIcon,
   options,
@@ -43,7 +44,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
         );
 
         return (
-          <React.Fragment key={option.value}>
+          <Fragment key={option.value}>
             <RadioButtonField
               {...field}
               {...props}
@@ -55,10 +56,9 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
               description={description}
               onChange={onChange}
             />
-          </React.Fragment>
+          </Fragment>
         );
       })}
-
       <FormHelperText>
         <HelperText>
           {!isValid ? (

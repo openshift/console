@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
@@ -12,12 +13,12 @@ import { Kebab } from '@console/internal/components/utils/kebab';
 import { EmptyBox } from '@console/internal/components/utils/status-box';
 import { IdentityProvider, OAuthKind } from '@console/internal/module/k8s';
 
-export const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders, obj }) => {
+export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProviders, obj }) => {
   const { t } = useTranslation();
   const launcher = useModal();
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
-  const launchModal = React.useCallback(
+  const launchModal = useCallback(
     (index, name, type) => {
       if (obj && model) {
         launcher<RemoveIdentityProvider>(RemoveIdentityProviderModal, {

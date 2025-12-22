@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImageStreamIcon } from '@console/internal/components/catalog/catalog-item-icon';
@@ -12,7 +12,7 @@ export type ImageStreamInfoProps = {
   tag: object;
 };
 
-const ImageStreamInfo: React.FC<ImageStreamInfoProps> = ({ displayName, tag }) => {
+const ImageStreamInfo: FC<ImageStreamInfoProps> = ({ displayName, tag }) => {
   const { t } = useTranslation();
   const annotationTags = getAnnotationTags(tag);
   const description = _.get(tag, 'annotations.description');

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent, Ref, CSSProperties } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Checkbox,
   FormGroup,
@@ -23,7 +24,7 @@ import {
   usePreferredRoutingOptions,
 } from './usePreferredRoutingOptions';
 
-const SecureRouteFields: React.FC = () => {
+const SecureRouteFields: FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [
@@ -33,10 +34,10 @@ const SecureRouteFields: React.FC = () => {
   ] = usePreferredRoutingOptions();
   const { secure, tlsTermination, insecureTraffic } =
     preferredRoutingOptionsLoaded && preferredRoutingOptions;
-  const [isTLSTerminationOpen, setIsTLSTerminationOpen] = React.useState<boolean>(false);
-  const [isInsecureTrafficOpen, setIsInsecureTrafficOpen] = React.useState<boolean>(false);
+  const [isTLSTerminationOpen, setIsTLSTerminationOpen] = useState<boolean>(false);
+  const [isInsecureTrafficOpen, setIsInsecureTrafficOpen] = useState<boolean>(false);
 
-  const terminationOptions = React.useMemo(() => {
+  const terminationOptions = useMemo(() => {
     return {
       [TerminationType.EDGE]: t('devconsole~Edge'),
       [TerminationType.PASSTHROUGH]: t('devconsole~Passthrough'),
@@ -44,7 +45,7 @@ const SecureRouteFields: React.FC = () => {
     };
   }, [t]);
 
-  const tlsTerminationSelectOptions: JSX.Element[] = React.useMemo(() => {
+  const tlsTerminationSelectOptions: JSX.Element[] = useMemo(() => {
     return Object.keys(terminationOptions).map((tlsTerminationOption) => (
       <SelectOption key={tlsTerminationOption} value={tlsTerminationOption}>
         {terminationOptions[tlsTerminationOption]}
@@ -52,7 +53,7 @@ const SecureRouteFields: React.FC = () => {
     ));
   }, [terminationOptions]);
 
-  const insecureTrafficOptions = React.useMemo(() => {
+  const insecureTrafficOptions = useMemo(() => {
     return tlsTermination === TerminationType.PASSTHROUGH
       ? {
           [PassthroughInsecureTrafficType.None]: t('devconsole~None'),
@@ -65,7 +66,7 @@ const SecureRouteFields: React.FC = () => {
         };
   }, [t, tlsTermination]);
 
-  const insecureTrafficSelectOptions: JSX.Element[] = React.useMemo(() => {
+  const insecureTrafficSelectOptions: JSX.Element[] = useMemo(() => {
     return Object.keys(insecureTrafficOptions).map((insecureTrafficOption) => (
       <SelectOption key={insecureTrafficOption} value={insecureTrafficOption}>
         {insecureTrafficOptions[insecureTrafficOption]}
@@ -73,8 +74,8 @@ const SecureRouteFields: React.FC = () => {
     ));
   }, [insecureTrafficOptions]);
 
-  const onSecureRouteChecked = React.useCallback(
-    (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const onSecureRouteChecked = useCallback(
+    (_event: FormEvent<HTMLInputElement>, checked: boolean) => {
       setPreferredRoutingOptions({
         secure: checked,
         tlsTermination,
@@ -95,7 +96,7 @@ const SecureRouteFields: React.FC = () => {
     setIsInsecureTrafficOpen(!isInsecureTrafficOpen);
   };
 
-  const onTLSTerminationSelect = React.useCallback(
+  const onTLSTerminationSelect = useCallback(
     (_, selection: string) => {
       if (typeof selection === 'undefined') {
         return;
@@ -114,7 +115,7 @@ const SecureRouteFields: React.FC = () => {
     [fireTelemetryEvent, insecureTraffic, secure, setPreferredRoutingOptions],
   );
 
-  const onInsecureTrafficSelect = React.useCallback(
+  const onInsecureTrafficSelect = useCallback(
     (_, selection: string) => {
       setPreferredRoutingOptions({
         secure,
@@ -129,7 +130,7 @@ const SecureRouteFields: React.FC = () => {
     [fireTelemetryEvent, secure, setPreferredRoutingOptions, tlsTermination],
   );
 
-  const tlsTerminationToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const tlsTerminationToggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       isFullWidth
       id="tls-termination"
@@ -142,14 +143,14 @@ const SecureRouteFields: React.FC = () => {
       style={
         {
           maxHeight: '300px',
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       {terminationOptions[tlsTermination]}
     </MenuToggle>
   );
 
-  const insecureTrafficToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const insecureTrafficToggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       isFullWidth
       ref={toggleRef}
@@ -162,7 +163,7 @@ const SecureRouteFields: React.FC = () => {
       style={
         {
           maxHeight: '300px',
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       {insecureTrafficOptions[insecureTraffic]}

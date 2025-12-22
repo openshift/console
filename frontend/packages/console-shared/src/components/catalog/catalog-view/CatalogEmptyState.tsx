@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   EmptyState,
@@ -14,7 +14,7 @@ type CatalogEmptyStateProps = {
   onClear: () => void;
 };
 
-const CatalogEmptyState: React.FC<CatalogEmptyStateProps> = ({ onClear }) => {
+const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
   const { t } = useTranslation();
   return (
     <EmptyState

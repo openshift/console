@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -25,11 +26,11 @@ import { BaseFormData, BuildOptions, GitImportFormData } from './import-types';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
-const ImportSamplePage: React.FC = () => {
+const ImportSamplePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
 
-  const imageStreamResource: FirehoseResource = React.useMemo(
+  const imageStreamResource: FirehoseResource = useMemo(
     () => ({
       kind: ImageStreamModel.kind,
       prop: 'imageStreams',

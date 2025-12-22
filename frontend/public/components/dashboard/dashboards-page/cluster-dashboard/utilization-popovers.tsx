@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
 import {
@@ -14,15 +15,15 @@ import {
   humanizeDecimalBytesPerSec,
 } from '../../../utils/units';
 
-export const ClusterUtilizationContext = React.createContext('.+');
+export const ClusterUtilizationContext = createContext('.+');
 
 const useConsumers = (
   nsQuery: OverviewQuery,
   podQuery: OverviewQuery,
   nodeQuery: OverviewQuery,
 ) => {
-  const nodeType = React.useContext(ClusterUtilizationContext);
-  return React.useMemo(() => {
+  const nodeType = useContext(ClusterUtilizationContext);
+  return useMemo(() => {
     const consumerQueries = getTop25ConsumerQueries(nodeType);
     return [
       {
@@ -44,7 +45,7 @@ const useConsumers = (
   }, [nodeQuery, nodeType, nsQuery, podQuery]);
 };
 
-export const CPUPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const CPUPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_CPU,
@@ -61,7 +62,7 @@ export const CPUPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
   );
 };
 
-export const MemoryPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const MemoryPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_MEMORY,
@@ -78,7 +79,7 @@ export const MemoryPopover: React.FC<TopConsumerPopoverProps> = ({ current }) =>
   );
 };
 
-export const StoragePopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const StoragePopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_STORAGE,
@@ -95,10 +96,10 @@ export const StoragePopover: React.FC<TopConsumerPopoverProps> = ({ current }) =
   );
 };
 
-export const PodPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const PodPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
-  const nodeType = React.useContext(ClusterUtilizationContext);
-  const consumers = React.useMemo(() => {
+  const nodeType = useContext(ClusterUtilizationContext);
+  const consumers = useMemo(() => {
     const consumerQueries = getTop25ConsumerQueries(nodeType);
     return [
       {
@@ -123,7 +124,7 @@ export const PodPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
   );
 };
 
-export const NetworkInPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const NetworkInPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_NETWORK_IN,
@@ -140,7 +141,7 @@ export const NetworkInPopover: React.FC<TopConsumerPopoverProps> = ({ current })
   );
 };
 
-export const NetworkOutPopover: React.FC<TopConsumerPopoverProps> = ({ current }) => {
+export const NetworkOutPopover: FC<TopConsumerPopoverProps> = ({ current }) => {
   const { t } = useTranslation();
   const consumers = useConsumers(
     OverviewQuery.PROJECTS_BY_NETWORK_OUT,

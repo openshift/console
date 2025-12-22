@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
@@ -12,7 +13,7 @@ type ControllerProps = {
   obj: ServiceKind;
 };
 
-const Controller: React.FC<ControllerProps> = (props) => {
+const Controller: FC<ControllerProps> = (props) => {
   const { loaded, obj } = props;
   return loaded ? <TestFunction {...props} service={obj} /> : null;
 };
@@ -21,7 +22,7 @@ type TestFunctionControllerProps = {
   obj: ServiceKind;
 };
 
-const TestFunctionController: React.FC<TestFunctionControllerProps> = (props) => {
+const TestFunctionController: FC<TestFunctionControllerProps> = (props) => {
   const { obj } = props;
 
   const serverlessResources = [
@@ -53,8 +54,5 @@ const TestFunctionModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useTestFunctionModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(TestFunctionModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(TestFunctionModalProvider, props), [launcher, props]);
 };

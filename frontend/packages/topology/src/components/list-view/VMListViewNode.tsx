@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
 import { getPodMetricStats, getTopologyResourceObject, useOverviewMetrics } from '../../utils';
@@ -12,12 +13,12 @@ interface VMListViewNodeProps {
   onSelect: (ids: string[]) => void;
 }
 
-const VMListViewNode: React.FC<VMListViewNodeProps> = observer(({ item, ...rest }) => {
+const VMListViewNode: FC<VMListViewNodeProps> = observer(({ item, ...rest }) => {
   const vm = getTopologyResourceObject(item.getData());
   const metrics = useOverviewMetrics();
   const { podData } = usePodsForVm(vm);
 
-  const metricStats = React.useMemo(() => {
+  const metricStats = useMemo(() => {
     if (!podData) {
       return null;
     }

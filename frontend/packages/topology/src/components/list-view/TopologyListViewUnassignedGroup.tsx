@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DataListCell,
   DataList,
@@ -18,7 +18,7 @@ interface TopologyListViewUnassignedGroupProps {
   onSelect: (ids: string[]) => void;
 }
 
-const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupProps> = ({
+const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> = ({
   items,
   showCategory,
   selectedIds,

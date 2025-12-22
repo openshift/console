@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { GraphElement, withDragNode, withSelection, withDndDrop } from '@patternfly/react-topology';
 import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
 import { withCreateConnector } from '@console/topology/src/behavior';
@@ -20,7 +20,7 @@ import HelmRelease from './HelmRelease';
 export const getHelmComponentFactory = (
   kind,
   type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+): ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_HELM_RELEASE:
       return withSelection({ controlled: true })(

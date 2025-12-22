@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ interface MonitoringOverviewEventsProps {
   events: EventKind[];
 }
 
-const MonitoringOverviewEvents: React.FC<MonitoringOverviewEventsProps> = ({ events }) => {
+const MonitoringOverviewEvents: FC<MonitoringOverviewEventsProps> = ({ events }) => {
   const { t } = useTranslation();
   return (
     <div className="odc-monitoring-events">

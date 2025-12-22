@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
 import { Flex, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import './styles.scss';
@@ -8,9 +8,9 @@ export enum EditorType {
   YAML = 'yaml',
 }
 
-export const EditorToggle: React.FC<EditorToggleProps> = ({ value, onChange }) => {
+export const EditorToggle: FC<EditorToggleProps> = ({ value, onChange }) => {
   const { t } = useTranslation();
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (event: FormEvent<HTMLInputElement>) => {
     onChange(event?.currentTarget?.value as EditorType);
   };
   return (

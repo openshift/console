@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import { PageSection, Skeleton, Switch, Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
@@ -22,13 +23,13 @@ type AddPageLayoutProps = {
   title: string;
 };
 
-const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title }) => {
+const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
-  const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
+  const [isQuickSearchOpen, setIsQuickSearchOpen] = useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
   );
-  const setIsQuickSearchOpenAndFireEvent = React.useCallback((open: boolean) => {
+  const setIsQuickSearchOpenAndFireEvent = useCallback((open: boolean) => {
     setIsQuickSearchOpen(open);
   }, []);
   const addActionGroupExtensions = useExtensions<AddActionGroup>(isAddActionGroup);

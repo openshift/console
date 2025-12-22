@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
@@ -39,10 +39,7 @@ type AddServerlessFunctionProps = {
   forApplication: string;
 };
 
-const AddServerlessFunction: React.FC<AddServerlessFunctionProps> = ({
-  namespace,
-  forApplication,
-}) => {
+const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forApplication }) => {
   const { t } = useTranslation();
   const postFormCallback = useResourceConnectionHandler();
   const [perspective] = useActivePerspective();

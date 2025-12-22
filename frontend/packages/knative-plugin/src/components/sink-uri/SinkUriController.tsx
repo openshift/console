@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
@@ -10,11 +11,9 @@ type SinkUriControllerProps = {
   eventSourceList: K8sResourceKind[];
 };
 
-const SinkUriController: React.FC<SinkUriControllerProps> = ({
-  source,
-  eventSourceList,
-  ...props
-}) => <SinkUri {...props} source={source} eventSourceList={eventSourceList} />;
+const SinkUriController: FC<SinkUriControllerProps> = ({ source, eventSourceList, ...props }) => (
+  <SinkUri {...props} source={source} eventSourceList={eventSourceList} />
+);
 
 type Props = SinkUriControllerProps & ModalComponentProps;
 
@@ -28,5 +27,5 @@ const SinkUriModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useSinkUriModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(SinkUriModalProvider, props), [launcher, props]);
+  return useCallback(() => launcher<Props>(SinkUriModalProvider, props), [launcher, props]);
 };

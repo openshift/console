@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
@@ -54,8 +54,8 @@ const CloudShellTerminal: React.FCC<
   setWorkspaceNamespace,
 }) => {
   const [operatorNamespace, namespaceLoadError] = useCloudShellNamespace();
-  const [initData, setInitData] = React.useState<TerminalInitData>();
-  const [initError, setInitError] = React.useState<string>();
+  const [initData, setInitData] = useState<TerminalInitData>();
+  const [initError, setInitError] = useState<string>();
   const [isAdmin, isAdminCheckLoading] = useAccessReview2({
     namespace: 'openshift-terminal',
     verb: 'create',
@@ -93,14 +93,14 @@ const CloudShellTerminal: React.FCC<
 
   // wait until the web terminal is loaded.
   // if the namespace has any problems loading then set the terminal into an unrecoverable state
-  React.useEffect(() => {
+  useEffect(() => {
     if (namespaceLoadError) {
       setInitError(namespaceLoadError);
     }
   }, [namespaceLoadError]);
 
   // start the workspace if no unrecoverable errors were found
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       operatorNamespace &&
       !unrecoverableErrorFound &&
@@ -122,7 +122,7 @@ const CloudShellTerminal: React.FCC<
   ]);
 
   // save the namespace once the workspace has loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && !loadError) {
       // workspace may be undefined which is ok
       setNamespace(workspaceNamespace);
@@ -130,7 +130,7 @@ const CloudShellTerminal: React.FCC<
   }, [loaded, loadError, workspaceNamespace, setNamespace]);
 
   // clear the init data and error if the workspace changes and if the loading process isn't in an unrecoverable state
-  React.useEffect(() => {
+  useEffect(() => {
     if (!unrecoverableErrorFound) {
       setInitData(undefined);
       setInitError(undefined);
@@ -138,7 +138,7 @@ const CloudShellTerminal: React.FCC<
   }, [unrecoverableErrorFound, username, workspaceName, workspaceNamespace]);
 
   // initialize the terminal once it is Running
-  React.useEffect(() => {
+  useEffect(() => {
     let unmounted = false;
     const defaultError = t(
       'webterminal-plugin~Failed to connect to your OpenShift command line terminal',

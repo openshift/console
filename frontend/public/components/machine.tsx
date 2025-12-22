@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
@@ -199,7 +200,7 @@ type MachineListProps = {
 const useMachineColumns = (): TableColumn<MachineKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<MachineKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -270,11 +271,11 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
   return columns;
 };
 
-export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
+export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineKind>
         {...props}
         label={MachineModel.labelPlural}
@@ -285,11 +286,11 @@ export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadErro
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const MachinePage: React.FC<MachinePageProps> = ({
+export const MachinePage: FC<MachinePageProps> = ({
   selector,
   namespace,
   showTitle = true,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   NodeStatus,
@@ -138,7 +138,7 @@ type WorkloadPodsNodeProps = WorkloadNodeProps & {
   donutStatus: PodRCData;
 };
 
-const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function WorkloadPodsNode({
+const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPodsNode({
   donutStatus,
   element,
   children,
@@ -221,10 +221,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
   );
 });
 
-const WorkloadNode: React.FC<WorkloadNodeProps> = observer(function WorkloadNode({
-  element,
-  ...rest
-}) {
+const WorkloadNode: FC<WorkloadNodeProps> = observer(function WorkloadNode({ element, ...rest }) {
   const resource = getTopologyResourceObject(element.getData());
   const { podData, loadError, loaded } = usePodsWatcher(
     resource,

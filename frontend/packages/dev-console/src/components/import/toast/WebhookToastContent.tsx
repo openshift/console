@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -11,7 +11,7 @@ interface WebhookToastContentProps {
   projectName: string;
 }
 
-const WebhookToastContent: React.FC<WebhookToastContentProps> = ({
+const WebhookToastContent: FC<WebhookToastContentProps> = ({
   repositoryName,
   git,
   projectName,

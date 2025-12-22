@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -11,7 +12,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { EnvironmentFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
+const EnvironmentField: FC<EnvironmentFieldProps> = ({
   label,
   helpText,
   required,
@@ -27,13 +28,13 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const fieldId = getFieldId(props.name, 'env-input');
-  const environmentVariables = React.useMemo(() => {
+  const environmentVariables = useMemo(() => {
     return _.isEmpty(envs) ? [['', '']] : envs.map((env) => _.values(env));
   }, [envs]);
-  const [nameValue, setNameValue] = React.useState(environmentVariables);
-  const [configMaps, setConfigMaps] = React.useState({});
-  const [secrets, setSecrets] = React.useState({});
-  const handleNameValuePairs = React.useCallback(
+  const [nameValue, setNameValue] = useState(environmentVariables);
+  const [configMaps, setConfigMaps] = useState({});
+  const [secrets, setSecrets] = useState({});
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
         nameValuePairs.map(([name, value]) => {
@@ -52,7 +53,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
     [props.name, setFieldValue],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (values.formReloadCount) {
       setNameValue(environmentVariables);
     }
@@ -60,7 +61,7 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.formReloadCount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     Promise.all([k8sGet(ConfigMapModel, null, namespace), k8sGet(SecretModel, null, namespace)])
       .then(([nsConfigMaps, nsSecrets]) => {
         setConfigMaps(nsConfigMaps);

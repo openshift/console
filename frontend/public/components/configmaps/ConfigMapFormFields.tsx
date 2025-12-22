@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
@@ -6,7 +6,7 @@ import { CheckboxField, InputField } from '@console/shared/src/components/formik
 import KeyValueFileInputField from '@console/shared/src/components/formik-fields/key-value-file-input-field/KeyValueFileInputField';
 import { isBase64 } from './configmap-utils';
 
-const ConfigMapFormFields: React.FC = () => {
+const ConfigMapFormFields: FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const onChange = (value: string, keyIndex: string) => {

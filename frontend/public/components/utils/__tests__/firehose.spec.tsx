@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -30,12 +30,10 @@ const k8sWatchMock = k8sWatch as jest.Mock;
 let store;
 
 interface WrapperProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 describe('processReduxId', () => {
   const k8s = ImmutableMap({
@@ -184,7 +182,7 @@ describe('processReduxId', () => {
 describe('Firehose', () => {
   // Object under test
   const resourceUpdate = jest.fn();
-  const Child: React.FC = (props) => {
+  const Child: FC = (props) => {
     resourceUpdate(props);
     return null;
   };
@@ -921,15 +919,13 @@ describe('Firehose', () => {
 describe('Firehose together with useK8sWatchResources', () => {
   // Objects under test
   const firehoseUpdate = jest.fn();
-  const Child: React.FC = (props) => {
+  const Child: FC = (props) => {
     firehoseUpdate(props);
     return null;
   };
 
   const resourcesUpdate = jest.fn();
-  const WatchResources: React.FC<{ initResources: WatchK8sResources<{}> }> = ({
-    initResources,
-  }) => {
+  const WatchResources: FC<{ initResources: WatchK8sResources<{}> }> = ({ initResources }) => {
     resourcesUpdate(useK8sWatchResources(initResources));
     return null;
   };

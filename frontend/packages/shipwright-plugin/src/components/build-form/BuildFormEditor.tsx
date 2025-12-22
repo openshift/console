@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import EnvironmentVariablesSection from '@console/dev-console/src/components/buildconfig/sections/EnvironmentVariablesSection';
 import NameSection from '@console/dev-console/src/components/buildconfig/sections/NameSection';
 import GitSection from '@console/dev-console/src/components/import/git/GitSection';
@@ -12,8 +13,8 @@ type BuildFormEditorProps = {
   namespace: string;
 };
 
-const BuildFormEditor: React.FC<BuildFormEditorProps> = ({ namespace }) => {
-  const [showYAMLAlert, setShowYAMLAlert] = React.useState<boolean>(true);
+const BuildFormEditor: FC<BuildFormEditorProps> = ({ namespace }) => {
+  const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
   return (
     <>
       {showYAMLAlert && <SwitchToYAMLAlert onClose={() => setShowYAMLAlert(false)} />}

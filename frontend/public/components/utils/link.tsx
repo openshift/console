@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, ComponentProps } from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash-es';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +77,7 @@ export const ExternalLinkWithCopy = ({
   displayBlock,
   ...props
 }: ExternalLinkWithCopyProps) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
   const { t } = useTranslation();
 
   const clipboardCopyFunc = (event, txt) => {
@@ -133,12 +134,12 @@ export const ExternalLinkWithCopy = ({
 };
 
 // Open links in a new window and set noopener/noreferrer.
-export const LinkifyExternal = ({ children }: { children: React.ReactNode }) => (
+export const LinkifyExternal = ({ children }: { children: ReactNode }) => (
   <Linkify component={ExternalLink}>{children}</Linkify>
 );
 LinkifyExternal.displayName = 'LinkifyExternal';
 
-type ExternalLinkWithCopyProps = React.ComponentProps<typeof ExternalLink> & {
+type ExternalLinkWithCopyProps = ComponentProps<typeof ExternalLink> & {
   href: string;
   text?: string;
 };

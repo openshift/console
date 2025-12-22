@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ export interface StateProps {
   perspective: string;
 }
 
-const EditApplication: React.FC<EditApplicationProps> = ({
+const EditApplication: FC<EditApplicationProps> = ({
   namespace,
   appName,
   resources: appResources,
@@ -43,7 +44,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const flowType = getFlowType(buildStrategy, buildSourceType);
   const validationSchema = getValidationSchema(buildStrategy, buildSourceType);
 
-  const imageStreamsData = React.useMemo(
+  const imageStreamsData = useMemo(
     () =>
       appResources.imageStreams && appResources.imageStreams.loaded
         ? appResources.imageStreams.data
@@ -51,7 +52,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     [appResources],
   );
 
-  const [builderImages, setBuilderImages] = React.useState<NormalizedBuilderImages>(null);
+  const [builderImages, setBuilderImages] = useState<NormalizedBuilderImages>(null);
 
   const updateResources = (values) => {
     if (values.build.strategy) {
@@ -97,7 +98,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
 
     const getBuilderImages = async () => {

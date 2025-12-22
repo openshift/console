@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -13,7 +13,7 @@ import {
 import { serverlessTab } from '../../../utils/serverless-tab-utils';
 import TriggerDetails from './TriggerDetails';
 
-const TriggerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+const TriggerDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj } = props;
   const params = useParams();
   const location = useLocation();

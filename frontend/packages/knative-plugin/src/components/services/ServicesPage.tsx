@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -9,7 +9,7 @@ import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { ServiceKind, ServiceTypeValue } from '../../types';
 import ServiceList from './ServiceList';
 
-const ServicesPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => {
+const ServicesPage: FC<ComponentProps<typeof ListPage>> = (props) => {
   const { t } = useTranslation();
 
   const filterReducer = (service): ServiceTypeValue => {

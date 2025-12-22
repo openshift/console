@@ -17,7 +17,7 @@ import { DASH } from '@console/shared/src/constants/ui';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import i18next from 'i18next';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
@@ -150,7 +150,7 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
 
 export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),

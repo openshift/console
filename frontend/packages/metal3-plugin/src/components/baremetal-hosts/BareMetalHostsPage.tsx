@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -100,7 +100,7 @@ const getCreateProps = ({ namespace, t }: { namespace: string; t: TFunction }) =
   };
 };
 
-const BareMetalHostsPage: React.FC<BareMetalHostsPageProps> = (props) => {
+const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
   const { t } = useTranslation();
   const [model] = useMaintenanceCapability();
   const { namespace } = props;

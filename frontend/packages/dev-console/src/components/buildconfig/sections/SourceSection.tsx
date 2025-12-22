@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Language } from '@patternfly/react-code-editor';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ export type SourceSectionFormData = {
   };
 };
 
-const SourceSection: React.FC = () => {
+const SourceSection: FC = () => {
   const { t } = useTranslation();
 
   const [, meta] = useField<string>('formData.name');

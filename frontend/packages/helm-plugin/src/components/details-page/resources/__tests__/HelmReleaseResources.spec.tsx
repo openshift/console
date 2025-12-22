@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import * as ReactRouter from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -11,7 +11,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
 }));
 
 describe('HelmReleaseResources', () => {
-  const helmReleaseResourcesProps: React.ComponentProps<typeof HelmReleaseResources> = {
+  const helmReleaseResourcesProps: ComponentProps<typeof HelmReleaseResources> = {
     customData: mockHelmReleases[0],
   };
 

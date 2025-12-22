@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -15,7 +15,7 @@ jest.mock('../hooks/useShowAddCardItemDetails', () => ({
 }));
 
 describe('AddCardItem', () => {
-  type AddCardItemProps = React.ComponentProps<typeof AddCardItem>;
+  type AddCardItemProps = ComponentProps<typeof AddCardItem>;
   let props: AddCardItemProps;
   const namespace = 'ns';
 

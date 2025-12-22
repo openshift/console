@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Alert } from '@patternfly/react-core';
@@ -59,7 +60,7 @@ const getDebugPod = (debugPodName: string, podToDebug: PodKind, containerName: s
   return debugPod;
 };
 
-const DebugTerminalError: React.FC<DebugTerminalErrorProps> = ({ error, description }) => {
+const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description }) => {
   return (
     <PaneBody>
       <Alert variant="danger" isInline title={error}>
@@ -69,7 +70,7 @@ const DebugTerminalError: React.FC<DebugTerminalErrorProps> = ({ error, descript
   );
 };
 
-const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
+const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
   const { t } = useTranslation();
   const infoMessage = (
     <Alert
@@ -107,19 +108,19 @@ const DebugTerminalInner: React.FC<DebugTerminalInnerProps> = ({ debugPod, initi
   }
 };
 
-export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, containerName }) => {
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [generatedDebugPodName, setGeneratedDebugPodName] = React.useState('');
+export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
   const { t } = useTranslation();
   const podNamespace = podData?.metadata.namespace;
   const podContainerName = containerName || podData?.spec.containers[0].name;
   const debugPodName = `${podData?.metadata?.name?.replace(/\./g, '-')}-debug-`;
-  const podToCreate = React.useMemo(() => {
+  const podToCreate = useMemo(() => {
     return getDebugPod(debugPodName, podData, podContainerName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debugPodName, podContainerName]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const deleteDebugPod = async (podToDelete) => {
       try {
         await k8sKillByName(PodModel, podToDelete, podNamespace);
@@ -179,7 +180,7 @@ export const DebugTerminal: React.FC<DebugTerminalProps> = ({ podData, container
   return <LoadingBox />;
 };
 
-export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
+export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
   const { t } = useTranslation();
   const params = useParams();
   const { podName, ns, name } = params;
@@ -222,7 +223,7 @@ export const DebugTerminalPage: React.FC<DebugTerminalPageProps> = () => {
 DebugTerminalPage.displayName = 'DebugTerminalPage';
 
 type DebugTerminalErrorProps = {
-  error: React.ReactNode;
+  error: ReactNode;
   description?: string;
 };
 

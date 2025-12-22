@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -10,7 +10,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { useChannelList } from '../../utils/create-channel-utils';
 import AddChannel from './channels/AddChannel';
 
-const EventingChannelPage: React.FC = () => {
+const EventingChannelPage: FC = () => {
   const { ns: namespace } = useParams();
   const location = useLocation();
   const channels = useChannelList(namespace);

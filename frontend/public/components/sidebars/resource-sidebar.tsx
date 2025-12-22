@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import CloseButton from '@console/shared/src/components/close-button';
 
@@ -20,7 +20,7 @@ const sidebarScrollTop = () => {
   document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
 };
 
-const ResourceSidebarWrapper: React.FC<{
+const ResourceSidebarWrapper: FC<{
   label: string;
   toggleSidebar: () => void;
 }> = (props) => {
@@ -47,11 +47,11 @@ const ResourceSidebarWrapper: React.FC<{
   );
 };
 
-const ResourceSchema: React.FC<{ kindObj: K8sKind; schema: any }> = ({ kindObj, schema }) => (
+const ResourceSchema: FC<{ kindObj: K8sKind; schema: any }> = ({ kindObj, schema }) => (
   <ExploreType kindObj={kindObj} schema={schema} scrollTop={sidebarScrollTop} />
 );
 
-const ResourceSamples: React.FC<{
+const ResourceSamples: FC<{
   samples: Sample[];
   loadSampleYaml: LoadSampleYaml;
   downloadSampleYaml: DownloadSampleYaml;
@@ -65,14 +65,14 @@ const ResourceSamples: React.FC<{
   />
 );
 
-const ResourceSnippets: React.FC<{
+const ResourceSnippets: FC<{
   snippets: Sample[];
   insertSnippetYaml(id: string, yaml: string, reference: string);
 }> = ({ snippets, insertSnippetYaml }) => (
   <ResourceSidebarSnippets snippets={snippets} insertSnippetYaml={insertSnippetYaml} />
 );
 
-export const ResourceSidebar: React.FC<{
+export const ResourceSidebar: FC<{
   kindObj: K8sKind;
   downloadSampleYaml: DownloadSampleYaml;
   schema: any;

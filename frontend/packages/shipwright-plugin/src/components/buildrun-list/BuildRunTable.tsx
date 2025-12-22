@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +72,7 @@ export const BuildRunHeader = () => {
   ];
 };
 
-export const BuildRunRow: React.FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
+export const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
   const kindReference = referenceFor(buildRun);
   const context = { [kindReference]: buildRun };
 
@@ -104,7 +104,7 @@ export const BuildRunRow: React.FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun
   );
 };
 
-export const BuildRunTable: React.FC<TableProps> = (props) => {
+export const BuildRunTable: FC<TableProps> = (props) => {
   const { t } = useTranslation();
 
   return (

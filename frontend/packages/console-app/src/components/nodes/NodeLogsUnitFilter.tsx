@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { FlexItem, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +10,13 @@ type NodeLogsUnitFilterProps = {
   unit: string;
 };
 
-const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
-  const firstRender = React.useRef(true);
-  const inputRef = React.useRef<HTMLInputElement>();
-  const [values, setValues] = React.useState<string[]>(getQueryArgument('unit')?.split(',') || []);
+const NodeLogsUnitFilter: FC<NodeLogsUnitFilterProps> = ({ onChangeUnit }) => {
+  const firstRender = useRef(true);
+  const inputRef = useRef<HTMLInputElement>();
+  const [values, setValues] = useState<string[]>(getQueryArgument('unit')?.split(',') || []);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const input = inputRef.current;
     const listener = (event) => {
       const { value } = event.currentTarget;
@@ -47,7 +48,7 @@ const NodeLogsUnitFilter: React.FC<NodeLogsUnitFilterProps> = ({ onChangeUnit })
   };
 
   const valuesString = values.join(',');
-  React.useEffect(() => {
+  useEffect(() => {
     if (!firstRender.current) {
       onChangeUnit(valuesString);
     } else {

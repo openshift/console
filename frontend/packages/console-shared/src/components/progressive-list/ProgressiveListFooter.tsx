@@ -1,18 +1,15 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { Fragment } from 'react';
 import { Button } from '@patternfly/react-core';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
 export interface ProgressiveListFooterProps {
   items: string[];
   onShowItem: (item: string) => void;
-  Footer: (children) => React.ReactElement;
+  Footer: (children) => ReactElement;
 }
 
-const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
-  items,
-  onShowItem,
-  Footer,
-}) => {
+const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({ items, onShowItem, Footer }) => {
   if (!items || items.length === 0) {
     return null;
   }
@@ -31,12 +28,12 @@ const ProgressiveListFooter: React.FC<ProgressiveListFooterProps> = ({
         {items.map((item) => {
           const currentIdx = formattedString.indexOf(item);
           const element = (
-            <React.Fragment key={item}>
+            <Fragment key={item}>
               {formattedString.slice(lastIdx + lastLen, currentIdx)}
               <Button variant="link" isInline onClick={() => onShowItem(item)}>
                 {item}
               </Button>
-            </React.Fragment>
+            </Fragment>
           );
 
           lastIdx = currentIdx;

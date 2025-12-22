@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { screen, render, fireEvent, act, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig, FormikErrors } from 'formik';
 import KeyValueFileInputField from '../KeyValueFileInputField';
 
 const onSubmit = jest.fn();
-const TestKeyValueInputField: React.FC<FormikConfig<any> & { disableRemoveAction?: boolean }> = ({
+const TestKeyValueInputField: FC<FormikConfig<any> & { disableRemoveAction?: boolean }> = ({
   initialValues,
   disableRemoveAction,
 }) => (

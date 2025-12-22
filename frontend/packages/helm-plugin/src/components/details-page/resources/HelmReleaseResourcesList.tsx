@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableProps } from '@console/internal/components/factory';
@@ -7,12 +8,12 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useHelmReleaseResourcesColumns } from './HelmReleaseResourcesHeader';
 import { getDataViewRows } from './HelmReleaseResourcesRow';
 
-const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
+const HelmReleaseResourcesList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const columns = useHelmReleaseResourcesColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={props.data}
@@ -23,7 +24,7 @@ const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
         hideColumnManagement
         data-test="helm-resources-list"
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

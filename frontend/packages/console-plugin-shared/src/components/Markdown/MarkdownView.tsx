@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useMemo, useRef, useCallback, useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import * as sanitizeHtml from 'sanitize-html';
@@ -76,7 +77,7 @@ export type MarkdownProps = {
   exactHeight?: boolean;
   truncateContent?: boolean;
   extensions?: ShowdownExtension[];
-  renderExtension?: (contentDocument: Document, rootSelector: string) => React.ReactNode;
+  renderExtension?: (contentDocument: Document, rootSelector: string) => ReactNode;
   inline?: boolean;
   options?: ShowdownOptions;
   theme?: string;
@@ -91,7 +92,7 @@ type InnerSyncMarkdownProps = Pick<
   isEmpty: boolean;
 };
 
-export const MarkdownView: React.FC<MarkdownProps> = ({
+export const MarkdownView: FC<MarkdownProps> = ({
   truncateContent,
   content,
   emptyMsg,
@@ -103,7 +104,7 @@ export const MarkdownView: React.FC<MarkdownProps> = ({
   theme,
   updateThemeClass,
 }) => {
-  const markup = React.useMemo(() => {
+  const markup = useMemo(() => {
     const truncatedContent = truncateContent
       ? _.truncate(content, {
           length: 256,
@@ -126,21 +127,21 @@ export const MarkdownView: React.FC<MarkdownProps> = ({
 };
 
 type RenderExtensionProps = {
-  renderExtension: (contentDocument: Document, rootSelector: string) => React.ReactNode;
+  renderExtension: (contentDocument: Document, rootSelector: string) => ReactNode;
   selector: string;
   markup: string;
   docContext?: Document;
 };
 
-const RenderExtension: React.FC<RenderExtensionProps> = ({
+const RenderExtension: FC<RenderExtensionProps> = ({
   renderExtension,
   selector,
   markup,
   docContext,
 }) => {
   const forceRender = useForceRender();
-  const markupRef = React.useRef<string>(null);
-  const shouldRenderExtension = React.useCallback(() => {
+  const markupRef = useRef<string>(null);
+  const shouldRenderExtension = useCallback(() => {
     if (markupRef.current === markup) {
       return true;
     }
@@ -152,7 +153,7 @@ const RenderExtension: React.FC<RenderExtensionProps> = ({
    * because react is still updating the dom using dangerouslySetInnerHTML with latest markdown markup.
    * Use forceRender to delay the rendering of the extension by one render cycle.
    */
-  React.useEffect(() => {
+  useEffect(() => {
     renderExtension && forceRender();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markup]);
@@ -161,12 +162,8 @@ const RenderExtension: React.FC<RenderExtensionProps> = ({
   );
 };
 
-const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
-  markup,
-  isEmpty,
-  renderExtension,
-}) => {
-  const id = React.useMemo(() => _.uniqueId('markdown'), []);
+const InlineMarkdownView: FC<InnerSyncMarkdownProps> = ({ markup, isEmpty, renderExtension }) => {
+  const id = useMemo(() => _.uniqueId('markdown'), []);
   return (
     <div className={css('co-markdown-view', { 'is-empty': isEmpty })} id={id}>
       {/* eslint-disable-next-line react/no-danger */}
@@ -176,7 +173,7 @@ const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   );
 };
 
-const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
+const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   exactHeight,
   markup,
   isEmpty,
@@ -184,12 +181,12 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   theme,
   updateThemeClass,
 }) => {
-  const frameRef = React.useRef<HTMLIFrameElement>(null);
-  const [frameHeight, setFrameHeight] = React.useState(0);
-  const [loaded, setLoaded] = React.useState(false);
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const [frameHeight, setFrameHeight] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateDimensions = React.useCallback(
+  const updateDimensions = useCallback(
     _.debounce(() => {
       if (frameRef.current?.contentWindow) {
         setFrameHeight(
@@ -201,7 +198,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
     [exactHeight],
   );
 
-  const onLoad = React.useCallback(() => {
+  const onLoad = useCallback(() => {
     updateDimensions();
     setLoaded(true);
   }, [updateDimensions]);
@@ -247,7 +244,7 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
   <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
 
   // update the iframe's content
-  React.useEffect(() => {
+  useEffect(() => {
     if (frameRef.current?.contentDocument) {
       const doc = frameRef.current.contentDocument;
       doc.open();

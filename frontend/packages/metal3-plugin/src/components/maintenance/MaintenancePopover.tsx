@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { MaintenanceIcon } from '@patternfly/react-icons/dist/esm/icons/maintenance-icon';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
@@ -11,10 +11,10 @@ type MaintenancePopoverProps = {
   title: string;
   nodeMaintenance: K8sResourceKind;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
-const MaintenancePopover: React.FC<MaintenancePopoverProps> = ({
+const MaintenancePopover: FC<MaintenancePopoverProps> = ({
   title,
   nodeMaintenance,
   className,

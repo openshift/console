@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -18,7 +18,7 @@ import SecureRoute from './route/SecureRoute';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-export const GitImportForm: React.FC<
+export const GitImportForm: FC<
   FormikProps<FormikValues & GitImportFormData> & GitImportFormProps
 > = ({
   values,

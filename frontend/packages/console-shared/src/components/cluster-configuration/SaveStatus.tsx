@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +7,7 @@ export type SaveStatusProps = {
   error?: Error;
 };
 
-export const SaveStatus: React.FC<SaveStatusProps> = ({ status, error }) => {
+export const SaveStatus: FC<SaveStatusProps> = ({ status, error }) => {
   const { t } = useTranslation();
   if (status === 'successful') {
     return (

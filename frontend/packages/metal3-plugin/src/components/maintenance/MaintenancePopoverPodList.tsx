@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, AutoSizer } from 'react-virtualized';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
@@ -17,7 +17,7 @@ const podRowRenderer = (pods) => ({ key, index, style }) => {
 type MaintenancePopoverPodListProps = {
   pods: string[];
 };
-const MaintenancePopoverPodList: React.FC<MaintenancePopoverPodListProps> = ({ pods }) => (
+const MaintenancePopoverPodList: FC<MaintenancePopoverPodListProps> = ({ pods }) => (
   <AutoSizer disableHeight>
     {({ width }) => (
       <List

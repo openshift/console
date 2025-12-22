@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import { StatusIcon } from '@patternfly/react-topology/dist/esm/pipelines';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +46,7 @@ const TooltipColoredStatusIcon = ({ status }) => {
   return icon;
 };
 
-export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepListProps> = ({
+export const PipelineVisualizationStepList: FC<PipelineVisualizationStepListProps> = ({
   isSpecOverview,
   taskName,
   steps,

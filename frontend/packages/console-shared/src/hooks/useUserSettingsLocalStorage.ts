@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { deserializeData, seralizeData } from '../utils/user-settings';
 
 export const useUserSettingsLocalStorage = <T>(
@@ -7,19 +8,19 @@ export const useUserSettingsLocalStorage = <T>(
   defaultValue: T,
   sync = false,
   session = false, // use sessionStorage if set to `true`
-): [T, React.Dispatch<React.SetStateAction<T>>] => {
+): [T, Dispatch<SetStateAction<T>>] => {
   // Mount status for safty state updates
-  const mounted = React.useRef(true);
-  React.useEffect(() => {
+  const mounted = useRef(true);
+  useEffect(() => {
     return () => {
       mounted.current = false;
     };
   }, []);
 
   const storage = session ? sessionStorage : localStorage;
-  const keyRef = React.useRef(userSettingsKey);
-  const defaultValueRef = React.useRef(defaultValue);
-  const [data, setData] = React.useState(() => {
+  const keyRef = useRef(userSettingsKey);
+  const defaultValueRef = useRef(defaultValue);
+  const [data, setData] = useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deserializeData(storage.getItem(storageKey));
     return valueInStorage?.hasOwnProperty(keyRef.current) &&
@@ -27,10 +28,10 @@ export const useUserSettingsLocalStorage = <T>(
       ? valueInStorage[keyRef.current]
       : defaultValueRef.current;
   });
-  const dataRef = React.useRef<T>(data);
+  const dataRef = useRef<T>(data);
   dataRef.current = data;
 
-  const storageUpdated = React.useCallback(
+  const storageUpdated = useCallback(
     (event: StorageEvent) => {
       if (mounted.current && event.storageArea === storage && event.key === storageKey) {
         const configMapData = deserializeData(event.newValue);
@@ -44,7 +45,7 @@ export const useUserSettingsLocalStorage = <T>(
     [storageKey, storage],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (sync) {
       window.addEventListener('storage', storageUpdated);
     }
@@ -55,8 +56,8 @@ export const useUserSettingsLocalStorage = <T>(
     };
   }, [storageUpdated, sync]);
 
-  const updateData = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
-    (action: React.SetStateAction<T>) => {
+  const updateData = useCallback<React.Dispatch<React.SetStateAction<T>>>(
+    (action: SetStateAction<T>) => {
       const previousData = dataRef.current;
       const newState =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousData) : action;

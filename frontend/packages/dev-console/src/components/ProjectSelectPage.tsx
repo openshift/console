@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -22,7 +22,7 @@ export interface ProjectSelectPageProps {
 
 const allParams = (props, params) => Object.assign({}, params, props);
 
-const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
+const ProjectSelectPage: FC<ProjectSelectPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const { kindObj, kindsInFlight, plural } = allParams(props, params);

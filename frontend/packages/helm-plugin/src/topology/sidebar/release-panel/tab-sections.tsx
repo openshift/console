@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -9,7 +9,7 @@ import HelmReleaseOverview from '../../../components/details-page/overview/HelmR
 import { TYPE_HELM_RELEASE } from '../../components/const';
 import TopologyHelmReleaseNotesPanel from '../../TopologyHelmReleaseNotesPanel';
 
-const HelmReleasePanelDetailsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
+const HelmReleasePanelDetailsTabSection: FC<{ element: GraphElement }> = ({ element }) => {
   const { t } = useTranslation();
   const secret = element.getData().resources.obj;
   return !secret ? (

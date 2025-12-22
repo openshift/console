@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -7,7 +7,7 @@ type EventSourceOwnedListProps = {
   source: K8sResourceKind;
 };
 
-const EventSourceOwnedList: React.FC<EventSourceOwnedListProps> = ({ source }) => {
+const EventSourceOwnedList: FC<EventSourceOwnedListProps> = ({ source }) => {
   const sourceModel = modelFor(referenceFor(source));
   return (
     <>

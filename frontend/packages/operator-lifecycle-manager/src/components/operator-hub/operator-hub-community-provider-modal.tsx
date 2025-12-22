@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import { Checkbox, Content, ContentVariants, Icon, Split, SplitItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -11,13 +12,13 @@ import {
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
-export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityProviderModalProps> = ({
+export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderModalProps> = ({
   close,
   showCommunityOperators,
 }) => {
   const { t } = useTranslation();
-  const [ignoreWarnings, setIgnoreWarnings] = React.useState(false);
-  const submit = React.useCallback(
+  const [ignoreWarnings, setIgnoreWarnings] = useState(false);
+  const submit = useCallback(
     (event) => {
       event.preventDefault();
       close();

@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FormEventHandler } from 'react';
+import { useState } from 'react';
 
 import { GroupModel } from '../../models';
 import { GroupKind, k8sPatch } from '../../module/k8s';
@@ -15,10 +16,10 @@ import { useTranslation } from 'react-i18next';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const AddUsersModal = (props: AddUsersModalProps) => {
-  const [values, setValues] = React.useState(['']);
+  const [values, setValues] = useState(['']);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const submit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     // Append to an existing array, but handle the special case when the array is null.
     const patch = props.group.users

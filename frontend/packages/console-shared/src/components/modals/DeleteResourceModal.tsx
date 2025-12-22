@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
@@ -30,7 +30,7 @@ type DeleteResourceModalState = {
   errorMessage: string;
 };
 
-const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
+const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
   handleSubmit,
   resourceName,
   resourceType,

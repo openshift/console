@@ -1,4 +1,4 @@
-import { useState, FCC, MouseEvent as ReactMouseEvent } from 'react';
+import { useState, MouseEvent as ReactMouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PullSecretCredentialsForm } from './PullSecretCredentialsForm';
 import { PullSecretUploadForm } from './PullSecretUploadForm';
@@ -12,7 +12,7 @@ import {
   FormGroup,
 } from '@patternfly/react-core';
 
-export const PullSecretForm: FCC<SecretSubFormProps> = ({
+export const PullSecretForm: React.FCC<SecretSubFormProps> = ({
   onChange,
   onError,
   onFormDisable,

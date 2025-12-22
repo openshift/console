@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
 import {
   Action,
@@ -15,32 +15,32 @@ import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
 const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context, children }) => {
-  const [contextMap, setContextMap] = React.useState<ActionContext>(context);
-  const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
-  const [loadError, setLoadError] = React.useState<any>();
+  const [contextMap, setContextMap] = useState<ActionContext>(context);
+  const [actionsMap, setActionsMap] = useState<{ [uid: string]: Action[] }>({});
+  const [loadError, setLoadError] = useState<any>();
 
   const memoizedContext = useDeepCompareMemoize(context);
 
-  const onContextChange = React.useCallback((newContexId: string, newScope: any) => {
+  const onContextChange = useCallback((newContexId: string, newScope: any) => {
     setContextMap((prevContext) => ({ ...prevContext, [newContexId]: newScope }));
   }, []);
 
-  const onActionsLoaded = React.useCallback((actions: Action[], uid: string) => {
+  const onActionsLoaded = useCallback((actions: Action[], uid: string) => {
     setActionsMap((prev) => ({ ...prev, [uid]: actions }));
   }, []);
 
-  const actions: Action[] = React.useMemo(() => _.flatten(Object.values(actionsMap)), [actionsMap]);
+  const actions: Action[] = useMemo(() => _.flatten(Object.values(actionsMap)), [actionsMap]);
 
   const groupExtensions = useExtensions<ActionGroup>(isActionGroup);
 
-  const options: MenuOption[] = React.useMemo(() => createMenuOptions(actions, groupExtensions), [
+  const options: MenuOption[] = useMemo(() => createMenuOptions(actions, groupExtensions), [
     actions,
     groupExtensions,
   ]);
 
   const actionsLoaded = Object.keys(contextMap).every((contextId) => actionsMap[contextId]);
 
-  const service: ActionService = React.useMemo(
+  const service: ActionService = useMemo(
     () => ({
       actions,
       options,
@@ -51,7 +51,7 @@ const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context,
   );
 
   // Update the state whenever the context from props changes.
-  React.useEffect(() => {
+  useEffect(() => {
     setContextMap((prevContext) => ({ ...prevContext, ...memoizedContext }));
   }, [memoizedContext]);
 

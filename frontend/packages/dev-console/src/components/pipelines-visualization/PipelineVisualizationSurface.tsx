@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   GRAPH_LAYOUT_END_EVENT,
   Model,
@@ -33,20 +34,20 @@ type PipelineVisualizationSurfaceProps = {
   noScrollbar?: boolean;
 };
 
-const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> = ({
+const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
   model,
   componentFactory,
   showControlBar = false,
   noScrollbar = false,
 }) => {
-  const [vis, setVis] = React.useState<Controller>(null);
-  const [maxSize, setMaxSize] = React.useState(null);
-  const [width, setWidth] = React.useState(null);
-  const storedGraphModel = React.useRef(null);
+  const [vis, setVis] = useState<Controller>(null);
+  const [maxSize, setMaxSize] = useState(null);
+  const [width, setWidth] = useState(null);
+  const storedGraphModel = useRef(null);
 
   const layout: PipelineLayout = model.graph.layout as PipelineLayout;
 
-  const onLayoutUpdate = React.useCallback(
+  const onLayoutUpdate = useCallback(
     (nodes: Node[]) => {
       const nodeBounds = nodes.map((node) => node.getBounds());
       const maxWidth = Math.floor(
@@ -84,7 +85,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
     [setMaxSize, layout],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (vis === null) {
       const visualization = new Visualization();
       visualization.registerLayoutFactory(layoutFactory);
@@ -107,7 +108,7 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
     }
   }, [vis, model, onLayoutUpdate, componentFactory]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (model && vis) {
       const graph = storedGraphModel.current;
       if (graph) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import { Button, DescriptionList } from '@patternfly/react-core';
@@ -35,7 +35,7 @@ export const pluralize = (
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
 
-export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
+export const detailsPage = <T extends {}>(Component: ComponentType<T>) =>
   function DetailsPage(props: T) {
     return <Component {...props} />;
   };
@@ -45,7 +45,7 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 };
 
-export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
+export const ResourceSummary: FC<ResourceSummaryProps> = ({
   children,
   resource,
   customPathName,
@@ -191,7 +191,7 @@ export const ResourcePodCount: React.FCC<ResourcePodCountProps> = ({ resource })
   );
 };
 
-export const RuntimeClass: React.FC<RuntimeClassProps> = ({ obj, path }) => {
+export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
   const { t } = useTranslation();
   return (
     <DetailsItem
@@ -242,7 +242,7 @@ export type ResourceSummaryProps = {
   canUpdateResource?: boolean;
   podSelector?: string;
   nodeSelector?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   customPathName?: string;
 };
 

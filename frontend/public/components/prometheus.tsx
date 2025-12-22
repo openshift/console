@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ListPage } from './factory/list-page';
@@ -87,7 +88,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -144,14 +145,14 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   );
 };
 
-export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
+export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
   props,
 ) => {
   const { data, loaded } = props;
   const columns = usePrometheusColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={data}
@@ -161,7 +162,7 @@ export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

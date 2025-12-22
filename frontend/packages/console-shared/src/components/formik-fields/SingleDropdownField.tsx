@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -15,7 +16,7 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
+const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -30,7 +31,7 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
 }) => {
   const [field, { touched, error }] = useField<string | string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
@@ -51,7 +52,7 @@ const SingleDropdownField: React.FC<SingleDropdownFieldProps> = ({
     toggleOnSelection && onToggle();
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       aria-label={ariaLabel}
       id={fieldId}

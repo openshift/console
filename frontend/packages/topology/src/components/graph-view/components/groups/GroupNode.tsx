@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useCallback } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import {
@@ -42,9 +43,9 @@ type GroupNodeProps = {
   badge?: string;
   badgeColor?: string;
   badgeClassName?: string;
-  emptyValue?: React.ReactNode;
+  emptyValue?: ReactNode;
   groupResources?: OdcNodeModel[];
-  children?: React.ReactNode;
+  children?: ReactNode;
   typeIconClass?: string;
   canDrop?: boolean;
   dropTarget?: boolean;
@@ -52,7 +53,7 @@ type GroupNodeProps = {
   dragRegroupable?: boolean;
 } & Partial<WithSelectionProps & WithDndDropProps & WithContextMenuProps & WithDragNodeProps>;
 
-const GroupNode: React.FC<GroupNodeProps> = ({
+const GroupNode: FC<GroupNodeProps> = ({
   element,
   bgClassName,
   badge,
@@ -63,7 +64,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
   typeIconClass,
   ...rest
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const [filtered] = useSearchFilter(element.getLabel());
   const [textHover, textHoverRef] = useHover();
   const [iconSize, iconRef] = useSize([badge]);
@@ -75,10 +76,7 @@ const GroupNode: React.FC<GroupNodeProps> = ({
   const width = groupSize ? groupSize.width : 0;
   const height = groupSize ? groupSize.height : 0;
   useAnchor(
-    React.useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [
-      width,
-      height,
-    ]),
+    useCallback((node: Node) => new GroupNodeAnchor(node, width, height, 1.5), [width, height]),
   );
 
   const getCustomShape = () => () => (

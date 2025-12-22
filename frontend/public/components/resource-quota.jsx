@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
@@ -527,7 +527,7 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
 
 const useResourceQuotaColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -596,7 +596,7 @@ export const ResourceQuotasList = (props) => {
   const columns = useResourceQuotaColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         data={data}
         loaded={loaded}
@@ -607,13 +607,13 @@ export const ResourceQuotasList = (props) => {
         }
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
 const useAppliedClusterResourceQuotaColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -667,7 +667,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
   const columns = useAppliedClusterResourceQuotaColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={data}
@@ -679,7 +679,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
         }
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

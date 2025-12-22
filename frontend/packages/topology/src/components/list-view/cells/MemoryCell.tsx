@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { MemoryCellComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -13,23 +14,21 @@ type MemoryCellProps = {
   item: Node;
 };
 
-const MemoryCellComponent: React.FC<MemoryCellComponentProps> = React.memo(
-  ({ memoryByPod, totalBytes }) => (
-    <div className="odc-topology-list-view__metrics-cell__detail--memory">
-      <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
-        <span>
-          <span className="odc-topology-list-view__metrics-cell__metric-value">
-            {formatBytesAsMiB(totalBytes)}
-          </span>
-          &nbsp;
-          <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+const MemoryCellComponent: FC<MemoryCellComponentProps> = memo(({ memoryByPod, totalBytes }) => (
+  <div className="odc-topology-list-view__metrics-cell__detail--memory">
+    <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
+      <span>
+        <span className="odc-topology-list-view__metrics-cell__metric-value">
+          {formatBytesAsMiB(totalBytes)}
         </span>
-      </MetricsTooltip>
-    </div>
-  ),
-);
+        &nbsp;
+        <span className="odc-topology-list-view__metrics-cell__metric-unit">MiB</span>
+      </span>
+    </MetricsTooltip>
+  </div>
+));
 
-const MemoryCell: React.FC<MemoryCellProps> = ({ item }) => {
+const MemoryCell: FC<MemoryCellProps> = ({ item }) => {
   const resource = getTopologyResourceObject(item.getData());
   const memoryStats = useMetricStats(resource);
 

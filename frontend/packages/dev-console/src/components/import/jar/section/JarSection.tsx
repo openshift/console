@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useContext, useCallback, useEffect } from 'react';
 import { DropEvent, FileUpload, TextInputTypes } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,7 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';
 
-const JarSection: React.FunctionComponent = () => {
+const JarSection: FunctionComponent = () => {
   const { t } = useTranslation();
   const {
     values: {
@@ -23,11 +24,11 @@ const JarSection: React.FunctionComponent = () => {
     setFieldTouched,
     touched,
   } = useFormikContext<FormikValues>();
-  const { fileUpload, setFileUpload } = React.useContext<FileUploadContextType>(FileUploadContext);
+  const { fileUpload, setFileUpload } = useContext<FileUploadContextType>(FileUploadContext);
 
   const { name: nameTouched } = touched;
 
-  const updatedJarFile = React.useCallback(
+  const updatedJarFile = useCallback(
     (_event: DropEvent, file: File): void => {
       if (file.name) {
         const appName = getAppName(file.name);
@@ -48,7 +49,7 @@ const JarSection: React.FunctionComponent = () => {
     [appGroupName, appGroupSelectedKey, setFieldValue, setFieldTouched, name, nameTouched],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (fileUpload) {
       updatedJarFile(null, fileUpload);
       if (fileName) {

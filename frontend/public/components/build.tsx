@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
@@ -100,8 +100,8 @@ const BuildMetrics = ({ obj }) => {
     : ONE_HOUR;
   const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
   const namespace = obj.metadata.namespace;
-  const domain = React.useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
-  const areaProps = React.useMemo(
+  const domain = useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
+  const areaProps = useMemo(
     () => ({
       namespace,
       endTime,
@@ -399,7 +399,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const useBuildsColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -458,7 +458,7 @@ export const BuildsList: React.FCC<BuildsListProps> = ({ data, loaded, ...props 
   const columns = useBuildsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={BuildModel.labelPlural}
@@ -468,7 +468,7 @@ export const BuildsList: React.FCC<BuildsListProps> = ({ data, loaded, ...props 
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -16,17 +17,17 @@ const formatFilterData = (filters) => {
   return filterPairs;
 };
 
-const PubSubFilter: React.FC = () => {
+const PubSubFilter: FC = () => {
   const initialValueResources = [['', '']];
   const { setFieldValue, status, values } = useFormikContext<FormikValues>();
   const filters = values.formData?.spec?.filter?.attributes;
   const filterPairs = formatFilterData(filters);
 
-  const [nameValue, setNameValue] = React.useState(
+  const [nameValue, setNameValue] = useState(
     filterPairs.length > 0 ? filterPairs : initialValueResources,
   );
   const { t } = useTranslation();
-  const handleNameValuePairs = React.useCallback(
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       let updatedNameValuePairs = {};
       _.forEach(nameValuePairs, ([name, value]) => {

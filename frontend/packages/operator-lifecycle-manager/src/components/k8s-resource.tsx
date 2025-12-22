@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +56,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-export const ResourceTableRow: React.FC<RowFunctionArgs<
+export const ResourceTableRow: FC<RowFunctionArgs<
   K8sResourceKind,
   {
     linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
@@ -74,7 +75,7 @@ export const ResourceTableRow: React.FC<RowFunctionArgs<
   </>
 );
 
-export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
+export const ResourceTable: FC<ResourceTableProps> = (props) => {
   const { t } = useTranslation();
   const ResourceTableHeader = () => [
     {
@@ -151,7 +152,7 @@ export const linkForCsvResource = (
 
 type ResourcesPageRouteParams = RouteParams<'plural'>;
 
-export const Resources: React.FC<ResourcesProps> = (props) => {
+export const Resources: FC<ResourcesProps> = (props) => {
   const { t } = useTranslation();
   const { plural } = useParams<ResourcesPageRouteParams>();
   const providedAPI = providedAPIForReference(props.customData, plural);
@@ -169,7 +170,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     },
   );
 
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       linkFor: linkForCsvResource,
       providedAPI,

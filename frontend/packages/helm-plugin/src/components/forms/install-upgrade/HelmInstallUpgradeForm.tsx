@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useContext, useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import { JSONSchema7 } from 'json-schema';
@@ -41,7 +42,7 @@ export type HelmInstallUpgradeFormData = {
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
   helmActionConfig: HelmActionConfigType;
-  chartMetaDescription: React.ReactNode;
+  chartMetaDescription: ReactNode;
   onVersionChange: (chart: HelmChart) => void;
   chartError: Error;
   namespace: string;
@@ -50,7 +51,7 @@ export interface HelmInstallUpgradeFormProps {
   providerName?: string;
 }
 
-const HelmInstallUpgradeForm: React.FC<
+const HelmInstallUpgradeForm: FC<
   FormikProps<HelmInstallUpgradeFormData> & HelmInstallUpgradeFormProps
 > = ({
   chartHasValues,
@@ -71,7 +72,7 @@ const HelmInstallUpgradeForm: React.FC<
   providerName,
 }) => {
   const { t } = useTranslation();
-  const theme = React.useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
@@ -84,7 +85,7 @@ const HelmInstallUpgradeForm: React.FC<
     !_.isEmpty(errors) ||
     !!chartError;
 
-  const uiSchema = React.useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
+  const uiSchema = useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.installUgradeForm.editor.lastView';
 

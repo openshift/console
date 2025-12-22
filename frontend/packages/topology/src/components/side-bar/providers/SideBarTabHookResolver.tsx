@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, ReactElement, FC } from 'react';
+import { useMemo, Fragment } from 'react';
 import { GraphElement, isEdge } from '@patternfly/react-topology';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,7 @@ import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
 import TopologyEdgeResourcesPanel from '../TopologyEdgeResourcesPanel';
 
 type ResolvedTabSection = Omit<DetailsTabSection['properties'], 'tab' | 'provider' | 'section'> & {
-  contentElement: React.ReactNode;
+  contentElement: ReactNode;
 };
 
 type ResolvedTabSections = {
@@ -19,7 +20,7 @@ type ResolvedTabSections = {
 
 type TabBarTabHookResolverProps = {
   element: GraphElement;
-  children: (tabs: Tab[], loaded: boolean) => React.ReactElement;
+  children: (tabs: Tab[], loaded: boolean) => ReactElement;
   tabSectionExtensions: ResolvedExtension<DetailsTabSection>['properties'][];
   tabExtensions: DetailsTab['properties'][];
 };
@@ -27,7 +28,7 @@ type TabBarTabHookResolverProps = {
 const blamedDeprecatedPlugins: Record<string, boolean> = {};
 const renderNullNoop = () => null;
 
-const TabBarTabHookResolver: React.FC<TabBarTabHookResolverProps> = ({
+const TabBarTabHookResolver: FC<TabBarTabHookResolverProps> = ({
   element: graphElement,
   children,
   tabSectionExtensions,
@@ -39,7 +40,7 @@ const TabBarTabHookResolver: React.FC<TabBarTabHookResolverProps> = ({
   // TODO: Render each hook in its own child component...
   const resolvedTabSections = tabSectionExtensions.reduce<ResolvedTabSections>(
     (acc, { provider, section, tab: tabId, ...rest }) => {
-      let contentElement: React.ReactNode;
+      let contentElement: ReactNode;
 
       if (provider) {
         const hookResult = provider(graphElement);
@@ -72,7 +73,7 @@ const TabBarTabHookResolver: React.FC<TabBarTabHookResolverProps> = ({
     {},
   );
 
-  const [tabs, tabsLoaded] = React.useMemo(() => {
+  const [tabs, tabsLoaded] = useMemo(() => {
     if (Object.keys(resolvedTabSections).length === 0) return [[], true];
 
     const resolvedTabs: Tab[] = tabExtensions.reduce((acc, { id: tabId, label }) => {
@@ -86,7 +87,7 @@ const TabBarTabHookResolver: React.FC<TabBarTabHookResolverProps> = ({
       }>(resolvedTabSections[tabId]);
 
       const tabContent = orderedResolvedExtensions.map(({ id: tabSectionId, contentElement }) => (
-        <React.Fragment key={tabSectionId}>{contentElement}</React.Fragment>
+        <Fragment key={tabSectionId}>{contentElement}</Fragment>
       ));
       return [...acc, { name: label, component: tabContent }];
     }, []);

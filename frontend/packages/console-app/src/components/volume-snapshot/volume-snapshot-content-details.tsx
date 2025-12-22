@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -23,7 +23,7 @@ import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
 
-const Details: React.FC<DetailsProps> = ({ obj }) => {
+const Details: FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const deletionPolicy = obj?.spec?.deletionPolicy || '';
   const driver = obj?.spec?.driver || '';
@@ -100,7 +100,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => {
+const VolumeSnapshotContentDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [
     {
       href: '',

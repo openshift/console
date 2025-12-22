@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, CSSProperties } from 'react';
+import { useState, useEffect } from 'react';
 import { PopperOptions } from 'popper.js';
 import { Popper } from '../popper';
 import './spotlight.scss';
@@ -28,16 +29,16 @@ const popperOptions: PopperOptions = {
   },
 };
 
-const InteractiveSpotlight: React.FC<InteractiveSpotlightProps> = ({ element }) => {
+const InteractiveSpotlight: FC<InteractiveSpotlightProps> = ({ element }) => {
   const { height, width } = element.getBoundingClientRect();
-  const style: React.CSSProperties = {
+  const style: CSSProperties = {
     height,
     width,
   };
 
-  const [clicked, setClicked] = React.useState(false);
+  const [clicked, setClicked] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!clicked) {
       if (!isInViewport(element)) {
         element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });

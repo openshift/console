@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import ListPageCreate from '@console/internal/components/factory/ListPage/ListPageCreate';
@@ -9,7 +9,7 @@ import { PodDisruptionBudgetModel } from '../../models';
 import PodDisruptionBudgetList from './PDBList';
 import { PodDisruptionBudgetKind } from './types';
 
-export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> = ({
+export const PodDisruptionBudgetsPage: FC<PodDisruptionBudgetsPageProps> = ({
   namespace,
   showTitle = true,
 }) => {

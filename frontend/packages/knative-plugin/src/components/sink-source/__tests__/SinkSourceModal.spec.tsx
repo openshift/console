@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ServiceModel } from '../../../models';
@@ -27,7 +27,7 @@ jest.mock('react-i18next', () => ({
   Trans: jest.fn(() => null),
 }));
 
-type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
+type SinkSourceModalProps = ComponentProps<typeof SinkSourceModal>;
 
 describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;

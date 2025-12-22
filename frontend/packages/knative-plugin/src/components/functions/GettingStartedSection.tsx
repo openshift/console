@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { CardHeader, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { GettingStartedExpandableGrid, useUserSettings } from '@console/shared';
@@ -7,7 +7,7 @@ import { FunctionsDocsGettingStartedCard } from './FunctionsDocsGettingStartedCa
 import { QuickStartGettingStartedCard } from './QuickStartGettingStartedCard';
 import { SampleGettingStartedCard } from './SamplesGettingStartedCard';
 
-export const GettingStartedSection: React.FC = () => {
+export const GettingStartedSection: FC = () => {
   const { t } = useTranslation();
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(

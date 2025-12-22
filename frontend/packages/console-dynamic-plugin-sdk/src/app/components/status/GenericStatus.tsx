@@ -1,11 +1,12 @@
-import * as React from 'react';
+import type { ReactNode, ComponentType, FC } from 'react';
+import { Children } from 'react';
 import { StatusComponentProps } from '../../../extensions/console-types';
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
 
 type GenericStatusProps = StatusComponentProps & {
-  children?: React.ReactNode;
-  Icon: React.ComponentType<{ title?: string }>;
+  children?: ReactNode;
+  Icon: ComponentType<{ title?: string }>;
   popoverTitle?: string;
   noTooltip?: boolean;
 };
@@ -24,7 +25,7 @@ type GenericStatusProps = StatusComponentProps & {
  * <GenericStatus Icon={CircleIcon} />
  * ```
  */
-const GenericStatus: React.FC<GenericStatusProps> = (props) => {
+const GenericStatus: FC<GenericStatusProps> = (props) => {
   const { Icon, children, popoverTitle, title, noTooltip, iconOnly, ...restProps } = props;
   const renderIcon = iconOnly && !noTooltip ? <Icon title={title} /> : <Icon />;
   const statusBody = (
@@ -36,7 +37,7 @@ const GenericStatus: React.FC<GenericStatusProps> = (props) => {
       icon={renderIcon}
     />
   );
-  return React.Children.toArray(children).length ? (
+  return Children.toArray(children).length ? (
     <PopoverStatus title={popoverTitle || title} {...restProps} statusBody={statusBody}>
       {children}
     </PopoverStatus>

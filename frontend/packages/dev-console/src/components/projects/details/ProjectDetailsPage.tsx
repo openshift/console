@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
@@ -54,7 +54,7 @@ const ProjectDetails = (props) => {
   );
 };
 
-export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
+export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
   const { t } = useTranslation();
   const params = useParams();
   const activeNamespace = params.ns;
@@ -112,7 +112,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => {
+export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>

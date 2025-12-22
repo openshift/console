@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { TFunction } from 'i18next';
 import {
   HealthState,
@@ -41,7 +41,7 @@ export type GetOperatorStatusPriority<R extends K8sResourceCommon = K8sResourceC
 export type OperatorStatusPriority = {
   title: string;
   priority: number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   health: keyof typeof HealthState;
 };
 
@@ -83,13 +83,13 @@ export type URLHealthHandler<
 > = (response: R, error: any, additionalResource?: FirehoseResult<T>) => SubsystemHealth;
 
 export type StatusPopupItemProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   value?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 };
 
 export type StatusPopupSectionProps = {
-  firstColumn: React.ReactNode;
-  secondColumn?: React.ReactNode;
-  children?: React.ReactNode;
+  firstColumn: ReactNode;
+  secondColumn?: ReactNode;
+  children?: ReactNode;
 };

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -42,9 +43,7 @@ enum SupportedRuntime {
   quarkus = 'java',
 }
 
-const AddServerlessFunctionForm: React.FC<
-  FormikProps<FormikValues> & AddServerlessFunctionFormProps
-> = ({
+const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFunctionFormProps> = ({
   values,
   errors,
   handleSubmit,
@@ -65,14 +64,14 @@ const AddServerlessFunctionForm: React.FC<
     image,
   } = values;
   const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
-  const [showPipelineSection, setShowPipelineSection] = React.useState<boolean>(false);
+  const [showPipelineSection, setShowPipelineSection] = useState<boolean>(false);
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
     type !== GitProvider.INVALID;
-  const [helpText, setHelpText] = React.useState<string>('');
+  const [helpText, setHelpText] = useState<string>('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (url) {
       const gitService = getGitService(url, type, ref, dir, secretResource);
       if (gitService) {
@@ -130,7 +129,7 @@ const AddServerlessFunctionForm: React.FC<
     }
   }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus, t]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (image.selected && isPipelineEnabled) {
       const fetchPipelineTemplate = async () => {
         const fetchedPipelines = (await k8sListResourceItems({

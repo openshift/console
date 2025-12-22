@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Alert,
@@ -30,7 +31,7 @@ type VSphereConnectionModalFooterProps = {
   onClose: VoidFunction;
 };
 
-const VSphereConnectionModalFooter: React.FC<VSphereConnectionModalFooterProps> = ({ onClose }) => {
+const VSphereConnectionModalFooter: FC<VSphereConnectionModalFooterProps> = ({ onClose }) => {
   const { t } = useTranslation('vsphere-plugin');
   const { isSubmitting, isValid, submitForm, initialValues, values } = useFormikContext();
   return (
@@ -59,10 +60,7 @@ type VSphereConnectionModalAlertProps = {
   error?: { title: string; message: string };
 };
 
-const VSphereConnectionModalAlert: React.FC<VSphereConnectionModalAlertProps> = ({
-  health,
-  error,
-}) => {
+const VSphereConnectionModalAlert: FC<VSphereConnectionModalAlertProps> = ({ health, error }) => {
   const { t } = useTranslation('vsphere-plugin');
   const { isSubmitting } = useFormikContext();
 
@@ -135,15 +133,15 @@ const validationSchema = Yup.lazy((values: ConnectionFormFormikValues) =>
   }),
 );
 
-export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
+export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
   health,
   hide,
   cloudProviderConfig,
 }) => {
   usePopupVisibility();
   const { t } = useTranslation('vsphere-plugin');
-  const [isModalOpen, setModalOpen] = React.useState(true);
-  const [error, setError] = React.useState<{ title: string; message: string }>();
+  const [isModalOpen, setModalOpen] = useState(true);
+  const [error, setError] = useState<{ title: string; message: string }>();
 
   const models = useConnectionModels();
 
@@ -169,7 +167,7 @@ export const VSphereConnectionModal: React.FC<VSphereConnectionProps> = ({
     }
   };
 
-  let modalBody: React.ReactNode;
+  let modalBody: ReactNode;
 
   if (loadError) {
     modalBody = (

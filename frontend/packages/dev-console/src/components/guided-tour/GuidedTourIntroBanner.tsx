@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-no-undef */
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 
-const GuidedTourIntroBanner: React.FC = (props) => (
+const GuidedTourIntroBanner: FC = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576.59399 436.20001" {...props}>
     {'&gt;'}
     <defs id="defs23">
@@ -654,4 +655,4 @@ const GuidedTourIntroBanner: React.FC = (props) => (
   </svg>
 );
 
-export default React.memo(GuidedTourIntroBanner);
+export default memo(GuidedTourIntroBanner);

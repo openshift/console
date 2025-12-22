@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
@@ -17,9 +18,9 @@ import { RowVolumeData } from '../volumes-table';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { ModalCallback } from './types';
 
-export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const getRemoveVolumePatch = (resource: K8sResourceKind, rowVolumeData: RowVolumeData) => {
     const containers: ContainerSpec[] = _.get(resource, 'spec.template.spec.containers', []);
@@ -57,7 +58,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
     return patches;
   };
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
+  const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
     setErrorMessage('');
     setInProgress(true);
@@ -123,7 +124,7 @@ export const useRemoveModalLauncher = (props: RemoveVolumeModalProps): ModalCall
   const launcher = useOverlay();
   const { kind, resource, volume } = props;
 
-  return React.useCallback(
+  return useCallback(
     () =>
       kind &&
       resource &&

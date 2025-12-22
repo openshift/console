@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
@@ -21,7 +22,7 @@ import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateP
  * Currently we just check if some well known build (BuildConfigs and Shipwright Builds)
  * are available and load their (dynamic) resource list page.
  */
-const BuildsTabListPage: React.FC = () => {
+const BuildsTabListPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, '*': currentTab } = useParams();
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const BuildsTabListPage: React.FC = () => {
 
   // BuildConfigs from @console/internal
   const buildConfigLoader = resourceListPages.get('build.openshift.io~v1~BuildConfig');
-  const buildConfigComponent = React.useMemo(
+  const buildConfigComponent = useMemo(
     () =>
       buildConfigLoader
         ? (childProps) => (
@@ -75,7 +76,7 @@ const BuildsTabListPage: React.FC = () => {
   const shipwrightBuildEnabled = SHIPWRIGHT_BUILD || SHIPWRIGHT_BUILD_V1ALPHA1;
 
   /* Redirect to last visited tab */
-  React.useEffect(() => {
+  useEffect(() => {
     if (preferredTabLoaded && namespace) {
       if (preferredTab === 'shipwright-builds' && shipwrightBuildEnabled) {
         navigate(`/builds/ns/${namespace}/shipwright-builds`, { replace: true });
@@ -86,7 +87,7 @@ const BuildsTabListPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace, preferredTabLoaded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // update the preferred tab
     if (preferredTabLoaded && namespace) {
       setPreferredTab(currentTab === 'shipwright-builds' ? 'shipwright-builds' : 'buildconfigs');
@@ -98,7 +99,7 @@ const BuildsTabListPage: React.FC = () => {
     : 'shipwright.io~v1alpha1~Build';
   const shipwrightBuildLoader = resourceListPages.get(shipwrightKind);
   const [shipwrightBuildModel] = useK8sModel(shipwrightKind);
-  const shipwrightBuildComponent = React.useMemo(() => {
+  const shipwrightBuildComponent = useMemo(() => {
     return shipwrightBuildEnabled && shipwrightBuildLoader
       ? (childProps) => (
           <AsyncComponent

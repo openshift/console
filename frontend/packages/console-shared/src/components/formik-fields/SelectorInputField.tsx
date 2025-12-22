@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { FormikValues, useFormikContext, useField } from 'formik';
 import { SelectorInput } from '@console/internal/components/utils/selector-input';
@@ -14,7 +14,7 @@ interface SelectorInputFieldProps extends FieldProps {
  *
  * Values are saved as string dictionary (Record<string, string>).
  */
-const SelectorInputField: React.FC<SelectorInputFieldProps> = ({
+const SelectorInputField: FC<SelectorInputFieldProps> = ({
   name,
   label,
   helpText,

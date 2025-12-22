@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
@@ -10,7 +11,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
 import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
-export const Invalid: React.FC<{ path: string }> = ({ path }) => {
+export const Invalid: FC<{ path: string }> = ({ path }) => {
   return (
     <span className="pf-v6-u-text-color-subtle pf-v6-u-display-inline-block pf-v6-u-mb-xl">
       <YellowExclamationTriangleIcon />
@@ -22,7 +23,7 @@ export const Invalid: React.FC<{ path: string }> = ({ path }) => {
   );
 };
 
-export const DefaultCapability: React.FC<CommonCapabilityProps<string | number | boolean>> = ({
+export const DefaultCapability: FC<CommonCapabilityProps<string | number | boolean>> = ({
   description,
   label,
   obj,
@@ -30,7 +31,7 @@ export const DefaultCapability: React.FC<CommonCapabilityProps<string | number |
   value,
 }) => {
   const { t } = useTranslation();
-  const detail = React.useMemo(() => {
+  const detail = useMemo(() => {
     if (_.isEmpty(value) && !_.isFinite(value) && !_.isBoolean(value)) {
       return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
     }
@@ -44,7 +45,7 @@ export const DefaultCapability: React.FC<CommonCapabilityProps<string | number |
   );
 };
 
-export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> = ({
+export const K8sResourceLinkCapability: FC<CommonCapabilityProps<string>> = ({
   capability,
   description,
   descriptor,
@@ -54,7 +55,7 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> 
   value,
 }) => {
   const { t } = useTranslation();
-  const detail = React.useMemo(() => {
+  const detail = useMemo(() => {
     if (!value) {
       return <span className="pf-v6-u-text-color-subtle">{t('public~None')}</span>;
     }
@@ -79,7 +80,7 @@ export const K8sResourceLinkCapability: React.FC<CommonCapabilityProps<string>> 
   );
 };
 
-export const SecretCapability: React.FC<CommonCapabilityProps<string>> = ({
+export const SecretCapability: FC<CommonCapabilityProps<string>> = ({
   description,
   label,
   obj,
@@ -87,7 +88,7 @@ export const SecretCapability: React.FC<CommonCapabilityProps<string>> = ({
   value,
 }) => {
   const { t } = useTranslation();
-  const [reveal, setReveal] = React.useState(false);
+  const [reveal, setReveal] = useState(false);
 
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>

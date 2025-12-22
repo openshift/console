@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -34,9 +35,9 @@ type SoftwareCatalogTypesConsoleConfig = K8sResourceKind & {
 
 type ItemProps = { type: string; title: string };
 
-const Item: React.FC<ItemProps> = ({ title }) => <>{title}</>;
+const Item: FC<ItemProps> = ({ title }) => <>{title}</>;
 
-const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const CatalogTypesConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -44,14 +45,14 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   const [catalogTypesExtensions, catalogTypesExtensionsLoaded] = useResolvedExtensions<
     CatalogItemType
   >(isCatalogItemType);
-  const sortedCatalogTypeExtensions = React.useMemo(() => {
+  const sortedCatalogTypeExtensions = useMemo(() => {
     return [...catalogTypesExtensions].sort((catalogTypeExtensionA, catalogTypeExtensionB) => {
       const titleA = catalogTypeExtensionA.properties.title;
       const titleB = catalogTypeExtensionB.properties.title;
       return titleA.localeCompare(titleB);
     });
   }, [catalogTypesExtensions]);
-  const catalogTypesByType = React.useMemo<Record<string, CatalogItemType>>(
+  const catalogTypesByType = useMemo<Record<string, CatalogItemType>>(
     () =>
       catalogTypesExtensions.reduce((acc, catalogItemType) => {
         acc[catalogItemType.properties.type] = catalogItemType;
@@ -64,15 +65,15 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     SoftwareCatalogTypesConsoleConfig
   >();
-  const [types, setTypes] = React.useState<Types>();
-  React.useEffect(() => {
+  const [types, setTypes] = useState<Types>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !types) {
       setTypes(consoleConfig?.spec?.customization?.developerCatalog?.types);
     }
   }, [consoleConfig, consoleConfigLoaded, types]);
 
   // Calculate options
-  const [enabledOptions, disabledOptions] = React.useMemo<
+  const [enabledOptions, disabledOptions] = useMemo<
     [React.ReactElement<ItemProps>[], React.ReactElement<ItemProps>[]]
   >(() => {
     if (!consoleConfigLoaded) {
@@ -162,7 +163,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   }, [consoleConfigLoaded, types, sortedCatalogTypeExtensions, catalogTypesByType]);
 
   // Save the latest value (types)
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Software Catalog types',
@@ -202,8 +203,8 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
   // Extract types from Items
   const onListChange = (
     _event,
-    newEnabledOptions: React.ReactElement<ItemProps>[],
-    newDisabledOptions: React.ReactElement<ItemProps>[],
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     if (types?.state === 'Enabled') {
       if (newEnabledOptions.length === 0) {
@@ -235,7 +236,7 @@ const CatalogTypesConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }
     save();
   };
 
-  const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
     return fuzzy(input.toLocaleLowerCase(), option.props.title.toLocaleLowerCase());
   };
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import NamespaceBarApplicationSelector from '@console/topology/src/components/dropdowns/NamespaceBarApplicationSelector';
@@ -11,16 +11,16 @@ export enum NamespacedPageVariants {
 }
 
 export interface NamespacedPageProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   disabled?: boolean;
   hideProjects?: boolean;
   hideApplications?: boolean;
   onNamespaceChange?: (newNamespace: string) => void;
   variant?: NamespacedPageVariants;
-  toolbar?: React.ReactNode;
+  toolbar?: ReactNode;
 }
 
-const NamespacedPage: React.FC<NamespacedPageProps> = ({
+const NamespacedPage: FC<NamespacedPageProps> = ({
   children,
   disabled,
   onNamespaceChange,

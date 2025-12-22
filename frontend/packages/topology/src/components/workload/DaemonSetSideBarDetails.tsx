@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
@@ -12,7 +12,7 @@ type DaemonSetOverviewDetailsProps = {
   ds: DaemonSetKind;
 };
 
-const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }) => {
+const DaemonSetSideBarDetails: FC<DaemonSetOverviewDetailsProps> = ({ ds }) => {
   const { namespace } = ds.metadata;
   const { podData, loaded, loadError } = usePodsWatcher(ds, 'DaemonSet', namespace);
 

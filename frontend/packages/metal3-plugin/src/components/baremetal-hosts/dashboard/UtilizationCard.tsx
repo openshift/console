@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useMemo, useCallback } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,17 +25,15 @@ import {
   getMultilineUtilizationQueries,
 } from './queries';
 
-const UtilizationCard: React.FC = () => {
+const UtilizationCard: FC = () => {
   const { t } = useTranslation();
-  const { machine } = React.useContext(BareMetalHostDashboardContext);
+  const { machine } = useContext(BareMetalHostDashboardContext);
   const nodeName = getMachineNodeName(machine);
 
-  const queries = React.useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
-  const multilineQueries = React.useMemo(() => getMultilineUtilizationQueries(nodeName), [
-    nodeName,
-  ]);
+  const queries = useMemo(() => getUtilizationQueries(nodeName), [nodeName]);
+  const multilineQueries = useMemo(() => getMultilineUtilizationQueries(nodeName), [nodeName]);
 
-  const humanizePods = React.useCallback(
+  const humanizePods = useCallback(
     (v) => ({
       string: `${v}`,
       value: v as number,
@@ -43,7 +42,7 @@ const UtilizationCard: React.FC = () => {
     [],
   );
 
-  const cpuPopover = React.useCallback(
+  const cpuPopover = useCallback(
     ({ current }) => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
@@ -69,7 +68,7 @@ const UtilizationCard: React.FC = () => {
     [nodeName, t],
   );
 
-  const memPopover = React.useCallback(
+  const memPopover = useCallback(
     ({ current }) => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (
@@ -95,7 +94,7 @@ const UtilizationCard: React.FC = () => {
     [nodeName, t],
   );
 
-  const storagePopover = React.useCallback(
+  const storagePopover = useCallback(
     ({ current }) => {
       const topConsumerQueries = getTopConsumerQueries(nodeName);
       return (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
@@ -15,7 +15,7 @@ import GetConditionsForStatus from './GetConditionsForStatus';
 
 const serviceReference = referenceForModel(ServiceModel);
 
-const FunctionRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
+const FunctionRow: FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;

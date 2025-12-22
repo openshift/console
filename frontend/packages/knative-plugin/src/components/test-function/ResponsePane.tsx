@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 import { FormikProps, FormikValues } from 'formik/dist/types';
@@ -19,9 +19,7 @@ type ResponsePaneFormikValues = {
   response?: Response | undefined;
 };
 
-const ResponsePane: React.FC<FormikProps<FormikValues & ResponsePaneFormikValues>> = ({
-  values,
-}) => {
+const ResponsePane: FC<FormikProps<FormikValues & ResponsePaneFormikValues>> = ({ values }) => {
   const { t } = useTranslation();
   const { statusCode, header } = values.response;
 

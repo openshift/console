@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
@@ -31,7 +31,7 @@ const SMTP_GLOBAL_FIELDS = [
 ];
 const GLOBAL_FIELDS = [...SMTP_GLOBAL_FIELDS, 'email_send_resolved', 'email_html'];
 
-export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   // disable saveAsDefault if all SMTP form fields match global values
   const disableSaveAsDefault = SMTP_GLOBAL_FIELDS.every(
     (propName) => formValues[propName] === globals[propName],

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -13,14 +14,14 @@ export interface ResourceQuotaAlertProps {
   namespace: string;
 }
 
-export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespace }) => {
+export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const [warningMessageFlag, setWarningMessageFlag] = React.useState<boolean>();
-  const [resourceQuotaName, setResourceQuotaName] = React.useState(null);
-  const [resourceQuotaKind, setResourceQuotaKind] = React.useState(null);
+  const [warningMessageFlag, setWarningMessageFlag] = useState<boolean>();
+  const [resourceQuotaName, setResourceQuotaName] = useState(null);
+  const [resourceQuotaKind, setResourceQuotaKind] = useState(null);
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       resourcequotas: {
         groupVersionKind: {
@@ -48,7 +49,7 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     appliedclusterresourcequotas: AppliedClusterResourceQuotaKind[];
   }>(watchedResources);
 
-  const [totalRQatQuota = [], quotaName, quotaKind] = React.useMemo(
+  const [totalRQatQuota = [], quotaName, quotaKind] = useMemo(
     () =>
       resourcequotas.loaded && !resourcequotas.loadError
         ? checkQuotaLimit(resourcequotas.data)
@@ -56,7 +57,7 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     [resourcequotas],
   );
 
-  const [totalACRQatQuota = [], clusterRQName, clusterRQKind] = React.useMemo(
+  const [totalACRQatQuota = [], clusterRQName, clusterRQKind] = useMemo(
     () =>
       appliedclusterresourcequotas.loaded && !appliedclusterresourcequotas.loadError
         ? checkQuotaLimit(appliedclusterresourcequotas.data)
@@ -64,13 +65,13 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     [appliedclusterresourcequotas],
   );
 
-  let totalResourcesAtQuota = React.useMemo(() => [...totalRQatQuota, ...totalACRQatQuota], [
+  let totalResourcesAtQuota = useMemo(() => [...totalRQatQuota, ...totalACRQatQuota], [
     totalRQatQuota,
     totalACRQatQuota,
   ]);
   totalResourcesAtQuota = totalResourcesAtQuota.filter((resourceAtQuota) => resourceAtQuota !== 0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (totalResourcesAtQuota.length === 1) {
       setResourceQuotaName(quotaName || clusterRQName);
       setResourceQuotaKind(quotaKind || clusterRQKind);
@@ -80,7 +81,7 @@ export const ResourceQuotaAlert: React.FC<ResourceQuotaAlertProps> = ({ namespac
     }
   }, [clusterRQKind, clusterRQName, totalResourcesAtQuota, quotaKind, quotaName]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (totalResourcesAtQuota.length > 0) {
       setWarningMessageFlag(true);
     } else {

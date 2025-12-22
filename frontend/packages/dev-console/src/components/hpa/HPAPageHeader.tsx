@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -13,7 +13,7 @@ type HPAPageHeaderProps = {
   validSupportedType: boolean;
 };
 
-const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
+const HPAPageHeader: FC<HPAPageHeaderProps> = ({
   name,
   title,
   kind,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { Map as ImmutableMap } from 'immutable';
 import {
@@ -18,16 +18,16 @@ type WithClassNameProps<R = {}> = R & {
 };
 
 export type ActivityItemProps = WithClassNameProps<{
-  children?: React.ReactNode;
+  children?: ReactNode;
 }>;
 
 export type ActivityBodyProps = WithClassNameProps<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>;
 
 export type AlertsBodyProps = WithClassNameProps<{
   error?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }>;
 
 export type RecentEventsBodyProps = {
@@ -43,12 +43,12 @@ type OngoingActvityProps<T> = {
 export type OngoingActivityBodyProps = {
   resourceActivities?: (OngoingActvityProps<K8sResourceCommon> & {
     timestamp: Date;
-    component?: React.ComponentType<Partial<OngoingActvityProps<K8sResourceCommon>>>;
+    component?: ComponentType<Partial<OngoingActvityProps<K8sResourceCommon>>>;
   })[];
   prometheusActivities?: {
     results: PrometheusResponse[];
-    loader?: () => Promise<React.ComponentType<{ results?: PrometheusResponse[] }>>;
-    component?: React.ComponentType<{ results: PrometheusResponse[] }>;
+    loader?: () => Promise<ComponentType<{ results?: PrometheusResponse[] }>>;
+    component?: ComponentType<{ results: PrometheusResponse[] }>;
   }[];
   loaded: boolean;
 };
@@ -64,11 +64,11 @@ export type HealthItemProps = WithClassNameProps<{
   state?: HealthState;
   popupTitle?: string;
   popupClassname?: string;
-  popupBodyContent?: React.ReactNode | ((hide: () => void) => React.ReactNode);
+  popupBodyContent?: ReactNode | ((hide: () => void) => ReactNode);
   popupKeepOnOutsideClick?: boolean;
   noIcon?: boolean;
-  icon?: React.ReactNode;
-  children?: React.ReactNode;
+  icon?: ReactNode;
+  children?: ReactNode;
 }>;
 
 export type ResourceInventoryItemProps = {
@@ -80,17 +80,17 @@ export type ResourceInventoryItemProps = {
   namespace?: string;
   error: boolean;
   showLink?: boolean;
-  TitleComponent?: React.ComponentType<{ children?: React.ReactNode }>;
+  TitleComponent?: ComponentType<{ children?: ReactNode }>;
   title?: string;
   titlePlural?: string;
-  ExpandedComponent?: React.ComponentType<{}>;
+  ExpandedComponent?: ComponentType<{}>;
   basePath?: string;
   dataTest?: string;
 };
 
 export type DetailItemProps = {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   isLoading?: boolean;
   error?: boolean;
   valueClassName?: string;
@@ -98,7 +98,7 @@ export type DetailItemProps = {
 };
 
 export type UtilizationBodyProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export enum ByteDataTypes {
@@ -120,7 +120,7 @@ export type UtilizationItemProps = {
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
+  TopConsumerPopover?: ComponentType<TopConsumerPopoverProps>;
   setLimitReqState?: (state: { limit: LIMIT_STATE; requested: LIMIT_STATE }) => void;
 };
 
@@ -179,11 +179,7 @@ export type Options = {
   cluster?: string;
 };
 
-export type UseLastNamespace = () => [
-  string,
-  React.Dispatch<React.SetStateAction<string>>,
-  boolean,
-];
+export type UseLastNamespace = () => [string, Dispatch<SetStateAction<string>>, boolean];
 
 export type VirtualizedGridProps = {
   items: VirtualizedGridItem[] | VirtualizedGridGroupedItems;
@@ -219,9 +215,9 @@ export type VirtualizedGridGroupedItems = {
   [key: string]: VirtualizedGridItem[];
 };
 
-export type VirtualizedGridRenderHeader = (heading: string) => React.ReactNode;
+export type VirtualizedGridRenderHeader = (heading: string) => ReactNode;
 
-export type VirtualizedGridRenderCell = (item: VirtualizedGridItem) => React.ReactNode;
+export type VirtualizedGridRenderCell = (item: VirtualizedGridItem) => ReactNode;
 
 export type LazyActionMenuProps = {
   context: ActionContext;
@@ -280,7 +276,7 @@ export type UseDashboardResources = ({
 };
 
 export type QuickStartsLoaderProps = {
-  children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;
+  children: (quickStarts: QuickStart[], loaded: boolean) => ReactNode;
 };
 
 export type UseURLPoll = <R>(

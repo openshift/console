@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Status } from '@console/shared/src/components/status/Status';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
@@ -308,7 +308,7 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
   const columns = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentConfigModel.labelPlural}
@@ -318,7 +318,7 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';

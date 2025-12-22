@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
@@ -42,7 +41,7 @@ interface WrapperProps extends FormikConfig<ImagesSectionFormData> {
   children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

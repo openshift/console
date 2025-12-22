@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
@@ -10,7 +10,7 @@ interface GroupResourcesCellProps {
   group: Node;
 }
 
-const GroupResourcesCell: React.FC<GroupResourcesCellProps> = ({ group }) => {
+const GroupResourcesCell: FC<GroupResourcesCellProps> = ({ group }) => {
   const displayFilters = useDisplayFilters();
   const { groupResources } = group.getData();
   const shownResources = groupResources.filter((res) =>

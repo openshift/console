@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import * as _ from 'lodash';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { DetailsItem as DetailsItemExtension } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
@@ -38,4 +38,4 @@ type ExtensionDetailsItemProps = {
   obj: K8sResourceCommon;
   extension: ResolvedExtension<DetailsItemExtension>;
 };
-type ExtensionDetailsItemComponent = (props: ExtensionDetailsItemProps) => React.ReactElement;
+type ExtensionDetailsItemComponent = (props: ExtensionDetailsItemProps) => ReactElement;

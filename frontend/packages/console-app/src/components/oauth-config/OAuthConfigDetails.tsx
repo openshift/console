@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert,
@@ -30,9 +31,9 @@ import { IdentityProviders } from './IdentityProviders';
 const tokenDuration = (seconds: number) =>
   _.isNil(seconds) ? '-' : formatPrometheusDuration(seconds * 1000);
 
-export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
+export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) => {
   const navigate = useNavigate();
-  const [isIDPOpen, setIDPOpen] = React.useState(false);
+  const [isIDPOpen, setIDPOpen] = useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
   const { t } = useTranslation();
   const queryParams = useQueryParams();
@@ -125,7 +126,7 @@ export const OAuthConfigDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: 
             isOpen={isIDPOpen}
             onSelect={() => setIDPOpen(false)}
             onOpenChange={(isOpen: boolean) => setIDPOpen(isOpen)}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            toggle={(toggleRef: Ref<MenuToggleElement>) => (
               <MenuToggle
                 id="idp-dropdown"
                 data-test-id="dropdown-button"

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { SyntheticEvent } from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { history, removeQueryArgument } from '@console/internal/components/utils/router';
 import { keywordCompare } from '../../catalog';
@@ -8,7 +8,7 @@ export const quickSearch = (items: CatalogItem[], query: string) => {
 };
 
 export const handleCta = async (
-  e: React.SyntheticEvent,
+  e: SyntheticEvent,
   item: CatalogItem,
   closeModal: () => void,
   fireTelemetryEvent: (event: string, properties?: {}) => void,

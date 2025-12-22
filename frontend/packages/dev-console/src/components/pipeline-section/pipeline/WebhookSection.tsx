@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode, ReactElement } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Content,
   TextInputTypes,
@@ -55,16 +56,16 @@ export const WebhookDocLinks = {
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/manage-webhooks/',
 };
 
-const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField }) => {
+const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => {
   const [namespace] = useActiveNamespace();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { gitProvider, webhook } = _.get(values, formContextField) || values;
-  const [controllerUrl, setControllerUrl] = React.useState('');
-  const [webhookSecret, setWebhookSecret] = React.useState('');
+  const [controllerUrl, setControllerUrl] = useState('');
+  const [webhookSecret, setWebhookSecret] = useState('');
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const ctlUrl = pac?.data?.['controller-url'];
     if (ctlUrl) {
       setControllerUrl(ctlUrl);
@@ -98,8 +99,8 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({ pac, formContextField 
     }
   };
 
-  const HelpText = (): React.ReactElement => {
-    let helpText: React.ReactNode;
+  const HelpText = (): ReactElement => {
+    let helpText: ReactNode;
     switch (gitProvider) {
       case GitProvider.GITHUB:
         helpText = (

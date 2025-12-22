@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -11,14 +12,14 @@ import FormSection from '../section/FormSection';
 import ImageSearch from './ImageSearch';
 import ImageStream from './ImageStream';
 
-const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
+const ImageSearchSection: FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
-  const [registry, setRegistry] = React.useState(values.registry);
+  const [registry, setRegistry] = useState(values.registry);
 
-  const showSample = React.useRef(hasSampleQueryParameter()).current;
+  const showSample = useRef(hasSampleQueryParameter()).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (values.registry !== registry) {
       setRegistry(values.registry);
       setFieldValue('searchTerm', initialValues.searchTerm);

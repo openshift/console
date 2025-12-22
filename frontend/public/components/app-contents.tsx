@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import {
   Route,
   Routes,
@@ -66,13 +67,13 @@ _.each(namespacedPrefixes, (p) => {
   namespacedRoutes.push({ path: `${p}/all-namespaces/*` });
 });
 
-const DefaultPageRedirect: React.FC<{
+const DefaultPageRedirect: FC<{
   url: Perspective['properties']['landingPageURL'];
   flags: { [key: string]: boolean };
   firstVisit: boolean;
 }> = ({ url, flags, firstVisit }) => {
-  const [resolvedUrl, setResolvedUrl] = React.useState<string>();
-  React.useEffect(() => {
+  const [resolvedUrl, setResolvedUrl] = useState<string>();
+  useEffect(() => {
     (async () => {
       setResolvedUrl((await url())(flags, firstVisit));
     })();
@@ -86,21 +87,21 @@ type DefaultPageProps = {
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
+const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
     getPerspectiveVisitedKey(activePerspective),
     false,
   );
-  const firstVisit = React.useRef<boolean>();
+  const firstVisit = useRef<boolean>();
 
   // First time thru, capture first visit status
   if (firstVisit.current == null && visitedLoaded) {
     firstVisit.current = !visited;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visitedLoaded && !visited) {
       // Mark perspective as visited
       setVisited(true);
@@ -155,12 +156,12 @@ const HorizontalPodRedirect = () => {
   return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
 };
 
-const AppContents: React.FC = () => {
+const AppContents: FC = () => {
   const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
 
-  const allPluginsProcessed = React.useMemo(
+  const allPluginsProcessed = useMemo(
     () => pluginInfoEntries.every((i) => i.status !== 'pending'),
     [pluginInfoEntries],
   );
@@ -792,9 +793,9 @@ const AppContents: React.FC = () => {
         id="content-scrollable"
       >
         <ErrorBoundaryPage>
-          <React.Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
+          <Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
             {contentRouter}
-          </React.Suspense>
+          </Suspense>
         </ErrorBoundaryPage>
       </PageSection>
       <TelemetryNotifier />

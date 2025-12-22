@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash-es';
 import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
 import { SquareIcon } from '@patternfly/react-icons/dist/esm/icons/square-icon';
@@ -14,7 +14,7 @@ const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 export const getImageStreamTagName = (imageStreamName: string, tag: string): string =>
   `${imageStreamName}:${tag}`;
 
-const ImageStreamTimelineItem: React.FC<ImageStreamTimelineItemProps> = ({
+const ImageStreamTimelineItem: FC<ImageStreamTimelineItemProps> = ({
   tag,
   imageStreamName,
   imageStreamNamespace,
@@ -64,7 +64,7 @@ const isTagVersionLatest = (
   );
 };
 
-export const ImageStreamTimeline: React.FC<ImageStreamTimelineProps> = ({
+export const ImageStreamTimeline: FC<ImageStreamTimelineProps> = ({
   imageStreamTags,
   imageStreamName,
   imageStreamNamespace,

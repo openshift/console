@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
@@ -8,7 +8,7 @@ export interface BuildConfigSectionProps {
   showHeader?: boolean;
 }
 
-const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ showHeader }) => {
+const BuildConfigSection: FC<BuildConfigSectionProps> = ({ showHeader }) => {
   const { t } = useTranslation();
   const {
     values: { build },

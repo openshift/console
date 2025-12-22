@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useMemo } from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -19,14 +20,12 @@ import { ClusterServiceVersionModel } from '../models';
 import { ProvidedAPI, ClusterServiceVersionKind } from '../types';
 
 type ExpandCollapseDescriptionProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-export const ExpandCollapseDescription: React.FC<ExpandCollapseDescriptionProps> = ({
-  children,
-}) => {
+export const ExpandCollapseDescription: FC<ExpandCollapseDescriptionProps> = ({ children }) => {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(false);
   const toggle = (isExpanded) => {
     setExpanded(isExpanded);
   };
@@ -145,7 +144,7 @@ const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const resourceSelector = React.useMemo(
+  const resourceSelector = useMemo(
     () => ({
       csvs: {
         isList: true,
@@ -172,7 +171,7 @@ const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
     globalCsvs?: ClusterServiceVersionKind[];
   }>(resourceSelector);
 
-  const normalizedCSVs = React.useMemo(
+  const normalizedCSVs = useMemo(
     () =>
       normalizeClusterServiceVersions(
         [...(csvsResources.csvs?.data ?? []), ...(csvsResources.globalCsvs?.data ?? [])],

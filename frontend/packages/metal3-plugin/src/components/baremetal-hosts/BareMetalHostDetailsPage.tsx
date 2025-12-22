@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -40,7 +40,7 @@ type ExtraResources = {
   nodeMaintenances: K8sResourceKind[];
 };
 
-const BareMetalHostDetailsPage: React.FC<BareMetalHostDetailsPageProps> = (props) => {
+const BareMetalHostDetailsPage: FC<BareMetalHostDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);

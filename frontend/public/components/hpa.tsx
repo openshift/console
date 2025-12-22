@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
@@ -38,7 +39,7 @@ const HorizontalPodAutoscalersReference: K8sResourceKindReference = referenceFor
   HorizontalPodAutoscalerModel,
 );
 
-const MetricsRow: React.FC<MetricsRowProps> = ({ type, current, target }) => (
+const MetricsRow: FC<MetricsRowProps> = ({ type, current, target }) => (
   <Tr>
     <Td width={50}>{type}</Td>
     <Td width={25}>{current || '-'}</Td>
@@ -71,7 +72,7 @@ const getResourceUtilization = (currentMetric, type) => {
     : `${currentUtilization}%`;
 };
 
-const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
+const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
   const { t } = useTranslation();
 
   const resourceRowFn = (metric, current, key, metricType) => {
@@ -187,7 +188,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   );
 };
 
-export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersDetailsProps> = ({
+export const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> = ({
   obj: hpa,
 }) => {
   const { t } = useTranslation();
@@ -248,7 +249,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
 ];
-export const HorizontalPodAutoscalersDetailsPage: React.FC = (props) => (
+export const HorizontalPodAutoscalersDetailsPage: FC = (props) => (
   <DetailsPage {...props} kind={HorizontalPodAutoscalersReference} pages={pages} />
 );
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
@@ -321,7 +322,7 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
 
 const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscalerKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = React.useMemo(() => {
+  const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -392,7 +393,7 @@ export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersLis
   const columns = useHorizontalPodAutoscalersColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<HorizontalPodAutoscalerKind>
         {...props}
         label={HorizontalPodAutoscalerModel.labelPlural}
@@ -402,14 +403,12 @@ export const HorizontalPodAutoscalersList: React.FCC<HorizontalPodAutoscalersLis
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
-export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPageProps> = (
-  props,
-) => (
+export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps> = (props) => (
   <ListPage
     {...props}
     kind={HorizontalPodAutoscalersReference}

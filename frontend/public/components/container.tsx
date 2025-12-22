@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -60,7 +60,7 @@ const getResourceLimitsValue = (container: ContainerSpec) => {
   return formatComputeResources(limits);
 };
 
-const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
+const Lifecycle: FC<LifecycleProps> = ({ lifecycle }) => {
   const { t } = useTranslation();
   const fields = lifecycle && k8sProbe.mapLifecycleConfigToFields(lifecycle);
   const postStart = _.get(fields, 'postStart.cmd');
@@ -92,7 +92,7 @@ const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
 };
 Lifecycle.displayName = 'Lifecycle';
 
-const Probe: React.FC<ProbeProps> = ({ probe, podIP }) => {
+const Probe: FC<ProbeProps> = ({ probe, podIP }) => {
   const label = probe && k8sProbe.getActionLabelFromObject(probe);
   const value = probe && _.get(k8sProbe.mapProbeToFields(probe, podIP), 'cmd');
   if (!value) {
@@ -112,7 +112,7 @@ const Probe: React.FC<ProbeProps> = ({ probe, podIP }) => {
 };
 Probe.displayName = 'Probe';
 
-const Ports: React.FC<PortsProps> = ({ ports }) => {
+const Ports: FC<PortsProps> = ({ ports }) => {
   const { t } = useTranslation();
   if (!ports || !ports.length) {
     return (
@@ -142,7 +142,7 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
   );
 };
 
-const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
+const VolumeMounts: FC<VolumeMountProps> = ({ volumeMounts }) => {
   const { t } = useTranslation();
   if (!volumeMounts || !volumeMounts.length) {
     return (
@@ -183,7 +183,7 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
 };
 VolumeMounts.displayName = 'VolumeMounts';
 
-const Env: React.FC<EnvProps> = ({ env }) => {
+const Env: FC<EnvProps> = ({ env }) => {
   const { t } = useTranslation();
   if (!env || !env.length) {
     return (
@@ -260,7 +260,7 @@ const getContainerStateValue = (state: any) => {
     : state.label;
 };
 
-export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props) => {
+export const ContainerDetailsList: FC<ContainerDetailsListProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const pod = props.obj;
@@ -458,7 +458,7 @@ export const ContainerDetailsList: React.FC<ContainerDetailsListProps> = (props)
 };
 ContainerDetailsList.displayName = 'ContainerDetailsList';
 
-export const ContainersDetailsPage: React.FC = (props) => {
+export const ContainersDetailsPage: FC = (props) => {
   const params = useParams();
   return (
     <Firehose
@@ -485,7 +485,7 @@ const getContainerStatusStateValue = (pod: PodKind, containerName: string) => {
   return getContainerStateValue(state);
 };
 
-export const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
+export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

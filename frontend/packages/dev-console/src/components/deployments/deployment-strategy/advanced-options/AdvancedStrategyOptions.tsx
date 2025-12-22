@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { InputField } from '@console/shared/src';
 import { DeploymentStrategyType } from '../utils/types';
 import LifecycleHookField from './LifecycleHookField';
 
-const AdvancedStrategyOptions: React.FC<{
+const AdvancedStrategyOptions: FC<{
   dataAttribute: string;
   resourceObj: K8sResourceKind;
 }> = ({ dataAttribute, resourceObj }) => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -18,7 +18,7 @@ const ALL_OPERATORS: MatchExpression['operator'][] = [
   Operator.NotIn,
 ];
 
-const MatchExpression: React.FC<MatchExpressionProps> = ({
+const MatchExpression: FC<MatchExpressionProps> = ({
   expression,
   onChange = () => {},
   allowedOperators = ALL_OPERATORS,
@@ -80,7 +80,7 @@ const MatchExpression: React.FC<MatchExpressionProps> = ({
   );
 };
 
-export const MatchExpressions: React.FC<MatchExpressionsProps> = ({
+export const MatchExpressions: FC<MatchExpressionsProps> = ({
   matchExpressions = [],
   onChange = () => {}, // Default to noop
   allowedOperators = ALL_OPERATORS,

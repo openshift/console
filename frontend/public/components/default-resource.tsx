@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import * as React from 'react';
+import type { ComponentProps, FC, ReactNode } from 'react';
+import { useMemo, useCallback } from 'react';
 import { JSONPath } from 'jsonpath-plus';
 import { useTranslation } from 'react-i18next';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -78,13 +79,9 @@ const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => {
 
 type ResourceActionsMenuProps = {
   resource: K8sResourceKind;
-} & Pick<React.ComponentProps<typeof ActionMenu>, 'variant' | 'appendTo'>;
+} & Pick<ComponentProps<typeof ActionMenu>, 'variant' | 'appendTo'>;
 
-const ResourceActionsMenu: React.FC<ResourceActionsMenuProps> = ({
-  resource,
-  variant,
-  appendTo,
-}) => {
+const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, appendTo }) => {
   const common = useCommonResourceActions(kindObj(referenceFor(resource)), resource);
   const menuActions = [...common];
   return <ActionMenu actions={menuActions} variant={variant} appendTo={appendTo} />;
@@ -95,13 +92,13 @@ const NamespaceCell: React.FCC<NamespaceCellProps> = ({ namespace }) => {
   return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
 };
 
-export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
+export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
   const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
   const rightDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'right');
-  const leftDetailsItems = React.useMemo(
+  const leftDetailsItems = useMemo(
     () =>
       leftDetailsItemExtensions.map((extension) => (
         <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
@@ -109,7 +106,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
     [leftDetailsItemExtensions, obj],
   );
 
-  const rightDetailsItems = React.useMemo(
+  const rightDetailsItems = useMemo(
     () =>
       rightDetailsItemExtensions.map((extension) => (
         <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
@@ -201,7 +198,7 @@ const getDataViewRows = (
         },
       };
       return acc;
-    }, {} as Record<string, { cell: React.ReactNode; props?: any }>);
+    }, {} as Record<string, { cell: ReactNode; props?: any }>);
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -254,7 +251,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
 ): TableColumn<T>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
       const path = col.jsonPath;
       const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
@@ -319,7 +316,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   return columns;
 };
 
-export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
+export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
   const { t } = useTranslation();
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
@@ -329,7 +326,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
   const columns = useDefaultResourceColumns(
     additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
   );
-  const resourceProviderGuard = React.useCallback(
+  const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
@@ -376,9 +373,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, 'ListComponent'>> = (
-  props,
-) => (
+export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponent'>> = (props) => (
   <ListPage
     {...props}
     ListComponent={DefaultList}
@@ -388,9 +383,9 @@ export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, '
 );
 DefaultPage.displayName = 'DefaultPage';
 
-export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+export const DefaultDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const resourceProviderGuard = React.useCallback(
+  const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === props.kind,

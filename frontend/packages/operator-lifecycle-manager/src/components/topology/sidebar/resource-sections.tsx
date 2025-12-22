@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -11,12 +12,12 @@ import { ClusterServiceVersionKind } from '../../../types';
 import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
 import { OperatorGroupData } from './types';
 
-const ResourceSection: React.FC<{ item: TopologyDataObject<OperatorGroupData> }> = ({ item }) => {
+const ResourceSection: FC<{ item: TopologyDataObject<OperatorGroupData> }> = ({ item }) => {
   const { resource, data } = item;
   const { namespace } = resource.metadata;
   const { csvName } = data;
 
-  const resourcesList = React.useMemo(() => {
+  const resourcesList = useMemo(() => {
     return {
       csv: {
         kind: referenceForModel(ClusterServiceVersionModel),

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Flex,
   FlexItem,
@@ -45,7 +45,7 @@ const DEFAULT_CHILDREN = (
   );
 };
 
-const TextColumnItemContent: React.FC<TextColumnItemContentProps> = ({
+const TextColumnItemContent: FC<TextColumnItemContentProps> = ({
   name,
   dndEnabled,
   children = DEFAULT_CHILDREN,

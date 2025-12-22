@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -32,7 +33,7 @@ interface OwnProps {
   channels: ChannelListProps;
 }
 
-const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
+const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   errors,
   handleSubmit,
   handleReset,
@@ -57,7 +58,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     namespace,
   );
   const channelKind = getChannelKind(values.formData.type);
-  const onTypeChange = React.useCallback(
+  const onTypeChange = useCallback(
     (item: string) => {
       setErrors({});
       setStatus({});

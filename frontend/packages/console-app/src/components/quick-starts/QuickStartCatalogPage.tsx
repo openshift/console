@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   QuickStartCatalogPage as PfQuickStartCatalogPage,
   QuickStartContext,
@@ -12,11 +13,11 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { QuickStartsLoader } from './loader/QuickStartsLoader';
 import { QuickStartEmptyState } from './QuickStartEmptyState';
 
-export const QuickStartCatalogPage: React.FC = () => {
+export const QuickStartCatalogPage: FC = () => {
   const { t } = useTranslation('console-app');
-  const { setFilter } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const { setFilter } = useContext<QuickStartContextValues>(QuickStartContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const keyword = getQueryArgument('keyword');
     if (keyword && setFilter) {
       setFilter('keyword', keyword);

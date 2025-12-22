@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Stack, StackItem, pluralize } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
@@ -46,7 +46,7 @@ export const quayURLFor = (vuln: ImageManifestVuln) =>
         .join('/')}/manifest/${vuln.spec?.manifest}?tab=vulnerabilities`
     : '';
 
-export const SecurityBreakdownPopup: React.FC<SecurityBreakdownPopupProps> = ({
+export const SecurityBreakdownPopup: FC<SecurityBreakdownPopupProps> = ({
   imageManifestVuln,
   namespace,
 }) => {

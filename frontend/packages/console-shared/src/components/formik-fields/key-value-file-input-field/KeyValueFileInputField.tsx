@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   Flex,
   FlexItem,
@@ -33,7 +34,7 @@ type KeyValueEntryFormProps = {
   onChange?: (value: string, keyIndex: string) => void;
 };
 
-const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
+const KeyValueFileInputField: FC<KeyValueEntryFormProps & FieldProps> = ({
   name,
   label = '',
   helpText = '',
@@ -47,7 +48,7 @@ const KeyValueFileInputField: React.FC<KeyValueEntryFormProps & FieldProps> = ({
   const rowValues = field.value ?? entries;
   const fieldId = getFieldId(name, 'key-value--input');
   const fieldValues = get(values, name, rowValues);
-  const [uniqId, setUniqId] = React.useState(uniqueId());
+  const [uniqId, setUniqId] = useState(uniqueId());
   useFormikValidationFix(field.value);
 
   return (

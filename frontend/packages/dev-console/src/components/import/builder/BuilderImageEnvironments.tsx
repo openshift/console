@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { InputField } from '@console/shared';
@@ -10,7 +11,7 @@ interface BuilderImageEnvironmentsProps {
   imageStreamTag: string;
 }
 
-const BuilderImageEnvironments: React.FC<BuilderImageEnvironmentsProps> = ({
+const BuilderImageEnvironments: FC<BuilderImageEnvironmentsProps> = ({
   name,
   imageStreamName,
   imageStreamTag,
@@ -26,7 +27,7 @@ const BuilderImageEnvironments: React.FC<BuilderImageEnvironmentsProps> = ({
 
   const [environments, loaded] = useBuilderImageEnvironments(imageStreamName, imageStreamTag);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (formType === 'edit' && buildEnvs?.length > 0 && !imageEnv) {
       environments.forEach((env) =>
         buildEnvs.forEach((buildEnv) => {

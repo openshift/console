@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 
 export const Phase: React.FCC<PhaseProps> = ({ status }) => (

@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Selector as SelectorKind } from '../../module/k8s';
 import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
-const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
+const Requirement: FC<RequirementProps> = ({ kind, requirements, namespace = '' }) => {
   // Strip off any trailing '=' characters for valueless selectors
   const requirementAsString = selectorToString(requirements).replace(/=,/g, ',').replace(/=$/g, '');
   const requirementAsUrlEncodedString = encodeURIComponent(requirementAsString);
@@ -27,7 +27,7 @@ const Requirement: React.FC<RequirementProps> = ({ kind, requirements, namespace
 };
 Requirement.displayName = 'Requirement';
 
-export const Selector: React.FC<SelectorProps> = ({
+export const Selector: FC<SelectorProps> = ({
   kind = 'Pod',
   selector = {},
   namespace = undefined,

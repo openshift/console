@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ type KSRoutesOverviewListItemProps = {
   ksroute: K8sResourceKind;
 };
 
-const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksroute }) => {
+const KSRoutesOverviewListItem: FC<KSRoutesOverviewListItemProps> = ({ ksroute }) => {
   const { t } = useTranslation();
   const {
     metadata: { name, namespace },

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ComponentType, ReactNode } from 'react';
+import { useContext, useMemo } from 'react';
 import { Button, Popover as PFPopover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
@@ -36,7 +36,7 @@ import {
   PopoverProps,
 } from './utilization-popovers';
 
-const LimitLink: React.FC<LimitLinkProps> = ({
+const LimitLink: FC<LimitLinkProps> = ({
   humanize,
   currentKey,
   totalKey,
@@ -46,10 +46,10 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   requestedState,
   Popover,
 }) => {
-  const { obj } = React.useContext(NodeDashboardContext);
+  const { obj } = useContext(NodeDashboardContext);
   const nodeName = obj.metadata.name;
   const nodeIP = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
-  const [queries, resourceQuotaQueries] = React.useMemo(
+  const [queries, resourceQuotaQueries] = useMemo(
     () => [getUtilizationQueries(nodeName, nodeIP), getResourceQutoaQueries(nodeName)],
     [nodeIP, nodeName],
   );
@@ -108,8 +108,8 @@ const getMessage: GetMessage = (
   };
 };
 
-const HealthChecksLink: React.FC = () => {
-  const { obj } = React.useContext(NodeDashboardContext);
+const HealthChecksLink: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
   const [name, namespace] = getNodeMachineNameAndNamespace(obj);
 
   const machine = useK8sWatchResource<MachineKind>(
@@ -149,7 +149,7 @@ interface NodeAlertsProps {
 }
 
 const NodeAlerts: React.FCC<NodeAlertsProps> = ({ children }) => {
-  const { cpuLimit, memoryLimit, healthCheck } = React.useContext(NodeDashboardContext);
+  const { cpuLimit, memoryLimit, healthCheck } = useContext(NodeDashboardContext);
   const { t } = useTranslation();
 
   const cpuMessage = getMessage(cpuLimit, {
@@ -228,7 +228,7 @@ type GetMessage = (
     reqWarn: string;
   },
 ) => {
-  Icon: React.ComponentType;
+  Icon: ComponentType;
   message: string;
 };
 
@@ -240,5 +240,5 @@ type LimitLinkProps = {
   requestedKey: string;
   limitState: LIMIT_STATE;
   requestedState: LIMIT_STATE;
-  Popover: React.ComponentType<PopoverProps>;
+  Popover: ComponentType<PopoverProps>;
 };

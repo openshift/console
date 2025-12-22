@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ValidatedOptions, AlertVariant } from '@patternfly/react-core';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -66,7 +66,7 @@ export interface StateProps {
   activeApplication: string;
 }
 
-const ImportForm: React.FC<ImportFormProps & StateProps> = ({
+const ImportForm: FC<ImportFormProps & StateProps> = ({
   namespace,
   imageStreams,
   importData,

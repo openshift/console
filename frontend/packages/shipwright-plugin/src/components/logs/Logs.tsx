@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
@@ -18,7 +19,7 @@ type LogsProps = {
   onComplete: (containerName: string) => void;
 };
 
-const Logs: React.FC<LogsProps> = ({
+const Logs: FC<LogsProps> = ({
   resource,
   resourceStatus,
   container,
@@ -30,16 +31,16 @@ const Logs: React.FC<LogsProps> = ({
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
-  const scrollToRef = React.useRef<HTMLDivElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-  const [error, setError] = React.useState<boolean>(false);
-  const resourceStatusRef = React.useRef<string>(resourceStatus);
-  const onCompleteRef = React.useRef<(name) => void>();
-  const blockContentRef = React.useRef<string>('');
+  const scrollToRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<boolean>(false);
+  const resourceStatusRef = useRef<string>(resourceStatus);
+  const onCompleteRef = useRef<(name) => void>();
+  const blockContentRef = useRef<string>('');
   onCompleteRef.current = onComplete;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addContentAndScroll = React.useCallback(
+  const addContentAndScroll = useCallback(
     throttle(() => {
       if (contentRef.current) {
         contentRef.current.innerText += blockContentRef.current;
@@ -52,9 +53,9 @@ const Logs: React.FC<LogsProps> = ({
     [],
   );
 
-  const appendMessage = React.useRef<(blockContent) => void>();
+  const appendMessage = useRef<(blockContent) => void>();
 
-  appendMessage.current = React.useCallback(
+  appendMessage.current = useCallback(
     (blockContent: string) => {
       blockContentRef.current += blockContent;
       if (scrollToRef.current && blockContent && render && autoScroll) {
@@ -68,7 +69,7 @@ const Logs: React.FC<LogsProps> = ({
     resourceStatusRef.current = resourceStatus;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     let loaded: boolean = false;
     let ws: WSFactory;
     const urlOpts = {
@@ -120,7 +121,7 @@ const Logs: React.FC<LogsProps> = ({
     };
   }, [kind, name, resName, resNamespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (scrollToRef.current && render && autoScroll) {
       addContentAndScroll();
     }

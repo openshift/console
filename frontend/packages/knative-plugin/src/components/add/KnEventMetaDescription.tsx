@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ type KnEventMetaDescriptionProps = {
   normalizedData: KnEventCatalogMetaData;
 };
 
-const KnEventMetaDescription: React.FC<KnEventMetaDescriptionProps> = ({ normalizedData }) => {
+const KnEventMetaDescription: FC<KnEventMetaDescriptionProps> = ({ normalizedData }) => {
   const { t } = useTranslation();
   if (_.isEmpty(normalizedData)) {
     return null;

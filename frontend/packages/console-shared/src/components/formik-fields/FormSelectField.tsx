@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -12,7 +12,7 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const FormSelectField: React.FC<FormSelectFieldProps> = ({
+const FormSelectField: FC<FormSelectFieldProps> = ({
   label,
   helpText,
   required,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   DescriptionList,
@@ -39,7 +39,7 @@ type NodeDetailsOverviewProps = {
   node: NodeKind;
 };
 
-const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
+const NodeDetailsOverview: FC<NodeDetailsOverviewProps> = ({ node }) => {
   const launchLabelsModal = useLabelsModal(node);
   const [machineName, machineNamespace] = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({

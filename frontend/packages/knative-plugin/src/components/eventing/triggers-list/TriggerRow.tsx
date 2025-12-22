@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -12,10 +12,7 @@ import { tableColumnClasses } from './trigger-table';
 type TriggerRowType = {
   broker?: string;
 };
-const TriggerRow: React.FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = ({
-  obj,
-  customData,
-}) => {
+const TriggerRow: FC<RowFunctionArgs<EventTriggerKind, TriggerRowType>> = ({ obj, customData }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
     spec: { subscriber, filter, broker: connectedBroker },

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useReducer, memo } from 'react';
 import {
   Alert,
   ClipboardCopy,
@@ -48,7 +49,7 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
   }
 };
 
-const ImageStream: React.FC<{
+const ImageStream: FC<{
   disabled?: boolean;
   label?: string;
   required?: boolean;
@@ -58,9 +59,9 @@ const ImageStream: React.FC<{
 }> = ({ disabled = false, label, required = false, formContextField, dataTest, reloadCount }) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
-  const [state, dispatch] = React.useReducer(ImageStreamReducer, initialState);
-  const [hasImageStreams, setHasImageStreams] = React.useState(false);
+  const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
+  const [state, dispatch] = useReducer(ImageStreamReducer, initialState);
+  const [hasImageStreams, setHasImageStreams] = useState(false);
   const { loading, accessLoading, selectedImageStream } = state;
   const { imageStream, project, registry, isi, fromImageStreamTag } =
     _.get(values, formContextField) || values;
@@ -167,4 +168,4 @@ const ImageStream: React.FC<{
   );
 };
 
-export default React.memo(ImageStream);
+export default memo(ImageStream);

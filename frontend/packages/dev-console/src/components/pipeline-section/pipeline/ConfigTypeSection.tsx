@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, Flex, FlexItem, Content } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
 import { FormikValues, useFormikContext } from 'formik';
@@ -20,7 +20,7 @@ enum PacConfigurationTypes {
   WEBHOOK = 'webhook',
 }
 
-const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({ pac, formContextField }) => {
+const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({ pac, formContextField }) => {
   const { values, setFieldValue } = useFormikContext<FormikValues & RepositoryFormValues>();
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const { method } = _.get(values, formContextField) || values;

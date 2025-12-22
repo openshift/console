@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -40,14 +41,14 @@ type NodeStatusWithExtensionsProps = {
   className?: string;
 };
 
-export const NodeStatusWithExtensions: React.FC<NodeStatusWithExtensionsProps> = ({
+export const NodeStatusWithExtensions: FC<NodeStatusWithExtensionsProps> = ({
   node,
   className,
   statusExtensions,
 }) => {
   const { t } = useTranslation();
 
-  const { popoverContent, secondaryStatuses } = React.useMemo(() => statusExtensions(node), [
+  const { popoverContent, secondaryStatuses } = useMemo(() => statusExtensions(node), [
     statusExtensions,
     node,
   ]);
@@ -93,7 +94,7 @@ type NodeStatusProps = {
   className?: string;
 };
 
-const NodeStatus: React.FC<NodeStatusProps> = ({ node, className }) => {
+const NodeStatus: FC<NodeStatusProps> = ({ node, className }) => {
   const statusExtensions = useNodeStatusExtensions();
 
   return (

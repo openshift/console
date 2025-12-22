@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch, FC, ReactNode } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -86,14 +87,14 @@ type ForcePowerOffDialogProps = {
   canStartMaintenance: boolean;
   forceOff: boolean;
   nodeName: string;
-  setForceOff: React.Dispatch<React.SetStateAction<boolean>>;
+  setForceOff: Dispatch<SetStateAction<boolean>>;
   status: StatusProps;
   pods?: PodKind[];
   loadError?: any;
   cancel?: () => void;
 };
 
-const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
+const ForcePowerOffDialog: FC<ForcePowerOffDialogProps> = ({
   canStartMaintenance,
   forceOff,
   nodeName,
@@ -110,7 +111,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
     NODE_STATUS_UNDER_MAINTENANCE,
     NODE_STATUS_STOPPING_MAINTENANCE,
   ].includes(status.status);
-  let mainText: React.ReactNode;
+  let mainText: ReactNode;
   if (!nodeName) {
     mainText = <p>{t('metal3-plugin~The host will be powered off gracefully.')}</p>;
   } else if (!hasMaintenance) {
@@ -184,7 +185,7 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
     fieldSelector: `spec.nodeName=${nodeName}`,
   });
   const [maintenanceModel] = useMaintenanceCapability();
-  const [forceOff, setForceOff] = React.useState(false);
+  const [forceOff, setForceOff] = useState(false);
 
   const submit = (event): void => {
     event.preventDefault();
@@ -248,7 +249,7 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
 
 export const usePowerOffHostModalLauncher = (props: PowerOffHostModalProps) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<PowerOffHostModalProps>(PowerOffHostModal, props), [
+  return useCallback(() => launcher<PowerOffHostModalProps>(PowerOffHostModal, props), [
     launcher,
     props,
   ]);

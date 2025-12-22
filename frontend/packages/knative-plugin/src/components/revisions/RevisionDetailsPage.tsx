@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
@@ -13,7 +13,7 @@ import {
 } from '@console/shared';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
-const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+const RevisionDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const location = useLocation();
   const params = useParams();
   const { kindObj } = props;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,7 +15,7 @@ import './VSphereStatus.css';
 // https://issues.redhat.com/browse/MGMT-9085
 // https://access.redhat.com/solutions/6677901
 
-const VSphereStatus: React.FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sResult }) => {
+const VSphereStatus: FC<PrometheusHealthPopupProps> = ({ hide, responses, k8sResult }) => {
   const { t } = useTranslation();
   const health = getVSphereHealth(t, responses, k8sResult);
 

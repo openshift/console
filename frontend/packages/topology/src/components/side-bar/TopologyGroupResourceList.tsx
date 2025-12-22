@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
 import { List } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import TopologyGroupResourceItem from './TopologyGroupResourceItem';
@@ -6,10 +6,10 @@ import TopologyGroupResourceItem from './TopologyGroupResourceItem';
 type TopologyGroupResourceListProps = {
   resources: K8sResourceKind[];
   releaseNamespace: string;
-  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement;
 };
 
-const TopologyGroupResourceList: React.FC<TopologyGroupResourceListProps> = ({
+const TopologyGroupResourceList: FC<TopologyGroupResourceListProps> = ({
   resources,
   releaseNamespace,
   linkForResource,

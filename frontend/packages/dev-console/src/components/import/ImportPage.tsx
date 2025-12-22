@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -34,7 +34,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
   },
 });
 
-const ImportPage: React.FunctionComponent = () => {
+const ImportPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

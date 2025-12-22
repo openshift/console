@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import * as _ from 'lodash';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
@@ -12,10 +12,10 @@ export const RESOURCE_KIND_ROW_HEIGHT = 29;
 
 type ResourceKindsInfoProps = {
   groupResources: OdcNodeModel[];
-  emptyValue?: React.ReactNode;
+  emptyValue?: ReactNode;
 };
 
-const ResourceKindsInfo: React.FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
+const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
   const resourcesData = {};
   _.forEach(groupResources, (node: OdcNodeModel) => {
     if (!node) {

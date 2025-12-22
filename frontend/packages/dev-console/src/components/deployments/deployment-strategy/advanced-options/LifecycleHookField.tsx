@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback } from 'react';
 import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -20,7 +21,7 @@ interface LifecycleHookFieldProps {
   subTitle?: string;
 }
 
-const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
+const LifecycleHookField: FC<LifecycleHookFieldProps> = ({
   title,
   subTitle,
   dataAttribute,
@@ -42,10 +43,10 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
   const [{ value: lifecycleHookExist }] = useField<boolean>(
     `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.exists`,
   );
-  const [showForm, setShowForm] = React.useState(false);
+  const [showForm, setShowForm] = useState(false);
   const resourceType = getResourcesType(resourceObj);
 
-  const onSubmit = React.useCallback(() => {
+  const onSubmit = useCallback(() => {
     setShowForm(false);
     setFieldValue(`formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}.exists`, true);
     setFieldValue(
@@ -64,7 +65,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
     setFieldValue,
   ]);
 
-  const onRemove = React.useCallback(() => {
+  const onRemove = useCallback(() => {
     const strategy = cloneDeep(deploymentStrategy);
     strategy[dataAttribute][lifecycleHookName] = undefined;
     const data = getStrategyData(
@@ -97,7 +98,7 @@ const LifecycleHookField: React.FC<LifecycleHookFieldProps> = ({
     setFieldValue,
   ]);
 
-  const onClose = React.useCallback(() => {
+  const onClose = useCallback(() => {
     setShowForm(false);
     setFieldValue(
       `formData.deploymentStrategy.${dataAttribute}.${lifecycleHookName}`,

@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo, Suspense } from 'react';
 import {
   SortByDirection,
   TableVariant,
@@ -73,7 +74,7 @@ const namespaced = (crd: CustomResourceDefinitionKind) => crd.spec.scope === 'Na
 
 const kind = referenceForModel(CustomResourceDefinitionModel);
 
-const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
+const Established: FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) => {
   const { t } = useTranslation();
   return crd.status && isEstablished(crd.status.conditions) ? (
     <span>
@@ -86,19 +87,16 @@ const Established: React.FC<{ crd: CustomResourceDefinitionKind }> = ({ crd }) =
   );
 };
 
-const EmptyVersionsMsg: React.FC<{}> = () => {
+const EmptyVersionsMsg: FC<{}> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~CRD versions')} />;
 };
 
-const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
+const CRDVersionTable: FC<CRDVersionProps> = ({ versions }) => {
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
-  const onSort = React.useCallback(
-    (_event, index, direction) => setSortBy({ index, direction }),
-    [],
-  );
-  const compare = React.useCallback(
+  const [sortBy, setSortBy] = useState({ index: 0, direction: SortByDirection.asc });
+  const onSort = useCallback((_event, index, direction) => setSortBy({ index, direction }), []);
+  const compare = useCallback(
     (a, b) => {
       const { index, direction } = sortBy;
       const descending = direction === SortByDirection.desc;
@@ -109,7 +107,7 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
     [sortBy],
   );
 
-  const versionRows = React.useMemo(
+  const versionRows = useMemo(
     () =>
       versions
         .map(({ name, served, storage }: CRDVersion) => [
@@ -121,9 +119,7 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
     [versions, compare],
   );
 
-  const headers = React.useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [
-    t,
-  ]);
+  const headers = useMemo(() => [t('public~Name'), t('public~Served'), t('public~Storage')], [t]);
 
   return versionRows.length > 0 ? (
     <PfTable variant={TableVariant.compact} aria-label={t('public~CRD versions')}>
@@ -151,7 +147,7 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
   );
 };
 
-const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
+const Details: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -193,7 +189,7 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
   );
 };
 
-const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
+const Instances: FC<InstancesProps> = ({ obj, namespace }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
   const crdKind = referenceForCRD(obj);
   const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
@@ -221,7 +217,7 @@ const tableColumnInfo = [
 
 const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefinitionKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<CustomResourceDefinitionKind>[] = React.useMemo(() => {
+  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -341,7 +337,7 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
   const columns = useCustomResourceDefinitionsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CustomResourceDefinitionKind>
         {...props}
         label={CustomResourceDefinitionModel.labelPlural}
@@ -351,11 +347,11 @@ export const CustomResourceDefinitionsList: React.FCC<CustomResourceDefinitionsL
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const CustomResourceDefinitionsPage: React.FC = (props) => (
+export const CustomResourceDefinitionsPage: FC = (props) => (
   <ListPage
     {...props}
     ListComponent={CustomResourceDefinitionsList}
@@ -365,7 +361,7 @@ export const CustomResourceDefinitionsPage: React.FC = (props) => (
   />
 );
 
-export const CustomResourceDefinitionsDetailsPage: React.FC = (props) => {
+export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}

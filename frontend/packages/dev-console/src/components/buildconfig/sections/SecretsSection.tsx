@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ export type SecretsSectionFormData = {
   };
 };
 
-const SecretsSection: React.FC<{ namespace: string }> = ({ namespace }) => {
+const SecretsSection: FC<{ namespace: string }> = ({ namespace }) => {
   const { t } = useTranslation();
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);

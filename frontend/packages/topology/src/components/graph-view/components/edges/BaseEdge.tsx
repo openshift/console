@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Edge,
@@ -37,7 +37,7 @@ type BaseEdgeProps = {
   Partial<WithTargetDragProps> &
   Partial<WithContextMenuProps>;
 
-const BaseEdge: React.FC<BaseEdgeProps> = ({
+const BaseEdge: FC<BaseEdgeProps> = ({
   className,
   element,
   endTerminalType = EdgeTerminalType.directional,

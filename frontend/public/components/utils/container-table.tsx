@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { ContainerSpec } from '../../module/k8s';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-const ContainerRow: React.FC<ContainerRowProps> = ({ container }) => {
+const ContainerRow: FC<ContainerRowProps> = ({ container }) => {
   const resourceLimits = _.get(container, 'resources.limits');
   const ports = _.get(container, 'ports');
   return (
@@ -23,7 +23,7 @@ const ContainerRow: React.FC<ContainerRowProps> = ({ container }) => {
   );
 };
 
-export const ContainerTable: React.FC<ContainerTableProps> = ({ containers }) => {
+export const ContainerTable: FC<ContainerTableProps> = ({ containers }) => {
   const { t } = useTranslation();
   return (
     <Table gridBreakPoint="">

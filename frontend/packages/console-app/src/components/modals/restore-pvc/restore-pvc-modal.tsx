@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -59,17 +60,17 @@ import './restore-pvc-modal.scss';
 const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { t } = useTranslation();
-  const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
+  const [restorePVCName, setPVCName] = useState(`${getName(resource) || 'pvc'}-restore`);
   const volumeSnapshotAnnotations = getAnnotations(resource);
   const snapshotBaseSize = convertToBaseValue(resource?.status?.restoreSize ?? '0');
   const snapshotHumanizedSize = humanizeBinaryBytesWithoutB(snapshotBaseSize);
-  const [requestedSize, setRequestedSize] = React.useState(snapshotHumanizedSize.value);
-  const [requestedUnit, setRequestedUnit] = React.useState(snapshotHumanizedSize.unit);
-  const [pvcSC, setPVCStorageClass] = React.useState('');
+  const [requestedSize, setRequestedSize] = useState(snapshotHumanizedSize.value);
+  const [requestedUnit, setRequestedUnit] = useState(snapshotHumanizedSize.unit);
+  const [pvcSC, setPVCStorageClass] = useState('');
   const requestedBytes = convertToBaseValue(requestedSize + requestedUnit);
   const validSize = requestedBytes >= snapshotBaseSize;
-  const [restoreAccessMode, setRestoreAccessMode] = React.useState('');
-  const [updatedProvisioner, setUpdatedProvisioner] = React.useState('');
+  const [restoreAccessMode, setRestoreAccessMode] = useState('');
+  const [updatedProvisioner, setUpdatedProvisioner] = useState('');
   const namespace = getNamespace(resource);
   const snapshotName = getName(resource);
 
@@ -83,7 +84,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
     pvcStorageClassName,
   );
 
-  const [volumeMode, setVolumeMode] = React.useState('');
+  const [volumeMode, setVolumeMode] = useState('');
   const requestedSizeInputChange = ({ value, unit }) => {
     setRequestedSize(value);
     setRequestedUnit(unit);
@@ -94,7 +95,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
   };
 
-  const submit = (event: React.FormEvent<EventTarget>) => {
+  const submit = (event: FormEvent<EventTarget>) => {
     event.preventDefault();
     const restorePVCTemplate: PersistentVolumeClaimKind = {
       apiVersion: PersistentVolumeClaimModel.apiVersion,

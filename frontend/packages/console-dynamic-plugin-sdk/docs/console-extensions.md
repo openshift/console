@@ -240,7 +240,7 @@ This extension allows plugins to contribute a new type of catalog item. For exam
 | ---- | ---------- | -------- | ----------- |
 | `type` | `string` | no | Type for the catalog item. |
 | `title` | `string` | no | Title for the catalog item. |
-| `catalogDescription` | `string \| CodeRef<React.ReactNode>` | yes | Description for the type specific catalog. |
+| `catalogDescription` | `string \| CodeRef<ReactNode>` | yes | Description for the type specific catalog. |
 | `typeDescription` | `string` | yes | Description for the catalog item type. |
 | `sortFilterGroups` | `boolean` | yes | Determine if filter groups should be sorted alphabetically. Defaults to true. |
 | `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
@@ -274,7 +274,7 @@ Adds a new inventory item into cluster overview page.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered. |
+| `component` | `CodeRef<ComponentType>` | no | The component to be rendered. |
 
 ---
 
@@ -291,7 +291,7 @@ Adds a new cluster overview multiline utilization item.
 | `title` | `string` | no | The title of the utilization item. |
 | `getUtilizationQueries` | `CodeRef<GetMultilineQueries>` | no | Prometheus utilization query. |
 | `humanize` | `CodeRef<Humanize>` | no | Convert prometheus data to human readable form. |
-| `TopConsumerPopovers` | `CodeRef<React.ComponentType<TopConsumerPopoverProps>[]>` | yes | Shows Top consumer popover instead of plain value |
+| `TopConsumerPopovers` | `CodeRef<ComponentType<TopConsumerPopoverProps>[]>` | yes | Shows Top consumer popover instead of plain value |
 
 ---
 
@@ -311,7 +311,7 @@ Adds a new cluster overview utilization item.
 | `getTotalQuery` | `CodeRef<GetQuery>` | yes | Prometheus total query. |
 | `getRequestQuery` | `CodeRef<GetQuery>` | yes | Prometheus request query. |
 | `getLimitQuery` | `CodeRef<GetQuery>` | yes | Prometheus limit query. |
-| `TopConsumerPopover` | `CodeRef<React.ComponentType<TopConsumerPopoverProps>>` | yes | Shows Top consumer popover instead of plain value |
+| `TopConsumerPopover` | `CodeRef<ComponentType<TopConsumerPopoverProps>>` | yes | Shows Top consumer popover instead of plain value |
 
 ---
 
@@ -372,7 +372,7 @@ Adds an item to the Details card of Overview Dashboard
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `title` | `string` | no | Details card title |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, rendered by the OverviewDetailItem component |
+| `component` | `CodeRef<ComponentType>` | no | The value, rendered by the OverviewDetailItem component |
 | `valueClassName` | `string` | yes | Optional class name for the value |
 | `isLoading` | `CodeRef<() => boolean>` | yes | Function returning the loading state of the component |
 | `error` | `CodeRef<() => string>` | yes | Function returning errors to be displayed by the component |
@@ -863,7 +863,7 @@ Adds a new inventory item into project overview page.
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{ projectName: string; }>>` | no | The component to be rendered. |
+| `component` | `CodeRef<ComponentType<{ projectName: string; }>>` | no | The component to be rendered. |
 
 ---
 
@@ -883,7 +883,7 @@ Adds a new project overview utilization item.
 | `getTotalQuery` | `CodeRef<GetProjectQuery>` | yes | Prometheus total query. |
 | `getRequestQuery` | `CodeRef<GetProjectQuery>` | yes | Prometheus request query. |
 | `getLimitQuery` | `CodeRef<GetProjectQuery>` | yes | Prometheus limit query. |
-| `TopConsumerPopover` | `CodeRef<React.ComponentType<TopConsumerPopoverProps>>` | yes | Shows Top consumer popover instead of plain value |
+| `TopConsumerPopover` | `CodeRef<ComponentType<TopConsumerPopoverProps>>` | yes | Shows Top consumer popover instead of plain value |
 
 ---
 
@@ -1208,7 +1208,7 @@ DetailsResourceLink contributes a link for specific topology context or graph el
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `link` | `CodeRef<(element: GraphElement) => React.Component \| undefined>` | no | Return the resource link if provided, otherwise undefined.<br/>Use ResourceIcon and ResourceLink for styles. |
+| `link` | `CodeRef<(element: GraphElement) => Component \| undefined>` | no | Return the resource link if provided, otherwise undefined.<br/>Use ResourceIcon and ResourceLink for styles. |
 | `priority` | `number` | yes | A higher priority factory will get the first chance to create the link. |
 
 ---
@@ -1243,7 +1243,7 @@ DetailsTabSection contributes a section for a specific tab in topology details p
 | `id` | `string` | no | A unique identifier for this details tab section. |
 | `tab` | `string` | no | The parent tab ID that this section should contribute to. |
 | `provider` | `CodeRef<DetailsTabSectionExtensionHook>` | no | A hook that returns a component or null/undefined that will be rendered<br/>in the topology sidebar.<br/>SDK component: <Section title={<optional>}>... padded area </Section> |
-| `section` | `CodeRef<(element: GraphElement, renderNull?: () => null) => React.Component \| undefined>` | no | @deprecated Fallback if no provider is defined. renderNull is a no-op already. |
+| `section` | `CodeRef<(element: GraphElement, renderNull?: () => null) => Component \| undefined>` | no | @deprecated Fallback if no provider is defined. renderNull is a no-op already. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here.<br/>For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here.<br/>For arrays, the first one found in order is used.<br/>insertBefore takes precedence. |
 
@@ -1350,7 +1350,7 @@ This extension allows plugins to contribute an add action item to the add page o
 | `groupId` | `string` | yes | IDs used to identify the action groups the action would belong to. |
 | `href` | `string` | yes | The href to navigate to. |
 | `callback` | `CodeRef<(props: Record<string, any>) => void>` | yes | A callback that performs an action on click |
-| `icon` | `CodeRef<React.ReactNode>` | yes | The perspective display icon. If possible, use a PatternFly icon for consistent icon colours and styling. |
+| `icon` | `CodeRef<ReactNode>` | yes | The perspective display icon. If possible, use a PatternFly icon for consistent icon colours and styling. |
 | `accessReview` | `AccessReviewResourceAttributes[]` | yes | Optional access review to control visibility / enablement of the action. |
 
 ---
@@ -1369,7 +1369,7 @@ This extension allows plugins to contibute a group in the add page of developer 
 | `name` | `string` | no | The title of the action group |
 | `insertBefore` | `string` | yes | ID of action group before which this group should be placed |
 | `insertAfter` | `string` | yes | ID of action group after which this group should be placed |
-| `icon` | `string \| CodeRef<React.ReactNode>` | yes | The perspective display icon. |
+| `icon` | `string \| CodeRef<ReactNode>` | yes | The perspective display icon. |
 
 ---
 
@@ -1399,7 +1399,7 @@ This extension can be used to specify extra build environment variable fields un
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The value, based on the DetailItem component |
+| `component` | `CodeRef<ComponentType>` | no | The value, based on the DetailItem component |
 
 ---
 

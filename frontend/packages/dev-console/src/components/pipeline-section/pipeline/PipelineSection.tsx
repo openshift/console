@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -43,16 +44,12 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines;
 };
 
-const PipelineSection: React.FC<PipelineSectionProps> = ({
-  flags,
-  builderImages,
-  existingPipeline,
-}) => {
+const PipelineSection: FC<PipelineSectionProps> = ({ flags, builderImages, existingPipeline }) => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   /* Set pipeline.enabled to true if the user has access to create pipelines and the Builds are not installed */
-  React.useEffect(() => {
+  useEffect(() => {
     if (flags[FLAG_OPENSHIFT_PIPELINE] && !flags[FLAG_OPENSHIFT_BUILDCONFIG]) {
       setFieldValue('pipeline.enabled', true);
     }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { FormProps } from '@rjsf/core';
 import { useField, useFormikContext, FormikValues } from 'formik';
@@ -7,11 +7,11 @@ import { AsyncComponent } from '@console/internal/components/utils/async';
 type DynamicFormFieldProps = FormProps<any> & {
   name: string;
   errors?: string[];
-  formDescription?: React.ReactNode;
+  formDescription?: ReactNode;
   showAlert?: boolean;
 };
 
-const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
+const DynamicFormField: FC<DynamicFormFieldProps> = ({
   name,
   schema,
   uiSchema,

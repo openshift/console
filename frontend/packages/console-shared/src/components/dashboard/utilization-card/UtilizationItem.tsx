@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentType } from 'react';
+import { memo, useEffect } from 'react';
 import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 
 const getMaxDate = (data: DataPoint[][]) =>
   new Date(Math.max(...(data?.map?.(lastTimeInSeries) ?? [])) ?? 0);
 
-export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> = React.memo(
+export const MultilineUtilizationItem: FC<MultilineUtilizationItemProps> = memo(
   ({
     title,
     data,
@@ -63,7 +64,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       getCurrentData(queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
     const maxDate = getMaxDate(data);
-    React.useEffect(() => {
+    useEffect(() => {
       updateEndDate(maxDate);
     }, [maxDate, updateEndDate]);
 
@@ -148,7 +149,7 @@ export const trimSecondsXMutator = (x) => {
   return d;
 };
 
-export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
+export const UtilizationItem: FC<UtilizationItemProps> = memo(
   ({
     title,
     utilization,
@@ -173,7 +174,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     );
     const [utilizationData, limitData, requestedData] = data;
     const maxDate = getMaxDate([utilizationData]);
-    React.useEffect(() => {
+    useEffect(() => {
       updateEndDate(maxDate);
     }, [updateEndDate, maxDate]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
@@ -215,7 +216,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       />
     );
 
-    let LimitIcon: React.ComponentType<ColoredIconProps>;
+    let LimitIcon: ComponentType<ColoredIconProps>;
     let humanLimit: string;
     let limitState = LIMIT_STATE.OK;
     let requestedState = LIMIT_STATE.OK;
@@ -351,7 +352,7 @@ type MultilineUtilizationItemProps = {
   queries: QueryWithDescription[];
   error: boolean;
   byteDataType?: ByteDataTypes;
-  TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProps>[];
+  TopConsumerPopovers?: ComponentType<TopConsumerPopoverProps>[];
 };
 
 export type QueryWithDescription = {

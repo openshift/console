@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -74,7 +74,7 @@ const HostsTableHeader = (t: TFunction) => () => [
   },
 ];
 
-const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
+const HostsTableRow: FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
 }) => {
   const [maintenanceModel] = useMaintenanceCapability();
@@ -126,11 +126,11 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   );
 };
 
-type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
+type BareMetalHostsTableProps = ComponentProps<typeof Table> & {
   data: BareMetalHostBundle[];
 };
 
-const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => {
+const BareMetalHostsTable: FC<BareMetalHostsTableProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Table

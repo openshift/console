@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { SearchPage } from '@console/internal/components/search';
@@ -27,7 +27,7 @@ const ProjectListPage = () => {
 
 const ProjectListPageWithStartGuide = withStartGuide(ProjectListPage);
 
-const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable }) => {
+const PageContents: FC<SearchPageProps> = ({ noProjectsAvailable }) => {
   const params = useParams();
   const namespace = params.ns;
   return namespace ? (
@@ -37,7 +37,7 @@ const PageContents: React.FC<SearchPageProps> = ({ noProjectsAvailable }) => {
   );
 };
 
-const Search: React.FC<SearchPageProps> = (props) => {
+const Search: FC<SearchPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>

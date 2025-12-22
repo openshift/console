@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
   Button,
@@ -138,7 +139,7 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
   });
 };
 
-const Badge: React.FC<{ text: string }> = ({ text }) => (
+const Badge: FC<{ text: string }> = ({ text }) => (
   <span key={text} className="pf-v6-c-badge pf-m-read">
     <Truncate className="pf-v6-c-truncate--no-min-width" content={text} />
   </span>
@@ -518,7 +519,7 @@ export const orderAndSortByRelevance = (
   });
 };
 
-const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
+const OperatorHubTile: FC<OperatorHubTileProps> = ({ item, onClick }) => {
   const { t } = useTranslation();
   if (!item) {
     return null;
@@ -551,7 +552,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       icon={icon}
       vendor={vendorAndDeprecated()}
       description={description}
-      onClick={(e: React.MouseEvent<HTMLElement>) => {
+      onClick={(e: MouseEvent<HTMLElement>) => {
         if (isModifiedEvent(e)) return;
         e.preventDefault();
         onClick(item);
@@ -569,18 +570,16 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
   );
 };
 
-export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
+export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
-  const [detailsItem, setDetailsItem] = React.useState(null);
-  const [showDetails, setShowDetails] = React.useState(false);
+  const [detailsItem, setDetailsItem] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
-  const [updateChannel, setUpdateChannel] = React.useState('');
-  const [updateVersion, setUpdateVersion] = React.useState('');
-  const [tokenizedAuth, setTokenizedAuth] = React.useState<TokenizedAuthProvider | undefined>(
-    undefined,
-  );
+  const [updateChannel, setUpdateChannel] = useState('');
+  const [updateVersion, setUpdateVersion] = useState('');
+  const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(undefined);
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
@@ -596,11 +595,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
 
   // Create wrapper functions that always use the full unfiltered item list
   // This ensures all categories and filter options are always available, regardless of current filters
-  const getAvailableCategoriesFromAllItems = React.useCallback(() => {
+  const getAvailableCategoriesFromAllItems = useCallback(() => {
     return determineCategories(filteredItems);
   }, [filteredItems]);
 
-  const getAvailableFiltersFromAllItems = React.useCallback(
+  const getAvailableFiltersFromAllItems = useCallback(
     (initialFilters: any, _items: OperatorHubItem[], filterGroups: string[]) => {
       // Always use filteredItems (full list) instead of the passed items (which are already filtered)
       return determineAvailableFilters(initialFilters, filteredItems, filterGroups);
@@ -609,7 +608,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   );
 
   // Performance optimization: Memoize sorted items with all filter dependencies
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     // Ensure we have items before processing - prevents race conditions on initial load
     if (!filteredItems || filteredItems.length === 0) {
       return [];
@@ -706,7 +705,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     selectedValidSubscriptionFilters,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const detailsItemID = searchParams.get('details-item');
     const currentItem = _.find(filteredItems, {
       uid: detailsItemID,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { MouseEvent } from 'react';
+import { useMemo } from 'react';
 import { DataViewTh } from '@patternfly/react-data-view';
 import { ThProps, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -28,10 +29,10 @@ export const getColumnIdByIndex = (index: number): string => {
 
 export const useRevisionListColumns = (
   sortBy: { index: number; direction: SortByDirection },
-  onSort: (event: React.MouseEvent, columnId: string, direction: SortByDirection) => void,
+  onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,
 ): DataViewTh[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         cell: <span className="pf-v6-u-screen-reader">{t('helm-plugin~Select')}</span>,

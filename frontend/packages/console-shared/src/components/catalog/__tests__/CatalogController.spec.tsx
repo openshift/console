@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
@@ -31,7 +31,7 @@ describe('CatalogController', () => {
   });
 
   it('should render the title and description from the catalog extension', async () => {
-    const catalogControllerProps: React.ComponentProps<typeof CatalogController> = {
+    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
       type: 'HelmChart',
       title: null,
       description: null,
@@ -64,7 +64,7 @@ describe('CatalogController', () => {
   });
 
   it('should fall back to the default title and description if the extension is missing them', async () => {
-    const catalogControllerProps: React.ComponentProps<typeof CatalogController> = {
+    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
       type: 'HelmChart',
       title: 'Default title',
       description: 'Default description',

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useReducer, useCallback } from 'react';
 import * as _ from 'lodash';
 import { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -72,22 +73,22 @@ export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) 
   }
 };
 
-const NodeDashboard: React.FC<NodeDashboardProps> = ({ obj }) => {
-  const [state, dispatch] = React.useReducer(reducer, initialState(obj));
+const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
+  const [state, dispatch] = useReducer(reducer, initialState(obj));
 
   if (obj !== state.obj) {
     dispatch({ type: ActionType.OBJ, payload: obj });
   }
 
-  const setCPULimit = React.useCallback(
+  const setCPULimit = useCallback(
     (payload: LimitRequested) => dispatch({ type: ActionType.CPU_LIMIT, payload }),
     [],
   );
-  const setMemoryLimit = React.useCallback(
+  const setMemoryLimit = useCallback(
     (payload: LimitRequested) => dispatch({ type: ActionType.MEMORY_LIMIT, payload }),
     [],
   );
-  const setHealthCheck = React.useCallback(
+  const setHealthCheck = useCallback(
     (payload: HealthCheck) => dispatch({ type: ActionType.HEALTH_CHECK, payload }),
     [],
   );

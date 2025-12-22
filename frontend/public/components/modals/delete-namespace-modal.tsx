@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -35,7 +35,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [confirmed, setConfirmed] = React.useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   /**
    * This is a workaround because modal launcher renders all modals outside of main app context.
@@ -130,7 +130,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
 
 export const useDeleteNamespaceModalLauncher = (props: DeleteNamespaceModalProps) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<DeleteNamespaceModalProps>(DeleteNamespaceModal, props), [
+  return useCallback(() => launcher<DeleteNamespaceModalProps>(DeleteNamespaceModal, props), [
     launcher,
     props,
   ]);

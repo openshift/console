@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ interface LifecycleHookFormProps {
   onClose: () => void;
 }
 
-const LifecycleHookForm: React.FC<LifecycleHookFormProps> = ({
+const LifecycleHookForm: FC<LifecycleHookFormProps> = ({
   lifecycleHook,
   resourceObj,
   dataAttribute,

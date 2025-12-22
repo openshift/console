@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useField } from 'formik';
 import { DropdownField } from '@console/shared';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';
@@ -9,7 +9,7 @@ type TrafficModalRevisionsDropdownFieldProps = {
   title: string;
 };
 
-const TrafficModalRevisionsDropdownField: React.FC<TrafficModalRevisionsDropdownFieldProps> = ({
+const TrafficModalRevisionsDropdownField: FC<TrafficModalRevisionsDropdownFieldProps> = ({
   revisionItems,
   name,
   title,

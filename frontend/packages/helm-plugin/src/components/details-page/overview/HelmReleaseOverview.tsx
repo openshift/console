@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
@@ -13,7 +13,7 @@ export interface HelmReleaseOverviewProps {
   customData: HelmRelease;
 }
 
-const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
+const HelmReleaseOverview: FC<HelmReleaseOverviewProps> = ({ obj, customData }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>

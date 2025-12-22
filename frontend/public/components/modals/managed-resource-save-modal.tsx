@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

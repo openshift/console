@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
 import { MultiStreamLogs } from '../MultiStreamLogs';
@@ -57,7 +57,7 @@ jest.mock('../Logs', () => {
 });
 
 describe('MultiStreamLogs', () => {
-  let props: React.ComponentProps<typeof MultiStreamLogs>;
+  let props: ComponentProps<typeof MultiStreamLogs>;
 
   beforeEach(() => {
     jest.clearAllMocks();

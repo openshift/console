@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { FocusTrap, TitleSizes, Title } from '@patternfly/react-core';
 import { PopoverArrow } from '@patternfly/react-core/dist/js/components/Popover/PopoverArrow';
 import { PopoverBody } from '@patternfly/react-core/dist/js/components/Popover/PopoverBody';
@@ -16,16 +16,16 @@ type PopoverProps = {
   open: boolean;
   uniqueId?: string;
   onClose?: () => void;
-  headerContent?: React.ReactNode | string;
-  footerContent?: React.ReactNode | string;
-  children: React.ReactNode | string;
+  headerContent?: ReactNode | string;
+  footerContent?: ReactNode | string;
+  children: ReactNode | string;
   trigger: string;
   className?: string;
   placement: PopoverPlacement;
   id?: string;
 };
 
-const Popover: React.FC<PopoverProps> = ({
+const Popover: FC<PopoverProps> = ({
   open,
   headerContent,
   placement,

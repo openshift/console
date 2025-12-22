@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveList from '../ProgressiveList';
@@ -11,7 +11,7 @@ const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
 const BarComponent: React.FCC = () => <div>Bar Component</div>;
 const FooComponent: React.FCC = () => <div>Foo Component</div>;
 
-const Footer: React.FCC<{ children?: React.ReactNode }> = ({ children }) => {
+const Footer: React.FCC<{ children?: ReactNode }> = ({ children }) => {
   return <div>Click on the names to access advanced options for {children}.</div>;
 };
 

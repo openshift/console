@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
@@ -11,7 +11,7 @@ interface SinkUriListViewNodeProps {
   onSelect: (ids: string[]) => void;
 }
 
-const ObservedSinkUriListViewNode: React.FC<SinkUriListViewNodeProps> = ({ item, ...rest }) => {
+const ObservedSinkUriListViewNode: FC<SinkUriListViewNodeProps> = ({ item, ...rest }) => {
   const sinkUri = item.getResource()?.spec?.sinkUri;
 
   const labelCell = (

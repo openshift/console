@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ type BuildFormProp = {
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'shipwright.buildForm.editor.lastView';
 
-const BuildForm: React.FC<BuildFormProp> = ({
+const BuildForm: FC<BuildFormProp> = ({
   handleSubmit,
   heading,
   build: watchedBuild,
@@ -53,7 +54,7 @@ const BuildForm: React.FC<BuildFormProp> = ({
   const yamlEditor = (
     <CodeEditorField name="yamlData" model={BuildModel} showSamples={isNew} onSave={handleSubmit} />
   );
-  const onReload = React.useCallback(() => {
+  const onReload = useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
     if (values.editorType === EditorType.Form) {

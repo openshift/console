@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import {
   Gallery,
   GalleryItem,
@@ -96,15 +97,11 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
   );
 };
 
-const HealthCard: React.FC<HealthCardProps> = ({
-  watchAlerts,
-  stopWatchAlerts,
-  notificationAlerts,
-}) => {
+const HealthCard: FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
   const { t } = useTranslation();
-  const { obj, machine, node, nodeMaintenance } = React.useContext(BareMetalHostDashboardContext);
+  const { obj, machine, node, nodeMaintenance } = useContext(BareMetalHostDashboardContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     watchAlerts();
     return () => stopWatchAlerts();
   }, [watchAlerts, stopWatchAlerts]);
@@ -114,7 +111,7 @@ const HealthCard: React.FC<HealthCardProps> = ({
   const hwHealth = getHostHardwareHealthState(obj);
 
   const { data, loaded, loadError } = notificationAlerts || {};
-  const alerts = React.useMemo(() => filterAlerts(data), [data]);
+  const alerts = useMemo(() => filterAlerts(data), [data]);
 
   const hasPowerMgmt = hasPowerManagement(obj);
   const provisioningState = getHostProvisioningState(obj);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { css } from '@patternfly/react-styles';
@@ -34,5 +34,5 @@ export default ActivityItem;
 type ActivityProgressProps = {
   title: string;
   progress: number;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };

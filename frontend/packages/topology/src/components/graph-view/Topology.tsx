@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo, useRef, useState, useCallback, useEffect } from 'react';
 import {
   Visualization,
   VisualizationSurface,
@@ -81,7 +82,7 @@ interface TopologyGraphViewProps {
   dragHint?: string;
 }
 
-const TopologyGraphView: React.FC<TopologyGraphViewProps> = React.memo(
+const TopologyGraphView: FC<TopologyGraphViewProps> = memo(
   ({ visualizationReady, visualization, controlsDisabled, selectedId, dragHint }) => {
     if (!visualizationReady) {
       return null;
@@ -128,7 +129,7 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: React.FC<
+const Topology: FC<
   TopologyProps & StateProps & DispatchProps & WithUserSettingsCompatibilityProps<object>
 > = ({
   model,
@@ -141,17 +142,17 @@ const Topology: React.FC<
   userSettingState: topologyLayoutDataJson,
   setUserSettingState: setTopologyLayoutData,
 }) => {
-  const applicationRef = React.useRef<string>(null);
-  const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
-  const [dragHint, setDragHint] = React.useState<string>('');
-  const storedLayoutApplied = React.useRef<boolean>(false);
+  const applicationRef = useRef<string>(null);
+  const [visualizationReady, setVisualizationReady] = useState<boolean>(false);
+  const [dragHint, setDragHint] = useState<string>('');
+  const storedLayoutApplied = useRef<boolean>(false);
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
   const [componentFactoryExtensions, extensionsResolved] = useResolvedExtensions<
     TopologyComponentFactory
   >(isTopologyComponentFactory);
 
-  const createVisualization = React.useCallback(() => {
+  const createVisualization = useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];
     const newVisualization = new Visualization();
     newVisualization.registerElementFactory(odcElementFactory);
@@ -201,18 +202,18 @@ const Topology: React.FC<
     return newVisualization;
   }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
-  const visualizationRef = React.useRef<Visualization>();
+  const visualizationRef = useRef<Visualization>();
   if (!visualizationRef.current) {
     visualizationRef.current = createVisualization();
   }
   const visualization = visualizationRef.current;
-  React.useEffect(() => {
+  useEffect(() => {
     if (visualization) {
       setVisualization(visualization);
     }
   }, [setVisualization, visualization]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (model && visualizationReady) {
       if (!storedLayoutApplied.current) {
         const storedGraphModel = getStoredGraphModel(namespace);
@@ -291,7 +292,7 @@ const Topology: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, visualization, visualizationReady]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!extensionsResolved) {
       return;
     }
@@ -310,7 +311,7 @@ const Topology: React.FC<
     setVisualizationReady(true);
   }, [visualization, extensionsResolved, componentFactoryExtensions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!applicationRef.current) {
       applicationRef.current = application;
       return;
@@ -324,7 +325,7 @@ const Topology: React.FC<
     }
   }, [application, visualization]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let resizeTimeout = null;
     if (visualization) {
       if (selectedId) {
@@ -387,7 +388,7 @@ export default withFallback(
       TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
       TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
       {},
-    )(React.memo(Topology)),
+    )(memo(Topology)),
   ),
   ErrorBoundaryFallbackPage,
 );

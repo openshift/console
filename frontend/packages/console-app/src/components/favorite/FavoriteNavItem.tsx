@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
 import { NavItem } from '@patternfly/react-core';
 import { NavLink } from 'react-router-dom';
 import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 
-export const FavoriteNavItem: React.FC<FavoriteNavItemProps> = ({
+export const FavoriteNavItem: FC<FavoriteNavItemProps> = ({
   className,
   dataAttributes,
   isActive,
@@ -25,5 +25,5 @@ export type FavoriteNavItemProps = {
   dataAttributes?: ResourceNSNavItem['properties']['dataAttributes'];
   isActive: boolean;
   className: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };

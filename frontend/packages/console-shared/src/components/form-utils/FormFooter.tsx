@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { css } from '@patternfly/react-styles';
@@ -10,7 +10,7 @@ import { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
 
-const FormFooter: React.FC<FormFooterProps> = ({
+const FormFooter: FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
   handleCancel,

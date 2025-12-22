@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { ImportStrategy, DetectedBuildType } from '@console/git-service';
 import { PipelineKind } from '../../../types/pipeline';
@@ -12,7 +13,7 @@ export interface ImageSectionProps {
   existingPipeline?: PipelineKind;
 }
 
-const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPipeline }) => {
+const BuilderSection: FC<ImageSectionProps> = ({ builderImages, existingPipeline }) => {
   const {
     values: {
       image,
@@ -21,7 +22,7 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
-  const handleBuilderImageSelection = React.useCallback(
+  const handleBuilderImageSelection = useCallback(
     async (detectedBuildTypes?: DetectedBuildType[]) => {
       setFieldValue('image.isRecommending', false);
       const recommendedBuildType =
@@ -40,7 +41,7 @@ const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPi
     [builderImages, setFieldValue],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (builderImages && recommendedStrategy && recommendedStrategy.type !== ImportStrategy.S2I) {
       const s2iStrategy = strategies.find((s) => s.type === ImportStrategy.S2I);
       if (s2iStrategy) {

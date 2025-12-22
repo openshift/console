@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { useRoutesWatcher, useServicesWatcher } from '@console/shared';
 import { RouteLocation } from '@console/shared/src/components/utils/routes';
 
-const ServicePortList: React.FC<ServicePortListProps> = ({ service }) => {
+const ServicePortList: FC<ServicePortListProps> = ({ service }) => {
   const ports = service.spec?.ports ?? [];
   const { t } = useTranslation();
   return (
@@ -26,7 +26,7 @@ const ServicePortList: React.FC<ServicePortListProps> = ({ service }) => {
   );
 };
 
-const ServicesOverviewListItem: React.FC<ServiceOverviewListItemProps> = ({ service }) => {
+const ServicesOverviewListItem: FC<ServiceOverviewListItemProps> = ({ service }) => {
   const { name, namespace } = service.metadata;
   return (
     <ListItem>
@@ -36,7 +36,7 @@ const ServicesOverviewListItem: React.FC<ServiceOverviewListItemProps> = ({ serv
   );
 };
 
-const ServicesOverviewList: React.FC<ServiceOverviewListProps> = ({ services }) => (
+const ServicesOverviewList: FC<ServiceOverviewListProps> = ({ services }) => (
   <List isPlain isBordered>
     {services?.map((service) => (
       <ServicesOverviewListItem key={service.metadata.uid} service={service} />
@@ -44,7 +44,7 @@ const ServicesOverviewList: React.FC<ServiceOverviewListProps> = ({ services }) 
   </List>
 );
 
-const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({ route }) => {
+const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({ route }) => {
   const { name, namespace } = route.metadata;
   const { t } = useTranslation();
   return (
@@ -56,7 +56,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({ route }
   );
 };
 
-const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ routes }) => (
+const RoutesOverviewList: FC<RoutesOverviewListProps> = ({ routes }) => (
   <List isPlain isBordered>
     {routes?.map((route) => (
       <RoutesOverviewListItem key={route.metadata.uid} route={route} />
@@ -64,7 +64,7 @@ const RoutesOverviewList: React.FC<RoutesOverviewListProps> = ({ routes }) => (
   </List>
 );
 
-export const NetworkingOverview: React.FC<NetworkingOverviewProps> = ({ obj }) => {
+export const NetworkingOverview: FC<NetworkingOverviewProps> = ({ obj }) => {
   const { t } = useTranslation();
   const serviceResources = useServicesWatcher(obj);
   const services =

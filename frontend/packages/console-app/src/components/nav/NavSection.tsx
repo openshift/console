@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { NavExpandable, NavGroup, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -19,14 +20,14 @@ import { NavItemResource } from './NavItemResource';
 import { useNavExtensionsForSection } from './useNavExtensionsForSection';
 import { navItemHrefIsActive, navItemResourceIsActive } from './utils';
 
-export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
+export const NavSection: FC<NavSectionProps> = ({ id, name, dataAttributes }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [k8sModels] = useK8sModels();
   const navExtensions = useNavExtensionsForSection(id);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const getK8sModelForExtension = React.useCallback(
+  const getK8sModelForExtension = useCallback(
     (e: LoadedExtension<ResourceNavItem>): K8sModel => {
       const { model } = e.properties;
       const gvk = referenceForExtensionModel(model);
@@ -35,7 +36,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     [k8sModels],
   );
 
-  const navExtensionIsActive = React.useCallback(
+  const navExtensionIsActive = useCallback(
     (e: LoadedExtension<NavExtension>) => {
       if (isHrefNavItem(e)) {
         return navItemHrefIsActive(location, e.properties.href, e.properties.startsWith);
@@ -48,7 +49,7 @@ export const NavSection: React.FC<NavSectionProps> = ({ id, name, dataAttributes
     },
     [getK8sModelForExtension, location],
   );
-  const isActive = React.useMemo(() => navExtensions.some(navExtensionIsActive), [
+  const isActive = useMemo(() => navExtensions.some(navExtensionIsActive), [
     navExtensions,
     navExtensionIsActive,
   ]);

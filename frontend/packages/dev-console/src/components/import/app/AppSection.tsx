@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ export interface AppSectionProps {
   fullWidth?: boolean;
 }
 
-const AppSection: React.FC<AppSectionProps> = ({
+const AppSection: FC<AppSectionProps> = ({
   project,
   noProjectsAvailable,
   extraMargin,

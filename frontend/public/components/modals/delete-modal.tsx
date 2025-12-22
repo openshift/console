@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -23,14 +24,14 @@ import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 export const DeleteModal = (props: DeleteModalProps) => {
   const navigate = useNavigate();
-  const [isChecked, setIsChecked] = React.useState(true);
-  const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = React.useState(true);
-  const [owner, setOwner] = React.useState<OwnerReference>(undefined);
+  const [isChecked, setIsChecked] = useState(true);
+  const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = useState(true);
+  const [owner, setOwner] = useState<OwnerReference>(undefined);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
 
-  const submit = React.useCallback(
+  const submit = useCallback(
     (event) => {
       event.preventDefault();
       const { kind, resource, deleteAllResources } = props;
@@ -61,7 +62,7 @@ export const DeleteModal = (props: DeleteModalProps) => {
     [isChecked, isDeleteOtherResourcesChecked, props, handlePromise, navigate],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const { resource } = props;
     const namespace = resource?.metadata?.namespace;
     if (!namespace || !resource?.metadata?.ownerReferences?.length) {
@@ -160,8 +161,8 @@ export const DeleteModal = (props: DeleteModalProps) => {
   );
 };
 
-export const DeleteOverlay: React.FC<DeleteModalProps> = (props) => {
-  const [isOpen, setIsOpen] = React.useState(true);
+export const DeleteOverlay: FC<DeleteModalProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
   const closeModal = () => setIsOpen(false);
   return isOpen ? (
     <Backdrop>
@@ -181,6 +182,6 @@ export type DeleteModalProps = {
   redirectTo?: LocationDescriptor;
   message?: JSX.Element;
   cancel?: () => void;
-  btnText?: React.ReactNode;
+  btnText?: ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;
 };

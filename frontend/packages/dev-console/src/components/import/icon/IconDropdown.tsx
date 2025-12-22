@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useMemo, useState } from 'react';
 import { Button, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { UploadIcon } from '@patternfly/react-icons';
 import * as fuzzy from 'fuzzysearch';
@@ -21,17 +22,17 @@ type IconProps = {
   url: string;
 };
 
-const Icon: React.FC<IconProps> = ({ label, url }) => (
+const Icon: FC<IconProps> = ({ label, url }) => (
   <div className="pf-v6-u-display-flex pf-v6-u-align-items-center">
     <img src={url} width="28" height="28" alt="" className="odc-icon-bg pf-v6-u-mr-sm" />
     {label}
   </div>
 );
 
-const iconLabelAutocompleteFilter = (text: string, item: React.ReactElement<IconProps>) =>
+const iconLabelAutocompleteFilter = (text: string, item: ReactElement<IconProps>) =>
   fuzzy(text, item.props.label);
 
-const IconDropdown: React.FC<IconDropdownProps> = ({
+const IconDropdown: FC<IconDropdownProps> = ({
   runtimeIcon,
   onRuntimeIconChanged,
   customIcon,
@@ -39,7 +40,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
 }) => {
   const { t } = useTranslation('devconsole');
 
-  const title = React.useMemo<React.ReactElement>(() => {
+  const title = useMemo<React.ReactElement>(() => {
     if (customIcon) {
       return <Icon label={t('Custom icon')} url={customIcon} />;
     }
@@ -52,8 +53,8 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     );
   }, [customIcon, runtimeIcon, t]);
 
-  const items = React.useMemo<Record<string, React.ReactElement>>(() => {
-    const options: Record<string, React.ReactElement> = {};
+  const items = useMemo<Record<string, React.ReactElement>>(() => {
+    const options: Record<string, ReactElement> = {};
 
     getIcons().forEach(({ label, url }) => {
       options[label] = <Icon label={label} url={url} />;
@@ -62,7 +63,7 @@ const IconDropdown: React.FC<IconDropdownProps> = ({
     return options;
   }, []);
 
-  const [customIconModalIsOpen, setCustomIconModalOpen] = React.useState(false);
+  const [customIconModalIsOpen, setCustomIconModalOpen] = useState(false);
 
   return (
     <>

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
+import { useState, useCallback } from 'react';
 import {
   ActionGroup,
   Button,
@@ -26,14 +27,14 @@ enum AvailabilityValue {
 
 export const CreateCatalogSource = () => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [availability, setAvailability] = React.useState(AvailabilityValue.ALL_NAMESPACES);
-  const [image, setImage] = React.useState('');
-  const [displayName, setDisplayName] = React.useState('');
-  const [name, setName] = React.useState('');
-  const [namespace, setNamespace] = React.useState('');
-  const [publisher, setPublisher] = React.useState('');
-  const onSave = React.useCallback(
-    (e: React.FormEvent<EventTarget>) => {
+  const [availability, setAvailability] = useState(AvailabilityValue.ALL_NAMESPACES);
+  const [image, setImage] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
+  const [namespace, setNamespace] = useState('');
+  const [publisher, setPublisher] = useState('');
+  const onSave = useCallback(
+    (e: FormEvent<EventTarget>) => {
       e.preventDefault();
       return handlePromise(
         k8sCreate(CatalogSourceModel, {
@@ -60,11 +61,11 @@ export const CreateCatalogSource = () => {
     [availability, displayName, handlePromise, image, name, namespace, publisher],
   );
 
-  const onNamespaceChange = React.useCallback((value: string) => {
+  const onNamespaceChange = useCallback((value: string) => {
     setNamespace(value);
   }, []);
 
-  const onAvailabiltiyChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+  const onAvailabiltiyChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
     setAvailability(value as AvailabilityValue);
   };
 

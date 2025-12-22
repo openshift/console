@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Page, navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -13,7 +13,7 @@ import BuildRunDetailsTab from './BuildRunDetailsTab';
 import BuildRunEventsTab from './BuildRunEventsTab';
 import BuildRunLogsTab from './BuildRunLogsTab';
 
-const BuildRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
+const BuildRunDetailsPage: FC<DetailsPageProps> = (props) => {
   const customActionMenu = (_, buildRun) => {
     const kindReference = referenceFor(buildRun);
     const context = { [kindReference]: buildRun };

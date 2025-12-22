@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
 import { coFetchText } from '@console/internal/co-fetch';
@@ -35,7 +35,7 @@ jest.mock('@console/internal/module/ws-factory', () => ({
 const mockCoFetchText = coFetchText as any;
 
 describe('logs component', () => {
-  let props: React.ComponentProps<typeof Logs>;
+  let props: ComponentProps<typeof Logs>;
 
   beforeEach(() => {
     jest.clearAllMocks();

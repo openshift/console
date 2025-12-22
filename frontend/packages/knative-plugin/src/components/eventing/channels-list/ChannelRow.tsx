@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -12,7 +12,7 @@ import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionStats } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
+const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;

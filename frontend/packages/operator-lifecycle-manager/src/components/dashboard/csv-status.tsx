@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { pluralize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
 import { OperatorRowProps } from '@console/dynamic-plugin-sdk';
@@ -13,7 +13,7 @@ import { ClusterServiceVersionKind } from '../../types';
 
 import './csv-status.scss';
 
-const ClusterServiceVersionRow: React.FC<OperatorRowProps<ClusterServiceVersionKind>> = ({
+const ClusterServiceVersionRow: FC<OperatorRowProps<ClusterServiceVersionKind>> = ({
   operatorStatus,
 }) => {
   const { name, namespace } = operatorStatus.operators[0].metadata;

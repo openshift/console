@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import { JSONSchema7 } from 'json-schema';
@@ -35,7 +36,7 @@ import { getHelmActionValidationSchema } from '../../../utils/helm-validation-ut
 import HelmChartMetaDescription from './HelmChartMetaDescription';
 import HelmInstallUpgradeForm, { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 
-const HelmInstallUpgradePage: React.FunctionComponent = () => {
+const HelmInstallUpgradePage: FunctionComponent = () => {
   const location = useLocation();
   const params = useParams();
   const searchParams = new URLSearchParams(location.search);
@@ -50,22 +51,22 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
   const helmActionOrigin = searchParams.get('actionOrigin') as HelmActionOrigins;
 
   const { t } = useTranslation();
-  const [chartData, setChartData] = React.useState<HelmChart>(null);
-  const [chartName, setChartName] = React.useState<string>('');
-  const [chartVersion, setChartVersion] = React.useState<string>('');
-  const [appVersion, setAppVersion] = React.useState<string>('');
-  const [chartReadme, setChartReadme] = React.useState<string>('');
-  const [chartHasValues, setChartHasValues] = React.useState<boolean>(false);
-  const [chartError, setChartError] = React.useState<Error>(null);
+  const [chartData, setChartData] = useState<HelmChart>(null);
+  const [chartName, setChartName] = useState<string>('');
+  const [chartVersion, setChartVersion] = useState<string>('');
+  const [appVersion, setAppVersion] = useState<string>('');
+  const [chartReadme, setChartReadme] = useState<string>('');
+  const [chartHasValues, setChartHasValues] = useState<boolean>(false);
+  const [chartError, setChartError] = useState<Error>(null);
 
-  const [initialYamlData, setInitialYamlData] = React.useState<string>('');
-  const [initialFormData, setInitialFormData] = React.useState<object>();
-  const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
+  const [initialYamlData, setInitialYamlData] = useState<string>('');
+  const [initialFormData, setInitialFormData] = useState<object>();
+  const [initialFormSchema, setInitialFormSchema] = useState<JSONSchema7>();
   const helmAction: HelmActionType = initialChartURL
     ? HelmActionType.Create
     : HelmActionType.Upgrade;
 
-  const config = React.useMemo<HelmActionConfigType>(
+  const config = useMemo<HelmActionConfigType>(
     () =>
       getHelmActionConfig(
         helmAction,
@@ -79,7 +80,7 @@ const HelmInstallUpgradePage: React.FunctionComponent = () => {
     [helmAction, helmActionOrigin, indexEntry, initialChartURL, initialReleaseName, namespace, t],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
 
     const fetchHelmChart = async () => {

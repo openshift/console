@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -193,7 +194,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
 
 const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<MachineConfigKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineConfigKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -251,16 +252,11 @@ const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   return columns;
 };
 
-const MachineConfigList: React.FC<MachineConfigListProps> = ({
-  data,
-  loaded,
-  loadError,
-  ...props
-}) => {
+const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineConfigColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineConfigKind>
         {...props}
         label={MachineConfigModel.labelPlural}
@@ -271,7 +267,7 @@ const MachineConfigList: React.FC<MachineConfigListProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
@@ -16,7 +16,7 @@ import { breadcrumbsForGlobalConfig } from './global-config';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
 
-const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) => {
+const ClusterVersionDetails: FC<ClusterVersionDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
   const conditions = _.get(obj, 'status.conditions', []);
@@ -36,7 +36,7 @@ const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) =>
   );
 };
 
-export const ClusterVersionDetailsPage: React.FC = (props) => {
+export const ClusterVersionDetailsPage: FC = (props) => {
   const canUpgrade = useCanClusterUpgrade();
   const location = useLocation();
   return (

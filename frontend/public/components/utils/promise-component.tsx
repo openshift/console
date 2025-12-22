@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { Component } from 'react';
 import i18next from 'i18next';
 
-export class PromiseComponent<P, S extends PromiseComponentState> extends React.Component<P, S> {
+export class PromiseComponent<P, S extends PromiseComponentState> extends Component<P, S> {
   constructor(props) {
     super(props);
     this.state = {

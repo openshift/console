@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SecondaryStatus } from '@console/shared';
 import { HOST_POWER_STATUS_POWERED_ON, HOST_REGISTERING_STATES } from '../../constants';
@@ -15,7 +15,7 @@ type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;
 };
 
-const BareMetalHostSecondaryStatus: React.FC<BareMetalHostSecondaryStatusProps> = ({ host }) => {
+const BareMetalHostSecondaryStatus: FC<BareMetalHostSecondaryStatusProps> = ({ host }) => {
   const { t } = useTranslation();
   const powerStatus = getHostPowerStatus(host);
   const provisioningState = getHostProvisioningState(host);

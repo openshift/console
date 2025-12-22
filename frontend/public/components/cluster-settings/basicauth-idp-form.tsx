@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import * as _ from 'lodash-es';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -21,15 +22,15 @@ export const DroppableFileInput = (props: any) => (
     {...props}
   />
 );
-export const AddBasicAuthPage: React.FC = () => {
+export const AddBasicAuthPage: FC = () => {
   const navigate = useNavigate();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [name, setName] = React.useState('basic-auth');
-  const [url, setUrl] = React.useState('');
-  const [caFileContent, setCaFileContent] = React.useState('');
-  const [certFileContent, setCertFileContent] = React.useState('');
-  const [keyFileContent, setKeyFileContent] = React.useState('');
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('basic-auth');
+  const [url, setUrl] = useState('');
+  const [caFileContent, setCaFileContent] = useState('');
+  const [certFileContent, setCertFileContent] = useState('');
+  const [keyFileContent, setKeyFileContent] = useState('');
 
   const { t } = useTranslation();
 

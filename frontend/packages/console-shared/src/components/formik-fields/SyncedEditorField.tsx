@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Button, AlertActionCloseButton } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useField, useFormikContext, FormikValues } from 'formik';
@@ -21,7 +22,7 @@ export type SanitizeToYAML = (preFormData: string) => string;
 
 type EditorContext<SanitizeTo> = {
   name: string;
-  editor: React.ReactNode;
+  editor: ReactNode;
   isDisabled?: boolean;
   sanitizeTo?: SanitizeTo;
   label?: string;
@@ -36,7 +37,7 @@ type SyncedEditorFieldProps = {
   noMargin?: boolean;
 };
 
-const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
+const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   name,
   formContext,
   yamlContext,
@@ -52,9 +53,9 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   const formData = _.get(values, formContext.name);
   const yamlData: string = _.get(values, yamlContext.name);
 
-  const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
-  const [sanitizeToCallback, setSanitizeToCallback] = React.useState<FormErrorCallback>(undefined);
-  const [disabledFormAlert, setDisabledFormAlert] = React.useState<boolean>(formContext.isDisabled);
+  const [yamlWarning, setYAMLWarning] = useState<boolean>(false);
+  const [sanitizeToCallback, setSanitizeToCallback] = useState<FormErrorCallback>(undefined);
+  const [disabledFormAlert, setDisabledFormAlert] = useState<boolean>(formContext.isDisabled);
 
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     !(type === EditorType.Form ? formContext?.isDisabled : yamlContext?.isDisabled);
@@ -136,7 +137,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     setStatus({ submitError: '' });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setDisabledFormAlert(formContext.isDisabled);
     if (resourceLoaded && field.value !== editorType) {
       setFieldValue(name, editorType);

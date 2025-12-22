@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent, Ref } from 'react';
+import { useState } from 'react';
 import {
   Switch,
   Divider,
@@ -25,7 +26,7 @@ type FilterDropdownProps = {
   opened?: boolean; // Use only for testing
 };
 
-const FilterDropdown: React.FC<FilterDropdownProps> = ({
+const FilterDropdown: FC<FilterDropdownProps> = ({
   filters,
   viewType,
   supportedFilters,
@@ -35,10 +36,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const [isOpen, setIsOpen] = React.useState(opened);
+  const [isOpen, setIsOpen] = useState(opened);
   const groupsExpanded = filters?.find((f) => f.id === EXPAND_GROUPS_FILTER_ID)?.value ?? true;
 
-  const onSelect = (e: React.MouseEvent, key: string) => {
+  const onSelect = (e: MouseEvent, key: string) => {
     const index = filters.findIndex((f) => f.id === key);
     const filter = { ...filters[index], value: (e.target as HTMLInputElement).checked };
     onChange([...filters.slice(0, index), filter, ...filters.slice(index + 1)]);
@@ -125,7 +126,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     </div>
   );
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}

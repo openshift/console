@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
@@ -9,7 +9,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventBrokerKind, BrokerConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 
-const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
+const BrokerRow: FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;

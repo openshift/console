@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClusterVersionKind } from '@console/internal/module/k8s';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
@@ -6,7 +7,7 @@ import ActivityItem from '@console/shared/src/components/dashboard/activity-card
 const getVersion = (cv: ClusterVersionKind) =>
   cv && cv.status.history[0] ? cv.status.history[0].version : null;
 
-const ClusterUpdateActivityText: React.FC<ClusterUpdateActivityProps> = ({ resource }) => {
+const ClusterUpdateActivityText: FC<ClusterUpdateActivityProps> = ({ resource }) => {
   const { t } = useTranslation();
   return (
     <ActivityItem>
@@ -15,7 +16,7 @@ const ClusterUpdateActivityText: React.FC<ClusterUpdateActivityProps> = ({ resou
   );
 };
 
-const ClusterUpdateActivity: React.FC<ClusterUpdateActivityProps> = React.memo(
+const ClusterUpdateActivity: FC<ClusterUpdateActivityProps> = memo(
   ({ resource }) => <ClusterUpdateActivityText resource={resource} />,
   (prevProps, newProps) => getVersion(prevProps.resource) === getVersion(newProps.resource),
 );

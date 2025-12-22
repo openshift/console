@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useMemo } from 'react';
 import { ContentVariants, Content } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { JSONSchema7 } from 'json-schema';
@@ -21,7 +22,7 @@ interface EventSinkSectionProps {
   kameletSink?: K8sResourceKind;
 }
 
-const EventSinkSection: React.FC<EventSinkSectionProps> = ({
+const EventSinkSection: FC<EventSinkSectionProps> = ({
   namespace,
   fullWidth = false,
   kameletSink,
@@ -30,7 +31,7 @@ const EventSinkSection: React.FC<EventSinkSectionProps> = ({
   const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
   const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
   useFormikValidationFix(values);
-  const formSchema: JSONSchema7 = React.useMemo(
+  const formSchema: JSONSchema7 = useMemo(
     () => ({
       type: 'object',
       required: kameletSink?.spec?.definition?.required,
@@ -53,7 +54,7 @@ const EventSinkSection: React.FC<EventSinkSectionProps> = ({
       />
     </>
   );
-  let EventSink: React.ReactElement = null;
+  let EventSink: ReactElement = null;
   if (kameletSink && values.formData.type === EventSources.KameletBinding) {
     EventSink = (
       <>

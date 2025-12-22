@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { getTitleForNodeKind } from '@console/shared';
 import { OdcNodeModel } from '../../topology-types';
@@ -11,7 +11,7 @@ type TopologyApplicationResourcesProps = {
   group: string;
 };
 
-const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> = ({
+const TopologyApplicationResources: FC<TopologyApplicationResourcesProps> = ({
   resources,
   group,
 }) => {

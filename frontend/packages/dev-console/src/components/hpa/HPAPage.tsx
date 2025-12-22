@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ErrorPage404 } from '@console/internal/components/error';
@@ -13,13 +14,13 @@ import { getRequestsWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
 
-const HPAPage: React.FC<PageComponentProps> = () => {
+const HPAPage: FC<PageComponentProps> = () => {
   const { t } = useTranslation();
   const { ns, resourceRef, name } = useParams();
   const breakdown = getGroupVersionKind(resourceRef) || [];
   const [group, version, kind] = breakdown;
   const [hpa, hpaLoaded, hpaError] = useRelatedHPA(`${group}/${version}`, kind, name, ns);
-  const resource = React.useMemo(
+  const resource = useMemo(
     () => ({
       kind,
       namespace: ns,

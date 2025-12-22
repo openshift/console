@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
 import { ResourceDropdown } from '@console/shared';
@@ -9,10 +10,10 @@ type ApplicationDropdownProps = Omit<ResourceDropdownProps, 'dataSelector' | 'pl
   namespace?: string;
 };
 
-const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
+const ApplicationDropdown: FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
   const { t } = useTranslation();
 
-  const resources = React.useMemo(() => {
+  const resources = useMemo(() => {
     // Use only base watched resources since dynamic factories are handled separately
     // and ApplicationDropdown primarily needs the base resources for application labels
     const watchedBaseResources = getBaseWatchedResources(namespace);

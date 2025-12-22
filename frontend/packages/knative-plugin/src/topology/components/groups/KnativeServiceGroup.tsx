@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useState, useMemo, useCallback, useLayoutEffect, useEffect } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import {
@@ -48,7 +49,7 @@ export type KnativeServiceGroupProps = {
   edgeDragging?: boolean;
   editAccess?: boolean;
   tooltipLabel?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 } & WithSelectionProps &
   WithDndDropProps &
   WithDragNodeProps &
@@ -56,7 +57,7 @@ export type KnativeServiceGroupProps = {
   WithCreateConnectorProps;
 
 const DECORATOR_RADIUS = 13;
-const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
+const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   element,
   badge,
   badgeColor,
@@ -80,12 +81,12 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   onShowCreateConnector,
   createConnectorDrag,
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
-  const [hoverChange, setHoverChange] = React.useState<boolean>(false);
+  const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
   const [innerHover, innerHoverRef] = useHover();
-  const dragProps = React.useMemo(() => ({ element }), [element]);
+  const dragProps = useMemo(() => ({ element }), [element]);
   const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
     dragSpec,
     dragProps,
@@ -95,7 +96,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   const { data } = element.getData();
   const hasDataUrl = !!data.url;
   useAnchor(
-    React.useCallback(
+    useCallback(
       (node: Node) => new RevisionTrafficSourceAnchor(node, hasDataUrl ? DECORATOR_RADIUS : 0),
       [hasDataUrl],
     ),
@@ -108,7 +109,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   const showLabel = useShowLabel(hover);
   const { x, y, width, height } = element.getBounds();
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (editAccess) {
       if (innerHover) {
         onShowCreateConnector && onShowCreateConnector();
@@ -118,7 +119,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     }
   }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!createConnectorDrag) {
       setHoverChange((prev) => !prev);
     }

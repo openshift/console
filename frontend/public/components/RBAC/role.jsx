@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import { Component } from 'react';
+import { useMemo, useCallback, Suspense, Component } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel } from '../../models';
@@ -205,7 +204,7 @@ const getBindingsDataViewRows = (data, columns) => {
 
 const useBindingsColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -252,7 +251,7 @@ const BindingsListComponent = (props) => {
   const { data, loaded, staticFilters } = props;
 
   // Apply staticFilters to filter the data using table filters
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!staticFilters || !data) {
       return data;
     }
@@ -276,7 +275,7 @@ const BindingsListComponent = (props) => {
   }, [data, staticFilters]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={filteredData}
@@ -286,7 +285,7 @@ const BindingsListComponent = (props) => {
         getDataViewRows={getBindingsDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
@@ -424,7 +423,7 @@ const useRolesColumns = () => {
 
 const useRoleFilterOptions = () => {
   const { t } = useTranslation();
-  return React.useMemo(() => {
+  return useMemo(() => {
     return [
       {
         value: 'cluster',
@@ -448,9 +447,9 @@ const RolesList = (props) => {
   const columns = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
-  const initialFilters = React.useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
 
-  const additionalFilterNodes = React.useMemo(
+  const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
         key="role-kind"
@@ -463,14 +462,14 @@ const RolesList = (props) => {
     [roleFilterOptions, t],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource, filters) =>
       filters['role-kind'].length === 0 || filters['role-kind'].includes(roleType(resource)),
     [],
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       {data.length === 0 ? (
         <ConsoleEmptyState title={t('public~No Roles found')}>
           {t(
@@ -490,7 +489,7 @@ const RolesList = (props) => {
           hideColumnManagement={true}
         />
       )}
-    </React.Suspense>
+    </Suspense>
   );
 };
 

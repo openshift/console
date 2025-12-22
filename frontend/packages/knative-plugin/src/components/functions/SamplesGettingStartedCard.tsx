@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { CatalogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
@@ -43,9 +43,7 @@ const orderCatalogItems = (allCatalogItems: CatalogItem[], featured: string[]): 
   return orderedCatalogItems;
 };
 
-export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> = ({
-  featured = [],
-}) => {
+export const SampleGettingStartedCard: FC<SampleGettingStartedCardProps> = ({ featured = [] }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const isSampleTypeEnabled = isCatalogTypeEnabled(SAMPLE_CATALOG_TYPE_ID);

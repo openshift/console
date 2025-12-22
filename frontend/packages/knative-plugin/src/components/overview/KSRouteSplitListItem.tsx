@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RoutesOverviewListItem } from '../../types';
@@ -8,7 +8,7 @@ type KSRouteSplitListItemProps = {
   route: RoutesOverviewListItem;
 };
 
-const KSRouteSplitListItem: React.FC<KSRouteSplitListItemProps> = ({ route: { percent, url } }) =>
+const KSRouteSplitListItem: FC<KSRouteSplitListItemProps> = ({ route: { percent, url } }) =>
   url.length > 0 && percent.length > 0 ? (
     <ListItem>
       <div className="odc-ksroute-split-list-item">

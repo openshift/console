@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { NavItem } from '@patternfly/react-core';
 import { HrefNavItem } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
@@ -10,7 +11,7 @@ import {
 import { NavLinkProps, NavLink } from './NavLink';
 import { navItemHrefIsActive, stripScopeFromPath } from './utils';
 
-export const NavItemHref: React.FC<NavItemHrefProps> = ({
+export const NavItemHref: FC<NavItemHrefProps> = ({
   children,
   href,
   namespaced,
@@ -21,12 +22,12 @@ export const NavItemHref: React.FC<NavItemHrefProps> = ({
 }) => {
   const [activeNamespace] = useActiveNamespace();
   const location = useLocation();
-  const isActive = React.useMemo(() => navItemHrefIsActive(location, href, startsWith), [
+  const isActive = useMemo(() => navItemHrefIsActive(location, href, startsWith), [
     href,
     location,
     startsWith,
   ]);
-  const to = React.useCallback(() => {
+  const to = useCallback(() => {
     if (namespaced) {
       return formatNamespacedRouteForHref(href, activeNamespace);
     }

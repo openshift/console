@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+import { useMemo, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -168,7 +167,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
 
 const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -222,7 +221,7 @@ const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ..
   const columns = useAlertManagerColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={AlertmanagerModel.labelPlural}
@@ -232,7 +231,7 @@ const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ..
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

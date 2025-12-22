@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { MouseEvent } from 'react';
+import { useMemo } from 'react';
 import { DataViewTd, DataViewTh } from '@patternfly/react-data-view';
 import { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
@@ -54,10 +55,10 @@ const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
 
 export const useHelmReleaseHistoryColumns = (
   sortBy: { index: number; direction: SortByDirection },
-  onSort: (event: React.MouseEvent, columnId: string, direction: SortByDirection) => void,
+  onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,
 ): DataViewTh[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         cell: t('helm-plugin~Revision'),

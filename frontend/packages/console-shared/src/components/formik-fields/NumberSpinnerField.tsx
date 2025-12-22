@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler } from 'react';
+import { useCallback } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -11,7 +12,7 @@ interface NumberSpinnerFieldProps extends FieldProps {
   setOutputAsIntegerFlag?: boolean;
 }
 
-const NumberSpinnerField: React.FC<NumberSpinnerFieldProps> = ({
+const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({
   label,
   helpText,
   required,
@@ -25,7 +26,7 @@ const NumberSpinnerField: React.FC<NumberSpinnerFieldProps> = ({
 
   useFormikValidationFix(field.value);
 
-  const handleChange: React.ReactEventHandler<HTMLInputElement> = React.useCallback(
+  const handleChange: ReactEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       field.onChange(event);
       setFieldValue(

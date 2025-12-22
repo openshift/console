@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
@@ -55,7 +56,7 @@ const AlertTooltip = ({ alerts, severity, isMobile }) => {
   );
 };
 
-const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
+const AlertsCell: FC<AlertsProps> = ({ item }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const resource = getResource(item);
@@ -72,28 +73,28 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
       }
     : {};
 
-  const currentAlerts = React.useMemo(() => {
+  const currentAlerts = useMemo(() => {
     if (loaded && podData.current) {
       return podData.current.alerts;
     }
     return {};
   }, [loaded, podData]);
 
-  const previousAlerts = React.useMemo(() => {
+  const previousAlerts = useMemo(() => {
     if (loaded && podData.previous) {
       return podData.current.alerts;
     }
     return {};
   }, [loaded, podData]);
 
-  const buildConfigAlerts = React.useMemo(() => {
+  const buildConfigAlerts = useMemo(() => {
     if (buildConfigsLoaded && buildConfigs) {
       return getBuildAlerts(buildConfigs);
     }
     return {};
   }, [buildConfigsLoaded, buildConfigs]);
 
-  const rollOutAlerts = React.useMemo(() => {
+  const rollOutAlerts = useMemo(() => {
     if (rcsLoaded && mostRecentRC) {
       return getReplicationControllerAlerts(mostRecentRC);
     }

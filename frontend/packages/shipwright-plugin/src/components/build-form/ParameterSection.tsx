@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ type ParameterFieldsProps = {
   params: any[];
 };
 
-const ParameterFields: React.FC<ParameterFieldsProps> = ({ params }) => {
+const ParameterFields: FC<ParameterFieldsProps> = ({ params }) => {
   return (
     <FieldArray
       name="parameters"
@@ -61,7 +62,7 @@ const ParameterFields: React.FC<ParameterFieldsProps> = ({ params }) => {
                   )}
                 </TextColumnField>
               ) : (
-                <React.Fragment key={parameter.name}>{input()}</React.Fragment>
+                <Fragment key={parameter.name}>{input()}</Fragment>
               );
             })}
           </FormSection>
@@ -71,7 +72,7 @@ const ParameterFields: React.FC<ParameterFieldsProps> = ({ params }) => {
   );
 };
 
-const ParameterSection: React.FC<ParametersSectionProps> = () => {
+const ParameterSection: FC<ParametersSectionProps> = () => {
   const { t } = useTranslation();
   const {
     values: { formData },

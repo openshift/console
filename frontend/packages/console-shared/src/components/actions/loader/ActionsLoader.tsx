@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
 import {
   Action,
@@ -22,31 +23,31 @@ type ActionsLoaderProps = {
   onLoadError: (error: any) => void;
 };
 
-const ActionsLoader: React.FC<ActionsLoaderProps> = ({
+const ActionsLoader: FC<ActionsLoaderProps> = ({
   contextId,
   scope,
   onActionsLoaded,
   onContextChange,
   onLoadError,
 }) => {
-  const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
-  const [loadError, setLoadError] = React.useState<any>();
+  const [actionsMap, setActionsMap] = useState<{ [uid: string]: Action[] }>({});
+  const [loadError, setLoadError] = useState<any>();
 
-  const onProviderValueResolved = React.useCallback((actions: Action[], uid: string) => {
+  const onProviderValueResolved = useCallback((actions: Action[], uid: string) => {
     setActionsMap((prev) => ({ ...prev, [uid]: actions }));
   }, []);
 
-  const providerGuard = React.useCallback(
+  const providerGuard = useCallback(
     (e): e is ActionProvider => isActionProvider(e) && e.properties.contextId === contextId,
     [contextId],
   );
 
-  const filterGuard = React.useCallback(
+  const filterGuard = useCallback(
     (e): e is ActionFilter => isActionFilter(e) && e.properties.contextId === contextId,
     [contextId],
   );
 
-  const resourceProviderGuard = React.useCallback(
+  const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === contextId,
@@ -74,7 +75,7 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
     (allProviderExtensions.length === 0 ||
       allProviderExtensions.every(({ uid }) => actionsMap[uid]));
 
-  const actions: Action[] = React.useMemo(() => {
+  const actions: Action[] = useMemo(() => {
     const flattenedActions = _.flatten(Object.values(actionsMap));
     return filterExtensions?.length > 0
       ? flattenedActions.filter((a) =>
@@ -83,13 +84,13 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
       : flattenedActions;
   }, [actionsMap, filterExtensions, scope]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionsLoaded) onActionsLoaded?.(actions);
     // We do not want to run the effect every time onActionsLoaded changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actions, actionsLoaded]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loadError) onLoadError(loadError);
     // We do not want to run the effect every time onLoadError changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

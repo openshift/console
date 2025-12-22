@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -30,14 +31,14 @@ export type EventingPubSubNodeProps = {
   dropTarget?: boolean;
   dragging?: boolean;
   edgeDragging?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
+const EventingPubSubNode: FC<EventingPubSubNodeProps> = ({
   element,
   canDrop,
   dropTarget,
@@ -50,7 +51,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
   useAnchor(RectAnchor, AnchorEnd.target, TYPE_AGGREGATE_EDGE);
   useAnchor(EventSinkSourceAnchor, AnchorEnd.source, TYPE_EVENT_SINK_LINK);
 
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const { data } = element.getData();
   const { width } = element.getBounds();

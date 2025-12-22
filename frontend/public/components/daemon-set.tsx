@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Suspense } from 'react';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -116,7 +116,7 @@ export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, .
   const columns = useWorkloadColumns<DaemonSetKind>();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<DaemonSetKind>
         {...props}
         label={DaemonSetModel.labelPlural}
@@ -126,7 +126,7 @@ export const DaemonSetsList: React.FCC<DaemonSetsListProps> = ({ data, loaded, .
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

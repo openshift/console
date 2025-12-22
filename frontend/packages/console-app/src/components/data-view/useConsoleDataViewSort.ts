@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { BaseSyntheticEvent } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { SortByDirection, ISortBy } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useSearchParams } from 'react-router-dom-v5-compat';
@@ -19,7 +20,7 @@ export const useConsoleDataViewSort = <TData>({
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Initialize sort state from URL params or defaults
-  const getInitialSortState = React.useCallback<() => ISortBy>(() => {
+  const getInitialSortState = useCallback<() => ISortBy>(() => {
     const sortByParam = searchParams.get('sortBy');
     const orderByParam = searchParams.get('orderBy');
 
@@ -40,9 +41,9 @@ export const useConsoleDataViewSort = <TData>({
     };
   }, [searchParams, columns, sortColumnIndex, sortDirection]);
 
-  const [sortBy, setSortBy] = React.useState<ISortBy>(getInitialSortState);
+  const [sortBy, setSortBy] = useState<ISortBy>(getInitialSortState);
 
-  const applySort = React.useCallback(
+  const applySort = useCallback(
     (index: number, direction: SortByDirection) => {
       const sortColumn = columns[index];
 
@@ -61,7 +62,7 @@ export const useConsoleDataViewSort = <TData>({
   );
 
   // Update sort state when columns change or URL params change
-  React.useEffect(() => {
+  useEffect(() => {
     const newSortState = getInitialSortState();
 
     setSortBy((prevSortState) => {
@@ -70,8 +71,8 @@ export const useConsoleDataViewSort = <TData>({
     });
   }, [getInitialSortState]);
 
-  const onSort = React.useCallback(
-    (event: React.BaseSyntheticEvent, index: number, direction: SortByDirection) => {
+  const onSort = useCallback(
+    (event: BaseSyntheticEvent, index: number, direction: SortByDirection) => {
       event.preventDefault();
       applySort(index, direction);
     },

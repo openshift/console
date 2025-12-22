@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
@@ -88,7 +88,7 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
 const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<VolumeSnapshotClassKind>[] = React.useMemo(
+  const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
       {
         title: t('console-app~Name'),
@@ -127,10 +127,10 @@ const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = useVolumeSnapshotClassColumns();
-  const getDataViewRows = React.useMemo(() => getDataViewRowsCreator(t), [t]);
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<VolumeSnapshotClassKind>
         {...props}
         label={VolumeSnapshotClassModel.labelPlural}
@@ -140,7 +140,7 @@ const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

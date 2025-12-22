@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -14,9 +14,7 @@ type HelmReleaseResourceStatusProps = {
   resource: K8sResourceKind;
 };
 
-export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps> = ({
-  resource,
-}) => {
+export const HelmReleaseResourceStatus: FC<HelmReleaseResourceStatusProps> = ({ resource }) => {
   const { t } = useTranslation();
   const kind = referenceFor(resource);
   return resource.status?.replicas ? (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import {
   GraphElement,
   withDragNode,
@@ -71,7 +71,7 @@ const dragOperationKafka: EditableDragOperationType = {
 export const getKnativeServingComponentFactory = (
   kind,
   type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+): ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_KNATIVE_SERVICE:
       return withCreateConnector(
@@ -107,7 +107,7 @@ export const getKnativeServingComponentFactory = (
 export const getKnativeEventingComponentFactory = (
   kind,
   type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+): ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_EVENT_SOURCE:
       return withEditReviewAccess('patch')(

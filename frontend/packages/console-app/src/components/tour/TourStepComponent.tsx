@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useContext } from 'react';
 import {
   Grid,
   GridItem,
@@ -24,9 +25,9 @@ type TourStepComponentProps = {
   selector?: string;
   placement?: string;
   heading: string;
-  content: React.ReactNode;
-  introBannerLight?: React.ReactNode;
-  introBannerDark?: React.ReactNode;
+  content: ReactNode;
+  introBannerLight?: ReactNode;
+  introBannerDark?: ReactNode;
   modalVariant?: ModalVariant;
   step?: number;
   totalSteps?: number;
@@ -38,7 +39,7 @@ type TourStepComponentProps = {
   onClose?: () => void;
 };
 
-const TourStepComponent: React.FC<TourStepComponentProps> = ({
+const TourStepComponent: FC<TourStepComponentProps> = ({
   placement,
   heading,
   content,
@@ -57,7 +58,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const theme = React.useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
     <StepFooter

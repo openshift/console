@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
@@ -45,7 +46,7 @@ const useBreadCrumbsForDetailPage = (
   const [breadCrumbsExtensions, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
     isDetailPageBreadCrumbs,
   );
-  return React.useMemo(
+  return useMemo(
     () =>
       breadCrumbsResolved
         ? [...breadCrumbsExtensions].find(({ properties: { getModels } }) => {
@@ -61,7 +62,7 @@ const useBreadCrumbsForDetailPage = (
 
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
-  const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
+  const [pluginBreadcrumbs, setPluginBreadcrumbs] = useState(undefined);
   const [model] = useK8sModel(props.kind);
   const kindObj: K8sModel = props.kindObj ?? model;
 
@@ -70,7 +71,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
 
   const [resourcePageExtensions] = useResolvedExtensions<ResourceTabPage>(isResourceTabPage);
 
-  const pluginPages = React.useMemo(
+  const pluginPages = useMemo(
     () => [
       /** @deprecated -- if there is a bug here, encourage `console.tab/horizontalNav` usage instead */
       ...resourcePageExtensions
@@ -95,7 +96,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     [resourcePageExtensions, kindObj, props.kind],
   );
   const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
-  const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {
+  const onBreadcrumbsResolved = useCallback((breadcrumbs) => {
     setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
   let allPages = [...pages, ...pluginPages];
@@ -184,7 +185,7 @@ export type DetailsPageProps = {
     obj: K8sResourceKind,
   ) => ({ name: string; path: string } | { name: string; path: Location })[];
   customData?: any;
-  badge?: React.ReactNode;
+  badge?: ReactNode;
   OverrideTitle?: ConnectedPageHeadingProps['OverrideTitle'];
   getResourceStatus?: (resource: K8sResourceKind) => string;
   customKind?: string;

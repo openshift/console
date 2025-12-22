@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
@@ -15,7 +15,7 @@ import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-so
 import { editDefaultSourcesModal } from '../modals/edit-default-sources-modal';
 import { OperatorHubKind } from '.';
 
-const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
+const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();
 
   const canEditDefaultSources = useAccessReview({
@@ -71,11 +71,11 @@ const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHu
   );
 };
 
-const Sources: React.FC<CatalogSourceListPageProps> = (props) => (
+const Sources: FC<CatalogSourceListPageProps> = (props) => (
   <CatalogSourceListPage showTitle={false} {...props} />
 );
 
-export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
+export const OperatorHubDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [
     navFactory.details(OperatorHubDetails),
     navFactory.editYaml(),

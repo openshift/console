@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import KnatifyForm from '../KnatifyForm';
@@ -39,7 +39,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-let knatifyFormProps: React.ComponentProps<typeof KnatifyForm>;
+let knatifyFormProps: ComponentProps<typeof KnatifyForm>;
 
 describe('KnatifyForm', () => {
   beforeEach(() => {

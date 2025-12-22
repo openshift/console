@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -16,11 +17,8 @@ type ClusterConfigurationTextFieldProps = {
   field: ClusterConfigurationTextField;
 };
 
-const ClusterConfigurationTextField: React.FC<ClusterConfigurationTextFieldProps> = ({
-  item,
-  field,
-}) => {
-  const [value, setValue] = React.useState<string>(field.defaultValue || '');
+const ClusterConfigurationTextField: FC<ClusterConfigurationTextFieldProps> = ({ item, field }) => {
+  const [value, setValue] = useState<string>(field.defaultValue || '');
 
   const save = useDebounceCallback(() => {
     // eslint-disable-next-line no-console

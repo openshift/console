@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import {
   TextInputTypes,
   Alert,
@@ -33,7 +34,7 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
    *    1. Lookup for the image if the image query parameter was missed.
    *    2. Set other form attributes like the image targetPort.
    */
-  React.useEffect(() => {
+  useEffect(() => {
     const { sampleName, image } = getContainerImportSample();
     if (image) {
       const componentName = getSuggestedName(image);
@@ -85,19 +86,19 @@ const useQueryParametersIfDefined = (handleSearch: (image: string) => void) => {
   }, []);
 };
 
-const ImageSearch: React.FC = () => {
+const ImageSearch: FC = () => {
   const { t } = useTranslation();
-  const inputRef = React.useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const launchCreateSecretModal = useCreateSecretModal();
-  const [newImageSecret, setNewImageSecret] = React.useState('');
-  const [alertVisible, shouldHideAlert] = React.useState(true);
-  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const [newImageSecret, setNewImageSecret] = useState('');
+  const [alertVisible, shouldHideAlert] = useState(true);
+  const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
   const namespace = values.project.name;
   const { application = {}, name: nameTouched } = touched;
   const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
 
-  const handleSearch = React.useCallback(
+  const handleSearch = useCallback(
     (searchTermImage: string, isAllowInsecureRegistry = values.allowInsecureRegistry) => {
       setFieldValue('isSearchingForImage', true);
       setValidated(ValidatedOptions.default);
@@ -180,7 +181,7 @@ const ImageSearch: React.FC = () => {
 
   const debouncedHandleSearch = useDebounceCallback(handleSearch);
 
-  const handleSave = React.useCallback(
+  const handleSave = useCallback(
     (name: string) => {
       setNewImageSecret(name);
       values.searchTerm && handleSearch(values.searchTerm);
@@ -188,7 +189,7 @@ const ImageSearch: React.FC = () => {
     [handleSearch, values.searchTerm],
   );
 
-  const helpText = React.useMemo(() => {
+  const helpText = useMemo(() => {
     if (values.isSearchingForImage) {
       return `${t('devconsole~Validating')}...`;
     }
@@ -216,11 +217,11 @@ const ImageSearch: React.FC = () => {
       setFieldValue('application.name', '');
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     !dirty && values.searchTerm && handleSearch(values.searchTerm);
   }, [dirty, handleSearch, values.searchTerm]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (touched.searchTerm && initialValues.searchTerm !== values.searchTerm) {
       const targetPort: ContainerPort = _.head(values.isi.ports);
       targetPort && setFieldValue('route.targetPort', makePortName(targetPort));
@@ -233,7 +234,7 @@ const ImageSearch: React.FC = () => {
     values.searchTerm,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     inputRef.current?.focus();
   }, []);
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '../utils/async';
 
@@ -9,7 +9,7 @@ const DroppableFileInput = (props: any) => (
   />
 );
 
-export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
+export const IDPCAFileInput: FC<IDPCAFileInputProps> = ({
   id,
   value,
   onChange,

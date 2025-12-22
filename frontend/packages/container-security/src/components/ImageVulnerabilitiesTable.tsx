@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
@@ -17,7 +17,7 @@ const getRowProps = (vulnerability: Vulnerability) => ({
   id: vulnerability.name,
 });
 
-const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
+const ImageVulnerabilitiesTable: FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
     <ConsoleEmptyState title={t('container-security~No Image vulnerabilities found')} />

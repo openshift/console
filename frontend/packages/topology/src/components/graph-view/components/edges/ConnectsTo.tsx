@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   WithSourceDragProps,
   WithTargetDragProps,
@@ -17,7 +17,7 @@ type ConnectsToProps = {
 } & WithSourceDragProps &
   WithTargetDragProps &
   WithContextMenuProps;
-const ConnectsTo: React.FC<ConnectsToProps> = (props) => (
+const ConnectsTo: FC<ConnectsToProps> = (props) => (
   <BaseEdge
     className="odc-connects-to"
     endTerminalType={EdgeTerminalType.directionalAlt}

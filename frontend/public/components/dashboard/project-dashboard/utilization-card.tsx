@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
@@ -36,11 +37,11 @@ import {
 
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
-export const UtilizationCard: React.FC = () => {
+export const UtilizationCard: FC = () => {
   const { t } = useTranslation();
-  const { obj } = React.useContext(ProjectDashboardContext);
+  const { obj } = useContext(ProjectDashboardContext);
   const projectName = obj?.metadata?.name;
-  const [queries, multilineQueries] = React.useMemo(
+  const [queries, multilineQueries] = useMemo(
     () => [getUtilizationQueries(projectName), getMultilineQueries(projectName)],
     [projectName],
   );

@@ -1,6 +1,6 @@
-import * as React from 'react';
+import type { FC } from 'react';
 
-const GuidedTourIntroBannerDark: React.FC = (props) => (
+const GuidedTourIntroBannerDark: FC = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576.59399 436.20001" {...props}>
     <defs id="defs23">
       <clipPath id="b">

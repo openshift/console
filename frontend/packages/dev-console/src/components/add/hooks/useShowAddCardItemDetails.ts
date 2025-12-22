@@ -1,10 +1,7 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
 import { useUserSettings } from '@console/shared';
 
-export const useShowAddCardItemDetails = (): [
-  boolean,
-  React.Dispatch<React.SetStateAction<boolean>>,
-] => {
+export const useShowAddCardItemDetails = (): [boolean, Dispatch<SetStateAction<boolean>>] => {
   const [showDetails, setShowDetails, showDetailsLoaded] = useUserSettings(
     'devconsole.addPage.showDetails',
     true,

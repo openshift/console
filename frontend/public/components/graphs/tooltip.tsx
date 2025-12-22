@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 // Mostly just a copy-paste from patternfly.
-import * as React from 'react';
+import type { FunctionComponent, CSSProperties } from 'react';
+
+import { cloneElement } from 'react';
 import { defaults } from 'lodash';
 import { Helpers } from 'victory-core';
 import {
@@ -24,7 +26,7 @@ import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/victo
 
 import { DataPoint } from '.';
 
-export const ChartLegendTooltipContent: React.FunctionComponent<
+export const ChartLegendTooltipContent: FunctionComponent<
   ChartLegendTooltipContentProps & {
     stack?: boolean;
     mainDataName?: string;
@@ -123,7 +125,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
 
   // Returns the label component
   const getLabelComponent = () =>
-    React.cloneElement(labelComponent, {
+    cloneElement(labelComponent, {
       dx: maxLegendDimensions.width - minLegendDimensions.width,
       legendData: visibleLegendData,
       ...labelComponent.props,
@@ -133,7 +135,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
   const getTitleComponent = () => {
     const _title = title instanceof Function ? title(activePoints) : title;
 
-    return React.cloneElement(titleComponent, {
+    return cloneElement(titleComponent, {
       style: {
         fill: ChartLegendTooltipStyles.label.fill,
       },
@@ -162,7 +164,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
 
   // Returns the legebd component
   const getLegendComponent = () =>
-    React.cloneElement(legendComponent, {
+    cloneElement(legendComponent, {
       data: tooltipLegendData,
       labelComponent: getLabelComponent(),
       standalone: false,
@@ -181,7 +183,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<
 };
 ChartLegendTooltipContent.displayName = 'ChartLegendTooltipContent';
 
-export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendTooltipLabelProps> = ({
+export const ChartLegendTooltipLabel: FunctionComponent<ChartLegendTooltipLabelProps> = ({
   index = 0,
   legendData,
   style,
@@ -194,7 +196,7 @@ export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendTooltip
   ...rest
 }: ChartLegendTooltipLabelProps) => {
   const getStyle = (styles: any) => {
-    const applyDefaultStyle = (customStyle: React.CSSProperties) =>
+    const applyDefaultStyle = (customStyle: CSSProperties) =>
       defaults(
         {
           ...customStyle,
@@ -221,7 +223,7 @@ export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendTooltip
 };
 ChartLegendTooltipLabel.displayName = 'ChartLegendTooltipLabel';
 
-export const ChartLegendTooltip: React.FunctionComponent<
+export const ChartLegendTooltip: FunctionComponent<
   Omit<ChartLegendTooltipProps, 'title'> & {
     stack?: boolean;
     formatDate: (data: DataPoint<Date>[]) => string;
@@ -292,7 +294,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
 
   // Returns the tooltip content component
   const getTooltipContentComponent = () =>
-    React.cloneElement(labelComponent, {
+    cloneElement(labelComponent, {
       center,
       flyoutHeight: flyoutHeight || getFlyoutHeight(),
       flyoutWidth: flyoutWidth || getFlyoutWidth(),
@@ -308,7 +310,7 @@ export const ChartLegendTooltip: React.FunctionComponent<
   const getTooltipComponent = () => {
     const _flyoutWidth = getFlyoutWidth();
     const tooltipComponent = isCursorTooltip ? <ChartCursorTooltip /> : <ChartTooltip />;
-    return React.cloneElement(tooltipComponent, {
+    return cloneElement(tooltipComponent, {
       activePoints,
       center,
       datum,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { Component, ReactNode, ReactElement } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ExtensionHook } from '../api/common-types';
 import { Extension, CodeRef, ExtensionDeclaration } from '../types';
@@ -41,9 +41,7 @@ export type DetailsTabSection = ExtensionDeclaration<
     /** Returns a section for the graph element or undefined if not provided.
      * @deprecated Fallback if no provider is defined. renderNull is a no-op already.
      */
-    section: CodeRef<
-      (element: GraphElement, renderNull?: () => null) => React.Component | undefined
-    >;
+    section: CodeRef<(element: GraphElement, renderNull?: () => null) => Component | undefined>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -65,7 +63,7 @@ export type DetailsResourceLink = ExtensionDeclaration<
     /** Return the resource link if provided, otherwise undefined.
      * Use ResourceIcon and ResourceLink for styles.
      * */
-    link: CodeRef<(element: GraphElement) => React.Component | undefined>;
+    link: CodeRef<(element: GraphElement) => Component | undefined>;
   }
 >;
 
@@ -153,9 +151,9 @@ export type DetailsResourceAlertContent = {
    * State will be store in user settings, once dismissed alert won't show up again untill user settings state resets
    */
   dismissible?: boolean;
-  content: React.Component | undefined | JSX.Element | string;
+  content: Component | undefined | JSX.Element | string;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'custom';
-  actionLinks?: React.ReactNode;
+  actionLinks?: ReactNode;
 };
 
 export type AdapterDataType<D = {}, T = {}> = {
@@ -177,7 +175,4 @@ export type NetworkAdapterType = {
   resource: K8sResourceCommon;
 };
 
-export type DetailsTabSectionExtensionHook = ExtensionHook<
-  React.ReactElement | undefined,
-  GraphElement
->;
+export type DetailsTabSectionExtensionHook = ExtensionHook<ReactElement | undefined, GraphElement>;

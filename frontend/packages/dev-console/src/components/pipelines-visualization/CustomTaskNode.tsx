@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import { css } from '@patternfly/react-styles';
@@ -46,7 +47,7 @@ interface CustomTaskProps {
 
 const FILTER_ID = 'SvgTaskDropShadowFilterId';
 
-const CustomTaskComponent: React.FC<CustomTaskProps> = ({
+const CustomTaskComponent: FC<CustomTaskProps> = ({
   pipelineRunName,
   namespace,
   task,
@@ -59,8 +60,8 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   const { t } = useTranslation();
   const showStatusState: boolean = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = React.useRef();
-  const pillRef = React.useRef();
+  const nameRef = useRef();
+  const pillRef = useRef();
 
   const path = `${resourcePathFromModel(
     CustomRunModelV1Beta1,
@@ -69,7 +70,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   )}`;
   const enableLogLink = !!path;
   const [hover, hoverRef] = useHover();
-  const truncatedVisualName = React.useMemo(
+  const truncatedVisualName = useMemo(
     () => truncateMiddle(visualName, { length: showStatusState ? 11 : 14, truncateEnd: true }),
     [visualName, showStatusState],
   );
@@ -148,7 +149,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   );
 };
 
-const CustomTaskNode: React.FC<CustomTaskNodeProps> = ({ element, disableTooltip }) => {
+const CustomTaskNode: FC<CustomTaskNodeProps> = ({ element, disableTooltip }) => {
   const { height, width } = element.getBounds();
 
   const { pipeline, pipelineRun, task } = element.getData();
@@ -183,4 +184,4 @@ const CustomTaskNode: React.FC<CustomTaskNodeProps> = ({ element, disableTooltip
   return taskComponent;
 };
 
-export default React.memo(observer(CustomTaskNode));
+export default memo(observer(CustomTaskNode));

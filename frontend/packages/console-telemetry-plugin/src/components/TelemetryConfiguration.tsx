@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FormHelperText,
   FormSection,
@@ -36,7 +37,7 @@ type TelemetryAnalyticsSelectOptions = {
   isSelected: boolean;
 };
 
-const TelemetryAnalyticsSelect: React.FC<{
+const TelemetryAnalyticsSelect: FC<{
   disabled: boolean;
   value?: CLUSTER_TELEMETRY_ANALYTICS;
   onChange: (selectedOption: TelemetryAnalyticsSelectOptions) => void;
@@ -69,10 +70,10 @@ const TelemetryAnalyticsSelect: React.FC<{
     },
   ];
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const selection = options.find((option) => option.isSelected)?.value;
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
@@ -117,7 +118,7 @@ const TelemetryAnalyticsSelect: React.FC<{
   );
 };
 
-const TelemetryConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const TelemetryConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -125,10 +126,10 @@ const TelemetryConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) =
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     TelemetryConsoleConfig
   >();
-  const [configuredTelemetrySetting, setConfiguredTelemetrySetting] = React.useState<
+  const [configuredTelemetrySetting, setConfiguredTelemetrySetting] = useState<
     CLUSTER_TELEMETRY_ANALYTICS
   >();
-  React.useEffect(() => {
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !configuredTelemetrySetting) {
       setConfiguredTelemetrySetting(
         consoleConfig?.metadata?.annotations?.['telemetry.console.openshift.io/STATE'],
@@ -137,7 +138,7 @@ const TelemetryConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) =
   }, [configuredTelemetrySetting, consoleConfig, consoleConfigLoaded]);
 
   // Save the latest changes
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     setSaveStatus({ status: 'in-progress' });
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
@@ -18,7 +19,7 @@ import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from 
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
 import { getUISchema } from './utils';
 
-export const OperandForm: React.FC<OperandFormProps> = ({
+export const OperandForm: FC<OperandFormProps> = ({
   csv,
   formData,
   model,
@@ -28,7 +29,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   prune,
   schema,
 }) => {
-  const [errors, setErrors] = React.useState<string[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
   const params = useParams();
   const postFormCallback = useResourceConnectionHandler();
   const processFormData = ({ metadata, ...rest }) => {
@@ -63,7 +64,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
     }
   };
 
-  const uiSchema = React.useMemo(() => getUISchema(schema, providedAPI), [schema, providedAPI]);
+  const uiSchema = useMemo(() => getUISchema(schema, providedAPI), [schema, providedAPI]);
 
   useScrollToTopOnMount();
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
@@ -19,20 +20,20 @@ interface HelmReleaseHistoryProps {
   customData: HelmRelease;
 }
 
-const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
+const HelmReleaseHistory: FC<HelmReleaseHistoryProps> = ({
   obj,
   customData: latestHelmRelease,
 }) => {
   const params = useParams();
   const namespace = params.ns;
   const helmReleaseName = params.name;
-  const [revisionsLoaded, setRevisionsLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>();
-  const [revisions, setRevisions] = React.useState([]);
+  const [revisionsLoaded, setRevisionsLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>();
+  const [revisions, setRevisions] = useState([]);
   const memoizedObj = useDeepCompareMemoize(obj);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let destroyed = false;
     fetchHelmReleaseHistory(helmReleaseName, namespace)
       .then((items) => {
@@ -56,13 +57,13 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({
   const totalRevisions = revisions?.length || 0;
   const latestHelmReleaseVersion = latestHelmRelease?.version || 0;
 
-  const customRowRenderer = React.useCallback(
+  const customRowRenderer = useCallback(
     (releaseHistory: HelmRelease[]) =>
       getHelmReleaseHistoryRows(releaseHistory, totalRevisions, latestHelmReleaseVersion),
     [totalRevisions, latestHelmReleaseVersion],
   );
 
-  const customSortFunctions = React.useMemo(
+  const customSortFunctions = useMemo(
     () => ({
       0: (r: HelmRelease) => r.version, // Revision
       1: (r: HelmRelease) => new Date(r.info.last_deployed).getTime(), // Updated

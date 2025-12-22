@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Resources } from '../import/import-types';
 import FormSection from '../import/section/FormSection';
 import { HealthChecksProbeType } from './health-checks-types';
@@ -9,7 +9,7 @@ interface HealthChecksProps {
   resourceType: Resources;
 }
 
-const HealthChecks: React.FC<HealthChecksProps> = ({ title, resourceType }) => (
+const HealthChecks: FC<HealthChecksProps> = ({ title, resourceType }) => (
   <FormSection title={title}>
     <HealthCheckProbe probeType={HealthChecksProbeType.ReadinessProbe} />
 

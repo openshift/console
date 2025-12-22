@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Checkbox, FormGroup } from '@patternfly/react-core';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 
-export const SaveAsDefaultCheckbox: React.FC<SaveAsDefaultCheckboxProps> = ({
+export const SaveAsDefaultCheckbox: FC<SaveAsDefaultCheckboxProps> = ({
   formField,
   disabled,
   label,

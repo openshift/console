@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { cloneElement } from 'react';
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
@@ -179,7 +179,7 @@ describe('CreateSubscriptionYAML', () => {
   it('displays package name in the subscription YAML when loaded', () => {
     mockFirehose.mockImplementationOnce((firehoseProps) => {
       const childElement = firehoseProps.children;
-      return React.cloneElement(childElement, {
+      return cloneElement(childElement, {
         packageManifest: { loaded: true, data: testPackageManifest },
         operatorGroup: { loaded: true, data: [] },
       });
@@ -193,7 +193,7 @@ describe('CreateSubscriptionYAML', () => {
   it('displays loading indicator when package manifest is not yet loaded', () => {
     mockFirehose.mockImplementationOnce((firehoseProps) => {
       const childElement = firehoseProps.children;
-      return React.cloneElement(childElement, {
+      return cloneElement(childElement, {
         packageManifest: { loaded: false },
         operatorGroup: { loaded: false },
       });
@@ -207,7 +207,7 @@ describe('CreateSubscriptionYAML', () => {
   it('displays subscription YAML with default channel information', () => {
     mockFirehose.mockImplementationOnce((firehoseProps) => {
       const childElement = firehoseProps.children;
-      return React.cloneElement(childElement, {
+      return cloneElement(childElement, {
         packageManifest: { loaded: true, data: testPackageManifest },
         operatorGroup: { loaded: true, data: [] },
       });

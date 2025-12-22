@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
@@ -14,7 +14,7 @@ import {
 } from '../../../const';
 import Subscribe from './Subscribe';
 
-const SubscribePage: React.FC = () => {
+const SubscribePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
@@ -9,7 +9,7 @@ interface PVCDropdownProps {
   namespace: string;
 }
 
-const PVCDropdown: React.FC<PVCDropdownProps> = ({ name, namespace }) => {
+const PVCDropdown: FC<PVCDropdownProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = [

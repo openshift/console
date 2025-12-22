@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import i18next from 'i18next';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { ChannelIcon } from '../utils/icons';
 
-const EventChannelIcon: React.FC = () => <ChannelIcon title="Eventing Channel" />;
+const EventChannelIcon: FC = () => <ChannelIcon title="Eventing Channel" />;
 
 export const AddChannelAction = (
   namespace: string,

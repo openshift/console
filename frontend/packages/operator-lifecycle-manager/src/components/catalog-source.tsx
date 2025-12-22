@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useCallback } from 'react';
 import { Button, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
@@ -80,7 +81,7 @@ const getOperatorCount = (
       p.status?.catalogSourceNamespace === catalogSource.metadata.namespace,
   ).length;
 
-const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
+const getEndpoint = (catalogSource: CatalogSourceKind): ReactNode => {
   if (catalogSource.spec.configmap) {
     return (
       <ResourceLink
@@ -93,7 +94,7 @@ const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
   return catalogSource.spec.image || catalogSource.spec.address;
 };
 
-export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
+export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
   obj: catalogSource,
   packageManifests,
 }) => {
@@ -166,11 +167,11 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
   );
 };
 
-export const CatalogSourceOperatorsPage: React.FC<CatalogSourceOperatorsPageProps> = (props) => {
+export const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => {
   return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
 };
 
-export const CatalogSourceDetailsPage: React.FC = (props) => {
+export const CatalogSourceDetailsPage: FC = (props) => {
   const { t } = useTranslation();
   const params = useParams();
 
@@ -211,7 +212,7 @@ export const CatalogSourceDetailsPage: React.FC = (props) => {
   );
 };
 
-export const CreateSubscriptionYAML: React.FC = (props) => {
+export const CreateSubscriptionYAML: FC = (props) => {
   type CreateProps = {
     packageManifest: { loaded: boolean; data?: PackageManifestKind };
     operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
@@ -296,7 +297,7 @@ const getRowProps = (obj) => ({
     : undefined,
 });
 
-const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
+const CatalogSourceTableRow: FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
   obj: {
     availability = '-',
     endpoint = '-',
@@ -340,7 +341,7 @@ const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>>
   </>
 );
 
-const CatalogSourceList: React.FC<TableProps> = (props) => {
+const CatalogSourceList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   const CatalogSourceHeader = () => {
     return [
@@ -403,12 +404,12 @@ const CatalogSourceList: React.FC<TableProps> = (props) => {
   );
 };
 
-const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) => {
-  const [visible, setVisible] = React.useState<boolean>(null);
-  const close = React.useCallback(() => {
+const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) => {
+  const [visible, setVisible] = useState<boolean>(null);
+  const close = useCallback(() => {
     setVisible(false);
   }, []);
-  const onClickEnable = React.useCallback(
+  const onClickEnable = useCallback(
     () => enableSource(OperatorHubModel, operatorHub, sourceName).callback().then(close),
     [close, operatorHub, sourceName],
   );
@@ -496,7 +497,7 @@ const flatten = ({
   );
 };
 
-export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (props) => {
+export const CatalogSourceListPage: FC<CatalogSourceListPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <MultiListPage
@@ -526,9 +527,9 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
 };
 
 type CatalogSourceTableRowObj = {
-  availability: React.ReactNode;
+  availability: ReactNode;
   disabled?: boolean;
-  endpoint?: React.ReactNode;
+  endpoint?: ReactNode;
   isDefault?: boolean;
   name: string;
   namespace: string;

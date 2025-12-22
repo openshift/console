@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useMemo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -40,14 +41,14 @@ export type EventSinkProps = {
   canDrop?: boolean;
   dropTarget?: boolean;
   edgeOperation?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const EventSink: React.FC<EventSinkProps> = ({
+const EventSink: FC<EventSinkProps> = ({
   element,
   dragNodeRef,
   dndDropRef,
@@ -61,7 +62,7 @@ const EventSink: React.FC<EventSinkProps> = ({
   ...rest
 }) => {
   useAnchor(EventSinkTargetAnchor, AnchorEnd.target, TYPE_EVENT_SINK_LINK);
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const groupRefs = useCombineRefs(dragNodeRef, dndDropRef);
@@ -72,7 +73,7 @@ const EventSink: React.FC<EventSinkProps> = ({
     element.getSourceEdges()?.filter((edge: Edge) => edge.getType() === TYPE_KAFKA_CONNECTION_LINK)
       .length > 0;
   const { revisions, associatedDeployment } = resources;
-  const revisionIds = React.useMemo(() => revisions?.map((revision) => revision.metadata.uid), [
+  const revisionIds = useMemo(() => revisions?.map((revision) => revision.metadata.uid), [
     revisions,
   ]);
 
@@ -93,7 +94,7 @@ const EventSink: React.FC<EventSinkProps> = ({
 
   const isKafkaSink = referenceFor(resource) === referenceForModel(KafkaSinkModel);
 
-  const donutStatus = React.useMemo(() => {
+  const donutStatus = useMemo(() => {
     if (!revisionIds && loadedDeployment && !loadErrorDeployment) {
       return podsDeployment;
     }

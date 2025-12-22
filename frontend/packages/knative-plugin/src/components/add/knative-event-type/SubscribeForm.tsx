@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -36,7 +37,7 @@ type Props = FormikProps<FormikValues> & SubscribeFormProps;
 
 const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.addSubscriberForm.editor.lastView';
 
-const SubscribeForm: React.FC<Props> = ({
+const SubscribeForm: FC<Props> = ({
   filterEnabled,
   handleSubmit,
   handleCancel,
@@ -47,7 +48,7 @@ const SubscribeForm: React.FC<Props> = ({
   values,
 }) => {
   const { t } = useTranslation();
-  const [showYAMLAlert, setShowYAMLAlert] = React.useState<boolean>(true);
+  const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
   const { kind: sourceKind } = source;
   const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
   const getResourceModel = () =>

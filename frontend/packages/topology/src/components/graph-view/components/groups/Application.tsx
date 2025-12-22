@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   DefaultGroup,
@@ -33,7 +34,7 @@ type ApplicationProps = {
   WithDragNodeProps &
   WithContextMenuProps;
 
-const Application: React.FC<ApplicationProps> = ({
+const Application: FC<ApplicationProps> = ({
   element,
   dragNodeRef,
   canDrop,
@@ -44,8 +45,8 @@ const Application: React.FC<ApplicationProps> = ({
   const [hover, hoverRef] = useHover();
   const refs = useCombineRefs(dragNodeRef, hoverRef);
   const [filtered] = useSearchFilter(element.getLabel());
-  const needsHintRef = React.useRef<boolean>(false);
-  React.useEffect(() => {
+  const needsHintRef = useRef<boolean>(false);
+  useEffect(() => {
     const needsHint = dropTarget && !canDrop && dragRegroupable;
     if (needsHint !== needsHintRef.current) {
       needsHintRef.current = needsHint;

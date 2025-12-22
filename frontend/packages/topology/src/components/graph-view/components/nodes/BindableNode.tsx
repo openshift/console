@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import {
   observer,
   Node,
@@ -23,7 +24,7 @@ type BindableNodeProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const BindableNode: React.FC<BindableNodeProps> = ({
+const BindableNode: FC<BindableNodeProps> = ({
   element,
   selected,
   onSelect,
@@ -31,7 +32,7 @@ const BindableNode: React.FC<BindableNodeProps> = ({
   ...rest
 }) => {
   const nodeElement = element as Node;
-  const spec = React.useMemo(() => getRelationshipProvider(), []);
+  const spec = useMemo(() => getRelationshipProvider(), []);
   const { width, height } = nodeElement.getBounds();
   const iconRadius = Math.min(width, height) * 0.25;
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element: nodeElement, ...rest });

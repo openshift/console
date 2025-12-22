@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
@@ -49,7 +50,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
   ];
 };
 
-export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
+export const WebhookTriggers: FC<WebhookTriggersProps> = (props) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const { resource } = props;
@@ -62,20 +63,20 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     namespace,
   });
   const tableColumnClasses = getTableColumnClasses(canGetSecret);
-  const [webhookSecrets, setWebhookSecrets] = React.useState<K8sResourceKind[]>([]);
-  const [webhookTriggers, setWebhookTriggers] = React.useState<WebhookTrigger[]>([]);
-  const [secretNames, setSecretNames] = React.useState<string[]>([]);
-  const [secretErrors, setSecretErrors] = React.useState<string[]>([]);
-  const [isLoaded, setLoaded] = React.useState(false);
+  const [webhookSecrets, setWebhookSecrets] = useState<K8sResourceKind[]>([]);
+  const [webhookTriggers, setWebhookTriggers] = useState<WebhookTrigger[]>([]);
+  const [secretNames, setSecretNames] = useState<string[]>([]);
+  const [secretErrors, setSecretErrors] = useState<string[]>([]);
+  const [isLoaded, setLoaded] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setWebhookTriggers((previousTriggers) => {
       const newTriggers = _.filter(triggers, ({ type }) => webhookTriggerTypes.has(type));
       return _.isEqual(previousTriggers, newTriggers) ? previousTriggers : newTriggers;
     });
   }, [triggers]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const newSecretNames: string[] = _.uniq(
       webhookTriggers.reduce((acc: string[], webhook: WebhookTrigger): string[] => {
         const triggerProperty = getTriggerProperty(webhook);
@@ -86,7 +87,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     setSecretNames(newSecretNames);
   }, [webhookTriggers]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!canGetSecret) {
       return;
     }

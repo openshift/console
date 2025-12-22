@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
@@ -14,7 +14,7 @@ type BuildRunLogsTabProps = {
   obj: BuildRun;
 };
 
-const BuildRunLogsTab: React.FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
+const BuildRunLogsTab: FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
 

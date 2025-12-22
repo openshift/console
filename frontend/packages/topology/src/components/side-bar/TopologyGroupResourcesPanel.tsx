@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import TopologyGroupResourceList from './TopologyGroupResourceList';
@@ -6,10 +6,10 @@ import TopologyGroupResourceList from './TopologyGroupResourceList';
 type TopologyGroupResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
   releaseNamespace: string;
-  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement;
 };
 
-const TopologyGroupResourcesPanel: React.FC<TopologyGroupResourcesPanelProps> = ({
+const TopologyGroupResourcesPanel: FC<TopologyGroupResourcesPanelProps> = ({
   manifestResources,
   releaseNamespace,
   linkForResource,

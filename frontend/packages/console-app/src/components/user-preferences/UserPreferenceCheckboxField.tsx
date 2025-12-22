@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Checkbox, Skeleton } from '@patternfly/react-core';
 import {
   UserPreferenceCheckboxField as CheckboxFieldType,
@@ -12,7 +12,7 @@ import './UserPreferenceField.scss';
 
 type UserPreferenceCheckboxFieldProps = UserPreferenceFieldProps<CheckboxFieldType>;
 
-const UserPreferenceCheckboxField: React.FC<UserPreferenceCheckboxFieldProps> = ({
+const UserPreferenceCheckboxField: FC<UserPreferenceCheckboxFieldProps> = ({
   id,
   label,
   userSettingsKey,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
@@ -27,16 +27,14 @@ const k8sWatchMock = k8sWatch as jest.Mock;
 // Redux wrapper
 let store;
 interface WrapperProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 // Object under test
 const resourceUpdate = jest.fn();
-const WatchResource: React.FC<{ initResource: WatchK8sResource }> = ({ initResource }) => {
+const WatchResource: FC<{ initResource: WatchK8sResource }> = ({ initResource }) => {
   resourceUpdate(...useK8sWatchResource(initResource));
   return null;
 };

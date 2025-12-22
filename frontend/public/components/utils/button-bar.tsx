@@ -1,16 +1,17 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { Children, cloneElement } from 'react';
 import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from './status-box';
 
 const injectDisabled = (children, disabled) => {
-  return React.Children.map(children, (c) => {
+  return Children.map(children, (c) => {
     if (!_.isObject(c) || c.type !== 'button') {
       return c;
     }
 
-    return React.cloneElement(c, { disabled: c.props.disabled || disabled });
+    return cloneElement(c, { disabled: c.props.disabled || disabled });
   });
 };
 
@@ -42,9 +43,9 @@ const SuccessMessage = ({ message }) => (
 );
 
 export interface ButtonBarProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  errorMessage?: React.ReactNode;
+  errorMessage?: ReactNode;
   infoMessage?: string;
   successMessage?: string;
   inProgress?: boolean;

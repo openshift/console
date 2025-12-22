@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useEffect } from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import {
   DescriptionList,
@@ -251,14 +251,14 @@ export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
   const currentCSVDescription = useCurrentCSVDescription(packageManifest);
   const selectedChannelDescription = currentCSVDescription?.description || longDescription;
   const packageManifestStatus = packageManifest?.status;
-  const [isTokenAuth, isTokenAuthGCP] = React.useMemo(() => {
+  const [isTokenAuth, isTokenAuthGCP] = useMemo(() => {
     return [
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuthGCP),
     ];
   }, [infraFeatures]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setDeprecatedPackage({ deprecation: packageManifestStatus?.deprecation });
   }, [packageManifestStatus, setDeprecatedPackage]);
 
@@ -366,7 +366,7 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
-  const supportWorkflowUrl = React.useMemo(() => {
+  const supportWorkflowUrl = useMemo(() => {
     if (marketplaceSupportWorkflow) {
       try {
         const url = new URL(marketplaceSupportWorkflow);

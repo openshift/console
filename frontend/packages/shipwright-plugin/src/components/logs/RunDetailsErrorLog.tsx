@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -14,7 +14,7 @@ type RunDetailErrorLogProps = {
   namespace: string;
 };
 
-const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({ logDetails, namespace }) => {
+const RunDetailsErrorLog: FC<RunDetailErrorLogProps> = ({ logDetails, namespace }) => {
   const { t } = useTranslation();
   if (!logDetails) {
     return null;

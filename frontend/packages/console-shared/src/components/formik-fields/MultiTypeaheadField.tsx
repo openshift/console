@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Label,
   LabelGroup,
@@ -25,7 +26,7 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
+const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -42,7 +43,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
   onChange,
   getLabelFromValue,
 }) => {
-  const [initialSelectOptions, setInitialSelectOptions] = React.useState<SelectOptionProps[]>(
+  const [initialSelectOptions, setInitialSelectOptions] = useState<SelectOptionProps[]>(
     _.map(options, (option) => ({
       value: option.value,
       description: option.description,
@@ -55,19 +56,19 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
 
   const [field, { touched, error }] = useField<string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
 
-  const [inputValue, setInputValue] = React.useState<string>('');
-  const [filteredSelectOptions, setFilteredSelectOptions] = React.useState<SelectOptionProps[]>(
+  const [inputValue, setInputValue] = useState<string>('');
+  const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(
     initialSelectOptions,
   );
-  const [focusedItemIndex, setFocusedItemIndex] = React.useState<number | null>(null);
-  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
-  const [onCreation, setOnCreation] = React.useState<boolean>(false); // Boolean to refresh filter state after new option is created
-  const textInputRef = React.useRef<HTMLInputElement>();
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [onCreation, setOnCreation] = useState<boolean>(false); // Boolean to refresh filter state after new option is created
+  const textInputRef = useRef<HTMLInputElement>();
 
   useFormikValidationFix(field.value);
 
@@ -77,7 +78,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
 
   const createItemId = (value: any) => `${ID_PREFIX}-value-${value.replace(' ', '-')}`;
 
-  React.useEffect(() => {
+  useEffect(() => {
     let newSelectOptions: SelectOptionProps[] = initialSelectOptions;
 
     // Filter menu items based on the text input value when one exists
@@ -171,7 +172,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
     textInputRef.current?.focus();
   };
 
-  const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const onTextInputChange = (_event: FormEvent<HTMLInputElement>, value: string) => {
     setInputValue(value);
     resetActiveAndFocusedItem();
   };
@@ -224,7 +225,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
     setActiveAndFocusedItem(indexToFocus);
   };
 
-  const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const focusedItem = focusedItemIndex !== null ? filteredSelectOptions[focusedItemIndex] : null;
 
     switch (event.key) {
@@ -262,7 +263,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
     (getLabelFromValue && getLabelFromValue(value)) ||
     value;
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       variant="typeahead"
       onClick={onToggleClick}
@@ -277,7 +278,7 @@ const MultiTypeaheadField: React.FC<MultiTypeaheadFieldProps> = ({
           value={inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {
+          onKeyDown={(ev: KeyboardEvent<HTMLInputElement>) => {
             ev.key === 'Enter' && ev.preventDefault(); // prevent accidental form submission
             onInputKeyDown(ev);
           }}

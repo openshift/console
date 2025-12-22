@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, gridItemSpanValueShape } from '@patternfly/react-core';
 import './MultiColumnField.scss';
 
@@ -7,7 +7,7 @@ export interface MultiColumnFieldHeaderProps {
   spans: gridItemSpanValueShape[];
 }
 
-const MultiColumnFieldHeader: React.FC<MultiColumnFieldHeaderProps> = ({ headers, spans }) => (
+const MultiColumnFieldHeader: FC<MultiColumnFieldHeaderProps> = ({ headers, spans }) => (
   <div className="odc-multi-column-field__header">
     <Grid>
       {headers.map((header, i) => (

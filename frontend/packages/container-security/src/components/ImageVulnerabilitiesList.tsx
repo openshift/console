@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -21,7 +21,7 @@ type ImageVuln = {
   vulnerability: Vulnerability;
 };
 
-const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props) => {
+const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
   const { t } = useTranslation();
   const {
     obj: {

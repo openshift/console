@@ -1,23 +1,24 @@
-import * as React from 'react';
+import type { FC, MouseEvent, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useMemo } from 'react';
 import { MultiTypeaheadSelect, MultiTypeaheadSelectOption } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 
-export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
+export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({
   onChange,
   placeholder,
   id,
   options,
   defaultSelected = [],
 }) => {
-  const [selected, setSelected] = React.useState<string[]>(defaultSelected || []);
+  const [selected, setSelected] = useState<string[]>(defaultSelected || []);
   const { t } = useTranslation();
 
-  const initialOptions = React.useMemo<MultiTypeaheadSelectOption[]>(
+  const initialOptions = useMemo<MultiTypeaheadSelectOption[]>(
     () => options.map((opt) => ({ content: opt, value: opt, selected: selected.includes(opt) })),
     [selected, options],
   );
 
-  const onSelect = (event: React.MouseEvent | React.ChangeEvent, selections: string[]) => {
+  const onSelect = (event: MouseEvent | ChangeEvent, selections: string[]) => {
     event.preventDefault();
     setSelected(selections);
     onChange(selections);
@@ -33,7 +34,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       aria-label={t('console-shared~Select input')}
       aria-labelledby={id}
       toggleProps={{
-        onKeyDown: (event: React.KeyboardEvent<any>) => {
+        onKeyDown: (event: KeyboardEvent<any>) => {
           if (event.key === 'Enter') {
             event.preventDefault();
           }

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RadioGroupField } from '@console/shared';
 import { sourceSinkType } from '../../import-types';
 import SinkResources, { SinkResourcesProps } from './SinkResources';
 import SinkUri from './SinkUri';
 
-const SinkUriResourcesGroup: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
+const SinkUriResourcesGroup: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const { t } = useTranslation();
   return (
     <RadioGroupField

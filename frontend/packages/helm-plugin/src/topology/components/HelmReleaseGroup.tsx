@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Layer,
@@ -39,7 +39,7 @@ type HelmReleaseGroupProps = {
   WithDndDropProps;
 
 const DECORATOR_RADIUS = 13;
-const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
+const HelmReleaseGroup: FC<HelmReleaseGroupProps> = ({
   element,
   badge,
   badgeColor,

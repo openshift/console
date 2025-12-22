@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FormEvent } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
@@ -25,7 +25,7 @@ const RemoveIdentityProviderModalComponent = ({
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     handlePromise(
       k8sPatchResource({

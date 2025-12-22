@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, ReactElement, ReactNode, Ref, FC } from 'react';
 import {
   Graph,
   Node,
@@ -65,7 +65,7 @@ export type ViewComponentFactory = (
   kind: ModelKind,
   type: string,
   view?: TopologyViewType,
-) => React.ComponentType<{ element: GraphElement }> | undefined;
+) => ComponentType<{ element: GraphElement }> | undefined;
 
 export type TopologyDataModelDepicted = (resource: K8sResourceCommon, model: Model) => boolean;
 
@@ -74,7 +74,7 @@ export type TopologyDataModelReconciler = (model: Model, resources: TopologyData
 export type CreateConnection = (
   source: Node,
   target: Node | Graph,
-) => Promise<React.ReactElement[] | null>;
+) => Promise<ReactElement[] | null>;
 
 export type CreateConnectionGetter = (
   createHints: string[],
@@ -119,7 +119,7 @@ export type TopologyDecoratorGetter = (
   radius: number,
   centerX: number,
   centerY: number,
-) => React.ReactElement;
+) => ReactElement;
 
 export type TopologyDecorator = {
   id: string;
@@ -225,16 +225,16 @@ export type TopologyListViewNodeProps = {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
-  badgeCell?: React.ReactNode;
-  labelCell?: React.ReactNode;
-  alertsCell?: React.ReactNode;
-  memoryCell?: React.ReactNode;
-  cpuCell?: React.ReactNode;
-  statusCell?: React.ReactNode;
-  groupResourcesCell?: React.ReactNode;
+  badgeCell?: ReactNode;
+  labelCell?: ReactNode;
+  alertsCell?: ReactNode;
+  memoryCell?: ReactNode;
+  cpuCell?: ReactNode;
+  statusCell?: ReactNode;
+  groupResourcesCell?: ReactNode;
   hideAlerts?: boolean;
   noPods?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export type UseOverviewMetrics = () => any;
@@ -243,9 +243,7 @@ export type WithEditReviewAccessComponentProps = { element: Node };
 
 export type WithEditReviewAccess = (
   verb: K8sVerb,
-) => (
-  WrappedComponent: React.ComponentType,
-) => React.ComponentType<WithEditReviewAccessComponentProps>;
+) => (WrappedComponent: ComponentType) => ComponentType<WithEditReviewAccessComponentProps>;
 
 export type PodStats = {
   name: string;
@@ -331,8 +329,8 @@ export type WorkloadNodeProps = {
   highlight?: boolean;
   canDrop?: boolean;
   dropTarget?: boolean;
-  urlAnchorRef?: React.Ref<SVGCircleElement>;
-  dropTooltip?: React.ReactNode;
+  urlAnchorRef?: Ref<SVGCircleElement>;
+  dropTooltip?: ReactNode;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -353,7 +351,7 @@ export type BaseNodeProps = {
   icon?: string;
   kind?: string;
   labelIconClass?: string; // Icon to show in label
-  labelIcon?: React.ReactNode;
+  labelIcon?: ReactNode;
   labelIconPadding?: number;
   badge?: string;
   badgeColor?: string;
@@ -361,8 +359,8 @@ export type BaseNodeProps = {
   badgeBorderColor?: string;
   badgeClassName?: string;
   badgeLocation?: BadgeLocation;
-  children?: React.ReactNode;
-  attachments?: React.ReactNode;
+  children?: ReactNode;
+  attachments?: ReactNode;
   element: Node;
   hoverRef?: (node: Element) => () => void;
   dragging?: boolean;
@@ -403,9 +401,9 @@ interface ConnectorComponentProps {
   hover?: boolean;
 }
 
-type CreateConnectorRenderer = React.ComponentType<ConnectorComponentProps>;
+type CreateConnectorRenderer = ComponentType<ConnectorComponentProps>;
 
-type OnCreateResult = ConnectorChoice[] | void | undefined | null | React.ReactElement[];
+type OnCreateResult = ConnectorChoice[] | void | undefined | null | ReactElement[];
 
 type CreateConnectorWidgetProps = {
   element: Node;
@@ -426,9 +424,7 @@ export type WithCreateConnector = <P extends WithCreateConnectorProps & ElementP
   ConnectorComponent?: CreateConnectorRenderer,
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
-) => (
-  WrappedComponent: React.ComponentType<Partial<P>>,
-) => React.FC<Omit<P, keyof WithCreateConnectorProps>>;
+) => (WrappedComponent: ComponentType<Partial<P>>) => FC<Omit<P, keyof WithCreateConnectorProps>>;
 
 export interface OdcBaseNodeInterface extends Node<OdcNodeModel> {
   resource?: K8sResourceKind;

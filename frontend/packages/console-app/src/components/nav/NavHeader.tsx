@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent, Ref } from 'react';
+import { useMemo, lazy, useState, useCallback, Suspense } from 'react';
 import {
   MenuToggle,
   MenuToggleElement,
@@ -23,24 +24,19 @@ type PerspectiveDropdownItemProps = {
   onClick: (perspective: string) => void;
 };
 
-const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
-  perspective,
-  onClick,
-}) => {
-  const LazyIcon = React.useMemo(() => React.lazy(perspective.properties.icon), [
-    perspective.properties.icon,
-  ]);
+const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => {
+  const LazyIcon = useMemo(() => lazy(perspective.properties.icon), [perspective.properties.icon]);
   return (
     <SelectOption
       key={perspective.properties.id}
-      onClick={(e: React.MouseEvent<HTMLLinkElement>) => {
+      onClick={(e: MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
         onClick(perspective.properties.id);
       }}
       icon={
-        <React.Suspense fallback={<>&emsp;</>}>
+        <Suspense fallback={<>&emsp;</>}>
           <LazyIcon />
-        </React.Suspense>
+        </Suspense>
       }
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
@@ -50,16 +46,16 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
   );
 };
 
-const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
+const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
-  const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
+  const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = useState(false);
   const perspectiveExtensions = usePerspectives();
 
-  const togglePerspectiveOpen = React.useCallback(() => {
+  const togglePerspectiveOpen = useCallback(() => {
     setPerspectiveDropdownOpen((isOpen) => !isOpen);
   }, []);
 
-  const onPerspectiveSelect = React.useCallback(
+  const onPerspectiveSelect = useCallback(
     (perspective: string): void => {
       setActivePerspective(perspective);
       setPerspectiveDropdownOpen(false);
@@ -77,14 +73,14 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     />
   ));
 
-  const { icon, name } = React.useMemo(
+  const { icon, name } = useMemo(
     () =>
       perspectiveExtensions.find((p) => p?.properties?.id === activePerspective)?.properties ??
       perspectiveExtensions[0]?.properties ?? { icon: null, name: null },
     [activePerspective, perspectiveExtensions],
   );
 
-  const LazyIcon = React.useMemo(() => icon && React.lazy(icon), [icon]);
+  const LazyIcon = useMemo(() => icon && lazy(icon), [icon]);
 
   return perspectiveDropdownItems.length > 1 ? (
     <div
@@ -96,7 +92,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
         isOpen={isPerspectiveDropdownOpen}
         data-test-id="perspective-switcher-menu"
         onOpenChange={(open) => setPerspectiveDropdownOpen(open)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             isFullWidth
             data-test-id="perspective-switcher-toggle"

@@ -1,4 +1,3 @@
-import { FCC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
@@ -8,7 +7,7 @@ import { SecretFormType } from './types';
 import { toSecretFormType } from './utils';
 import { SecretFormWrapper } from './SecretFormWrapper';
 
-export const EditSecret: FCC<EditSecretProps> = ({ kind }) => {
+export const EditSecret: React.FCC<EditSecretProps> = ({ kind }) => {
   const { name, ns } = useParams();
 
   const [secret, secretLoaded, secretError] = useK8sWatchResource<K8sResourceKind>({

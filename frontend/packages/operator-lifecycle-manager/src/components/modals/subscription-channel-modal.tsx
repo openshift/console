@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { Radio, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +15,7 @@ import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
 import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 
-export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> = ({
+export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   cancel,
   close,
   k8sUpdate,
@@ -24,10 +25,10 @@ export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> =
   const { t } = useTranslation();
   const currentChannel = subscription?.spec?.channel;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [selectedChannel, setSelectedChannel] = React.useState(currentChannel);
+  const [selectedChannel, setSelectedChannel] = useState(currentChannel);
 
-  const submit = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>): void => {
+  const submit = useCallback(
+    (event: FormEvent<HTMLFormElement>): void => {
       event.preventDefault();
       handlePromise(
         k8sUpdate(SubscriptionModel, {

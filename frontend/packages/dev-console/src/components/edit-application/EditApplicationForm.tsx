@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ export interface EditApplicationFormProps {
   appResources: AppResources;
 }
 
-const EditApplicationForm: React.FC<
+const EditApplicationForm: FC<
   FormikProps<FormikValues & GitImportFormData> & EditApplicationFormProps
 > = ({
   handleSubmit,

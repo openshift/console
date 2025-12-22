@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceSummary } from '@console/internal/components/utils';
@@ -11,7 +11,7 @@ type StatefulSetSideBarDetailsProps = {
   ss: K8sResourceKind;
 };
 
-const StatefulSetSideBarDetails: React.FC<StatefulSetSideBarDetailsProps> = ({ ss }) => (
+const StatefulSetSideBarDetails: FC<StatefulSetSideBarDetailsProps> = ({ ss }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
       <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
