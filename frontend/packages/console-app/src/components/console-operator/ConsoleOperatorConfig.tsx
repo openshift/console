@@ -89,7 +89,10 @@ export const useConsoleOperatorConfigData = () => {
 };
 
 export const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ status, errorMessage }) => (
-  <Status status={status} title={status === 'failed' ? errorMessage : undefined} />
+  <Status
+    status={status.charAt(0).toUpperCase() + status.slice(1)}
+    title={status === 'failed' ? errorMessage : undefined}
+  />
 );
 
 export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = ({
