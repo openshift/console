@@ -1,6 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk/src';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/';
 import { getAddGroups } from '../../utils/add-page-utils';
 import { AddGroup } from '../types';

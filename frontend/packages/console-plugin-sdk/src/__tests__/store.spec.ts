@@ -1,5 +1,6 @@
 import * as Combinatorics from 'js-combinatorics';
 import * as _ from 'lodash';
+import type { Extension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
@@ -11,7 +12,6 @@ import {
   getGatingFlagNames,
   PluginStore,
 } from '../store';
-import { Extension } from '../typings';
 
 describe('sanitizeExtension', () => {
   it('sanitizes the flags object for gated extensions', () => {

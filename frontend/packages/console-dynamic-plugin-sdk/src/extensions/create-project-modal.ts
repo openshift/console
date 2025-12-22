@@ -1,5 +1,5 @@
 import { ModalComponent } from '../app/modal-support/ModalProvider';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { K8sResourceCommon } from './console-types';
 
 export type CreateProjectModalProps = {
@@ -7,7 +7,7 @@ export type CreateProjectModalProps = {
 };
 
 /** This extension can be used to pass a component that will be rendered in place of the standard create project modal. */
-export type CreateProjectModal = ExtensionDeclaration<
+export type CreateProjectModal = Extension<
   'console.create-project-modal',
   {
     /** A component to render in place of the create project modal */

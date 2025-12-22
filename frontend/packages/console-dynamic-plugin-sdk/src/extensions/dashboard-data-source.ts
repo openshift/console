@@ -1,6 +1,6 @@
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
-export type DataSource = ExtensionDeclaration<
+export type DataSource = Extension<
   'console.dashboards/datasource',
   {
     contextId: string;

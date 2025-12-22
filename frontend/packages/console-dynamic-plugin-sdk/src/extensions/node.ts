@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { Extension, CodeRef } from '../types';
 import { NodeKind, ResourcesObject, WatchK8sResources, WatchK8sResults } from './console-types';
 
 export type IsNodeStatusActive<T extends ResourcesObject> = (
@@ -13,7 +13,7 @@ export type NodePopoverContentProps<T extends ResourcesObject> = {
 };
 
 /** This extension can be used to add additional states to Node resource. */
-export type NodeStatus<T extends ResourcesObject = ResourcesObject> = ExtensionDeclaration<
+export type NodeStatus<T extends ResourcesObject = ResourcesObject> = Extension<
   'console.node/status',
   {
     /** Returns true if the additional state is active */

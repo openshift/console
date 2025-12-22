@@ -12,7 +12,7 @@ import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import {
+import type {
   ExtensionK8sGroupKindModel,
   K8sModel,
   K8sVerb,
@@ -23,7 +23,7 @@ import {
   ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import { Extension, ExtensionTypeGuard } from '../types';
+import type { Extension, ExtensionTypeGuard } from '../types';
 import { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {

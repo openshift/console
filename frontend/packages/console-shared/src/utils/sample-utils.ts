@@ -11,6 +11,7 @@ import {
   isPerspective,
   Perspective,
 } from '@console/dynamic-plugin-sdk';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,
@@ -27,7 +28,6 @@ import {
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LoadedExtension } from '@console/plugin-sdk/src';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { defaultCatalogCategories } from './default-categories';
 

@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 import { JSONSchema7Type } from 'json-schema';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 export type Resource = {
@@ -68,7 +68,7 @@ export type ClusterConfigurationCustomField = {
 
 export type ClusterConfigurationField = ClusterConfigurationCustomField;
 
-export type ClusterConfigurationGroup = ExtensionDeclaration<
+export type ClusterConfigurationGroup = Extension<
   'console.cluster-configuration/group',
   {
     /** ID used to identify the cluster configuration group. */
@@ -82,7 +82,7 @@ export type ClusterConfigurationGroup = ExtensionDeclaration<
   }
 >;
 
-export type ClusterConfigurationItem = ExtensionDeclaration<
+export type ClusterConfigurationItem = Extension<
   'console.cluster-configuration/item',
   {
     /** ID used to identify the cluster configuration item and referenced in insertAfter and insertBefore to define the item order. */
