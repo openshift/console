@@ -73,7 +73,7 @@ func NewAsyncCache[T any](ctx context.Context, reloadPeriod time.Duration, cachi
 func (c *AsyncCache[T]) runCache(ctx context.Context) {
 	item, err := c.cachingFunc(ctx)
 	if err != nil {
-		klog.Errorf("failed a caching attempt: %v", err)
+		klog.V(4).Infof("failed a caching attempt: %v", err)
 		return
 	}
 
