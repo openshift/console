@@ -129,11 +129,11 @@ const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePo
 
   const addHostValidationSchema = Yup.lazy(({ enablePowerManagement }) =>
     Yup.object().shape({
-      name: Yup.mixed()
+      name: Yup.string()
         .test(
           'unique-name',
           t('metal3-plugin~Name "${value}" is already taken.'), // eslint-disable-line no-template-curly-in-string
-          (value) => !hostNames.includes(value),
+          (value: string) => !hostNames.includes(value),
         )
         .concat(nameValidationSchema(t)),
       BMCAddress: enablePowerManagement

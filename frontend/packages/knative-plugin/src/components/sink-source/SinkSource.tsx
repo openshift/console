@@ -79,7 +79,7 @@ const SinkSource: FC<SinkSourceProps> = ({ source, cancel, close }) => {
           formData: yup.object().shape({
             sink: yup.object().when('sinkType', {
               is: SinkType.Uri,
-              then: sinkTypeUriValidation(t),
+              then: (schema) => schema.concat(sinkTypeUriValidation(t)),
             }),
           }),
         })
