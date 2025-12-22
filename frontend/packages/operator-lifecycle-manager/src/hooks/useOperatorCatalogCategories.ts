@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { OLMAnnotation } from '../components/operator-hub';
 import { getCurrentCSVDescription } from '../utils/packagemanifests';
@@ -8,7 +9,9 @@ import { useOperatorHubPackageManifests } from './useOperatorHubPackageManifests
 
 const useOperatorCatalogCategories = (): CatalogCategory[] => {
   const [activeNamespace] = useActiveNamespace();
-  const [packageManifests, loaded, loadError] = useOperatorHubPackageManifests(activeNamespace);
+  const [packageManifests, loaded, loadError] = useOperatorHubPackageManifests(
+    activeNamespace === ALL_NAMESPACES_KEY ? null : activeNamespace,
+  );
   return React.useMemo<CatalogCategory[]>(() => {
     if (!loaded) {
       return [];

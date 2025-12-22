@@ -171,7 +171,6 @@
   "Shipwright Builds": "Shipwright Builds",
   "Select a Project to view the list of builds<1></1>.": "Select a Project to view the list of builds<1></1>.",
   "Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.": "Add shared applications, services, event sources, or source-to-image builders to your Project from the software catalog. Cluster administrators can customize the content made available in the catalog.",
-  "Select a Project to view the software catalog<1></1>.": "Select a Project to view the software catalog<1></1>.",
   "Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the \"Search\" and \"Topology\" will still show such resources.": "Another option to customize and standardize your development process. As an admin, you can disable the complete Software Catalog, or individual sub-catalogs (available as Types in the Software Catalog). Also here the \"Search\" and \"Topology\" will still show such resources.",
   "Enabled types": "Enabled types",
   "Disabled types": "Disabled types",

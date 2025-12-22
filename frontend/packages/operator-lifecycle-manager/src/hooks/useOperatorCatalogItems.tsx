@@ -3,11 +3,7 @@ import { Spinner } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  useActiveNamespace,
-  CatalogItem,
-  CatalogItemBadge,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { CatalogItem, CatalogItemBadge } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { parseList, PlainList, strConcat } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -63,9 +59,8 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     error,
   );
 
-export const useOperatorCatalogItems = () => {
+export const useOperatorCatalogItems = ({ namespace }) => {
   const { t } = useTranslation('olm');
-  const [namespace] = useActiveNamespace();
   const [operatorGroups, operatorGroupsLoaded, operatorGroupsLoadError] = useOperatorGroups();
   const [
     operatorHubPackageManifests,

@@ -1,6 +1,5 @@
 import { act } from 'react-dom/test-utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { DevfileSample } from '../../../import/devfile/devfile-types';
 import useDevfileSamples from '../useDevfileSamples';
@@ -12,16 +11,10 @@ jest.mock('@console/internal/co-fetch', () => ({
   coFetchJSON: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
-  useActiveNamespace: jest.fn(),
-}));
-
 const getMock = (coFetchJSON as unknown) as jest.Mock;
-const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 
 beforeEach(() => {
   jest.resetAllMocks();
-  useActiveNamespaceMock.mockReturnValue([ns]);
 });
 
 describe('useDevfileSamples:', () => {
@@ -29,7 +22,7 @@ describe('useDevfileSamples:', () => {
     let resolver: (samples: DevfileSample[]) => void;
     getMock.mockReturnValue(new Promise((resolve) => (resolver = resolve)));
 
-    const { result } = testHook(() => useDevfileSamples({}));
+    const { result } = testHook(() => useDevfileSamples({ namespace: ns }));
 
     expect(getMock).toHaveBeenCalledTimes(1);
     expect(getMock).toHaveBeenLastCalledWith(
@@ -47,7 +40,7 @@ describe('useDevfileSamples:', () => {
     let rejector: (error: Error) => void;
     getMock.mockReturnValue(new Promise((_, reject) => (rejector = reject)));
 
-    const { result } = testHook(() => useDevfileSamples({}));
+    const { result } = testHook(() => useDevfileSamples({ namespace: ns }));
 
     expect(getMock).toHaveBeenCalledTimes(1);
     expect(getMock).toHaveBeenLastCalledWith(
