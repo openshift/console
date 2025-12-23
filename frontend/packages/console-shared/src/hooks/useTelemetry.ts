@@ -46,9 +46,7 @@ export const getClusterProperties = () => {
   ) {
     clusterProperties.clusterType = 'DEVSANDBOX';
   }
-  // Prefer to report the OCP version (releaseVersion) if available.
-  clusterProperties.consoleVersion =
-    window.SERVER_FLAGS.releaseVersion || window.SERVER_FLAGS.consoleVersion;
+  clusterProperties.consoleVersion = window.SERVER_FLAGS.releaseVersion;
   clusterProperties.organizationId = window.SERVER_FLAGS.telemetry?.ORGANIZATION_ID;
   clusterProperties.accountMail = window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL;
   return clusterProperties;
