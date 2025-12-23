@@ -243,9 +243,10 @@ export const useOperatorCatalogItems = () => {
                 variant: 'secondary',
               }
             : {
-                label: t('Install'),
+                label: isInstalling ? t('Installing') : t('Install'),
                 href: installLink,
                 variant: 'primary',
+                disabled: isInstalling,
               };
 
         const badges = [
