@@ -166,6 +166,7 @@ export type CatalogItem<T extends any = any> = {
     label: string;
     href?: string;
     callback?: (props?: any) => void;
+    disabled?: boolean;
   };
   icon?: {
     url?: string;
