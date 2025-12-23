@@ -1,10 +1,12 @@
 {
+  "Insights": "Insights",
+  "Red Hat Lightspeed Advisor status": "Red Hat Lightspeed Advisor のステータス",
   "low": "低 (low)",
   "moderate": "中程度 (moderate)",
   "important": "重要 (important)",
   "critical": "重大 (critical)",
   "Last refresh": "最終更新",
-  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Insights Advisor は、クラスターのセキュリティー、パフォーマンス、可用性、および安定性のリスクを特定し、優先順位を付けます。",
+  "Red Hat Lightspeed Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Red Hat Lightspeed Advisor は、クラスターのセキュリティー、パフォーマンス、可用性、および安定性のリスクを特定し、優先順位を付けます。",
   "Temporarily unavailable.": "一時的に利用できません。",
   "Disabled.": "無効。",
   "Waiting for results.": "結果を待っています。",
@@ -12,14 +14,12 @@
   "Total issue_other": "全体の問題",
   "Total risk": "全体リスク",
   "Fixable issues": "修正可能な問題",
-  "View all recommendations in Insights Advisor": "Insights Advisor でのすべての推奨事項を表示します",
-  "View more in Insights Advisor": "詳細は、Insights Advisor を参照してください",
+  "View all recommendations in Red Hat Lightspeed Advisor": "Red Hat Lightspeed Advisor の推奨事項をすべて表示",
+  "View more in Red Hat Lightspeed Advisor": "Red Hat Lightspeed Advisor で詳細を表示",
   "More about Insights": "Insights の詳細",
   "Not available": "利用不可",
   "Disabled": "無効",
   "Issues pending": "保留中の問題",
   "{{issuesNumber}} issue found": "{{issuesNumber}} 件の問題が見つかりました",
-  "{{issuesNumber}} issues found": "{{issuesNumber}} 件の問題が見つかりました",
-  "Insights": "Insights",
-  "Insights Advisor status": "Insights Advisor のステータス"
+  "{{issuesNumber}} issues found": "{{issuesNumber}} 件の問題が見つかりました"
 }

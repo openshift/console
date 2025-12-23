@@ -1,8 +1,8 @@
 {
   "Web Terminal": "Web ターミナル",
   "Configure default timeout and image of web terminal operator.": "Web ターミナル Operator のデフォルトのタイムアウトおよびイメージを設定します。",
-  "DevWorkspaceTemplate": "開発ワークスペーステンプレート",
-  "DevWorkspaceTemplates": "DevWorkspace テンプレート",
+  "DevWorkspaceTemplate": "DevWorkspaceTemplate",
+  "DevWorkspaceTemplates": "DevWorkspaceTemplates",
   "OpenShift command line terminal": "OpenShift コマンドラインターミナル",
   "Open terminal in new tab": "新規タブでターミナルを開く",
   "Minimize terminal": "ターミナルを最小化する",
