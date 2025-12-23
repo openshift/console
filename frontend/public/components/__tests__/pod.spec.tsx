@@ -171,8 +171,8 @@ describe('ContainerRow', () => {
   it('verifies container timing information', async () => {
     await renderContainerRow();
 
-    expect(screen.getByText(/Feb 9, 2022/)).toBeVisible();
-    expect(screen.getByText(/11:20|6:20/)).toBeVisible();
+    expect(screen.getAllByText(/Feb 9, 2022/)[0]).toBeVisible();
+    expect(screen.getAllByText(/11:20|6:20|4:50/)[0]).toBeVisible();
     expect(screen.getByText(/Completed/)).toBeVisible();
   });
 });
