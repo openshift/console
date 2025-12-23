@@ -360,16 +360,18 @@ const AppRouter: React.FC = () => {
 const CaptureTelemetry = memo(function CaptureTelemetry() {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
-  const [debounceTime, setDebounceTime] = useState(5000);
   const [titleOnLoad, setTitleOnLoad] = useState('');
   // notify of identity change
   const user = useSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
 
+  // Track if we've already fired the initial page event
+  const initialPageFiredRef = useRef(false);
+
+  // Wait 5 seconds before firing the first page event to allow initial redirects to settle
   useEffect(() => {
     setTimeout(() => {
       setTitleOnLoad(telemetryTitle);
-      setDebounceTime(500);
     }, 5000);
   }, [telemetryTitle]);
 
@@ -377,9 +379,11 @@ const CaptureTelemetry = memo(function CaptureTelemetry() {
     if (user?.uid || user?.username) {
       fireTelemetryEvent('identify', { perspective, user });
     }
-    // Only trigger identify event when the user identifier changes
+    // Only trigger identify event when the user identifier changes.
+    // fireTelemetryEvent is stable (doesn't change identity) so it's safe to omit.
+    // We intentionally exclude perspective/user object - identify is for user identity, not navigation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.uid || user?.username, fireTelemetryEvent]);
+  }, [user?.uid, user?.username]);
 
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
@@ -390,25 +394,36 @@ const CaptureTelemetry = memo(function CaptureTelemetry() {
       title: getTelemetryTitle(),
       ...withoutSensitiveInformations(location),
     });
-  }, debounceTime);
+  }, 500);
+
+  // Use a ref to always have the latest fireUrlChangeEvent without triggering effect re-runs
+  const fireUrlChangeEventRef = useRef(fireUrlChangeEvent);
+  fireUrlChangeEventRef.current = fireUrlChangeEvent;
+
   useEffect(() => {
     if (!titleOnLoad) {
       return;
     }
-    fireUrlChangeEvent(history.location);
+    // Only fire initial page event once
+    if (!initialPageFiredRef.current) {
+      initialPageFiredRef.current = true;
+      fireUrlChangeEventRef.current(history.location);
+    }
     let { pathname, search } = history.location;
     const unlisten = history.listen((location) => {
       const { pathname: nextPathname, search: nextSearch } = history.location;
       if (pathname !== nextPathname || search !== nextSearch) {
         pathname = nextPathname;
         search = nextSearch;
-        fireUrlChangeEvent(location);
+        fireUrlChangeEventRef.current(location);
       }
     });
     return () => {
       unlisten();
     };
-  }, [perspective, fireUrlChangeEvent, titleOnLoad]);
+    // fireUrlChangeEventRef is stable, so we don't need it in deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [perspective, titleOnLoad]);
 
   return null;
 });
