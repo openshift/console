@@ -132,7 +132,7 @@ const MoveConnectionModal: React.FC<MoveConnectionModalProps> = (props) => {
   const { t } = useTranslation();
   const [handlePromise] = usePromiseHandler();
 
-  const onSubmit = React.useCallback(
+  const onSubmit = useCallback(
     (newTarget: Node): Promise<K8sResourceKind[] | K8sResourceKind> => {
       switch (edge.getType()) {
         case TYPE_CONNECTS_TO:
@@ -154,7 +154,7 @@ const MoveConnectionModal: React.FC<MoveConnectionModalProps> = (props) => {
     [edge, t],
   );
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     (values, actions) => {
       return handlePromise(onSubmit(values.target))
         .then(() => {

@@ -64,11 +64,11 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
   );
 };
 
-const EditApplicationModal: React.FC<EditApplicationModalProps> = (props) => {
+const EditApplicationModal: FC<EditApplicationModalProps> = (props) => {
   const { resourceKind, resource, close } = props;
   const [handlePromise] = usePromiseHandler();
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     (values, actions) => {
       const applicationKey = values.application.selectedKey;
       const application = applicationKey === UNASSIGNED_KEY ? undefined : values.application.name;
