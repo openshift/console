@@ -102,7 +102,7 @@ const MachineConfigDetails: React.FCC<MachineConfigDetailsProps> = ({ obj }) => 
                     <Button
                       icon={<BlueInfoCircleIcon />}
                       variant={ButtonVariant.plain}
-                      aria-label={'public~Info'}
+                      aria-label={t('public~Info')}
                       className="pf-v6-u-ml-sm pf-v6-u-p-0"
                     />
                   </Popover>
