@@ -402,3 +402,65 @@ func TestInstallChartAsync(t *testing.T) {
 		})
 	}
 }
+
+func TestInstallOCIChart(t *testing.T) {
+	tests := []struct {
+		releaseName  string
+		chartPath    string
+		chartName    string
+		chartVersion string
+		plainHTTP    bool
+		insecureTLS  bool
+	}{
+		{
+			releaseName:  "valid-chart-path",
+			chartPath:    "http://localhost:9181/charts/influxdb-3.0.2.tgz",
+			chartName:    "influxdb",
+			chartVersion: "3.0.2",
+		},
+		{
+			releaseName:  "valid-chart-path",
+			chartPath:    "oci://localhost:5000/helm-charts/mychart:0.1.0",
+			chartName:    "mychart",
+			chartVersion: "0.1.0",
+			plainHTTP:    true,
+		},
+		{
+			releaseName:  "valid-chart-path",
+			chartPath:    "oci://localhost:5443/helm-charts/mariadb:7.3.5",
+			chartName:    "mariadb",
+			chartVersion: "7.3.5",
+			insecureTLS:  true,
+		},
+		{
+			releaseName:  "invalid-chart-path",
+			chartPath:    "http://localhost:9181/charts/influxdb/filename",
+			chartName:    "influxdb",
+			chartVersion: "3.0.1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.releaseName, func(t *testing.T) {
+			store := storage.Init(driver.NewMemory())
+			actionConfig := &action.Configuration{
+				RESTClientGetter: FakeConfig{},
+				Releases:         store,
+				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				Capabilities:     chartutil.DefaultCapabilities,
+				Log:              func(format string, v ...interface{}) {},
+			}
+			GetOCIRegistry(actionConfig, tt.insecureTLS, tt.plainHTTP)
+
+			rel, err := InstallOCIChart("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig)
+			if tt.releaseName == "valid-chart-path" {
+				require.NoError(t, err)
+				require.Equal(t, tt.releaseName, rel.Name)
+				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
+				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
+
+			} else if tt.releaseName == "invalid-chart-path" {
+				require.Error(t, err)
+			}
+		})
+	}
+}

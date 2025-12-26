@@ -30,6 +30,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		renderManifests:         actions.RenderManifests,
 		installChartAsync:       actions.InstallChartAsync,
 		installChart:            actions.InstallChart,
+		installOCIChart:         actions.InstallOCIChart,
 		listReleases:            actions.ListReleases,
 		getRelease:              actions.GetRelease,
 		getChart:                actions.GetChart,
@@ -39,6 +40,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		uninstallReleaseAsync:   actions.UninstallReleaseAsync,
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
+		getDefaultOCIRegistry:   actions.GetDefaultOCIRegistry,
 	}
 
 	h.newProxy = func(bearerToken string) (getter chartproxy.Proxy, err error) {
@@ -62,6 +64,7 @@ type helmHandlers struct {
 	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
 	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
+	installOCIChart       func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
 	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
@@ -72,6 +75,7 @@ type helmHandlers struct {
 	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
 	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
+	getDefaultOCIRegistry func(*action.Configuration) error
 }
 
 func (h *helmHandlers) restConfig(bearerToken string) *rest.Config {
@@ -127,6 +131,11 @@ func (h *helmHandlers) HandleHelmInstall(user *auth.User, w http.ResponseWriter,
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
@@ -163,6 +172,11 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
@@ -240,6 +254,11 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	indexEntry := params.Get("indexEntry")
 	// scope request to default namespace
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	err := h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
@@ -277,6 +296,11 @@ func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWrit
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
@@ -313,6 +337,11 @@ func (h *helmHandlers) HandleUpgradeReleaseAsync(user *auth.User, w http.Respons
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
@@ -366,6 +395,11 @@ func (h *helmHandlers) HandleRollbackRelease(user *auth.User, w http.ResponseWri
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
 	rel, err := h.rollbackRelease(req.Name, req.Version, conf)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
@@ -463,4 +497,28 @@ func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.Respo
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *helmHandlers) HandleInstallOCIChart(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	var req HelmRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		return
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	err = h.getDefaultOCIRegistry(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway,
+			serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
+		return
+	}
+	resp, err := h.installOCIChart(req.Namespace, req.Name, req.ChartUrl, req.Values, conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
+		return
+	}
+	serverutils.SendResponse(w, http.StatusCreated, resp)
 }

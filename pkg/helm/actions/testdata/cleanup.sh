@@ -11,3 +11,6 @@ GOOS=${GOOS:-$(go env GOOS)}
 GOARCH=${GOARCH:-$(go env GOARCH)}
 rm -rf ./$GOOS-$GOARCH
 rm -rf ./chartmuseum.tar.gz
+rm -rf ./helm.tar.gz
+# Zot cleanup
+rm -rf ./zot-storage-*

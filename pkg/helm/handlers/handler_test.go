@@ -63,6 +63,7 @@ var fakeReleaseManifest = "manifest-data"
 func fakeHelmHandler() helmHandlers {
 	return helmHandlers{
 		getActionConfigurations: getFakeActionConfigurations,
+		getDefaultOCIRegistry:   fakeGetDefaultOCIRegistry,
 	}
 }
 
@@ -198,6 +199,16 @@ func (f FakeConfig) ToRESTConfig() (config *rest.Config, err error) {
 func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *action.Configuration {
 	return &action.Configuration{
 		RESTClientGetter: FakeConfig{},
+	}
+}
+
+func fakeGetDefaultOCIRegistry(conf *action.Configuration) error {
+	return nil
+}
+
+func fakeInstallOCIChart(mockedRelease *release.Release, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
+		return mockedRelease, err
 	}
 }
 
@@ -1039,6 +1050,66 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			response := httptest.NewRecorder()
 
 			handlers.HandleHelmInstallAsync(&auth.User{}, response, request)
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != "application/json" {
+				t.Errorf("content type should be application/json but got %s", response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleInstallOCIChart(t *testing.T) {
+	tests := []struct {
+		name             string
+		requestBody      string
+		expectedResponse string
+		installedRelease release.Release
+		error
+		httpStatusCode int
+	}{
+		{
+			name:             "Invalid JSON request",
+			requestBody:      `{invalid}`,
+			expectedResponse: `{"error":"Failed to parse request: invalid character 'i' looking for beginning of object key string"}`,
+			httpStatusCode:   http.StatusBadGateway,
+		},
+		{
+			name:             "Error occurred during OCI chart installation",
+			requestBody:      `{"name":"test-release","namespace":"default","chartUrl":"http://ghcr.io/test/chart"}`,
+			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
+			error:            errors.New("Chart path is invalid"),
+			httpStatusCode:   http.StatusBadGateway,
+		},
+		{
+			name:             "Successful OCI chart install returns release info",
+			requestBody:      `{"name":"test-release","namespace":"default","chartUrl":"oci://ghcr.io/test/chart"}`,
+			installedRelease: fakeRelease,
+			httpStatusCode:   http.StatusCreated,
+			expectedResponse: `{"name":"Test"}`,
+		},
+		{
+			name:             "Successful HTTP .tgz chart install returns release info",
+			requestBody:      `{"name":"test-release","namespace":"default","chartUrl":"https://charts.example.com/mychart-1.0.0.tgz"}`,
+			installedRelease: fakeRelease,
+			httpStatusCode:   http.StatusCreated,
+			expectedResponse: `{"name":"Test"}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.installOCIChart = fakeInstallOCIChart(&tt.installedRelease, tt.error)
+
+			request := httptest.NewRequest("POST", "/api/helm/release/oci", strings.NewReader(tt.requestBody))
+			request.Header.Set("Content-Type", "application/json")
+			response := httptest.NewRecorder()
+
+			handlers.HandleInstallOCIChart(&auth.User{}, response, request)
 			if response.Code != tt.httpStatusCode {
 				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
 			}
