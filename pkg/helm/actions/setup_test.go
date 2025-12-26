@@ -33,6 +33,9 @@ func TestMain(m *testing.M) {
 	if err := ExecuteScript("./testdata/chartmuseum-stop.sh", false); err != nil {
 		panic(err)
 	}
+	if err := ExecuteScript("./testdata/zot-stop.sh", false); err != nil {
+		panic(err)
+	}
 	if err := ExecuteScript("./testdata/cleanupNonTls.sh", false); err != nil {
 		panic(err)
 	}
@@ -52,11 +55,23 @@ func setupTestWithTls() error {
 	if err := ExecuteScript("./testdata/chartmuseum.sh", false); err != nil {
 		return err
 	}
+	if err := ExecuteScript("./testdata/downloadZot.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/downloadHelm.sh", false); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/zot.sh", false); err != nil {
+		return err
+	}
 	time.Sleep(5 * time.Second)
 	if err := ExecuteScript("./testdata/cacertCreate.sh", true); err != nil {
 		return err
 	}
 	if err := ExecuteScript("./testdata/uploadCharts.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/uploadOciCharts.sh", true); err != nil {
 		return err
 	}
 	return nil
@@ -66,8 +81,14 @@ func setupTestWithoutTls() error {
 	if err := ExecuteScript("./testdata/chartmuseumWithoutTls.sh", false); err != nil {
 		return err
 	}
+	if err := ExecuteScript("./testdata/zotWithoutTls.sh", false); err != nil {
+		return err
+	}
 	time.Sleep(5 * time.Second)
 	if err := ExecuteScript("./testdata/uploadChartsWithoutTls.sh", true); err != nil {
+		return err
+	}
+	if err := ExecuteScript("./testdata/uploadOciChartsWithoutTls.sh", true); err != nil {
 		return err
 	}
 	return nil

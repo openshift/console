@@ -409,12 +409,28 @@ func TestInstallOCIChart(t *testing.T) {
 		chartPath    string
 		chartName    string
 		chartVersion string
+		plainHTTP    bool
+		insecureTLS  bool
 	}{
 		{
 			releaseName:  "valid-chart-path",
 			chartPath:    "http://localhost:9181/charts/influxdb-3.0.2.tgz",
 			chartName:    "influxdb",
 			chartVersion: "3.0.2",
+		},
+		{
+			releaseName:  "valid-chart-path",
+			chartPath:    "oci://localhost:5000/helm-charts/mychart:0.1.0",
+			chartName:    "mychart",
+			chartVersion: "0.1.0",
+			plainHTTP:    true,
+		},
+		{
+			releaseName:  "valid-chart-path",
+			chartPath:    "oci://localhost:5443/helm-charts/mariadb:7.3.5",
+			chartName:    "mariadb",
+			chartVersion: "7.3.5",
+			insecureTLS:  true,
 		},
 		{
 			releaseName:  "invalid-chart-path",
@@ -433,6 +449,7 @@ func TestInstallOCIChart(t *testing.T) {
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
+			GetOCIRegistry(actionConfig, tt.insecureTLS, tt.plainHTTP)
 
 			rel, err := InstallOCIChart("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig)
 			if tt.releaseName == "valid-chart-path" {
