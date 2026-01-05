@@ -30,7 +30,7 @@
       "Bash(git branch *)",
       "Bash(git show *)",
       "Bash(git stash *)",
-      "Bash(git remove *)",
+      "Bash(git remote *)",
 
       "Bash(gh pr view *)",
       "Bash(gh pr list *)",
