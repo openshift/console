@@ -29,12 +29,12 @@ import {
   useFlag,
   usePerspectiveExtension,
   useTelemetry,
+  useUser,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/webterminal-plugin/src/components/cloud-shell/CloudShellMastheadAction';
-import { getUser } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import * as UIActions from '../actions/ui';
 import { flagPending, featureReducerName } from '../reducers/features';
@@ -128,12 +128,14 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, user, alertCount, canAccessNS } = useSelector((state) => ({
+  const { clusterID, alertCount, canAccessNS } = useSelector((state) => ({
     clusterID: state.UI.get('clusterID'),
-    user: getUser(state),
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
   }));
+
+  // Use centralized user hook for user data
+  const { displayName, username } = useUser();
   const [isAppLauncherDropdownOpen, setIsAppLauncherDropdownOpen] = React.useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = React.useState(false);
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = React.useState(false);
@@ -147,7 +149,6 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
   const kebabMenuRef = React.useRef(null);
   const reportBugLink = cv?.data ? getReportBugLink(cv.data, t) : null;
   const userInactivityTimeout = React.useRef(null);
-  const username = user?.username ?? '';
   const isKubeAdmin = username === 'kube:admin';
 
   const drawerToggle = React.useCallback(
@@ -574,7 +575,7 @@ const MastheadToolbarContents = ({ consoleLinks, cv, isMastheadStacked }) => {
     const userToggle = (
       <span className="pf-v5-c-dropdown__toggle">
         <span className="co-username" data-test="username">
-          {authEnabledFlag ? username : t('public~Auth disabled')}
+          {authEnabledFlag ? displayName : t('public~Auth disabled')}
         </span>
         <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </span>
