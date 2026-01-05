@@ -423,6 +423,7 @@
   "Configure alert receivers": "アラートレシーバーの設定",
   "Take console tour": "コンソールツアーを開始する",
   "View all steps in documentation": "ドキュメントのすべての手順の表示",
+  "View all events": "すべてのイベントを表示",
   "Set up your cluster": "クラスターの設定",
   "Finish setting up your cluster with recommended configurations.": "推奨される設定でクラスターの設定を完了します。",
   "Add identity providers": "アイデンティティープロバイダーの追加",
