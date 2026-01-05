@@ -12,6 +12,14 @@ import (
 	"k8s.io/klog/v2"
 )
 
+// CachedIcon represents a cached operator icon.
+type CachedIcon struct {
+	Data         []byte
+	MediaType    string
+	LastModified string
+	ETag         string
+}
+
 // ConsoleCatalogItem represents a single item in the catalog.
 type ConsoleCatalogItem struct {
 	ID                     string   `json:"id"`

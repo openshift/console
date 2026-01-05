@@ -1,8 +1,12 @@
 package olm
 
 import (
+	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -48,6 +52,10 @@ func getCatalogBaseURLKey(catalog string) string {
 	return keyPrefix + catalog + ":baseURL"
 }
 
+func getCatalogIconKey(catalog, packageName string) string {
+	return keyPrefix + catalog + ":icon:" + packageName
+}
+
 func NewCatalogService(serviceClient *http.Client, proxyConfig *proxy.Config, cache *cache.Cache) *CatalogService {
 	c := &CatalogService{
 		cache:  cache,
@@ -66,6 +74,106 @@ func (s *CatalogService) GetMetas(catalog string, r *http.Request) (*http.Respon
 		}
 	}
 	return s.client.FetchMetas(catalog, baseURL, r)
+}
+
+// GetPackageIcon retrieves the icon for a package from the cache or fetches it from catalogd.
+// Returns the cached icon data, or nil if the package or icon is not found.
+func (s *CatalogService) GetPackageIcon(catalog, packageName string) (*CachedIcon, error) {
+	iconKey := getCatalogIconKey(catalog, packageName)
+
+	// Check cache first
+	if cachedIcon, ok := s.cache.Get(iconKey); ok {
+		if icon, ok := cachedIcon.(*CachedIcon); ok {
+			klog.V(4).Infof("Cache hit for icon: %s/%s", catalog, packageName)
+			return icon, nil
+		}
+		// Malformed cache entry, remove it
+		s.cache.Delete(iconKey)
+	}
+
+	// Cache miss - fetch from catalogd
+	klog.V(4).Infof("Cache miss for icon: %s/%s, fetching from catalogd", catalog, packageName)
+
+	var baseURL string
+	baseURLKey := getCatalogBaseURLKey(catalog)
+	if cachedBaseURL, ok := s.cache.Get(baseURLKey); ok {
+		if baseURL, ok = cachedBaseURL.(string); !ok {
+			return nil, fmt.Errorf("cached base URL for catalog %s is not a string", catalog)
+		}
+	}
+
+	resp, err := s.client.FetchPackageIcon(catalog, baseURL, packageName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch package icon: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("catalogd request failed with status: %d", resp.StatusCode)
+	}
+
+	// Parse the response to extract the package icon
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	icon, err := s.parsePackageIcon(body)
+	if err != nil {
+		return nil, err
+	}
+
+	if icon == nil {
+		// Package found but has no icon
+		klog.V(4).Infof("Package %s/%s has no icon", catalog, packageName)
+		return nil, nil
+	}
+
+	// Cache the icon
+	s.cache.Set(iconKey, icon, cacheExpiration)
+	klog.V(4).Infof("Cached icon for %s/%s", catalog, packageName)
+
+	return icon, nil
+}
+
+// parsePackageIcon extracts icon data from the catalogd metas response.
+func (s *CatalogService) parsePackageIcon(body []byte) (*CachedIcon, error) {
+	var pkg declcfg.Package
+
+	// The response is a JSON stream, we need to parse the first (and only) package
+	reader := io.NopCloser(bytes.NewReader(body))
+	if err := declcfg.WalkMetasReader(reader, func(meta *declcfg.Meta, err error) error {
+		if err != nil {
+			return err
+		}
+		if meta.Schema == declcfg.SchemaPackage {
+			if err := json.Unmarshal(meta.Blob, &pkg); err != nil {
+				return fmt.Errorf("failed to unmarshal package: %w", err)
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("failed to parse package metadata: %w", err)
+	}
+
+	if pkg.Icon == nil || len(pkg.Icon.Data) == 0 {
+		return nil, nil
+	}
+
+	// Generate ETag from icon data
+	hash := md5.Sum(pkg.Icon.Data)
+	etag := hex.EncodeToString(hash[:])
+
+	return &CachedIcon{
+		Data:         pkg.Icon.Data,
+		MediaType:    pkg.Icon.MediaType,
+		LastModified: time.Now().UTC().Format(http.TimeFormat),
+		ETag:         etag,
+	}, nil
 }
 
 // Start begins the polling process.
