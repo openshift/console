@@ -18,8 +18,8 @@ import {
 
 export type ModelExtensionContext = {
   priority: number;
-  resources?: (namespace: string) => WatchK8sResources<any>;
   workloadKeys?: string[];
+  resources?: WatchK8sResources<any>;
   dataModelGetter?: TopologyDataModelGetter;
   dataModelDepicter?: TopologyDataModelDepicted;
   dataModelReconciler?: TopologyDataModelReconciler;
@@ -98,7 +98,7 @@ export class ExtensibleModel {
     const extensionKeys = Object.keys(this.extensions);
     this.watchedResources = extensionKeys.reduce((acc, key) => {
       if (this.extensions[key].resources) {
-        const resList = this.extensions[key].resources(this.namespace);
+        const resList = this.extensions[key].resources;
         Object.keys(resList).forEach((resKey) => {
           if (!acc[resKey]) {
             acc[resKey] = resList[resKey];

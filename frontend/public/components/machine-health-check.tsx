@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +13,6 @@ import { DASH } from '@console/shared/src/constants';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { SectionHeading } from './utils/headings';
 import { Selector } from './utils/selector';
@@ -25,24 +25,18 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: '' }];
 
-const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuActions> = (
-  data,
-  columns,
-) => {
-  return data.map(({ obj, rowData }) => {
+const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns) => {
+  return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
-    const actions = rowData;
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -51,21 +45,13 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuAction
       },
       [tableColumnInfo[1].id]: {
         cell: <ResourceLink kind="Namespace" name={namespace} />,
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[2].id]: {
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
-        props: {
-          modifier: 'nowrap',
-        },
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={actions} kind={machineHealthCheckReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [machineHealthCheckReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -82,7 +68,7 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind, typeof menuAction
 
 const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<MachineHealthCheckKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -121,7 +107,7 @@ const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] =
   return columns;
 };
 
-const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
+const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
   data,
   loaded,
   loadError,
@@ -130,24 +116,22 @@ const MachineHealthCheckList: React.FC<MachineHealthCheckListProps> = ({
   const columns = useMachineHealthCheckColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
-      <ConsoleDataView<MachineHealthCheckKind, typeof menuActions>
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<MachineHealthCheckKind>
         {...props}
         label={MachineHealthCheckModel.labelPlural}
         data={data}
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
-        customRowData={menuActions}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
+const UnhealthyConditionsTable: FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   const { t } = useTranslation();
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
     <EmptyBox label={t('public~Unhealthy conditions')} />
@@ -173,7 +157,7 @@ const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) =
   );
 };
 
-const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
+const MachineHealthCheckDetails: FC<MachineHealthCheckDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -216,7 +200,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   );
 };
 
-export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (props) => (
+export const MachineHealthCheckPage: FC<MachineHealthCheckPageProps> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineHealthCheckList}
@@ -226,10 +210,9 @@ export const MachineHealthCheckPage: React.FC<MachineHealthCheckPageProps> = (pr
   />
 );
 
-export const MachineHealthCheckDetailsPage: React.FC = (props) => (
+export const MachineHealthCheckDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
     kind={machineHealthCheckReference}
     pages={[navFactory.details(MachineHealthCheckDetails), navFactory.editYaml()]}
   />

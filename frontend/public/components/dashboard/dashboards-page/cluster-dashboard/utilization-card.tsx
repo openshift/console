@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref, MouseEvent, ComponentType } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,7 +30,7 @@ import UtilizationItem, {
   LimitRequested,
   trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
@@ -89,7 +90,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     let isLoading = false;
     const { duration } = useUtilizationDuration();
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (!isDisabled) {
         watchPrometheus(utilizationQuery, namespace, duration);
         totalQuery && watchPrometheus(totalQuery, namespace);
@@ -167,7 +168,7 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     isDisabled = false,
   }) => {
     const { duration } = useUtilizationDuration();
-    React.useEffect(() => {
+    useEffect(() => {
       if (!isDisabled) {
         queries.forEach((q) => watchPrometheus(q.query, namespace, duration));
         return () => {
@@ -213,13 +214,13 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
   },
 );
 
-const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
+const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   machineConfigPools,
   onNodeSelect,
   selectedNodes,
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const sortedMCPs = machineConfigPools.sort((a, b) => {
     const order = ['worker', 'master'];
     const indexA = order.indexOf(a.metadata.name);
@@ -250,7 +251,7 @@ const UtilizationCardNodeFilter: React.FC<UtilizationCardNodeFilterProps> = ({
     );
   });
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={(open) => setIsOpen(open)} variant="plainText">
       {t('public~Filter by Node type')}
       {selectedNodes.length > 0 && (
@@ -285,7 +286,7 @@ export const UtilizationCard = () => {
     kind: referenceForModel(MachineConfigPoolModel),
   });
   // TODO: add `useUserSettings` to get default selected
-  const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
     isClusterOverviewUtilizationItem,
@@ -295,7 +296,7 @@ export const UtilizationCard = () => {
   >(isClusterOverviewMultilineUtilizationItem);
 
   // TODO: add `useUserSettingsCompatibility` to store selectedNodes
-  const onNodeSelect = (event: React.MouseEvent, selection: string) => {
+  const onNodeSelect = (event: MouseEvent, selection: string) => {
     const selectionUpdated = selection === 'control plane' ? 'master' : selection;
     if (selectedNodes.includes(selectionUpdated)) {
       setSelectedNodes(selectedNodes.filter((item) => item !== selectionUpdated));
@@ -305,7 +306,7 @@ export const UtilizationCard = () => {
   };
   // if no filter is applied, show all nodes using regex
   const nodeType = _.isEmpty(selectedNodes) ? '.+' : selectedNodes.join('|');
-  const [utilizationQueries, multilineQueries] = React.useMemo(
+  const [utilizationQueries, multilineQueries] = useMemo(
     () => [getUtilizationQueries(nodeType), getMultilineQueries(nodeType)],
     [nodeType],
   );
@@ -421,18 +422,18 @@ type PrometheusUtilizationItemProps = DashboardItemProps &
     totalQuery?: string;
     limitQuery?: string;
     requestQuery?: string;
-    TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProps>;
+    TopConsumerPopover?: ComponentType<TopConsumerPopoverProps>;
     setLimitReqState?: (state: LimitRequested) => void;
   };
 
 type PrometheusMultilineUtilizationItemProps = DashboardItemProps &
   PrometheusCommonProps & {
     queries: QueryWithDescription[];
-    TopConsumerPopovers?: React.ComponentType<TopConsumerPopoverProps>[];
+    TopConsumerPopovers?: ComponentType<TopConsumerPopoverProps>[];
   };
 
 type UtilizationCardNodeFilterProps = {
   machineConfigPools: MachineConfigPoolKind[];
-  onNodeSelect: (event: React.MouseEvent, selection: string) => void;
+  onNodeSelect: (event: MouseEvent, selection: string) => void;
   selectedNodes: string[];
 };

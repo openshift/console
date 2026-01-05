@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { Node, TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
 import { TopologyDecorator } from '../../../../../topology-types';
 
@@ -12,7 +12,7 @@ const getExtensionDecoratorForQuadrant = (
   decoratorRadius: number,
   nodeWidth: number,
   nodeHeight: number,
-): React.ReactElement => {
+): ReactElement => {
   let x: number;
   let y: number;
   const deltaX = nodeRadius > 0 ? nodeRadius : nodeWidth / 2;
@@ -58,7 +58,7 @@ export const getNodeDecorators = (
   decoratorRadius: number,
   nodeWidth?: number,
   nodeHeight?: number,
-): React.ReactNode => {
+): ReactNode => {
   const keys = decorators ? Object.keys(decorators) : [];
   return (
     <>

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEventHandler } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Content, TextInput, ContentVariants } from '@patternfly/react-core';
@@ -26,7 +27,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   const { cancel, close, cv } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [channel, setChannel] = React.useState(cv.spec.channel);
+  const [channel, setChannel] = useState(cv.spec.channel);
   const { t } = useTranslation();
   const availableChannels = getAvailableClusterChannels(cv).reduce((o, val) => {
     o[val] = val;
@@ -34,7 +35,7 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   }, {});
   const version = semver.parse(getLastCompletedUpdate(cv));
   const channelsExist = cv.status?.desired?.channels?.length;
-  const submit: React.FormEventHandler<HTMLFormElement> = (e): void => {
+  const submit: FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
     const patch = [{ op: 'add', path: '/spec/channel', value: channel }];
     handlePromise(k8sPatch(ClusterVersionModel, cv, patch))

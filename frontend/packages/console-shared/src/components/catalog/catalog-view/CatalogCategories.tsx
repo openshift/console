@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
@@ -15,7 +15,7 @@ type CatalogCategoriesProp = {
   onSelectCategory: (category: string) => void;
 };
 
-const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
+const CatalogCategories: FC<CatalogCategoriesProp> = ({
   categories,
   categorizedIds,
   selectedCategory,
@@ -28,7 +28,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
     selectedCategoryID: string,
     toplevelCategory: boolean,
   ) => {
-    if (!categorizedIds[category.id]) return null;
+    if (!category || !categorizedIds[category.id]) return null;
 
     const { id, label, subcategories } = category;
     const active = id === selectedCategory;

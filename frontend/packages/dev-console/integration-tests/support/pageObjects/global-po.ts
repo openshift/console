@@ -54,3 +54,4 @@ export const pagePO = {
 };
 export const resourceRow = '[data-test-rows="resource-row"]';
 export const helpDropdownMenu = '[data-test="help-dropdown-toggle"]';
+export const switchToFormView = '[id="form-radiobutton-editorType-form-field"]';

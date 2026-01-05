@@ -1,15 +1,17 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
+const EventSourceRow: FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -34,7 +36,7 @@ const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => 
       <TableData>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={Kebab.columnClass}>
+      <TableData className={KEBAB_COLUMN_CLASS}>
         <LazyActionMenu context={{ 'event-source-actions': obj }} />
       </TableData>
     </>

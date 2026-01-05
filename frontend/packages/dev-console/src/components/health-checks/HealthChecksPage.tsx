@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { FirehoseResource, Firehose } from '@console/internal/components/utils';
 import AddHealthChecksForm from './AddHealthChecksForm';
 
-const HealthChecksPage: React.FC = () => {
+const HealthChecksPage: FC = () => {
   const { ns, kind, name, containerName } = useParams();
   const resource: FirehoseResource[] = [
     {

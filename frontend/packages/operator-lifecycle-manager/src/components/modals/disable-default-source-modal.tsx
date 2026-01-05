@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,7 +14,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { OperatorHubKind } from '../operator-hub';
 
-const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
+const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
   kind,
   operatorHub,
   sourceName,
@@ -22,8 +23,8 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
 }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
-  const submit = React.useCallback(
-    (event: React.FormEvent<EventTarget>): void => {
+  const submit = useCallback(
+    (event: FormEvent<EventTarget>): void => {
       event.preventDefault();
       const currentSources = _.get(operatorHub, 'spec.sources', []);
       const patch = [

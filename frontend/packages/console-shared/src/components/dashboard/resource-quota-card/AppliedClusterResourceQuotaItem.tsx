@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { ExpandableSection, Split, SplitItem } from '@patternfly/react-core';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import { QuotaScopesInline } from '@console/internal/components/resource-quota';
@@ -7,12 +8,12 @@ import { AppliedClusterResourceQuotaModel } from '@console/internal/models';
 import { AppliedClusterResourceQuotaKind } from '@console/internal/module/k8s';
 import QuotaSummary from './QuotaSummary';
 
-const AppliedClusterResourceQuotaItem: React.FC<AppliedClusterResourceQuotaItemProps> = ({
+const AppliedClusterResourceQuotaItem: FC<AppliedClusterResourceQuotaItemProps> = ({
   resourceQuota,
   namespace,
 }) => {
   const resources = Object.keys(resourceQuota.status?.total?.hard ?? {});
-  const [isExpanded, setExpanded] = React.useState(resources.length <= 4);
+  const [isExpanded, setExpanded] = useState(resources.length <= 4);
   const scopes = resourceQuota?.spec?.quota?.scopes;
   return (
     <>

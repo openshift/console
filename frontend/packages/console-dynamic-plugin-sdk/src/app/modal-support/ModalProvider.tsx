@@ -1,12 +1,12 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
+import { createContext, useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { UnknownProps } from '../common-types';
 
 type CloseModal = () => void;
 type CloseModalContextValue = (id?: string) => void;
 
-export type ModalComponent<P = UnknownProps> = React.FC<P & { closeModal: CloseModal }>;
+export type ModalComponent<P = UnknownProps> = FC<P & { closeModal: CloseModal }>;
 
 export type LaunchModal = <P = UnknownProps>(
   component: ModalComponent<P>,
@@ -19,7 +19,7 @@ type ModalContextValue = {
   closeModal: CloseModalContextValue;
 };
 
-export const ModalContext = React.createContext<ModalContextValue>({
+export const ModalContext = createContext<ModalContextValue>({
   launchModal: () => {},
   closeModal: () => {},
 });
@@ -35,13 +35,13 @@ interface ModalProviderProps {
   children?: ReactNode;
 }
 
-export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  const [isOpen, setOpen] = React.useState(false);
-  const [Component, setComponent] = React.useState<ModalComponent>();
-  const [componentProps, setComponentProps] = React.useState({});
-  const [componentsMap, setComponentsMap] = React.useState<ComponentMap>({});
+export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
+  const [isOpen, setOpen] = useState(false);
+  const [Component, setComponent] = useState<ModalComponent>();
+  const [componentProps, setComponentProps] = useState({});
+  const [componentsMap, setComponentsMap] = useState<ComponentMap>({});
 
-  const launchModal = React.useCallback<LaunchModal>(
+  const launchModal = useCallback<LaunchModal>(
     (component, compProps, id = null) => {
       if (id) {
         setComponentsMap((components) => ({
@@ -57,7 +57,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     [setOpen, setComponent, setComponentProps],
   );
 
-  const closeModal = React.useCallback<CloseModalContextValue>(
+  const closeModal = useCallback<CloseModalContextValue>(
     (id = null) => {
       if (id) {
         setComponentsMap((components) => _.omit(components, id));

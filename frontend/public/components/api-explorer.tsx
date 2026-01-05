@@ -1,6 +1,12 @@
 import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
 import { withRouter } from 'react-router-dom';
-import { useLocation, useParams, Link, useSearchParams } from 'react-router-dom-v5-compat';
+import {
+  useLocation,
+  useParams,
+  Link,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as _ from 'lodash-es';
@@ -54,7 +60,7 @@ import { connectToFlags } from '../reducers/connectToFlags';
 import type { RootState } from '../redux';
 import { RowFilter } from './row-filter';
 import { DefaultPage } from './default-resource';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import { exactMatch, fuzzyCaseInsensitive } from './factory/table-filters';
 import { getResourceListPages } from './resource-pages';
 import { ExploreType } from './sidebars/explore-type-sidebar';
@@ -209,6 +215,7 @@ const APIResourcesList = compose(
     prevFiltersRef.current = currentFilters;
   }, [groupFilter, versionFilter, textFilter, scopeFilter, pagination.page, setSearchParams]);
 
+  const navigate = useNavigate();
   // group options
   const groups: Set<string> = models.reduce((result: Set<string>, { apiGroup }) => {
     return apiGroup ? result.add(apiGroup) : result;
@@ -229,8 +236,11 @@ const APIResourcesList = compose(
     groupSpacer.add(sortedGroups[0]);
   }
 
-  const autocompleteGroups = (text: string, _item: string, key: string): boolean => {
-    return key !== ALL && fuzzy(text, key);
+  const autocompleteGroups = (text: string, item: React.ReactNode, key: string): boolean => {
+    if (key === ALL || key === '') {
+      return false;
+    }
+    return fuzzy(text.toLowerCase(), key.toLowerCase());
   };
 
   // version options
@@ -357,6 +367,13 @@ const APIResourcesList = compose(
   const updateURL = (k: string, v: string) => {
     if (v === ALL) {
       removeQueryArgument(k);
+    } else if (v === '') {
+      // For empty string values (like "No group"), we need to explicitly set the param to empty
+      // because setQueryArgument deletes empty string values
+      const params = new URLSearchParams(window.location.search);
+      params.set(k, v);
+      const url = new URL(window.location.href);
+      navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
     } else {
       setQueryArgument(k, v);
     }
@@ -420,7 +437,7 @@ const APIResourcesList = compose(
             />
           </ToolbarItem>
           <ToolbarItem variant="pagination">
-            <Pagination itemCount={sortedResources.length} {...pagination} isCompact />
+            <Pagination itemCount={sortedResources.length} {...pagination} />
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
@@ -497,13 +514,6 @@ const APIResourcesList = compose(
           />
         </InnerScrollContainer>
       </DataView>
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem variant="pagination">
-            <Pagination itemCount={sortedResources.length} {...pagination} variant="bottom" />
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
     </PaneBody>
   );
 });
@@ -827,7 +837,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             />
           </FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
-            <Pagination itemCount={filteredData.length} {...pagination} isCompact />
+            <Pagination itemCount={filteredData.length} {...pagination} />
           </FlexItem>
         </Flex>
         <RowFilter
@@ -924,13 +934,6 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             />
           </InnerScrollContainer>
         </DataView>
-        <Toolbar>
-          <ToolbarContent>
-            <ToolbarItem variant="pagination">
-              <Pagination itemCount={filteredData.length} {...pagination} variant="bottom" />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
       </PaneBody>
     </>
   );

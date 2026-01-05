@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import { BitbucketIcon } from '@patternfly/react-icons/dist/esm/icons/bitbucket-icon';
 import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
 import { GithubIcon } from '@patternfly/react-icons/dist/esm/icons/github-icon';
@@ -15,7 +15,7 @@ export const routeDecoratorIcon = (
   t: TFunction,
   cheEnabled?: boolean,
   cheIconURL?: string,
-): React.ReactElement => {
+): ReactElement => {
   if (cheEnabled && routeURL) {
     return cheIconURL ? (
       <image xlinkHref={cheIconURL} width={radius} height={radius} />

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Node,
   observer,
@@ -20,7 +20,7 @@ type ApplicationGroupProps = {
   WithDndDropProps &
   WithContextMenuProps;
 
-const ApplicationNode: React.FC<ApplicationGroupProps> = ({
+const ApplicationNode: FC<ApplicationGroupProps> = ({
   element,
   badge,
   badgeColor,

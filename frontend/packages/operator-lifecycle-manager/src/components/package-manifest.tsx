@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -62,7 +63,7 @@ export const PackageManifestTableHeaderWithCatalogSource = () => [
   },
 ];
 
-export const PackageManifestTableRow: React.FC<RowFunctionArgs<
+export const PackageManifestTableRow: FC<RowFunctionArgs<
   PackageManifestKind,
   { catalogSource: CatalogSourceKind }
 >> = ({ obj: packageManifest, customData }) => {
@@ -139,7 +140,7 @@ export const PackageManifestList = (props: PackageManifestListProps) => {
   );
 };
 
-export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props) => {
+export const PackageManifestsPage: FC<PackageManifestsPageProps> = (props) => {
   const { catalogSource } = props;
   const { ns: namespace } = useParams();
 
@@ -153,7 +154,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
     </Trans>
   );
 
-  const customData = React.useMemo(
+  const customData = useMemo(
     () => ({
       catalogSource,
     }),

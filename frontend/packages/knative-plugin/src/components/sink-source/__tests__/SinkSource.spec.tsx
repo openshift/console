@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';
 import SinkSource from '../SinkSource';
@@ -46,7 +46,7 @@ jest.mock('../../add/eventSource-validation-utils', () => ({
   sinkTypeUriValidation: jest.fn(() => ({})),
 }));
 
-type SinkSourceProps = React.ComponentProps<typeof SinkSource>;
+type SinkSourceProps = ComponentProps<typeof SinkSource>;
 
 describe('SinkSource', () => {
   const formProps: SinkSourceProps = {

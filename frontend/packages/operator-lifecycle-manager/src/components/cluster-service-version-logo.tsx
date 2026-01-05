@@ -1,10 +1,8 @@
-import * as React from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 import operatorLogo from '../operator.svg';
-import { ClusterServiceVersionIcon } from '../types';
+import type { ClusterServiceVersionIcon, DeprecatedOperatorWarning } from '../types';
 import { DeprecatedOperatorWarningBadge } from './deprecated-operator-warnings/deprecated-operator-warnings';
 
 type ClusterServiceVersionHeaderIconProps = {

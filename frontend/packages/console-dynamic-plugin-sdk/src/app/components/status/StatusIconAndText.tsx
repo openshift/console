@@ -1,11 +1,12 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { cloneElement } from 'react';
 import { css } from '@patternfly/react-styles';
 import { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import CamelCaseWrap from '../utils/camel-case-wrap';
 
 type StatusIconAndTextProps = StatusComponentProps & {
-  icon?: React.ReactElement;
+  icon?: ReactElement;
   spin?: boolean;
 };
 
@@ -22,7 +23,7 @@ type StatusIconAndTextProps = StatusComponentProps & {
  * <StatusIconAndText title={title} icon={renderIcon} />
  * ```
  */
-const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
+const StatusIconAndText: FC<StatusIconAndTextProps> = ({
   icon,
   title,
   spin,
@@ -40,7 +41,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
       title={iconOnly && !noTooltip ? title : undefined}
     >
       {icon &&
-        React.cloneElement(icon, {
+        cloneElement(icon, {
           className: css(
             spin && 'co-spin',
             icon.props.className,

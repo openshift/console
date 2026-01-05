@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Progress,
   ProgressSize,
@@ -27,7 +27,7 @@ type StartingMaintenancePopoverContentProps = {
   nodeMaintenance: K8sResourceKind;
 };
 
-const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverContentProps> = ({
+const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentProps> = ({
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();
@@ -79,7 +79,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
       </ExpandableSection>
       <br />
       <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
-        {t('metal3-plugin~Stop')}
+        {t('metal3-plugin~Stop maintenance')}
       </Button>
     </>
   );

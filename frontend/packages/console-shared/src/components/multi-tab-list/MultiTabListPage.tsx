@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { SimpleDropdown } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
@@ -12,14 +12,14 @@ import { MenuActions, MenuAction, SecondaryButtonAction } from './multi-tab-list
 
 interface MultiTabListPageProps {
   title: string;
-  badge?: React.ReactNode;
+  badge?: ReactNode;
   menuActions?: MenuActions;
   pages: Page[];
   secondaryButtonAction?: SecondaryButtonAction;
   telemetryPrefix?: string;
 }
 
-const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
+const MultiTabListPage: FC<MultiTabListPageProps> = ({
   title,
   badge,
   pages,

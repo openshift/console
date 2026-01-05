@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -17,14 +18,14 @@ interface KafkaSourceSectionProps {
   fullWidth?: boolean;
 }
 
-const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, namespace, fullWidth }) => {
+const KafkaSourceSection: FC<KafkaSourceSectionProps> = ({ title, namespace, fullWidth }) => {
   const { t } = useTranslation();
   const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
   const { kafkatopics } = useK8sWatchResources<{
     [key: string]: K8sResourceKind[];
   }>(kafkaTopicsResourcesWatcher());
 
-  const [kafkaTopics, ktPlaceholder] = React.useMemo(() => {
+  const [kafkaTopics, ktPlaceholder] = useMemo(() => {
     let topicsOptions: SelectInputOption[] = [];
     let placeholder: string = '';
     if (kafkatopics.loaded && !kafkatopics.loadError) {

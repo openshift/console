@@ -1,9 +1,8 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { DASH } from '@console/shared/src/constants/ui';
 
 import { ListPage } from './factory';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
@@ -12,14 +11,11 @@ import { referenceForModel } from '../module/k8s';
 import { useTranslation } from 'react-i18next';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-
-const { Edit, Delete } = Kebab.factory;
-const menuActions = [Edit, Delete];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const serviceMonitorTableColumnInfo = [
   { id: 'name' },
@@ -84,10 +80,8 @@ const getServiceMonitorDataViewRows = (data, columns) => {
         cell: namespaceSelectorLinks(obj),
       },
       [serviceMonitorTableColumnInfo[4].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={resourceKind} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [referenceForModel(ServiceMonitorModel)]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -105,7 +99,7 @@ const getServiceMonitorDataViewRows = (data, columns) => {
 
 const useServiceMonitorColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -158,18 +152,17 @@ export const ServiceMonitorsList = (props) => {
   const columns = useServiceMonitorColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={data}
         loaded={loaded}
         label={ServiceMonitorModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getServiceMonitorDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

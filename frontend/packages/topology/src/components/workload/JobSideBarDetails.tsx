@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -18,7 +18,7 @@ type JobSideBarDetailsProps = {
   job: JobKind;
 };
 
-const JobSideBarDetails: React.FC<JobSideBarDetailsProps> = ({ job }) => {
+const JobSideBarDetails: FC<JobSideBarDetailsProps> = ({ job }) => {
   const { namespace } = job.metadata;
   const { podData, loaded, loadError } = usePodsWatcher(job, 'Job', namespace);
   const { t } = useTranslation();

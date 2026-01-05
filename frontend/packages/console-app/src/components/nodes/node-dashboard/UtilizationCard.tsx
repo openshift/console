@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useMemo } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,7 +12,7 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeNumber,
 } from '@console/internal/components/utils/units';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
@@ -33,14 +34,14 @@ import {
 
 const networkPopovers = [NetworkInPopover, NetworkOutPopover];
 
-const UtilizationCard: React.FC = () => {
+const UtilizationCard: FC = () => {
   const { t } = useTranslation();
-  const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
+  const { obj, setCPULimit, setMemoryLimit } = useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
   const nodeIP = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
 
-  const [queries, multilineQueries, resourceQuotaQueries] = React.useMemo(
+  const [queries, multilineQueries, resourceQuotaQueries] = useMemo(
     () => [
       getUtilizationQueries(nodeName, nodeIP),
       getMultilineQueries(nodeName),

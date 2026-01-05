@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { PageSection } from '@patternfly/react-core';
 import { OverviewProps } from '@console/dynamic-plugin-sdk';
 import './dashboard.scss';

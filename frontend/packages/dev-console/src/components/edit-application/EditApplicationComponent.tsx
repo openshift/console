@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
 import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
+import { PipelineKind } from '../../types/pipeline';
 import EditApplication from './EditApplication';
 
 type AppResources = {
@@ -22,9 +22,7 @@ type EditApplicationComponentProps = {
   resources: AppResources;
 };
 
-const EditApplicationComponent: React.FunctionComponent<EditApplicationComponentProps> = (
-  props,
-) => {
+const EditApplicationComponent: FunctionComponent<EditApplicationComponentProps> = (props) => {
   const { appName, resources } = props;
   const appLabel =
     resources.editAppResource?.data?.metadata?.labels?.[NAME_LABEL] ||

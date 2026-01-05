@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +11,11 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
@@ -30,7 +33,7 @@ const columnClassNames = [
   'pf-m-hidden pf-m-visible-on-lg', // last run status
   'pf-m-hidden pf-m-visible-on-lg', // last run time
   'pf-m-hidden pf-m-visible-on-lg', // last run duration
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 export const BuildHeader = () => {
@@ -86,7 +89,7 @@ export const BuildHeader = () => {
   ];
 };
 
-export const BuildRow: React.FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
+export const BuildRow: FC<RowFunctionArgs<Build>> = ({ obj: build }) => {
   const kindReference = referenceFor(build);
   const context = { [kindReference]: build };
   const buildRunKindReference = isV1Alpha1Resource(build)
@@ -151,7 +154,7 @@ type BuildTableProps = TableProps & {
   namespace: string;
 };
 
-export const BuildTable: React.FC<BuildTableProps> = (props) => {
+export const BuildTable: FC<BuildTableProps> = (props) => {
   const { t } = useTranslation();
   const buildRunModel = useFlag('SHIPWRIGHT_BUILDRUN')
     ? referenceForModel(BuildRunModel)
@@ -163,7 +166,7 @@ export const BuildTable: React.FC<BuildTableProps> = (props) => {
     isList: true,
   });
 
-  const data = React.useMemo<CustomData>(
+  const data = useMemo<CustomData>(
     () => ({
       buildRuns: {
         latestByBuildName: buildRuns.reduce<Record<string, BuildRun>>((acc, buildRun) => {

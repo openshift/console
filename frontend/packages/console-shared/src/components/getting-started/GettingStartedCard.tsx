@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, MouseEvent, ChangeEvent, FC } from 'react';
 import {
   Flex,
   FlexItem,
@@ -23,19 +23,19 @@ export interface GettingStartedLink {
   id: string;
   loading?: boolean;
 
-  title?: string | React.ReactElement;
+  title?: string | ReactElement;
   description?: string;
 
   external?: boolean;
   /** Default hyperlink location */
   href?: string;
   /** OnClick callback for the SimpleList item */
-  onClick?: (event: React.MouseEvent | React.ChangeEvent) => void;
+  onClick?: (event: MouseEvent | ChangeEvent) => void;
 }
 
 export interface GettingStartedCardProps {
   id: string;
-  icon?: React.ReactElement;
+  icon?: ReactElement;
   title: string;
   titleColor?: string;
   description?: string;
@@ -43,7 +43,7 @@ export interface GettingStartedCardProps {
   moreLink?: GettingStartedLink;
 }
 
-export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
+export const GettingStartedCard: FC<GettingStartedCardProps> = ({
   id,
   icon,
   title,

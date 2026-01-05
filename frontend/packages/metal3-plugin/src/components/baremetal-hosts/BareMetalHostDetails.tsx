@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -93,7 +93,7 @@ type BareMetalHostDetailsProps = {
   nodeMaintenances: K8sResourceKind[];
 };
 
-const BareMetalHostDetails: React.FC<BareMetalHostDetailsProps> = ({
+const BareMetalHostDetails: FC<BareMetalHostDetailsProps> = ({
   obj: host,
   machines,
   nodes,

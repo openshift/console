@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import { ActionMenuVariant } from '@console/shared/src/components/actions/types'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodDisruptionBudgetKind } from './types';
 
-const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
+const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
@@ -49,9 +49,7 @@ const PodDisruptionBudgetDetails: React.FC<PodDisruptionBudgetDetailsProps> = ({
   );
 };
 
-export const PodDisruptionBudgetDetailsPage: React.FC<PodDisruptionBudgetDetailsPageProps> = (
-  props,
-) => {
+export const PodDisruptionBudgetDetailsPage: FC<PodDisruptionBudgetDetailsPageProps> = (props) => {
   return (
     <DetailsPage
       {...props}

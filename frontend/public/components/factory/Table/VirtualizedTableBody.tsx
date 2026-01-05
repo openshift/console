@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
+import { memo, useMemo } from 'react';
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { VirtualTableBody } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
@@ -12,7 +13,7 @@ import {
 import { TableRow } from '../table';
 
 type VirtualizedTableBodyProps<D, R = {}> = {
-  Row: React.ComponentType<RowProps<D, R>>;
+  Row: ComponentType<RowProps<D, R>>;
   data: D[];
   height: number;
   isScrolling: boolean;
@@ -28,7 +29,7 @@ type VirtualizedTableBodyProps<D, R = {}> = {
   onSelect?: OnSelect;
 };
 
-const RowMemo = React.memo<
+const RowMemo = memo<
   RowProps<any, any> & {
     Row: React.ComponentType<RowProps<any, any>>;
     isScrolling: boolean;
@@ -66,7 +67,7 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
     keyMapper: (rowIndex) => (data?.[rowIndex] as K8sResourceCommon)?.metadata?.uid || rowIndex, // TODO custom keyMapper ?
   });
 
-  const activeColumnIDs = React.useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
+  const activeColumnIDs = useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
 
   const rowRenderer = ({ index, isVisible, key, style, parent }) => {
     const rowArgs: RowProps<D, R> = {

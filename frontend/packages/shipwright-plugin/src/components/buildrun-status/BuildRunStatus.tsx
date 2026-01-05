@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import i18next from 'i18next';
 import Status, { StatusProps } from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import { BuildRun, ComputedBuildRunStatus } from '../../types';
@@ -59,7 +59,7 @@ export const getBuildRunStatusProps = (buildRun: BuildRun): StatusProps => {
   };
 };
 
-const BuildRunStatus: React.FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
+const BuildRunStatus: FC<{ buildRun: BuildRun }> = ({ buildRun }) => {
   const status = getBuildRunStatus(buildRun);
   const failedCondition = getSucceededCondition(buildRun);
   return (

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +18,7 @@ import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 
-export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
+export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
   const launchCopyLoginCommandModal = useCopyCodeModal(
@@ -33,7 +34,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
     const defaultLinkText = t('Download {{displayName}}', { displayName });
     const sortedLinks = _.sortBy(tool.spec.links, 'text');
     return (
-      <React.Fragment key={tool.metadata.uid}>
+      <Fragment key={tool.metadata.uid}>
         {index > 0 && <Divider className="co-divider" />}
         <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
         <SyncMarkdownView content={tool.spec.description} exactHeight />
@@ -54,7 +55,7 @@ export const CommandLineTools: React.FC<CommandLineToolsProps> = ({ obj }) => {
             ))}
           </ul>
         )}
-      </React.Fragment>
+      </Fragment>
     );
   });
 

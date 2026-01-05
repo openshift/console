@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 const PaneBodyGroup: React.FCC<PaneBodyGroupProps> = ({ children, ...props }) => {
   return (
@@ -9,6 +9,6 @@ const PaneBodyGroup: React.FCC<PaneBodyGroupProps> = ({ children, ...props }) =>
 };
 
 export type PaneBodyGroupProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 export default PaneBodyGroup;

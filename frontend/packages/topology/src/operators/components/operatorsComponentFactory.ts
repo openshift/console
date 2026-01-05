@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentType } from 'react';
 import {
   GraphElement,
   WithContextMenuProps,
@@ -17,12 +17,12 @@ import OperatorBackedService from './OperatorBackedService';
 export const getOperatorsComponentFactory = (
   kind,
   type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+): ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_OPERATOR_BACKED_SERVICE:
       return withSelection({ controlled: true })(
         withContextMenu(contextMenuActions)(
-          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(OperatorBackedService)) as React.FC<
+          withNoDrop()(withDragNode(noRegroupDragSourceSpec)(OperatorBackedService)) as FC<
             WithContextMenuProps
           >,
         ),

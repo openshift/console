@@ -12,6 +12,13 @@ import {
   getMonorepoRootDir,
 } from '../plugin-resolver';
 
+jest.mock('read-pkg', () => ({
+  ...jest.requireActual('read-pkg'),
+  sync: jest.fn(),
+}));
+
+const readPkgMock = readPkg.sync as jest.Mock;
+
 describe('isPluginPackage', () => {
   it('returns false if package.consolePlugin is missing', () => {
     expect(
@@ -20,44 +27,11 @@ describe('isPluginPackage', () => {
       }),
     ).toBe(false);
   });
-
-  it('returns false if package.consolePlugin.entry is missing', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: {},
-      }),
-    ).toBe(false);
-  });
-
-  it('returns false if package.consolePlugin.entry is an empty string', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: { entry: '' },
-      }),
-    ).toBe(false);
-  });
-
-  it('returns true if package.consolePlugin.entry is a non-empty string', () => {
-    expect(
-      isPluginPackage({
-        ...getTemplatePackage(),
-        consolePlugin: { entry: 'plugin.ts' },
-      }),
-    ).toBe(true);
-  });
 });
 
 describe('readPackages', () => {
-  let readPkgMock: jest.SpyInstance<typeof readPkg.sync>;
-
-  beforeEach(() => {
-    readPkgMock = jest.spyOn(readPkg, 'sync');
-  });
-
   afterEach(() => {
-    readPkgMock.mockRestore();
+    jest.clearAllMocks();
   });
 
   it('detects app and plugin packages by reading their metadata', () => {
@@ -75,7 +49,7 @@ describe('readPackages', () => {
         name: '@console/foo-plugin',
         _path: pluginPackagePath,
       }),
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     const utilsPackagePath = '/test/packages/bar-utils';
@@ -132,14 +106,14 @@ describe('filterActivePluginPackages', () => {
           name: 'bar',
           version: '1.2.3',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
       {
         ...getTemplatePackage({
           name: 'qux',
           version: '2.3.4',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
     ];
 
@@ -152,7 +126,7 @@ describe('filterActivePluginPackages', () => {
         name: 'app',
       }),
       dependencies: {},
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     expect(filterActivePluginPackages(appPackage, [appPackage])).toEqual([appPackage]);
@@ -167,7 +141,7 @@ describe('filterActivePluginPackages', () => {
         bar: '1.2.3',
         qux: '2.3.4',
       },
-      consolePlugin: { entry: 'plugin.ts' },
+      consolePlugin: {},
     };
 
     const pluginPackages: PluginPackage[] = [
@@ -176,14 +150,14 @@ describe('filterActivePluginPackages', () => {
           name: 'bar',
           version: '1.2.3',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
       {
         ...getTemplatePackage({
           name: 'qux',
           version: '2.3.4',
         }),
-        consolePlugin: { entry: 'plugin.ts' },
+        consolePlugin: {},
       },
     ];
 
@@ -196,6 +170,12 @@ describe('filterActivePluginPackages', () => {
 });
 
 describe('getMonorepoRootDir', () => {
+  beforeEach(() => {
+    // Reset the mock to use the real implementation for this test
+    readPkgMock.mockReset();
+    readPkgMock.mockImplementation(jest.requireActual('read-pkg').sync);
+  });
+
   it('returns the location of Console monorepo root package', () => {
     const currentPackageFile = findUp.sync('package.json', {
       cwd: __dirname,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { useState, useCallback } from 'react';
 import {
   FormGroup,
   Alert,
@@ -29,17 +30,17 @@ export interface SinkResourcesProps {
   isMoveSink?: boolean;
 }
 
-const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
+const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
   const { t } = useTranslation();
-  const [resourceAlert, setResourceAlert] = React.useState(false);
+  const [resourceAlert, setResourceAlert] = useState(false);
   const { setFieldValue, setFieldTouched, validateForm, initialValues } = useFormikContext<
     FormikValues
   >();
   const [, { touched: sinkTypeTouched }] = useField('formData.sinkType');
-  const autocompleteFilter = (strText: string, item: React.ReactElement): boolean =>
+  const autocompleteFilter = (strText: string, item: ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('sink-name', 'dropdown');
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (_selectedValue, valueObj) => {
       const modelData = valueObj?.props?.model;
       const name = valueObj?.props?.name;

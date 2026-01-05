@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 
-const ContainerField: React.FC = () => {
+const ContainerField: FC = () => {
   const { t } = useTranslation();
   const {
     values: {

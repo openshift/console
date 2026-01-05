@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, SyntheticEvent } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { InputField, useDebounceCallback } from '@console/shared';
 import FormSection from '../section/FormSection';
 import SourceSecretSelector from './SourceSecretSelector';
 
-const AdvancedGitOptions: React.FC<{
+const AdvancedGitOptions: FC<{
   formContextField?: string;
 }> = ({ formContextField }) => {
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
@@ -15,11 +15,11 @@ const AdvancedGitOptions: React.FC<{
   const { t } = useTranslation();
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
 
-  const handleGitRefChange = useDebounceCallback((e: React.SyntheticEvent) =>
+  const handleGitRefChange = useDebounceCallback((e: SyntheticEvent) =>
     setFieldValue(`${fieldPrefix}git.ref`, (e.target as HTMLInputElement).value),
   );
 
-  const handleGitDirChange = useDebounceCallback((e: React.SyntheticEvent) => {
+  const handleGitDirChange = useDebounceCallback((e: SyntheticEvent) => {
     setFieldValue(`${fieldPrefix}git.dir`, (e.target as HTMLInputElement).value);
     setFieldTouched(`${fieldPrefix}git.dir`);
   });

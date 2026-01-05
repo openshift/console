@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DashboardAlerts } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/status-card';
@@ -7,8 +8,8 @@ import NodeAlerts from './NodeAlerts';
 import { NodeDashboardContext } from './NodeDashboardContext';
 import NodeHealth from './NodeHealth';
 
-const StatusCard: React.FC = () => {
-  const { obj } = React.useContext(NodeDashboardContext);
+const StatusCard: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
   const { t } = useTranslation();
   return (
     <Card data-test-id="status-card">

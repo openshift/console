@@ -1,5 +1,7 @@
 /* eslint-disable camelcase, tsdoc/syntax */
-import * as React from 'react';
+import type { FC } from 'react';
+
+import { useMemo, memo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -43,7 +45,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -53,6 +54,7 @@ import {
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { DASH } from '@console/shared/src/constants/ui';
 
 export enum InitialReceivers {
   Critical = 'Critical',
@@ -226,16 +228,13 @@ export const numberOfIncompleteReceivers = (config: AlertmanagerConfig): number 
     : numIncompleteReceivers;
 };
 
-const RoutingLabels: React.FC<RoutingLabelsProps> = ({ data }) => {
+const RoutingLabels: FC<RoutingLabelsProps> = ({ data }) => {
   const { labels, matchers } = data;
   const lbls = _.map(labels || {}, (value, key) => `${key}=${value}`);
   const values = [...lbls, ...(matchers ?? [])];
-
   return values.length > 0 ? (
     <PfLabelGroup>
-      {values.map((value, i) => (
-        <PfLabel key={`label-${i}`}>{value}</PfLabel>
-      ))}
+      {values.map((value, i) => (value ? <PfLabel key={`label-${i}`}>{value}</PfLabel> : DASH))}
     </PfLabelGroup>
   ) : null;
 };
@@ -389,9 +388,7 @@ const getReceiverDataViewRows = (
       },
       [tableColumnInfo[3].id]: {
         cell: <Kebab options={receiverMenuItems(receiver.name)} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -408,7 +405,7 @@ const getReceiverDataViewRows = (
 
 const useReceiverColumns = (): TableColumn<AlertmanagerReceiver>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -450,7 +447,7 @@ const getObjectMetadata = (receiver: AlertmanagerReceiver): ResourceMetadata => 
   return { name: receiver.name };
 };
 
-const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
+const ReceiversTable: FC<ReceiversTableProps> = (props) => {
   const { secret, config, data } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
@@ -458,7 +455,7 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   const navigate = useNavigate();
   const columns = useReceiverColumns();
 
-  const routingLabelsByReceivers = React.useMemo(
+  const routingLabelsByReceivers = useMemo(
     () => (_.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes)),
     [routes],
   );
@@ -475,13 +472,12 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
   };
 
   return (
-    <React.Suspense fallback={<div className="loading-skeleton--table" />}>
+    <Suspense fallback={<div className="loading-skeleton--table" />}>
       <ConsoleDataView<AlertmanagerReceiver, ReceiverRowData, ReceiverFilters>
         label={t('public~Receivers')}
         data={data}
         loaded={true}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getObjectMetadata={getObjectMetadata}
         getDataViewRows={getReceiverDataViewRows}
         customRowData={customRowData}
@@ -489,12 +485,12 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
         hideNameLabelFilters={false}
         hideLabelFilter={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 ReceiversTable.displayName = 'ReceiversTable';
 
-const ReceiversEmptyState: React.FC<{}> = () => {
+const ReceiversEmptyState: FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <EmptyState
@@ -555,7 +551,7 @@ const Receivers = ({ secret, config }: ReceiversProps) => {
   );
 };
 
-const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj: secret }) => {
+const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: secret }) => {
   const { t } = useTranslation();
   const { config, errorMessage } = getAlertmanagerConfig(secret);
 
@@ -580,21 +576,19 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
   );
 };
 
-const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
-  ({ obj, ...props }) => {
-    const { t } = useTranslation();
-    return (
-      <>
-        <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
-        <StatusBox {...obj}>
-          <AlertmanagerConfiguration {...props} obj={obj.data} />
-        </StatusBox>
-      </>
-    );
-  },
-);
+const AlertmanagerConfigWrapper: FC<AlertmanagerConfigWrapperProps> = memo(({ obj, ...props }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <DocumentTitle>{t('public~Alerting')}</DocumentTitle>
+      <StatusBox {...obj}>
+        <AlertmanagerConfiguration {...props} obj={obj.data} />
+      </StatusBox>
+    </>
+  );
+});
 
-export const AlertmanagerConfig: React.FC = () => {
+export const AlertmanagerConfig: FC = () => {
   const { t } = useTranslation();
 
   const configPath = 'alertmanagerconfig';

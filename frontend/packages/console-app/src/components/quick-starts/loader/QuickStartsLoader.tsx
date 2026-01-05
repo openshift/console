@@ -1,17 +1,17 @@
-import * as React from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useQuickStarts } from '../utils/useQuickStarts';
-import QuickStartPermissionChecker from './QuickStartPermissionChecker';
+import { QuickStartPermissionChecker } from './QuickStartPermissionChecker';
 
-const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
+export const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
   const [quickStarts, quickStartsLoaded] = useQuickStarts();
 
-  const [allowedQuickStarts, setAllowedQuickStarts] = React.useState<QuickStart[]>([]);
-  const [permissionsLoaded, setPermissionsLoaded] = React.useState<boolean>(false);
-  const permissionChecks = React.useRef<{ [name: string]: boolean }>({});
+  const [allowedQuickStarts, setAllowedQuickStarts] = useState<QuickStart[]>([]);
+  const [permissionsLoaded, setPermissionsLoaded] = useState<boolean>(false);
+  const permissionChecks = useRef<{ [name: string]: boolean }>({});
 
-  const handlePermissionCheck = React.useCallback(
+  const handlePermissionCheck = useCallback(
     (quickStart, hasPermission) => {
       permissionChecks.current[quickStart.metadata.name] = hasPermission;
       if (Object.keys(permissionChecks.current).length === quickStarts.length) {
@@ -43,5 +43,3 @@ const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
     </>
   );
 };
-
-export default QuickStartsLoader;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { CamelKameletBindingModel } from '../../../models';
@@ -22,7 +22,7 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: any) => Component,
 }));
 
-let eventSinkFormProps: React.ComponentProps<typeof EventSinkForm>;
+let eventSinkFormProps: ComponentProps<typeof EventSinkForm>;
 
 describe('EventSinkForm', () => {
   beforeEach(() => {

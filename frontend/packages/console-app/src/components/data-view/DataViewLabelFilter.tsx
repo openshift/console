@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { ToolbarFilter } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ export const DataViewLabelFilter = <TData,>({
   const { t } = useTranslation();
 
   const [searchParams] = useSearchParams();
-  const [labelInputText, setLabelInputText] = React.useState('');
+  const [labelInputText, setLabelInputText] = useState('');
   const labelSelection = searchParams.get(filterId)?.split(',') ?? [];
 
   const applyLabelFilters = (values: string[]) => {

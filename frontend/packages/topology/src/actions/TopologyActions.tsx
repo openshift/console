@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { observer, GraphElement } from '@patternfly/react-topology';
 import { referenceFor } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
@@ -8,9 +9,9 @@ type TopologyActionsProps = {
   element: GraphElement;
 };
 
-const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
+const TopologyActions: FC<TopologyActionsProps> = ({ element }) => {
   const resource = getResource(element);
-  const context = React.useMemo(() => {
+  const context = useMemo(() => {
     const { csvName } = element.getData()?.data ?? {};
     return {
       'topology-actions': element,

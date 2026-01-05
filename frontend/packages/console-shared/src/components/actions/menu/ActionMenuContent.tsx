@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Menu, MenuContent, MenuGroup, MenuItem, MenuList, Divider } from '@patternfly/react-core';
 import { Action, GroupedMenuOption, MenuOption, MenuOptionType } from '@console/dynamic-plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '../../../utils/order-extensions';
@@ -11,7 +11,7 @@ type GroupMenuContentProps = {
   onClick: () => void;
 };
 
-const GroupMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) => (
+const GroupMenuContent: FC<GroupMenuContentProps> = ({ option, onClick }) => (
   <>
     <Divider />
     <MenuGroup label={option.label}>
@@ -27,7 +27,7 @@ const GroupMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) 
 );
 
 // Need to keep this in the same file to avoid circular dependency.
-const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) => (
+const SubMenuContent: FC<GroupMenuContentProps> = ({ option, onClick }) => (
   <MenuItem
     data-test-action={option.id}
     flyoutMenu={
@@ -54,7 +54,7 @@ type ActionMenuContentProps = {
   focusItem?: MenuOption;
 };
 
-const ActionMenuContent: React.FC<ActionMenuContentProps> = ({ options, onClick, focusItem }) => {
+const ActionMenuContent: FC<ActionMenuContentProps> = ({ options, onClick, focusItem }) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(options);
   return (
     <>

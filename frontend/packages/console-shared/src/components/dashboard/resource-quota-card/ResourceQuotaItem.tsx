@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { ExpandableSection, Split, SplitItem } from '@patternfly/react-core';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import { QuotaScopesInline } from '@console/internal/components/resource-quota';
@@ -7,9 +8,9 @@ import { ResourceQuotaModel } from '@console/internal/models';
 import { ResourceQuotaKind } from '@console/internal/module/k8s';
 import QuotaSummary from './QuotaSummary';
 
-const ResourceQuotaItem: React.FC<ResourceQuotaItemProps> = ({ resourceQuota }) => {
+const ResourceQuotaItem: FC<ResourceQuotaItemProps> = ({ resourceQuota }) => {
   const resources = Object.keys(resourceQuota.status?.hard ?? {});
-  const [isExpanded, setExpanded] = React.useState(resources.length <= 4);
+  const [isExpanded, setExpanded] = useState(resources.length <= 4);
 
   const scopes = resourceQuota.spec?.scopes;
   return (

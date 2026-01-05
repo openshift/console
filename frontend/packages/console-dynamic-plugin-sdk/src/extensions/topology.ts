@@ -41,7 +41,7 @@ export type TopologyDataModelFactory = ExtensionDeclaration<
     /** Priority for the factory */
     priority: number;
     /** Resources to be fetched from useK8sWatchResources hook. */
-    resources?: WatchK8sResourcesGeneric;
+    resources?: WatchK8sResourcesGeneric | CodeRef<() => Promise<WatchK8sResourcesGeneric>>;
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Form, FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useShowOperandsInAllNamespaces } from './useShowOperandsInAllNamespaces';
 
-export const ShowOperandsInAllNamespacesRadioGroup: React.FC = () => {
+export const ShowOperandsInAllNamespacesRadioGroup: FC = () => {
   const { t } = useTranslation();
   const [
     showOperandsInAllNamespaces,

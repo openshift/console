@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
@@ -14,20 +14,24 @@ jest.mock('react-router-dom-v5-compat', () => ({
   }),
 }));
 
-describe('CatalogController', () => {
-  let spyUseQueryParams: jest.SpyInstance;
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParams'),
+  useQueryParams: jest.fn(),
+}));
 
+const useQueryParamsMock = UseQueryParams.useQueryParams as jest.Mock;
+
+describe('CatalogController', () => {
   beforeEach(() => {
-    spyUseQueryParams = jest.spyOn(UseQueryParams, 'useQueryParams');
-    spyUseQueryParams.mockImplementation(() => new URLSearchParams());
+    useQueryParamsMock.mockImplementation(() => new URLSearchParams());
   });
 
   afterEach(() => {
-    spyUseQueryParams.mockRestore();
+    jest.clearAllMocks();
   });
 
   it('should render the title and description from the catalog extension', async () => {
-    const catalogControllerProps: React.ComponentProps<typeof CatalogController> = {
+    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
       type: 'HelmChart',
       title: null,
       description: null,
@@ -60,7 +64,7 @@ describe('CatalogController', () => {
   });
 
   it('should fall back to the default title and description if the extension is missing them', async () => {
-    const catalogControllerProps: React.ComponentProps<typeof CatalogController> = {
+    const catalogControllerProps: ComponentProps<typeof CatalogController> = {
       type: 'HelmChart',
       title: 'Default title',
       description: 'Default description',

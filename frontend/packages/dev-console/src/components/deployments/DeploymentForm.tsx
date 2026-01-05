@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ import { Resources } from '../import/import-types';
 import DeploymentFormEditor from './DeploymentFormEditor';
 import { convertDeploymentToEditForm, convertEditFormToDeployment } from './utils/deployment-utils';
 
-const EditDeploymentForm: React.FC<
+const EditDeploymentForm: FC<
   FormikProps<FormikValues> & {
     heading: string;
     resource: K8sResourceKind;
@@ -72,7 +73,7 @@ const EditDeploymentForm: React.FC<
       skipInvalid: true,
     });
 
-  const onReload = React.useCallback(() => {
+  const onReload = useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
     if (editorType === EditorType.Form) {

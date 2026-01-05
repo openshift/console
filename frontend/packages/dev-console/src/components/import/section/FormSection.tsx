@@ -1,27 +1,27 @@
-import * as React from 'react';
+import type { ReactNode, CSSProperties, FC } from 'react';
 import { FormHelperText, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import './FormSection.scss';
 
 export interface FormSectionProps {
-  title?: React.ReactNode;
-  subTitle?: React.ReactNode;
+  title?: ReactNode;
+  subTitle?: ReactNode;
   fullWidth?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
   flexLayout?: boolean;
   extraMargin?: boolean;
   dataTest?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-const flexStyle: React.CSSProperties = {
+const flexStyle: CSSProperties = {
   display: 'flex',
   flex: 1,
   flexDirection: 'column',
   margin: 'var(--pf-t--global--spacer--md)',
 };
 
-const FormSection: React.FC<FormSectionProps> = ({
+const FormSection: FC<FormSectionProps> = ({
   title,
   subTitle,
   fullWidth,

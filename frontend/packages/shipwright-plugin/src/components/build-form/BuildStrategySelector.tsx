@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -15,10 +16,10 @@ type BuildStrategySelectorProps = {
   formType?: string;
 };
 
-const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace, formType }) => {
+const BuildStrategySelector: FC<BuildStrategySelectorProps> = ({ namespace, formType }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const [error, setError] = React.useState('');
+  const [error, setError] = useState('');
   const watchedResources = {
     bs: {
       isList: true,
@@ -36,12 +37,12 @@ const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace
     cbs: ClusterBuildStrategyKind[];
     bs: BuildStrategyKind[];
   }>(watchedResources);
-  const buildStrategies = React.useMemo(
+  const buildStrategies = useMemo(
     () => [...watchedBuildStrategies.bs.data, ...watchedBuildStrategies.cbs.data],
     [watchedBuildStrategies.bs.data, watchedBuildStrategies.cbs.data],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const errorKey = Object.keys(watchedBuildStrategies).find(
       (key) => watchedBuildStrategies[key].loadError,
     );
@@ -56,7 +57,7 @@ const BuildStrategySelector: React.FC<BuildStrategySelectorProps> = ({ namespace
     }
   }, [buildStrategies, watchedBuildStrategies]);
 
-  const clusterBuildStrategyOptions = React.useMemo(() => {
+  const clusterBuildStrategyOptions = useMemo(() => {
     const options: SelectInputOption[] = buildStrategies.reduce((acc, currentValue) => {
       acc.push({
         label: currentValue.metadata.name,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
@@ -10,7 +11,7 @@ import { NodeKind, PodKind, k8sCreate, k8sGet, k8sKillByName } from '@console/in
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type NodeTerminalErrorProps = {
-  error: React.ReactNode;
+  error: ReactNode;
 };
 
 type NodeTerminalInnerProps = {
@@ -115,7 +116,7 @@ const getDebugPod = async (
   return template;
 };
 
-const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
+const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
   return (
     <PaneBody>
       <Alert variant="danger" isInline title={error} data-test="node-terminal-error" />
@@ -123,7 +124,7 @@ const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
   );
 };
 
-const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
+const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="console-app">
@@ -152,13 +153,13 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
   }
 };
 
-const NodeTerminal: React.FC<NodeTerminalProps> = ({ obj: node }) => {
-  const [resources, setResources] = React.useState<FirehoseResource[]>([]);
-  const [errorMessage, setErrorMessage] = React.useState('');
+const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
+  const [resources, setResources] = useState<FirehoseResource[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
   const nodeName = node.metadata.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
 
-  React.useEffect(() => {
+  useEffect(() => {
     let namespace;
     const name = `${nodeName?.replace(/\./g, '-')}-debug`;
     const deleteNamespace = async (ns) => {

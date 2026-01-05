@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
 import { Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
-const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
+const TertiaryHeading: FC<TertiaryHeadingProps> = ({
   altSpacing,
   children,
   className,
@@ -18,7 +18,7 @@ const TertiaryHeading: React.FC<TertiaryHeadingProps> = ({
 );
 
 export type TertiaryHeadingProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   altSpacing?: string;
 };

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventingTriggerModel } from '../../models';
@@ -9,8 +10,8 @@ type BrokerTriggerTabProps = {
   obj: EventBrokerKind;
 };
 
-const BrokerTriggerTab: React.FC<BrokerTriggerTabProps> = ({ obj }) => {
-  const customData = React.useMemo(
+const BrokerTriggerTab: FC<BrokerTriggerTabProps> = ({ obj }) => {
+  const customData = useMemo(
     () => ({
       broker: obj.metadata.name,
     }),

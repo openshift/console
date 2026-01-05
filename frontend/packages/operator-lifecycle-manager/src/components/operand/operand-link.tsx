@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link } from 'react-router-dom-v5-compat';
 import { ResourceIcon } from '@console/internal/components/utils';
@@ -14,7 +14,7 @@ export const csvNameFromWindow = () =>
         allParts[i - 1] === ClusterServiceVersionModel.plural,
     );
 
-export const OperandLink: React.FC<OperandLinkProps> = (props) => {
+export const OperandLink: FC<OperandLinkProps> = (props) => {
   const { namespace, name } = props.obj.metadata;
   const csvName = props.csvName || csvNameFromWindow();
 

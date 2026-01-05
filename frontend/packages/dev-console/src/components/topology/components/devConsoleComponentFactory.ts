@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { GraphElement, withDragNode, withSelection } from '@patternfly/react-topology';
 import { contextMenuActions } from '@console/topology/src/actions';
 import { withCreateConnector } from '@console/topology/src/behavior';
@@ -15,7 +15,7 @@ import { TYPE_BINDABLE_NODE } from '../const';
 export const getDevConsoleComponentFactory = (
   kind,
   type,
-): React.ComponentType<{ element: GraphElement }> | undefined => {
+): ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
     case TYPE_BINDABLE_NODE:
       return withCreateConnector(

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
@@ -10,7 +10,7 @@ import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';
 import ServicesPage from '../../services/ServicesPage';
 
-const ServingListPage: React.FC = () => {
+const ServingListPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [showTitle, canCreate] = [false, false];

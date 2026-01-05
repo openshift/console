@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/inte
 import { RootState } from '@console/internal/redux';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
+export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
   const { t } = useTranslation();
   const { cpu, memory, storage, onChangeCPU, onChangeMemory, onChangeStorage, path = '' } = props;
 
@@ -85,9 +86,9 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { obj, path, type, model, close } = props;
-  const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
-  const [memory, setMemory] = React.useState<string>(_.get(obj.spec, `${path}.${type}.memory`, ''));
-  const [storage, setStorage] = React.useState<string>(
+  const [cpu, setCPU] = useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
+  const [memory, setMemory] = useState<string>(_.get(obj.spec, `${path}.${type}.memory`, ''));
+  const [storage, setStorage] = useState<string>(
     _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
   );
 

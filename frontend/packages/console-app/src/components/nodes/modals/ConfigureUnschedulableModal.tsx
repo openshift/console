@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ModalTitle,
@@ -16,7 +16,7 @@ type ConfigureUnschedulableModalProps = {
   close?: () => void;
 };
 
-const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = ({
+const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   resource,
   close,
   cancel,

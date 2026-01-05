@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared/src';
@@ -6,7 +6,7 @@ import { Resources } from '../../import/import-types';
 import AdvancedStrategyOptions from './advanced-options/AdvancedStrategyOptions';
 import { StrategyFieldProps } from './utils/types';
 
-const RecreateStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
+const RecreateStrategy: FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
   const { t } = useTranslation();
   return resourceType === Resources.OpenShift ? (
     <div data-test="recreateParams">

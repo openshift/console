@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventingSubscriptionModel } from '../../models';
@@ -9,8 +10,8 @@ type ChannelSubscriptionTabProps = {
   obj: EventChannelKind;
 };
 
-const ChannelSubscriptionTab: React.FC<ChannelSubscriptionTabProps> = ({ obj }) => {
-  const customData = React.useMemo(
+const ChannelSubscriptionTab: FC<ChannelSubscriptionTabProps> = ({ obj }) => {
+  const customData = useMemo(
     () => ({
       channel: obj.metadata.name,
     }),

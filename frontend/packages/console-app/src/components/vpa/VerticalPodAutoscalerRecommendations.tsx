@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -11,14 +12,14 @@ import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
 
-const Recommendations: React.FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {
+const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const recommendations = obj?.status?.recommendation?.containerRecommendations ?? [];
   return (
     <>
       {recommendations.length > 0 && <p>{t('console-app~Recommended')}</p>}
       {recommendations.map((recommendation) => (
-        <React.Fragment key={recommendation.containerName}>
+        <Fragment key={recommendation.containerName}>
           <div>
             {t('console-app~Container name')}: {recommendation.containerName}
           </div>
@@ -28,13 +29,13 @@ const Recommendations: React.FC<VerticalPodAutoscalerRecommendationsProps> = ({ 
           <div>
             {t('console-app~Memory')}: {recommendation.target.memory}
           </div>
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   );
 };
 
-export const VerticalPodAutoscalerRecommendations: React.FC<VerticalPodAutoscalerRecommendationsProps> = ({
+export const VerticalPodAutoscalerRecommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({
   obj,
 }) => {
   const { t } = useTranslation();

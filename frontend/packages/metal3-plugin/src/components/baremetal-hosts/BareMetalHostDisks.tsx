@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ const getRowProps = (obj) => ({
   id: obj.name,
 });
 
-const DisksTableRow: React.FC<RowFunctionArgs<BareMetalHostDisk>> = ({ obj }) => {
+const DisksTableRow: FC<RowFunctionArgs<BareMetalHostDisk>> = ({ obj }) => {
   const { hctl, model, name, rotational, serialNumber, sizeBytes, vendor } = obj;
   const { string: size } = humanizeDecimalBytes(sizeBytes);
   return (
@@ -44,11 +44,7 @@ type BareMetalHostDisksProps = {
   loadError?: any;
 };
 
-const BareMetalHostDisks: React.FC<BareMetalHostDisksProps> = ({
-  obj: host,
-  loadError,
-  loaded,
-}) => {
+const BareMetalHostDisks: FC<BareMetalHostDisksProps> = ({ obj: host, loadError, loaded }) => {
   const { t } = useTranslation();
   const disks = getHostStorage(host);
   return (

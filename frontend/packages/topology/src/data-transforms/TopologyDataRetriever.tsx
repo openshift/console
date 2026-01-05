@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState, useMemo, useEffect } from 'react';
 import { observer } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
@@ -13,12 +14,12 @@ type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;
 };
 
-const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
-  const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
+const TopologyDataRetriever: FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
+  const dataModelContext = useContext<ExtensibleModel>(ModelContext);
   const { namespace, extensionsLoaded, watchedResources } = dataModelContext;
-  const [resources, setResources] = React.useState<WatchK8sResults<TopologyResourcesObject>>();
+  const [resources, setResources] = useState<WatchK8sResults<TopologyResourcesObject>>();
   const monitoringAlerts = useMonitoringAlerts(namespace);
-  const resourcesList = React.useMemo<WatchK8sResources<any>>(
+  const resourcesList = useMemo<WatchK8sResources<any>>(
     () => (namespace && extensionsLoaded ? watchedResources : {}),
     [extensionsLoaded, watchedResources, namespace],
   );
@@ -26,17 +27,17 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   const debouncedUpdateResources = useDebounceCallback(setResources, 250);
 
   const updatedResources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedUpdateResources(updatedResources);
   }, [debouncedUpdateResources, updatedResources]);
 
   // Wipe the current model on a namespace change
-  React.useEffect(() => {
+  useEffect(() => {
     dataModelContext.model = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isEmpty(resources)) {
       updateTopologyDataModel(dataModelContext, resources, trafficData, monitoringAlerts)
         .then((res) => {

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
 
-const CreateRoute: React.FC = () => {
+const CreateRoute: FC = () => {
   const { t } = useTranslation();
   return (
     <>

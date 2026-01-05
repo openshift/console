@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent, ReactNode } from 'react';
+import { forwardRef } from 'react';
 import {
   InputGroupText,
   Spinner,
@@ -14,12 +15,12 @@ interface QuickSearchBarProps {
   itemsLoaded: boolean;
   autoFocus: boolean;
   searchTerm: string;
-  onSearch: (event: React.FormEvent<HTMLInputElement>, searchTerm: string) => void;
+  onSearch: (event: FormEvent<HTMLInputElement>, searchTerm: string) => void;
   searchPlaceholder: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
-const QuickSearchBar = React.forwardRef<HTMLInputElement, QuickSearchBarProps>(
+const QuickSearchBar = forwardRef<HTMLInputElement, QuickSearchBarProps>(
   (
     {
       showNoResults,

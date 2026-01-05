@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -8,7 +8,7 @@ import {
 export type OverviewDetailItemProps = {
   /** Details card title */
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   /** Trigger skeleton loading component during the loading phase. */
   isLoading?: boolean;
   /** Optional class name for the value */
@@ -21,14 +21,14 @@ export type OverviewDetailItemProps = {
  * A wrapper around PatternFly's description group. This component's parent must
  * be a PatternFly DescriptionList.
  */
-export const OverviewDetailItem: React.FC<OverviewDetailItemProps> = ({
+export const OverviewDetailItem: FC<OverviewDetailItemProps> = ({
   title,
   isLoading = false,
   children,
   error,
   valueClassName,
 }) => {
-  let status: React.ReactNode;
+  let status: ReactNode;
 
   if (error) {
     status = <span className="pf-v6-u-text-color-subtle">{error}</span>;

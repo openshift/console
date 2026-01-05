@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { AsyncComponent } from '../utils/async';
 
 export const OverviewListPageLoader = () =>
@@ -6,6 +6,6 @@ export const OverviewListPageLoader = () =>
     (m) => m.OverviewListPage,
   );
 
-export const OverviewListPage: React.FC = (props) => {
+export const OverviewListPage: FC = (props) => {
   return <AsyncComponent loader={OverviewListPageLoader} {...props} />;
 };

@@ -1,14 +1,15 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventBrokerKind, BrokerConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 
-const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
+const BrokerRow: FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -32,8 +33,8 @@ const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
       <TableData>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={Kebab.columnClass}>
-        <LazyActionMenu context={context} />;
+      <TableData className={KEBAB_COLUMN_CLASS}>
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

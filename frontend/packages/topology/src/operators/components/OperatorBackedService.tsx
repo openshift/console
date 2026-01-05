@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Node,
@@ -74,12 +75,12 @@ type OperatorBackedServiceProps = {
   WithContextMenuProps &
   StateProps;
 
-const OperatorBackedService: React.FC<OperatorBackedServiceProps> = ({
+const OperatorBackedService: FC<OperatorBackedServiceProps> = ({
   serviceBinding,
   element,
   ...rest
 }) => {
-  const spec = React.useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
+  const spec = useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...rest });
   const resourceObj = getResource(element);
   const resourceModel = resourceObj ? modelFor(referenceFor(resourceObj)) : null;

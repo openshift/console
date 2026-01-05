@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -23,7 +23,7 @@ type StartBuildButtonProps = {
   namespace: string;
 };
 
-const StartBuildButton: React.FC<StartBuildButtonProps & StateProps> = ({
+const StartBuildButton: FC<StartBuildButtonProps & StateProps> = ({
   build,
   namespace,
   impersonate,

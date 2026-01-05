@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useMemo } from 'react';
 import {
   MenuToggle,
   MenuToggleElement,
@@ -17,7 +18,7 @@ import './UserPreferenceField.scss';
 
 type UserPreferenceDropdownFieldProps = UserPreferenceFieldProps<DropdownFieldType>;
 
-const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = ({
+const UserPreferenceDropdownField: FC<UserPreferenceDropdownFieldProps> = ({
   id,
   userSettingsKey,
   defaultValue,
@@ -32,8 +33,8 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
     setCurrentUserPreferenceValue,
     currentUserPreferenceValueLoaded,
   ] = useUserSettings<string>(userSettingsKey);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const selectOptions: JSX.Element[] = React.useMemo(
+  const [isOpen, setIsOpen] = useState(false);
+  const selectOptions: JSX.Element[] = useMemo(
     () =>
       options.map((dropdownOption, index) => {
         const key = `${dropdownOption.label}${index}`;
@@ -89,7 +90,7 @@ const UserPreferenceDropdownField: React.FC<UserPreferenceDropdownFieldProps> = 
         isOpen={isOpen}
         onSelect={onSelect}
         data-test={`select ${id}`}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle isFullWidth ref={toggleRef} onClick={(open) => setIsOpen(open)}>
             {selected || t('console-app~Select an option')}
           </MenuToggle>

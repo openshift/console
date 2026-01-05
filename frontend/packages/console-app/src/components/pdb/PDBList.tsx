@@ -1,10 +1,9 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -31,7 +30,7 @@ export const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns) => {
   return data.map(({ obj: pdb }) => {
     const { name, namespace } = pdb.metadata;
     const resourceKind = referenceForModel(PodDisruptionBudgetModel);
@@ -76,7 +75,7 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind, undefined> = (da
 
 const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
@@ -148,18 +147,17 @@ const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
   const columns = usePDBColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<PodDisruptionBudgetKind>
         {...props}
         label={PodDisruptionBudgetModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

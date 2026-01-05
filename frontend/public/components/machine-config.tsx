@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -22,7 +23,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -32,7 +32,6 @@ import { MachineConfigModel } from '../models';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { CopyToClipboard } from './utils/copy-to-clipboard';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { LoadingBox } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -40,9 +39,9 @@ import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
-const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
@@ -129,14 +128,7 @@ const pages = [
 ];
 
 export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
-  return (
-    <DetailsPage
-      {...props}
-      kind={machineConfigReference}
-      menuActions={machineConfigMenuActions}
-      pages={pages}
-    />
-  );
+  return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
 };
 
 const tableColumnInfo = [
@@ -148,7 +140,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name } = obj.metadata;
 
@@ -184,16 +176,8 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, co
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
       [tableColumnInfo[5].id]: {
-        cell: (
-          <ResourceKebab
-            actions={machineConfigMenuActions}
-            kind={machineConfigReference}
-            resource={obj}
-          />
-        ),
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [machineConfigReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -210,7 +194,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind, undefined> = (data, co
 
 const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<MachineConfigKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineConfigKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -268,16 +252,11 @@ const useMachineConfigColumns = (): TableColumn<MachineConfigKind>[] => {
   return columns;
 };
 
-const MachineConfigList: React.FC<MachineConfigListProps> = ({
-  data,
-  loaded,
-  loadError,
-  ...props
-}) => {
+const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineConfigColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineConfigKind>
         {...props}
         label={MachineConfigModel.labelPlural}
@@ -285,11 +264,10 @@ const MachineConfigList: React.FC<MachineConfigListProps> = ({
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

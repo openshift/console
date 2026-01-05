@@ -1,5 +1,4 @@
 import { testName, checkErrors } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 
 const name = `${testName}-event-test-pod`;
 const testpod = {
@@ -34,7 +33,6 @@ const testpod = {
 describe('Events', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
     try {
       cy.exec(`echo '${JSON.stringify(testpod)}' | oc create -n ${testName} -f -`);

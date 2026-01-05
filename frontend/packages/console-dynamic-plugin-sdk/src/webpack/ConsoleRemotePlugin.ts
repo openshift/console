@@ -10,7 +10,7 @@ import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as semver from 'semver';
-import * as webpack from 'webpack';
+import type * as webpack from 'webpack';
 import { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
 import { extensionsFile } from '../constants';
 import {
@@ -437,7 +437,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         );
 
         if (result.hasErrors()) {
-          const error = new webpack.WebpackError('ExtensionValidator has reported errors');
+          const error = new compiler.webpack.WebpackError('ExtensionValidator has reported errors');
           error.details = result.formatErrors();
           error.file = extensionsFile;
           compilation.errors.push(error);
@@ -457,7 +457,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
       const modifiedModules: string[] = [];
 
-      webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
+      compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
         ConsoleRemotePlugin.name,
         (loaders, normalModule) => {
           const { userRequest } = normalModule;

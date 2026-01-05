@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -15,13 +15,7 @@ interface ResourceLimitsModalProps {
 
 type Props = FormikProps<FormikValues> & ResourceLimitsModalProps;
 
-const ResourceLimitsModal: React.FC<Props> = ({
-  handleSubmit,
-  cancel,
-  isSubmitting,
-  status,
-  errors,
-}) => {
+const ResourceLimitsModal: FC<Props> = ({ handleSubmit, cancel, isSubmitting, status, errors }) => {
   const { t } = useTranslation();
   return (
     <form

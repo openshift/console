@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { cleanup, fireEvent, render, screen, RenderResult, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -13,8 +13,8 @@ jest.mock('../ContainerField', () => ({
   default: jest.fn(),
 }));
 
-const MockContainerField: React.FC = () => <div>Container: foo</div>;
-const mockedContainerField = ContainerField as jest.Mock<React.FC>;
+const MockContainerField: FC = () => <div>Container: foo</div>;
+const mockedContainerField = jest.mocked(ContainerField);
 
 const handleSubmit = jest.fn();
 

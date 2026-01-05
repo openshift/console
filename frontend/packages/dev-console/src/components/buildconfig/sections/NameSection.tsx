@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ export type NameSectionFormData = {
   };
 };
 
-const NameSection: React.FC<{}> = () => {
+const NameSection: FC<{}> = () => {
   const { t } = useTranslation();
 
   const [, meta] = useField<string>('formData.name');

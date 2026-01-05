@@ -26,6 +26,19 @@ import {
 } from '../create-eventsources-utils';
 import { getDefaultEventingData, Kafkas } from './knative-serving-data';
 
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  checkAccess: jest.fn(),
+}));
+
+jest.mock('@console/internal/module/k8s/k8s-models', () => ({
+  ...jest.requireActual('@console/internal/module/k8s/k8s-models'),
+  modelFor: jest.fn(),
+}));
+
+const checkAccessMock = rbacModule.checkAccess as jest.Mock;
+const modelForMock = k8sModelsModule.modelFor as jest.Mock;
+
 describe('Create knative Utils', () => {
   it('should return bootstrapServers', () => {
     expect(getBootstrapServers(Kafkas)).toEqual([
@@ -50,7 +63,7 @@ describe('Create knative Utils', () => {
   });
 
   it('expect response of loadYamlData to update namespace if not there yamlEditor', () => {
-    jest.spyOn(k8sModelsModule, 'modelFor').mockImplementation(() => ({ namespaced: true }));
+    modelForMock.mockImplementation(() => ({ namespaced: true }));
     const defaultEventingData = getDefaultEventingData(EVENT_SOURCE_CAMEL_KIND);
     defaultEventingData.formData.project.name = '';
     const mockData = {
@@ -70,9 +83,7 @@ describe('Create knative Utils', () => {
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'kafkasources' },
       { apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP, plural: 'camelsources' },
     ] as K8sKind[];
-    spyOn(rbacModule, 'checkAccess').and.callFake(() =>
-      Promise.resolve({ status: { allowed: true } }),
-    );
+    checkAccessMock.mockResolvedValue({ status: { allowed: true } });
     const eventSourceData = getEventSourceModelsWithAccess('my-app', eventSourcesModel);
     Promise.all(eventSourceData)
       .then((results) => {

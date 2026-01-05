@@ -1,6 +1,6 @@
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
-import { Kebab } from '@console/internal/components/utils';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const BrokerHeaders = (t: TFunction) => () => {
   return [
@@ -30,7 +30,7 @@ const BrokerHeaders = (t: TFunction) => () => {
     },
     {
       title: '',
-      props: { className: Kebab.columnClass },
+      props: { className: KEBAB_COLUMN_CLASS },
     },
   ];
 };

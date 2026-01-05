@@ -11,7 +11,7 @@ import useTranslationExt from './useTranslationExt';
  */
 const translationKeyMap: Record<string, Record<string, string>> = {};
 
-const useTranslatedExtensions = <E extends Extension>(
+export const useTranslatedExtensions = <E extends Extension>(
   extensions: LoadedExtension<E>[],
 ): typeof extensions => {
   const { t } = useTranslationExt();
@@ -48,5 +48,3 @@ const useTranslatedExtensions = <E extends Extension>(
 
   return extensions;
 };
-
-export default useTranslatedExtensions;

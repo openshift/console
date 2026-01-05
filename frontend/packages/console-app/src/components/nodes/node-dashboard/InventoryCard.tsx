@@ -1,23 +1,21 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useContext } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
-import InventoryItem, {
+import {
+  InventoryItem,
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
-export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
-  nodeName,
-  model,
-  mapper,
-}) => {
-  const resource = React.useMemo(
+export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
+  const resource = useMemo(
     () => ({
       kind: model.crd ? referenceForModel(model) : model.kind,
       fieldSelector: `spec.nodeName=${nodeName}`,
@@ -40,8 +38,8 @@ export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
   );
 };
 
-const InventoryCard: React.FC = () => {
-  const { obj } = React.useContext(NodeDashboardContext);
+const InventoryCard: FC = () => {
+  const { obj } = useContext(NodeDashboardContext);
   const { t } = useTranslation();
 
   return (

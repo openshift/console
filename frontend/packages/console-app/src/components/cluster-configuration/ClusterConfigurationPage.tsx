@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent, ReactElement } from 'react';
+import { useState, useMemo, createRef } from 'react';
 import { IconStatus, Status } from '@patternfly/react-component-groups/dist/dynamic/Status';
 import {
   Tabs,
@@ -28,13 +29,13 @@ import useClusterConfigurationItems from './useClusterConfigurationItems';
 
 import './ClusterConfigurationPage.scss';
 
-const ClusterConfigurationPage: React.FC = () => {
+const ClusterConfigurationPage: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
 
   const initialGroupId = params.group || 'general';
-  const [activeTabId, setActiveTabId] = React.useState<string>(initialGroupId);
-  const onSelect = (event: React.MouseEvent<HTMLElement>, newGroupId: string) => {
+  const [activeTabId, setActiveTabId] = useState<string>(initialGroupId);
+  const onSelect = (event: MouseEvent<HTMLElement>, newGroupId: string) => {
     if (isModifiedEvent(event)) {
       return;
     }
@@ -56,7 +57,7 @@ const ClusterConfigurationPage: React.FC = () => {
 
   const loaded = clusterConfigurationGroupsResolved && clusterConfigurationItemsResolved;
 
-  const [clusterConfigurationTabs, clusterConfigurationTabContents] = React.useMemo<
+  const [clusterConfigurationTabs, clusterConfigurationTabContents] = useMemo<
     [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]]
   >(() => {
     const populatedClusterCongigurationGroups: ClusterConfigurationTabGroup[] = getClusterConfigurationGroups(
@@ -64,9 +65,9 @@ const ClusterConfigurationPage: React.FC = () => {
       clusterConfigurationItems,
     );
     const [tabs, tabContents] = populatedClusterCongigurationGroups.reduce(
-      (acc: [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]], currGroup) => {
+      (acc: [ReactElement<TabProps>[], ReactElement<TabContentProps>[]], currGroup) => {
         const { id, label, items } = currGroup;
-        const ref = React.createRef<HTMLElement>();
+        const ref = createRef<HTMLElement>();
         acc[0].push(
           <Tab
             key={id}
@@ -92,7 +93,7 @@ const ClusterConfigurationPage: React.FC = () => {
         );
         return acc;
       },
-      [[], []] as [React.ReactElement<TabProps>[], React.ReactElement<TabContentProps>[]],
+      [[], []] as [ReactElement<TabProps>[], ReactElement<TabContentProps>[]],
     );
     return [tabs, tabContents];
   }, [activeTabId, clusterConfigurationGroups, clusterConfigurationItems]);

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -20,7 +21,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom-v5-compat';
-import { getUser } from '@console/dynamic-plugin-sdk';
+import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';
 import {
@@ -35,8 +36,6 @@ import {
   SectionHeading,
   ConsoleEmptyState,
   ResourceLink,
-  ResourceKebab,
-  Kebab,
   ResourceIcon,
   navFactory,
   ResourceSummary,
@@ -54,8 +53,13 @@ import {
   UserInfo,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { FLAGS, GreenCheckCircleIcon, Status, useFlag } from '@console/shared';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { Status } from '@console/shared/src/components/status/Status';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -74,7 +78,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-v6-u-w-16-on-lg', 'pf-v6-c-table__td'),
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
   css('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-v6-c-table__td'),
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const componentsTableColumnClasses = [
@@ -84,7 +88,7 @@ const componentsTableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
-export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, footer }) => {
+export const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
   return (
     <Hint>
       <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>
@@ -94,7 +98,7 @@ export const InstallPlanHint: React.FC<InstallPlanHintProps> = ({ title, body, f
   );
 };
 
-export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
+export const InstallPlanTableRow: FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => <Status status={phase} />;
   return (
@@ -161,17 +165,13 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
 
       {/* Kebab */}
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab
-          actions={Kebab.factory.common}
-          kind={referenceForModel(InstallPlanModel)}
-          resource={obj}
-        />
+        <LazyActionMenu context={{ [referenceForModel(InstallPlanModel)]: obj }} />
       </TableData>
     </>
   );
 };
 
-const EmptyMsg: React.FC = () => {
+const EmptyMsg: FC = () => {
   const { t } = useTranslation();
   return (
     <ConsoleEmptyState title={t('olm~No InstallPlans found')}>
@@ -238,7 +238,7 @@ const getCatalogSources = (
     ImmutableSet(),
   ).toJS();
 
-export const InstallPlansPage: React.FC<InstallPlansPageProps> = (props) => {
+export const InstallPlansPage: FC<InstallPlansPageProps> = (props) => {
   const { t } = useTranslation();
   const params = useParams();
   const namespace = props.namespace || params?.ns;
@@ -275,15 +275,15 @@ const updateUser = (isOpenShift: boolean, user: UserInfo): string => {
   return user?.username;
 };
 
-export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProps> = ({
+export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = ({
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
   const user: UserInfo = useSelector<RootState, object>(getUser);
 
-  const [username, setUsername] = React.useState(updateUser(isOpenShift, user));
+  const [username, setUsername] = useState(updateUser(isOpenShift, user));
 
-  React.useEffect(() => {
+  useEffect(() => {
     setUsername(updateUser(isOpenShift, user));
   }, [isOpenShift, user]);
 
@@ -310,7 +310,7 @@ export const NeedInstallPlanPermissions: React.FC<NeedInstallPlanPermissionsProp
   );
 };
 
-export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) => {
+export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const needsApproval =
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
@@ -407,13 +407,10 @@ export const InstallPlanDetails: React.FC<InstallPlanDetailsProps> = ({ obj }) =
   );
 };
 
-export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
-  obj,
-  hideApprovalBlock,
-}) => {
+export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideApprovalBlock }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
-  const [needsApproval, setNeedsApproval] = React.useState(
+  const [needsApproval, setNeedsApproval] = useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
   const subscription = obj?.metadata?.ownerReferences.find(
@@ -547,7 +544,7 @@ export const InstallPlanPreview: React.FC<InstallPlanPreviewProps> = ({
   );
 };
 
-export const InstallPlanDetailsPage: React.FC = (props) => {
+export const InstallPlanDetailsPage: FC = (props) => {
   const params = useParams();
   return (
     <DetailsPage
@@ -561,15 +558,14 @@ export const InstallPlanDetailsPage: React.FC = (props) => {
         // t('olm~Components')
         { href: 'components', nameKey: 'olm~Components', component: InstallPlanPreview },
       ]}
-      menuActions={[...Kebab.factory.common]}
     />
   );
 };
 
 type InstallPlanHintProps = {
-  title?: React.ReactNode;
-  body?: React.ReactNode;
-  footer?: React.ReactNode;
+  title?: ReactNode;
+  body?: ReactNode;
+  footer?: ReactNode;
 };
 
 export type InstallPlansListProps = {};

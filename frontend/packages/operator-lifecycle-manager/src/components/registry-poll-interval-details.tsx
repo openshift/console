@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEventHandler } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Button,
   Form,
@@ -37,14 +38,14 @@ type RegistryPollIntervalDetailItemProps = {
   catalogSource: CatalogSourceKind;
 };
 
-export const RegistryPollIntervalDetailItem: React.FC<RegistryPollIntervalDetailItemProps> = ({
+export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemProps> = ({
   catalogSource,
 }) => {
   const { t } = useTranslation('olm');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const pollInterval = React.useMemo(() => {
+  const pollInterval = useMemo(() => {
     let initialValue = catalogSource.spec?.updateStrategy?.registryPoll?.interval || '';
     if (initialValue.endsWith('0s')) {
       initialValue = initialValue.substring(0, initialValue.length - 2);
@@ -52,8 +53,8 @@ export const RegistryPollIntervalDetailItem: React.FC<RegistryPollIntervalDetail
     return initialValue;
   }, [catalogSource.spec.updateStrategy?.registryPoll?.interval]);
 
-  const [selectedPollInterval, setSelectedPollInterval] = React.useState<string>(pollInterval);
-  const items = React.useMemo<SimpleSelectOption[]>(() => {
+  const [selectedPollInterval, setSelectedPollInterval] = useState<string>(pollInterval);
+  const items = useMemo<SimpleSelectOption[]>(() => {
     return getPollIntervals(selectedPollInterval);
   }, [selectedPollInterval]);
 
@@ -61,13 +62,13 @@ export const RegistryPollIntervalDetailItem: React.FC<RegistryPollIntervalDetail
   const managedBy = catalogSource.metadata?.annotations?.['operatorframework.io/managed-by'];
 
   // reset value on modal open
-  React.useEffect(() => {
+  useEffect(() => {
     if (isModalOpen) {
       setSelectedPollInterval(pollInterval);
     }
   }, [pollInterval, isModalOpen]);
 
-  const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const submit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const patch = [
       {

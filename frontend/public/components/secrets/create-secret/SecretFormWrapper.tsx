@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { FCC, useState, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
@@ -36,7 +36,7 @@ import {
 import { SecretSubForm } from './SecretSubForm';
 import { isBinary } from 'istextorbinary';
 
-export const SecretFormWrapper: FCC<BaseEditSecretProps_> = (props) => {
+export const SecretFormWrapper: React.FCC<BaseEditSecretProps_> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();

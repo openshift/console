@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -30,12 +30,10 @@ const k8sWatchMock = k8sWatch as jest.Mock;
 let store;
 
 interface WrapperProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children }) => (
-  <Provider store={store}>{children}</Provider>
-);
+const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 describe('processReduxId', () => {
   const k8s = ImmutableMap({
@@ -184,7 +182,7 @@ describe('processReduxId', () => {
 describe('Firehose', () => {
   // Object under test
   const resourceUpdate = jest.fn();
-  const Child: React.FC = (props) => {
+  const Child: FC = (props) => {
     resourceUpdate(props);
     return null;
   };
@@ -205,7 +203,7 @@ describe('Firehose', () => {
       }),
     );
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ legacyFakeTimers: true });
     jest.resetAllMocks();
 
     k8sListMock.mockReturnValue(Promise.resolve(podList));
@@ -921,15 +919,13 @@ describe('Firehose', () => {
 describe('Firehose together with useK8sWatchResources', () => {
   // Objects under test
   const firehoseUpdate = jest.fn();
-  const Child: React.FC = (props) => {
+  const Child: FC = (props) => {
     firehoseUpdate(props);
     return null;
   };
 
   const resourcesUpdate = jest.fn();
-  const WatchResources: React.FC<{ initResources: WatchK8sResources<{}> }> = ({
-    initResources,
-  }) => {
+  const WatchResources: FC<{ initResources: WatchK8sResources<{}> }> = ({ initResources }) => {
     resourcesUpdate(useK8sWatchResources(initResources));
     return null;
   };
@@ -950,7 +946,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       }),
     );
 
-    jest.useFakeTimers();
+    jest.useFakeTimers({ legacyFakeTimers: true });
     jest.resetAllMocks();
 
     k8sListMock.mockReturnValue(Promise.resolve(podList));
@@ -1362,7 +1358,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     });
 
     // FIXME crashs
-    it.skip('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (Firehose first)', async () => {
+    xit('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (Firehose first)', async () => {
       // Without a name the k8sGet API is called, but it returns a list anyway.
       k8sGetMock.mockReturnValue(Promise.resolve(podList));
 
@@ -1477,7 +1473,7 @@ describe('Firehose together with useK8sWatchResources', () => {
     });
 
     // FIXME crashs
-    it.skip('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (useK8sWatchResources first)', async () => {
+    xit('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (useK8sWatchResources first)', async () => {
       // Without a name the k8sGet API is called, but it returns a list anyway.
       k8sGetMock.mockReturnValue(Promise.resolve(podList));
 

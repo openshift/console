@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
@@ -13,7 +13,7 @@ export type RoutesOverviewListItemProps = {
   totalPercent?: string;
 };
 
-const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
+const RoutesOverviewListItem: FC<RoutesOverviewListItemProps> = ({
   routeLink: { url, name, namespace, percent },
   totalPercent,
   uniqueRoutes,

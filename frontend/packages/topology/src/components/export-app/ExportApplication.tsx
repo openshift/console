@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ToolbarItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -12,7 +12,7 @@ type ExportApplicationProps = {
   isDisabled: boolean;
 };
 
-const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisabled }) => {
+const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const toast = useToast();

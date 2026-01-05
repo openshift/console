@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
 import { Resources, RouteData } from '../import-types';
@@ -10,7 +10,7 @@ interface RouteSectionProps {
   resources: Resources;
 }
 
-const RouteSection: React.FC<RouteSectionProps> = ({ route, resources }) => {
+const RouteSection: FC<RouteSectionProps> = ({ route, resources }) => {
   const { t } = useTranslation();
   const { defaultUnknownPort, disable, create } = route;
 

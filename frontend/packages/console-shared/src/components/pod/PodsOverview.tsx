@@ -1,9 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Alert, AlertActionLink, Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import { PodStatus } from '@console/internal/components/pod';
+import { PodStatus } from '@console/internal/components/pod-list';
 import { PodTraffic } from '@console/internal/components/pod-traffic';
 import { SidebarSectionHeading } from '@console/internal/components/utils/headings';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -100,7 +101,7 @@ export const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   return pod1.metadata.name.localeCompare(pod2.metadata.name);
 };
 
-const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
+const PodOverviewItem: FC<PodOverviewItemProps> = ({ pod }) => {
   const {
     metadata: { name, namespace },
   } = pod;
@@ -131,7 +132,7 @@ type PodOverviewItemProps = {
   pod: PodKind;
 };
 
-const PodsOverviewList: React.FC<PodOverviewListProps> = ({ pods }) => (
+const PodsOverviewList: FC<PodOverviewListProps> = ({ pods }) => (
   <List isPlain isBordered>
     {_.map(pods, (pod) => (
       <PodOverviewItem key={pod.metadata.uid} pod={pod} />
@@ -170,7 +171,7 @@ const useGetShipwrightBuilds = (namespace: string, name: string): K8sResourceKin
   // get all shipwright buildrun CRDs and concatenate into a list
   const watchedBuildRuns = useK8sWatchResources(watchedResources);
 
-  const buildRuns = React.useMemo(() => {
+  const buildRuns = useMemo(() => {
     const allBuildRuns = {
       ...((watchedBuildRuns.buildRunBeta.data as object) || {}),
       ...((watchedBuildRuns.buildRunAlpha.data as object) || {}),
@@ -198,7 +199,7 @@ const buildRunIsComplete = (buildRun: K8sResourceKind) => {
   );
 };
 
-export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
+export const PodsOverviewContent: FC<PodsOverviewContentProps> = ({
   obj,
   pods,
   loaded,
@@ -211,7 +212,7 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
     metadata: { name, namespace },
   } = obj;
   const { t } = useTranslation();
-  const [showWaitingPods, setShowWaitingPods] = React.useState(false);
+  const [showWaitingPods, setShowWaitingPods] = useState(false);
   const shipwrightBuilds = useGetShipwrightBuilds(namespace, name);
 
   const waitingForBuildConfig =
@@ -280,7 +281,7 @@ export const PodsOverviewContent: React.FC<PodsOverviewContentProps> = ({
 };
 PodsOverviewContent.displayName = 'PodsOverviewContent';
 
-export const PodsOverview: React.FC<PodsOverviewProps> = ({
+export const PodsOverview: FC<PodsOverviewProps> = ({
   obj,
   podsFilter,
   hideIfEmpty = false,
@@ -289,10 +290,10 @@ export const PodsOverview: React.FC<PodsOverviewProps> = ({
   const {
     metadata: { namespace },
   } = obj;
-  const [pods, setPods] = React.useState<PodKind[]>([]);
+  const [pods, setPods] = useState<PodKind[]>([]);
   const { podData, loadError, loaded } = usePodsWatcher(obj, obj.kind, namespace);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!loadError && loaded) {
       let updatedPods = podData.pods as PodKind[];
       if (podsFilter) {
@@ -311,7 +312,7 @@ export const PodsOverview: React.FC<PodsOverviewProps> = ({
   );
 };
 
-export const PodsOverviewMultiple: React.FC<PodsOverviewMultipleProps> = ({
+export const PodsOverviewMultiple: FC<PodsOverviewMultipleProps> = ({
   obj,
   podResources,
   podsFilter,
@@ -321,16 +322,16 @@ export const PodsOverviewMultiple: React.FC<PodsOverviewMultipleProps> = ({
     metadata: { namespace },
   } = obj;
 
-  const [pods, setPods] = React.useState<PodKind[]>([]);
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>('');
-  const watchedResources = React.useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
+  const [pods, setPods] = useState<PodKind[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const watchedResources = useMemo(() => getResourcesToWatchForPods('CronJob', namespace), [
     namespace,
   ]);
 
   const resources = useK8sWatchResources(watchedResources);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
     if (errorKey) {
       setLoadError(resources[errorKey].loadError);

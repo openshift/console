@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -23,7 +23,7 @@ interface QuickSearchContentProps {
   onListChange?: (items: number) => void;
 }
 
-const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
+const QuickSearchContent: FC<QuickSearchContentProps> = ({
   catalogItems,
   catalogItemTypes,
   viewAll,

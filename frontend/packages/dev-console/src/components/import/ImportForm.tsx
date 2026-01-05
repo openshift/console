@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ValidatedOptions, AlertVariant } from '@patternfly/react-core';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -11,10 +11,6 @@ import { RouteModel } from '@console/internal/models';
 import { RouteKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
-import { usePacInfo } from '@console/pipelines-plugin/src/components/repository/hooks/pac-hook';
-import { createRemoteWebhook } from '@console/pipelines-plugin/src/components/repository/repository-form-utils';
 import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
@@ -27,6 +23,12 @@ import {
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
+import { PipelineType } from '../pipeline-section/import-types';
+import { usePacInfo } from '../pipeline-section/pipeline/pac-hook';
+import {
+  createRemoteWebhook,
+  defaultRepositoryFormValues,
+} from '../pipeline-section/pipeline/utils';
 import { getBaseInitialValues } from './form-initial-values';
 import {
   createOrUpdateResources,
@@ -64,7 +66,7 @@ export interface StateProps {
   activeApplication: string;
 }
 
-const ImportForm: React.FC<ImportFormProps & StateProps> = ({
+const ImportForm: FC<ImportFormProps & StateProps> = ({
   namespace,
   imageStreams,
   importData,

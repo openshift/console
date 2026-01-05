@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Button, List } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ export type RevisionsOverviewListProps = {
 
 const MAX_REVISIONS: number = 3;
 
-const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
+const RevisionsOverviewList: FC<RevisionsOverviewListProps> = ({
   revisions,
   service,
   hideSectionHeading,
@@ -36,7 +37,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({
   const traffic = service.status?.traffic;
   const name = service.metadata?.name;
 
-  const filteredRevisions: K8sResourceKind[] = React.useMemo(() => {
+  const filteredRevisions: K8sResourceKind[] = useMemo(() => {
     if (!revisions || !revisions.length) {
       return [];
     }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { NodeAddress } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import DetailPropertyList from '@console/shared/src/components/lists/DetailPropertyList';
@@ -9,7 +9,7 @@ type NodeIPListProps = {
   expand?: boolean;
 };
 
-const NodeIPList: React.FC<NodeIPListProps> = ({ ips, expand = false }) => (
+const NodeIPList: FC<NodeIPListProps> = ({ ips, expand = false }) => (
   <DetailPropertyList>
     {_.sortBy(ips, ['type']).map(
       ({ type, address }) =>

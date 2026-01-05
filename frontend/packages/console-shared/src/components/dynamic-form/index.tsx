@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import Form, { FormProps } from '@rjsf/core';
 import * as _ from 'lodash';
@@ -18,7 +18,7 @@ import { getSchemaErrors } from './utils';
 import defaultWidgets from './widgets';
 import './styles.scss';
 
-export const DynamicForm: React.FC<DynamicFormProps> = ({
+export const DynamicForm: FC<DynamicFormProps> = ({
   ArrayFieldTemplate = DefaultArrayFieldTemplate,
   errors = [],
   ErrorTemplate = DefaultErrorTemplate,
@@ -57,7 +57,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       />
     );
   }
-  const FormErrorFallbackComponent: React.FC<ErrorBoundaryFallbackProps> = () => {
+  const FormErrorFallbackComponent: FC<ErrorBoundaryFallbackProps> = () => {
     return (
       <Alert
         isInline
@@ -126,7 +126,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
 type DynamicFormProps = FormProps<any> & {
   errors?: string[];
-  ErrorTemplate?: React.FC<{ errors: string[] }>;
+  ErrorTemplate?: FC<{ errors: string[] }>;
   noActions?: boolean;
   customUISchema?: boolean;
   showAlert?: boolean;

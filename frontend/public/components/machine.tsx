@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   getMachineAddresses,
@@ -21,7 +22,6 @@ import { DetailsPage } from './factory/details';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { NodeLink, ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -34,7 +34,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -45,9 +44,8 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
 
 const tableColumnInfo = [
@@ -96,10 +94,8 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
         cell: zone || DASH,
       },
       [tableColumnInfo[7].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [machineReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -204,7 +200,7 @@ type MachineListProps = {
 const useMachineColumns = (): TableColumn<MachineKind>[] => {
   const { t } = useTranslation();
 
-  const columns: TableColumn<MachineKind>[] = React.useMemo(() => {
+  const columns: TableColumn<MachineKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -275,11 +271,11 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
   return columns;
 };
 
-export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
+export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<MachineKind>
         {...props}
         label={MachineModel.labelPlural}
@@ -287,15 +283,14 @@ export const MachineList: React.FC<MachineListProps> = ({ data, loaded, loadErro
         loaded={loaded}
         loadError={loadError}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const MachinePage: React.FC<MachinePageProps> = ({
+export const MachinePage: FC<MachinePageProps> = ({
   selector,
   namespace,
   showTitle = true,
@@ -343,7 +338,6 @@ export const MachineDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
     kind={machineReference}
-    menuActions={menuActions}
     pages={[
       navFactory.details(MachineDetails),
       navFactory.editYaml(),

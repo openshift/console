@@ -4,7 +4,7 @@ import { ActionMenuVariant } from '@console/shared/src/components/actions/types'
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { Status } from '@console/shared/src/components/status/Status';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import * as React from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -26,10 +26,7 @@ import { ResourceEventStream } from './events';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { ReplicaSetsPage } from './replicaset';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { LoadingBox } from './utils/status-box';
 import { AsyncComponent } from './utils/async';
 import { ContainerTable } from './utils/container-table';
@@ -223,7 +220,7 @@ const DeploymentTableHeader = () => {
 };
 DeploymentTableHeader.displayName = 'DeploymentTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentModel);
 };
 
@@ -231,17 +228,16 @@ export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded,
   const columns = useWorkloadColumns<DeploymentKind>();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 DeploymentsList.displayName = 'DeploymentsList';

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   AboutModal as PfAboutModal,
@@ -10,7 +11,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { getBrandingDetails, MASTHEAD_TYPE, useCustomLogoURL } from './utils/branding';
 import { ReleaseNotesLink } from './utils/release-notes-link';
@@ -31,13 +31,13 @@ import {
 import redHatFedoraImg from '../imgs/red-hat-fedora.svg';
 import redHatFedoraWatermarkImg from '../imgs/red-hat-fedora-watermark.svg';
 
-const DynamicPlugins: React.FC = () => {
+const DynamicPlugins: FC = () => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = usePluginInfo();
-  const [items, setItems] = React.useState([]);
+  const pluginInfoEntries = usePluginInfo();
+  const [items, setItems] = useState([]);
 
-  React.useEffect(() => {
-    const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
+  useEffect(() => {
+    const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
       a.metadata.name.localeCompare(b.metadata.name),
     );
@@ -63,10 +63,10 @@ const DynamicPlugins: React.FC = () => {
   );
 };
 
-const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
-  const [kubernetesVersion, setKubernetesVersion] = React.useState('');
+const AboutModalItems: FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
+  const [kubernetesVersion, setKubernetesVersion] = useState('');
   const { t } = useTranslation();
-  React.useEffect(() => {
+  useEffect(() => {
     k8sVersion()
       .then((response) => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion(t('public~unknown')));
@@ -161,7 +161,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
 };
 AboutModalItems.displayName = 'AboutModalItems';
 
-export const AboutModal: React.FC<AboutModalProps> = (props) => {
+export const AboutModal: FC<AboutModalProps> = (props) => {
   const { isOpen, closeAboutModal } = props;
   const { t } = useTranslation();
   const { productName } = getBrandingDetails();

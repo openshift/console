@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Spinner } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import './Loading.scss';

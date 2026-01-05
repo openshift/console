@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { SimpleDropdown, SimpleDropdownItem } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
@@ -7,7 +7,7 @@ type CreateActionDropdownProps = {
   namespace: string;
 };
 
-export const CreateActionDropdown: React.FC<CreateActionDropdownProps> = ({ namespace }) => {
+export const CreateActionDropdown: FC<CreateActionDropdownProps> = ({ namespace }) => {
   const { t } = useTranslation();
 
   const menuActions: SimpleDropdownItem[] = [

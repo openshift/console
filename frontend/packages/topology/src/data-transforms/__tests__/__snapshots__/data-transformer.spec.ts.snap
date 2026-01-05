@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`data transformer  should match the previous snapshot 1`] = `
-Object {
-  "edges": Array [
-    Object {
+{
+  "edges": [
+    {
       "id": "5ca9ae28-680d-11e9-8c69-5254003f9382_60a9b423-680d-11e9-8c69-5254003f9382",
       "label": "Visual connector",
       "source": "5ca9ae28-680d-11e9-8c69-5254003f9382",
@@ -11,31 +11,31 @@ Object {
       "type": "connects-to",
     },
   ],
-  "nodes": Array [
-    Object {
-      "data": Object {
-        "data": Object {
+  "nodes": [
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": undefined,
           "vcsURI": undefined,
         },
         "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
         "name": "analytics-deployment",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "Deployment",
-          "metadata": Object {
-            "annotations": Object {
-              "app.openshift.io/connects-to": "[\\"wit\\"]",
+          "metadata": {
+            "annotations": {
+              "app.openshift.io/connects-to": "["wit"]",
             },
             "creationTimestamp": "2019-04-22T11:35:37Z",
             "generation": 5,
-            "labels": Object {
+            "labels": {
               "app.kubernetes.io/component": "backend",
               "app.kubernetes.io/instance": "analytics",
               "app.kubernetes.io/name": "python",
@@ -47,12 +47,12 @@ Object {
             "resourceVersion": "753748",
             "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
           },
-          "spec": Object {
+          "spec": {
             "progressDeadlineSeconds": 600,
             "replicas": 3,
             "revisionHistoryLimit": 10,
-            "selector": Object {
-              "matchLabels": Object {
+            "selector": {
+              "matchLabels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "analytics",
                 "app.kubernetes.io/name": "python",
@@ -60,17 +60,17 @@ Object {
                 "app.kubernetes.io/version": "1.0",
               },
             },
-            "strategy": Object {
-              "rollingUpdate": Object {
+            "strategy": {
+              "rollingUpdate": {
                 "maxSurge": "25%",
                 "maxUnavailable": "25%",
               },
               "type": "RollingUpdate",
             },
-            "template": Object {
-              "metadata": Object {
+            "template": {
+              "metadata": {
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "analytics",
                   "app.kubernetes.io/name": "python",
@@ -78,28 +78,28 @@ Object {
                   "app.kubernetes.io/version": "1.0",
                 },
               },
-              "spec": Object {
-                "containers": Array [],
+              "spec": {
+                "containers": [],
               },
             },
           },
-          "status": Object {},
+          "status": {},
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "Deployment",
-            "metadata": Object {
-              "annotations": Object {
-                "app.openshift.io/connects-to": "[\\"wit\\"]",
+            "metadata": {
+              "annotations": {
+                "app.openshift.io/connects-to": "["wit"]",
               },
               "creationTimestamp": "2019-04-22T11:35:37Z",
               "generation": 5,
-              "labels": Object {
+              "labels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "analytics",
                 "app.kubernetes.io/name": "python",
@@ -111,12 +111,12 @@ Object {
               "resourceVersion": "753748",
               "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
             },
-            "spec": Object {
+            "spec": {
               "progressDeadlineSeconds": 600,
               "replicas": 3,
               "revisionHistoryLimit": 10,
-              "selector": Object {
-                "matchLabels": Object {
+              "selector": {
+                "matchLabels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "analytics",
                   "app.kubernetes.io/name": "python",
@@ -124,17 +124,17 @@ Object {
                   "app.kubernetes.io/version": "1.0",
                 },
               },
-              "strategy": Object {
-                "rollingUpdate": Object {
+              "strategy": {
+                "rollingUpdate": {
                   "maxSurge": "25%",
                   "maxUnavailable": "25%",
                 },
                 "type": "RollingUpdate",
               },
-              "template": Object {
-                "metadata": Object {
+              "template": {
+                "metadata": {
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "analytics",
                     "app.kubernetes.io/name": "python",
@@ -142,12 +142,12 @@ Object {
                     "app.kubernetes.io/version": "1.0",
                   },
                 },
-                "spec": Object {
-                  "containers": Array [],
+                "spec": {
+                  "containers": [],
                 },
               },
             },
-            "status": Object {},
+            "status": {},
           },
         },
         "type": "workload",
@@ -156,16 +156,16 @@ Object {
       "height": 104,
       "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
       "label": "analytics-deployment",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
-        "metadata": Object {
-          "annotations": Object {
-            "app.openshift.io/connects-to": "[\\"wit\\"]",
+        "metadata": {
+          "annotations": {
+            "app.openshift.io/connects-to": "["wit"]",
           },
           "creationTimestamp": "2019-04-22T11:35:37Z",
           "generation": 5,
-          "labels": Object {
+          "labels": {
             "app.kubernetes.io/component": "backend",
             "app.kubernetes.io/instance": "analytics",
             "app.kubernetes.io/name": "python",
@@ -177,12 +177,12 @@ Object {
           "resourceVersion": "753748",
           "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
         },
-        "spec": Object {
+        "spec": {
           "progressDeadlineSeconds": 600,
           "replicas": 3,
           "revisionHistoryLimit": 10,
-          "selector": Object {
-            "matchLabels": Object {
+          "selector": {
+            "matchLabels": {
               "app.kubernetes.io/component": "backend",
               "app.kubernetes.io/instance": "analytics",
               "app.kubernetes.io/name": "python",
@@ -190,17 +190,17 @@ Object {
               "app.kubernetes.io/version": "1.0",
             },
           },
-          "strategy": Object {
-            "rollingUpdate": Object {
+          "strategy": {
+            "rollingUpdate": {
               "maxSurge": "25%",
               "maxUnavailable": "25%",
             },
             "type": "RollingUpdate",
           },
-          "template": Object {
-            "metadata": Object {
+          "template": {
+            "metadata": {
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "analytics",
                 "app.kubernetes.io/name": "python",
@@ -208,17 +208,17 @@ Object {
                 "app.kubernetes.io/version": "1.0",
               },
             },
-            "spec": Object {
-              "containers": Array [],
+            "spec": {
+              "containers": [],
             },
           },
         },
-        "status": Object {},
+        "status": {},
       },
       "resourceKind": "apps~v1~Deployment",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -227,30 +227,30 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "data": Object {
-        "data": Object {
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": undefined,
           "vcsURI": undefined,
         },
         "id": "60a9b423-680d-11e9-8c69-5254003f9382",
         "name": "wit-deployment",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "Deployment",
-          "metadata": Object {
-            "annotations": Object {
+          "metadata": {
+            "annotations": {
               "deployment.kubernetes.io/revision": "1",
             },
             "creationTimestamp": "2019-04-22T11:35:43Z",
             "generation": 2,
-            "labels": Object {
+            "labels": {
               "app.kubernetes.io/component": "backend",
               "app.kubernetes.io/instance": "wit",
               "app.kubernetes.io/name": "nodejs",
@@ -262,12 +262,12 @@ Object {
             "resourceVersion": "726179",
             "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
           },
-          "spec": Object {
+          "spec": {
             "progressDeadlineSeconds": 600,
             "replicas": 3,
             "revisionHistoryLimit": 10,
-            "selector": Object {
-              "matchLabels": Object {
+            "selector": {
+              "matchLabels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "wit",
                 "app.kubernetes.io/name": "nodejs",
@@ -275,17 +275,17 @@ Object {
                 "app.kubernetes.io/version": "1.0",
               },
             },
-            "strategy": Object {
-              "rollingUpdate": Object {
+            "strategy": {
+              "rollingUpdate": {
                 "maxSurge": "25%",
                 "maxUnavailable": "25%",
               },
               "type": "RollingUpdate",
             },
-            "template": Object {
-              "metadata": Object {
+            "template": {
+              "metadata": {
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "wit",
                   "app.kubernetes.io/name": "nodejs",
@@ -293,33 +293,33 @@ Object {
                   "app.kubernetes.io/version": "1.0",
                 },
               },
-              "spec": Object {
-                "containers": Array [
-                  Object {
+              "spec": {
+                "containers": [
+                  {
                     "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                     "imagePullPolicy": "Always",
                     "name": "wit-deployment",
-                    "ports": Array [
-                      Object {
+                    "ports": [
+                      {
                         "containerPort": 8080,
                         "protocol": "TCP",
                       },
                     ],
-                    "resources": Object {},
+                    "resources": {},
                     "terminationMessagePath": "/dev/termination-log",
                     "terminationMessagePolicy": "File",
                   },
-                  Object {
+                  {
                     "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                     "imagePullPolicy": "Always",
                     "name": "wit-deployment-1",
-                    "ports": Array [
-                      Object {
+                    "ports": [
+                      {
                         "containerPort": 8080,
                         "protocol": "TCP",
                       },
                     ],
-                    "resources": Object {},
+                    "resources": {},
                     "terminationMessagePath": "/dev/termination-log",
                     "terminationMessagePolicy": "File",
                   },
@@ -327,23 +327,23 @@ Object {
               },
             },
           },
-          "status": Object {},
+          "status": {},
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "Deployment",
-            "metadata": Object {
-              "annotations": Object {
+            "metadata": {
+              "annotations": {
                 "deployment.kubernetes.io/revision": "1",
               },
               "creationTimestamp": "2019-04-22T11:35:43Z",
               "generation": 2,
-              "labels": Object {
+              "labels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "wit",
                 "app.kubernetes.io/name": "nodejs",
@@ -355,12 +355,12 @@ Object {
               "resourceVersion": "726179",
               "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
             },
-            "spec": Object {
+            "spec": {
               "progressDeadlineSeconds": 600,
               "replicas": 3,
               "revisionHistoryLimit": 10,
-              "selector": Object {
-                "matchLabels": Object {
+              "selector": {
+                "matchLabels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "wit",
                   "app.kubernetes.io/name": "nodejs",
@@ -368,17 +368,17 @@ Object {
                   "app.kubernetes.io/version": "1.0",
                 },
               },
-              "strategy": Object {
-                "rollingUpdate": Object {
+              "strategy": {
+                "rollingUpdate": {
                   "maxSurge": "25%",
                   "maxUnavailable": "25%",
                 },
                 "type": "RollingUpdate",
               },
-              "template": Object {
-                "metadata": Object {
+              "template": {
+                "metadata": {
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "wit",
                     "app.kubernetes.io/name": "nodejs",
@@ -386,33 +386,33 @@ Object {
                     "app.kubernetes.io/version": "1.0",
                   },
                 },
-                "spec": Object {
-                  "containers": Array [
-                    Object {
+                "spec": {
+                  "containers": [
+                    {
                       "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                       "imagePullPolicy": "Always",
                       "name": "wit-deployment",
-                      "ports": Array [
-                        Object {
+                      "ports": [
+                        {
                           "containerPort": 8080,
                           "protocol": "TCP",
                         },
                       ],
-                      "resources": Object {},
+                      "resources": {},
                       "terminationMessagePath": "/dev/termination-log",
                       "terminationMessagePolicy": "File",
                     },
-                    Object {
+                    {
                       "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                       "imagePullPolicy": "Always",
                       "name": "wit-deployment-1",
-                      "ports": Array [
-                        Object {
+                      "ports": [
+                        {
                           "containerPort": 8080,
                           "protocol": "TCP",
                         },
                       ],
-                      "resources": Object {},
+                      "resources": {},
                       "terminationMessagePath": "/dev/termination-log",
                       "terminationMessagePolicy": "File",
                     },
@@ -420,7 +420,7 @@ Object {
                 },
               },
             },
-            "status": Object {},
+            "status": {},
           },
         },
         "type": "workload",
@@ -429,16 +429,16 @@ Object {
       "height": 104,
       "id": "60a9b423-680d-11e9-8c69-5254003f9382",
       "label": "wit-deployment",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
-        "metadata": Object {
-          "annotations": Object {
+        "metadata": {
+          "annotations": {
             "deployment.kubernetes.io/revision": "1",
           },
           "creationTimestamp": "2019-04-22T11:35:43Z",
           "generation": 2,
-          "labels": Object {
+          "labels": {
             "app.kubernetes.io/component": "backend",
             "app.kubernetes.io/instance": "wit",
             "app.kubernetes.io/name": "nodejs",
@@ -450,12 +450,12 @@ Object {
           "resourceVersion": "726179",
           "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
         },
-        "spec": Object {
+        "spec": {
           "progressDeadlineSeconds": 600,
           "replicas": 3,
           "revisionHistoryLimit": 10,
-          "selector": Object {
-            "matchLabels": Object {
+          "selector": {
+            "matchLabels": {
               "app.kubernetes.io/component": "backend",
               "app.kubernetes.io/instance": "wit",
               "app.kubernetes.io/name": "nodejs",
@@ -463,17 +463,17 @@ Object {
               "app.kubernetes.io/version": "1.0",
             },
           },
-          "strategy": Object {
-            "rollingUpdate": Object {
+          "strategy": {
+            "rollingUpdate": {
               "maxSurge": "25%",
               "maxUnavailable": "25%",
             },
             "type": "RollingUpdate",
           },
-          "template": Object {
-            "metadata": Object {
+          "template": {
+            "metadata": {
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app.kubernetes.io/component": "backend",
                 "app.kubernetes.io/instance": "wit",
                 "app.kubernetes.io/name": "nodejs",
@@ -481,33 +481,33 @@ Object {
                 "app.kubernetes.io/version": "1.0",
               },
             },
-            "spec": Object {
-              "containers": Array [
-                Object {
+            "spec": {
+              "containers": [
+                {
                   "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                   "imagePullPolicy": "Always",
                   "name": "wit-deployment",
-                  "ports": Array [
-                    Object {
+                  "ports": [
+                    {
                       "containerPort": 8080,
                       "protocol": "TCP",
                     },
                   ],
-                  "resources": Object {},
+                  "resources": {},
                   "terminationMessagePath": "/dev/termination-log",
                   "terminationMessagePolicy": "File",
                 },
-                Object {
+                {
                   "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                   "imagePullPolicy": "Always",
                   "name": "wit-deployment-1",
-                  "ports": Array [
-                    Object {
+                  "ports": [
+                    {
                       "containerPort": 8080,
                       "protocol": "TCP",
                     },
                   ],
-                  "resources": Object {},
+                  "resources": {},
                   "terminationMessagePath": "/dev/termination-log",
                   "terminationMessagePolicy": "File",
                 },
@@ -515,12 +515,12 @@ Object {
             },
           },
         },
-        "status": Object {},
+        "status": {},
       },
       "resourceKind": "apps~v1~Deployment",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -529,25 +529,25 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "data": Object {
-        "data": Object {
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~Deployment",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": undefined,
           "vcsURI": undefined,
         },
         "id": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
         "name": "jaeger-all-in-one-inmemory",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "Deployment",
-          "metadata": Object {
-            "annotations": Object {
+          "metadata": {
+            "annotations": {
               "deployment.kubernetes.io/revision": "1",
               "prometheus.io/port": "14269",
               "prometheus.io/scrape": "true",
@@ -555,7 +555,7 @@ Object {
             },
             "creationTimestamp": "2019-12-15T17:31:52Z",
             "generation": 1,
-            "labels": Object {
+            "labels": {
               "app": "jaeger",
               "app.kubernetes.io/component": "all-in-one",
               "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -565,8 +565,8 @@ Object {
             },
             "name": "jaeger-all-in-one-inmemory",
             "namespace": "myproj",
-            "ownerReferences": Array [
-              Object {
+            "ownerReferences": [
+              {
                 "apiVersion": "jaegertracing.io/v1",
                 "controller": true,
                 "kind": "Jaeger",
@@ -577,12 +577,12 @@ Object {
             "resourceVersion": "120365",
             "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
           },
-          "spec": Object {
+          "spec": {
             "progressDeadlineSeconds": 600,
             "replicas": 1,
             "revisionHistoryLimit": 10,
-            "selector": Object {
-              "matchLabels": Object {
+            "selector": {
+              "matchLabels": {
                 "app": "jaeger",
                 "app.kubernetes.io/component": "all-in-one",
                 "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -591,22 +591,22 @@ Object {
                 "app.kubernetes.io/part-of": "jaeger",
               },
             },
-            "strategy": Object {
-              "rollingUpdate": Object {
+            "strategy": {
+              "rollingUpdate": {
                 "maxSurge": "25%",
                 "maxUnavailable": "25%",
               },
               "type": "RollingUpdate",
             },
-            "template": Object {
-              "metadata": Object {
-                "annotations": Object {
+            "template": {
+              "metadata": {
+                "annotations": {
                   "prometheus.io/port": "14269",
                   "prometheus.io/scrape": "true",
                   "sidecar.istio.io/inject": "false",
                 },
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app": "jaeger",
                   "app.kubernetes.io/component": "all-in-one",
                   "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -615,14 +615,14 @@ Object {
                   "app.kubernetes.io/part-of": "jaeger",
                 },
               },
-              "spec": Object {
-                "containers": Array [
-                  Object {
+              "spec": {
+                "containers": [
+                  {
                     "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                     "imagePullPolicy": "Always",
-                    "livenessProbe": Object {
+                    "livenessProbe": {
                       "failureThreshold": 1,
-                      "httpGet": Object {
+                      "httpGet": {
                         "path": "/healthz",
                         "port": 8080,
                         "scheme": "HTTP",
@@ -630,13 +630,13 @@ Object {
                       "periodSeconds": 10,
                     },
                     "name": "jaeger-all-in-one-inmemory",
-                    "ports": Array [
-                      Object {
+                    "ports": [
+                      {
                         "containerPort": 8080,
                         "protocol": "TCP",
                       },
                     ],
-                    "resources": Object {},
+                    "resources": {},
                     "terminationMessagePath": "/dev/termination-log",
                     "terminationMessagePolicy": "File",
                   },
@@ -644,33 +644,33 @@ Object {
                 "dnsPolicy": "ClusterFirst",
                 "restartPolicy": "Always",
                 "schedulerName": "default-scheduler",
-                "securityContext": Object {},
+                "securityContext": {},
                 "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
                 "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
                 "terminationGracePeriodSeconds": 30,
-                "volumes": Array [],
+                "volumes": [],
               },
             },
           },
-          "status": Object {
+          "status": {
             "availableReplicas": 1,
-            "conditions": Array [],
+            "conditions": [],
             "observedGeneration": 1,
             "readyReplicas": 1,
             "replicas": 1,
             "updatedReplicas": 1,
           },
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "Deployment",
-            "metadata": Object {
-              "annotations": Object {
+            "metadata": {
+              "annotations": {
                 "deployment.kubernetes.io/revision": "1",
                 "prometheus.io/port": "14269",
                 "prometheus.io/scrape": "true",
@@ -678,7 +678,7 @@ Object {
               },
               "creationTimestamp": "2019-12-15T17:31:52Z",
               "generation": 1,
-              "labels": Object {
+              "labels": {
                 "app": "jaeger",
                 "app.kubernetes.io/component": "all-in-one",
                 "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -688,8 +688,8 @@ Object {
               },
               "name": "jaeger-all-in-one-inmemory",
               "namespace": "myproj",
-              "ownerReferences": Array [
-                Object {
+              "ownerReferences": [
+                {
                   "apiVersion": "jaegertracing.io/v1",
                   "controller": true,
                   "kind": "Jaeger",
@@ -700,12 +700,12 @@ Object {
               "resourceVersion": "120365",
               "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
             },
-            "spec": Object {
+            "spec": {
               "progressDeadlineSeconds": 600,
               "replicas": 1,
               "revisionHistoryLimit": 10,
-              "selector": Object {
-                "matchLabels": Object {
+              "selector": {
+                "matchLabels": {
                   "app": "jaeger",
                   "app.kubernetes.io/component": "all-in-one",
                   "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -714,22 +714,22 @@ Object {
                   "app.kubernetes.io/part-of": "jaeger",
                 },
               },
-              "strategy": Object {
-                "rollingUpdate": Object {
+              "strategy": {
+                "rollingUpdate": {
                   "maxSurge": "25%",
                   "maxUnavailable": "25%",
                 },
                 "type": "RollingUpdate",
               },
-              "template": Object {
-                "metadata": Object {
-                  "annotations": Object {
+              "template": {
+                "metadata": {
+                  "annotations": {
                     "prometheus.io/port": "14269",
                     "prometheus.io/scrape": "true",
                     "sidecar.istio.io/inject": "false",
                   },
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app": "jaeger",
                     "app.kubernetes.io/component": "all-in-one",
                     "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -738,14 +738,14 @@ Object {
                     "app.kubernetes.io/part-of": "jaeger",
                   },
                 },
-                "spec": Object {
-                  "containers": Array [
-                    Object {
+                "spec": {
+                  "containers": [
+                    {
                       "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                       "imagePullPolicy": "Always",
-                      "livenessProbe": Object {
+                      "livenessProbe": {
                         "failureThreshold": 1,
-                        "httpGet": Object {
+                        "httpGet": {
                           "path": "/healthz",
                           "port": 8080,
                           "scheme": "HTTP",
@@ -753,13 +753,13 @@ Object {
                         "periodSeconds": 10,
                       },
                       "name": "jaeger-all-in-one-inmemory",
-                      "ports": Array [
-                        Object {
+                      "ports": [
+                        {
                           "containerPort": 8080,
                           "protocol": "TCP",
                         },
                       ],
-                      "resources": Object {},
+                      "resources": {},
                       "terminationMessagePath": "/dev/termination-log",
                       "terminationMessagePolicy": "File",
                     },
@@ -767,17 +767,17 @@ Object {
                   "dnsPolicy": "ClusterFirst",
                   "restartPolicy": "Always",
                   "schedulerName": "default-scheduler",
-                  "securityContext": Object {},
+                  "securityContext": {},
                   "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
                   "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
                   "terminationGracePeriodSeconds": 30,
-                  "volumes": Array [],
+                  "volumes": [],
                 },
               },
             },
-            "status": Object {
+            "status": {
               "availableReplicas": 1,
-              "conditions": Array [],
+              "conditions": [],
               "observedGeneration": 1,
               "readyReplicas": 1,
               "replicas": 1,
@@ -791,11 +791,11 @@ Object {
       "height": 104,
       "id": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
       "label": "jaeger-all-in-one-inmemory",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
-        "metadata": Object {
-          "annotations": Object {
+        "metadata": {
+          "annotations": {
             "deployment.kubernetes.io/revision": "1",
             "prometheus.io/port": "14269",
             "prometheus.io/scrape": "true",
@@ -803,7 +803,7 @@ Object {
           },
           "creationTimestamp": "2019-12-15T17:31:52Z",
           "generation": 1,
-          "labels": Object {
+          "labels": {
             "app": "jaeger",
             "app.kubernetes.io/component": "all-in-one",
             "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -813,8 +813,8 @@ Object {
           },
           "name": "jaeger-all-in-one-inmemory",
           "namespace": "myproj",
-          "ownerReferences": Array [
-            Object {
+          "ownerReferences": [
+            {
               "apiVersion": "jaegertracing.io/v1",
               "controller": true,
               "kind": "Jaeger",
@@ -825,12 +825,12 @@ Object {
           "resourceVersion": "120365",
           "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
         },
-        "spec": Object {
+        "spec": {
           "progressDeadlineSeconds": 600,
           "replicas": 1,
           "revisionHistoryLimit": 10,
-          "selector": Object {
-            "matchLabels": Object {
+          "selector": {
+            "matchLabels": {
               "app": "jaeger",
               "app.kubernetes.io/component": "all-in-one",
               "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -839,22 +839,22 @@ Object {
               "app.kubernetes.io/part-of": "jaeger",
             },
           },
-          "strategy": Object {
-            "rollingUpdate": Object {
+          "strategy": {
+            "rollingUpdate": {
               "maxSurge": "25%",
               "maxUnavailable": "25%",
             },
             "type": "RollingUpdate",
           },
-          "template": Object {
-            "metadata": Object {
-              "annotations": Object {
+          "template": {
+            "metadata": {
+              "annotations": {
                 "prometheus.io/port": "14269",
                 "prometheus.io/scrape": "true",
                 "sidecar.istio.io/inject": "false",
               },
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app": "jaeger",
                 "app.kubernetes.io/component": "all-in-one",
                 "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -863,14 +863,14 @@ Object {
                 "app.kubernetes.io/part-of": "jaeger",
               },
             },
-            "spec": Object {
-              "containers": Array [
-                Object {
+            "spec": {
+              "containers": [
+                {
                   "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                   "imagePullPolicy": "Always",
-                  "livenessProbe": Object {
+                  "livenessProbe": {
                     "failureThreshold": 1,
-                    "httpGet": Object {
+                    "httpGet": {
                       "path": "/healthz",
                       "port": 8080,
                       "scheme": "HTTP",
@@ -878,13 +878,13 @@ Object {
                     "periodSeconds": 10,
                   },
                   "name": "jaeger-all-in-one-inmemory",
-                  "ports": Array [
-                    Object {
+                  "ports": [
+                    {
                       "containerPort": 8080,
                       "protocol": "TCP",
                     },
                   ],
-                  "resources": Object {},
+                  "resources": {},
                   "terminationMessagePath": "/dev/termination-log",
                   "terminationMessagePolicy": "File",
                 },
@@ -892,17 +892,17 @@ Object {
               "dnsPolicy": "ClusterFirst",
               "restartPolicy": "Always",
               "schedulerName": "default-scheduler",
-              "securityContext": Object {},
+              "securityContext": {},
               "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
               "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
               "terminationGracePeriodSeconds": 30,
-              "volumes": Array [],
+              "volumes": [],
             },
           },
         },
-        "status": Object {
+        "status": {
           "availableReplicas": 1,
-          "conditions": Array [],
+          "conditions": [],
           "observedGeneration": 1,
           "readyReplicas": 1,
           "replicas": 1,
@@ -911,8 +911,8 @@ Object {
       },
       "resourceKind": "apps~v1~Deployment",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -921,31 +921,31 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "data": Object {
-        "data": Object {
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": "master",
           "vcsURI": "https://github.com/redhat-developer/topology-example",
         },
         "id": "02f680df-680f-11e9-b69e-5254003f9382",
         "name": "nodejs",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "DeploymentConfig",
-          "metadata": Object {
-            "annotations": Object {
+          "metadata": {
+            "annotations": {
               "app.openshift.io/vcs-ref": "master",
               "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
             },
             "creationTimestamp": "2019-04-22T11:58:33Z",
             "generation": 2,
-            "labels": Object {
+            "labels": {
               "app": "nodejs",
               "app.kubernetes.io/instance": "nodejs",
               "app.openshift.io/runtime": "nodejs",
@@ -955,28 +955,28 @@ Object {
             "resourceVersion": "732186",
             "uid": "02f680df-680f-11e9-b69e-5254003f9382",
           },
-          "spec": Object {
-            "strategy": Object {
+          "spec": {
+            "strategy": {
               "type": "Rolling",
             },
-            "template": Object {
-              "metadata": Object {
+            "template": {
+              "metadata": {
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app": "nodejs",
                   "deploymentconfig": "nodejs",
                 },
               },
-              "spec": Object {},
+              "spec": {},
             },
-            "triggers": Array [
-              Object {
-                "imageChangeParams": Object {
+            "triggers": [
+              {
+                "imageChangeParams": {
                   "automatic": true,
-                  "containerNames": Array [
+                  "containerNames": [
                     "nodejs",
                   ],
-                  "from": Object {
+                  "from": {
                     "kind": "ImageStreamTag",
                     "name": "nodejs:latest",
                     "namespace": "testproject1",
@@ -984,12 +984,12 @@ Object {
                 },
                 "type": "ImageChange",
               },
-              Object {
+              {
                 "type": "ConfigChange",
               },
             ],
           },
-          "status": Object {
+          "status": {
             "availableReplicas": 1,
             "latestVersion": 1,
             "readyReplicas": 1,
@@ -998,22 +998,22 @@ Object {
             "updatedReplicas": 1,
           },
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "DeploymentConfig",
-            "metadata": Object {
-              "annotations": Object {
+            "metadata": {
+              "annotations": {
                 "app.openshift.io/vcs-ref": "master",
                 "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
               },
               "creationTimestamp": "2019-04-22T11:58:33Z",
               "generation": 2,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs",
                 "app.kubernetes.io/instance": "nodejs",
                 "app.openshift.io/runtime": "nodejs",
@@ -1023,28 +1023,28 @@ Object {
               "resourceVersion": "732186",
               "uid": "02f680df-680f-11e9-b69e-5254003f9382",
             },
-            "spec": Object {
-              "strategy": Object {
+            "spec": {
+              "strategy": {
                 "type": "Rolling",
               },
-              "template": Object {
-                "metadata": Object {
+              "template": {
+                "metadata": {
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app": "nodejs",
                     "deploymentconfig": "nodejs",
                   },
                 },
-                "spec": Object {},
+                "spec": {},
               },
-              "triggers": Array [
-                Object {
-                  "imageChangeParams": Object {
+              "triggers": [
+                {
+                  "imageChangeParams": {
                     "automatic": true,
-                    "containerNames": Array [
+                    "containerNames": [
                       "nodejs",
                     ],
-                    "from": Object {
+                    "from": {
                       "kind": "ImageStreamTag",
                       "name": "nodejs:latest",
                       "namespace": "testproject1",
@@ -1052,12 +1052,12 @@ Object {
                   },
                   "type": "ImageChange",
                 },
-                Object {
+                {
                   "type": "ConfigChange",
                 },
               ],
             },
-            "status": Object {
+            "status": {
               "availableReplicas": 1,
               "latestVersion": 1,
               "readyReplicas": 1,
@@ -1073,17 +1073,17 @@ Object {
       "height": 104,
       "id": "02f680df-680f-11e9-b69e-5254003f9382",
       "label": "nodejs",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "DeploymentConfig",
-        "metadata": Object {
-          "annotations": Object {
+        "metadata": {
+          "annotations": {
             "app.openshift.io/vcs-ref": "master",
             "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
           },
           "creationTimestamp": "2019-04-22T11:58:33Z",
           "generation": 2,
-          "labels": Object {
+          "labels": {
             "app": "nodejs",
             "app.kubernetes.io/instance": "nodejs",
             "app.openshift.io/runtime": "nodejs",
@@ -1093,28 +1093,28 @@ Object {
           "resourceVersion": "732186",
           "uid": "02f680df-680f-11e9-b69e-5254003f9382",
         },
-        "spec": Object {
-          "strategy": Object {
+        "spec": {
+          "strategy": {
             "type": "Rolling",
           },
-          "template": Object {
-            "metadata": Object {
+          "template": {
+            "metadata": {
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs",
                 "deploymentconfig": "nodejs",
               },
             },
-            "spec": Object {},
+            "spec": {},
           },
-          "triggers": Array [
-            Object {
-              "imageChangeParams": Object {
+          "triggers": [
+            {
+              "imageChangeParams": {
                 "automatic": true,
-                "containerNames": Array [
+                "containerNames": [
                   "nodejs",
                 ],
-                "from": Object {
+                "from": {
                   "kind": "ImageStreamTag",
                   "name": "nodejs:latest",
                   "namespace": "testproject1",
@@ -1122,12 +1122,12 @@ Object {
               },
               "type": "ImageChange",
             },
-            Object {
+            {
               "type": "ConfigChange",
             },
           ],
         },
-        "status": Object {
+        "status": {
           "availableReplicas": 1,
           "latestVersion": 1,
           "readyReplicas": 1,
@@ -1138,8 +1138,8 @@ Object {
       },
       "resourceKind": "apps~v1~DeploymentConfig",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -1148,31 +1148,31 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "data": Object {
-        "data": Object {
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": "master",
           "vcsURI": "https://github.com/redhat-developer/topology-example",
         },
         "id": "02f680df-680f-11e9-b69e-5254003f9382",
         "name": "nodejs-with-bc",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "DeploymentConfig",
-          "metadata": Object {
-            "annotations": Object {
+          "metadata": {
+            "annotations": {
               "app.openshift.io/vcs-ref": "master",
               "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
             },
             "creationTimestamp": "2019-04-22T11:58:33Z",
             "generation": 2,
-            "labels": Object {
+            "labels": {
               "app": "nodejs-with-bc",
               "app.kubernetes.io/instance": "nodejs-with-bc",
               "app.openshift.io/part-of": "nodejs-with-bc",
@@ -1183,28 +1183,28 @@ Object {
             "resourceVersion": "732186",
             "uid": "02f680df-680f-11e9-b69e-5254003f9382",
           },
-          "spec": Object {
-            "strategy": Object {
+          "spec": {
+            "strategy": {
               "type": "Rolling",
             },
-            "template": Object {
-              "metadata": Object {
+            "template": {
+              "metadata": {
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app": "nodejs-with-bc",
                   "deploymentconfig": "nodejs-with-bc",
                 },
               },
-              "spec": Object {},
+              "spec": {},
             },
-            "triggers": Array [
-              Object {
-                "imageChangeParams": Object {
+            "triggers": [
+              {
+                "imageChangeParams": {
                   "automatic": true,
-                  "containerNames": Array [
+                  "containerNames": [
                     "nodejs-with-bc",
                   ],
-                  "from": Object {
+                  "from": {
                     "kind": "ImageStreamTag",
                     "name": "nodejs:latest",
                     "namespace": "testproject",
@@ -1212,12 +1212,12 @@ Object {
                 },
                 "type": "ImageChange",
               },
-              Object {
+              {
                 "type": "ConfigChange",
               },
             ],
           },
-          "status": Object {
+          "status": {
             "availableReplicas": 1,
             "latestVersion": 1,
             "readyReplicas": 1,
@@ -1226,22 +1226,22 @@ Object {
             "updatedReplicas": 1,
           },
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "DeploymentConfig",
-            "metadata": Object {
-              "annotations": Object {
+            "metadata": {
+              "annotations": {
                 "app.openshift.io/vcs-ref": "master",
                 "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
               },
               "creationTimestamp": "2019-04-22T11:58:33Z",
               "generation": 2,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs-with-bc",
                 "app.kubernetes.io/instance": "nodejs-with-bc",
                 "app.openshift.io/part-of": "nodejs-with-bc",
@@ -1252,28 +1252,28 @@ Object {
               "resourceVersion": "732186",
               "uid": "02f680df-680f-11e9-b69e-5254003f9382",
             },
-            "spec": Object {
-              "strategy": Object {
+            "spec": {
+              "strategy": {
                 "type": "Rolling",
               },
-              "template": Object {
-                "metadata": Object {
+              "template": {
+                "metadata": {
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app": "nodejs-with-bc",
                     "deploymentconfig": "nodejs-with-bc",
                   },
                 },
-                "spec": Object {},
+                "spec": {},
               },
-              "triggers": Array [
-                Object {
-                  "imageChangeParams": Object {
+              "triggers": [
+                {
+                  "imageChangeParams": {
                     "automatic": true,
-                    "containerNames": Array [
+                    "containerNames": [
                       "nodejs-with-bc",
                     ],
-                    "from": Object {
+                    "from": {
                       "kind": "ImageStreamTag",
                       "name": "nodejs:latest",
                       "namespace": "testproject",
@@ -1281,12 +1281,12 @@ Object {
                   },
                   "type": "ImageChange",
                 },
-                Object {
+                {
                   "type": "ConfigChange",
                 },
               ],
             },
-            "status": Object {
+            "status": {
               "availableReplicas": 1,
               "latestVersion": 1,
               "readyReplicas": 1,
@@ -1302,17 +1302,17 @@ Object {
       "height": 104,
       "id": "02f680df-680f-11e9-b69e-5254003f9382",
       "label": "nodejs-with-bc",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "DeploymentConfig",
-        "metadata": Object {
-          "annotations": Object {
+        "metadata": {
+          "annotations": {
             "app.openshift.io/vcs-ref": "master",
             "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
           },
           "creationTimestamp": "2019-04-22T11:58:33Z",
           "generation": 2,
-          "labels": Object {
+          "labels": {
             "app": "nodejs-with-bc",
             "app.kubernetes.io/instance": "nodejs-with-bc",
             "app.openshift.io/part-of": "nodejs-with-bc",
@@ -1323,28 +1323,28 @@ Object {
           "resourceVersion": "732186",
           "uid": "02f680df-680f-11e9-b69e-5254003f9382",
         },
-        "spec": Object {
-          "strategy": Object {
+        "spec": {
+          "strategy": {
             "type": "Rolling",
           },
-          "template": Object {
-            "metadata": Object {
+          "template": {
+            "metadata": {
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs-with-bc",
                 "deploymentconfig": "nodejs-with-bc",
               },
             },
-            "spec": Object {},
+            "spec": {},
           },
-          "triggers": Array [
-            Object {
-              "imageChangeParams": Object {
+          "triggers": [
+            {
+              "imageChangeParams": {
                 "automatic": true,
-                "containerNames": Array [
+                "containerNames": [
                   "nodejs-with-bc",
                 ],
-                "from": Object {
+                "from": {
                   "kind": "ImageStreamTag",
                   "name": "nodejs:latest",
                   "namespace": "testproject",
@@ -1352,12 +1352,12 @@ Object {
               },
               "type": "ImageChange",
             },
-            Object {
+            {
               "type": "ConfigChange",
             },
           ],
         },
-        "status": Object {
+        "status": {
           "availableReplicas": 1,
           "latestVersion": 1,
           "readyReplicas": 1,
@@ -1368,8 +1368,8 @@ Object {
       },
       "resourceKind": "apps~v1~DeploymentConfig",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -1378,31 +1378,31 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "data": Object {
-        "data": Object {
+    {
+      "data": {
+        "data": {
           "builderImage": "test-file-stub",
           "contextDir": null,
           "editURL": undefined,
           "isKnativeResource": false,
           "kind": "apps~v1~DeploymentConfig",
-          "monitoringAlerts": Array [],
+          "monitoringAlerts": [],
           "vcsRef": "master",
           "vcsURI": "https://github.com/redhat-developer/topology-example",
         },
         "id": "02f680df-b69e-5254003f9382",
         "name": "nodejs-ex",
-        "resource": Object {
+        "resource": {
           "apiVersion": "apps/v1",
           "kind": "DeploymentConfig",
-          "metadata": Object {
-            "annotations": Object {
+          "metadata": {
+            "annotations": {
               "app.openshift.io/vcs-ref": "master",
               "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
             },
             "creationTimestamp": "2019-04-22T11:58:33Z",
             "generation": 2,
-            "labels": Object {
+            "labels": {
               "app": "nodejs-ex",
               "app.kubernetes.io/instance": "nodejs-ex",
               "app.openshift.io/runtime": "nodejs",
@@ -1412,22 +1412,22 @@ Object {
             "resourceVersion": "732186",
             "uid": "02f680df-b69e-5254003f9382",
           },
-          "spec": Object {
-            "strategy": Object {
+          "spec": {
+            "strategy": {
               "type": "Rolling",
             },
-            "template": Object {
-              "metadata": Object {
+            "template": {
+              "metadata": {
                 "creationTimestamp": null,
-                "labels": Object {
+                "labels": {
                   "app": "nodejs-ex",
                   "deploymentconfig": "nodejs-ex",
                 },
               },
-              "spec": Object {},
+              "spec": {},
             },
           },
-          "status": Object {
+          "status": {
             "availableReplicas": 1,
             "latestVersion": 1,
             "readyReplicas": 1,
@@ -1436,22 +1436,22 @@ Object {
             "updatedReplicas": 1,
           },
         },
-        "resources": Object {
+        "resources": {
           "hpas": undefined,
           "isMonitorable": true,
           "isOperatorBackedService": false,
-          "monitoringAlerts": Array [],
-          "obj": Object {
+          "monitoringAlerts": [],
+          "obj": {
             "apiVersion": "apps/v1",
             "kind": "DeploymentConfig",
-            "metadata": Object {
-              "annotations": Object {
+            "metadata": {
+              "annotations": {
                 "app.openshift.io/vcs-ref": "master",
                 "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
               },
               "creationTimestamp": "2019-04-22T11:58:33Z",
               "generation": 2,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs-ex",
                 "app.kubernetes.io/instance": "nodejs-ex",
                 "app.openshift.io/runtime": "nodejs",
@@ -1461,22 +1461,22 @@ Object {
               "resourceVersion": "732186",
               "uid": "02f680df-b69e-5254003f9382",
             },
-            "spec": Object {
-              "strategy": Object {
+            "spec": {
+              "strategy": {
                 "type": "Rolling",
               },
-              "template": Object {
-                "metadata": Object {
+              "template": {
+                "metadata": {
                   "creationTimestamp": null,
-                  "labels": Object {
+                  "labels": {
                     "app": "nodejs-ex",
                     "deploymentconfig": "nodejs-ex",
                   },
                 },
-                "spec": Object {},
+                "spec": {},
               },
             },
-            "status": Object {
+            "status": {
               "availableReplicas": 1,
               "latestVersion": 1,
               "readyReplicas": 1,
@@ -1492,17 +1492,17 @@ Object {
       "height": 104,
       "id": "02f680df-b69e-5254003f9382",
       "label": "nodejs-ex",
-      "resource": Object {
+      "resource": {
         "apiVersion": "apps/v1",
         "kind": "DeploymentConfig",
-        "metadata": Object {
-          "annotations": Object {
+        "metadata": {
+          "annotations": {
             "app.openshift.io/vcs-ref": "master",
             "app.openshift.io/vcs-uri": "https://github.com/redhat-developer/topology-example",
           },
           "creationTimestamp": "2019-04-22T11:58:33Z",
           "generation": 2,
-          "labels": Object {
+          "labels": {
             "app": "nodejs-ex",
             "app.kubernetes.io/instance": "nodejs-ex",
             "app.openshift.io/runtime": "nodejs",
@@ -1512,22 +1512,22 @@ Object {
           "resourceVersion": "732186",
           "uid": "02f680df-b69e-5254003f9382",
         },
-        "spec": Object {
-          "strategy": Object {
+        "spec": {
+          "strategy": {
             "type": "Rolling",
           },
-          "template": Object {
-            "metadata": Object {
+          "template": {
+            "metadata": {
               "creationTimestamp": null,
-              "labels": Object {
+              "labels": {
                 "app": "nodejs-ex",
                 "deploymentconfig": "nodejs-ex",
               },
             },
-            "spec": Object {},
+            "spec": {},
           },
         },
-        "status": Object {
+        "status": {
           "availableReplicas": 1,
           "latestVersion": 1,
           "readyReplicas": 1,
@@ -1538,8 +1538,8 @@ Object {
       },
       "resourceKind": "apps~v1~DeploymentConfig",
       "shape": undefined,
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           0,
           20,
         ],
@@ -1548,38 +1548,38 @@ Object {
       "visible": true,
       "width": 104,
     },
-    Object {
-      "children": Array [
+    {
+      "children": [
         "5ca9ae28-680d-11e9-8c69-5254003f9382",
         "60a9b423-680d-11e9-8c69-5254003f9382",
       ],
       "collapsed": false,
-      "data": Object {
-        "groupResources": Array [
-          Object {
-            "data": Object {
-              "data": Object {
+      "data": {
+        "groupResources": [
+          {
+            "data": {
+              "data": {
                 "builderImage": "test-file-stub",
                 "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
-                "monitoringAlerts": Array [],
+                "monitoringAlerts": [],
                 "vcsRef": undefined,
                 "vcsURI": undefined,
               },
               "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
               "name": "analytics-deployment",
-              "resource": Object {
+              "resource": {
                 "apiVersion": "apps/v1",
                 "kind": "Deployment",
-                "metadata": Object {
-                  "annotations": Object {
-                    "app.openshift.io/connects-to": "[\\"wit\\"]",
+                "metadata": {
+                  "annotations": {
+                    "app.openshift.io/connects-to": "["wit"]",
                   },
                   "creationTimestamp": "2019-04-22T11:35:37Z",
                   "generation": 5,
-                  "labels": Object {
+                  "labels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "analytics",
                     "app.kubernetes.io/name": "python",
@@ -1591,12 +1591,12 @@ Object {
                   "resourceVersion": "753748",
                   "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
                 },
-                "spec": Object {
+                "spec": {
                   "progressDeadlineSeconds": 600,
                   "replicas": 3,
                   "revisionHistoryLimit": 10,
-                  "selector": Object {
-                    "matchLabels": Object {
+                  "selector": {
+                    "matchLabels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "analytics",
                       "app.kubernetes.io/name": "python",
@@ -1604,17 +1604,17 @@ Object {
                       "app.kubernetes.io/version": "1.0",
                     },
                   },
-                  "strategy": Object {
-                    "rollingUpdate": Object {
+                  "strategy": {
+                    "rollingUpdate": {
                       "maxSurge": "25%",
                       "maxUnavailable": "25%",
                     },
                     "type": "RollingUpdate",
                   },
-                  "template": Object {
-                    "metadata": Object {
+                  "template": {
+                    "metadata": {
                       "creationTimestamp": null,
-                      "labels": Object {
+                      "labels": {
                         "app.kubernetes.io/component": "backend",
                         "app.kubernetes.io/instance": "analytics",
                         "app.kubernetes.io/name": "python",
@@ -1622,28 +1622,28 @@ Object {
                         "app.kubernetes.io/version": "1.0",
                       },
                     },
-                    "spec": Object {
-                      "containers": Array [],
+                    "spec": {
+                      "containers": [],
                     },
                   },
                 },
-                "status": Object {},
+                "status": {},
               },
-              "resources": Object {
+              "resources": {
                 "hpas": undefined,
                 "isMonitorable": true,
                 "isOperatorBackedService": false,
-                "monitoringAlerts": Array [],
-                "obj": Object {
+                "monitoringAlerts": [],
+                "obj": {
                   "apiVersion": "apps/v1",
                   "kind": "Deployment",
-                  "metadata": Object {
-                    "annotations": Object {
-                      "app.openshift.io/connects-to": "[\\"wit\\"]",
+                  "metadata": {
+                    "annotations": {
+                      "app.openshift.io/connects-to": "["wit"]",
                     },
                     "creationTimestamp": "2019-04-22T11:35:37Z",
                     "generation": 5,
-                    "labels": Object {
+                    "labels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "analytics",
                       "app.kubernetes.io/name": "python",
@@ -1655,12 +1655,12 @@ Object {
                     "resourceVersion": "753748",
                     "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
                   },
-                  "spec": Object {
+                  "spec": {
                     "progressDeadlineSeconds": 600,
                     "replicas": 3,
                     "revisionHistoryLimit": 10,
-                    "selector": Object {
-                      "matchLabels": Object {
+                    "selector": {
+                      "matchLabels": {
                         "app.kubernetes.io/component": "backend",
                         "app.kubernetes.io/instance": "analytics",
                         "app.kubernetes.io/name": "python",
@@ -1668,17 +1668,17 @@ Object {
                         "app.kubernetes.io/version": "1.0",
                       },
                     },
-                    "strategy": Object {
-                      "rollingUpdate": Object {
+                    "strategy": {
+                      "rollingUpdate": {
                         "maxSurge": "25%",
                         "maxUnavailable": "25%",
                       },
                       "type": "RollingUpdate",
                     },
-                    "template": Object {
-                      "metadata": Object {
+                    "template": {
+                      "metadata": {
                         "creationTimestamp": null,
-                        "labels": Object {
+                        "labels": {
                           "app.kubernetes.io/component": "backend",
                           "app.kubernetes.io/instance": "analytics",
                           "app.kubernetes.io/name": "python",
@@ -1686,12 +1686,12 @@ Object {
                           "app.kubernetes.io/version": "1.0",
                         },
                       },
-                      "spec": Object {
-                        "containers": Array [],
+                      "spec": {
+                        "containers": [],
                       },
                     },
                   },
-                  "status": Object {},
+                  "status": {},
                 },
               },
               "type": "workload",
@@ -1700,16 +1700,16 @@ Object {
             "height": 104,
             "id": "5ca9ae28-680d-11e9-8c69-5254003f9382",
             "label": "analytics-deployment",
-            "resource": Object {
+            "resource": {
               "apiVersion": "apps/v1",
               "kind": "Deployment",
-              "metadata": Object {
-                "annotations": Object {
-                  "app.openshift.io/connects-to": "[\\"wit\\"]",
+              "metadata": {
+                "annotations": {
+                  "app.openshift.io/connects-to": "["wit"]",
                 },
                 "creationTimestamp": "2019-04-22T11:35:37Z",
                 "generation": 5,
-                "labels": Object {
+                "labels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "analytics",
                   "app.kubernetes.io/name": "python",
@@ -1721,12 +1721,12 @@ Object {
                 "resourceVersion": "753748",
                 "uid": "5ca9ae28-680d-11e9-8c69-5254003f9382",
               },
-              "spec": Object {
+              "spec": {
                 "progressDeadlineSeconds": 600,
                 "replicas": 3,
                 "revisionHistoryLimit": 10,
-                "selector": Object {
-                  "matchLabels": Object {
+                "selector": {
+                  "matchLabels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "analytics",
                     "app.kubernetes.io/name": "python",
@@ -1734,17 +1734,17 @@ Object {
                     "app.kubernetes.io/version": "1.0",
                   },
                 },
-                "strategy": Object {
-                  "rollingUpdate": Object {
+                "strategy": {
+                  "rollingUpdate": {
                     "maxSurge": "25%",
                     "maxUnavailable": "25%",
                   },
                   "type": "RollingUpdate",
                 },
-                "template": Object {
-                  "metadata": Object {
+                "template": {
+                  "metadata": {
                     "creationTimestamp": null,
-                    "labels": Object {
+                    "labels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "analytics",
                       "app.kubernetes.io/name": "python",
@@ -1752,17 +1752,17 @@ Object {
                       "app.kubernetes.io/version": "1.0",
                     },
                   },
-                  "spec": Object {
-                    "containers": Array [],
+                  "spec": {
+                    "containers": [],
                   },
                 },
               },
-              "status": Object {},
+              "status": {},
             },
             "resourceKind": "apps~v1~Deployment",
             "shape": undefined,
-            "style": Object {
-              "padding": Array [
+            "style": {
+              "padding": [
                 0,
                 20,
               ],
@@ -1771,30 +1771,30 @@ Object {
             "visible": true,
             "width": 104,
           },
-          Object {
-            "data": Object {
-              "data": Object {
+          {
+            "data": {
+              "data": {
                 "builderImage": "test-file-stub",
                 "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
-                "monitoringAlerts": Array [],
+                "monitoringAlerts": [],
                 "vcsRef": undefined,
                 "vcsURI": undefined,
               },
               "id": "60a9b423-680d-11e9-8c69-5254003f9382",
               "name": "wit-deployment",
-              "resource": Object {
+              "resource": {
                 "apiVersion": "apps/v1",
                 "kind": "Deployment",
-                "metadata": Object {
-                  "annotations": Object {
+                "metadata": {
+                  "annotations": {
                     "deployment.kubernetes.io/revision": "1",
                   },
                   "creationTimestamp": "2019-04-22T11:35:43Z",
                   "generation": 2,
-                  "labels": Object {
+                  "labels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "wit",
                     "app.kubernetes.io/name": "nodejs",
@@ -1806,12 +1806,12 @@ Object {
                   "resourceVersion": "726179",
                   "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
                 },
-                "spec": Object {
+                "spec": {
                   "progressDeadlineSeconds": 600,
                   "replicas": 3,
                   "revisionHistoryLimit": 10,
-                  "selector": Object {
-                    "matchLabels": Object {
+                  "selector": {
+                    "matchLabels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "wit",
                       "app.kubernetes.io/name": "nodejs",
@@ -1819,17 +1819,17 @@ Object {
                       "app.kubernetes.io/version": "1.0",
                     },
                   },
-                  "strategy": Object {
-                    "rollingUpdate": Object {
+                  "strategy": {
+                    "rollingUpdate": {
                       "maxSurge": "25%",
                       "maxUnavailable": "25%",
                     },
                     "type": "RollingUpdate",
                   },
-                  "template": Object {
-                    "metadata": Object {
+                  "template": {
+                    "metadata": {
                       "creationTimestamp": null,
-                      "labels": Object {
+                      "labels": {
                         "app.kubernetes.io/component": "backend",
                         "app.kubernetes.io/instance": "wit",
                         "app.kubernetes.io/name": "nodejs",
@@ -1837,33 +1837,33 @@ Object {
                         "app.kubernetes.io/version": "1.0",
                       },
                     },
-                    "spec": Object {
-                      "containers": Array [
-                        Object {
+                    "spec": {
+                      "containers": [
+                        {
                           "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                           "imagePullPolicy": "Always",
                           "name": "wit-deployment",
-                          "ports": Array [
-                            Object {
+                          "ports": [
+                            {
                               "containerPort": 8080,
                               "protocol": "TCP",
                             },
                           ],
-                          "resources": Object {},
+                          "resources": {},
                           "terminationMessagePath": "/dev/termination-log",
                           "terminationMessagePolicy": "File",
                         },
-                        Object {
+                        {
                           "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                           "imagePullPolicy": "Always",
                           "name": "wit-deployment-1",
-                          "ports": Array [
-                            Object {
+                          "ports": [
+                            {
                               "containerPort": 8080,
                               "protocol": "TCP",
                             },
                           ],
-                          "resources": Object {},
+                          "resources": {},
                           "terminationMessagePath": "/dev/termination-log",
                           "terminationMessagePolicy": "File",
                         },
@@ -1871,23 +1871,23 @@ Object {
                     },
                   },
                 },
-                "status": Object {},
+                "status": {},
               },
-              "resources": Object {
+              "resources": {
                 "hpas": undefined,
                 "isMonitorable": true,
                 "isOperatorBackedService": false,
-                "monitoringAlerts": Array [],
-                "obj": Object {
+                "monitoringAlerts": [],
+                "obj": {
                   "apiVersion": "apps/v1",
                   "kind": "Deployment",
-                  "metadata": Object {
-                    "annotations": Object {
+                  "metadata": {
+                    "annotations": {
                       "deployment.kubernetes.io/revision": "1",
                     },
                     "creationTimestamp": "2019-04-22T11:35:43Z",
                     "generation": 2,
-                    "labels": Object {
+                    "labels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "wit",
                       "app.kubernetes.io/name": "nodejs",
@@ -1899,12 +1899,12 @@ Object {
                     "resourceVersion": "726179",
                     "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
                   },
-                  "spec": Object {
+                  "spec": {
                     "progressDeadlineSeconds": 600,
                     "replicas": 3,
                     "revisionHistoryLimit": 10,
-                    "selector": Object {
-                      "matchLabels": Object {
+                    "selector": {
+                      "matchLabels": {
                         "app.kubernetes.io/component": "backend",
                         "app.kubernetes.io/instance": "wit",
                         "app.kubernetes.io/name": "nodejs",
@@ -1912,17 +1912,17 @@ Object {
                         "app.kubernetes.io/version": "1.0",
                       },
                     },
-                    "strategy": Object {
-                      "rollingUpdate": Object {
+                    "strategy": {
+                      "rollingUpdate": {
                         "maxSurge": "25%",
                         "maxUnavailable": "25%",
                       },
                       "type": "RollingUpdate",
                     },
-                    "template": Object {
-                      "metadata": Object {
+                    "template": {
+                      "metadata": {
                         "creationTimestamp": null,
-                        "labels": Object {
+                        "labels": {
                           "app.kubernetes.io/component": "backend",
                           "app.kubernetes.io/instance": "wit",
                           "app.kubernetes.io/name": "nodejs",
@@ -1930,33 +1930,33 @@ Object {
                           "app.kubernetes.io/version": "1.0",
                         },
                       },
-                      "spec": Object {
-                        "containers": Array [
-                          Object {
+                      "spec": {
+                        "containers": [
+                          {
                             "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                             "imagePullPolicy": "Always",
                             "name": "wit-deployment",
-                            "ports": Array [
-                              Object {
+                            "ports": [
+                              {
                                 "containerPort": 8080,
                                 "protocol": "TCP",
                               },
                             ],
-                            "resources": Object {},
+                            "resources": {},
                             "terminationMessagePath": "/dev/termination-log",
                             "terminationMessagePolicy": "File",
                           },
-                          Object {
+                          {
                             "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                             "imagePullPolicy": "Always",
                             "name": "wit-deployment-1",
-                            "ports": Array [
-                              Object {
+                            "ports": [
+                              {
                                 "containerPort": 8080,
                                 "protocol": "TCP",
                               },
                             ],
-                            "resources": Object {},
+                            "resources": {},
                             "terminationMessagePath": "/dev/termination-log",
                             "terminationMessagePolicy": "File",
                           },
@@ -1964,7 +1964,7 @@ Object {
                       },
                     },
                   },
-                  "status": Object {},
+                  "status": {},
                 },
               },
               "type": "workload",
@@ -1973,16 +1973,16 @@ Object {
             "height": 104,
             "id": "60a9b423-680d-11e9-8c69-5254003f9382",
             "label": "wit-deployment",
-            "resource": Object {
+            "resource": {
               "apiVersion": "apps/v1",
               "kind": "Deployment",
-              "metadata": Object {
-                "annotations": Object {
+              "metadata": {
+                "annotations": {
                   "deployment.kubernetes.io/revision": "1",
                 },
                 "creationTimestamp": "2019-04-22T11:35:43Z",
                 "generation": 2,
-                "labels": Object {
+                "labels": {
                   "app.kubernetes.io/component": "backend",
                   "app.kubernetes.io/instance": "wit",
                   "app.kubernetes.io/name": "nodejs",
@@ -1994,12 +1994,12 @@ Object {
                 "resourceVersion": "726179",
                 "uid": "60a9b423-680d-11e9-8c69-5254003f9382",
               },
-              "spec": Object {
+              "spec": {
                 "progressDeadlineSeconds": 600,
                 "replicas": 3,
                 "revisionHistoryLimit": 10,
-                "selector": Object {
-                  "matchLabels": Object {
+                "selector": {
+                  "matchLabels": {
                     "app.kubernetes.io/component": "backend",
                     "app.kubernetes.io/instance": "wit",
                     "app.kubernetes.io/name": "nodejs",
@@ -2007,17 +2007,17 @@ Object {
                     "app.kubernetes.io/version": "1.0",
                   },
                 },
-                "strategy": Object {
-                  "rollingUpdate": Object {
+                "strategy": {
+                  "rollingUpdate": {
                     "maxSurge": "25%",
                     "maxUnavailable": "25%",
                   },
                   "type": "RollingUpdate",
                 },
-                "template": Object {
-                  "metadata": Object {
+                "template": {
+                  "metadata": {
                     "creationTimestamp": null,
-                    "labels": Object {
+                    "labels": {
                       "app.kubernetes.io/component": "backend",
                       "app.kubernetes.io/instance": "wit",
                       "app.kubernetes.io/name": "nodejs",
@@ -2025,33 +2025,33 @@ Object {
                       "app.kubernetes.io/version": "1.0",
                     },
                   },
-                  "spec": Object {
-                    "containers": Array [
-                      Object {
+                  "spec": {
+                    "containers": [
+                      {
                         "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                         "imagePullPolicy": "Always",
                         "name": "wit-deployment",
-                        "ports": Array [
-                          Object {
+                        "ports": [
+                          {
                             "containerPort": 8080,
                             "protocol": "TCP",
                           },
                         ],
-                        "resources": Object {},
+                        "resources": {},
                         "terminationMessagePath": "/dev/termination-log",
                         "terminationMessagePolicy": "File",
                       },
-                      Object {
+                      {
                         "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                         "imagePullPolicy": "Always",
                         "name": "wit-deployment-1",
-                        "ports": Array [
-                          Object {
+                        "ports": [
+                          {
                             "containerPort": 8080,
                             "protocol": "TCP",
                           },
                         ],
-                        "resources": Object {},
+                        "resources": {},
                         "terminationMessagePath": "/dev/termination-log",
                         "terminationMessagePolicy": "File",
                       },
@@ -2059,12 +2059,12 @@ Object {
                   },
                 },
               },
-              "status": Object {},
+              "status": {},
             },
             "resourceKind": "apps~v1~Deployment",
             "shape": undefined,
-            "style": Object {
-              "padding": Array [
+            "style": {
+              "padding": [
                 0,
                 20,
               ],
@@ -2079,8 +2079,8 @@ Object {
       "height": 180,
       "id": "group:application-1",
       "label": "application-1",
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           40,
           40,
           60,
@@ -2091,32 +2091,32 @@ Object {
       "visible": true,
       "width": 300,
     },
-    Object {
-      "children": Array [
+    {
+      "children": [
         "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
       ],
       "collapsed": false,
-      "data": Object {
-        "groupResources": Array [
-          Object {
-            "data": Object {
-              "data": Object {
+      "data": {
+        "groupResources": [
+          {
+            "data": {
+              "data": {
                 "builderImage": "test-file-stub",
                 "contextDir": null,
                 "editURL": undefined,
                 "isKnativeResource": false,
                 "kind": "apps~v1~Deployment",
-                "monitoringAlerts": Array [],
+                "monitoringAlerts": [],
                 "vcsRef": undefined,
                 "vcsURI": undefined,
               },
               "id": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
               "name": "jaeger-all-in-one-inmemory",
-              "resource": Object {
+              "resource": {
                 "apiVersion": "apps/v1",
                 "kind": "Deployment",
-                "metadata": Object {
-                  "annotations": Object {
+                "metadata": {
+                  "annotations": {
                     "deployment.kubernetes.io/revision": "1",
                     "prometheus.io/port": "14269",
                     "prometheus.io/scrape": "true",
@@ -2124,7 +2124,7 @@ Object {
                   },
                   "creationTimestamp": "2019-12-15T17:31:52Z",
                   "generation": 1,
-                  "labels": Object {
+                  "labels": {
                     "app": "jaeger",
                     "app.kubernetes.io/component": "all-in-one",
                     "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2134,8 +2134,8 @@ Object {
                   },
                   "name": "jaeger-all-in-one-inmemory",
                   "namespace": "myproj",
-                  "ownerReferences": Array [
-                    Object {
+                  "ownerReferences": [
+                    {
                       "apiVersion": "jaegertracing.io/v1",
                       "controller": true,
                       "kind": "Jaeger",
@@ -2146,12 +2146,12 @@ Object {
                   "resourceVersion": "120365",
                   "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
                 },
-                "spec": Object {
+                "spec": {
                   "progressDeadlineSeconds": 600,
                   "replicas": 1,
                   "revisionHistoryLimit": 10,
-                  "selector": Object {
-                    "matchLabels": Object {
+                  "selector": {
+                    "matchLabels": {
                       "app": "jaeger",
                       "app.kubernetes.io/component": "all-in-one",
                       "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2160,22 +2160,22 @@ Object {
                       "app.kubernetes.io/part-of": "jaeger",
                     },
                   },
-                  "strategy": Object {
-                    "rollingUpdate": Object {
+                  "strategy": {
+                    "rollingUpdate": {
                       "maxSurge": "25%",
                       "maxUnavailable": "25%",
                     },
                     "type": "RollingUpdate",
                   },
-                  "template": Object {
-                    "metadata": Object {
-                      "annotations": Object {
+                  "template": {
+                    "metadata": {
+                      "annotations": {
                         "prometheus.io/port": "14269",
                         "prometheus.io/scrape": "true",
                         "sidecar.istio.io/inject": "false",
                       },
                       "creationTimestamp": null,
-                      "labels": Object {
+                      "labels": {
                         "app": "jaeger",
                         "app.kubernetes.io/component": "all-in-one",
                         "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2184,14 +2184,14 @@ Object {
                         "app.kubernetes.io/part-of": "jaeger",
                       },
                     },
-                    "spec": Object {
-                      "containers": Array [
-                        Object {
+                    "spec": {
+                      "containers": [
+                        {
                           "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                           "imagePullPolicy": "Always",
-                          "livenessProbe": Object {
+                          "livenessProbe": {
                             "failureThreshold": 1,
-                            "httpGet": Object {
+                            "httpGet": {
                               "path": "/healthz",
                               "port": 8080,
                               "scheme": "HTTP",
@@ -2199,13 +2199,13 @@ Object {
                             "periodSeconds": 10,
                           },
                           "name": "jaeger-all-in-one-inmemory",
-                          "ports": Array [
-                            Object {
+                          "ports": [
+                            {
                               "containerPort": 8080,
                               "protocol": "TCP",
                             },
                           ],
-                          "resources": Object {},
+                          "resources": {},
                           "terminationMessagePath": "/dev/termination-log",
                           "terminationMessagePolicy": "File",
                         },
@@ -2213,33 +2213,33 @@ Object {
                       "dnsPolicy": "ClusterFirst",
                       "restartPolicy": "Always",
                       "schedulerName": "default-scheduler",
-                      "securityContext": Object {},
+                      "securityContext": {},
                       "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
                       "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
                       "terminationGracePeriodSeconds": 30,
-                      "volumes": Array [],
+                      "volumes": [],
                     },
                   },
                 },
-                "status": Object {
+                "status": {
                   "availableReplicas": 1,
-                  "conditions": Array [],
+                  "conditions": [],
                   "observedGeneration": 1,
                   "readyReplicas": 1,
                   "replicas": 1,
                   "updatedReplicas": 1,
                 },
               },
-              "resources": Object {
+              "resources": {
                 "hpas": undefined,
                 "isMonitorable": true,
                 "isOperatorBackedService": false,
-                "monitoringAlerts": Array [],
-                "obj": Object {
+                "monitoringAlerts": [],
+                "obj": {
                   "apiVersion": "apps/v1",
                   "kind": "Deployment",
-                  "metadata": Object {
-                    "annotations": Object {
+                  "metadata": {
+                    "annotations": {
                       "deployment.kubernetes.io/revision": "1",
                       "prometheus.io/port": "14269",
                       "prometheus.io/scrape": "true",
@@ -2247,7 +2247,7 @@ Object {
                     },
                     "creationTimestamp": "2019-12-15T17:31:52Z",
                     "generation": 1,
-                    "labels": Object {
+                    "labels": {
                       "app": "jaeger",
                       "app.kubernetes.io/component": "all-in-one",
                       "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2257,8 +2257,8 @@ Object {
                     },
                     "name": "jaeger-all-in-one-inmemory",
                     "namespace": "myproj",
-                    "ownerReferences": Array [
-                      Object {
+                    "ownerReferences": [
+                      {
                         "apiVersion": "jaegertracing.io/v1",
                         "controller": true,
                         "kind": "Jaeger",
@@ -2269,12 +2269,12 @@ Object {
                     "resourceVersion": "120365",
                     "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
                   },
-                  "spec": Object {
+                  "spec": {
                     "progressDeadlineSeconds": 600,
                     "replicas": 1,
                     "revisionHistoryLimit": 10,
-                    "selector": Object {
-                      "matchLabels": Object {
+                    "selector": {
+                      "matchLabels": {
                         "app": "jaeger",
                         "app.kubernetes.io/component": "all-in-one",
                         "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2283,22 +2283,22 @@ Object {
                         "app.kubernetes.io/part-of": "jaeger",
                       },
                     },
-                    "strategy": Object {
-                      "rollingUpdate": Object {
+                    "strategy": {
+                      "rollingUpdate": {
                         "maxSurge": "25%",
                         "maxUnavailable": "25%",
                       },
                       "type": "RollingUpdate",
                     },
-                    "template": Object {
-                      "metadata": Object {
-                        "annotations": Object {
+                    "template": {
+                      "metadata": {
+                        "annotations": {
                           "prometheus.io/port": "14269",
                           "prometheus.io/scrape": "true",
                           "sidecar.istio.io/inject": "false",
                         },
                         "creationTimestamp": null,
-                        "labels": Object {
+                        "labels": {
                           "app": "jaeger",
                           "app.kubernetes.io/component": "all-in-one",
                           "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2307,14 +2307,14 @@ Object {
                           "app.kubernetes.io/part-of": "jaeger",
                         },
                       },
-                      "spec": Object {
-                        "containers": Array [
-                          Object {
+                      "spec": {
+                        "containers": [
+                          {
                             "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                             "imagePullPolicy": "Always",
-                            "livenessProbe": Object {
+                            "livenessProbe": {
                               "failureThreshold": 1,
-                              "httpGet": Object {
+                              "httpGet": {
                                 "path": "/healthz",
                                 "port": 8080,
                                 "scheme": "HTTP",
@@ -2322,13 +2322,13 @@ Object {
                               "periodSeconds": 10,
                             },
                             "name": "jaeger-all-in-one-inmemory",
-                            "ports": Array [
-                              Object {
+                            "ports": [
+                              {
                                 "containerPort": 8080,
                                 "protocol": "TCP",
                               },
                             ],
-                            "resources": Object {},
+                            "resources": {},
                             "terminationMessagePath": "/dev/termination-log",
                             "terminationMessagePolicy": "File",
                           },
@@ -2336,17 +2336,17 @@ Object {
                         "dnsPolicy": "ClusterFirst",
                         "restartPolicy": "Always",
                         "schedulerName": "default-scheduler",
-                        "securityContext": Object {},
+                        "securityContext": {},
                         "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
                         "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
                         "terminationGracePeriodSeconds": 30,
-                        "volumes": Array [],
+                        "volumes": [],
                       },
                     },
                   },
-                  "status": Object {
+                  "status": {
                     "availableReplicas": 1,
-                    "conditions": Array [],
+                    "conditions": [],
                     "observedGeneration": 1,
                     "readyReplicas": 1,
                     "replicas": 1,
@@ -2360,11 +2360,11 @@ Object {
             "height": 104,
             "id": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
             "label": "jaeger-all-in-one-inmemory",
-            "resource": Object {
+            "resource": {
               "apiVersion": "apps/v1",
               "kind": "Deployment",
-              "metadata": Object {
-                "annotations": Object {
+              "metadata": {
+                "annotations": {
                   "deployment.kubernetes.io/revision": "1",
                   "prometheus.io/port": "14269",
                   "prometheus.io/scrape": "true",
@@ -2372,7 +2372,7 @@ Object {
                 },
                 "creationTimestamp": "2019-12-15T17:31:52Z",
                 "generation": 1,
-                "labels": Object {
+                "labels": {
                   "app": "jaeger",
                   "app.kubernetes.io/component": "all-in-one",
                   "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2382,8 +2382,8 @@ Object {
                 },
                 "name": "jaeger-all-in-one-inmemory",
                 "namespace": "myproj",
-                "ownerReferences": Array [
-                  Object {
+                "ownerReferences": [
+                  {
                     "apiVersion": "jaegertracing.io/v1",
                     "controller": true,
                     "kind": "Jaeger",
@@ -2394,12 +2394,12 @@ Object {
                 "resourceVersion": "120365",
                 "uid": "c73277f2-e85c-477c-a43d-330a5d0b2cf6",
               },
-              "spec": Object {
+              "spec": {
                 "progressDeadlineSeconds": 600,
                 "replicas": 1,
                 "revisionHistoryLimit": 10,
-                "selector": Object {
-                  "matchLabels": Object {
+                "selector": {
+                  "matchLabels": {
                     "app": "jaeger",
                     "app.kubernetes.io/component": "all-in-one",
                     "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2408,22 +2408,22 @@ Object {
                     "app.kubernetes.io/part-of": "jaeger",
                   },
                 },
-                "strategy": Object {
-                  "rollingUpdate": Object {
+                "strategy": {
+                  "rollingUpdate": {
                     "maxSurge": "25%",
                     "maxUnavailable": "25%",
                   },
                   "type": "RollingUpdate",
                 },
-                "template": Object {
-                  "metadata": Object {
-                    "annotations": Object {
+                "template": {
+                  "metadata": {
+                    "annotations": {
                       "prometheus.io/port": "14269",
                       "prometheus.io/scrape": "true",
                       "sidecar.istio.io/inject": "false",
                     },
                     "creationTimestamp": null,
-                    "labels": Object {
+                    "labels": {
                       "app": "jaeger",
                       "app.kubernetes.io/component": "all-in-one",
                       "app.kubernetes.io/instance": "jaeger-all-in-one-inmemory",
@@ -2432,14 +2432,14 @@ Object {
                       "app.kubernetes.io/part-of": "jaeger",
                     },
                   },
-                  "spec": Object {
-                    "containers": Array [
-                      Object {
+                  "spec": {
+                    "containers": [
+                      {
                         "image": "image-registry.openshift-image-registry.svc:5000/viraj/calculator-react@sha256:84d947d3bb6ae52090c86b5ec7e172dcef2c28a78eedb11a7ff588a3d336d8e0",
                         "imagePullPolicy": "Always",
-                        "livenessProbe": Object {
+                        "livenessProbe": {
                           "failureThreshold": 1,
-                          "httpGet": Object {
+                          "httpGet": {
                             "path": "/healthz",
                             "port": 8080,
                             "scheme": "HTTP",
@@ -2447,13 +2447,13 @@ Object {
                           "periodSeconds": 10,
                         },
                         "name": "jaeger-all-in-one-inmemory",
-                        "ports": Array [
-                          Object {
+                        "ports": [
+                          {
                             "containerPort": 8080,
                             "protocol": "TCP",
                           },
                         ],
-                        "resources": Object {},
+                        "resources": {},
                         "terminationMessagePath": "/dev/termination-log",
                         "terminationMessagePolicy": "File",
                       },
@@ -2461,17 +2461,17 @@ Object {
                     "dnsPolicy": "ClusterFirst",
                     "restartPolicy": "Always",
                     "schedulerName": "default-scheduler",
-                    "securityContext": Object {},
+                    "securityContext": {},
                     "serviceAccount": "jaeger-all-in-one-inmemory-ui-proxy",
                     "serviceAccountName": "jaeger-all-in-one-inmemory-ui-proxy",
                     "terminationGracePeriodSeconds": 30,
-                    "volumes": Array [],
+                    "volumes": [],
                   },
                 },
               },
-              "status": Object {
+              "status": {
                 "availableReplicas": 1,
-                "conditions": Array [],
+                "conditions": [],
                 "observedGeneration": 1,
                 "readyReplicas": 1,
                 "replicas": 1,
@@ -2480,8 +2480,8 @@ Object {
             },
             "resourceKind": "apps~v1~Deployment",
             "shape": undefined,
-            "style": Object {
-              "padding": Array [
+            "style": {
+              "padding": [
                 0,
                 20,
               ],
@@ -2496,8 +2496,8 @@ Object {
       "height": 180,
       "id": "group:jaeger",
       "label": "jaeger",
-      "style": Object {
-        "padding": Array [
+      "style": {
+        "padding": [
           40,
           40,
           60,

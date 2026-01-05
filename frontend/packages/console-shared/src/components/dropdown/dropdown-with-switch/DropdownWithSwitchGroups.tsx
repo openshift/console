@@ -1,15 +1,13 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { Divider, MenuGroup, MenuItem, MenuList } from '@patternfly/react-core';
 
-const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
-  options,
-  selectedKey,
-}) => {
+const DropdownWithSwitchGroups: FC<DropdownWithSwitchGroupsProps> = ({ options, selectedKey }) => {
   const renderedOptions = options.filter(({ items }) => items.length > 0);
   return renderedOptions.length === 0 ? null : (
     <>
       {renderedOptions.map(({ items, key, label }, i) => (
-        <React.Fragment key={key}>
+        <Fragment key={key}>
           {i !== 0 && <Divider />}
           <MenuGroup label={label}>
             <MenuList>
@@ -26,7 +24,7 @@ const DropdownWithSwitchGroups: React.FC<DropdownWithSwitchGroupsProps> = ({
               ))}
             </MenuList>
           </MenuGroup>
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   );

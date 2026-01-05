@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { Alert, AlertActionCloseButton, AlertVariant } from '@patternfly/react-core';
 
 export const DismissableAlert = ({
@@ -7,7 +8,7 @@ export const DismissableAlert = ({
   variant,
   className,
 }: DismissableAlertProps) => {
-  const [show, setShow] = React.useState(true);
+  const [show, setShow] = useState(true);
   return show ? (
     <Alert
       isInline
@@ -23,7 +24,7 @@ export const DismissableAlert = ({
 
 type DismissableAlertProps = {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: AlertVariant;
   className?: string;
 };

@@ -16,7 +16,7 @@ export type {
 } from '@openshift/dynamic-plugin-sdk';
 
 /**
- * A type for **existing static extensions** in console.
+ * A legacy type for static extensions that should not be used anymore.
  *
  * Each extension instance has a `type` and the corresponding parameters
  * represented by the `properties` object.
@@ -24,7 +24,7 @@ export type {
  * Each extension may specify `flags` referencing Console feature flags which
  * are required and/or disallowed in order to put this extension into effect.
  *
- * @deprecated - Use `ExtensionDeclaration` instead for dynamic extensions.
+ * @deprecated - Use `ExtensionDeclaration` instead.
  */
 export type Extension<P extends {} = any> = {
   type: string;

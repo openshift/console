@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 // import { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
 import { ClusterConfigurationCustomField } from '@console/dynamic-plugin-sdk/src';
 import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
@@ -11,7 +11,7 @@ type ClusterConfigurationCustomFieldProps = {
   field: ResolvedCodeRefProperties<ClusterConfigurationCustomField>;
 };
 
-const ClusterConfigurationCustomField: React.FC<ClusterConfigurationCustomFieldProps> = ({
+const ClusterConfigurationCustomField: FC<ClusterConfigurationCustomFieldProps> = ({
   item,
   field,
 }) => {

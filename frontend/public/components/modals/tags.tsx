@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -31,20 +32,18 @@ const NameValueEditorComponent = (props) => (
 export const TagsModal = (props: TagsModalProps) => {
   // Track tags as an array instead of an object / Map so we can preserve the order during editing and so we can have
   // duplicate keys during editing. However, the ordering and any duplicate keys are lost when the form is submitted.
-  const [tags, setTags] = React.useState(
-    _.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags),
-  );
-  const [localErrorMessage, setLocalErrorMessage] = React.useState('');
+  const [tags, setTags] = useState(_.isEmpty(props.tags) ? [['', '']] : _.toPairs(props.tags));
+  const [localErrorMessage, setLocalErrorMessage] = useState('');
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({
     kind: props.resource?.kind,
     name: props.resource?.metadata?.name,
     namespace: props.resource?.metadata?.namespace,
   });
-  const [stale, setStale] = React.useState(false);
+  const [stale, setStale] = useState(false);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
       setStale(!_.isEqual(props.tags, watchedResource?.metadata?.annotations));
     }
@@ -97,7 +96,7 @@ export const TagsModal = (props: TagsModalProps) => {
   );
 };
 
-export const AnnotationsModal: React.FC<AnnotationsModalProps> = (props) => (
+export const AnnotationsModal: FC<AnnotationsModalProps> = (props) => (
   <TagsModal
     path="/metadata/annotations"
     tags={props.resource?.metadata?.annotations}

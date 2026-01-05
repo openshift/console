@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import IconSection from '@console/dev-console/src/components/import/section/Icon
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 
-const KnatifyForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
+const KnatifyForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
   errors,
   handleSubmit,

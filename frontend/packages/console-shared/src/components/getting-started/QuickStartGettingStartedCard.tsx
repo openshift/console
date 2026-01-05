@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   AllQuickStartStates,
   QuickStart,
@@ -7,7 +7,7 @@ import {
 } from '@patternfly/quickstarts';
 import { RouteIcon } from '@patternfly/react-icons/dist/esm/icons/route-icon';
 import { useTranslation } from 'react-i18next';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 import type { GettingStartedLink } from './GettingStartedCard';
 import { GettingStartedCard } from './GettingStartedCard';
@@ -66,7 +66,7 @@ const orderQuickStarts = (
   return orderedQuickStarts;
 };
 
-export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCardProps> = ({
+export const QuickStartGettingStartedCard: FC<QuickStartGettingStartedCardProps> = ({
   featured,
   title,
   description,

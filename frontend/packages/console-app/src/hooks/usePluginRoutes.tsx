@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
+import { useMemo, lazy, useEffect, useCallback } from 'react';
 import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
@@ -9,9 +10,9 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
   (extension.properties.perspective ?? activePerspective) === activePerspective;
 
 const LazyDynamicRoutePage: React.FCC<LazyDynamicRoutePageProps> = ({ component }) => {
-  const LazyComponent = React.useMemo(
+  const LazyComponent = useMemo(
     () =>
-      React.lazy(async () => {
+      lazy(async () => {
         const Component = await component();
         // TODO do not wrap as `default` when we support module code refs
         return { default: Component };
@@ -30,7 +31,7 @@ const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
   path,
   setActivePerspective,
 }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     setActivePerspective(extension.properties.perspective, path);
   });
   return null;
@@ -57,8 +58,8 @@ const RoutePage: React.FCC<RoutePageProps> = ({
 export const usePluginRoutes: UsePluginRoutes = () => {
   const routePages = useExtensions<RoutePage>(isRoutePage);
   const [activePerspective, setActivePerspective] = useActivePerspective();
-  const getRoutesForExtension = React.useCallback(
-    (extension: LoadedRoutePageExtension): React.ReactElement[] => {
+  const getRoutesForExtension = useCallback(
+    (extension: LoadedRoutePageExtension): ReactElement[] => {
       const paths = Array.isArray(extension.properties.path)
         ? extension.properties.path
         : [extension.properties.path];
@@ -80,7 +81,7 @@ export const usePluginRoutes: UsePluginRoutes = () => {
     [activePerspective, setActivePerspective],
   );
 
-  return React.useMemo(
+  return useMemo(
     () =>
       routePages.reduce(
         ([activeAcc, inactiveAcc], extension) => {
@@ -123,4 +124,4 @@ type RoutePageProps = {
   setActivePerspective: SetActivePerspective;
 };
 
-type UsePluginRoutes = () => [React.ReactElement[], React.ReactElement[]];
+type UsePluginRoutes = () => [ReactElement[], ReactElement[]];

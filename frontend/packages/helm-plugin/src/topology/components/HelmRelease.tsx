@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Node,
@@ -24,7 +24,7 @@ type HelmReleaseProps = {
   WithDragNodeProps &
   WithDndDropProps;
 
-const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
+const HelmRelease: FC<HelmReleaseProps> = (props) => {
   const secretObj = getResource(props.element);
   const resourceModel = secretObj ? modelFor(referenceFor(secretObj)) : null;
   const editAccess = useAccessReview({

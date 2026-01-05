@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { ExtensionHook, Action } from '@console/dynamic-plugin-sdk';
 
 type ActionsHookResolverProps = {
@@ -9,7 +10,7 @@ type ActionsHookResolverProps = {
   onValueError: (error: any) => void;
 };
 
-const ActionsHookResolver: React.FC<ActionsHookResolverProps> = ({
+const ActionsHookResolver: FC<ActionsHookResolverProps> = ({
   useValue,
   scope,
   onValueResolved,
@@ -17,13 +18,13 @@ const ActionsHookResolver: React.FC<ActionsHookResolverProps> = ({
 }) => {
   const [value, loaded, loadError] = useValue(scope);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) onValueResolved(value);
     // We do not want to run the effect every time onValueResolved changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loaded, value]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loadError) onValueError(loadError);
     // We do not want to run the effect every time onValueError changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

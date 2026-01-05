@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import {
@@ -9,7 +9,7 @@ import { ServiceModel } from '@console/internal/models';
 import { ConsolePluginKind } from '@console/internal/module/k8s';
 import { DASH } from '@console/shared/src/constants';
 
-const ConsolePluginBackendDetail: React.FC<ConsolePluginBackendDetailProps> = ({
+const ConsolePluginBackendDetail: FC<ConsolePluginBackendDetailProps> = ({
   obj: {
     spec: { proxy },
   },

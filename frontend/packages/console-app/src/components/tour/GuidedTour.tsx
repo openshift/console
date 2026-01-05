@@ -1,10 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import StepComponent from './StepComponent';
 import { TourContext } from './tour-context';
 
-const GuidedTour: React.FC = () => {
-  const { tourState, tour, totalSteps, onComplete } = React.useContext(TourContext);
+const GuidedTour: FC = () => {
+  const { tourState, tour, totalSteps, onComplete } = useContext(TourContext);
   const { t } = useTranslation();
   if (!tour) return null;
   const { intro, steps, end } = tour;

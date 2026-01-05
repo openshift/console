@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +13,7 @@ import { getResource } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { NodeType } from '../topology-types';
 
-export const EventSinkSourceSection: React.FC<{ resource: K8sResourceKind }> = ({ resource }) => {
+export const EventSinkSourceSection: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
   const { t } = useTranslation();
   const target = resource?.spec?.source?.ref;
   const reference = target && referenceFor(target);
@@ -81,7 +82,7 @@ export const usePodsForEventSink = (resource: K8sResourceKind, data) => {
     associatedDeployment?.kind ?? '',
     associatedDeployment?.metadata?.namespace || resource.metadata?.namespace,
   );
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!revisions) {
       return {
         pods: podsDeployment?.pods ?? [],
@@ -125,7 +126,7 @@ export const usePodsForEventSource = (resource: K8sResourceKind, data) => {
     associatedDeployment?.metadata?.namespace || resource.metadata?.namespace,
   );
 
-  return React.useMemo(
+  return useMemo(
     () =>
       !associatedDeployment || Object.keys(associatedDeployment).length === 0
         ? null

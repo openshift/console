@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, ComponentType } from 'react';
 import { screen, cleanup } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -13,7 +13,7 @@ jest.mock('@console/shared', () => {
   const originalModule = jest.requireActual('@console/shared');
   return {
     ...originalModule,
-    useFlag: jest.fn<boolean>().mockReturnValue(false),
+    useFlag: jest.fn<boolean, []>().mockReturnValue(false),
   };
 });
 
@@ -22,8 +22,8 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => key,
     i18n: { language: 'en' },
   }),
-  Trans: ({ children }: { children: React.ReactNode }) => children,
-  withTranslation: () => (Component: React.ComponentType) => Component,
+  Trans: ({ children }: { children: ReactNode }) => children,
+  withTranslation: () => (Component: ComponentType) => Component,
 }));
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
@@ -59,13 +59,16 @@ jest.mock('@console/topology/src/components/quick-search/TopologyQuickSearchButt
   default: () => null,
 }));
 
+const useParamsMock = Router.useParams as jest.Mock;
+
 describe('AddPage', () => {
   afterEach(() => {
     cleanup();
+    jest.clearAllMocks();
   });
 
   it('should render AddCardsLoader if namespace exists', () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({
+    useParamsMock.mockReturnValue({
       ns: 'ns',
     });
     renderWithProviders(<AddPage />);
@@ -73,7 +76,7 @@ describe('AddPage', () => {
   });
 
   it('should render CreateProjectListPage if namespace does not exist', () => {
-    jest.spyOn(Router, 'useParams').mockReturnValue({});
+    useParamsMock.mockReturnValue({});
     renderWithProviders(<AddPage />);
     expect(screen.getByText(/select a namespace to start adding/i)).toBeInTheDocument();
   });

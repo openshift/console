@@ -21,15 +21,16 @@ type IDTokenVerifier func(context.Context, string) (*oidc.IDToken, error)
 // and should be safe to send as a non-http-only cookie.
 type LoginState struct {
 	// IMPORTANT: if adding any ref type, change the DeepCopy() implementation
-	userID       string
-	name         string
-	email        string
-	exp          time.Time
-	rotateAt     time.Time // 80% of token's lifetime
-	now          nowFunc
-	sessionToken string
-	rawToken     string
-	refreshToken string
+	userID         string
+	name           string
+	email          string
+	exp            time.Time
+	rotateAt       time.Time // 80% of token's lifetime
+	now            nowFunc
+	sessionToken   string
+	rawToken       string
+	refreshToken   string
+	refreshTokenID string // Small reference ID for the refresh token (stored in cookie)
 }
 
 type LoginJSON struct {
@@ -162,6 +163,10 @@ func (ls *LoginState) SessionToken() string {
 
 func (ls *LoginState) RefreshToken() string {
 	return ls.refreshToken
+}
+
+func (ls *LoginState) RefreshTokenID() string {
+	return ls.refreshTokenID
 }
 
 func (ls *LoginState) IsExpired() bool {

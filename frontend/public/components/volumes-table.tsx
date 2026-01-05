@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ import { sortable } from '@patternfly/react-table';
 import { connectToModel } from '../kinds';
 import { useRemoveModalLauncher } from './modals/remove-volume-modal';
 import { ModalCallback } from './modals/types';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const removeVolume = (
   removeVolumeModal: ModalCallback,
@@ -75,7 +76,7 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
   return data;
 };
 
-const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
+const ContainerLink: FC<ContainerLinkProps> = ({ name, pod }) => (
   <span className="co-resource-item co-resource-item--inline">
     <ResourceIcon kind="Container" />
     <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
@@ -92,7 +93,7 @@ const volumeRowColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-lg',
   'pf-m-hidden pf-m-visible-on-xl',
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 const VolumesTableRows = ({ componentProps: { data } }) => {

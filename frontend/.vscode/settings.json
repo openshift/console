@@ -1,40 +1,19 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[javascript]": {
-    "editor.formatOnSave": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "./packages/console-shared/src/index.ts"
+  ],
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",
-      "source.sortImports": "never"
+      "source.sortImports": "never",
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.ts": "explicit"
     }
   },
-  "[javascriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "never",
-      "source.sortImports": "never"
-    }
-  },
-  "[typescript]": {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "never",
-      "source.sortImports": "never"
-    }
-  },
-  "[typescriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "never",
-      "source.sortImports": "never"
-    }
-  },
-  "[json]": {
-    "editor.formatOnSave": true
-  },
-  "[jsonc]": {
-    "editor.formatOnSave": true
-  },
-  "[graphql]": {
+  "[json][jsonc][graphql]": {
     "editor.formatOnSave": true
   },
   "eslint.validate": [
@@ -45,6 +24,8 @@
     "json",
     "graphql"
   ],
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
   "javascript.validate.enable": false,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "search.exclude": {
@@ -77,26 +58,21 @@
   },
   "json.schemas": [
     {
-      "fileMatch": ["**/console-extensions.json"],
+      "fileMatch": [
+        "**/console-extensions.json"
+      ],
       "url": "./packages/console-dynamic-plugin-sdk/dist/webpack/schema/console-extensions.json"
     }
   ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
+  "cucumberautocomplete.steps": [
+    "./packages/*/integration-tests/support/step-definitions/*/*.ts"
+  ],
   "cucumberautocomplete.strictGherkinCompletion": true,
   "editor.quickSuggestions": {
     "comments": "on",
     "strings": "on",
     "other": "on"
   },
-  "[javascript][javascriptreact][typescript][typescriptreact]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "never",
-      "source.sortImports": "never"
-    }
-  }
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
   // "css.validate": false,

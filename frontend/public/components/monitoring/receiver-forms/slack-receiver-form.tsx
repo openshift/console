@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Checkbox,
@@ -32,7 +32,7 @@ const GLOBAL_FIELDS = [
   'slack_text',
 ];
 
-export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -253,7 +253,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           <FormHelperText>
             <HelperText>
               <HelperTextItem id="slack-title-help">
-                {t('public~The title of the Slack message.')}
+                {t('public~Slack message title')}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
@@ -270,9 +270,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem id="slack-text-help">
-                {t('public~The text of the Slack message.')}
-              </HelperTextItem>
+              <HelperTextItem id="slack-text-help">{t('public~Slack message text')}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         </FormGroup>

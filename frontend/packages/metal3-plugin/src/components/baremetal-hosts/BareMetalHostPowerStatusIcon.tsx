@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { OffIcon } from '@patternfly/react-icons/dist/esm/icons/off-icon';
 import { OnRunningIcon } from '@patternfly/react-icons/dist/esm/icons/on-running-icon';
@@ -8,7 +8,7 @@ type BareMetalHostPowerStatusIconProps = {
   powerStatus: string;
 };
 
-const BareMetalHostPowerStatusIcon: React.FC<BareMetalHostPowerStatusIconProps> = ({
+const BareMetalHostPowerStatusIcon: FC<BareMetalHostPowerStatusIconProps> = ({
   powerStatus,
   ...iconProps
 }) => {

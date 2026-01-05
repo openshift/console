@@ -46,6 +46,7 @@ import {
   ServiceMonitorModel,
   StatefulSetModel,
   StorageClassModel,
+  VolumeAttributesClassModel,
   TemplateInstanceModel,
   UserModel,
   VolumeSnapshotModel,
@@ -123,7 +124,7 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(NodeModel), () =>
     import(
       '@console/app/src/components/nodes/NodeDetailsPage' /* webpackChunkName: "node-detail" */
-    ).then((m) => m.default),
+    ).then((m) => m.NodeDetailsPage),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
     import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(
@@ -246,6 +247,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.StorageClassDetailsPage,
     ),
   )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassDetailsPage,
+    ),
+  )
   .set(referenceForModel(TemplateInstanceModel), () =>
     import('./template-instance' /* webpackChunkName: "template-instance" */).then(
       (m) => m.TemplateInstanceDetailsPage,
@@ -274,12 +280,12 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-details' /* webpackChunkName: "volume-snapshot-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotDetailsPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class-details' /* webpackChunkName: "volume-snapshot-class-details" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassDetailsPage),
   );
 
 export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
@@ -329,7 +335,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(NodeModel), () =>
     import('@console/app/src/components/nodes/NodesPage' /* webpackChunkName: "node" */).then(
-      (m) => m.default,
+      (m) => m.NodesPage,
     ),
   )
   .set(referenceForModel(MachineAutoscalerModel), () =>
@@ -364,7 +370,7 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(PodModel), () =>
-    import('./pod' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
+    import('./pod-list' /* webpackChunkName: "pod" */).then((m) => m.PodsPage),
   )
   .set(referenceForModel(ReplicaSetModel), () =>
     import('./replicaset' /* webpackChunkName: "replicaset" */).then((m) => m.ReplicaSetsPage),
@@ -443,6 +449,11 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.StorageClassPage,
     ),
   )
+  .set(referenceForModel(VolumeAttributesClassModel), () =>
+    import('./volume-attributes-class' /* webpackChunkName: "volume-attributes-class" */).then(
+      (m) => m.VolumeAttributesClassPage,
+    ),
+  )
   .set(referenceForModel(TemplateInstanceModel), () =>
     import('./template-instance' /* webpackChunkName: "template-instance" */).then(
       (m) => m.TemplateInstancePage,
@@ -466,12 +477,12 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(VolumeSnapshotModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotPage),
   )
   .set(referenceForModel(VolumeSnapshotClassModel), () =>
     import(
       '@console/app/src/components/volume-snapshot/volume-snapshot-class' /* webpackChunkName: "volume-snapshot-class" */
-    ).then((m) => m.default),
+    ).then((m) => m.VolumeSnapshotClassPage),
   );
 
 export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
+import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useDispatch } from 'react-redux';
@@ -37,7 +38,7 @@ import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import useRowFilterFix from './useRowFilterFix';
 import useLabelSelectionFix from './useLabelSelectionFix';
@@ -65,7 +66,7 @@ type FilterKeys = {
   [key: string]: string;
 };
 
-export const FilterToolbar: React.FC<FilterToolbarProps> = ({
+export const FilterToolbar: FC<FilterToolbarProps> = ({
   rowFilters,
   data,
   hideColumnManagement,
@@ -133,13 +134,11 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     : labelFilter;
 
   const params = new URLSearchParams(location.search);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [nameInputText, setNameInputText] = React.useState(
-    params.get(nameFilterQueryArgumentKey) ?? '',
-  );
-  const [labelInputText, setLabelInputText] = React.useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [nameInputText, setNameInputText] = useState(params.get(nameFilterQueryArgumentKey) ?? '');
+  const [labelInputText, setLabelInputText] = useState('');
 
-  const [filterType, setFilterType] = React.useState(
+  const [filterType, setFilterType] = useState(
     nameInputText || !hideNameLabelFilters
       ? FilterType.NAME
       : Object.keys(searchFiltersState)?.[0] || rowSearchFilters?.[0]?.type,
@@ -159,7 +158,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   );
 
   // Reduce generatedRowFilters once and memoize
-  const [filters, filtersNameMap, filterKeys, defaultSelections] = React.useMemo<
+  const [filters, filtersNameMap, filterKeys, defaultSelections] = useMemo<
     [Filter, FilterKeys, FilterKeys, string[]]
   >(
     () =>
@@ -212,7 +211,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
       {rowFilter.items?.map?.((item) =>
         item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
-          <React.Fragment key={item.id} />
+          <Fragment key={item.id} />
         ) : (
           <SelectOption
             data-test-row-filter={item.id}
@@ -232,7 +231,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     </SelectGroup>
   ));
 
-  const applyFilters = React.useCallback(
+  const applyFilters = useCallback(
     (type: string, input: FilterValue) =>
       onFilterChange
         ? onFilterChange(type, input)
@@ -240,7 +239,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     [onFilterChange, reduxIDs, dispatch],
   );
 
-  const applyTextFilter = React.useCallback(
+  const applyTextFilter = useCallback(
     (value: string, filterName: string) => {
       applyFilters(filterName, { selected: [value] });
     },
@@ -289,7 +288,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     applyFilters(labelFilter, { all: values });
   };
 
-  const applyNameFilter = React.useCallback(
+  const applyNameFilter = useCallback(
     (value: string) => {
       setOrRemoveQueryArgument(nameFilterQueryArgumentKey, value);
       applyFilters(textFilter, { selected: [value] });
@@ -320,7 +319,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
   };
 
   // Run once on mount to apply filters from query params
-  React.useEffect(() => {
+  useEffect(() => {
     if (!hideNameLabelFilters || !hideLabelFilter) {
       applyFilters(labelFilter, { all: labelSelection });
     }
@@ -340,7 +339,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
    * Initialize any external data filters based on the hack-fix data when they are finished init
    * TODO: Remove during https://issues.redhat.com/browse/CONSOLE-3147
    */
-  React.useEffect(() => {
+  useEffect(() => {
     if (rowFiltersInitialized && labelSelectionInitialized) {
       applyFilters(labelFilter, { all: labelSelection });
       applyRowFilter(selectedRowFilters);
@@ -392,7 +391,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                   <div data-test-id="filter-dropdown-toggle">
                     <Select
                       role="menu"
-                      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                      toggle={(toggleRef: Ref<MenuToggleElement>) => (
                         <MenuToggle
                           ref={toggleRef}
                           onClick={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
@@ -406,7 +405,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
                       )}
                       isOpen={isOpen}
                       onOpenChange={(open) => setIsOpen(open)}
-                      onSelect={(event: React.MouseEvent | React.ChangeEvent, value: string) => {
+                      onSelect={(event: MouseEvent | ChangeEvent, value: string) => {
                         onRowFilterSelect(value);
                       }}
                       selected={selectedRowFilters}
@@ -534,7 +533,7 @@ export type RowMatchFilter<R = any> = RowFilterBase<R> & {
 };
 
 export type RowReducerFilter<R = any> = RowFilterBase<R> & {
-  reducer: (obj: R) => React.ReactText;
+  reducer: (obj: R) => ReactText;
 };
 
 export type RowFilter<R = any> = RowMatchFilter<R> | RowReducerFilter<R>;

@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { projectDropdown } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
@@ -20,7 +19,6 @@ type TestDefinition = {
 describe('Kubernetes resource CRUD operations', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 
@@ -94,11 +92,13 @@ describe('Kubernetes resource CRUD operations', () => {
 
   const testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   const testLabel = 'automated-test-name';
+
   const resourcesWithCreationForm = new Set([
     'StorageClass',
     'PersistentVolumeClaim',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
+
   const resourcesWithSyncedEditor = new Set([
     'ConfigMap',
     'DeploymentConfig',
@@ -107,14 +107,19 @@ describe('Kubernetes resource CRUD operations', () => {
   ]);
 
   const dataViewResources = new Set([
+    'Build',
+    'BuildConfig',
     'ConfigMap',
     'CronJob',
     'DaemonSet',
     'Deployment',
     'DeploymentConfig',
     'HorizontalPodAutoscaler',
+    'ImageStream',
     'Job',
     'LimitRange',
+    'PersistentVolume',
+    'PersistentVolumeClaim',
     'Pod',
     'PodDisruptionBudget',
     'ReplicaSet',
@@ -123,7 +128,11 @@ describe('Kubernetes resource CRUD operations', () => {
     'Role',
     'Secret',
     'ServiceAccount',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
     'StatefulSet',
+    'StorageClass',
     'user.openshift.io~v1~Group',
   ]);
 
@@ -263,7 +272,11 @@ describe('Kubernetes resource CRUD operations', () => {
         cy.testA11y(`Search page for ${kind}: ${name}`);
 
         // link to to details page
-        listPage.rows.clickRowByName(name);
+        if (isDataViewResource) {
+          listPage.dvRows.clickRowByName(name);
+        } else {
+          listPage.rows.clickRowByName(name);
+        }
         cy.url().should('include', `/${name}`);
         detailsPage.titleShouldContain(name);
       });

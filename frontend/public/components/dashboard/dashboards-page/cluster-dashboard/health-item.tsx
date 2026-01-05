@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
+import { useEffect, useContext, useMemo } from 'react';
 import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
@@ -35,15 +36,15 @@ import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { ClusterDashboardContext } from './context';
 
-const OperatorRow: React.FC<
+const OperatorRow: FC<
   OperatorRowProps & {
     LoadingComponent: () => JSX.Element;
-    Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+    Component: ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
     key: string;
     isResolved: boolean;
   }
 > = ({ operatorStatus, isResolved, key, Component, LoadingComponent }) => {
-  const ResolvedComponent = Component as React.ComponentType<OperatorRowProps>;
+  const ResolvedComponent = Component as ComponentType<OperatorRowProps>;
   return isResolved ? (
     <ResolvedComponent key={key} operatorStatus={operatorStatus} />
   ) : (
@@ -56,10 +57,7 @@ const OperatorRow: React.FC<
   );
 };
 
-export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
-  resources,
-  operatorSubsystems,
-}) => {
+export const OperatorsPopup: FC<OperatorsPopupProps> = ({ resources, operatorSubsystems }) => {
   const { t } = useTranslation();
   const sections = [
     ...operatorSubsystems.map((o, index) => {
@@ -97,7 +95,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
 export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps>(
   ({ resources, watchK8sResource, stopWatchK8sResource, operatorSubsystems }) => {
     const { t } = useTranslation();
-    React.useEffect(() => {
+    useEffect(() => {
       operatorSubsystems.forEach((o, index) =>
         o.resources.forEach((r) => watchK8sResource(uniqueResource(r, index))),
       );
@@ -162,7 +160,7 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
 
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
-    React.useEffect(() => {
+    useEffect(() => {
       watchURL(subsystem.url, subsystem.fetch);
       if (modelExists) {
         watchK8sResource(subsystem.additionalResource);
@@ -219,11 +217,11 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     models,
   }) => {
     const { t } = useTranslation();
-    const { infrastructure } = React.useContext(ClusterDashboardContext);
+    const { infrastructure } = useContext(ClusterDashboardContext);
 
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
-    React.useEffect(() => {
+    useEffect(() => {
       subsystem.queries.forEach((q) => watchPrometheus(q));
       if (modelExists) {
         watchK8sResource(subsystem.additionalResource);
@@ -243,7 +241,7 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
       modelExists,
     ]);
 
-    const queryResults = React.useMemo(
+    const queryResults = useMemo(
       () =>
         subsystem.queries.map((q) => {
           const [response, error] = getPrometheusQueryResponse(prometheusResults, q);
@@ -286,12 +284,12 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
   },
 );
 
-export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
+export const ResourceHealthItem: FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
   const { t } = useTranslation();
 
   const { title, resources, healthHandler, popupComponent: PopupComponent, popupTitle } = subsystem;
 
-  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = React.useMemo(() => {
+  const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = useMemo(() => {
     return {
       ...resources,
       ...(resources.imageManifestVuln && {

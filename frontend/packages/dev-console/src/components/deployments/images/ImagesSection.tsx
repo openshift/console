@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared/src';
@@ -8,7 +8,7 @@ import ContainerField from '../ContainerField';
 import AdvancedImageOptions from './AdvancedImageOptions';
 import ContainerImageField from './ContainerImageField';
 
-const ImagesSection: React.FC<{ resourceType: string }> = ({ resourceType }) => {
+const ImagesSection: FC<{ resourceType: string }> = ({ resourceType }) => {
   const { t } = useTranslation();
   const {
     values: {

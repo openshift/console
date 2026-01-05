@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -32,10 +32,10 @@ type OperatorResourcesProps = {
   loaded?: boolean;
   loadError?: string;
   flatten: (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
-  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => ReactElement;
 };
 
-const OperatorResources: React.FC<OperatorResourcesProps> = ({
+const OperatorResources: FC<OperatorResourcesProps> = ({
   namespace,
   resources,
   loaded,
@@ -68,7 +68,7 @@ type OperatorResourcesGetterProps = {
   flatten: (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
 };
 
-const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
+const OperatorResourcesGetter: FC<OperatorResourcesGetterProps> = ({
   csv,
   modelReference,
   namespace,
@@ -125,7 +125,7 @@ type TopologyOperatorBackedResourcesProps = {
   csv: ClusterServiceVersionKind;
 };
 
-const TopologyOperatorBackedResources: React.FC<TopologyOperatorBackedResourcesProps> = ({
+const TopologyOperatorBackedResources: FC<TopologyOperatorBackedResourcesProps> = ({
   item,
   csv,
 }) => {

@@ -1,9 +1,0 @@
-{
-  "extends": "../../dev-console/integration-tests/tsconfig.json",
-  "include": ["**/*.ts", "./support/commands/index.ts"],
-  "paths": {
-    "pages/*":["support/pages/*"],
-    "page-objects/*": ["support/page-objects/*"],
-    "constants/*": ["support/constants/*"]
-  }
-}

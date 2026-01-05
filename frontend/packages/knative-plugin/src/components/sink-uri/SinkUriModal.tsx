@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Form,
   FormGroup,
@@ -23,7 +23,7 @@ export interface SinkUriModalProps {
 
 type Props = FormikProps<FormikValues> & SinkUriModalProps;
 
-const SinkUriModal: React.FC<Props> = ({
+const SinkUriModal: FC<Props> = ({
   handleSubmit,
   cancel,
   isSubmitting,

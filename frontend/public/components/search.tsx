@@ -1,9 +1,10 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   Accordion,
   AccordionContent,
@@ -48,7 +49,7 @@ import {
   isResourceListPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
-import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
@@ -82,26 +83,27 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   );
 };
 
-const SearchPage_: React.FC<SearchProps> = (props) => {
+const SearchPage_: FC<SearchProps> = (props) => {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
-  const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
-  const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
-  const [labelFilter, setLabelFilter] = React.useState([]);
-  const [labelFilterInput, setLabelFilterInput] = React.useState('');
-  const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
-  const [debouncedNameFilter, setDebouncedNameFilter] = React.useState('');
+  const [selectedItems, setSelectedItems] = useState(new Set<string>([]));
+  const [collapsedKinds, setCollapsedKinds] = useState(new Set<string>([]));
+  const [labelFilter, setLabelFilter] = useState([]);
+  const [labelFilterInput, setLabelFilterInput] = useState('');
+  const [typeaheadNameFilter, setTypeaheadNameFilter] = useState('');
+  const [debouncedNameFilter, setDebouncedNameFilter] = useState('');
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const { noProjectsAvailable } = props;
   const { t } = useTranslation();
-  const { ns: namespace } = useParams<{ ns?: string }>();
+  const [namespace] = useActiveNamespace();
+  const location = useLocation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(pinnedResources, setPinnedResources);
   // Set state variables from the URL
-  React.useEffect(() => {
+  useEffect(() => {
     let kind: string, q: string, name: string;
 
-    if (window.location.search) {
-      const sp = new URLSearchParams(window.location.search);
+    if (location.search) {
+      const sp = new URLSearchParams(location.search);
       kind = sp.get('kind');
       q = sp.get('q');
       name = sp.get('name');
@@ -110,18 +112,20 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     kind = kind || '';
     if (kind !== '') {
       setSelectedItems(new Set(kind.split(',')));
+    } else {
+      setSelectedItems(new Set([]));
     }
     const tags = split(q || '');
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
-  }, []);
+  }, [location.search]);
 
   const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
     setDebouncedNameFilter(nameFilter);
   }, 300);
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedNameFilterCallback(typeaheadNameFilter);
   }, [typeaheadNameFilter, debouncedNameFilterCallback]);
 
@@ -163,7 +167,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     clearLabelFilter();
   };
 
-  const pinToggle = (e: React.MouseEvent<HTMLElement>, resource: string) => {
+  const pinToggle = (e: MouseEvent<HTMLElement>, resource: string) => {
     e.preventDefault();
     e.stopPropagation();
     const index = pinnedResources.indexOf(resource);

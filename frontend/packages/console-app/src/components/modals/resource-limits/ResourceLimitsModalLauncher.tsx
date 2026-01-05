@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik } from 'formik';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ const rlValidationSchema = (t: TFunction) =>
     limits: limitsValidationSchema(t),
   });
 
-const ResourceLimitsModalLauncher: React.FC<ResourceLimitsModalLauncherProps> = (props) => {
+const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props) => {
   const { t } = useTranslation();
 
   const handleSubmit = (values, actions) => {

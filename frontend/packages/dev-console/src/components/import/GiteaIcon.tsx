@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { CSSProperties, FC, ReactElement } from 'react';
 
 type GiteaIconProps = {
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   topology?: boolean;
 };
 
-const GiteaIcon: React.FC<GiteaIconProps> = ({ style, topology }): React.ReactElement => {
+const GiteaIcon: FC<GiteaIconProps> = ({ style, topology }): ReactElement => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

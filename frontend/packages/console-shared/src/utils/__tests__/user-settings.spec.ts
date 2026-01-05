@@ -40,7 +40,7 @@ describe('createConfigMap', () => {
 
     expect(actual).toEqual(configMap);
     expect(coFetchMock).toHaveBeenCalledTimes(1);
-    expect(coFetchMock).lastCalledWith('/api/console/user-settings', {
+    expect(coFetchMock).toHaveBeenLastCalledWith('/api/console/user-settings', {
       method: 'POST',
     });
   });
@@ -56,7 +56,7 @@ describe('updateConfigMap', () => {
 
     expect(actual).toEqual(configMap);
     expect(coFetchMock).toHaveBeenCalledTimes(1);
-    expect(coFetchMock).lastCalledWith(
+    expect(coFetchMock).toHaveBeenLastCalledWith(
       '/api/kubernetes/api/v1/namespaces/openshift-console-user-settings/configmaps/user-settings-1234',
       {
         method: 'PATCH',

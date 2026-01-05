@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -15,7 +15,7 @@ export type ApplicationGroupResourceProps = {
   group: string;
 };
 
-const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
+const ApplicationGroupResource: FC<ApplicationGroupResourceProps> = ({
   title,
   resourcesData,
   group,

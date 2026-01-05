@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -61,7 +62,7 @@ export const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
+const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
@@ -69,12 +70,12 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
 
   const location = useLocation();
 
-  const pluginPages = React.useMemo(
-    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
-    [tabExtensions, cardExtensions],
-  );
+  const pluginPages = useMemo(() => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''), [
+    tabExtensions,
+    cardExtensions,
+  ]);
 
-  const allPages: Page[] = React.useMemo(
+  const allPages: Page[] = useMemo(
     () => [
       {
         href: '',
@@ -87,7 +88,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ kindsInFlight, k8sMode
     [pluginPages],
   );
 
-  const badge = React.useMemo(
+  const badge = useMemo(
     () => allPages.find((page) => `/dashboards${page.href}` === location.pathname)?.badge,
     [allPages, location.pathname],
   );

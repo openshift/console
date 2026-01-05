@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { ComponentProps, ReactNode, FC } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
@@ -9,24 +10,16 @@ import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import {
-  FLAGS,
-  ALL_NAMESPACES_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { getResourceSidebarSamples } from '@console/shared/src/utils/sample-utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-import CodeEditor from '@console/shared/src/components/editor/CodeEditor';
-import CodeEditorSidebar from '@console/shared/src/components/editor/CodeEditorSidebar';
+import { CodeEditor } from '@console/shared/src/components/editor/CodeEditor';
+import { CodeEditorSidebar } from '@console/shared/src/components/editor/CodeEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
@@ -64,7 +57,7 @@ import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
-import { EditYamlSettingsModal } from './modals/edit-yaml-settings-modal';
+import { EditYamlSettingsModal, useEditYamlSettings } from './modals/edit-yaml-settings-modal';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
 import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
@@ -73,6 +66,7 @@ import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
+import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -116,11 +110,11 @@ type EditYAMLProps = {
   /** Whether to add a button to download the YAML */
   download?: boolean;
   /** Header text or component to display above the editor */
-  header?: React.ComponentProps<typeof PageHeading>['title'];
+  header?: ComponentProps<typeof PageHeading>['title'];
   /** Whether the YAML is generic (not tied to a specific resource) */
   genericYAML?: boolean;
   /** Custom alerts to display in the editor */
-  children?: React.ReactNode;
+  children?: ReactNode;
   /** URL to redirect to after saving */
   redirectURL?: string;
   /** Function to clear the file upload state */
@@ -147,7 +141,7 @@ type EditYAMLProps = {
 
 type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
-const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
+const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const {
     allowMultiple,
     create,
@@ -168,59 +162,47 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
-  const [errors, setErrors] = React.useState<string[]>(null);
-  const [success, setSuccess] = React.useState<string>(null);
-  const [initialized, setInitialized] = React.useState(false);
-  const [stale, setStale] = React.useState(false);
-  const [sampleObj, setSampleObj] = React.useState(props.sampleObj);
-  const [showSidebar, setShowSidebar] = React.useState(!!create);
-  const [owner, setOwner] = React.useState(null);
-  const [notAllowed, setNotAllowed] = React.useState<boolean>();
-  const [displayResults, setDisplayResults] = React.useState<boolean>();
-  const [resourceObjects, setResourceObjects] = React.useState();
-  const [editorMounted, setEditorMounted] = React.useState(false);
+  const [errors, setErrors] = useState<string[]>(null);
+  const [success, setSuccess] = useState<string>(null);
+  const [initialized, setInitialized] = useState(false);
+  const [stale, setStale] = useState(false);
+  const [sampleObj, setSampleObj] = useState(props.sampleObj);
+  const [showSidebar, setShowSidebar] = useState(!!create);
+  const [owner, setOwner] = useState(null);
+  const [notAllowed, setNotAllowed] = useState<boolean>();
+  const [displayResults, setDisplayResults] = useState<boolean>();
+  const [resourceObjects, setResourceObjects] = useState();
+  const [editorMounted, setEditorMounted] = useState(false);
   const [fullscreenRef, toggleFullscreen, isFullscreen, canUseFullScreen] = useFullscreen();
   const launchModal = useOverlay();
 
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
-    React.useCallback(
+    useCallback(
       (e): e is YAMLTemplate => isYAMLTemplate(e) && e.properties.model.kind === props?.obj?.kind,
       [props?.obj?.kind],
     ),
   );
 
-  const [showTooltips] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-    true,
-    true,
-  );
+  const { theme, fontSize, showTooltips, stickyScrollEnabled } = useEditYamlSettings();
 
-  const [stickyScrollEnabled] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
-    true,
-    true,
-  );
-
-  const [callbackCommand, setCallbackCommand] = React.useState('');
-  const [showReplaceCodeModal, setShowReplaceCodeModal] = React.useState(false);
-  const [olsCode, setOLSCode] = React.useState('');
+  const [callbackCommand, setCallbackCommand] = useState('');
+  const [showReplaceCodeModal, setShowReplaceCodeModal] = useState(false);
+  const [olsCode, setOLSCode] = useState('');
   const olsCodeBlock = useSelector(getOLSCodeBlock);
 
   const closeOLS = () => action(ActionType.CloseOLS);
   const dispatch = useDispatch();
 
-  const monacoRef = React.useRef<CodeEditorRef>();
-  const editor = React.useRef();
-  const buttons = React.useRef();
+  const monacoRef = useRef<CodeEditorRef>();
+  const editor = useRef();
+  const buttons = useRef();
 
   const { t } = useTranslation();
 
   const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
     'editor' in monacoRef?.current ? monacoRef.current.editor : undefined;
 
-  const getModel = React.useCallback(
+  const getModel = useCallback(
     (obj) => {
       if (_.isEmpty(obj) || !models) {
         return null;
@@ -242,7 +224,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
       navigate(-1); // fallback to previous page if no model available
     }
   };
-  const displayedVersion = React.useRef('0');
+  const displayedVersion = useRef('0');
   const onCancel = 'onCancel' in props ? props.onCancel : navigateToResourceList;
 
   async function createResources(objs) {
@@ -264,7 +246,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     return Promise.resolve(results);
   }
 
-  const checkEditAccess = React.useCallback(
+  const checkEditAccess = useCallback(
     (obj) => {
       if (props.readOnly) {
         // We're already read-only. No need for the access review.
@@ -305,14 +287,14 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     [props.readOnly, props.impersonate, create, getModel, editorMounted],
   );
 
-  const appendYAMLString = React.useCallback((yaml) => {
+  const appendYAMLString = useCallback((yaml) => {
     const currentYAML = getEditor()?.getValue();
     return _.isEmpty(currentYAML)
       ? yaml
       : `${currentYAML}${currentYAML.trim().endsWith('---') ? '\n' : '\n---\n'}${yaml}`;
   }, []);
 
-  const convertObjToYAMLString = React.useCallback(
+  const convertObjToYAMLString = useCallback(
     (obj) => {
       let yaml = '';
       if (obj) {
@@ -333,7 +315,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     [appendYAMLString, allowMultiple, checkEditAccess, t],
   );
 
-  const getResourceKindfromYAML = React.useCallback(
+  const getResourceKindfromYAML = useCallback(
     (yaml) => {
       try {
         const obj = safeLoad(yaml);
@@ -345,7 +327,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     [getModel],
   );
 
-  const loadYaml = React.useCallback(
+  const loadYaml = useCallback(
     (reloaded = false, obj = props.obj) => {
       if (initialized && !reloaded) {
         return;
@@ -385,7 +367,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isValidYaml(olsCodeBlock?.value) || !isCodeImportRedirect) {
       return;
     }
@@ -426,7 +408,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     });
   };
 
-  const loadCSVs = React.useCallback(() => {
+  const loadCSVs = useCallback(() => {
     const namespace = props.obj?.metadata?.namespace;
     if (create || !namespace || !props.obj?.metadata?.ownerReferences?.length) {
       return;
@@ -442,13 +424,13 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
       });
   }, [create, props.obj]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     editorMounted && loadYaml();
     loadCSVs();
   }, [loadCSVs, loadYaml, editorMounted]);
 
   // unsafecomponentwillreceiveprops
-  React.useEffect(() => {
+  useEffect(() => {
     const newVersion = _.get(props.obj, 'metadata.resourceVersion');
     const s = displayedVersion.current !== newVersion && editorMounted;
     setStale(s);
@@ -460,8 +442,8 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   }, [props, loadYaml, sampleObj, editorMounted]);
 
   // update editor as fileUpload changes
-  const prevProps = React.useRef(props);
-  React.useEffect(() => {
+  const prevProps = useRef(props);
+  useEffect(() => {
     if (props.fileUpload) {
       editorMounted &&
         loadYaml(!_.isEqual(prevProps.current.fileUpload, props.fileUpload), props.fileUpload);
@@ -478,7 +460,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     setSuccess(null);
   };
 
-  const updateYAML = React.useCallback(
+  const updateYAML = useCallback(
     (obj) => {
       const model = getModel(obj);
       setSuccess(null);
@@ -526,7 +508,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     ],
   );
 
-  const setDisplay = React.useCallback(
+  const setDisplay = useCallback(
     (value) => {
       clearFileUpload();
       setDisplayResults(value);
@@ -543,7 +525,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     }
   };
 
-  const validate = React.useCallback(
+  const validate = useCallback(
     (obj) => {
       if (!obj) {
         return t('public~No YAML content found.');
@@ -584,9 +566,9 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     [getModel, props.activeNamespace, t],
   );
 
-  const [saving, setSaving] = React.useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const saveCallback = React.useCallback(() => {
+  const saveCallback = useCallback(() => {
     let obj;
 
     if (onSave) {
@@ -672,7 +654,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     setSaving((current) => !current);
   };
 
-  const saveAllCallback = React.useCallback(() => {
+  const saveAllCallback = useCallback(() => {
     let objs;
     let hasErrors = false;
 
@@ -737,7 +719,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     setSaving((current) => !current);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (callbackCommand === 'save') {
       saveCallback();
     }
@@ -782,7 +764,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     return sanitizedYaml;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     editorMounted && getEditor()?.updateOptions({ hover: { enabled: showTooltips } });
     editorMounted && getEditor()?.updateOptions({ stickyScroll: { enabled: stickyScrollEnabled } });
   }, [showTooltips, stickyScrollEnabled, editorMounted]);
@@ -803,7 +785,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   }
 
   const readOnly = props.readOnly || notAllowed;
-  const options = { readOnly, scrollBeyondLastLine: false };
+  const options: CodeEditorProps['options'] = { fontSize, readOnly, scrollBeyondLastLine: false };
   const model = getModel(props.obj);
   const { samples, snippets } = model
     ? getResourceSidebarSamples(model, yamlSamplesList, t)
@@ -876,9 +858,10 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
             <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
+                editorProps={theme === 'default' ? undefined : { theme: `console-${theme}` }}
+                options={options}
                 isCopyEnabled={canDownload}
                 ref={monacoRef}
-                options={options}
                 showShortcuts={!genericYAML && !isFullscreen}
                 toolbarLinks={
                   sidebarSwitch

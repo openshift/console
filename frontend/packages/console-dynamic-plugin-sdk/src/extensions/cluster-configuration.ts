@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { JSONSchema7Type } from 'json-schema';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
@@ -62,7 +62,7 @@ export type ClusterConfigurationCheckboxField = {
 
 export type ClusterConfigurationCustomField = {
   type: ClusterConfigurationFieldType.custom;
-  component: CodeRef<React.ComponentType<ClusterConfigurationFieldProps>>;
+  component: CodeRef<ComponentType<ClusterConfigurationFieldProps>>;
   props?: { [key: string]: JSONSchema7Type };
 };
 

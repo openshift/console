@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   topologyPage,
@@ -19,7 +18,6 @@ When('user applies cronjob YAML', () => {
 
 Then('user will see cron job with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });
@@ -30,7 +28,6 @@ When('user applies job YAML', () => {
 
 Then('user will see job with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });
@@ -41,7 +38,6 @@ When('user applies pod YAML', () => {
 
 Then('user will see pod with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });

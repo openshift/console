@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) => {
+export const IDPNameInput: FC<IDPNameInputProps> = ({ value, onChange }) => {
   const { t } = useTranslation();
   return (
     <div className="form-group" data-test="idp-name-form">
@@ -28,5 +28,5 @@ export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) =
 
 type IDPNameInputProps = {
   value: string;
-  onChange: React.ReactEventHandler<HTMLInputElement>;
+  onChange: ReactEventHandler<HTMLInputElement>;
 };

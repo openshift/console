@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
@@ -22,11 +23,11 @@ export interface EditDeploymentProps {
   namespace: string;
 }
 
-const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
+const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
   const isNew = !name;
 
-  const initialValues = React.useRef({
+  const initialValues = useRef({
     editorType: EditorType.Form,
     yamlData: safeJSToYAML(resource, 'yamlData', {
       skipInvalid: true,

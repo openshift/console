@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   observer,
@@ -25,12 +26,12 @@ type OperatorBackedServiceNodeProps = {
   WithDragNodeProps &
   WithDndDropProps;
 
-const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
+const OperatorBackedServiceNode: FC<OperatorBackedServiceNodeProps> = ({
   canDrop,
   dropTarget,
   ...rest
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   return (
     <Tooltip

@@ -55,4 +55,10 @@ describe('LoadingBox', () => {
     const { getByText } = render(<LoadingBox>{message}</LoadingBox>);
     getByText(message);
   });
+
+  it('should not render blame info when query param disabled', () => {
+    // can't test the other way around without some hacks
+    const { queryByText } = render(<LoadingBox blame={label} />);
+    expect(queryByText(label)).toBeNull();
+  });
 });

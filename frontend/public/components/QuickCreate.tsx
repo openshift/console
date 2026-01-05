@@ -12,7 +12,8 @@ import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
@@ -67,13 +68,13 @@ const useCanCreateResource = () => {
   );
 };
 
-const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
+const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
   const canCreate = useCanCreateResource();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const importYAMLURL = formatNamespacedRouteForResource('import', namespace);
 
   const onToggleClick = () => {
@@ -88,7 +89,7 @@ const QuickCreate: React.FC<QuickCreateProps> = ({ namespace }) => {
       isOpen={isOpen}
       onSelect={onSelect}
       onOpenChange={(open: boolean) => setIsOpen(open)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <Tooltip content={t('public~Quick create')} position="bottom">
           <MenuToggle
             ref={toggleRef}

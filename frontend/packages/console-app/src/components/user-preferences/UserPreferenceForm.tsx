@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Form } from '@patternfly/react-core';
 import { ResolvedUserPreferenceItem } from './types';
 import UserPreferenceField from './UserPreferenceField';
@@ -7,7 +7,7 @@ import './UserPreferenceForm.scss';
 
 type UserPreferenceFormProps = { items: ResolvedUserPreferenceItem[] };
 
-const UserPreferenceForm: React.FC<UserPreferenceFormProps> = ({ items }) =>
+const UserPreferenceForm: FC<UserPreferenceFormProps> = ({ items }) =>
   items && items.length > 0 ? (
     <Form
       onSubmit={(event) => event.preventDefault()}

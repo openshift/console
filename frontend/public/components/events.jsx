@@ -21,7 +21,7 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 import {
   apiGroupForReference,
   isGroupVersionKind,
@@ -394,6 +394,7 @@ const EventStream = ({
   // Handle websocket setup and teardown when dependent props change
   useEffect(() => {
     ws.current?.destroy();
+    setSortedEvents([]);
     if (!mock) {
       const webSocketID = `${namespace || 'all'}-sysevents`;
       const watchURLOptions = {

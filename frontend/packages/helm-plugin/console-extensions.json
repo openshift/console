@@ -57,7 +57,7 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/helm-releases", "/helm", "/helm-repositories"],
+      "path": ["/helm"],
       "component": { "$codeRef": "NamespaceRedirect.NamespaceRedirect" }
     },
     "flags": {
@@ -114,28 +114,6 @@
       "exact": false,
       "path": ["/helm/all-namespaces", "/helm/ns/:ns"],
       "component": { "$codeRef": "HelmTabbedPage" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": false,
-      "path": ["/helm-releases/all-namespaces", "/helm-releases/ns/:ns"],
-      "component": { "$codeRef": "AdminHelmReleaseListPage" }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": false,
-      "path": ["/helm-repositories/all-namespaces", "/helm-repositories/ns/:ns"],
-      "component": { "$codeRef": "AdminHelmRepositoriesListPage" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -285,47 +263,19 @@
     }
   },
   {
-    "type": "console.navigation/section",
-    "properties": {
-      "perspective": "admin",
-      "id": "helm-section",
-      "name": "%helm-plugin~Helm%",
-      "dataAttributes": {
-        "data-quickstart-id": "qs-admin-nav-helm",
-        "data-tour-id": "tour-admin-helm-nav"
-      },
-      "insertAfter": "ecosystem"
-    }
-  },
-  {
     "type": "console.navigation/href",
     "properties": {
       "id": "repositories",
       "perspective": "admin",
-      "section": "helm-section",
-      "name": "%helm-plugin~Repositories%",
-      "href": "/helm-repositories",
+      "section": "ecosystem",
+      "insertAfter": "operators",
+      "name": "%helm-plugin~Helm%",
+      "href": "/helm",
       "namespaced": true,
       "dataAttributes": {
-        "data-test-id": "helm-repositories-header"
-      }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "releases",
-      "perspective": "admin",
-      "section": "helm-section",
-      "name": "%helm-plugin~Releases%",
-      "href": "/helm-releases",
-      "insertAfter": "repositories",
-      "namespaced": true,
-      "dataAttributes": {
-        "data-test-id": "helm-releases-header"
+        "data-test-id": "helm-nav",
+        "data-quickstart-id": "qs-nav-helm",
+        "data-tour-id": "tour-helm-nav"
       }
     },
     "flags": {

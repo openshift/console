@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { InputHTMLAttributes, ReactNode } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 
 export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupProps) => {
@@ -35,13 +35,13 @@ export type RadioGroupProps = {
   id?: string;
   items: RadioGroupItems;
   label?: string;
-  onChange: React.InputHTMLAttributes<any>['onChange'];
+  onChange: InputHTMLAttributes<any>['onChange'];
 };
 
 export type RadioGroupItems = {
   name: string;
   value: string;
-  label: React.ReactNode;
-  description?: React.ReactNode;
+  label: ReactNode;
+  description?: ReactNode;
   disabled?: boolean;
 }[];

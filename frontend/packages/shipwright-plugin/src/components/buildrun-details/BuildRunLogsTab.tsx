@@ -1,21 +1,20 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from '@console/internal/components/utils';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import TaskRunLog from '@console/pipelines-plugin/src/components/taskruns/TaskRunLog';
-import { TaskRunModel } from '@console/pipelines-plugin/src/models/pipelines';
-import { TaskRunKind } from '@console/pipelines-plugin/src/types';
-import { BuildRun } from '../../types';
+import { TaskRunModel } from '../../models';
+import { BuildRun, TaskRunKind } from '../../types';
 import { isV1Alpha1Resource } from '../../utils';
+import BuildRunLog from './BuildRunLog';
 
 type BuildRunLogsTabProps = {
   obj: BuildRun;
 };
 
-const BuildRunLogsTab: React.FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
+const BuildRunLogsTab: FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
 
@@ -50,7 +49,7 @@ const BuildRunLogsTab: React.FC<BuildRunLogsTabProps> = ({ obj: buildRun }) => {
     return <LoadingBox />;
   }
 
-  return <TaskRunLog obj={taskRun} />;
+  return <BuildRunLog obj={taskRun} />;
 };
 
 export default BuildRunLogsTab;

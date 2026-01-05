@@ -1,13 +1,14 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 
 import { coFetch } from '../../co-fetch';
 
-export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
-  const [inFlight, setInFlight] = React.useState(false);
-  const [error, setError] = React.useState(null);
+export const DownloadButton: FC<DownloadButtonProps> = (props) => {
+  const [inFlight, setInFlight] = useState(false);
+  const [error, setError] = useState(null);
 
   const download = () => {
     setInFlight(true);

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Button, Popover, PopoverPosition, PopoverProps } from '@patternfly/react-core';
 import './PopoverStatus.scss';
 
 type PopoverStatusProps = {
-  children?: React.ReactNode;
-  statusBody: React.ReactNode;
+  children?: ReactNode;
+  statusBody: ReactNode;
   onHide?: () => void;
   onShow?: () => void;
   title?: string;
@@ -31,7 +31,7 @@ type PopoverStatusProps = {
  * </PopoverStatus>
  * ```
  */
-const PopoverStatus: React.FC<PopoverStatusProps> = ({
+const PopoverStatus: FC<PopoverStatusProps> = ({
   hideHeader,
   children,
   isVisible = null,

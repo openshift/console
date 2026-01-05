@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -9,7 +9,7 @@ type DefaultChannelSectionProps = {
   namespace: string;
 };
 
-const DefaultChannelSection: React.FC<DefaultChannelSectionProps> = ({ namespace }) => {
+const DefaultChannelSection: FC<DefaultChannelSectionProps> = ({ namespace }) => {
   const { t } = useTranslation();
   return (
     <FormSection extraMargin>

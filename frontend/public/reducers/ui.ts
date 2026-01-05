@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 
-import { ActionType, UIAction } from '../actions/ui';
+import type { UIAction } from '../actions/ui';
+import { ActionType } from '../actions/common';
 import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
@@ -62,9 +63,7 @@ export default (state: UIState, action: UIAction): UIState => {
         return state;
       }
 
-      return state
-        .set('activeApplication', ALL_APPLICATIONS_KEY)
-        .set('activeNamespace', action.payload.namespace);
+      return state.set('activeNamespace', action.payload.namespace);
 
     case ActionType.SetCurrentLocation: {
       state = state.set('location', action.payload.location);

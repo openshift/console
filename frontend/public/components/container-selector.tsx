@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ContainerSpec } from '../module/k8s';
 import { Checkbox } from '@patternfly/react-core';
 
-export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
+export const ContainerSelector: FC<ContainerSelectorProps> = ({
   containers,
   onChange,
   selected,
@@ -30,6 +30,6 @@ export const ContainerSelector: React.FC<ContainerSelectorProps> = ({
 };
 export type ContainerSelectorProps = {
   containers: ContainerSpec[];
-  onChange: (event: React.FormEvent<HTMLInputElement>, checked: boolean) => void;
+  onChange: (event: FormEvent<HTMLInputElement>, checked: boolean) => void;
   selected: string[];
 };

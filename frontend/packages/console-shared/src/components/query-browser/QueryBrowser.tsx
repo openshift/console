@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref, ReactNode, KeyboardEvent, MouseEvent } from 'react';
+import { memo, useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
@@ -60,12 +61,12 @@ import {
   timeFormatter,
   timeFormatterWithSeconds,
 } from '@console/internal/components/utils/datetime';
-import { usePoll } from '@console/internal/components/utils/poll-hook';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { humanizeNumberSI } from '@console/internal/components/utils/units';
 import { RootState } from '@console/internal/redux';
+import { usePoll } from '../../hooks/usePoll';
 import withFallback from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';
 
@@ -82,7 +83,7 @@ const valueFormatter = (units: string): ((v: number) => string) =>
     ? (v: number) => formatNumber(String(v), undefined, units)
     : formatValue;
 
-const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
+const Error: FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
   <Alert isInline className="co-alert" title={title} variant="danger">
     {_.get(error, 'json.error', error.message)}
   </Alert>
@@ -101,21 +102,21 @@ const GraphEmptyState: React.FCC<GraphEmptyStateProps> = ({ children, title }) =
   </div>
 );
 
-const SpanControls: React.FC<SpanControlsProps> = React.memo(
+const SpanControls: FC<SpanControlsProps> = memo(
   ({ defaultSpanText, onChange, span, hasReducedResolution }) => {
-    const [isValid, setIsValid] = React.useState(true);
-    const [text, setText] = React.useState(formatPrometheusDuration(span));
+    const [isValid, setIsValid] = useState(true);
+    const [text, setText] = useState(formatPrometheusDuration(span));
 
     const { t } = useTranslation();
 
     const [isOpen, setIsOpen, , setClosed] = useBoolean(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
       setText(formatPrometheusDuration(span));
     }, [span]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedOnChange = React.useCallback(_.debounce(onChange, 400), [onChange]);
+    const debouncedOnChange = useCallback(_.debounce(onChange, 400), [onChange]);
 
     const setSpan = (newText: string, isDebounced = false) => {
       const newSpan = parsePrometheusDuration(newText);
@@ -155,7 +156,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
             <Dropdown
               isOpen={isOpen}
               onSelect={setClosed}
-              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              toggle={(toggleRef: Ref<MenuToggleElement>) => (
                 <MenuToggle
                   ref={toggleRef}
                   onClick={setIsOpen}
@@ -208,14 +209,7 @@ type TooltipSeries = {
 };
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
-const TooltipWrapped: React.FC<TooltipProps> = ({
-  activePoints,
-  center,
-  height,
-  style,
-  width,
-  x,
-}) => {
+const TooltipWrapped: FC<TooltipProps> = ({ activePoints, center, height, style, width, x }) => {
   const time = activePoints?.[0]?.x;
 
   if (!_.isDate(time) || !_.isFinite(x)) {
@@ -333,7 +327,7 @@ const graphContainer = (
   />
 );
 
-const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+const LegendContainer = ({ children }: { children?: ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
   const width = children?.[0]?.[0]?.props?.width ?? '100%';
   return (
@@ -354,7 +348,7 @@ const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - spa
 
 const ONE_MINUTE = 60 * 1000;
 
-const Graph: React.FC<GraphProps> = React.memo(
+const Graph: FC<GraphProps> = memo(
   ({
     allSeries,
     disabledSeries,
@@ -372,10 +366,10 @@ const Graph: React.FC<GraphProps> = React.memo(
     const legendData: { name: string }[] = [];
     const { t } = useTranslation();
 
-    const [xDomain, setXDomain] = React.useState(fixedXDomain || getXDomain(Date.now(), span));
+    const [xDomain, setXDomain] = useState(fixedXDomain || getXDomain(Date.now(), span));
 
     // Only update X-axis if the time range (fixedXDomain or span) or graph data (allSeries) change
-    React.useEffect(() => {
+    useEffect(() => {
       setXDomain(fixedXDomain || getXDomain(Date.now(), span));
     }, [allSeries, span, fixedXDomain]);
 
@@ -574,7 +568,7 @@ const minSpan = 30 * 1000;
 // Don't poll more often than this number of milliseconds
 const minPollInterval = 10 * 1000;
 
-const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
+const ZoomableGraph: FC<ZoomableGraphProps> = ({
   allSeries,
   disabledSeries,
   fixedXDomain,
@@ -586,29 +580,29 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   units,
   width,
 }) => {
-  const [isZooming, setIsZooming] = React.useState(false);
-  const [x1, setX1] = React.useState(0);
-  const [x2, setX2] = React.useState(0);
+  const [isZooming, setIsZooming] = useState(false);
+  const [x1, setX1] = useState(0);
+  const [x2, setX2] = useState(0);
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       setIsZooming(false);
     }
   };
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const onMouseDown = (e: MouseEvent) => {
     setIsZooming(true);
     const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
     setX1(x);
     setX2(x);
   };
 
-  const onMouseMove = (e: React.MouseEvent) => {
+  const onMouseMove = (e: MouseEvent) => {
     setX2(e.clientX - e.currentTarget.getBoundingClientRect().left);
   };
 
-  const onMouseUp = (e: React.MouseEvent) => {
+  const onMouseUp = (e: MouseEvent) => {
     setIsZooming(false);
 
     const xMin = Math.min(x1, x2);
@@ -671,7 +665,7 @@ const Loading = () => (
 const getMaxSamplesForSpan = (span: number) =>
   _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
-const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
+const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   customDataSource,
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
@@ -707,17 +701,17 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
   // as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
   // If we have both `timespan` and `defaultTimespan`, `timespan` takes precedence
-  const [span, setSpan] = React.useState(timespan || parsePrometheusDuration(defaultSpanText));
+  const [span, setSpan] = useState(timespan || parsePrometheusDuration(defaultSpanText));
 
   // Limit the number of samples so that the step size doesn't fall below minStep
   const maxSamplesForSpan = defaultSamples || getMaxSamplesForSpan(span);
 
-  const [xDomain, setXDomain] = React.useState<AxisDomain>();
-  const [error, setError] = React.useState<PrometheusAPIError>();
-  const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
-  const [graphData, setGraphData] = React.useState<Series[][]>(null);
-  const [samples, setSamples] = React.useState(maxSamplesForSpan);
-  const [updating, setUpdating] = React.useState(true);
+  const [xDomain, setXDomain] = useState<AxisDomain>();
+  const [error, setError] = useState<PrometheusAPIError>();
+  const [isDatasetTooBig, setIsDatasetTooBig] = useState(false);
+  const [graphData, setGraphData] = useState<Series[][]>(null);
+  const [samples, setSamples] = useState(maxSamplesForSpan);
+  const [updating, setUpdating] = useState(true);
 
   const [containerRef, width] = useRefWidth();
 
@@ -725,33 +719,33 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
 
   const safeFetch = useSafeFetch();
 
-  const [isStacked, setIsStacked] = React.useState(isStack);
+  const [isStacked, setIsStacked] = useState(isStack);
 
   const canStack = _.sumBy(graphData, 'length') <= maxStacks;
 
   // If provided, `timespan` overrides any existing span setting
-  React.useEffect(() => {
+  useEffect(() => {
     if (timespan) {
       setSpan(timespan);
       setSamples(defaultSamples || getMaxSamplesForSpan(timespan));
     }
   }, [defaultSamples, timespan]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setGraphData(null);
     if (fixedEndTime) {
       setXDomain(getXDomain(fixedEndTime, span));
     }
   }, [fixedEndTime, span]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!fixedEndTime) {
       setXDomain(undefined);
     }
   }, [fixedEndTime]);
 
   // Clear any existing series data when the namespace is changed
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(queryBrowserDeleteAllSeries());
   }, [dispatch, namespace]);
 
@@ -874,9 +868,9 @@ const QueryBrowserWrapped: React.FC<QueryBrowserProps> = ({
     lastRequestTime,
   );
 
-  React.useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
+  useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
-  const onSpanChange = React.useCallback(
+  const onSpanChange = useCallback(
     (newSpan: number) => {
       setGraphData(null);
       setXDomain(undefined);
@@ -1037,7 +1031,7 @@ type ErrorProps = {
 };
 
 type GraphEmptyStateProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
 };
 

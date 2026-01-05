@@ -1,7 +1,7 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import * as webpack from 'webpack';
+import type * as webpack from 'webpack';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
@@ -12,21 +12,8 @@ const HandleCyclesPluginName = 'HandleCyclesPlugin';
 type PresetOptions = {
   /** Exclude modules that match the given regex */
   exclude?: RegExp;
-  /** Ignores cycles that involve modules matching the given regex */
-  filterModules?: RegExp;
   /** Path to write the cycle report to */
   reportFile: string;
-  /** Thresholds for the number of cycles detected before emitting an error */
-  thresholds?: Partial<{
-    /**
-     * Maximum number of total cycles permitted. Defaults to 0
-     */
-    totalCycles: number;
-    /**
-     * Maximum number of min-length cycles (A -\> B -\> A) permitted. Defaults to 0
-     */
-    minLengthCycles: number;
-  }>;
 };
 
 type DetectedCycle = {
@@ -86,30 +73,6 @@ const getCycleEntries = (cycles: DetectedCycle[]): string => {
   return cycles.map((c) => `${c.causedBy}\n  ${c.modulePaths.join('\n  ')}\n`).join('\n');
 };
 
-const applyThresholds = (
-  cycles: DetectedCycle[],
-  thresholds: PresetOptions['thresholds'],
-  compilation: webpack.Compilation,
-) => {
-  const totalCycles = cycles.length;
-  if (totalCycles > thresholds.totalCycles) {
-    compilation.errors.push(
-      new webpack.WebpackError(
-        `${HandleCyclesPluginName}: total cycles (${totalCycles}) exceeds threshold (${thresholds.totalCycles})`,
-      ),
-    );
-  }
-
-  const minLengthCycles = minLengthCycleCount(cycles);
-  if (minLengthCycles > thresholds.minLengthCycles) {
-    compilation.errors.push(
-      new webpack.WebpackError(
-        `${HandleCyclesPluginName}: min-length cycles (${minLengthCycles}) exceeds threshold (${thresholds.minLengthCycles})`,
-      ),
-    );
-  }
-};
-
 export class CircularDependencyPreset {
   constructor(private readonly options: PresetOptions) {}
 
@@ -120,12 +83,7 @@ export class CircularDependencyPreset {
       new CircularDependencyPlugin({
         exclude: this.options.exclude,
         onDetected: ({ module: { resource }, paths: modulePaths }) => {
-          if (
-            !this.options.filterModules ||
-            !modulePaths.some((p) => this.options.filterModules.test(p))
-          ) {
-            cycles.push({ causedBy: resource, modulePaths });
-          }
+          cycles.push({ causedBy: resource, modulePaths });
         },
       }),
       {
@@ -136,6 +94,7 @@ export class CircularDependencyPreset {
               return;
             }
 
+            // write report
             const header = `webpack compilation ${compilation.getStats().hash}\n`;
 
             const reportPath = path.resolve(__dirname, this.options.reportFile);
@@ -144,16 +103,16 @@ export class CircularDependencyPreset {
               [header, getCycleStats(cycles), getCycleEntries(cycles)].join('\n'),
             );
 
-            console.log(chalk.bold.yellow(`Detected ${cycles.length} cycles`));
+            console.log(chalk.bold.red(`Detected ${cycles.length} cycles`));
             console.log(`Module cycle report written to ${chalk.bold(reportPath)}`);
 
-            applyThresholds(
-              cycles,
-              {
-                totalCycles: this.options.thresholds?.totalCycles ?? 0,
-                minLengthCycles: this.options.thresholds?.minLengthCycles ?? 0,
-              },
-              compilation,
+            // throw build error
+            const minLengthCycles = minLengthCycleCount(cycles);
+
+            compilation.errors.push(
+              new compiler.webpack.WebpackError(
+                `${HandleCyclesPluginName}: ${cycles.length} total cycles detected, ${minLengthCycles} of which are min-length :-(`,
+              ),
             );
           });
         },

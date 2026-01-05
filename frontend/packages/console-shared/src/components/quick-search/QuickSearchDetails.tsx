@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
@@ -12,12 +12,12 @@ export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
 };
-export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => React.ReactNode;
+export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => ReactNode;
 export interface QuickSearchDetailsProps extends QuickSearchDetailsRendererProps {
   detailsRenderer: DetailsRendererFunction;
 }
 
-const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
+const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   selectedItem,
   closeModal,
   detailsRenderer,
@@ -27,7 +27,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
 
   const defaultContentRenderer: DetailsRendererFunction = (
     props: QuickSearchDetailsProps,
-  ): React.ReactNode => {
+  ): ReactNode => {
     return (
       <>
         <Title headingLevel="h4">{props.selectedItem.name}</Title>

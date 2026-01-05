@@ -1,6 +1,5 @@
 export * from './line-buffer';
 export * from './promise-component';
-export * from './kebab';
 export * from './selector';
 export * from './selector-input';
 export * from './label-list';
@@ -39,7 +38,6 @@ export * from './workload-pause';
 export * from './list-dropdown';
 export * from './list-input';
 export * from './rbac';
-export * from './poll-hook';
 export * from './ref-width-hook';
 export * from './safe-fetch-hook';
 export * from './truncate-middle';

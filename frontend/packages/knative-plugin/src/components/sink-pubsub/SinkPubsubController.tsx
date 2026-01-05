@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
@@ -10,7 +11,7 @@ type SinkPubsubControllerProps = {
   resourceType: string;
 };
 
-const SinkPubsubController: React.FC<SinkPubsubControllerProps> = ({ source, ...props }) => (
+const SinkPubsubController: FC<SinkPubsubControllerProps> = ({ source, ...props }) => (
   <SinkPubsub {...props} source={source} />
 );
 
@@ -26,8 +27,5 @@ const SinkPubsubModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useSinkPubsubModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(SinkPubsubModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(SinkPubsubModalProvider, props), [launcher, props]);
 };

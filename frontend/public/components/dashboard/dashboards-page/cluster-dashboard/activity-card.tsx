@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo, memo } from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -14,18 +15,12 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  DashboardsOverviewResourceActivity,
-  isDashboardsOverviewResourceActivity,
-} from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
-  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
+  DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
-  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
+  isDashboardsOverviewResourceActivity,
   isDashboardsOverviewPrometheusActivity,
-  ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
@@ -35,7 +30,7 @@ const viewEvents = '/k8s/all-namespaces/events';
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }) => {
-    React.useEffect(() => {
+    useEffect(() => {
       watchK8sResource(eventsResource);
       return () => {
         stopWatchK8sResource(eventsResource);
@@ -65,26 +60,20 @@ const OngoingActivity = connect(mapStateToProps)(
       prometheusResults,
       models,
     }: DashboardItemProps & OngoingActivityProps) => {
-      const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
-        isDashboardsOverviewResourceActivity,
-      );
-      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
-        DynamicDashboardsOverviewResourceActivity
-      >(isDynamicDashboardsOverviewResourceActivity);
+      const [resourceActivityExtensions] = useResolvedExtensions<
+        DashboardsOverviewResourceActivity
+      >(isDashboardsOverviewResourceActivity);
 
-      const resourceActivities = React.useMemo(
-        () =>
-          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter(
-            (e) => !!models.get(e.properties.k8sResource.kind),
-          ),
-        [dynamicResourceActivityExtensions, models, resourceActivityExtensions],
+      const resourceActivities = useMemo(
+        () => resourceActivityExtensions.filter((e) => !!models.get(e.properties.k8sResource.kind)),
+        [resourceActivityExtensions, models],
       );
 
       const [prometheusActivities] = useResolvedExtensions<DashboardsOverviewPrometheusActivity>(
         isDashboardsOverviewPrometheusActivity,
       );
 
-      React.useEffect(() => {
+      useEffect(() => {
         resourceActivities.forEach((a, index) => {
           watchK8sResource(uniqueResource(a.properties.k8sResource, index));
         });
@@ -108,7 +97,7 @@ const OngoingActivity = connect(mapStateToProps)(
         prometheusActivities,
       ]);
 
-      const allResourceActivities = React.useMemo(
+      const allResourceActivities = useMemo(
         () =>
           _.flatten(
             resourceActivities.map((a, index) => {
@@ -122,16 +111,14 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
-                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
-                    ?.properties?.component,
+                  component: a.properties.component,
                 }));
             }),
           ),
         [resourceActivities, resources],
       );
 
-      const allPrometheusActivities = React.useMemo(
+      const allPrometheusActivities = useMemo(
         () =>
           prometheusActivities
             .filter((a) => {
@@ -152,7 +139,7 @@ const OngoingActivity = connect(mapStateToProps)(
         [prometheusActivities, prometheusResults],
       );
 
-      const resourcesLoaded = React.useMemo(
+      const resourcesLoaded = useMemo(
         () =>
           resourceActivities.every((a, index) => {
             const uniqueProp = uniqueResource(a.properties.k8sResource, index).prop;
@@ -161,7 +148,7 @@ const OngoingActivity = connect(mapStateToProps)(
         [resourceActivities, resources],
       );
 
-      const queriesLoaded = React.useMemo(
+      const queriesLoaded = useMemo(
         () =>
           prometheusActivities.every((a) =>
             a.properties.queries.every(
@@ -186,7 +173,7 @@ const OngoingActivity = connect(mapStateToProps)(
 const RecentEventFooter = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }) => {
     const { t } = useTranslation();
-    React.useEffect(() => {
+    useEffect(() => {
       watchK8sResource(eventsResource);
       return () => {
         stopWatchK8sResource(eventsResource);
@@ -213,7 +200,7 @@ const RecentEventFooter = withDashboardResources(
   },
 );
 
-export const ActivityCard: React.FC<{}> = React.memo(() => {
+export const ActivityCard: FC<{}> = memo(() => {
   const { t } = useTranslation();
 
   return (

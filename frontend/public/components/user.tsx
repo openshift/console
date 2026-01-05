@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
+import { Link } from 'react-router-dom-v5-compat';
 import * as _ from 'lodash-es';
 import {
   Button,
@@ -11,14 +11,12 @@ import {
 } from '@patternfly/react-core';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
-import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
+import { K8sModel, referenceForModel, UserKind } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { RoleBindingsPage } from './RBAC';
 import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
-import { Kebab, KebabAction, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
@@ -28,13 +26,13 @@ import {
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
-  initialFiltersDefault,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import { DASH } from '@console/shared/src/constants/ui';
-
 import { useTranslation } from 'react-i18next';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -43,35 +41,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const UserKebab: React.FC<UserKebabProps> = ({ user }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
-  return (
-    <ResourceKebab
-      actions={[impersonateAction, ...Kebab.factory.common]}
-      kind={referenceForModel(UserModel)}
-      resource={user}
-    />
-  );
-};
-
-const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<UserKind> = (data, columns) => {
   return data.map(({ obj: user }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -85,7 +55,7 @@ const getDataViewRows: GetDataViewRows<UserKind, undefined> = (data, columns) =>
         cell: _.map(user.identities, (identity: string) => <div key={identity}>{identity}</div>),
       },
       [tableColumnInfo[3].id]: {
-        cell: <UserKebab user={user} />,
+        cell: <LazyActionMenu context={{ [referenceForModel(UserModel)]: user }} />,
         props: actionsCellProps,
       },
     };
@@ -154,7 +124,7 @@ const NoDataEmptyMsg = () => {
 
 const useUsersColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -201,22 +171,21 @@ export const UserList: React.FCC<UserListProps> = (props) => {
   }
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<UserKind>
         {...props}
         data={data}
         loaded={loaded}
         label={t('public~Users')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const UserPage: React.FC<UserPageProps> = (props) => {
+export const UserPage: FC<UserPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage
@@ -231,7 +200,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
   );
 };
 
-const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
+const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
     staticFilters={[{ 'role-binding-user': obj.metadata.name }]}
@@ -240,7 +209,7 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
+const UserDetails: FC<UserDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
@@ -263,34 +232,17 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   );
 };
 
-type UserKebabProps = {
-  user: UserKind;
-};
-
-export const UserDetailsPage: React.FC = (props) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const impersonateAction: KebabAction = (_kind: K8sKind, obj: UserKind) => ({
-    label: t('public~Impersonate User {{name}}', obj.metadata),
-    callback: () => {
-      dispatch(UIActions.startImpersonate('User', obj.metadata.name));
-      navigate(window.SERVER_FLAGS.basePath);
-    },
-    // Must use API group authorization.k8s.io, NOT user.openshift.io
-    // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
-    accessReview: {
-      group: 'authorization.k8s.io',
-      resource: 'users',
-      name: obj.metadata.name,
-      verb: 'impersonate',
-    },
-  });
+export const UserDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(UserModel)}
-      menuActions={[impersonateAction, ...Kebab.factory.common]}
+      customActionMenu={(k8sObj: K8sModel, obj: UserKind) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(UserModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         navFactory.details(UserDetails),
         navFactory.editYaml(),

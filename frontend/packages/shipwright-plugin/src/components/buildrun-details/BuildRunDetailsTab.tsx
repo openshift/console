@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, Content, ContentVariants, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
@@ -13,7 +13,7 @@ type BuildRunDetailsTabProps = {
   obj: BuildRun;
 };
 
-const BuildRunDetailsTab: React.FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
+const BuildRunDetailsTab: FC<BuildRunDetailsTabProps> = ({ obj: buildRun }) => {
   const { t } = useTranslation();
 
   return (

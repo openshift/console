@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Status } from '@console/shared/src/components/status/Status';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
@@ -20,10 +20,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import {
-  initialFiltersDefault,
-  ConsoleDataView,
-} from '@console/app/src/components/data-view/ConsoleDataView';
+import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 
@@ -299,7 +296,7 @@ const DeploymentConfigTableHeader = () => {
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-const getDataViewRows: GetDataViewRows<DeploymentConfigKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
@@ -311,18 +308,17 @@ export const DeploymentConfigsList: React.FCC<DeploymentConfigsListProps> = ({
   const columns = useWorkloadColumns<DeploymentConfigKind>();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         label={DeploymentConfigModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';

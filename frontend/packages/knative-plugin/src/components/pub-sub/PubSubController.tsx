@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
@@ -14,7 +15,7 @@ type PubSubControllerProps = {
   target?: K8sResourceKind;
 };
 
-const PubSubController: React.FC<PubSubControllerProps> = ({ source, ...props }) => (
+const PubSubController: FC<PubSubControllerProps> = ({ source, ...props }) => (
   <PubSub {...props} source={source} />
 );
 
@@ -30,7 +31,7 @@ const PubSubModalProvider: OverlayComponent<Props> = (props) => {
 
 export const usePubSubModalLauncher = (props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(PubSubModalProvider, props), [launcher, props]);
+  return useCallback(() => launcher<Props>(PubSubModalProvider, props), [launcher, props]);
 };
 
 export const PubSubModalLauncher = createModalLauncher<Props>(PubSubController);

@@ -24,6 +24,7 @@ export const LAST_BUILD_PAGE_TAB_STORAGE_KEY = `devconsole.last.build-page-tab`;
 export const NAME_LABEL = 'app.kubernetes.io/name';
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 export const RUNTIME_LABEL = 'app.openshift.io/runtime';
+export const RUNTIME_ICON_LABEL = 'app.openshift.io/runtime-icon';
 export const FLAG_DEVELOPER_CATALOG = 'DEVELOPER_CATALOG';
 export const FLAG_OPERATOR_BACKED_SERVICE_CATALOG_TYPE = 'OPERATOR_BACKED_SERVICE_CATALOG_TYPE';
 export const FLAG_SAMPLE_CATALOG_TYPE = 'SAMPLE_CATALOG_TYPE';
@@ -39,3 +40,14 @@ export const JAVA_IMAGESTREAM_NAME = 'java';
 
 export const FLAG_OPENSHIFT_DEPLOYMENTCONFIG = 'OPENSHIFT_DEPLOYMENTCONFIG';
 export const FLAG_OPENSHIFT_BUILDCONFIG = 'OPENSHIFT_BUILDCONFIG';
+export const FLAG_OPENSHIFT_PIPELINE = 'OPENSHIFT_PIPELINE';
+
+// Pipeline constants
+export const CLUSTER_PIPELINE_NS = 'openshift';
+export const PIPELINE_RUNTIME_LABEL = 'pipeline.openshift.io/runtime';
+export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+export const FUNC_PIPELINE_RUNTIME_LABEL = 'function.knative.dev/runtime';
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
+export const PIPELINE_RUNTIME_VERSION_LABEL = 'pipeline.openshift.io/runtime-version';
+export const PIPELINE_STRATEGY_LABEL = 'pipeline.openshift.io/strategy';
+export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';

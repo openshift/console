@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { render, fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
@@ -26,7 +26,7 @@ class ResizeObserver {
 
 window.ResizeObserver = ResizeObserver;
 
-const mockContainerField: React.FC = () => {
+const mockContainerField: FC = () => {
   return <div>Container: xyz</div>;
 };
 
@@ -47,7 +47,7 @@ jest.mock(
   }),
 );
 
-const mockedContainerField = ContainerField as jest.Mock<React.FC>;
+const mockedContainerField = jest.mocked(ContainerField);
 
 const handleSubmit = jest.fn();
 const handleCancel = jest.fn();
@@ -57,6 +57,10 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  // Initialize i18n.services if it doesn't exist
+  if (!i18n.services) {
+    (i18n as any).services = {};
+  }
   i18n.services.interpolator = {
     init: () => undefined,
     reset: () => undefined,

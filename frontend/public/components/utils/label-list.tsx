@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import { Label as PfLabel, LabelGroup as PfLabelGroup } from '@patternfly/react-core';
@@ -26,7 +26,7 @@ export const Label: React.FCC<LabelProps> = ({ kind, name, value, expand }) => {
   );
 };
 
-class TranslatedLabelList extends React.Component<LabelListProps> {
+class TranslatedLabelList extends Component<LabelListProps> {
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(nextProps, this.props);
   }

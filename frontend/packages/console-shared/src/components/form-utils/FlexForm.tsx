@@ -1,13 +1,10 @@
-import * as React from 'react';
+import type { ReactNode, HTMLProps, FC } from 'react';
 
 type FlexFormProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
-const FlexForm: React.FC<FlexFormProps & React.HTMLProps<HTMLFormElement>> = ({
-  children,
-  ...props
-}) => (
+const FlexForm: FC<FlexFormProps & HTMLProps<HTMLFormElement>> = ({ children, ...props }) => (
   <form {...props} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
     {children}
   </form>

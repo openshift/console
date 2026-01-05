@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent, Ref } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Select,
@@ -21,7 +22,7 @@ type KindFilterDropdownProps = {
   opened?: boolean; // Use only for testing
 };
 
-const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
+const KindFilterDropdown: FC<KindFilterDropdownProps> = ({
   filters,
   supportedKinds,
   onChange,
@@ -29,7 +30,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   opened = false,
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState(opened);
+  const [isOpen, setIsOpen] = useState(opened);
   let kindFilters = filters.filter(
     (f) => f.type === TopologyDisplayFilterType.kind && supportedKinds[f.id],
   );
@@ -48,7 +49,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   }, kindFilters);
   kindFilters.sort((a, b) => a.label.localeCompare(b.label));
 
-  const onSelect = (e: React.MouseEvent, key: string) => {
+  const onSelect = (e: MouseEvent, key: string) => {
     const index = filters.findIndex((f) => f.id === key);
     let updatedFilters;
     if (index === -1) {
@@ -92,7 +93,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
     </div>
   );
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}

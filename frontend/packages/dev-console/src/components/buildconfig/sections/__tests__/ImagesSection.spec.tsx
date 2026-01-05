@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
@@ -42,7 +41,7 @@ interface WrapperProps extends FormikConfig<ImagesSectionFormData> {
   children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (
@@ -171,7 +170,7 @@ describe('ImagesSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should provide four options for build from image (when build strategy is Docker)', () => {
+  it('should provide four options for build from image (when build strategy is Docker)', async () => {
     const initialValues = _.cloneDeep(emptyInitialValues);
     initialValues.formData.images.strategyType = BuildStrategyType.Docker;
     const onSubmit = jest.fn();
@@ -186,7 +185,7 @@ describe('ImagesSection', () => {
     expect(renderResult.queryAllByText('None')).toHaveLength(2);
 
     // Open first dropdown
-    userEvent.click(renderResult.getAllByText('None')[0]);
+    await userEvent.click(renderResult.getAllByText('None')[0]);
 
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
@@ -202,7 +201,7 @@ describe('ImagesSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should provide three options (incl. none) for push to image', () => {
+  it('should provide three options (incl. none) for push to image', async () => {
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -216,7 +215,7 @@ describe('ImagesSection', () => {
     renderResult.getByText('None');
 
     // Open second dropdown
-    userEvent.click(renderResult.getByText('None'));
+    await userEvent.click(renderResult.getByText('None'));
 
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
@@ -231,7 +230,7 @@ describe('ImagesSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should show a subform when user selects image stream tag', () => {
+  it('should show a subform when user selects image stream tag', async () => {
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -240,8 +239,8 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Image Stream Tag'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('Image Stream Tag'));
 
     renderResult.getByText('Project');
     renderResult.getByText('Image Stream');
@@ -250,7 +249,7 @@ describe('ImagesSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should show a subform when user selects image stream image', () => {
+  it('should show a subform when user selects image stream image', async () => {
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -259,15 +258,15 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('Image Stream Image'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('Image Stream Image'));
 
     expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should show a subform when user selects dockerfile', () => {
+  it('should show a subform when user selects dockerfile', async () => {
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -276,8 +275,8 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Please select'));
-    userEvent.click(renderResult.getByText('External container image'));
+    await userEvent.click(renderResult.getByText('Please select'));
+    await userEvent.click(renderResult.getByText('External container image'));
 
     expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
 
@@ -370,7 +369,7 @@ describe('ImagesSection', () => {
     // Fill form
     await userEvent.click(renderResult.getByText('Please select'));
     await userEvent.click(renderResult.getByText('Image Stream Image'));
-    userEvent.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
+    await userEvent.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
@@ -412,7 +411,7 @@ describe('ImagesSection', () => {
     // Fill form
     await userEvent.click(renderResult.getByText('Please select'));
     await userEvent.click(renderResult.getByText('External container image'));
-    userEvent.type(renderResult.getByRole('textbox'), 'centos');
+    await userEvent.type(renderResult.getByRole('textbox'), 'centos');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });

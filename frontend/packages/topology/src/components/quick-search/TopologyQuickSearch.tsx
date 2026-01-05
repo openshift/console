@@ -1,7 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import {
   QuickSearchController,
   QuickSearchProviders,
@@ -16,7 +17,7 @@ interface QuickSearchProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const Contents: React.FC<
+const Contents: FC<
   {
     quickStarts: QuickStart[];
     quickStartsLoaded: boolean;
@@ -78,7 +79,7 @@ const Contents: React.FC<
   );
 };
 
-const TopologyQuickSearch: React.FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpen }) => {
+const TopologyQuickSearch: FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpen }) => {
   return (
     <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog">
       {(catalogService: CatalogService) => (
@@ -106,4 +107,4 @@ const TopologyQuickSearch: React.FC<QuickSearchProps> = ({ namespace, isOpen, se
   );
 };
 
-export default React.memo(TopologyQuickSearch);
+export default memo(TopologyQuickSearch);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
@@ -22,7 +22,7 @@ type HPAFormikFormProps = {
   targetResource: K8sResourceKind;
 };
 
-const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
+const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
   const { t } = useTranslation();
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, CSSProperties } from 'react';
 import { useBoundingClientRect } from '../../hooks/useBoundingClientRect';
 import Portal from '../popper/Portal';
 import './spotlight.scss';
@@ -7,9 +7,9 @@ type StaticSpotlightProps = {
   element: Element | HTMLElement;
 };
 
-const StaticSpotlight: React.FC<StaticSpotlightProps> = ({ element }) => {
+const StaticSpotlight: FC<StaticSpotlightProps> = ({ element }) => {
   const clientRect = useBoundingClientRect(element as HTMLElement);
-  const style: React.CSSProperties = clientRect
+  const style: CSSProperties = clientRect
     ? {
         top: clientRect.top,
         left: clientRect.left,

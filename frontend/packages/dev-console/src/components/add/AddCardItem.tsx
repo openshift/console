@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, SyntheticEvent } from 'react';
+import { isValidElement } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src';
@@ -12,7 +13,7 @@ type AddCardItemProps = {
   namespace: string;
 };
 
-const AddCardItem: React.FC<AddCardItemProps> = ({
+const AddCardItem: FC<AddCardItemProps> = ({
   action: {
     properties: { id, label, icon, href, callback, description },
   },
@@ -34,7 +35,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         />
       );
     }
-    if (typeof icon !== 'string' && React.isValidElement(icon)) {
+    if (typeof icon !== 'string' && isValidElement(icon)) {
       return (
         <span className="odc-add-card-item__icon" aria-hidden="true" data-test="add-card-icon">
           {icon}
@@ -51,7 +52,7 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         'data-test': `item ${id}`,
       }}
       href={href ? resolvedHref(href, namespace) : null}
-      onClick={(e: React.SyntheticEvent) => {
+      onClick={(e: SyntheticEvent) => {
         fireTelemetryEvent('Add Item Selected', {
           id,
           name: label,

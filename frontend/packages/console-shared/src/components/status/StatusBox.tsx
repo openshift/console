@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ComponentType, ReactNode } from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { AccessDenied, EmptyBox } from '../empty-state';
 import { LoadError, LoadingBox } from '../loading';
 
-const Data: React.FC<DataProps> = ({
+const Data: FC<DataProps> = ({
   NoDataEmptyMsg,
   EmptyMsg,
   label,
@@ -38,7 +38,7 @@ const Data: React.FC<DataProps> = ({
 };
 Data.displayName = 'Data';
 
-export const StatusBox: React.FC<StatusBoxProps> = (props) => {
+export const StatusBox: FC<StatusBoxProps> = (props) => {
   const { loadError, loaded, skeleton, data, ...dataProps } = props;
   const { t } = useTranslation('console-shared');
 
@@ -88,19 +88,19 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   }
 
   if (!loaded) {
-    return skeleton ? <>{skeleton}</> : <LoadingBox />;
+    return skeleton ? <>{skeleton}</> : <LoadingBox blame={props.label} />;
   }
   return <Data data={data} {...dataProps} />;
 };
 StatusBox.displayName = 'StatusBox';
 
 type DataProps = {
-  NoDataEmptyMsg?: React.ComponentType;
-  EmptyMsg?: React.ComponentType;
+  NoDataEmptyMsg?: ComponentType;
+  EmptyMsg?: ComponentType;
   label?: string;
   unfilteredData?: any;
   data?: any;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 type StatusBoxProps = {
@@ -109,8 +109,8 @@ type StatusBoxProps = {
   loaded?: boolean;
   data?: any;
   unfilteredData?: any;
-  skeleton?: React.ReactNode;
-  NoDataEmptyMsg?: React.ComponentType;
-  EmptyMsg?: React.ComponentType;
-  children?: React.ReactNode;
+  skeleton?: ReactNode;
+  NoDataEmptyMsg?: ComponentType;
+  EmptyMsg?: ComponentType;
+  children?: ReactNode;
 };

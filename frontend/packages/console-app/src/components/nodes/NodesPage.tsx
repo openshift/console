@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback, useEffect, Suspense } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import * as _ from 'lodash';
@@ -133,7 +134,7 @@ const kind = 'Node';
 
 const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
@@ -232,6 +233,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         sort: 'metadata.labels',
         props: {
           modifier: 'nowrap',
+          width: 15,
         },
         additional: true,
       },
@@ -265,7 +267,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
   return columns;
 };
 
-const CPUCell: React.FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
+const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
   const { t } = useTranslation();
   return Number.isFinite(cores) && Number.isFinite(totalCores) ? (
     t('console-app~{{formattedCores}} cores / {{totalCores}} cores', {
@@ -385,9 +387,6 @@ const getNodeDataViewRows = (
       },
       [nodeColumnInfo.labels.id]: {
         cell: <LabelList kind={kind} labels={labels} />,
-        props: {
-          width: 15,
-        },
       },
       [nodeColumnInfo.zone.id]: {
         cell: zone,
@@ -397,9 +396,7 @@ const getNodeDataViewRows = (
       },
       [nodeColumnInfo.actions.id]: {
         cell: node ? <LazyActionMenu context={context} /> : null,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -473,7 +470,7 @@ type NodeListProps = {
   selectedColumns?: TableColumnsType;
 };
 
-const NodeList: React.FC<NodeListProps> = ({
+const NodeList: FC<NodeListProps> = ({
   data,
   loaded,
   loadError,
@@ -490,7 +487,7 @@ const NodeList: React.FC<NodeListProps> = ({
   const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
 
-  const columnLayout = React.useMemo(
+  const columnLayout = useMemo(
     () => ({
       id: columnManagementID,
       type: t('console-app~Node'),
@@ -507,7 +504,7 @@ const NodeList: React.FC<NodeListProps> = ({
     [columns, columnManagementID, selectedColumns, t],
   );
 
-  const nodeStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(
+  const nodeStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
         value: 'Ready',
@@ -525,7 +522,7 @@ const NodeList: React.FC<NodeListProps> = ({
     [t],
   );
 
-  const nodeRoleFilterOptions = React.useMemo<DataViewFilterOption[]>(
+  const nodeRoleFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
         value: 'control-plane',
@@ -539,7 +536,7 @@ const NodeList: React.FC<NodeListProps> = ({
     [t],
   );
 
-  const nodeArchitectureFilterOptions = React.useMemo<DataViewFilterOption[]>(
+  const nodeArchitectureFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       { value: 'amd64', label: 'amd64' },
       { value: 'ppc64le', label: 'ppc64le' },
@@ -549,8 +546,13 @@ const NodeList: React.FC<NodeListProps> = ({
     [],
   );
 
+  const initialFilters = useMemo<NodeFilters>(
+    () => ({ ...initialFiltersDefault, status: [], roles: [], architecture: [] }),
+    [],
+  );
+
   // Create stable filter nodes with stable option references to prevent filter resets
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -577,47 +579,44 @@ const NodeList: React.FC<NodeListProps> = ({
     [t, nodeStatusFilterOptions, nodeRoleFilterOptions, nodeArchitectureFilterOptions],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
-    (resource: NodeRowItem, filters: NodeFilters) => {
-      const isCSR = isCSRResource(resource);
+  const matchesAdditionalFilters = useCallback((resource: NodeRowItem, filters: NodeFilters) => {
+    const isCSR = isCSRResource(resource);
 
-      // Status filter
-      if (filters.status.length > 0) {
-        const status = isCSR ? 'Discovered' : nodeStatus(resource as NodeKind);
-        if (!filters.status.includes(status)) {
-          return false;
-        }
+    // Status filter
+    if (filters.status.length > 0) {
+      const status = isCSR ? 'Discovered' : nodeStatus(resource as NodeKind);
+      if (!filters.status.includes(status)) {
+        return false;
       }
+    }
 
-      // Roles filter
-      if (filters.roles.length > 0) {
-        if (isCSR) {
-          return false;
-        }
-        const nodeRoles = getNodeRoles(resource as NodeKind);
-        if (!filters.roles.some((r) => nodeRoles.includes(r))) {
-          return false;
-        }
+    // Roles filter
+    if (filters.roles.length > 0) {
+      if (isCSR) {
+        return false;
       }
-
-      // Architecture filter
-      if (filters.architecture.length > 0) {
-        if (isCSR) {
-          return false;
-        }
-        const arch = getNodeArchitecture(resource as NodeKind);
-        if (!filters.architecture.includes(arch)) {
-          return false;
-        }
+      const nodeRoles = getNodeRoles(resource as NodeKind);
+      if (!filters.roles.some((r) => nodeRoles.includes(r))) {
+        return false;
       }
+    }
 
-      return true;
-    },
-    [],
-  );
+    // Architecture filter
+    if (filters.architecture.length > 0) {
+      if (isCSR) {
+        return false;
+      }
+      const arch = getNodeArchitecture(resource as NodeKind);
+      if (!filters.architecture.includes(arch)) {
+        return false;
+      }
+    }
+
+    return true;
+  }, []);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<NodeRowItem, NodeFilters>
         label={NodeModel.labelPlural}
         data={data}
@@ -626,9 +625,7 @@ const NodeList: React.FC<NodeListProps> = ({
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
-        initialFilters={
-          { ...initialFiltersDefault, status: [], roles: [], architecture: [] } as NodeFilters
-        }
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={(rowData, tableColumns) =>
@@ -643,17 +640,17 @@ const NodeList: React.FC<NodeListProps> = ({
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
 type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
 
-interface NodeFilters extends ResourceFilters {
+type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
   architecture: string[];
-}
+};
 
 const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => {
   const [isAllowed, checkIsLoading] = useAccessReview({
@@ -678,7 +675,7 @@ const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => 
   return [csrs, !checkIsLoading && loaded, error];
 };
 
-const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
+export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
@@ -699,7 +696,7 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
 
   const [csrs, csrsLoaded, csrsLoadError] = useWatchCSRs();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const updateMetrics = async () => {
       try {
         const metrics = await fetchNodeMetrics();
@@ -718,7 +715,7 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
   }, [dispatch]);
   const { t } = useTranslation();
 
-  const data = React.useMemo(() => {
+  const data = useMemo(() => {
     const csrBundle = getNodeClientCSRs(csrs).filter(
       (csr) => !nodes.some((n) => n.metadata.name === csr.metadata.name),
     );
@@ -750,5 +747,3 @@ const NodesPage: React.FC<NodesPageProps> = ({ selector }) => {
 type NodesPageProps = {
   selector?: Selector;
 };
-
-export default NodesPage;

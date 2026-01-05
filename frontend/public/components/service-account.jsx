@@ -2,7 +2,6 @@ import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DetailsPage, ListPage } from './factory';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -12,17 +11,17 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Grid, GridItem } from '@patternfly/react-core';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
+import { referenceForModel } from '../module/k8s';
+import { ServiceAccountModel } from '../models';
 
 const kind = 'ServiceAccount';
+const serviceAccountReference = referenceForModel(ServiceAccountModel);
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -54,10 +53,8 @@ const getDataViewRows = (data, columns) => {
         cell: <Timestamp timestamp={creationTimestamp} />,
       },
       [tableColumnInfo[4].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={kind} resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [serviceAccountReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -91,7 +88,7 @@ const Details = ({ obj: serviceaccount }) => {
 const ServiceAccountsDetailsPage = (props) => (
   <DetailsPage
     {...props}
-    menuActions={menuActions}
+    kind={serviceAccountReference}
     pages={[navFactory.details(Details), navFactory.editYaml()]}
   />
 );
@@ -158,7 +155,6 @@ const ServiceAccountsList = (props) => {
         loaded={loaded}
         label={t('public~ServiceAccounts')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />

@@ -1,29 +1,30 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { useState, Children, useRef, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import './MasonryLayout.scss';
 
 type MasonryProps = {
   columnCount: number;
-  children: React.ReactElement[];
+  children: ReactElement[];
 };
 
-export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
-  const [heights, setHeights] = React.useState<Record<string, number>>({});
+export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
+  const [heights, setHeights] = useState<Record<string, number>>({});
   const columns = columnCount || 1;
   const setHeight = (key: string, height: number) => {
     setHeights((old) => ({ ...old, [key]: height }));
   };
   const groupedColumns = Array.from({ length: columns }, () => ({
     height: 0,
-    items: [] as React.ReactElement[],
+    items: [] as ReactElement[],
   }));
 
   let added = false;
   let allRendered = true;
-  React.Children.forEach(children, (item: React.ReactElement, itemIndex) => {
+  Children.forEach(children, (item: ReactElement, itemIndex) => {
     const MeasuredItem = () => {
-      const measureRef = React.useRef<HTMLDivElement>(null);
-      React.useEffect(() => {
+      const measureRef = useRef<HTMLDivElement>(null);
+      useEffect(() => {
         const newHeight = measureRef.current.getBoundingClientRect().height;
         if (heights[item.key as string] !== newHeight) {
           setHeight(item.key as string, newHeight);

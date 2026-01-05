@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
+import { isValidElement, useState, useEffect, useMemo } from 'react';
 import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -33,7 +34,7 @@ type SoftwareCatalogAddPageConfig = K8sResourceKind & {
 
 type ItemProps = { id: string; addAction?: ResolvedExtension<AddAction> };
 
-const Item: React.FC<ItemProps> = ({ id, addAction }) => (
+const Item: FC<ItemProps> = ({ id, addAction }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     {typeof addAction?.properties.icon === 'string' ? (
       <img
@@ -44,7 +45,7 @@ const Item: React.FC<ItemProps> = ({ id, addAction }) => (
       />
     ) : typeof addAction?.properties.icon !== 'string' &&
       addAction?.properties.icon &&
-      React.isValidElement(addAction.properties.icon) ? (
+      isValidElement(addAction.properties.icon) ? (
       <span className="odc-add-card-item__icon" aria-hidden="true">
         {addAction.properties.icon}
       </span>
@@ -53,7 +54,7 @@ const Item: React.FC<ItemProps> = ({ id, addAction }) => (
   </div>
 );
 
-const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => {
+const AddPageConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
 
@@ -66,15 +67,15 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
   const [consoleConfig, consoleConfigLoaded, consoleConfigError] = useConsoleOperatorConfig<
     SoftwareCatalogAddPageConfig
   >();
-  const [disabled, setDisabled] = React.useState<string[]>();
-  React.useEffect(() => {
+  const [disabled, setDisabled] = useState<string[]>();
+  useEffect(() => {
     if (consoleConfig && consoleConfigLoaded && !disabled) {
       setDisabled(consoleConfig?.spec?.customization?.addPage?.disabledActions || []);
     }
   }, [consoleConfig, consoleConfigLoaded, disabled]);
 
   // Calculate options
-  const enabledOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const enabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!consoleConfigLoaded || !addActionExtensions || !addActionExtensionsResolved || !disabled) {
       return [];
     }
@@ -89,7 +90,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
         <Item key={addAction.uid} id={addAction.properties.id} addAction={addAction} />
       ));
   }, [addActionExtensions, addActionExtensionsResolved, consoleConfigLoaded, disabled]);
-  const disabledOptions = React.useMemo<React.ReactElement<ItemProps>[]>(() => {
+  const disabledOptions = useMemo<React.ReactElement<ItemProps>[]>(() => {
     if (!disabled) {
       return [];
     }
@@ -112,7 +113,7 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
   }, [addActionExtensions, disabled]);
 
   // Save the latest value (disabled string array)
-  const [saveStatus, setSaveStatus] = React.useState<SaveStatusProps>();
+  const [saveStatus, setSaveStatus] = useState<SaveStatusProps>();
   const save = useDebounceCallback(() => {
     fireTelemetryEvent('Console cluster configuration changed', {
       customize: 'Add page actions',
@@ -137,15 +138,15 @@ const AddPageConfiguration: React.FC<{ readonly: boolean }> = ({ readonly }) => 
   // Extract disabled string array from Items
   const onListChange = (
     _event,
-    newEnabledOptions: React.ReactElement<ItemProps>[],
-    newDisabledOptions: React.ReactElement<ItemProps>[],
+    newEnabledOptions: ReactElement<ItemProps>[],
+    newDisabledOptions: ReactElement<ItemProps>[],
   ) => {
     setDisabled(newDisabledOptions.map((node) => node.props.id));
     setSaveStatus({ status: 'pending' });
     save();
   };
 
-  const filterOption = (option: React.ReactElement<ItemProps>, input: string): boolean => {
+  const filterOption = (option: ReactElement<ItemProps>, input: string): boolean => {
     const title = option.props.addAction?.properties.label || option.props.id;
     return fuzzy(input.toLocaleLowerCase(), title.toLocaleLowerCase());
   };

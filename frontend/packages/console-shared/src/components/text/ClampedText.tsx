@@ -1,22 +1,23 @@
-import * as React from 'react';
+import type { ReactNode, CSSProperties } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Popover } from '@patternfly/react-core';
 import { useDebounceCallback } from '../../hooks/debounce';
 import './ClampedText.scss';
 
 type ClampedTextProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   lineClamp?: number;
 };
 
 const ClampedText: React.FCC<ClampedTextProps> = ({ children, lineClamp = 1 }) => {
-  const [isContentClamped, setContentClamped] = React.useState<boolean>(false);
-  const measureRef = React.useRef<HTMLDivElement>(null);
+  const [isContentClamped, setContentClamped] = useState<boolean>(false);
+  const measureRef = useRef<HTMLDivElement>(null);
   const debouncedSetContentClamped = useDebounceCallback(() => {
     setContentClamped(measureRef.current.scrollHeight > measureRef.current.clientHeight);
   });
-  const style = { '--ocs-clamped-text--line-clamp': lineClamp } as React.CSSProperties;
+  const style = { '--ocs-clamped-text--line-clamp': lineClamp } as CSSProperties;
 
-  React.useEffect(() => {
+  useEffect(() => {
     debouncedSetContentClamped();
   }, [children, lineClamp, debouncedSetContentClamped]);
 

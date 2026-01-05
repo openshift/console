@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, SyntheticEvent } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   DataList,
@@ -28,7 +29,7 @@ export const MAX_VIEW_COLS = 9;
 export const NAME_COLUMN_ID = 'name';
 const readOnlyColumns = new Set([NAME_COLUMN_ID]);
 
-const DataListRow: React.FC<DataListRowProps> = ({
+const DataListRow: FC<DataListRowProps> = ({
   checkedColumns,
   column,
   onChange,
@@ -69,20 +70,20 @@ const NamespaceColumnHelpText: React.FCC = () => {
   return t('public~The namespace column is only shown when in "All projects"');
 };
 
-export const ColumnManagementModal: React.FC<
+export const ColumnManagementModal: FC<
   ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
   const { t } = useTranslation();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
 
-  const [checkedColumns, setCheckedColumns] = React.useState(
+  const [checkedColumns, setCheckedColumns] = useState(
     columnLayout.selectedColumns && columnLayout.selectedColumns.size !== 0
       ? new Set(columnLayout.selectedColumns)
       : new Set(defaultColumns.map((col) => col.id)),
   );
 
-  const onColumnChange = (event: React.SyntheticEvent): void => {
+  const onColumnChange = (event: SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
     const selectedId = event?.currentTarget?.id;
     updatedCheckedColumns.has(selectedId)
@@ -105,7 +106,7 @@ export const ColumnManagementModal: React.FC<
 
   const areMaxColumnsDisplayed = checkedColumns.size >= MAX_VIEW_COLS;
 
-  const resetColumns = (event: React.SyntheticEvent): void => {
+  const resetColumns = (event: SyntheticEvent): void => {
     event.preventDefault();
     const updatedCheckedColumns = new Set(checkedColumns);
     defaultColumns.forEach((col) => col.id && updatedCheckedColumns.add(col.id));
@@ -210,7 +211,7 @@ ColumnManagementModal.displayName = 'ColumnManagementModal';
 
 type DataListRowProps = {
   column: ManagedColumn;
-  onChange: (event: React.SyntheticEvent, checked: boolean) => void;
+  onChange: (event: SyntheticEvent, checked: boolean) => void;
   disableUncheckedRow: boolean;
   checkedColumns: Set<string>;
 };

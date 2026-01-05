@@ -1,37 +1,41 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { RootState } from '@console/internal/redux';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalComponentProps,
-} from '@console/internal/components/factory/modal';
+import { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
 } from '@console/shared/src/constants/common';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalVariant,
+  ModalBody,
+  ModalFooter,
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core';
+import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ErrorMessage } from '../utils/button-bar';
 
-export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
-  cancel,
-  close,
+export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
   resource,
+  closeOverlay,
 }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const [confirmed, setConfirmed] = React.useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   /**
    * This is a workaround because modal launcher renders all modals outside of main app context.
@@ -59,7 +63,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
           dispatch(setActiveNamespace(ALL_NAMESPACES_KEY));
           setLastNamespace(ALL_NAMESPACES_KEY);
         }
-        close?.();
+        closeOverlay();
         navigate(`/k8s/cluster/${kind.plural}`);
       })
       .catch(() => {
@@ -72,25 +76,25 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   };
 
   return (
-    <form onSubmit={onSubmit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">
-        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
-      </ModalTitle>
+    <Modal isOpen onClose={closeOverlay} variant={ModalVariant.small}>
+      <ModalHeader
+        title={t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
+        titleIconVariant="warning"
+      />
       <ModalBody>
-        <p>
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             This action cannot be undone. It will destroy all pods, services and other objects in
             the namespace{' '}
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
           </Trans>
-        </p>
-        <p>
+        </Content>
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             Confirm deletion by typing{' '}
             <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
           </Trans>
-        </p>
+        </Content>
         <span className="pf-v6-c-form-control">
           <input
             type="text"
@@ -104,19 +108,33 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
           />
         </span>
       </ModalBody>
-      <ModalSubmitFooter
-        submitText={t('public~Delete')}
-        submitDisabled={!confirmed}
-        cancel={() => cancel?.()}
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitDanger
-      />
-    </form>
+      <ModalFooter>
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        <Button
+          type="submit"
+          variant="danger"
+          onClick={onSubmit}
+          isLoading={inProgress}
+          isDisabled={!confirmed}
+          data-test="confirm-action"
+        >
+          {t('public~Delete')}
+        </Button>
+        <Button variant="secondary" onClick={closeOverlay} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 };
 
-export const deleteNamespaceModal = createModalLauncher(DeleteNamespaceModal);
+export const useDeleteNamespaceModalLauncher = (props: DeleteNamespaceModalProps) => {
+  const launcher = useOverlay();
+  return useCallback(() => launcher<DeleteNamespaceModalProps>(DeleteNamespaceModal, props), [
+    launcher,
+    props,
+  ]);
+};
 
 type DeleteNamespaceModalProps = {
   resource: K8sResourceKind;

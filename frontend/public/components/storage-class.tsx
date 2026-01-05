@@ -1,30 +1,6 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
-import { sortable } from '@patternfly/react-table';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
-import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useTranslation } from 'react-i18next';
-import { css } from '@patternfly/react-styles';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DetailsPage } from './factory/details';
-import { ListPage } from './factory/list-page';
-import { Table, TableData } from './factory/table';
-import type { RowFunctionArgs } from './factory/table';
-import { DetailsItem } from './utils/details-item';
-import { Kebab } from './utils/kebab';
-import { ResourceLink } from './utils/resource-link';
-import { ResourceSummary, detailsPage } from './utils/details-page';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import {
-  StorageClassResourceKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
-} from '../module/k8s';
+import { TFunction } from 'i18next';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -33,12 +9,49 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import {
+  actionsCellProps,
+  cellIsStickyProps,
+  getNameCellProps,
+  ConsoleDataView,
+} from '@console/app/src/components/data-view/ConsoleDataView';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useTranslation } from 'react-i18next';
+import { StorageClassModel } from '@console/internal/models';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
+import { DASH } from '@console/shared/src/constants/ui';
+import { DetailsPage, DetailsPageProps } from './factory/details';
+import { ListPage } from './factory/list-page';
+import { DetailsItem } from './utils/details-item';
+import { ResourceLink } from './utils/resource-link';
+import { ResourceSummary, detailsPage } from './utils/details-page';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import {
+  StorageClassResourceKind,
+  K8sResourceKind,
+  referenceFor,
+  referenceForModel,
+} from '../module/k8s';
 
-export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
+const { kind } = StorageClassModel;
 
 export const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const betaDefaultStorageClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 const defaultVirtClassAnnotation = 'storageclass.kubevirt.io/is-default-virt-class';
+
+const tableColumnInfo = [
+  { id: 'name' },
+  { id: 'provisioner' },
+  { id: 'reclaimPolicy' },
+  { id: '' },
+];
 
 export const isDefaultClass = (storageClass: K8sResourceKind) => {
   const annotations = _.get(storageClass, 'metadata.annotations') || {};
@@ -53,15 +66,119 @@ const isDefaultVirtClass = (storageClass: K8sResourceKind) => {
   return annotations[defaultVirtClassAnnotation] === 'true';
 };
 
-const tableColumnClasses = [
-  'pf-v6-u-w-42-on-md',
-  'pf-v6-u-w-42-on-md',
-  'pf-m-hidden pf-m-visible-on-md pf-v6-u-w-16-on-md',
-  Kebab.columnClass,
-];
+// TODO remove this code, the plugin should use an appropriate extension
+const isKubevirtPluginActive =
+  Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
+  window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin');
 
-const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
+const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<StorageClassResourceKind> = (t) => (
+  data,
+  columns,
+) => {
+  return data.map(({ obj }) => {
+    const name = obj.metadata?.name || '';
+    const context = { [referenceFor(obj)]: obj };
+
+    const rowCells = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink kind={kind} name={name}>
+            {isDefaultClass(obj) && (
+              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+                &ndash; {t('public~Default')}
+              </span>
+            )}
+            {isDefaultVirtClass(obj) && isKubevirtPluginActive && (
+              <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
+                &ndash; {t('public~Default for VirtualMachines')}
+              </span>
+            )}
+          </ResourceLink>
+        ),
+        props: getNameCellProps(name),
+      },
+      [tableColumnInfo[1].id]: {
+        cell: obj.provisioner,
+      },
+      [tableColumnInfo[2].id]: {
+        cell: obj.reclaimPolicy || DASH,
+      },
+      [tableColumnInfo[3].id]: {
+        cell: <LazyActionMenu context={context} />,
+        props: actionsCellProps,
+      },
+    };
+
+    return columns.map(({ id }) => {
+      const cell = rowCells[id]?.cell || DASH;
+      const props = rowCells[id]?.props || undefined;
+      return {
+        id,
+        props,
+        cell,
+      };
+    });
+  });
+};
+
+const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
   const { t } = useTranslation();
+
+  const columns: TableColumn<StorageClassResourceKind>[] = useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        sort: 'metadata.name',
+        id: tableColumnInfo[0].id,
+        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Provisioner'),
+        sort: 'provisioner',
+        id: tableColumnInfo[1].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: t('public~Reclaim policy'),
+        sort: 'reclaimPolicy',
+        id: tableColumnInfo[2].id,
+        props: { modifier: 'nowrap' },
+      },
+      {
+        title: '',
+        id: tableColumnInfo[3].id,
+        props: { ...cellIsStickyProps },
+      },
+    ],
+    [t],
+  );
+
+  return columns;
+};
+
+export const StorageClassList: React.FCC<StorageClassListProps> = ({ data, loaded, ...props }) => {
+  const { t } = useTranslation();
+  const columns = useStorageClassColumns();
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
+
+  return (
+    <Suspense fallback={<LoadingBox />}>
+      <ConsoleDataView<StorageClassResourceKind>
+        {...props}
+        label={StorageClassModel.labelPlural}
+        data={data}
+        loaded={loaded}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+      />
+    </Suspense>
+  );
+};
+
+const StorageClassDetails: React.FCC<StorageClassDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
+
   return (
     <PaneBody>
       <SectionHeading text={t('public~StorageClass details')} />
@@ -92,101 +209,30 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   );
 };
 
-const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> = ({ obj }) => {
+export const StorageClassPage: React.FCC = ({ ...props }) => {
   const { t } = useTranslation();
-  const isKubevirtPluginActive =
-    Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
-    window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin');
 
-  const resourceKind = referenceFor(obj);
-  const context = { [resourceKind]: obj };
-  return (
-    <>
-      <TableData className={css(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
-          {isDefaultClass(obj) && (
-            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-              &ndash; {t('public~Default')}
-            </span>
-          )}
-          {isDefaultVirtClass(obj) && isKubevirtPluginActive && (
-            <span className="pf-v6-u-font-size-xs pf-v6-u-text-color-subtle co-resource-item__help-text">
-              &ndash; {t('public~Default for VirtualMachines')}
-            </span>
-          )}
-        </ResourceLink>
-      </TableData>
-      <TableData className={css(tableColumnClasses[1], 'co-break-word')}>
-        {obj.provisioner}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <LazyActionMenu context={context} />
-      </TableData>
-    </>
-  );
-};
-
-export const StorageClassList: React.FC = (props) => {
-  const { t } = useTranslation();
-  const StorageClassTableHeader = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Provisioner'),
-        sortField: 'provisioner',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('public~Reclaim policy'),
-        sortField: 'reclaimPolicy',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[3] },
-      },
-    ];
-  };
-  return (
-    <Table
-      {...props}
-      aria-label={t('public~StorageClasses')}
-      Header={StorageClassTableHeader}
-      Row={StorageClassTableRow}
-      virtualize
-    />
-  );
-};
-StorageClassList.displayName = 'StorageClassList';
-
-export const StorageClassPage: React.FC<StorageClassPageProps> = (props) => {
   const createProps = {
     to: '/k8s/cluster/storageclasses/~new/form',
   };
-  const { t } = useTranslation();
+
   return (
     <ListPage
-      {..._.omit(props, 'mock')}
+      {...props}
       title={t('public~StorageClasses')}
-      kind={StorageClassReference}
+      kind={kind}
       ListComponent={StorageClassList}
       canCreate={true}
-      filterLabel={props.filterLabel}
+      omitFilterToolbar={true}
       createProps={createProps}
       createButtonText={t('public~Create StorageClass')}
     />
   );
 };
-export const StorageClassDetailsPage: React.FC = (props) => {
+
+export const StorageClassDetailsPage: React.FCC<DetailsPageProps> = (props) => {
   const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
+
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -200,22 +246,16 @@ export const StorageClassDetailsPage: React.FC = (props) => {
       </ActionServiceProvider>
     );
   };
-  return (
-    <DetailsPage
-      {...props}
-      kind={StorageClassReference}
-      customActionMenu={customActionMenu}
-      pages={pages}
-    />
-  );
-};
-StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';
 
-export type StorageClassDetailsProps = {
-  obj: any;
+  return <DetailsPage {...props} kind={kind} customActionMenu={customActionMenu} pages={pages} />;
 };
 
-export type StorageClassPageProps = {
-  filterLabel: string;
-  namespace: string;
+type StorageClassListProps = {
+  data: StorageClassResourceKind[];
+  loaded: boolean;
+  loadError: unknown;
+};
+
+type StorageClassDetailsProps = {
+  obj: StorageClassResourceKind;
 };

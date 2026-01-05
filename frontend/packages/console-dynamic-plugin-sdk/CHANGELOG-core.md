@@ -10,14 +10,28 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.21.0-prerelease.x - TBD
+## 4.21.0-prerelease.1 - 2025-12-04
 
-- Deprecated `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
+- **Deprecated**: `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
   will be removed in a future release. ([CONSOLE-4840], [#15671])
-- Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
-- Begin alignment of plugin SDK types with `@openshift/dynamic-plugin-sdk` ([CONSOLE-3769], [#15509])
+- **Type breaking**: Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
+- **Type breaking**: `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types`. ([CONSOLE-3769], [#15509])
+- The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
+  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update`. ([CONSOLE-4840], [#15509], [#15671])
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
+- Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
+- Allow async functions for the `resources` property of `console.topology/data/factory` extension ([CONSOLE-4806], [#15641])
+- Add color theme and font size customization to `ResourceYAMLEditor` component ([CONSOLE-4701], [#15735])
+- Ensure proper pass-through of `props.editorProps.theme` and `props.options.fontFamily` to `CodeEditor` component ([CONSOLE-4701], [#15735])
+
+## 4.20.0 - 2025-11-24
+
+> Initial release for OCP Console 4.20.
+
+- Add new `console.catalog/categories-provider` extension ([CONSOLE-4576], [#15269])
+- Add optional `sortFilterGroups` property to extension `console.catalog/item-type` ([CONSOLE-4576], [#15269])
+- Fixed namespaced path generation for non-namespaced resources in `getK8sResourcePath` utility ([OCPBUGS-58118], [#15498])
 
 ## 4.20.0-prerelease.1 - 2025-08-15
 
@@ -132,9 +146,12 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
+[CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4654]: https://issues.redhat.com/browse/CONSOLE-4654
 [CONSOLE-4656]: https://issues.redhat.com/browse/CONSOLE-4656
+[CONSOLE-4701]: https://issues.redhat.com/browse/CONSOLE-4701
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
+[CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
@@ -155,6 +172,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
 [OCPBUGS-56248]: https://issues.redhat.com/browse/OCPBUGS-56248
 [OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
+[OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
@@ -191,7 +209,12 @@ table in [Console dynamic plugins README](./README.md).
 [#15167]: https://github.com/openshift/console/pull/15167
 [#15231]: https://github.com/openshift/console/pull/15231
 [#15254]: https://github.com/openshift/console/pull/15254
+[#15269]: https://github.com/openshift/console/pull/15269
 [#15386]: https://github.com/openshift/console/pull/15386
+[#15498]: https://github.com/openshift/console/pull/15498
 [#15509]: https://github.com/openshift/console/pull/15509
 [#15526]: https://github.com/openshift/console/pull/15526
+[#15641]: https://github.com/openshift/console/pull/15641
 [#15671]: https://github.com/openshift/console/pull/15671
+[#15699]: https://github.com/openshift/console/pull/15699
+[#15735]: https://github.com/openshift/console/pull/15735

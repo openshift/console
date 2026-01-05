@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
@@ -8,7 +8,7 @@ import { BuildModel } from '../../models';
 import { Build } from '../../types';
 import EditBuild from './EditBuild';
 
-const BuildFormPage: React.FC = () => {
+const BuildFormPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
 

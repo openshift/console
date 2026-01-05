@@ -1,45 +1,26 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src/types';
-import { getActiveNamespace } from '@console/internal/actions/ui';
-import { LoadingInline, useAccessReview } from '@console/internal/components/utils';
-import { CLUSTER_PIPELINE_NS, FLAG_OPENSHIFT_PIPELINE } from '@console/pipelines-plugin/src/const';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { SingleDropdownField, SelectInputOption, useFlag } from '@console/shared';
-import { FLAG_OPENSHIFT_BUILDCONFIG } from '../../../../const';
+import { LoadingInline } from '@console/internal/components/utils';
+import { SelectInputOption, SingleDropdownField, useFlag } from '@console/shared';
+import { FLAG_OPENSHIFT_BUILDCONFIG, FLAG_OPENSHIFT_PIPELINE } from '../../../../const';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
   useShipwrightBuilds,
 } from '../../../../utils/shipwright-build-hook';
 import { BuildOptions, ReadableBuildOptions } from '../../import-types';
+import { usePipelineAccessReview } from './usePipelineAccessReview';
 
 type BuildOptionProps = {
   isDisabled: boolean;
   importStrategy: ImportStrategy;
 };
 
-export const usePipelineAccessReview = (): boolean => {
-  const canListPipelines = useAccessReview({
-    group: PipelineModel.apiGroup,
-    resource: PipelineModel.plural,
-    namespace: CLUSTER_PIPELINE_NS,
-    verb: 'list',
-  });
-
-  const canCreatePipelines = useAccessReview({
-    group: PipelineModel.apiGroup,
-    resource: PipelineModel.plural,
-    namespace: getActiveNamespace(),
-    verb: 'create',
-  });
-
-  return canListPipelines && canCreatePipelines;
-};
-
-export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
+export const BuildOption: FC<BuildOptionProps> = ({ isDisabled, importStrategy }) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const isBuildV1Enabled = useFlag(FLAG_OPENSHIFT_BUILDCONFIG);
@@ -50,7 +31,7 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
 
   const fieldName = 'build.option';
 
-  const selectInputOptions = React.useMemo(() => {
+  const selectInputOptions = useMemo(() => {
     const options: SelectInputOption[] = [];
 
     if (isShipwrightBuildsEnabled && isPreferredStrategyAvailable(importStrategy, strategy)) {
@@ -95,7 +76,7 @@ export const BuildOption: React.FC<BuildOptionProps> = ({ isDisabled, importStra
     t,
   ]);
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (selection: string) => {
       const value = _.findKey(ReadableBuildOptions, (name) => t(name) === selection);
       setFieldValue(fieldName, value);

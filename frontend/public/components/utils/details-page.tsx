@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import { Button, DescriptionList } from '@patternfly/react-core';
@@ -7,7 +7,6 @@ import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpg
 import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import { DetailsItem } from './details-item';
-import { Kebab } from './kebab';
 import { LabelList } from './label-list';
 import { OwnerReferences } from './owner-references';
 import { ResourceLink } from './resource-link';
@@ -23,6 +22,8 @@ import {
   Toleration,
 } from '../../module/k8s';
 import { configureClusterUpstreamModal } from '../modals';
+import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
+import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 
 export const pluralize = (
   i: number,
@@ -34,7 +35,7 @@ export const pluralize = (
   return includeCount ? `${i || 0} ${pluralized}` : pluralized;
 };
 
-export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) =>
+export const detailsPage = <T extends {}>(Component: ComponentType<T>) =>
   function DetailsPage(props: T) {
     return <Component {...props} />;
   };
@@ -44,7 +45,7 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 };
 
-export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
+export const ResourceSummary: FC<ResourceSummaryProps> = ({
   children,
   resource,
   customPathName,
@@ -73,6 +74,9 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
     namespace: metadata.namespace,
   });
   const canUpdate = canUpdateAccess && canUpdateResource;
+  const [modifyTolerationsAction] = useCommonActions(model, resource, [
+    CommonActionCreator.ModifyTolerations,
+  ]);
 
   return (
     <DescriptionList data-test-id="resource-summary">
@@ -122,7 +126,12 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               iconPosition="end"
               type="button"
               isInline
-              onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
+              onClick={() => {
+                const action = modifyTolerationsAction[CommonActionCreator.ModifyTolerations]?.cta;
+                if (typeof action === 'function') {
+                  action();
+                }
+              }}
               variant="link"
             >
               {t('public~{{count}} toleration', { count: _.size(tolerations) })}
@@ -182,7 +191,7 @@ export const ResourcePodCount: React.FCC<ResourcePodCountProps> = ({ resource })
   );
 };
 
-export const RuntimeClass: React.FC<RuntimeClassProps> = ({ obj, path }) => {
+export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
   const { t } = useTranslation();
   return (
     <DetailsItem
@@ -233,7 +242,7 @@ export type ResourceSummaryProps = {
   canUpdateResource?: boolean;
   podSelector?: string;
   nodeSelector?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   customPathName?: string;
 };
 

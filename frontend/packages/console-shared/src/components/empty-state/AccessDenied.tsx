@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Alert, Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';

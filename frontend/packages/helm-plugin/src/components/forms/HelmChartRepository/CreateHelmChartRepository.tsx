@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
@@ -33,7 +34,7 @@ interface CreateHelmChartRepositoryProps {
   existingRepoName: string;
 }
 
-const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
+const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
   showScopeType,
   existingRepoName,
 }) => {
@@ -62,7 +63,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
       : null,
   );
 
-  const defaultResource: HelmChartRepositoryType = React.useMemo(
+  const defaultResource: HelmChartRepositoryType = useMemo(
     () =>
       hcrLoaded && _.isEmpty(hcrLoadError) && !_.isEmpty(hcr)
         ? hcr
@@ -70,7 +71,7 @@ const CreateHelmChartRepository: React.FC<CreateHelmChartRepositoryProps> = ({
     [hcrLoadError, hcrLoaded, hcr, namespace, resourceKind],
   );
 
-  const initialValues = React.useMemo(
+  const initialValues = useMemo(
     () => ({
       editorType: EditorType.Form,
       yamlData: safeJSToYAML(isEditForm ? hcr : defaultResource, 'yamlData', {

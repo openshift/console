@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
 import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
@@ -15,7 +15,7 @@ export const tableColumnInfo = [
 
 export const useRepositoriesColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('helm-plugin~Name'),
@@ -56,7 +56,6 @@ export const useRepositoriesColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'spec.connectionConfig.url',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {
@@ -65,7 +64,6 @@ export const useRepositoriesColumns = (): TableColumn<K8sResourceKind>[] => {
         sort: 'metadata.creationTimestamp',
         props: {
           modifier: 'nowrap',
-          visibility: ['hiddenOnMd', 'visibleOnXl'],
         },
       },
       {

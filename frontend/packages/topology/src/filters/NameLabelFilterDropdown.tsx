@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import {
   Select,
   SelectList,
@@ -9,7 +10,7 @@ import {
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from '@console/internal/components/autocomplete';
-import { TextFilter } from '@console/internal/components/factory';
+import { TextFilter } from '@console/internal/components/factory/text-filter';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NameLabelFilterValues } from './filter-utils';
 
@@ -23,11 +24,11 @@ type NameLabelFilterDropdownProps = {
   labelFilterInput: string;
 };
 
-const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) => {
+const NameLabelFilterDropdown: FC<NameLabelFilterDropdownProps> = (props) => {
   const { data, onChange, nameFilterInput, labelFilterInput, isDisabled } = props;
 
-  const [isOpen, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(NameLabelFilterValues.Name);
+  const [isOpen, setOpen] = useState(false);
+  const [selected, setSelected] = useState(NameLabelFilterValues.Name);
 
   const { t } = useTranslation();
 
@@ -38,7 +39,7 @@ const NameLabelFilterDropdown: React.FC<NameLabelFilterDropdownProps> = (props) 
     onChange(selected, value, false);
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       id="toggle-id"
       ref={toggleRef}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,7 @@ const addHealthChecksRefs = [
   referenceForModel(KnativeServiceModel),
 ];
 
-const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
+const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
   const {
     kind,
     metadata: { name, namespace, uid },

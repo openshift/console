@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   TopologyControlBar as PfTopologyControlBar,
   observer,
@@ -16,7 +16,7 @@ interface ControlBarProps {
   isDisabled: boolean;
 }
 
-const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization, isDisabled }) => {
+const TopologyControlBar: FC<ControlBarProps> = observer(({ visualization, isDisabled }) => {
   const { t } = useTranslation();
   return (
     <span className="pf-topology-control-bar odc-topology-control-bar">

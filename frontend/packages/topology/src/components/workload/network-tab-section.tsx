@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import {
   isNetworkAdapter,
@@ -11,7 +12,7 @@ import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';
 
-const NetworkTabSection: React.FC<{
+const NetworkTabSection: FC<{
   networkAdapter: {
     resource: K8sResourceCommon;
   };
@@ -29,7 +30,7 @@ export const useNetworkingSideBarTabSection: DetailsTabSectionExtensionHook = (
   const [networkAdapterExtensions, extensionsLoaded] = useResolvedExtensions<NetworkAdapter>(
     isNetworkAdapter,
   );
-  const networkAdapter = React.useMemo(
+  const networkAdapter = useMemo(
     () =>
       getDataFromAdapter<{ resource: K8sResourceCommon }, NetworkAdapter>(element, [
         networkAdapterExtensions,

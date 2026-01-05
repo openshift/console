@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   isFeatureFlagHookProvider,
   FeatureFlagHookProvider,
@@ -7,7 +7,7 @@ import {
 import { featureFlagController } from '@console/internal/actions/features';
 import FeatureFlagExtensionHookResolver from './FeatureFlagExtensionHookResolver';
 
-const FeatureFlagExtensionLoader: React.FC = () => {
+const FeatureFlagExtensionLoader: FC = () => {
   const [flagProvider, flagProviderResolved] = useResolvedExtensions<FeatureFlagHookProvider>(
     isFeatureFlagHookProvider,
   );

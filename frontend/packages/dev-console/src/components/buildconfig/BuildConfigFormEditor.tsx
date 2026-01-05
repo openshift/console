@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
@@ -28,10 +29,10 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC<BuildConfigFormEditorProps> = ({ namespace }) => {
+const List: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
   const { t } = useTranslation();
 
-  const [visibleItems, setVisibleItems] = React.useState<string[]>([]);
+  const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
@@ -58,9 +59,9 @@ const List: React.FC<BuildConfigFormEditorProps> = ({ namespace }) => {
   );
 };
 
-const BuildConfigFormEditor: React.FC<BuildConfigFormEditorProps> = ({ namespace }) => {
+const BuildConfigFormEditor: FC<BuildConfigFormEditorProps> = ({ namespace }) => {
   const { t } = useTranslation();
-  const [showYAMLAlert, setShowYAMLAlert] = React.useState<boolean>(true);
+  const [showYAMLAlert, setShowYAMLAlert] = useState<boolean>(true);
 
   return (
     <>

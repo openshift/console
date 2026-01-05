@@ -101,8 +101,9 @@ Given('user is at the Helm page', () => {
 });
 
 Given('user is at the Helm Release tab in admin perspective', () => {
-  cy.byLegacyTestID('helm-releases-header').should('exist').click({ force: true });
-  detailsPage.titleShouldContain(pageTitle.HelmReleases);
+  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
+  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
 When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {

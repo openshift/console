@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { List, ListProps } from '@patternfly/react-core';
 
 import './DetailPropertyList.scss';

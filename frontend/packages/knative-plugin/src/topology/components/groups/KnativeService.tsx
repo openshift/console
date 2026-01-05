@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Node,
@@ -30,7 +31,7 @@ export type KnativeServiceProps = {
   WithContextMenuProps &
   WithCreateConnectorProps;
 
-const KnativeService: React.FC<KnativeServiceProps & { children?: React.ReactNode }> = ({
+const KnativeService: FC<KnativeServiceProps & { children?: ReactNode }> = ({
   children,
   ...props
 }) => {
@@ -49,10 +50,10 @@ const KnativeService: React.FC<KnativeServiceProps & { children?: React.ReactNod
   const badgeClassName = css('odc-resource-icon', {
     [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
   });
-  const dragSpec = React.useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
+  const dragSpec = useMemo(() => nodeDragSourceSpec(TYPE_KNATIVE_SERVICE, true, editAccess), [
     editAccess,
   ]);
-  const dragProps = React.useMemo(() => ({ element }), [element]);
+  const dragProps = useMemo(() => ({ element }), [element]);
   const [{ dragging, regrouping }, dragNodeRef] = useDragNode(dragSpec, dragProps);
 
   if (props.element.isCollapsed()) {

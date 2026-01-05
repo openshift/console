@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 
 type SecondaryStatusProps = {
@@ -7,7 +7,7 @@ type SecondaryStatusProps = {
   dataStatusID?: string;
 };
 
-const SecondaryStatus: React.FC<SecondaryStatusProps> = ({ status, className, dataStatusID }) => {
+const SecondaryStatus: FC<SecondaryStatusProps> = ({ status, className, dataStatusID }) => {
   const statusLabel = _.compact(_.concat([], status)).join(', ');
   const cssClassName = className || '';
   if (statusLabel) {

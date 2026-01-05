@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { EnvironmentField, NameValueFromPair, NameValuePair } from '@console/shared/src';
@@ -10,7 +10,7 @@ export type EnvironmentVariablesSectionFormData = {
   };
 };
 
-const EnvironmentVariablesSection: React.FC<{ namespace: string }> = ({ namespace }) => {
+const EnvironmentVariablesSection: FC<{ namespace: string }> = ({ namespace }) => {
   const { t } = useTranslation();
   const {
     values: {

@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NumberSpinnerField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
-const ScalingSection: React.FC<{ name: string }> = ({ name }) => {
+const ScalingSection: FC<{ name: string }> = ({ name }) => {
   const { t } = useTranslation();
   return (
     <FormSection

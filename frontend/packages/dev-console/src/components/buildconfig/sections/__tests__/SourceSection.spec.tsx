@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -28,10 +28,20 @@ jest.mock('../EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-const spyUseAccessReview = jest.spyOn(rbacModule, 'useAccessReview');
-const spyEvaluateFunc = jest.spyOn(serverlessFxUtils, 'evaluateFunc');
+jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),
+  useAccessReview: jest.fn(),
+}));
 
-const Wrapper: React.FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
+jest.mock('@console/git-service/src/utils/serverless-strategy-detector', () => ({
+  ...jest.requireActual('@console/git-service/src/utils/serverless-strategy-detector'),
+  evaluateFunc: jest.fn(),
+}));
+
+const spyUseAccessReview = rbacModule.useAccessReview as jest.Mock;
+const spyEvaluateFunc = serverlessFxUtils.evaluateFunc as jest.Mock;
+
+const Wrapper: FC<FormikConfig<SourceSectionFormData>> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (
@@ -92,6 +102,10 @@ const initialValues: SourceSectionFormData = {
 };
 
 describe('SourceSection', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should render form with minimal form data', () => {
     const onSubmit = jest.fn();
 

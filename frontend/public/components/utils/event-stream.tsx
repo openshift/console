@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentType, CSSProperties } from 'react';
+import { Component, useState, useCallback, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import {
   AutoSizer,
@@ -19,7 +20,7 @@ const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
 });
 
-class SysEvent extends React.Component<SysEventProps> {
+class SysEvent extends Component<SysEventProps> {
   shouldComponentUpdate(nextProps: SysEventProps) {
     if (this.props.event.lastTimestamp !== nextProps.event.lastTimestamp) {
       // Timestamps can be modified because events can be combined.
@@ -63,18 +64,18 @@ class SysEvent extends React.Component<SysEventProps> {
   }
 }
 
-export const EventStreamList: React.FC<EventStreamListProps> = ({
+export const EventStreamList: FC<EventStreamListProps> = ({
   events,
   className,
   EventComponent,
 }) => {
-  const [list, setList] = React.useState(null);
-  const onResize = React.useCallback(() => measurementCache.clearAll(), []);
-  React.useEffect(() => {
+  const [list, setList] = useState(null);
+  const onResize = useCallback(() => measurementCache.clearAll(), []);
+  useEffect(() => {
     onResize();
     list?.recomputeRowHeights();
   }, [list, events, onResize]);
-  const rowRenderer = React.useCallback(
+  const rowRenderer = useCallback(
     ({ index, style, key, parent }) => (
       <CellMeasurer
         cache={measurementCache}
@@ -135,7 +136,7 @@ export const EventStreamList: React.FC<EventStreamListProps> = ({
 
 type EventStreamListProps = {
   events: EventKind[];
-  EventComponent: React.ComponentType<EventComponentProps>;
+  EventComponent: ComponentType<EventComponentProps>;
   className?: string;
 };
 
@@ -147,11 +148,11 @@ export type EventComponentProps = {
 };
 
 type SysEventProps = {
-  EventComponent: React.ComponentType<EventComponentProps>;
+  EventComponent: ComponentType<EventComponentProps>;
   event: EventKind;
   onLoad: () => void;
   onEntered: () => void;
-  style: React.CSSProperties;
+  style: CSSProperties;
   index: number;
   className?: string;
   list: VirtualList;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, SyntheticEvent, KeyboardEvent, Ref } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
@@ -11,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { TextFilter } from './factory/list-page';
+import { TextFilter } from './factory/text-filter';
 
 export enum searchFilterValues {
   // t('public~Label')
@@ -20,21 +21,21 @@ export enum searchFilterValues {
   Name = 'Name',
 }
 
-export const SearchFilterDropdown: React.FC<SearchFilterDropdownProps> = ({
+export const SearchFilterDropdown: FC<SearchFilterDropdownProps> = ({
   labelFilterInput,
   nameFilterInput,
   onChange,
 }) => {
-  const [isOpen, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(searchFilterValues.Label);
+  const [isOpen, setOpen] = useState(false);
+  const [selected, setSelected] = useState(searchFilterValues.Label);
   const { t } = useTranslation();
 
   const onToggle = () => setOpen(!isOpen);
-  const onSelect = (event: React.SyntheticEvent, value: string) => {
+  const onSelect = (event: SyntheticEvent, value: string) => {
     setSelected(value as searchFilterValues);
     setOpen(false);
   };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const { value } = e.target as HTMLInputElement;
       onChange(selected, value, true);
@@ -61,7 +62,7 @@ export const SearchFilterDropdown: React.FC<SearchFilterDropdownProps> = ({
           selected={selected}
           onSelect={onSelect}
           onOpenChange={(lala) => setOpen(lala)}
-          toggle={(toggleRef: React.Ref<MenuToggleElement>) => {
+          toggle={(toggleRef: Ref<MenuToggleElement>) => {
             return (
               <MenuToggle
                 ref={toggleRef}

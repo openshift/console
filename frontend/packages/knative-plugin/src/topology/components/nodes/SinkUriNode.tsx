@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { LinkIcon } from '@patternfly/react-icons/dist/esm/icons/link-icon';
@@ -31,15 +32,15 @@ export type SinkUriNodeProps = {
   WithContextMenuProps;
 
 const DECORATOR_RADIUS = 13;
-const SinkUriNode: React.FC<SinkUriNodeProps> = ({
+const SinkUriNode: FC<SinkUriNodeProps> = ({
   element,
   canDrop,
   dropTarget,
   contextMenuOpen,
   ...rest
 }) => {
-  const ref = React.useRef();
-  const sinkRef = React.useRef();
+  const ref = useRef();
+  const sinkRef = useRef();
   const { t } = useTranslation();
   const { width, height } = element.getDimensions();
   const [hover, hoverRef] = useHover();

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
@@ -9,7 +9,7 @@ import { BareMetalHostKind } from '../../../types';
 
 import './status-activity.scss';
 
-const BareMetalStatusActivity: React.FC<BareMetalStatusActivityProps> = ({ resource }) => (
+const BareMetalStatusActivity: FC<BareMetalStatusActivityProps> = ({ resource }) => (
   <ActivityItem>
     {getHostPowerStatus(resource)}{' '}
     <ResourceLink

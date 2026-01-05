@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import i18n from 'i18next';
 import {
@@ -49,7 +50,7 @@ export const chartStatusColors = {
   [AreaChartStatus.WARNING]: warningColor.value,
 };
 
-export const AreaChart: React.FC<AreaChartProps> = ({
+export const AreaChart: FC<AreaChartProps> = ({
   className,
   data = [],
   formatDate = timeFormatter.format,
@@ -72,7 +73,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 }) => {
   const theme = getCustomTheme(ChartThemeColor.blue, areaTheme);
   const [containerRef, width] = useRefWidth();
-  const { processedData, unit } = React.useMemo(() => {
+  const { processedData, unit } = useMemo(() => {
     const nonEmptyDataSets = data.filter((dataSet) => dataSet?.length);
     if (byteDataType) {
       return processFrame(nonEmptyDataSets, byteDataType);
@@ -81,18 +82,18 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   }, [byteDataType, data]);
 
   // If every data point of every data set is 0, force y-domain to [0,1]
-  const allZero = React.useMemo(
+  const allZero = useMemo(
     () => _.every(processedData, (dataSet) => _.every(dataSet, ({ y }) => y === 0)),
     [processedData],
   );
 
-  const xTickFormat = React.useCallback((tick) => formatDate(tick), [formatDate]);
-  const yTickFormat = React.useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
+  const xTickFormat = useCallback((tick) => formatDate(tick), [formatDate]);
+  const yTickFormat = useCallback((tick) => `${humanize(tick, unit, unit).string}`, [
     humanize,
     unit,
   ]);
 
-  const domain = React.useMemo<AreaChartProps['domain']>(
+  const domain = useMemo<AreaChartProps['domain']>(
     () => ({
       ...(allZero && { y: [0, 1] }),
       ...(rest.domain ?? {}),
@@ -100,7 +101,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
     [allZero, rest.domain],
   );
 
-  const getLabel = React.useCallback(
+  const getLabel = useCallback(
     (prop: { datum: DataPoint<Date> }, includeDate = true) => {
       const { x, y } = prop.datum;
       const value = humanize(y, unit, unit).string;
@@ -112,7 +113,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 
   const multiLine = processedData?.length > 1;
 
-  const container = React.useMemo(() => {
+  const container = useMemo(() => {
     if (multiLine) {
       const legendData = processedData.map((d) => ({
         childName: d[0].description,
@@ -191,7 +192,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   );
 };
 
-export const Area: React.FC<AreaProps> = ({
+export const Area: FC<AreaProps> = ({
   endTime = Date.now(),
   namespace,
   query,

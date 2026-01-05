@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
@@ -21,7 +21,7 @@ const validateConditionsDescriptor = (descriptor: StatusDescriptor, value: any):
   return true;
 };
 
-export const DescriptorConditions: React.FC<ConditionsDescriptorProps> = ({
+export const DescriptorConditions: FC<ConditionsDescriptorProps> = ({
   descriptor,
   obj,
   schema,

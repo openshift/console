@@ -1,11 +1,11 @@
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, ComponentType, ReactNode, Ref } from 'react';
+import { forwardRef } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
 import { Title } from '@patternfly/react-core';
 
-import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
@@ -17,14 +17,12 @@ const mapStateToProps = (state: RootState) => ({
   namespace: getActiveNamespace(state),
 });
 
-const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
-  canAccessMonitoring,
+const PrometheusGraphLink_: FC<PrometheusGraphLinkProps> = ({
   children,
   query,
   namespace,
   ariaChartLinkLabel,
 }) => {
-  const [activePerspective, setActivePerspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return <>{children}</>;
@@ -32,31 +30,26 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
 
   const params = new URLSearchParams();
   queries.forEach((q, index) => params.set(`query${index}`, q));
+  params.set('namespace', namespace);
 
-  const url =
-    canAccessMonitoring && activePerspective === 'admin'
-      ? `/monitoring/query-browser?${params.toString()}`
-      : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
+  const url = `/monitoring/query-browser?${params.toString()}`;
 
   return (
     <Link
       to={url}
       aria-label={ariaChartLinkLabel}
       style={{ color: 'inherit', textDecoration: 'none' }}
-      onClick={() => {
-        if (url.startsWith('/dev-monitoring/') && activePerspective !== 'dev') {
-          setActivePerspective('dev');
-        }
-      }}
     >
       {children}
     </Link>
   );
 };
-export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_);
+export const PrometheusGraphLink = connect(mapStateToProps)(PrometheusGraphLink_) as ComponentType<
+  Omit<PrometheusGraphLinkProps, 'namespace'>
+>;
 
-export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
-  ({ children, className, title }, ref: React.RefObject<HTMLDivElement>) => (
+export const PrometheusGraph = forwardRef<HTMLDivElement, PrometheusGraphProps>(
+  ({ children, className, title }, ref) => (
     <div ref={ref} className={css('graph-wrapper graph-wrapper__horizontal-bar', className)}>
       {title && (
         <Title headingLevel="h5" className="graph-title">
@@ -69,14 +62,15 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 );
 
 type PrometheusGraphLinkProps = {
-  canAccessMonitoring: boolean;
   query: string | string[];
   namespace?: string;
   ariaChartLinkLabel?: string;
+  children?: ReactNode;
 };
 
 type PrometheusGraphProps = {
   className?: string;
-  ref?: React.Ref<HTMLDivElement>;
+  ref?: Ref<HTMLDivElement>;
   title?: string;
+  children?: ReactNode;
 };

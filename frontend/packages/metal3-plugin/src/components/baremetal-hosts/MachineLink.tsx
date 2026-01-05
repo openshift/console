@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ResourceLink } from '@console/internal/components/utils';
 import { MachineModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -10,7 +10,7 @@ interface MachineLinkProps {
   host: BareMetalHostKind;
 }
 
-const MachineLink: React.FC<MachineLinkProps> = ({ host }) => {
+const MachineLink: FC<MachineLinkProps> = ({ host }) => {
   const machineName = getHostMachineName(host);
   const namespace = getNamespace(host);
 

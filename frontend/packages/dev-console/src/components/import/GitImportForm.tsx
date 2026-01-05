@@ -1,12 +1,12 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
-import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { hasSampleQueryParameter } from '../../utils/samples';
+import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
@@ -18,7 +18,7 @@ import SecureRoute from './route/SecureRoute';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-const GitImportForm: React.FC<
+export const GitImportForm: FC<
   FormikProps<FormikValues & GitImportFormData> & GitImportFormProps
 > = ({
   values,
@@ -120,5 +120,3 @@ const GitImportForm: React.FC<
     </form>
   );
 };
-
-export default GitImportForm;

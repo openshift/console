@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import {
@@ -7,7 +7,7 @@ import {
 } from '@console/shared/src/components/utils';
 import { isCatalogSourceTrusted } from '../utils';
 
-export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({
+export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({
   catalogSource,
   csvPlugins,
   enabledPlugins,

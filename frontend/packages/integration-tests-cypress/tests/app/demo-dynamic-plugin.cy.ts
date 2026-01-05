@@ -2,7 +2,6 @@ import { safeLoadAll } from 'js-yaml';
 import { checkErrors } from '../../support';
 import { isLocalDevEnvironment } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import { masthead } from '../../views/masthead';
 import { modal } from '../../views/modal';
@@ -55,7 +54,7 @@ const enableDemoPlugin = (enable: boolean) => {
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
   cy.byTestID(`${PLUGIN_NAME}-status`)
-    .should('include.text', enable ? 'Loaded' : '-')
+    .should('include.text', enable ? 'loaded' : '-')
     .then(() => {
       if (!enable) {
         cy.byLegacyTestID(PLUGIN_NAME).click();
@@ -85,7 +84,6 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
   describe('Demo dynamic plugin test', () => {
     before(() => {
       cy.login();
-      guidedTour.close();
       cy.createProjectWithCLI(PLUGIN_NAME);
       cy.readFile(`${PLUGIN_PATH}/oc-manifest.yaml`).then((textManifest) => {
         const yamlManifest = safeLoadAll(textManifest);

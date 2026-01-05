@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -8,7 +8,7 @@ import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
 import EnvironmentVariablesSection from '../EnvironmentVariablesSection';
 
-const MockContainerField: React.FC = () => <div>Container: foo</div>;
+const MockContainerField: FC = () => <div>Container: foo</div>;
 
 jest.mock('../ContainerField', () => ({
   __esModule: true,
@@ -16,7 +16,7 @@ jest.mock('../ContainerField', () => ({
   default: jest.fn(),
 }));
 
-const mockedContainerField = ContainerField as jest.Mock<React.FC>;
+const mockedContainerField = jest.mocked(ContainerField);
 const handleSubmit = jest.fn();
 const mockInitialValues = _.cloneDeep(mockEditDeploymentData);
 mockInitialValues.formData.envs = [

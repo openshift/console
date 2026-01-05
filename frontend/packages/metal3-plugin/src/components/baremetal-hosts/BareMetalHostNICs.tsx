@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { OutlinedCheckSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-check-square-icon';
 import { OutlinedSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-square-icon';
 import { sortable } from '@patternfly/react-table';
@@ -23,7 +23,7 @@ const getRowProps = (obj) => ({
   id: obj.ip,
 });
 
-const NICsTableRow: React.FC<RowFunctionArgs<BareMetalHostNIC>> = ({ obj: nic }) => {
+const NICsTableRow: FC<RowFunctionArgs<BareMetalHostNIC>> = ({ obj: nic }) => {
   const { ip, mac, model, name, pxe, speedGbps, vlanId } = nic;
   return (
     <>
@@ -44,7 +44,7 @@ type BareMetalHostNICsProps = {
   loadError?: any;
 };
 
-const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadError, loaded }) => {
+const BareMetalHostNICs: FC<BareMetalHostNICsProps> = ({ obj: host, loadError, loaded }) => {
   const { t } = useTranslation();
   const nics = getHostNICs(host);
   return (

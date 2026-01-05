@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
@@ -27,9 +28,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
       : resource.spec.template.spec.tolerations;
   };
 
-  const [tolerations, setTolerations] = React.useState<Toleration[]>(
-    getTolerationsFromResource() || [],
-  );
+  const [tolerations, setTolerations] = useState<Toleration[]>(getTolerationsFromResource() || []);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const { t } = useTranslation();
@@ -46,7 +45,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
     NoExecute: 'NoExecute',
   };
 
-  const submit = (e: React.FormEvent<EventTarget>): void => {
+  const submit = (e: FormEvent<EventTarget>): void => {
     e.preventDefault();
 
     const path =

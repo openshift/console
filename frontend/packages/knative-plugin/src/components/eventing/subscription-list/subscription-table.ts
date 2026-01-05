@@ -1,5 +1,5 @@
 import { css } from '@patternfly/react-styles';
-import { Kebab } from '@console/internal/components/utils';
+import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 export const tableColumnClasses = [
   '', // name
@@ -9,5 +9,5 @@ export const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'), // channel
   css('pf-m-hidden', 'pf-m-visible-on-xl'), // subscriber
   css('pf-m-hidden', 'pf-m-visible-on-2xl'), // created
-  Kebab.columnClass, // kebab menu
+  KEBAB_COLUMN_CLASS, // kebab menu
 ];

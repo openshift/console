@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { isValidElement, memo } from 'react';
 import {
   CatalogTileBadge,
   CatalogTile as PfCatalogTile,
@@ -22,7 +23,7 @@ type CatalogTileProps = {
   href?: string;
 };
 
-const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
+const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
   const { uid, name, title, provider, description, type, typeLabel, badges } = item;
   const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
@@ -34,12 +35,12 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
     </CatalogTileBadge>,
   ];
 
-  const isDescriptionReactElement = React.isValidElement(description);
+  const isDescriptionReactElement = isValidElement(description);
   return (
     <PfCatalogTile
       id={uid}
       className="odc-catalog-tile co-catalog-tile"
-      onClick={(e: React.MouseEvent<HTMLElement>) => {
+      onClick={(e: MouseEvent<HTMLElement>) => {
         if (isModifiedEvent(e)) return;
         e.preventDefault();
         if (onClick) {
@@ -62,4 +63,4 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
   );
 };
 
-export default React.memo(CatalogTile);
+export default memo(CatalogTile);

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveListItem from '../ProgressiveListItem';

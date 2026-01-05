@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   formatPrometheusDuration,
@@ -23,11 +24,11 @@ type Props = {
   id?: string;
 };
 
-const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
+const IntervalDropdown: FC<Props> = ({ id, interval, setInterval }) => {
   const [isOpen, toggleIsOpen, setOpen, setClosed] = useBoolean(false);
   const { t } = useTranslation();
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (v: string) => setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
     [setInterval],
   );
@@ -47,7 +48,7 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
 
   const selectedKey = interval === null ? OFF_KEY : formatPrometheusDuration(interval);
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       id={`${id}-dropdown`}
       onClick={toggleIsOpen}

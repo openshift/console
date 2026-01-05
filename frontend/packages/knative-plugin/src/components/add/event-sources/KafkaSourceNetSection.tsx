@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared';
@@ -6,7 +6,7 @@ import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHead
 import { EventSources } from '../import-types';
 import SecretKeySelector from '../SecretKeySelector';
 
-const KafkaSourceNetSection: React.FC = () => {
+const KafkaSourceNetSection: FC = () => {
   const { t } = useTranslation();
   const {
     values: {

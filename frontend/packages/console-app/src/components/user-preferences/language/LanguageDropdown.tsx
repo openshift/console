@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Skeleton,
   Checkbox,
@@ -16,12 +17,12 @@ import { PREFERRED_LANGUAGE_USER_SETTING_KEY, usePreferredLanguage } from './use
 
 import './LanguageDropdown.scss';
 
-const LanguageDropdown: React.FC = () => {
+const LanguageDropdown: FC = () => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const options: JSX.Element[] = React.useMemo(
+  const [isOpen, setIsOpen] = useState(false);
+  const options: JSX.Element[] = useMemo(
     () =>
       Object.keys(supportedLocales).map((language) => (
         <SelectOption key={language} value={language}>
@@ -31,7 +32,7 @@ const LanguageDropdown: React.FC = () => {
     [],
   );
 
-  const [isUsingDefault, setIsUsingDefault] = React.useState<boolean>(!preferredLanguage);
+  const [isUsingDefault, setIsUsingDefault] = useState<boolean>(!preferredLanguage);
   const checkboxLabel: string = t('console-app~Use the default browser language setting.');
 
   const onSelect = (_, selection: string) => {
@@ -58,7 +59,7 @@ const LanguageDropdown: React.FC = () => {
 
   useLanguage(preferredLanguage, preferredLanguageLoaded); // sync the preferred language with local storage and set the console language
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (preferredLanguageLoaded) {
       setIsUsingDefault(!preferredLanguage);
     }
@@ -86,7 +87,7 @@ const LanguageDropdown: React.FC = () => {
         onSelect={onSelect}
         data-test="dropdown console.preferredLanguage"
         id={'console.preferredLanguage'}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             aria-label={t('console-app~Select a language')}
             isFullWidth

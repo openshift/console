@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -13,7 +13,6 @@ import { DetailsPage, DetailsPageProps } from '@console/internal/components/fact
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
-import { Kebab } from '@console/internal/components/utils/kebab';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
@@ -24,7 +23,7 @@ import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
 
-const Details: React.FC<DetailsProps> = ({ obj }) => {
+const Details: FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const deletionPolicy = obj?.spec?.deletionPolicy || '';
   const driver = obj?.spec?.driver || '';
@@ -101,7 +100,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => {
+const VolumeSnapshotContentDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [
     {
       href: '',
@@ -112,14 +111,7 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
     editYaml(),
     events(ResourceEventStream),
   ];
-  return (
-    <DetailsPage
-      {...props}
-      getResourceStatus={volumeSnapshotStatus}
-      menuActions={Kebab.factory.common}
-      pages={pages}
-    />
-  );
+  return <DetailsPage {...props} getResourceStatus={volumeSnapshotStatus} pages={pages} />;
 };
 
 type DetailsProps = {

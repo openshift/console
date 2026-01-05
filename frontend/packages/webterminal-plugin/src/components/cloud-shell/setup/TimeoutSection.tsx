@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLimitField } from '@console/shared';

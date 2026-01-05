@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ type VPATabSectionProps = {
   vpas: K8sResourceCommon[];
 };
 
-const VPATabSection: React.FC<VPATabSectionProps> = ({ vpas }) => {
+const VPATabSection: FC<VPATabSectionProps> = ({ vpas }) => {
   const { t } = useTranslation();
   return (
     <>

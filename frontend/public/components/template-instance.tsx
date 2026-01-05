@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash-es';
 import { Table as PfTable, Th, Thead, Tr, Tbody, Td } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +11,13 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { sorts } from './factory/table';
 import { Conditions } from './conditions';
-import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
+import {
+  getTemplateInstanceStatus,
+  referenceFor,
+  referenceForModel,
+  TemplateInstanceKind,
+} from '../module/k8s';
 import { EmptyBox, LoadingBox } from './utils/status-box';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
@@ -43,8 +48,9 @@ import {
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from './factory/Table/sort';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
-const menuActions = Kebab.factory.common;
+const templateInstanceReference = referenceForModel(TemplateInstanceModel);
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'status' }, { id: '' }];
 
@@ -74,10 +80,8 @@ const getTemplateInstanceDataViewRows = (
         cell: <Status status={status} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />,
-        props: {
-          ...actionsCellProps,
-        },
+        cell: <LazyActionMenu context={{ [templateInstanceReference]: obj }} />,
+        props: actionsCellProps,
       },
     };
 
@@ -94,7 +98,7 @@ const getTemplateInstanceDataViewRows = (
 
 const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -136,14 +140,11 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   return columns;
 };
 
-export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useTemplateInstanceColumns();
-  const templateInstanceStatusFilterOptions = React.useMemo<DataViewFilterOption[]>(() => {
+
+  const templateInstanceStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return [
       {
         value: 'Ready',
@@ -159,7 +160,10 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
       },
     ];
   }, [t]);
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, status: [] }), []);
+
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="status"
@@ -171,27 +175,28 @@ export const TemplateInstanceList: React.FC<TemplateInstanceListProps> = ({
     ],
     [t, templateInstanceStatusFilterOptions],
   );
-  const matchesAdditionalFilters = React.useCallback(
+
+  const matchesAdditionalFilters = useCallback(
     (resource: TemplateInstanceKind, filters: TemplateInstanceFilters) =>
       filters.status.length === 0 || filters.status.includes(getTemplateInstanceStatus(resource)),
     [],
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<TemplateInstanceKind, TemplateInstanceRowData, TemplateInstanceFilters>
         {...props}
         label={TemplateInstanceModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={{ ...initialFiltersDefault, status: [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getTemplateInstanceDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
@@ -295,8 +300,7 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
 export const TemplateInstanceDetailsPage: React.FCC = (props) => (
   <DetailsPage
     {...props}
-    kind="TemplateInstance"
-    menuActions={menuActions}
+    kind={templateInstanceReference}
     pages={[navFactory.details(TemplateInstanceDetails), navFactory.editYaml()]}
   />
 );

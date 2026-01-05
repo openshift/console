@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Split, SplitItem, Bullseye, Icon } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
@@ -9,11 +10,11 @@ import { usePodsWatcher } from '../../hooks/usePodsWatcher';
 import { getPodData } from '../../utils';
 import PodRing from './PodRing';
 
-const PodRingSet: React.FC<PodRingSetProps> = ({ obj, path }) => {
+const PodRingSet: FC<PodRingSetProps> = ({ obj, path }) => {
   const { podData, loadError, loaded } = usePodsWatcher(obj);
   const resourceKind = modelFor(obj?.kind);
 
-  const deploymentData = React.useMemo(() => {
+  const deploymentData = useMemo(() => {
     return loaded && !loadError
       ? getPodData({ ...podData, obj })
       : { inProgressDeploymentData: null, completedDeploymentData: null };

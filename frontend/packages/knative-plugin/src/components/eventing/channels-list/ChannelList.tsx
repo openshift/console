@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from '@console/internal/components/factory';
 import ChannelHeaders from './ChannelHeaders';
 import ChannelRow from './ChannelRow';
 
-const ChannelList: React.FC<TableProps> = (props) => {
+const ChannelList: FC<TableProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Table

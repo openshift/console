@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Formik } from 'formik';
 import { mockEditDeploymentData } from './deployment-data';
 
-const MockForm: React.FC<{
+const MockForm: FC<{
   initialValues?: any;
   enableReinitialize?: boolean;
-  children: (props) => React.ReactNode;
+  children: (props) => ReactNode;
   handleSubmit: (values) => void;
   handleReset?: () => void;
 }> = ({ initialValues, children, handleSubmit, handleReset, enableReinitialize = false }) => (

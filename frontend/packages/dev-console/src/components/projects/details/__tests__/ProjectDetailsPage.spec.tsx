@@ -30,6 +30,10 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(),
 }));
 
+jest.mock('@console/internal/module/k8s', () => ({
+  referenceForModel: jest.fn(),
+}));
+
 jest.mock('@console/internal/models', () => ({
   ProjectModel: { kind: 'Project' },
   RoleBindingModel: {

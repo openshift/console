@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
@@ -12,7 +12,7 @@ export type ResourceLimitSectionProps = {
   hideTitle?: boolean;
 };
 
-const ResourceLimitSection: React.FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
+const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
   const { t } = useTranslation();
   const {
     values: { container },

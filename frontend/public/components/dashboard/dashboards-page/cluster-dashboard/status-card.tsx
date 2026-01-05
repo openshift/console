@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
@@ -83,7 +84,7 @@ const cvResource: WatchK8sResource = {
   isList: false,
 };
 
-export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector }) => {
+export const DashboardAlerts: FC<DashboardAlertsProps> = ({ labelSelector }) => {
   const { t } = useTranslation();
   const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
   const [alerts, , loadError] = useNotificationAlerts(labelSelector);
@@ -112,9 +113,7 @@ export const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ labelSelector 
   );
 };
 
-export const DashboardNamespacedAlerts: React.FC<DashboardNamespacedAlertsProps> = ({
-  namespace,
-}) => {
+export const DashboardNamespacedAlerts: FC<DashboardNamespacedAlertsProps> = ({ namespace }) => {
   const [namespacedAlerts, , loadError] = useNamespacedNotificationAlerts(namespace);
 
   return (
@@ -134,16 +133,16 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
     isDashboardsOverviewHealthSubsystem,
   );
 
-  const subsystems = React.useMemo(() => {
+  const subsystems = useMemo(() => {
     return filterSubsystems([...subsystemExtensions], k8sModels);
   }, [subsystemExtensions, k8sModels]);
 
-  const operatorSubsystemIndex = React.useMemo(
+  const operatorSubsystemIndex = useMemo(
     () => subsystems.findIndex((e) => isResolvedDashboardsOverviewHealthOperator(e)),
     [subsystems],
   );
   const { t } = useTranslation();
-  const healthItems: { title: string; Component: React.ReactNode }[] = [];
+  const healthItems: { title: string; Component: ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
     if (isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)) {
       healthItems.push({

@@ -1,18 +1,37 @@
-import * as redux from 'react-redux';
-import * as useExtensionsModule from '@console/plugin-sdk/src/api/useExtensions';
-import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useSelector } from 'react-redux';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { TourActions } from '../const';
-import * as TourModule from '../tour-context';
+import { tourReducer, useTourValuesForContext, useTourStateForPerspective } from '../tour-context';
 import { TourDataType } from '../type';
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
+
+jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
+  useResolvedExtensions: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
+  useUserSettingsCompatibility: jest.fn(),
+}));
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: () => ['dev', jest.fn()],
 }));
 
-const { tourReducer, useTourValuesForContext, useTourStateForPerspective } = TourModule;
+const useSelectorMock = useSelector as jest.Mock;
+const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
+const useUserSettingsCompatibilityMock = useUserSettingsCompatibility as jest.Mock;
 
 describe('guided-tour-context', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('tour-reducer', () => {
     let mockState;
     beforeEach(() => {
@@ -62,27 +81,26 @@ describe('guided-tour-context', () => {
       };
 
       mockTourExtension = [
-        {
-          type: 'GuidedTour',
-          properties: {
-            perspective: 'dev',
-            tour: mockTour,
+        [
+          {
+            type: 'INTERNAL_DO_NOT_USE.guided-tour',
+            properties: {
+              perspective: 'dev',
+              tour: mockTour,
+            },
           },
-        },
+        ],
       ];
     });
 
     it('should return context values from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
-          A: true,
-          B: false,
-        },
-      );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
+      useSelectorMock
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
+      // Mock useUserSettingsCompatibility to return { completed: false } for the tour state
+      useUserSettingsCompatibilityMock.mockReturnValue([
+        { dev: { completed: false } },
         () => null,
         true,
       ]);
@@ -103,16 +121,12 @@ describe('guided-tour-context', () => {
     });
 
     it('should return tour null from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
-          A: true,
-          B: false,
-        },
-      );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue([]);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
+      useSelectorMock
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue([[]]);
+      useUserSettingsCompatibilityMock.mockReturnValue([
+        { dev: { completed: false } },
         () => null,
         true,
       ]);
@@ -126,16 +140,13 @@ describe('guided-tour-context', () => {
     });
 
     it('should return null from the hook if tour is available but data isnot loaded', () => {
-      spyOn(redux, 'useSelector').and.returnValues(
-        { A: true, B: false },
-        {
-          A: true,
-          B: false,
-        },
-      );
-      spyOn(useExtensionsModule, 'useExtensions').and.returnValue(mockTourExtension);
-      spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
-        { completed: false },
+      useSelectorMock
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
+      // Mock useUserSettingsCompatibility with loaded: false
+      useUserSettingsCompatibilityMock.mockReturnValue([
+        { dev: { completed: false } },
         () => null,
         false,
       ]);
@@ -151,7 +162,7 @@ describe('guided-tour-context', () => {
 
   describe('useTourStatePerspective', () => {
     it('should return data based on the perspective passed as prop', () => {
-      spyOn(userHooks, 'useUserSettingsCompatibility').and.returnValue([
+      useUserSettingsCompatibilityMock.mockReturnValue([
         { dev: { a: true }, admin: { a: false } },
         () => null,
         true,

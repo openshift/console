@@ -166,11 +166,13 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 					refreshFound = true
 					gotRefresh := make(map[interface{}]interface{})
 					require.NoError(t, securecookie.DecodeMulti(openshiftRefreshTokenCookieName, c.Value, &gotRefresh, cookieCodecs...))
-					if gotRefresh["refresh-token"] != tt.wantRefreshToken {
-						t.Errorf("wanted refresh cookie to be %q, got %q", tt.wantRefreshToken, c.Value)
+					// The cookie now contains an ID, not the actual refresh token
+					refreshTokenID := gotRefresh["refresh-token-id"].(string)
+					actualRefreshToken := cs.serverStore.byRefreshTokenID[refreshTokenID]
+					if actualRefreshToken != tt.wantRefreshToken {
+						t.Errorf("wanted refresh token to be %q, got %q (via ID %q)", tt.wantRefreshToken, actualRefreshToken, refreshTokenID)
 					}
 				}
-
 			}
 
 			require.True(t, sessionFound, "session cookie not found")
@@ -239,6 +241,7 @@ func TestCombinedSessionStore_GetSession(t *testing.T) {
 
 			testCookies := &testCookieFactory{
 				cookieCodecs: cookieCodecs,
+				serverStore:  cs.serverStore,
 			}
 
 			req, err := http.NewRequest(http.MethodGet, "/", nil)
@@ -367,7 +370,7 @@ func TestCombinedSessionStore_UpdateTokens(t *testing.T) {
 			req, err := http.NewRequest(http.MethodGet, "/", nil)
 			require.NoError(t, err)
 
-			testCookieFactory := &testCookieFactory{cookieCodecs: cookieCodecs}
+			testCookieFactory := &testCookieFactory{cookieCodecs: cookieCodecs, serverStore: cs.serverStore}
 			if len(tt.currentSessionToken) > 0 {
 				testCookieFactory.WithSessionToken(tt.currentSessionToken)
 			}
@@ -557,6 +560,7 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 
 			if tt.cookieStore != nil {
 				tt.cookieStore.cookieCodecs = cookieCodecs
+				tt.cookieStore.serverStore = cs.serverStore
 				req = tt.cookieStore.Complete(t, req)
 			}
 
@@ -619,10 +623,12 @@ func TestCombinedSessionStore_DeleteSession(t *testing.T) {
 }
 
 type testCookieFactory struct {
-	cookieCodecs  []securecookie.Codec
-	sessionToken  *string
-	refreshToken  *string
-	customCookies map[string]map[interface{}]interface{}
+	cookieCodecs   []securecookie.Codec
+	sessionToken   *string
+	refreshToken   *string
+	refreshTokenID *string
+	customCookies  map[string]map[interface{}]interface{}
+	serverStore    *SessionStore // needed to set up refresh token ID mapping
 }
 
 func (f *testCookieFactory) WithSessionToken(sessionToken string) *testCookieFactory {
@@ -652,9 +658,17 @@ func (f *testCookieFactory) Complete(t *testing.T, req *http.Request) *http.Requ
 			f.cookieCodecs)
 	}
 	if f.refreshToken != nil {
+		// Generate an ID for the refresh token and store the mapping
+		id := randomString(32)
+		if f.serverStore != nil {
+			f.serverStore.byRefreshTokenID[id] = *f.refreshToken
+		}
+		f.refreshTokenID = &id
+
+		// Store only the ID in the cookie
 		attachCookieOrDie(t, req, openshiftRefreshTokenCookieName,
 			map[interface{}]interface{}{
-				"refresh-token": f.refreshToken,
+				"refresh-token-id": id,
 			},
 			f.cookieCodecs)
 	}

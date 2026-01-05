@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
@@ -13,7 +14,7 @@ import {
 import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
 import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils/documentation';
 
-export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
+export const ExploreAdminFeaturesGettingStartedCard: FC = () => {
   const { t } = useTranslation();
   const canListPackageManifest = useFlag(FLAGS.CAN_LIST_PACKAGE_MANIFEST);
   const canListOperatorGroup = useFlag(FLAGS.CAN_LIST_OPERATOR_GROUP);
@@ -23,7 +24,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
   const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
-  const links: GettingStartedLink[] = React.useMemo(
+  const links: GettingStartedLink[] = useMemo(
     () => [
       {
         id: 'openshift-ai',
@@ -31,6 +32,12 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
         description: t('public~Build, deploy, and manage AI-enabled applications.'),
         href:
           '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+      },
+      {
+        id: 'trusted-software-supply-chain',
+        title: t('public~Trusted Software Supply Chain'),
+        description: t('public~Assess risk, validate integrity, secure artifacts, release safely.'),
+        href: '/quickstart?keyword=trusted',
       },
       ...(showLightSpeedLink
         ? [

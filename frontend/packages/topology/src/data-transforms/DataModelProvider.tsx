@@ -1,18 +1,11 @@
-import * as React from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
-  ExtensionK8sGroupKindModel,
-  isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
-  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
-  WatchK8sResource,
+  isTopologyDataModelFactory,
+  ResolvedExtension,
+  TopologyDataModelFactory,
+  useResolvedExtensions,
+  WatchK8sResourcesGeneric,
 } from '@console/dynamic-plugin-sdk';
-import {
-  modelForGroupKind,
-  referenceForExtensionModel,
-  referenceForModel,
-} from '@console/internal/module/k8s';
-import { LoadedExtension } from '@console/plugin-sdk/src';
-import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../extensions/topology';
 import DataModelExtension from './DataModelExtension';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import TopologyDataRetriever from './TopologyDataRetriever';
@@ -22,88 +15,83 @@ interface DataModelProviderProps {
   children?: React.ReactNode;
 }
 
-const flattenResource = (
-  namespace: string,
-  extension: LoadedExtension<DynamicTopologyDataModelFactory>,
-  resourceKey: string,
-  model?: ExtensionK8sGroupKindModel,
-  opts = {} as Partial<WatchK8sResource>,
-) => {
-  if (!model) {
-    return { namespace, ...opts };
-  }
+const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) => {
+  const [model, setModel] = useState<ExtensibleModel>(new ExtensibleModel(namespace));
 
-  if (model.version) {
-    const extensionReference = referenceForExtensionModel(model); // requires model.version
-    return { namespace, kind: extensionReference, ...opts };
-  }
-
-  // If can't find reference for an extention model, fall back to internal reference
-  const internalModel = modelForGroupKind(model.group, model.kind); // Return null for CRDs
-  if (!internalModel) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Plugin "${extension.pluginID}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determinate version. Please add a required flag to the extension to suppress this warning. The resource "${resourceKey}" will not be loaded and ignored in the topology view for now:`,
-      extension,
-      resourceKey,
-      model,
-      opts,
-    );
-    return null;
-  }
-  const internalReference = referenceForModel(internalModel);
-  return { namespace, kind: internalReference, ...opts };
-};
-
-export const getNamespacedDynamicModelFactories = (
-  extensions: LoadedExtension<DynamicTopologyDataModelFactory>[],
-) =>
-  extensions.map((extension) => {
-    return {
-      ...extension,
-      properties: {
-        ...extension.properties,
-        resources: (namespace: string) =>
-          Object.entries(extension.properties.resources || {}).reduce((acc, [key, resource]) => {
-            const flattenedResource = flattenResource(
-              namespace,
-              extension,
-              key,
-              resource?.model,
-              resource?.opts,
-            );
-            if (flattenedResource) {
-              acc[key] = flattenedResource;
-            }
-            return acc;
-          }, {}),
-      },
-    };
-  });
-
-const DataModelProvider: React.FCC<DataModelProviderProps> = ({ namespace, children }) => {
-  const [model, setModel] = React.useState<ExtensibleModel>(new ExtensibleModel(namespace));
-
-  React.useEffect(() => {
+  useEffect(() => {
     setModel(new ExtensibleModel(namespace));
   }, [namespace]);
 
-  const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
-  const dynamicModelFactories = useExtensions<DynamicTopologyDataModelFactory>(
-    isDynamicTopologyDataModelFactory,
+  // Use useResolvedExtensions to automatically resolve all CodeRefs in the extensions
+  const [modelFactories, factoriesResolved] = useResolvedExtensions<TopologyDataModelFactory>(
+    isTopologyDataModelFactory,
   );
 
-  const namespacedDynamicFactories = React.useMemo(
-    () => getNamespacedDynamicModelFactories(dynamicModelFactories),
-    [dynamicModelFactories],
-  );
+  // State to track resolved factories (with async resources resolved)
+  const [resolvedFactories, setResolvedFactories] = useState<
+    | {
+        properties: ResolvedExtension<TopologyDataModelFactory>['properties'] & {
+          resources?: WatchK8sResourcesGeneric;
+        };
+        pluginID: string;
+      }[]
+    | null
+  >(null);
+
+  // Resolve any async resources from factories
+  useEffect(() => {
+    if (!modelFactories || !factoriesResolved) {
+      setResolvedFactories(null);
+      return;
+    }
+
+    const resolveFactories = async () => {
+      const resolved = await Promise.all(
+        modelFactories.map(async (factory) => {
+          const { resources, ...rest } = factory.properties;
+
+          // Check if resources is a function (CodeRef that returns Promise)
+          if (typeof resources === 'function') {
+            try {
+              const resolvedResources: WatchK8sResourcesGeneric = await resources();
+              return {
+                properties: { ...rest, resources: resolvedResources },
+                pluginID: factory.pluginID,
+              };
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error(
+                `Failed to resolve resources for topology factory "${factory.properties.id}" from plugin "${factory.pluginID}":`,
+                error,
+              );
+              return {
+                properties: { ...rest, resources: undefined },
+                pluginID: factory.pluginID,
+              };
+            }
+          }
+
+          // Resources are already static, no resolution needed
+          return factory;
+        }),
+      );
+
+      setResolvedFactories(resolved);
+    };
+
+    resolveFactories();
+  }, [modelFactories, factoriesResolved]);
 
   return (
     <ModelContext.Provider value={model}>
-      {namespace && (
+      {namespace && resolvedFactories && (
         <>
-          {[...namespacedDynamicFactories, ...modelFactories].map((factory) => (
-            <DataModelExtension key={factory.properties.id} dataModelFactory={factory.properties} />
+          {resolvedFactories.map((factory) => (
+            <DataModelExtension
+              key={factory.properties.id}
+              dataModelFactory={factory.properties}
+              pluginID={factory.pluginID}
+            />
           ))}
         </>
       )}

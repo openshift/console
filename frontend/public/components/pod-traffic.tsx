@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -15,7 +15,7 @@ export type PodTrafficProp = {
   tooltipFlag?: boolean;
 };
 
-export const PodTraffic: React.FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag }) => {
+export const PodTraffic: FC<PodTrafficProp> = ({ podName, namespace, tooltipFlag }) => {
   const { t } = useTranslation();
   const [data, loaded, loadError] = useK8sWatchResource<EndpointSliceKind[]>({
     groupVersionKind: {

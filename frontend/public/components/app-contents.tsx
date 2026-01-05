@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import {
   Route,
   Routes,
@@ -17,6 +18,7 @@ import {
   usePerspectives,
 } from '@console/shared/src/hooks/perspective-utils';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import CatalogDefaultNamespaceRedirect from '@console/shared/src/components/catalog/CatalogDefaultNamespaceRedirect';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -65,13 +67,13 @@ _.each(namespacedPrefixes, (p) => {
   namespacedRoutes.push({ path: `${p}/all-namespaces/*` });
 });
 
-const DefaultPageRedirect: React.FC<{
+const DefaultPageRedirect: FC<{
   url: Perspective['properties']['landingPageURL'];
   flags: { [key: string]: boolean };
   firstVisit: boolean;
 }> = ({ url, flags, firstVisit }) => {
-  const [resolvedUrl, setResolvedUrl] = React.useState<string>();
-  React.useEffect(() => {
+  const [resolvedUrl, setResolvedUrl] = useState<string>();
+  useEffect(() => {
     (async () => {
       setResolvedUrl((await url())(flags, firstVisit));
     })();
@@ -85,21 +87,21 @@ type DefaultPageProps = {
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
+const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
   const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
     getPerspectiveVisitedKey(activePerspective),
     false,
   );
-  const firstVisit = React.useRef<boolean>();
+  const firstVisit = useRef<boolean>();
 
   // First time thru, capture first visit status
   if (firstVisit.current == null && visitedLoaded) {
     firstVisit.current = !visited;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visitedLoaded && !visited) {
       // Mark perspective as visited
       setVisited(true);
@@ -107,7 +109,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   }, [visitedLoaded, visited, setVisited]);
 
   if (Object.keys(flags).some((key) => flagPending(flags[key])) || !visitedLoaded) {
-    return <LoadingBox />;
+    return <LoadingBox blame="DefaultPage" />;
   }
 
   const perspective = perspectiveExtensions.find((p) => p?.properties?.id === activePerspective);
@@ -154,10 +156,15 @@ const HorizontalPodRedirect = () => {
   return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
 };
 
-const AppContents: React.FC<{}> = () => {
-  const [, allPluginsProcessed] = usePluginInfo();
+const AppContents: FC = () => {
+  const pluginInfoEntries = usePluginInfo();
   const location = useLocation();
   const [pluginPageRoutes, inactivePluginPageRoutes] = usePluginRoutes();
+
+  const allPluginsProcessed = useMemo(
+    () => pluginInfoEntries.every((i) => i.status !== 'pending'),
+    [pluginInfoEntries],
+  );
 
   const contentRouter = (
     <Routes>
@@ -257,6 +264,9 @@ const AppContents: React.FC<{}> = () => {
         }
       />
 
+      <Route path="/catalog" element={<CatalogDefaultNamespaceRedirect />} />
+      {/* TODO: Make Software Catalog work with all namespaces. https://issues.redhat.com/browse/CONSOLE-4827 */}
+      <Route path="/catalog/all-namespaces" element={<CatalogDefaultNamespaceRedirect />} />
       <Route
         path="/catalog/instantiate-template"
         element={
@@ -349,9 +359,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "create-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -362,9 +372,9 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             kind="ConfigMap"
             loader={() =>
-              import(
-                './configmaps/ConfigMapPage' /* webpackChunkName: "edit-configmap-page" */
-              ).then((m) => m.default)
+              import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
+                (m) => m.ConfigMapPage,
+              )
             }
           />
         }
@@ -464,7 +474,7 @@ const AppContents: React.FC<{}> = () => {
           <AsyncComponent
             loader={() =>
               import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
-                (m) => m.default,
+                (m) => m.AttachStorage,
               )
             }
           />
@@ -682,7 +692,7 @@ const AppContents: React.FC<{}> = () => {
             loader={() =>
               import(
                 './monitoring/alertmanager/alertmanager-yaml-editor' /* webpackChunkName: "alertmanager-yaml-editor" */
-              ).then((m) => m.default)
+              ).then((m) => m.AlertmanagerYAML)
             }
           />
         }
@@ -758,7 +768,7 @@ const AppContents: React.FC<{}> = () => {
           }
         />
       ) : (
-        <Route element={<LoadingBox />} />
+        <Route element={<LoadingBox blame="AppContents" />} />
       )}
     </Routes>
   );
@@ -783,7 +793,9 @@ const AppContents: React.FC<{}> = () => {
         id="content-scrollable"
       >
         <ErrorBoundaryPage>
-          <React.Suspense fallback={<LoadingBox />}>{contentRouter}</React.Suspense>
+          <Suspense fallback={<LoadingBox blame="AppContents suspense" />}>
+            {contentRouter}
+          </Suspense>
         </ErrorBoundaryPage>
       </PageSection>
       <TelemetryNotifier />

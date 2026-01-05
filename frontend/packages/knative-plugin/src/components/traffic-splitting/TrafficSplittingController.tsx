@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
@@ -17,7 +18,7 @@ type ControllerProps = {
   };
 };
 
-const Controller: React.FC<ControllerProps> = (props) => {
+const Controller: FC<ControllerProps> = (props) => {
   const { loaded, obj, resources } = props;
   const revisions = getKnativeRevisionsData(obj, resources);
   return loaded ? <TrafficSplitting {...props} service={obj} revisions={revisions} /> : null;
@@ -27,7 +28,7 @@ type TrafficSplittingControllerProps = {
   obj: K8sResourceKind;
 };
 
-const TrafficSplittingController: React.FC<TrafficSplittingControllerProps> = (props) => {
+const TrafficSplittingController: FC<TrafficSplittingControllerProps> = (props) => {
   const {
     metadata: { namespace },
   } = props.obj;
@@ -56,7 +57,7 @@ const TrafficSplittingModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useTrafficSplittingModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(TrafficSplittingModalProvider, props), [
+  return useCallback(() => launcher<Props>(TrafficSplittingModalProvider, props), [
     launcher,
     props,
   ]);

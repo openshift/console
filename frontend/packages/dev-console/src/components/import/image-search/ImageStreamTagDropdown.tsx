@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useContext, useCallback, useEffect } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -17,13 +18,13 @@ import {
 } from '../../../utils/imagestream-utils';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamTagDropdown: React.FC<{
+const ImageStreamTagDropdown: FC<{
   disabled?: boolean;
   formContextField?: string;
   reloadCount?: number;
 }> = ({ disabled = false, formContextField, reloadCount }) => {
   const { t } = useTranslation();
-  const unmounted = React.useRef(false);
+  const unmounted = useRef(false);
   let imageStreamTagList = {};
   const { values, setFieldValue, initialValues, touched } = useFormikContext<FormikValues>();
   const { name: resourceName, imageStream, application, formType, isi: isiValues } =
@@ -32,7 +33,7 @@ const ImageStreamTagDropdown: React.FC<{
   const { imageStream: initialImageStream, route: initialRoute } =
     _.get(initialValues, formContextField) || initialValues;
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
-  const { state, hasImageStreams, setValidated } = React.useContext(ImageStreamContext);
+  const { state, hasImageStreams, setValidated } = useContext(ImageStreamContext);
   const { selectedImageStream, accessLoading, loading } = state;
   imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
@@ -41,7 +42,7 @@ const ImageStreamTagDropdown: React.FC<{
   const isImageStreamSelected = imageStream.image !== '';
   const initialImageStreamImage = initialImageStream?.image;
 
-  const searchImageTag = React.useCallback(
+  const searchImageTag = useCallback(
     (selectedTag: string) => {
       setFieldValue(`${fieldPrefix}isSearchingForImage`, true);
       k8sGet(ImageStreamTagModel, `${imageStream.image}:${selectedTag}`, imageStream.namespace)
@@ -111,17 +112,17 @@ const ImageStreamTagDropdown: React.FC<{
     ],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     imageStream.tag && searchImageTag(imageStream.tag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.tag]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     reloadCount && imageStream.tag && searchImageTag(imageStream.tag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadCount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       initialRoute &&
       getIn(_.get(touched, `${fieldPrefix}imageStream`), 'image') &&
@@ -143,7 +144,7 @@ const ImageStreamTagDropdown: React.FC<{
     touched,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       unmounted.current = true;
     };

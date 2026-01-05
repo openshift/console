@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
@@ -16,7 +17,7 @@ import { EmptyBox } from './utils/status-box';
 import { SectionHeading } from './utils/headings';
 import * as ITOB from 'istextorbinary';
 
-export const MaskedData: React.FC<{}> = () => {
+export const MaskedData: FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -37,7 +38,7 @@ const downloadBinary = (key, value) => {
   saveAs(blob, key);
 };
 
-const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value }) => {
+const DownloadBinaryButton: FC<DownloadBinaryButtonProps> = ({ label, value }) => {
   const { t } = useTranslation();
   return (
     <Button
@@ -52,7 +53,7 @@ const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, valu
 };
 DownloadBinaryButton.displayName = 'DownloadBinaryButton';
 
-export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
+export const ConfigMapBinaryData: FC<DownloadValueProps> = ({ data }) => {
   const dl = [];
   const { t } = useTranslation();
   Object.keys(data || {})
@@ -78,7 +79,7 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
 
-export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => {
+export const ConfigMapData: FC<ConfigMapDataProps> = ({ data, label }) => {
   const dl = [];
   Object.keys(data || {})
     .sort()
@@ -99,7 +100,7 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
+export const SecretValue: FC<SecretValueProps> = ({ value, reveal, encoded = true, id }) => {
   const { t } = useTranslation();
   if (!value) {
     return <span className="pf-v6-u-text-color-subtle">{t('public~No value')}</span>;
@@ -111,7 +112,7 @@ export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded
 };
 SecretValue.displayName = 'SecretValue';
 
-const SecretDataRevealButton: React.FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
+const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onClick }) => {
   const { t } = useTranslation();
   return (
     <Button
@@ -136,12 +137,12 @@ const SecretDataRevealButton: React.FC<SecretDataRevealButtonProps> = ({ reveal,
   );
 };
 
-export const SecretData: React.FC<SecretDataProps> = ({ data }) => {
-  const [reveal, setReveal] = React.useState(false);
-  const [hasRevealableContent, setHasRevealableContent] = React.useState(false);
+export const SecretData: FC<SecretDataProps> = ({ data }) => {
+  const [reveal, setReveal] = useState(false);
+  const [hasRevealableContent, setHasRevealableContent] = useState(false);
   const { t } = useTranslation();
 
-  const dataDescriptionList = React.useMemo(() => {
+  const dataDescriptionList = useMemo(() => {
     return data
       ? Object.keys(data)
           .sort()

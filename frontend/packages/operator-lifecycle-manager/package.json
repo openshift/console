@@ -8,7 +8,6 @@
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts",
     "exposedModules": {
       "CatalogRedirect": "src/components/catalog-redirect.tsx",
       "catalogSource": "src/components/catalog-source.tsx",
@@ -32,6 +31,8 @@
       "useClusterServiceVersions": "src/utils/useClusterServiceVersions.tsx",
       "useDefaultOperandActions": "src/actions/useDefaultOperandActions.ts",
       "useOperatorActions": "src/actions/useOperatorActions.ts",
+      "defaultActionsProvider": "src/actions/providers/default-actions-provider.ts",
+      "catalogSourceActionsProvider": "src/actions/providers/catalog-source-provider.ts",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
       "utils": "src/components/dashboard/utils.ts"

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   Grid,
   GridItem,
@@ -57,7 +58,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import './_create-volume-snapshot.scss';
 
-const LoadingComponent: React.FC = () => (
+const LoadingComponent: FC = () => (
   <Grid className="skeleton-box">
     <GridItem className="skeleton-activity" />
     <GridItem className="skeleton-activity" />
@@ -88,7 +89,7 @@ const SnapshotClassDropdown = (props: SnapshotClassDropdownProps) => {
   );
 };
 
-const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
+const PVCSummary: FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   const { t } = useTranslation();
   const storageClass = persistentVolumeClaim?.spec?.storageClassName;
   const requestedCapacity = persistentVolumeClaim?.spec?.resources?.requests?.storage;
@@ -159,16 +160,16 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<VolumeSnapshotKind>();
 
   const { t } = useTranslation();
-  const [selectedPVCName, setSelectedPVCName] = React.useState(pvcName);
-  const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind | null>(null);
-  const [snapshotName, setSnapshotName] = React.useState(`${pvcName || 'pvc'}-snapshot`);
-  const [snapshotClassName, setSnapshotClassName] = React.useState('');
+  const [selectedPVCName, setSelectedPVCName] = useState(pvcName);
+  const [pvcObj, setPVCObj] = useState<PersistentVolumeClaimKind | null>(null);
+  const [snapshotName, setSnapshotName] = useState(`${pvcName || 'pvc'}-snapshot`);
+  const [snapshotClassName, setSnapshotClassName] = useState('');
   const [vscObj, , vscErr] = useK8sGet<ListKind<VolumeSnapshotClassKind>>(VolumeSnapshotClassModel);
   const [scObjList, scObjListLoaded, scObjListErr] = useK8sGet<ListKind<StorageClassResourceKind>>(
     StorageClassModel,
   );
   const title = t('console-app~Create VolumeSnapshot');
-  const resourceWatch = React.useMemo(() => {
+  const resourceWatch = useMemo(() => {
     return Object.assign(
       {
         kind: PersistentVolumeClaimModel.kind,
@@ -183,13 +184,13 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const scList = scObjListLoaded ? scObjList.items : [];
   const provisioner = scList.find((sc) => sc.metadata?.name === pvcObj?.spec?.storageClassName)
     ?.provisioner;
-  const snapshotClassFilter = React.useCallback(
+  const snapshotClassFilter = useCallback(
     (snapshotClass: VolumeSnapshotClassKind) =>
       provisioner?.includes(snapshotClass?.driver) ?? false,
     [provisioner],
   );
-  const vscList = React.useMemo(() => vscObj?.items || [], [vscObj]);
-  const getDefaultItem = React.useCallback(
+  const vscList = useMemo(() => vscObj?.items || [], [vscObj]);
+  const getDefaultItem = useCallback(
     (snapFilter) => {
       const filteredVSC = vscList.filter(snapFilter);
       const defaultFilteredVSC = filteredVSC.filter(isDefaultSnapshotClass);
@@ -200,13 +201,13 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
     [vscList],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const currentPVC = data.find((pvc) => pvc.metadata?.name === selectedPVCName);
     setPVCObj(currentPVC || null);
     setSnapshotClassName(getDefaultItem(snapshotClassFilter));
   }, [data, selectedPVCName, namespace, loadError, snapshotClassFilter, getDefaultItem]);
 
-  const handleSnapshotName: React.ReactEventHandler<HTMLInputElement> = (event) =>
+  const handleSnapshotName: ReactEventHandler<HTMLInputElement> = (event) =>
     setSnapshotName(event.currentTarget.value);
 
   const handlePVCName = (name: string) => {
@@ -216,7 +217,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
     setSelectedPVCName(name);
   };
 
-  const create = (event: React.FormEvent<EventTarget>): void => {
+  const create = (event: FormEvent<EventTarget>): void => {
     event.preventDefault();
     const snapshotTemplate: VolumeSnapshotKind = {
       apiVersion: apiVersionForModel(VolumeSnapshotModel),
@@ -352,7 +353,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   );
 };
 
-export const VolumeSnapshot: React.FC = () => {
+export const VolumeSnapshot: FC = () => {
   const params = useParams();
   const { pvc } = getURLSearchParams();
   return <CreateSnapshotForm namespace={params.ns || ''} pvcName={pvc} />;

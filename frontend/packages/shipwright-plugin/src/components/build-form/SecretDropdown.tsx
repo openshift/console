@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { SecretModel } from '@console/internal/models';
@@ -9,7 +9,7 @@ interface SecretDropdownProps {
   namespace: string;
 }
 
-const SecretDropdown: React.FC<SecretDropdownProps> = ({ name, namespace }) => {
+const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = [

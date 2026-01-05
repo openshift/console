@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Alert, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -69,14 +70,14 @@ export const getDaemonSetsOfPods = (pods?: PodKind[]) => {
   return result;
 };
 
-const ExpandableResources: React.FC<ExpandableResourcesProps> = ({
+const ExpandableResources: FC<ExpandableResourcesProps> = ({
   resources,
   onLinkClicked,
   subject,
 }) => {
-  const [isExpanded, setExpanded] = React.useState(false);
-  const onToggle = React.useCallback(() => setExpanded(!isExpanded), [isExpanded, setExpanded]);
-  const onLinkClick = React.useCallback(
+  const [isExpanded, setExpanded] = useState(false);
+  const onToggle = useCallback(() => setExpanded(!isExpanded), [isExpanded, setExpanded]);
+  const onLinkClick = useCallback(
     (event) => {
       onLinkClicked && (!event.key || event.key === 'Enter') && onLinkClicked();
     },
@@ -112,7 +113,7 @@ const ExpandableResources: React.FC<ExpandableResourcesProps> = ({
   );
 };
 
-export const StatusValidations: React.FC<StatusValidationProps> = ({
+export const StatusValidations: FC<StatusValidationProps> = ({
   status,
   nodePods,
   loadError,
@@ -120,7 +121,7 @@ export const StatusValidations: React.FC<StatusValidationProps> = ({
 }) => {
   const { t } = useTranslation();
   const validations = [];
-  const [daemonSets, staticPods] = React.useMemo(
+  const [daemonSets, staticPods] = useMemo(
     () => [getDaemonSetsOfPods(nodePods), getStaticPods(nodePods)],
     [nodePods],
   );

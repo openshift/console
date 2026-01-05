@@ -1,14 +1,17 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
-import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
+import { NamespaceDetails } from '@console/internal/components/namespace';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { referenceForModel } from '@console/internal/module/k8s';
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectListPage';
@@ -25,7 +28,33 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
+const ProjectDetails = (props) => {
+  const { t } = useTranslation();
+  const { activeNamespace, pages } = props;
+  return (
+    <DetailsPage
+      {...props}
+      breadcrumbsFor={() => [
+        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
+        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
+      ]}
+      name={activeNamespace}
+      kind={referenceForModel(ProjectModel)}
+      customActionMenu={(k8sObj, obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(ProjectModel)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+          label={t('devconsole~Actions')}
+        />
+      )}
+      kindObj={ProjectModel}
+      customData={{ activeNamespace, hideHeading: true }}
+      pages={pages}
+    />
+  );
+};
+
+export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...props }) => {
   const { t } = useTranslation();
   const params = useParams();
   const activeNamespace = params.ns;
@@ -68,19 +97,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
   }
 
   return !noProjectsAvailable && activeNamespace ? (
-    <DetailsPage
-      {...props}
-      breadcrumbsFor={() => [
-        { name: t('devconsole~Projects'), path: '/project-details/all-namespaces' },
-        { name: t('devconsole~Project Details'), path: `/project-details/ns/${activeNamespace}` },
-      ]}
-      name={activeNamespace}
-      kind={ProjectModel.kind}
-      kindObj={ProjectModel}
-      menuActions={projectMenuActions}
-      customData={{ activeNamespace, hideHeading: true }}
-      pages={pages}
-    />
+    <ProjectDetails {...props} activeNamespace={activeNamespace} pages={pages} />
   ) : (
     <CreateProjectListPage title={t('devconsole~Project Details')}>
       {(openProjectModal) => (
@@ -95,7 +112,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ noProjectsAvailabl
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-export const ProjectDetailsPage: React.FC<MonitoringPageProps> = (props) => {
+export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <>

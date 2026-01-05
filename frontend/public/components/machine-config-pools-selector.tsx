@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { isMCPWorker, MachineConfigPoolKind, NodeTypeNames } from '../module/k8s';
 import { NodeModel } from '../models';
 
-export const MachineConfigPoolsSelector: React.FC<MachineConfigPoolsSelectorProps> = ({
+export const MachineConfigPoolsSelector: FC<MachineConfigPoolsSelectorProps> = ({
   machineConfigPools,
   onChange,
   selected,
@@ -34,6 +34,6 @@ export const MachineConfigPoolsSelector: React.FC<MachineConfigPoolsSelectorProp
 
 export type MachineConfigPoolsSelectorProps = {
   machineConfigPools: MachineConfigPoolKind[];
-  onChange: (event: React.FormEvent<HTMLInputElement>, checked: boolean) => void;
+  onChange: (event: FormEvent<HTMLInputElement>, checked: boolean) => void;
   selected: string[];
 };

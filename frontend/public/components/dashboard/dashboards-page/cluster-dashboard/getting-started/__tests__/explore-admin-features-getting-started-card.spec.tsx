@@ -10,7 +10,7 @@ jest.mock('@console/shared/src/hooks/version', () => ({
 }));
 
 jest.mock('@console/shared/src/hooks/flag', () => ({
-  useFlag: jest.fn(),
+  useFlag: jest.fn<boolean, []>(),
 }));
 
 const mockUseFlag = useFlag as jest.Mock;
@@ -31,6 +31,10 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
 
     expect(screen.getByText('OpenShift AI')).toBeVisible();
     expect(screen.getByText('Build, deploy, and manage AI-enabled applications.')).toBeVisible();
+    expect(screen.getByText('Trusted Software Supply Chain')).toBeVisible();
+    expect(
+      screen.getByText('Assess risk, validate integrity, secure artifacts, release safely.'),
+    ).toBeVisible();
     expect(screen.getByText("See what's new in OpenShift 4.16")).toBeVisible();
   });
 
@@ -39,11 +43,17 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('item openshift-ai')).toBeTruthy();
+      expect(screen.getByTestId('item trusted-software-supply-chain')).toBeTruthy();
     });
 
     expect(screen.getByTestId('item openshift-ai')).toHaveAttribute(
       'href',
       '/catalog?catalogType=operator&keyword=openshift+ai&selectedId=rhods-operator-redhat-operators-openshift-marketplace',
+    );
+
+    expect(screen.getByTestId('item trusted-software-supply-chain')).toHaveAttribute(
+      'href',
+      '/quickstart?keyword=trusted',
     );
 
     expectExternalLinkAttributes(

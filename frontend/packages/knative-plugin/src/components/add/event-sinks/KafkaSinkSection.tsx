@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ interface KafkaSinkSectionProps {
   fullWidth?: boolean;
 }
 
-const KafkaSinkSection: React.FC<KafkaSinkSectionProps> = ({ title, namespace, fullWidth }) => {
+const KafkaSinkSection: FC<KafkaSinkSectionProps> = ({ title, namespace, fullWidth }) => {
   const { t } = useTranslation();
   const [bootstrapServers, bsPlaceholder] = useBootstrapServers(namespace);
 

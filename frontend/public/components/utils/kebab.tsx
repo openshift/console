@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC, MouseEvent, Ref, ReactNode, ComponentProps, ComponentType } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -13,38 +14,15 @@ import {
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import {
-  HelmChartRepositoryModel,
-  ProjectHelmChartRepositoryModel,
-} from '@console/helm-plugin/src/models';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import {
-  annotationsModalLauncher,
-  taintsModal,
-  tolerationsModal,
-  labelsModalLauncher,
-  podSelectorModal,
-  deleteModal,
-} from '../modals';
-import { asAccessReview, checkAccess, useAccessReview } from './rbac';
-import { resourceObjPath } from './resource-link';
 import {
   AccessReviewResourceAttributes,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceFor,
-  referenceForModel,
 } from '../../module/k8s';
-import { connectToModel } from '../../kinds';
-import {
-  BuildConfigModel,
-  ConfigMapModel,
-  DeploymentConfigModel,
-  DeploymentModel,
-  RouteModel,
-} from '../../models';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
+import { useAccessReview, checkAccess } from './rbac';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenuOption } = {};
@@ -83,7 +61,7 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
   return menuOptions;
 };
 
-const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
+const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
   option,
   onClick,
   autoFocus,
@@ -119,7 +97,7 @@ export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuO
   return Array.isArray((option as KebabSubMenuOption).children);
 };
 
-export const KebabItem: React.FC<KebabItemProps> = (props) => {
+export const KebabItem: FC<KebabItemProps> = (props) => {
   const { option } = props;
   let item;
 
@@ -141,12 +119,12 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
 
 type KebabMenuItemsProps = {
   options: KebabMenuOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };
 
-export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
+export const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
   const { t } = useTranslation();
 
   return (
@@ -173,138 +151,16 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({ options, onClick
   );
 };
 
-export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => {
+export const KebabItems: FC<KebabItemsProps> = ({ options, ...props }) => {
   const menuOptions = kebabOptionsToMenu(options);
   return <KebabMenuItems {...props} options={menuOptions} />;
 };
-
-const kebabFactory: KebabFactory = {
-  Delete: (kind, obj) => ({
-    // t('public~Delete {{kind}}', {kind: kind.label})
-    labelKey: 'public~Delete {{kind}}',
-    labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
-    callback: () =>
-      deleteModal({
-        kind,
-        resource: obj,
-      }),
-    accessReview: asAccessReview(kind, obj, 'delete'),
-  }),
-  Edit: (kind, obj) => {
-    let href: string;
-    switch (kind.kind) {
-      case ConfigMapModel.kind:
-      case RouteModel.kind:
-      case BuildConfigModel.kind:
-      case DeploymentModel.kind:
-      case DeploymentConfigModel.kind:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
-        break;
-      case HelmChartRepositoryModel.kind:
-        href = `/k8s/cluster/helmchartrepositories/${obj.metadata.name}/form?kind=${referenceFor(
-          obj,
-        )}`;
-        break;
-      case ProjectHelmChartRepositoryModel.kind:
-        href = `/helm-repositories/ns/${obj.metadata.namespace}/${
-          obj.metadata.name
-        }/form?kind=${referenceFor(obj)}`;
-        break;
-      default:
-        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`;
-    }
-    return {
-      // t('public~Edit {{kind}}', {kind: kind.label})
-      labelKey: 'public~Edit {{kind}}',
-      labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
-      dataTest: `Edit ${kind.label}`,
-      href,
-      // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-      accessReview: asAccessReview(kind, obj, 'update'),
-    };
-  },
-  ModifyLabels: (kind, obj) => ({
-    // t('public~Edit labels')
-    labelKey: 'public~Edit labels',
-    callback: () =>
-      labelsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyPodSelector: (kind, obj) => ({
-    // t('public~Edit Pod selector')
-    labelKey: 'public~Edit Pod selector',
-    callback: () =>
-      podSelectorModal({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyAnnotations: (kind, obj) => ({
-    // t('public~Edit annotations')
-    labelKey: 'public~Edit annotations',
-    callback: () =>
-      annotationsModalLauncher({
-        kind,
-        resource: obj,
-        blocking: true,
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyCount: (kind, obj) => ({
-    // t('public~Edit Pod count')
-    labelKey: 'public~Edit Pod count',
-    callback: () => {},
-    accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
-  }),
-  ModifyTaints: (kind, obj) => ({
-    // t('public~Edit taints')
-    labelKey: 'public~Edit taints',
-    callback: () =>
-      taintsModal({
-        resourceKind: kind,
-        resource: obj,
-        modalClassName: 'modal-lg',
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  ModifyTolerations: (kind, obj) => ({
-    // t('public~Edit tolerations')
-    labelKey: 'public~Edit tolerations',
-    callback: () =>
-      tolerationsModal({
-        resourceKind: kind,
-        resource: obj,
-        modalClassName: 'modal-lg',
-      }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-  AddStorage: (kind, obj) => ({
-    // t('public~Add storage')
-    labelKey: 'public~Add storage',
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
-    accessReview: asAccessReview(kind, obj, 'patch'),
-  }),
-};
-
-// The common menu actions that most resource share
-kebabFactory.common = [
-  kebabFactory.ModifyLabels,
-  kebabFactory.ModifyAnnotations,
-  kebabFactory.Edit,
-  kebabFactory.Delete,
-];
 
 export const Kebab: KebabComponent = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { options, isDisabled, terminatingTooltip } = props;
-  const [active, setActive] = React.useState(false);
+  const [active, setActive] = useState(false);
 
   const hide = () => {
     setActive(false);
@@ -354,7 +210,7 @@ export const Kebab: KebabComponent = (props) => {
           position: 'right',
         }}
         style={{ overflow: 'inherit' }} // allow ContextSubMenuItem to work
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             data-test-id="kebab-button"
@@ -374,37 +230,10 @@ export const Kebab: KebabComponent = (props) => {
     </Tooltip>
   );
 };
-Kebab.factory = kebabFactory;
-Kebab.columnClass = 'pf-v6-c-table__action';
-
-export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { t } = useTranslation();
-  const { actions, kindObj, resource, isDisabled, customData, terminatingTooltip } = props;
-
-  if (!kindObj) {
-    return null;
-  }
-  const options = _.reject(
-    actions.map((a) => a(kindObj, resource, null, customData)),
-    'hidden',
-  );
-  return (
-    <Kebab
-      options={options}
-      key={resource.metadata.uid}
-      isDisabled={isDisabled ?? _.has(resource.metadata, 'deletionTimestamp')}
-      terminatingTooltip={
-        _.has(resource.metadata, 'deletionTimestamp')
-          ? terminatingTooltip || t('Resource is being deleted.')
-          : ''
-      }
-    />
-  );
-});
 
 export type KebabOption = {
   hidden?: boolean;
-  label?: React.ReactNode;
+  label?: ReactNode;
   labelKey?: string;
   labelKind?: { [key: string]: string | string[] };
   href?: string;
@@ -417,7 +246,7 @@ export type KebabOption = {
   // Eg. `Menu 1/Menu 2/Menu 3`
   path?: string;
   pathKey?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 };
 
 export type KebabAction = (
@@ -455,11 +284,11 @@ type KebabProps = {
 
 type KebabItemProps = {
   option: KebabOption;
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   autoFocus?: boolean;
-  Component?: React.ComponentType<
+  Component?: ComponentType<
     Pick<
-      React.ComponentProps<typeof DropdownItem>,
+      ComponentProps<typeof DropdownItem>,
       'onClick' | 'isDisabled' | 'autoFocus' | 'children' | 'icon'
     >
   >;
@@ -467,18 +296,12 @@ type KebabItemProps = {
 
 export type KebabItemsProps = {
   options: KebabOption[];
-  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  onClick: (event: MouseEvent<{}>, option: KebabOption) => void;
   focusItem?: KebabOption;
   className?: string;
 };
 
 export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
-type KebabStaticProperties = {
-  columnClass: string;
-  factory: KebabFactory;
-};
-
-type KebabComponent = React.FC<KebabProps> & KebabStaticProperties;
+type KebabComponent = FC<KebabProps>;
 KebabItems.displayName = 'KebabItems';
-ResourceKebab.displayName = 'ResourceKebab';

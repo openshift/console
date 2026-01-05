@@ -1,11 +1,16 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
-import { FLAGS, KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
+import {
+  ALL_APPLICATIONS_KEY,
+  FLAGS,
+  KEYBOARD_SHORTCUTS,
+} from '@console/shared/src/constants/common';
 import { NamespaceDropdown } from '@console/shared/src/components/namespace/NamespaceDropdown';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
@@ -18,9 +23,10 @@ import { FirehoseResult } from './utils/types';
 import { removeQueryArgument } from './utils/router';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import type { RootState } from '../redux';
+import { setActiveApplication } from '../actions/ui';
 
 export type NamespaceBarDropdownsProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   isDisabled: boolean;
   namespace?: FirehoseResult;
   onNamespaceChange: (namespace: string) => void;
@@ -29,7 +35,7 @@ export type NamespaceBarDropdownsProps = {
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 
-export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
+export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
   children,
   isDisabled,
   namespace,
@@ -40,16 +46,16 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
   const dispatch = useDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const activePerspective = useActivePerspective()[0];
-  const [activeNamespaceError, setActiveNamespaceError] = React.useState(false);
+  const [activeNamespaceError, setActiveNamespaceError] = useState(false);
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
-  React.useEffect(() => {
+  useEffect(() => {
     if (namespace.loaded) {
       dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));
     }
   }, [dispatch, namespace.data, namespace.loaded]);
 
   /* Check if the activeNamespace is present in the cluster */
-  React.useEffect(() => {
+  useEffect(() => {
     if (activePerspective === 'dev' && activeNamespace !== ALL_NAMESPACES_KEY) {
       k8sGet(useProjects ? ProjectModel : NamespaceModel, activeNamespace)
         .then(() => {
@@ -77,6 +83,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
           onNamespaceChange?.(newNamespace);
           setActiveNamespace(newNamespace);
           removeQueryArgument('project-name');
+          activeNamespace !== newNamespace && dispatch(setActiveApplication(ALL_APPLICATIONS_KEY));
         }}
         onCreateNew={() => {
           createNamespaceOrProjectModal({
@@ -96,7 +103,7 @@ export const NamespaceBarDropdowns: React.FC<NamespaceBarDropdownsProps> = ({
   );
 };
 
-export const NamespaceBar: React.FC<NamespaceBarProps & { hideProjects?: boolean }> = ({
+export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = ({
   onNamespaceChange,
   isDisabled,
   children,

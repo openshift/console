@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Edge,
   EdgeTerminalType,
@@ -14,7 +14,7 @@ type EventSourceLinkProps = {
 } & WithSourceDragProps &
   WithTargetDragProps;
 
-const EventSourceLink: React.FC<EventSourceLinkProps> = ({ ...others }) => (
+const EventSourceLink: FC<EventSourceLinkProps> = ({ ...others }) => (
   <BaseEdge endTerminalType={EdgeTerminalType.circle} {...others} />
 );
 

@@ -23,6 +23,11 @@ jest.mock('@console/internal/components/utils', () => ({
   },
 }));
 
+jest.mock('../../traffic-splitting/TrafficSplittingController', () => ({
+  ...jest.requireActual('../../traffic-splitting/TrafficSplittingController'),
+  useTrafficSplittingModalLauncher: jest.fn(),
+}));
+
 jest.mock('@patternfly/react-core', () => ({
   Button: 'Button',
   List: 'List',
@@ -44,6 +49,8 @@ jest.mock('react-i18next', () => ({
   withTranslation: () => (Component: React.ComponentType) => Component,
 }));
 
+const useTrafficSplittingModalLauncherMock = TrafficSplittingController.useTrafficSplittingModalLauncher as jest.Mock;
+
 describe('RevisionsOverviewList', () => {
   // Get the mocked function using the imported function
   const mockUseAccessReview = useAccessReview as any;
@@ -53,7 +60,7 @@ describe('RevisionsOverviewList', () => {
   });
 
   afterEach(() => {
-    mockUseAccessReview.mockReset();
+    jest.clearAllMocks();
   });
 
   it('should have title Revisions', () => {
@@ -124,9 +131,7 @@ describe('RevisionsOverviewList', () => {
 
   it('should call setTrafficDistributionModal on click', () => {
     const trafficSplitModalLauncherMock = jest.fn();
-    jest
-      .spyOn(TrafficSplittingController, 'useTrafficSplittingModalLauncher')
-      .mockImplementation(() => trafficSplitModalLauncherMock);
+    useTrafficSplittingModalLauncherMock.mockImplementation(() => trafficSplitModalLauncherMock);
     const { container } = render(
       <RevisionsOverviewList
         revisions={MockKnativeResources.revisions.data}

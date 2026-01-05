@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -8,21 +8,22 @@ import { PluginCSPViolations } from '@console/internal/actions/ui';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import { ConsolePluginKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { isLoadedDynamicPluginInfo, isNotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
-const DynamicPluginsPopover: React.FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
+const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
-  const [pluginInfoEntries] = usePluginInfo();
+  const pluginInfoEntries = usePluginInfo();
   const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
-  const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(isNotLoadedDynamicPluginInfo);
-  const failedPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Failed');
-  const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'Pending');
-  const loadedPlugins = pluginInfoEntries.filter(isLoadedDynamicPluginInfo);
+  const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(
+    (plugin) => plugin.status !== 'loaded',
+  );
+  const failedPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'failed');
+  const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'pending');
+  const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
   const loadedPluginsWithCSPViolations = loadedPlugins.filter(
     (plugin) => cspViolations[plugin.metadata.name] ?? false,
   );

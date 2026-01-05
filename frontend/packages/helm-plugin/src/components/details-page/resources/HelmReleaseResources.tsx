@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -17,7 +17,7 @@ export interface HelmReleaseResourcesProps {
   customData: HelmRelease;
 }
 
-const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ customData }) => {
+const HelmReleaseResources: FC<HelmReleaseResourcesProps> = ({ customData }) => {
   const { t } = useTranslation();
   const params = useParams();
   const namespace = params.ns;

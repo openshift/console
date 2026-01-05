@@ -1,9 +1,10 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+import { createContext } from 'react';
 import { PerspectiveType } from '../extensions';
 
 export type PerspectiveContextType = {
   activePerspective?: PerspectiveType;
-  setActivePerspective?: React.Dispatch<React.SetStateAction<PerspectiveType>>;
+  setActivePerspective?: Dispatch<SetStateAction<PerspectiveType>>;
 };
 
 /**
@@ -12,4 +13,4 @@ export type PerspectiveContextType = {
  * @param {PerspectiveContextType} PerspectiveContextType - object with active perspective and setter
  * @returns React context
  */
-export const PerspectiveContext = React.createContext<PerspectiveContextType>({});
+export const PerspectiveContext = createContext<PerspectiveContextType>({});

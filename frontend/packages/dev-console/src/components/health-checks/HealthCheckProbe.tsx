@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState } from 'react';
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -16,14 +17,14 @@ interface HealthCheckProbeProps {
   probeType: string;
 }
 
-const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
+const HealthCheckProbe: FC<HealthCheckProbeProps> = ({ probeType }) => {
   const { t } = useTranslation();
   const {
     values: { healthChecks },
     setFieldValue,
   } = useFormikContext<FormikValues>();
-  const { viewOnly } = React.useContext(HealthCheckContext);
-  const [temporaryProbeData, setTemporaryProbeData] = React.useState<HealthCheckProbeData>();
+  const { viewOnly } = useContext(HealthCheckContext);
+  const [temporaryProbeData, setTemporaryProbeData] = useState<HealthCheckProbeData>();
   const showProbe = () => {
     setFieldValue(`healthChecks.${probeType}.showForm`, true);
     setTemporaryProbeData(healthChecks?.[probeType].data);

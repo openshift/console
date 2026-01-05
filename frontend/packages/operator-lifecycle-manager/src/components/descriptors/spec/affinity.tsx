@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ChangeEvent } from 'react';
 import {
   Button,
   DescriptionList,
@@ -68,7 +68,7 @@ export const DEFAULT_POD_AFFINITY: PodAffinityType = {
   ],
 };
 
-const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
+const NodeAffinityRule: FC<NodeAffinityRuleProps> = ({
   key,
   type,
   showRemoveButton = false,
@@ -87,7 +87,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
       },
     });
 
-  const onChangeWeight = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChangeWeight = (e: ChangeEvent<HTMLInputElement>): void => {
     const parsedValue = _.parseInt(e?.target?.value);
     onChange({
       ...rule,
@@ -128,7 +128,7 @@ const NodeAffinityRule: React.FC<NodeAffinityRuleProps> = ({
   );
 };
 
-export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, uid = '' }) => {
+export const NodeAffinity: FC<NodeAffinityProps> = ({ affinity, onChange, uid = '' }) => {
   const { t } = useTranslation();
   const requiredRules =
     affinity?.requiredDuringSchedulingIgnoredDuringExecution?.nodeSelectorTerms || [];
@@ -261,7 +261,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = ({ affinity, onChange, 
   );
 };
 
-const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
+const PodAffinityRule: FC<PodAffinityRuleProps> = ({
   key,
   onChange = () => {},
   onClickRemove = () => {},
@@ -273,7 +273,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
   const { podAffinityTerm, weight } = rule;
   const selector = podAffinityTerm?.labelSelector || {};
   const topologyKey = podAffinityTerm?.topologyKey;
-  const onChangeWeight = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const onChangeWeight = (e: ChangeEvent<HTMLInputElement>): void => {
     const parsed = _.parseInt(e?.target?.value);
     onChange({
       ...rule,
@@ -281,7 +281,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
     });
   };
 
-  const onChangeTopologyKey = (e: React.ChangeEvent<HTMLInputElement>): void =>
+  const onChangeTopologyKey = (e: ChangeEvent<HTMLInputElement>): void =>
     onChange({
       ...rule,
       podAffinityTerm: {
@@ -350,7 +350,7 @@ const PodAffinityRule: React.FC<PodAffinityRuleProps> = ({
   ) : null;
 };
 
-export const PodAffinity: React.FC<PodAffinityProps> = ({ affinity, onChange, uid = '' }) => {
+export const PodAffinity: FC<PodAffinityProps> = ({ affinity, onChange, uid = '' }) => {
   const {
     requiredDuringSchedulingIgnoredDuringExecution: requiredRules = [],
     preferredDuringSchedulingIgnoredDuringExecution: preferredRules = [],

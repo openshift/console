@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
@@ -10,14 +11,14 @@ import {
 } from '../../../utils/fetch-dynamic-eventsources-utils';
 import ChannelList from './ChannelList';
 
-const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
+const ChannelListPage: FC<ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceChannels } = useChannelModels();
   const flatten = (resources) =>
     modelsLoaded
       ? eventSourceChannels.flatMap((model) => resources[referenceForModel(model)]?.data ?? [])
       : [];
-  const resources = React.useMemo(
+  const resources = useMemo(
     () =>
       modelsLoaded
         ? eventSourceChannels.map((model) => {
@@ -35,13 +36,13 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
     [eventSourceChannels, modelsLoaded],
   );
 
-  const getModelId = React.useCallback((obj: K8sResourceCommon) => {
+  const getModelId = useCallback((obj: K8sResourceCommon) => {
     const reference = referenceFor(obj);
     const model = getDynamicChannelModel(reference);
     return model.id;
   }, []);
 
-  const channelRowFilter = React.useMemo<RowFilter<K8sResourceCommon>[]>(
+  const channelRowFilter = useMemo<RowFilter<K8sResourceCommon>[]>(
     () => [
       {
         filterGroupName: t('knative-plugin~Type'),

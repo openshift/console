@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
@@ -12,7 +12,7 @@ import Status, {
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { getControlPlaneComponentHealth } from './status';
 
-const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) => {
+const ControlPlanePopup: FC<PrometheusHealthPopupProps> = ({ responses }) => {
   const { t } = useTranslation();
   const titles = [
     t('console-app~API Servers'),

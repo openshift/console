@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ interface TrafficSplittingDeleteModalProps {
 
 type Props = FormikProps<FormikValues> & TrafficSplittingDeleteModalProps;
 
-const DeleteRevisionModal: React.FC<Props> = (props) => {
+const DeleteRevisionModal: FC<Props> = (props) => {
   const { t } = useTranslation();
   const { deleteRevision, handleSubmit, isSubmitting, status, showTraffic, cancel } = props;
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];

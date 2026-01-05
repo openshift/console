@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -10,19 +11,19 @@ import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy
 import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
-import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import {
-  CLUSTER_PIPELINE_NS,
-  FLAG_OPENSHIFT_PIPELINE,
-  FUNC_PIPELINE_RUNTIME_LABEL,
-} from '@console/pipelines-plugin/src/const';
-import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { useFlag } from '@console/shared/src';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import {
+  CLUSTER_PIPELINE_NS,
+  FUNC_PIPELINE_RUNTIME_LABEL,
+  FLAG_OPENSHIFT_PIPELINE,
+} from '../../../const';
+import { PipelineModel } from '../../../models/pipelines';
+import { PipelineKind } from '../../../types/pipeline';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { notSupportedRuntime } from '../../../utils/serverless-functions';
+import PipelineSection from '../../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
@@ -42,9 +43,7 @@ enum SupportedRuntime {
   quarkus = 'java',
 }
 
-const AddServerlessFunctionForm: React.FC<
-  FormikProps<FormikValues> & AddServerlessFunctionFormProps
-> = ({
+const AddServerlessFunctionForm: FC<FormikProps<FormikValues> & AddServerlessFunctionFormProps> = ({
   values,
   errors,
   handleSubmit,
@@ -65,14 +64,14 @@ const AddServerlessFunctionForm: React.FC<
     image,
   } = values;
   const isPipelineEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE);
-  const [showPipelineSection, setShowPipelineSection] = React.useState<boolean>(false);
+  const [showPipelineSection, setShowPipelineSection] = useState<boolean>(false);
   const showFullForm =
     strategy === ServerlessBuildStrategyType.ServerlessFunction &&
     validated !== ValidatedOptions.default &&
     type !== GitProvider.INVALID;
-  const [helpText, setHelpText] = React.useState<string>('');
+  const [helpText, setHelpText] = useState<string>('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (url) {
       const gitService = getGitService(url, type, ref, dir, secretResource);
       if (gitService) {
@@ -111,7 +110,7 @@ const AddServerlessFunctionForm: React.FC<
                 );
                 setStatus({ errors: 'Builder strategy not supported' });
               }
-              if (builderImages[SupportedRuntime[res?.values?.runtime]] === undefined) {
+              if (builderImages?.[SupportedRuntime[res?.values?.runtime]] === undefined) {
                 setHelpText(
                   t('devconsole~Support for {{runtime}} is not yet available.', {
                     runtime: res?.values?.runtime,
@@ -130,7 +129,7 @@ const AddServerlessFunctionForm: React.FC<
     }
   }, [setFieldValue, url, type, ref, dir, secretResource, builderImages, setStatus, t]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (image.selected && isPipelineEnabled) {
       const fetchPipelineTemplate = async () => {
         const fetchedPipelines = (await k8sListResourceItems({

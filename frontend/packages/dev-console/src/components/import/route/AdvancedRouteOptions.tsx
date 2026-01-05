@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils';
@@ -14,10 +14,7 @@ type AdvancedRouteOptionsProps = {
   resources: Resources;
 };
 
-const AdvancedRouteOptions: React.FC<AdvancedRouteOptionsProps> = ({
-  canCreateRoute,
-  resources,
-}) => {
+const AdvancedRouteOptions: FC<AdvancedRouteOptionsProps> = ({ canCreateRoute, resources }) => {
   const { t } = useTranslation();
   return (
     <ExpandCollapse

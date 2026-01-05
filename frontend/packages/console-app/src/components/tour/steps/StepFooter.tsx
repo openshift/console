@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Flex, FlexItem, Button, ButtonVariant } from '@patternfly/react-core';
 
 type StepFooterProps = {
@@ -10,7 +10,7 @@ type StepFooterProps = {
     name: string;
     onClick: () => void;
   };
-  children?: React.ReactNode;
+  children?: ReactNode;
   step?: number;
 };
 
@@ -82,7 +82,7 @@ const PopoverFooter = ({
   );
 };
 
-const StepFooter: React.FC<StepFooterProps> = ({
+const StepFooter: FC<StepFooterProps> = ({
   children,
   primaryButton: { name: primaryButton, onClick: primaryButtonCallback },
   secondaryButton: { name: secondaryButton, onClick: secondaryButtonCallback },

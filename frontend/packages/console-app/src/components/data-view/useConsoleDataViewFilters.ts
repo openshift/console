@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
 import { useSearchParams } from 'react-router-dom-v5-compat';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
@@ -38,7 +38,7 @@ export const useConsoleDataViewFilters = <
     setSearchParams,
   });
 
-  const filteredData = React.useMemo(
+  const filteredData = useMemo(
     () =>
       data?.filter((resource) => {
         const { name: resourceName, labels } = getObjectMetadata(resource);

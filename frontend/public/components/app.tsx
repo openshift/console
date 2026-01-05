@@ -20,7 +20,7 @@ import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
 import { history } from './utils/router';
 import { AsyncComponent } from './utils/async';
-import { LoadingBox } from './utils/status-box';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, startAPIDiscovery } from '../actions/k8s';
@@ -46,7 +46,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
+import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
@@ -74,6 +74,7 @@ import { AdmissionWebhookWarningNotifications } from '@console/app/src/component
 import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageManifestCheck';
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
+import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
 initI18n();
 
@@ -155,6 +156,10 @@ const App: React.FC<{
   }, [location, params, prevLocation, prevParams]);
 
   const dispatch = useDispatch();
+
+  // Handle feature refresh after impersonation changes
+  useImpersonateRefreshFeatures();
+
   const [, , errorMessage] = usePackageManifestCheck(
     'lightspeed-operator',
     'openshift-marketplace',
@@ -293,14 +298,16 @@ const App: React.FC<{
       <DetectNamespace>
         <ModalProvider>
           <OverlayProvider>
-            {contextProviderExtensions.reduce(
-              (children, e) => (
-                <EnhancedProvider key={e.uid} {...e.properties}>
-                  {children}
-                </EnhancedProvider>
-              ),
-              content,
-            )}
+            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
+              {contextProviderExtensions.reduce(
+                (children, e) => (
+                  <EnhancedProvider key={e.uid} {...e.properties}>
+                    {children}
+                  </EnhancedProvider>
+                ),
+                content,
+              )}
+            </Suspense>
           </OverlayProvider>
         </ModalProvider>
       </DetectNamespace>
@@ -322,10 +329,10 @@ const AppWithExtensions: React.FC = () => {
     return <App contextProviderExtensions={contextProviderExtensions} />;
   }
 
-  return <LoadingBox />;
+  return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox />, document.getElementById('app'));
+render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
 const AppRouter: React.FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -497,7 +504,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>

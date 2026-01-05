@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
@@ -16,16 +17,16 @@ type PubSubSubscriberProps = {
   cancel?: () => void;
 };
 
-const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel }) => {
+const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, validateForm, setStatus } = useFormikContext<
     FormikValues
   >();
   const { namespace } = values.formData.metadata;
-  const [resourceAlert, setResourceAlert] = React.useState(false);
+  const [resourceAlert, setResourceAlert] = useState(false);
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
 
-  const onSubscriberChange = React.useCallback(
+  const onSubscriberChange = useCallback(
     (selectedValue, target) => {
       const modelResource = target?.props?.model;
       if (selectedValue) {
@@ -45,7 +46,7 @@ const PubSubSubscriber: React.FC<PubSubSubscriberProps> = ({ autoSelect = true, 
     [setFieldValue, setFieldTouched, validateForm],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setStatus({ subscriberAvailable: !resourceAlert });
   }, [resourceAlert, setStatus]);
 

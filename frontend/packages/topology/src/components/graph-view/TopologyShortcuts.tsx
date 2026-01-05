@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import { TFunction } from 'i18next';
 import { Shortcut, ShortcutTable } from '@console/shared';
 import { TopologyViewType } from '../../topology-types';
@@ -9,7 +9,7 @@ export type Options = {
   viewType: TopologyViewType;
   allImportAccess: boolean;
 };
-export const getTopologyShortcuts = (t: TFunction, options: Options): React.ReactElement => {
+export const getTopologyShortcuts = (t: TFunction, options: Options): ReactElement => {
   const { supportedFileTypes, isEmptyModel, viewType, allImportAccess } = options;
   return (
     <ShortcutTable>

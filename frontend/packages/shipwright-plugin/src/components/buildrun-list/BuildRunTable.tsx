@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -8,9 +8,11 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildRun } from '../../types';
 import BuildRunDuration, {
@@ -24,7 +26,7 @@ const columnClassNames = [
   'pf-m-hidden pf-m-visible-on-md', // status
   'pf-m-hidden pf-m-visible-on-lg', // age
   'pf-m-hidden pf-m-visible-on-xl', // duration
-  Kebab.columnClass,
+  KEBAB_COLUMN_CLASS,
 ];
 
 export const BuildRunHeader = () => {
@@ -70,7 +72,7 @@ export const BuildRunHeader = () => {
   ];
 };
 
-export const BuildRunRow: React.FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
+export const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
   const kindReference = referenceFor(buildRun);
   const context = { [kindReference]: buildRun };
 
@@ -102,7 +104,7 @@ export const BuildRunRow: React.FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun
   );
 };
 
-export const BuildRunTable: React.FC<TableProps> = (props) => {
+export const BuildRunTable: FC<TableProps> = (props) => {
   const { t } = useTranslation();
 
   return (

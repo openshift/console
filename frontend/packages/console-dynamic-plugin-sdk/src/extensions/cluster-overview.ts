@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
 import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/src';
 import { CodeRef, Extension, ExtensionDeclaration } from '../types';
 import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
@@ -8,7 +8,7 @@ export type ClusterOverviewInventoryItem = ExtensionDeclaration<
   'console.cluster-overview/inventory-item',
   {
     /** The component to be rendered. */
-    component: CodeRef<React.ComponentType>;
+    component: CodeRef<ComponentType>;
   }
 >;
 
@@ -32,7 +32,7 @@ export type ClusterOverviewUtilizationItem = ExtensionDeclaration<
     /** Prometheus limit query. */
     getLimitQuery?: CodeRef<GetQuery>;
     /** Shows Top consumer popover instead of plain value */
-    TopConsumerPopover?: CodeRef<React.ComponentType<TopConsumerPopoverProps>>;
+    TopConsumerPopover?: CodeRef<ComponentType<TopConsumerPopoverProps>>;
   }
 >;
 
@@ -47,7 +47,7 @@ export type ClusterOverviewMultilineUtilizationItem = ExtensionDeclaration<
     /** Convert prometheus data to human readable form. */
     humanize: CodeRef<Humanize>;
     /** Shows Top consumer popover instead of plain value */
-    TopConsumerPopovers?: CodeRef<React.ComponentType<TopConsumerPopoverProps>[]>;
+    TopConsumerPopovers?: CodeRef<ComponentType<TopConsumerPopoverProps>[]>;
   }
 >;
 
@@ -58,7 +58,7 @@ export type OverviewDetailItem = ExtensionDeclaration<
   'console.dashboards/overview/detail/item',
   {
     /** The value, based on the DetailItem component */
-    component: CodeRef<React.ComponentType>;
+    component: CodeRef<ComponentType>;
   }
 >;
 
@@ -67,7 +67,7 @@ export type CustomOverviewDetailItem = ExtensionDeclaration<
   'console.dashboards/custom/overview/detail/item',
   Omit<OverviewDetailItemProps, 'children' | 'isLoading' | 'error'> & {
     /** The value, rendered by the OverviewDetailItem component */
-    component: CodeRef<React.ComponentType>;
+    component: CodeRef<ComponentType>;
     /** Function returning the loading state of the component */
     isLoading?: CodeRef<() => boolean>;
     /** Function returning errors to be displayed by the component */

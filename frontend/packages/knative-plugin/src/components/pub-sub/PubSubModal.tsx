@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -21,7 +21,7 @@ export interface PubSubModalProps {
 
 type Props = FormikProps<FormikValues> & PubSubModalProps;
 
-const PubSubModal: React.FC<Props> = ({
+const PubSubModal: FC<Props> = ({
   filterEnabled,
   labelTitle,
   handleSubmit,

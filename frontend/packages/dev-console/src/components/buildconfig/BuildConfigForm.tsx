@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-util
 import { BuildConfigFormikValues } from './form-utils/types';
 import { BuildConfig, BuildConfigModel } from './types';
 
-const BuildConfigForm: React.FC<
+const BuildConfigForm: FC<
   FormikProps<BuildConfigFormikValues> & {
     heading: string;
     buildConfig: BuildConfig;
@@ -65,7 +66,7 @@ const BuildConfigForm: React.FC<
 
   const sanitizeToYaml = () => convertFormDataToYAML(values);
 
-  const onReload = React.useCallback(() => {
+  const onReload = useCallback(() => {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
     if (values.editorType === EditorType.Form) {

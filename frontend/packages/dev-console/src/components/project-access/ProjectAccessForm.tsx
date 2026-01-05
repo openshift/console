@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -26,10 +27,7 @@ type SubjectNamespaceDropdownProps = {
   values: FormikValues;
 };
 
-export const SubjectNamespaceDropdown: React.FC<SubjectNamespaceDropdownProps> = ({
-  name,
-  values,
-}) => {
+export const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ name, values }) => {
   const { t } = useTranslation();
   const arr = name.split('.');
   const showDropdown =
@@ -48,7 +46,7 @@ export const SubjectNamespaceDropdown: React.FC<SubjectNamespaceDropdownProps> =
   );
 };
 
-const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
+const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   handleSubmit,
   handleReset,
   isSubmitting,
@@ -61,10 +59,10 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const [isStaleInfo, setIsStaleInfo] = React.useState<boolean>(false);
+  const [isStaleInfo, setIsStaleInfo] = useState<boolean>(false);
   const disableSubmit = !dirty || !_.isEmpty(errors) || isSubmitting;
 
-  React.useEffect(() => {
+  useEffect(() => {
     !_.isEqual(
       ignoreRoleBindingName(roleBindings.projectAccess),
       ignoreRoleBindingName(values.projectAccess),

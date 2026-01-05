@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { NodeKind } from '@console/internal/module/k8s';
 import NodeDetailsConditions from './NodeDetailsConditions';
 import NodeDetailsImages from './NodeDetailsImages';
@@ -8,7 +8,7 @@ type NodeDetailsProps = {
   obj: NodeKind;
 };
 
-const NodeDetails: React.FC<NodeDetailsProps> = ({ obj: node }) => (
+const NodeDetails: FC<NodeDetailsProps> = ({ obj: node }) => (
   <>
     <NodeDetailsOverview node={node} />
     <NodeDetailsConditions node={node} />

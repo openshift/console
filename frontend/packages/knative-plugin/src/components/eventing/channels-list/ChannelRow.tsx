@@ -1,16 +1,18 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
-import { LazyActionMenu } from '@console/shared/src';
+import LazyActionMenu, {
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionStats } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
+const ChannelRow: FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -42,8 +44,8 @@ const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
       <TableData>
         <Timestamp timestamp={creationTimestamp} />
       </TableData>
-      <TableData className={Kebab.columnClass}>
-        <LazyActionMenu context={context} />;
+      <TableData className={KEBAB_COLUMN_CLASS}>
+        <LazyActionMenu context={context} />
       </TableData>
     </>
   );

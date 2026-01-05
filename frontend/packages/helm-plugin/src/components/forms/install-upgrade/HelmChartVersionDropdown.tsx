@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { FormikValues, useFormikContext } from 'formik';
@@ -42,7 +43,7 @@ export type HelmChartVersionDropdownProps = {
   providerName?: string;
 };
 
-const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdownProps> = ({
+const HelmChartVersionDropdown: FunctionComponent<HelmChartVersionDropdownProps> = ({
   chartVersion,
   chartName,
   helmAction,
@@ -58,11 +59,11 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     values: { chartRepoName, yamlData, formData, appVersion },
     setFieldTouched,
   } = useFormikContext<FormikValues>();
-  const [helmChartVersions, setHelmChartVersions] = React.useState({});
-  const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
-  const [initialYamlData, setInitialYamlData] = React.useState<string>('');
-  const [initialFormData, setInitialFormData] = React.useState<object>();
-  const [helmChartRepos, setHelmChartRepos] = React.useState<HelmChartEntries>({});
+  const [helmChartVersions, setHelmChartVersions] = useState({});
+  const [helmChartEntries, setHelmChartEntries] = useState<HelmChartMetaData[]>([]);
+  const [initialYamlData, setInitialYamlData] = useState<string>('');
+  const [initialFormData, setInitialFormData] = useState<object>();
+  const [helmChartRepos, setHelmChartRepos] = useState<HelmChartEntries>({});
   const resourceSelector: WatchK8sResource = {
     isList: true,
     kind: referenceForModel(HelmChartRepositoryModel),
@@ -111,13 +112,13 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setInitialYamlData(yamlData);
     setInitialFormData(formData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
 
     const fetchChartVersions = async () => {

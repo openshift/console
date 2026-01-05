@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import * as React from 'react';
+import type { ComponentProps, FC, ReactNode } from 'react';
+import { useMemo, useCallback } from 'react';
 import { JSONPath } from 'jsonpath-plus';
 import { useTranslation } from 'react-i18next';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -21,7 +22,6 @@ import {
   ExtensionK8sGroupModel,
 } from '../module/k8s';
 import { DetailsItem } from './utils/details-item';
-import { Kebab, ResourceKebab } from './utils/kebab';
 import { kindObj } from './utils/inject';
 import { navFactory } from './utils/horizontal-nav';
 import { ResourceLink } from './utils/resource-link';
@@ -36,7 +36,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
@@ -51,8 +50,9 @@ import {
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-
-const { common } = Kebab.factory;
+import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
+import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];
 
@@ -77,18 +77,28 @@ const getAdditionaPrinterColumnID = (column: CRDAdditionalPrinterColumn) => {
   return `apc-${column.name}`;
 };
 
+type ResourceActionsMenuProps = {
+  resource: K8sResourceKind;
+} & Pick<ComponentProps<typeof ActionMenu>, 'variant' | 'appendTo'>;
+
+const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, appendTo }) => {
+  const common = useCommonResourceActions(kindObj(referenceFor(resource)), resource);
+  const menuActions = [...common];
+  return <ActionMenu actions={menuActions} variant={variant} appendTo={appendTo} />;
+};
+
 const NamespaceCell: React.FCC<NamespaceCellProps> = ({ namespace }) => {
   const { t } = useTranslation();
   return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
 };
 
-export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
+export const DetailsForKind: FC<PageComponentProps<K8sResourceKind>> = ({ obj }) => {
   const { t } = useTranslation();
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
   const leftDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'left');
   const rightDetailsItemExtensions = useDetailsItemExtensionsForResource(obj, 'right');
-  const leftDetailsItems = React.useMemo(
+  const leftDetailsItems = useMemo(
     () =>
       leftDetailsItemExtensions.map((extension) => (
         <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
@@ -96,7 +106,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
     [leftDetailsItemExtensions, obj],
   );
 
-  const rightDetailsItems = React.useMemo(
+  const rightDetailsItems = useMemo(
     () =>
       rightDetailsItemExtensions.map((extension) => (
         <ExtensionDetailsItem key={extension.properties.id} extension={extension} obj={obj} />
@@ -166,7 +176,7 @@ export const DetailsForKind: React.FC<PageComponentProps<K8sResourceKind>> = ({ 
 };
 
 const getDataViewRows = (
-  data: RowProps<K8sResourceKind, undefined>[],
+  data: RowProps<K8sResourceKind>[],
   columns: ConsoleDataViewColumn<K8sResourceKind>[],
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
   kinds: string[],
@@ -176,7 +186,6 @@ const getDataViewRows = (
   return data.map(({ obj }) => {
     const { name, namespace, creationTimestamp } = obj.metadata;
     const kind = referenceFor(obj) || kinds[0];
-    const menuActions = [...common];
 
     const hasExtensionActions =
       resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
@@ -189,7 +198,7 @@ const getDataViewRows = (
         },
       };
       return acc;
-    }, {} as Record<string, { cell: React.ReactNode; props?: any }>);
+    }, {} as Record<string, { cell: ReactNode; props?: any }>);
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -214,13 +223,15 @@ const getDataViewRows = (
             {hasExtensionActions ? (
               <LazyActionMenu context={{ [kind]: obj }} />
             ) : (
-              <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+              <ResourceActionsMenu
+                resource={obj}
+                variant={ActionMenuVariant.KEBAB}
+                appendTo={document.getElementById('popper-container') ?? document.body}
+              />
             )}
           </>
         ),
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -240,7 +251,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   additionalPrinterColumns: CRDAdditionalPrinterColumn[],
 ): TableColumn<T>[] => {
   const { t } = useTranslation();
-  const columns = React.useMemo(() => {
+  const columns = useMemo(() => {
     const additionalPrinterColumnsHeaders = additionalPrinterColumns.map((col) => {
       const path = col.jsonPath;
       const pathHasSpecialCharacter = checkPathHasSpecialCharacter(path);
@@ -305,7 +316,7 @@ const useDefaultResourceColumns = <T extends K8sResourceKind>(
   return columns;
 };
 
-export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
+export const DefaultList: FC<TableProps & { kinds: string[] }> = (props) => {
   const { t } = useTranslation();
   const { kinds, data, loaded } = props;
   const [model] = useK8sModel(kinds[0]);
@@ -315,7 +326,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
   const columns = useDefaultResourceColumns(
     additionalPrinterColumnsLoaded ? additionalPrinterColumns : [],
   );
-  const resourceProviderGuard = React.useCallback(
+  const resourceProviderGuard = useCallback(
     (e): e is ResourceActionProvider =>
       isResourceActionProvider(e) &&
       referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === kinds[0],
@@ -336,7 +347,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
   return (
     <>
       {!loaded && !additionalPrinterColumnsLoaded ? (
-        <LoadingBox />
+        <LoadingBox blame="DefaultList" />
       ) : (
         <ConsoleDataView<K8sResourceKind>
           {...props}
@@ -344,7 +355,6 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
           data={data}
           loaded={loaded}
           columns={columns}
-          initialFilters={initialFiltersDefault}
           getDataViewRows={(dvData, dvColumns) =>
             getDataViewRows(
               dvData,
@@ -363,9 +373,7 @@ export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) =
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, 'ListComponent'>> = (
-  props,
-) => (
+export const DefaultPage: FC<Omit<ComponentProps<typeof ListPage>, 'ListComponent'>> = (props) => (
   <ListPage
     {...props}
     ListComponent={DefaultList}
@@ -375,11 +383,35 @@ export const DefaultPage: React.FC<Omit<React.ComponentProps<typeof ListPage>, '
 );
 DefaultPage.displayName = 'DefaultPage';
 
-export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+export const DefaultDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const menuActions = [...common];
-
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  const resourceProviderGuard = useCallback(
+    (e): e is ResourceActionProvider =>
+      isResourceActionProvider(e) &&
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === props.kind,
+    [props.kind],
+  );
+  const [resourceProviderExtensions, resourceProviderExtensionsResolved] = useResolvedExtensions<
+    ResourceActionProvider
+  >(resourceProviderGuard);
+  const hasExtensionActions =
+    resourceProviderExtensionsResolved && resourceProviderExtensions?.length > 0;
+  return (
+    <DetailsPage
+      {...props}
+      customActionMenu={(k8sObj, obj) =>
+        hasExtensionActions ? (
+          <LazyActionMenu
+            context={{ [referenceFor(obj)]: obj }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        ) : (
+          <ResourceActionsMenu resource={obj} variant={ActionMenuVariant.DROPDOWN} />
+        )
+      }
+      pages={pages}
+    />
+  );
 };
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
 

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -15,18 +16,18 @@ type HelmRollbackFormData = {
   revision: number;
 };
 
-const HelmReleaseRollbackPage: React.FC = () => {
+const HelmReleaseRollbackPage: FC = () => {
   const { t } = useTranslation();
   const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
-  const [releaseHistory, setReleaseHistory] = React.useState<HelmRelease[]>(null);
+  const [releaseHistory, setReleaseHistory] = useState<HelmRelease[]>(null);
 
-  const config = React.useMemo(
+  const config = useMemo(
     () => getHelmActionConfig(HelmActionType.Rollback, releaseName, namespace, t, actionOrigin),
     [actionOrigin, namespace, releaseName, t],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
 
     const getReleaseHistory = async () => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
@@ -19,7 +19,7 @@ type GettingStartedSectionProps = {
   userSettingKey: string;
 };
 
-export const GettingStartedSection: React.FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
+export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
   const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);

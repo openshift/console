@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { SecretModel } from '@console/internal/models';
@@ -12,7 +12,7 @@ interface SourceSecretDropdownProps
   namespace?: string;
 }
 
-const SourceSecretDropdown: React.FC<SourceSecretDropdownProps> = (props) => {
+const SourceSecretDropdown: FC<SourceSecretDropdownProps> = (props) => {
   const { t } = useTranslation();
   const filterData = (item) => {
     return item.type === 'kubernetes.io/basic-auth' || item.type === 'kubernetes.io/ssh-auth';

@@ -7,7 +7,8 @@ import {
   stopWatchPrometheusQuery,
   watchPrometheusQuery,
 } from '../dashboards';
-import { RESULTS_TYPE, defaults } from '../../reducers/dashboards';
+import { defaults } from '../../reducers/dashboards';
+import { RESULTS_TYPE } from '../../reducers/dashboard-results';
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
   expect(stopAction(key)).toEqual({
@@ -20,24 +21,22 @@ const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
 };
 
 const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
-  const getState = jasmine
-    .createSpy('getState')
-    .and.returnValues(
-      { dashboards: ImmutableMap(defaults) },
-      { dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) },
-    );
-  const dispatch = jasmine.createSpy('dispatch');
+  const getState = jest
+    .fn()
+    .mockReturnValueOnce({ dashboards: ImmutableMap(defaults) })
+    .mockReturnValueOnce({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
+  const dispatch = jest.fn();
 
   watchAction(key)(dispatch, getState);
   expect(dispatch).toHaveBeenCalledTimes(2);
-  expect(dispatch.calls.all()[0].args[0]).toEqual({
+  expect(dispatch.mock.calls[0][0]).toEqual({
     payload: {
       key,
       type,
     },
     type: ActionType.ActivateWatch,
   });
-  expect(dispatch.calls.all()[1].args[0]).toEqual({
+  expect(dispatch.mock.calls[1][0]).toEqual({
     payload: {
       key,
       type,
@@ -48,14 +47,14 @@ const testStartWatch = (watchAction, type: RESULTS_TYPE, key: string) => {
 };
 
 const testIncrementActiveWatch = (watchAction, type, key) => {
-  const getState = jasmine
-    .createSpy('getState')
-    .and.returnValue({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
-  const dispatch = jasmine.createSpy('dispatch');
+  const getState = jest
+    .fn()
+    .mockReturnValue({ dashboards: ImmutableMap(defaults).setIn([type, key, 'active'], 1) });
+  const dispatch = jest.fn();
 
   watchAction(key)(dispatch, getState);
   expect(dispatch).toHaveBeenCalledTimes(1);
-  expect(dispatch.calls.all()[0].args[0]).toEqual({
+  expect(dispatch.mock.calls[0][0]).toEqual({
     payload: {
       key,
       type,
@@ -77,14 +76,12 @@ describe('dashboards-actions', () => {
   });
 
   it('watchPrometheusQuery sets error if base url is not available', () => {
-    const getState = jasmine
-      .createSpy('getState')
-      .and.returnValue({ dashboards: ImmutableMap(defaults) });
-    const dispatch = jasmine.createSpy('dispatch');
+    const getState = jest.fn().mockReturnValue({ dashboards: ImmutableMap(defaults) });
+    const dispatch = jest.fn();
 
     watchPrometheusQuery('fooQuery')(dispatch, getState);
     expect(dispatch).toHaveBeenCalledTimes(2);
-    expect(dispatch.calls.all()[1].args[0]).toEqual({
+    expect(dispatch.mock.calls[1][0]).toEqual({
       payload: {
         key: 'fooQuery',
         type: RESULTS_TYPE.PROMETHEUS,

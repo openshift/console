@@ -26,11 +26,11 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('@console/pipelines-plugin/src/const', () => ({
+jest.mock('../../../../const', () => ({
   PIPELINE_RUNTIME_LABEL: 'pipeline-runtime-label',
 }));
 
-jest.mock('@console/pipelines-plugin/src/types', () => ({
+jest.mock('../../../../types/pipeline', () => ({
   PipelineKind: {},
 }));
 

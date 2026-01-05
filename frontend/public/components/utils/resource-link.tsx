@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
 
@@ -68,7 +68,7 @@ export const resourcePath = (kind: K8sResourceKindReference, name?: string, name
 export const resourceObjPath = (obj: K8sResourceKind, kind: K8sResourceKindReference) =>
   resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
-export const ResourceLink: React.FC<ResourceLinkProps> = ({
+export const ResourceLink: FC<ResourceLinkProps> = ({
   className,
   displayName,
   inline = false,
@@ -126,7 +126,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   );
 };
 
-const NodeLink_: React.FC<NodeLinkProps> = (props) => {
+const NodeLink_: FC<NodeLinkProps> = (props) => {
   const { name, flags } = props;
   if (!name) {
     return <>-</>;

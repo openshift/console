@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { DescriptionList, GridItem } from '@patternfly/react-core';
 import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
@@ -46,7 +47,7 @@ export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   },
 );
 
-const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
+const DescriptorDetailsItemArrayGroup: FC<DescriptorDetailsItemGroupProps> = ({
   className,
   group,
   groupPath,
@@ -96,7 +97,7 @@ const DescriptorDetailsItemArrayGroup: React.FC<DescriptorDetailsItemGroupProps>
   );
 };
 
-const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
+const DescriptorDetailsItemGroup: FC<DescriptorDetailsItemGroupProps> = ({
   group,
   groupPath,
   model,
@@ -111,11 +112,14 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
   const label = descriptor?.displayName || groupSchema?.title || _.startCase(groupPath);
   const arrayGroups = _.pickBy(nested, 'isArrayGroup');
   const primitives = _.omitBy(nested, 'isArrayGroup');
-  const span = _.isEmpty(arrayGroups) || _.isEmpty(primitives) ? 6 : 12;
+  const spanRow = !(_.isEmpty(arrayGroups) || _.isEmpty(primitives));
   return (
-    <GridItem sm={span}>
+    <GridItem style={spanRow ? { gridColumn: '1 / -1' } : undefined}>
       <DetailsItem description={description} label={label} obj={obj} path={`${type}.${groupPath}`}>
-        <DescriptionList className="co-editable-label-group">
+        <DescriptionList
+          className="co-editable-label-group"
+          columnModifier={spanRow ? { default: '2Col' } : undefined}
+        >
           {!_.isEmpty(primitives) &&
             _.map(primitives, ({ descriptor: primitiveDescriptor }) => (
               <DescriptorDetailsItem
@@ -148,7 +152,7 @@ const DescriptorDetailsItemGroup: React.FC<DescriptorDetailsItemGroupProps> = ({
 };
 
 /** Note: MUST be used inside a `<DescriptionList>` */
-export const DescriptorDetailsItems: React.FC<DescriptorDetailsItemsProps> = ({
+export const DescriptorDetailsItems: FC<DescriptorDetailsItemsProps> = ({
   descriptors,
   model,
   obj,
@@ -157,9 +161,7 @@ export const DescriptorDetailsItems: React.FC<DescriptorDetailsItemsProps> = ({
   type,
   itemClassName,
 }) => {
-  const groupedDescriptors = React.useMemo(() => groupDescriptorDetails(descriptors), [
-    descriptors,
-  ]);
+  const groupedDescriptors = useMemo(() => groupDescriptorDetails(descriptors), [descriptors]);
   return (
     <>
       {_.map(groupedDescriptors, (group, groupPath) => {

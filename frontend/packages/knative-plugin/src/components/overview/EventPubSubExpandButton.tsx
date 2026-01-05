@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { AngleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-down-icon';
 import { AngleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-right-icon';
@@ -11,10 +11,7 @@ type EventPubSubExpandButtonProps = {
   rowSelected: boolean;
 };
 
-const EventPubSubExpandButton: React.FC<EventPubSubExpandButtonProps> = ({
-  rowSelected,
-  onClick,
-}) => {
+const EventPubSubExpandButton: FC<EventPubSubExpandButtonProps> = ({ rowSelected, onClick }) => {
   const { t } = useTranslation();
   const title = rowSelected ? t('knative-plugin~Hide filters') : t('knative-plugin~Show filters');
   return (

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { Formik, FormikHelpers, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +49,7 @@ type ControllerProps = {
   close?: () => void;
 };
 
-const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, cancel, close }) => {
+const Controller: FC<ControllerProps> = ({ loaded, resources, revision, cancel, close }) => {
   const { t } = useTranslation();
   if (!loaded) {
     return null;
@@ -179,7 +180,7 @@ type DeleteRevisionModalControllerProps = {
   revision: K8sResourceKind;
 };
 
-const DeleteRevisionModalController: React.FC<DeleteRevisionModalControllerProps> = (props) => {
+const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = (props) => {
   const {
     metadata: { namespace },
   } = props.revision;
@@ -214,8 +215,5 @@ const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => {
 
 export const useDeleteRevisionModalLauncher = (props: Props) => {
   const launcher = useOverlay();
-  return React.useCallback(() => launcher<Props>(DeleteRevisionModalProvider, props), [
-    launcher,
-    props,
-  ]);
+  return useCallback(() => launcher<Props>(DeleteRevisionModalProvider, props), [launcher, props]);
 };

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -26,7 +27,13 @@ import { ResourceFilters, ResourceMetadata, GetDataViewRows } from './types';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
-export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
+export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
+
+export type ConsoleDataViewProps<
+  TData,
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters
+> = {
   label?: string;
   data: TData[];
   loaded: boolean;
@@ -34,8 +41,8 @@ export type ConsoleDataViewProps<TData, TCustomRowData, TFilters> = {
   columns: TableColumn<TData>[];
   columnLayout?: ColumnLayout;
   columnManagementID?: string;
-  initialFilters: TFilters;
-  additionalFilterNodes?: React.ReactNode[];
+  initialFilters?: TFilters;
+  additionalFilterNodes?: ReactNode[];
   /**
    * By default, `TData` is assumed to be assignable to `K8sResourceCommon` type.
    *
@@ -86,7 +93,7 @@ export const ConsoleDataView = <
   columns,
   columnLayout,
   columnManagementID,
-  initialFilters,
+  initialFilters = initialFiltersDefault as TFilters,
   additionalFilterNodes,
   getObjectMetadata,
   matchesAdditionalFilters,
@@ -124,16 +131,16 @@ export const ConsoleDataView = <
     customRowData,
   });
 
-  const bodyLoading = React.useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
+  const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
     dataViewColumns.length,
   ]);
 
-  const bodyEmpty = React.useMemo(
-    () => <BodyEmpty label={label} colSpan={dataViewColumns.length} />,
-    [dataViewColumns.length, label],
-  );
+  const bodyEmpty = useMemo(() => <BodyEmpty label={label} colSpan={dataViewColumns.length} />, [
+    dataViewColumns.length,
+    label,
+  ]);
 
-  const activeState = React.useMemo(() => {
+  const activeState = useMemo(() => {
     if (!loaded) {
       return DataViewState.loading;
     }
@@ -143,8 +150,8 @@ export const ConsoleDataView = <
     return undefined;
   }, [filteredData.length, loaded]);
 
-  const dataViewFilterNodes = React.useMemo<React.ReactNode[]>(() => {
-    const basicFilters: React.ReactNode[] = [];
+  const dataViewFilterNodes = useMemo<React.ReactNode[]>(() => {
+    const basicFilters: ReactNode[] = [];
 
     if (!hideNameLabelFilters) {
       basicFilters.push(
@@ -253,5 +260,3 @@ export const actionsCellProps = {
   hasLeftBorder: true,
   isActionCell: true,
 };
-
-export const initialFiltersDefault = { name: '', label: '' };

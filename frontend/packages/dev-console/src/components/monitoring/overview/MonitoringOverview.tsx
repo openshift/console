@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -31,11 +32,11 @@ type MonitoringOverviewProps = {
   monitoringAlerts: Alert[];
 };
 
-const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
+const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
   const { t } = useTranslation();
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
-  const [expanded, setExpanded] = React.useState([
+  const [expanded, setExpanded] = useState([
     'metrics',
     ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
   ]);
@@ -68,6 +69,17 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
         : [...expanded, id];
     setExpanded(newExpanded);
   };
+
+  // query params:
+  // namespace - used within dashboard logic for variables
+  // project-dropdown-value - used for namespace dropdown for console
+
+  const dashboardLinkParams = new URLSearchParams({
+    workload: resource?.metadata?.name ?? '',
+    type: resource?.kind?.toLowerCase() ?? '',
+    'project-dropdown-value': resource?.metadata?.namespace ?? '',
+    namespace: resource?.metadata?.namespace ?? '',
+  });
 
   return (
     <div className="odc-monitoring-overview">
@@ -129,11 +141,7 @@ const MonitoringOverview: React.FC<MonitoringOverviewProps> = (props) => {
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
                   <Link
-                    to={`/dev-monitoring/ns/${
-                      resource?.metadata?.namespace
-                    }?dashboard=grafana-dashboard-k8s-resources-workload&workload=${
-                      resource?.metadata?.name
-                    }&type=${resource?.kind?.toLowerCase()}`}
+                    to={`/monitoring/dashboards/dashboard-k8s-resources-workload?${dashboardLinkParams.toString()}`}
                     data-test="observe-dashboards-link"
                   >
                     {t('devconsole~View dashboards')}

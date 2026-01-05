@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ListPage } from './factory/list-page';
@@ -12,18 +13,12 @@ import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s'
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [
@@ -35,10 +30,7 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
-  data: RowProps<K8sResourceKind, undefined>[],
-  columns: ConsoleDataViewColumn<K8sResourceKind>[],
-): ConsoleDataViewRow[] => {
+const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { metadata, spec } = obj;
     const resourceKind = referenceFor(obj);
@@ -78,9 +70,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
       },
       [tableColumnInfo[5].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -98,7 +88,7 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (
 
 const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -155,25 +145,24 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   );
 };
 
-export const PrometheusInstancesList: React.FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
+export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
   props,
 ) => {
   const { data, loaded } = props;
   const columns = usePrometheusColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<K8sResourceKind>
         {...props}
         data={data}
         loaded={loaded}
         label={PrometheusModel.labelPlural}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

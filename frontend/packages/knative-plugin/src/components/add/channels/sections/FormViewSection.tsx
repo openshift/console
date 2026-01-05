@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
 import { EVENTING_KAFKA_CHANNEL_KIND } from '../../../../const';
 import DefaultChannelSection from './DefaultChannelSection';
 import KafkaChannelSection from './KafkaChannelSection';
@@ -8,14 +8,14 @@ type FormViewSectionProps = {
   kind: string;
 };
 
-const getChannelSection = (kind: string): React.ReactElement | null => {
+const getChannelSection = (kind: string): ReactElement | null => {
   if (kind === EVENTING_KAFKA_CHANNEL_KIND) {
     return <KafkaChannelSection />;
   }
   return null;
 };
 
-const FormViewSection: React.FC<FormViewSectionProps> = ({ namespace, kind }) => (
+const FormViewSection: FC<FormViewSectionProps> = ({ namespace, kind }) => (
   <>
     {getChannelSection(kind)}
     <DefaultChannelSection namespace={namespace} />

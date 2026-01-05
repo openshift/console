@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
@@ -44,7 +45,6 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -76,7 +76,7 @@ const Completions: React.FCC<CompletionsCellProps> = ({ obj, completions }) => {
   );
 };
 
-const getDataViewRows: GetDataViewRows<JobKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { name, namespace } = obj.metadata;
     const { type, completions } = getJobTypeAndCompletions(obj);
@@ -110,9 +110,7 @@ const getDataViewRows: GetDataViewRows<JobKind, undefined> = (data, columns) => 
       },
       [tableColumnInfo[6].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -127,7 +125,7 @@ const getDataViewRows: GetDataViewRows<JobKind, undefined> = (data, columns) => 
   });
 };
 
-export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
+export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -211,10 +209,10 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   );
 };
 
-const JobPods: React.FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
+const JobPods: FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, pods, editYaml, events } = navFactory;
-const JobsDetailsPage: React.FC = (props) => {
+const JobsDetailsPage: FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
@@ -242,7 +240,7 @@ const JobsDetailsPage: React.FC = (props) => {
 };
 const useJobsColumns = (): TableColumn<JobKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<JobKind>[] = React.useMemo(() => {
+  const columns: TableColumn<JobKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -312,22 +310,21 @@ const JobsList: React.FCC<JobsListProps> = ({ data, loaded, ...props }) => {
   const columns = useJobsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<JobKind>
         {...props}
         label={JobModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-const JobsPage: React.FC<JobsPageProps> = (props) => (
+const JobsPage: FC<JobsPageProps> = (props) => (
   <ListPage
     {...props}
     kind={kind}

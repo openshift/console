@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -8,11 +8,11 @@ import { useBuildRunModel } from '../../utils';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import { BuildRunTable } from './BuildRunTable';
 
-type ListPageProps = React.ComponentProps<typeof ListPage>;
+type ListPageProps = ComponentProps<typeof ListPage>;
 
 type BuildRunListPageProps = Omit<ListPageProps, 'title' | 'kind' | 'ListComponent' | 'rowFilters'>;
 
-const BuildRunListPage: React.FC<BuildRunListPageProps> = (props) => {
+const BuildRunListPage: FC<BuildRunListPageProps> = (props) => {
   const { t } = useTranslation();
 
   const filters: RowFilter<BuildRun>[] = [

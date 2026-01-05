@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared';
@@ -13,7 +13,7 @@ export type PolicySectionFormData = {
   };
 };
 
-const PolicySection: React.FC<{}> = () => {
+const PolicySection: FC<{}> = () => {
   const { t } = useTranslation();
   const [{ value: runPolicy }] = useField<BuildConfigRunPolicy>('formData.policy.runPolicy');
 

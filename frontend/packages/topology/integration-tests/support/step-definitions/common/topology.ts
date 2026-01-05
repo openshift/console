@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   switchPerspective,
@@ -119,7 +118,6 @@ Then('user is able to see health check notification', () => {
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
   perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
 });
 

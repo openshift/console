@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
@@ -6,7 +6,7 @@ import { ResourceSummary, SectionHeading } from '@console/internal/components/ut
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '@console/topology/src/operators/components/const';
 
-const DetailsSection: React.FC<{ resource: K8sResourceKind }> = ({ resource }) => {
+const DetailsSection: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
   const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body">

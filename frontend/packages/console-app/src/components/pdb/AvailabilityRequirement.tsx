@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PodDisruptionBudgetKind } from './types';
 
-const AvailabilityRequirement: React.FC<AvailabilityRequirementProps> = ({ pdb, replicas }) => {
+const AvailabilityRequirement: FC<AvailabilityRequirementProps> = ({ pdb, replicas }) => {
   const { t } = useTranslation();
   return (
     <>

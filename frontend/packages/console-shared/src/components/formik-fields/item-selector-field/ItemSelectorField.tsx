@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   FormGroup,
   EmptyState,
@@ -46,7 +47,7 @@ interface ItemSelectorFieldProps {
   emptyStateMessage?: string;
 }
 
-const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
+const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
   itemList,
   name,
   loadingItems,
@@ -62,11 +63,11 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
   const { t } = useTranslation();
   const [selected, { error: selectedError, touched: selectedTouched }] = useField(name);
   const { setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
-  const [filteredList, setFilteredList] = React.useState(itemList);
-  const [filterText, setFilterText] = React.useState('');
+  const [filteredList, setFilteredList] = useState(itemList);
+  const [filterText, setFilterText] = useState('');
   const itemCount = _.keys(filteredList).length;
 
-  const handleItemChange = React.useCallback(
+  const handleItemChange = useCallback(
     (item: string) => {
       setFieldValue(name, item);
       setFieldTouched(name, true);
@@ -76,7 +77,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     [name, setFieldValue, setFieldTouched, validateForm, onSelect],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!selected.value && _.keys(itemList).length === 1) {
       const image = _.find(filteredList);
       handleItemChange(image.name);
@@ -100,7 +101,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     setFieldTouched,
   ]);
 
-  const filterSources = React.useCallback(
+  const filterSources = useCallback(
     (text: string) => {
       const subList = _.pickBy(itemList, (val) =>
         fuzzy(text.toLowerCase(), val.title.toLowerCase()),

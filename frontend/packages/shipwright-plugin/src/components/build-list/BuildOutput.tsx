@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ExternalLinkWithCopy, ResourceLink } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
@@ -9,7 +9,7 @@ type BuildOutputProps = {
   buildSpec: BuildSpec;
 };
 
-const BuildOutput: React.FC<BuildOutputProps> = ({ buildSpec }) => {
+const BuildOutput: FC<BuildOutputProps> = ({ buildSpec }) => {
   const outputImage = buildSpec?.output?.image;
 
   if (outputImage?.startsWith(BUILD_OUTPUT_IMAGESTREAM_URL)) {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -30,7 +30,7 @@ interface StateProps {
 
 type Props = ChannelProps & StateProps;
 
-const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication }) => {
+const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
   const initialFormData: AddChannelFormData = {

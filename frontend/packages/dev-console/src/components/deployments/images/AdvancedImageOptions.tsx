@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { ResourceDropdownField } from '@console/shared/src';
 
-const AdvancedImageOptions: React.FC = () => {
+const AdvancedImageOptions: FC = () => {
   const { t } = useTranslation();
   const launchCreateSecretModal = useCreateSecretModal();
   const {

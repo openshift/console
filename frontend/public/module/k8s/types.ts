@@ -482,6 +482,13 @@ export type StorageClassResourceKind = {
   };
 } & K8sResourceCommon;
 
+export type VolumeAttributesClassKind = {
+  driverName: string;
+  parameters?: {
+    [key: string]: string;
+  };
+} & K8sResourceCommon;
+
 export type ConfigMapKind = {
   data?: { [key: string]: string };
   binaryData?: { [key: string]: string };
@@ -1130,6 +1137,7 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
       };
     };
     storageClassName: string;
+    volumeAttributesClassName?: string;
     volumeMode?: string;
     volumeName?: string;
     /* Parameters in a cloned PVC */
@@ -1146,6 +1154,7 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
     capacity?: { storage: string };
     phase: string;
     conditions?: K8sResourceCondition[];
+    currentVolumeAttributesClassName?: string;
   };
 };
 

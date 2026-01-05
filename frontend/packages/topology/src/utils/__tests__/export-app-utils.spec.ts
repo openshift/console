@@ -8,31 +8,43 @@ import {
   killExportResource,
 } from '../export-app-utils';
 
+jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
+  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
+  k8sCreate: jest.fn(),
+  k8sGet: jest.fn(),
+  k8sKill: jest.fn(),
+}));
+
+const k8sCreateMock = k8sResourceModule.k8sCreate as jest.Mock;
+const k8sGetMock = k8sResourceModule.k8sGet as jest.Mock;
+const k8sKillMock = k8sResourceModule.k8sKill as jest.Mock;
+
 describe('export-app-utils', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should create export resource', async () => {
-    const spyk8sCreate = jest.spyOn(k8sResourceModule, 'k8sCreate');
-    spyk8sCreate.mockReturnValueOnce(Promise.resolve(mockExportData));
+    k8sCreateMock.mockReturnValueOnce(Promise.resolve(mockExportData));
     const createResData = getExportAppData('my-export', 'my-app');
     const exportRes = await createExportResource(createResData);
     expect(exportRes).toEqual(mockExportData);
-    expect(spyk8sCreate).toHaveBeenCalledTimes(1);
-    expect(spyk8sCreate).toHaveBeenCalledWith(ExportModel, createResData);
+    expect(k8sCreateMock).toHaveBeenCalledTimes(1);
+    expect(k8sCreateMock).toHaveBeenCalledWith(ExportModel, createResData);
   });
 
   it('should get export resource', async () => {
-    const spyk8sGet = jest.spyOn(k8sResourceModule, 'k8sGet');
-    spyk8sGet.mockReturnValueOnce(Promise.resolve(mockExportData));
+    k8sGetMock.mockReturnValueOnce(Promise.resolve(mockExportData));
     const exportRes = await getExportResource('my-export', 'my-app');
     expect(exportRes).toEqual(mockExportData);
-    expect(spyk8sGet).toHaveBeenCalledTimes(1);
-    expect(spyk8sGet).toHaveBeenCalledWith(ExportModel, 'my-export', 'my-app');
+    expect(k8sGetMock).toHaveBeenCalledTimes(1);
+    expect(k8sGetMock).toHaveBeenCalledWith(ExportModel, 'my-export', 'my-app');
   });
 
   it('should kill export resource', async () => {
-    const spyk8sKill = jest.spyOn(k8sResourceModule, 'k8sKill');
-    spyk8sKill.mockReturnValueOnce(Promise.resolve());
+    k8sKillMock.mockReturnValueOnce(Promise.resolve());
     await killExportResource(mockExportData);
-    expect(spyk8sKill).toHaveBeenCalledTimes(1);
-    expect(spyk8sKill).toHaveBeenCalledWith(ExportModel, mockExportData);
+    expect(k8sKillMock).toHaveBeenCalledTimes(1);
+    expect(k8sKillMock).toHaveBeenCalledWith(ExportModel, mockExportData);
   });
 });

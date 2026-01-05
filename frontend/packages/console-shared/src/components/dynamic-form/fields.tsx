@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
 import {
   AccordionContent,
   AccordionItem,
@@ -39,11 +40,11 @@ const Description = ({ id, description }) =>
     </span>
   ) : null;
 
-export const DescriptionField: React.FC<FieldProps> = ({ id, description }) => (
+export const DescriptionField: FC<FieldProps> = ({ id, description }) => (
   <Description id={id} description={description} />
 );
 
-export const FormField: React.FC<FormFieldProps> = ({
+export const FormField: FC<FormFieldProps> = ({
   children,
   id,
   defaultLabel,
@@ -69,7 +70,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   );
 };
 
-export const FieldSet: React.FC<FieldSetProps> = ({
+export const FieldSet: FC<FieldSetProps> = ({
   children,
   defaultLabel,
   idSchema,
@@ -77,7 +78,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
   schema,
   uiSchema,
 }) => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel);
   const description = useSchemaDescription(schema, uiSchema);
   const onToggle = (e) => {
@@ -106,7 +107,7 @@ export const FieldSet: React.FC<FieldSetProps> = ({
   );
 };
 
-export const ResourceRequirementsField: React.FC<FieldProps> = ({
+export const ResourceRequirementsField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -164,7 +165,7 @@ export const ResourceRequirementsField: React.FC<FieldProps> = ({
   );
 };
 
-export const UpdateStrategyField: React.FC<FieldProps> = ({
+export const UpdateStrategyField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -207,7 +208,7 @@ export const UpdateStrategyField: React.FC<FieldProps> = ({
   );
 };
 
-export const NodeAffinityField: React.FC<FieldProps> = ({
+export const NodeAffinityField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -233,7 +234,7 @@ export const NodeAffinityField: React.FC<FieldProps> = ({
     </FieldSet>
   );
 };
-export const PodAffinityField: React.FC<FieldProps> = ({
+export const PodAffinityField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -260,7 +261,7 @@ export const PodAffinityField: React.FC<FieldProps> = ({
   );
 };
 
-export const MatchExpressionsField: React.FC<FieldProps> = ({
+export const MatchExpressionsField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -287,7 +288,7 @@ export const MatchExpressionsField: React.FC<FieldProps> = ({
   );
 };
 
-export const LabelsField: React.FC<FieldProps> = ({
+export const LabelsField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -311,7 +312,7 @@ export const LabelsField: React.FC<FieldProps> = ({
   </FormField>
 );
 
-export const DropdownField: React.FC<FieldProps> = ({
+export const DropdownField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -336,7 +337,7 @@ export const DropdownField: React.FC<FieldProps> = ({
   );
 };
 
-export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
+export const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
   // To check that, it's required to resolving definition references ($ref) in the
   // JSON schema as it is implemented in the origin SchemaField:
@@ -384,10 +385,10 @@ type FormFieldProps = {
   required: boolean;
   schema: JSONSchema7;
   uiSchema: UiSchema;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 type FieldSetProps = Pick<FieldProps, 'idSchema' | 'required' | 'schema' | 'uiSchema'> & {
   defaultLabel?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };

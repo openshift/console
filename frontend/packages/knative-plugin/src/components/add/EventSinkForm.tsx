@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -22,11 +22,11 @@ import { EventSinkSyncFormData } from './import-types';
 
 interface OwnProps {
   namespace: string;
-  eventSinkMetaDescription: React.ReactNode;
+  eventSinkMetaDescription: ReactNode;
   kameletSink: K8sResourceKind;
 }
 
-const EventSinkForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
+const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   errors,
   values,
   handleSubmit,

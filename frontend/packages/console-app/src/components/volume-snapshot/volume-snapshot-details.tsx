@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -33,7 +33,7 @@ import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
 
-const Details: React.FC<DetailsProps> = ({ obj }) => {
+const Details: FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const namespace = obj?.metadata?.namespace || '';
   const sourceModel = obj?.spec?.source?.persistentVolumeClaimName
@@ -113,7 +113,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
+export const VolumeSnapshotDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [
     {
       href: '',
@@ -150,5 +150,3 @@ const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
 type DetailsProps = {
   obj: VolumeSnapshotKind;
 };
-
-export default VolumeSnapshotDetailsPage;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Label, Tooltip } from '@patternfly/react-core';
 import { CatalogItemBadge } from '@console/dynamic-plugin-sdk/src/extensions';
 import './CatalogBadges.scss';
@@ -22,7 +22,7 @@ const Badge = ({ color, icon, variant, text, tooltip }: CatalogItemBadge) => {
   return tooltip ? <Tooltip content={tooltip}>{badge}</Tooltip> : badge;
 };
 
-const CatalogBadges: React.FC<CatalogBadgesProps> = ({ badges }) => (
+const CatalogBadges: FC<CatalogBadgesProps> = ({ badges }) => (
   <div className="odc-catalog-badges">
     {badges?.map((badge) => (
       <Badge key={badge.text} {...badge} />

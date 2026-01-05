@@ -1,7 +1,8 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
+import { useCallback } from 'react';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import { PodsPage } from '@console/internal/components/pod';
+import { PodsPage } from '@console/internal/components/pod-list';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { K8sModel, NodeKind, referenceForModel } from '@console/internal/module/k8s';
@@ -17,7 +18,7 @@ import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
 
-const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
+const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage
     showTitle={false}
     fieldSelector={`spec.nodeName=${obj.metadata.name}`}
@@ -25,8 +26,8 @@ const NodePodsPage: React.FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   />
 );
 
-const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const pagesFor = React.useCallback(
+export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {
+  const pagesFor = useCallback(
     (node: NodeKind) => [
       {
         href: '',
@@ -72,5 +73,3 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
     />
   );
 };
-
-export default NodeDetailsPage;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
 import ScalingSection from '../import/advanced/ScalingSection';
@@ -21,9 +22,9 @@ const Footer = ({ children }) => {
   );
 };
 
-const List: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
+const List: FC<AdvancedSectionProps> = ({ resourceType }) => {
   const { t } = useTranslation();
-  const [visibleItems, setVisibleItems] = React.useState<string[]>([]);
+  const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
     setVisibleItems([...visibleItems, item]);
   };
@@ -44,7 +45,7 @@ const List: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
   );
 };
 
-const AdvancedSection: React.FC<AdvancedSectionProps> = ({ resourceType }) => {
+const AdvancedSection: FC<AdvancedSectionProps> = ({ resourceType }) => {
   const { t } = useTranslation();
 
   return (

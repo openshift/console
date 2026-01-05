@@ -12,12 +12,10 @@
     "@console/git-service": "0.0.0-fixed",
     "@console/topology": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
-    "@console/pipelines-plugin": "0.0.0-fixed",
     "@console/shipwright-plugin": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx",
     "exposedModules": {
       "providers": "src/actions/providers.tsx",
       "useDevfile": "src/components/catalog/providers/useDevfile.tsx",
@@ -33,7 +31,6 @@
       "CatalogTypesConfiguration": "src/components/catalog/CatalogTypesConfiguration.tsx",
       "PinnedResourcesConfiguration": "src/components/catalog/PinnedResourcesConfiguration.tsx",
       "CatalogPage": "src/components/catalog/CatalogPage.tsx",
-      "CatalogDefaultNamespaceRedirect": "src/components/catalog/CatalogDefaultNamespaceRedirect.tsx",
       "fileUpload": "src/components/jar-file-upload/jar-file-upload-utils.ts",
       "devConsoleComponentFactory": "src/components/topology/components/devConsoleComponentFactory.ts",
       "hpaTabSection": "src/components/topology/hpa-tab-section.tsx",
@@ -62,7 +59,8 @@
       "ProjectSelectPage": "src/components/ProjectSelectPage.tsx",
       "NamespaceRedirect": "src/components/NamespaceRedirect.tsx",
       "HPAPage": "src/components/hpa/HPAPage.tsx",
-      "useDeveloperCatalogCategories": "src/components/catalog/providers/useDeveloperCatalogCategories.ts"
+      "useDeveloperCatalogCategories": "src/components/catalog/providers/useDeveloperCatalogCategories.ts",
+      "getGuidedTour": "src/components/guided-tour/index.tsx"
     }
   }
 }

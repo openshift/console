@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ResourceLog,

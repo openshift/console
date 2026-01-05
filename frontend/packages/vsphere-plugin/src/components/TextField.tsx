@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, Ref } from 'react';
+import { forwardRef } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -12,13 +13,13 @@ import { useField } from 'formik';
 
 interface TextFieldProps extends TextInputProps {
   name: string;
-  helperText?: React.ReactNode;
+  helperText?: ReactNode;
 }
 
-const TextField = React.forwardRef(
+const TextField = forwardRef(
   (
     { helperText, onChange: onParentChange, ...props }: TextFieldProps,
-    ref: React.Ref<HTMLInputElement>,
+    ref: Ref<HTMLInputElement>,
   ) => {
     const [field, meta, { setValue }] = useField({
       name: props.name,

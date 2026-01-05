@@ -22,6 +22,16 @@
       "usePerspectiveDetection": { "$codeRef": "perspective.usePerspectiveDetection" }
     }
   },
+  {
+    "type": "INTERNAL_DO_NOT_USE.guided-tour",
+    "properties": {
+      "perspective": "dev",
+      "tour": { "$codeRef": "getGuidedTour" }
+    },
+    "flags": {
+      "disallowed": ["INTEGRATION_TEST"]
+    }
+  },
 
   {
     "type": "console.flag/model",
@@ -1056,14 +1066,6 @@
       "exact": true,
       "path": ["/topology/all-namespaces", "/topology/ns/:name"],
       "component": { "$codeRef": "topologyPage" }
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/catalog/all-namespaces"],
-      "component": { "$codeRef": "CatalogDefaultNamespaceRedirect" }
     }
   },
   {

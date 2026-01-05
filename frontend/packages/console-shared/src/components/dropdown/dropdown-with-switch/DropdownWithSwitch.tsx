@@ -1,21 +1,22 @@
-import * as React from 'react';
+import type { FC, ComponentProps } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import DropdownWithSwitchMenu from './DropdownWithSwitchMenu';
 import DropdownWithSwitchToggle from './DropdownWithSwitchToggle';
 
-export const DropdownWithSwitch: React.FC<DropdownWithSwitchProps> = ({
+export const DropdownWithSwitch: FC<DropdownWithSwitchProps> = ({
   isDisabled,
   isFullWidth,
   toggleLabel,
   ...dropdownWithSwitchMenuProps
 }) => {
-  const menuRef = React.useRef(null);
-  const [isOpen, setOpen] = React.useState(false);
-  const switchMenuProps: React.ComponentProps<typeof DropdownWithSwitchMenu> = {
+  const menuRef = useRef(null);
+  const [isOpen, setOpen] = useState(false);
+  const switchMenuProps: ComponentProps<typeof DropdownWithSwitchMenu> = {
     ...dropdownWithSwitchMenuProps,
     menuRef,
     setOpen,
   };
-  const onToggle = React.useCallback((menuState: boolean) => {
+  const onToggle = useCallback((menuState: boolean) => {
     setOpen(menuState);
   }, []);
 
@@ -33,7 +34,7 @@ export const DropdownWithSwitch: React.FC<DropdownWithSwitchProps> = ({
 };
 
 type DropdownWithSwitchProps = Omit<
-  React.ComponentProps<typeof DropdownWithSwitchMenu>,
+  ComponentProps<typeof DropdownWithSwitchMenu>,
   'menuRef' | 'setOpen'
 > & {
   isDisabled?: boolean;

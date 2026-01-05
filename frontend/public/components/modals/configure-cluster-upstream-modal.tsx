@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEventHandler } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Form,
   FormHelperText,
@@ -38,12 +39,12 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const currentUpstream = cv?.spec?.upstream;
 
-  const [customSelected, setCustomSelected] = React.useState(!!currentUpstream);
-  const [customURL, setCustomURL] = React.useState(currentUpstream ?? '');
-  const customURLInputRef = React.useRef(null);
-  const [invalidCustomURL, setInvalidCustomURL] = React.useState(false);
+  const [customSelected, setCustomSelected] = useState(!!currentUpstream);
+  const [customURL, setCustomURL] = useState(currentUpstream ?? '');
+  const customURLInputRef = useRef(null);
+  const [invalidCustomURL, setInvalidCustomURL] = useState(false);
 
-  const submit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
+  const submit: FormEventHandler<HTMLFormElement> = useCallback(
     (e): void => {
       e.preventDefault();
       if (customSelected) {

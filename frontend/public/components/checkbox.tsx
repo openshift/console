@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactEventHandler } from 'react';
 import { Checkbox as PFCheckbox } from '@patternfly/react-core';
 
 export const Checkbox = ({ name, label, checked, onChange }: CheckboxProps) => (
@@ -20,5 +20,5 @@ export type CheckboxProps = {
   name: string;
   label: string;
   checked: boolean;
-  onChange: React.ReactEventHandler<HTMLInputElement>;
+  onChange: ReactEventHandler<HTMLInputElement>;
 };

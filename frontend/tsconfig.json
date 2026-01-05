@@ -13,7 +13,31 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "typeRoots": ["node_modules/@types", "@types"],
-    "types": ["node", "jest", "console"]
+    "types": ["node", "jest", "console"],
+    "paths": {
+      "@console/internal/*": ["./public/*"],
+      "@console/app/*": ["./packages/console-app/*"],
+      "@console/dynamic-plugin-sdk/*": ["./packages/console-dynamic-plugin-sdk/*"],
+      "@console/plugin-sdk/*": ["./packages/console-plugin-sdk/*"],
+      "@console/plugin-shared/*": ["./packages/console-plugin-shared/*"],
+      "@console/shared/*": ["./packages/console-shared/*"],
+      "@console/telemetry-plugin/*": ["./packages/console-telemetry-plugin/*"],
+      "@console/container-security/*": ["./packages/container-security/*"],
+      "@console/dev-console/*": ["./packages/dev-console/*"],
+      "@console/eslint-plugin-console/*": ["./packages/eslint-plugin-console/*"],
+      "@console/git-service/*": ["./packages/git-service/*"],
+      "@console/helm-plugin/*": ["./packages/helm-plugin/*"],
+      "@console/insights-plugin/*": ["./packages/insights-plugin/*"],
+      "@console/cypress-integration-tests/*": ["./packages/integration-tests-cypress/*"],
+      "@console/knative-plugin/*": ["./packages/knative-plugin/*"],
+      "@console/metal3-plugin/*": ["./packages/metal3-plugin/*"],
+      "@console/operator-lifecycle-manager/*": ["./packages/operator-lifecycle-manager/*"],
+      "@console/operator-lifecycle-manager-v1/*": ["./packages/operator-lifecycle-manager-v1/*"],
+      "@console/shipwright-plugin/*": ["./packages/shipwright-plugin/*"],
+      "@console/topology/*": ["./packages/topology/*"],
+      "@console/vsphere-plugin/*": ["./packages/vsphere-plugin/*"],
+      "@console/webterminal-plugin/*": ["./packages/webterminal-plugin/*"]
+    }
   },
   "exclude": [
     ".yarn",

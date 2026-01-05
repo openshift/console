@@ -11,7 +11,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { routeStatus } from '@console/shared/src/components/utils/routes';
 import { secretTypeFilterReducer } from '../secrets/create-secret';
-import { roleType } from '../RBAC/role';
+import { roleType } from '../RBAC/role-type';
 import {
   K8sResourceKind,
   MachineKind,
@@ -54,7 +54,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     },
 
     alerts: (values, alert: Alert) => {
-      if (!values.all) {
+      if (!values.all || !Array.isArray(values.all)) {
         return true;
       }
       const labels = getLabelsAsString(alert, 'labels');
@@ -62,7 +62,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     },
 
     'observe-rules': (values, rule: Rule) => {
-      if (!values.all) {
+      if (!values.all || !Array.isArray(values.all)) {
         return true;
       }
       const labels = getLabelsAsString(rule, 'labels');
@@ -70,7 +70,9 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     },
 
     'observe-target-labels': (values, target: Target) =>
-      !values.all || values.all.every((v) => getLabelsAsString(target, 'labels').includes(v)),
+      !values.all ||
+      (Array.isArray(values.all) &&
+        values.all.every((v) => getLabelsAsString(target, 'labels').includes(v))),
 
     // Filter role by role kind
     'role-kind': (filter, role) =>
@@ -95,7 +97,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
     'role-binding-group': (groupName, { subject }) => subject.name === groupName,
 
     labels: (values, obj) => {
-      if (!values.all) {
+      if (!values.all || !Array.isArray(values.all)) {
         return true;
       }
       const labels = getLabelsAsString(obj);

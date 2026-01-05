@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { FormHelperText, Title } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,7 @@ import {
   InsecureTrafficType,
 } from '../import-types';
 
-const SecureRoute: React.FC = () => {
+const SecureRoute: FC = () => {
   const { t } = useTranslation();
   const [preferredRoutingOptions, , preferredRoutingOptionsLoaded] = usePreferredRoutingOptions();
   const { secure: secureRoute, tlsTermination, insecureTraffic } =
@@ -40,7 +41,7 @@ const SecureRoute: React.FC = () => {
           [InsecureTrafficType.Redirect]: t('devconsole~Redirect'),
         };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (formType !== 'edit' && preferredRoutingOptionsLoaded) {
       setFieldValue('route.secure', secureRoute, false);
       setFieldValue('route.tls.termination', tlsTermination, false);

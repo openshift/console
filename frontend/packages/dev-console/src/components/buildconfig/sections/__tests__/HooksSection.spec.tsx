@@ -1,5 +1,4 @@
-import * as React from 'react';
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -15,7 +14,7 @@ interface WrapperProps extends FormikConfig<HooksSectionFormData> {
   children?: ReactNode;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children, ...formikConfig }) => (
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

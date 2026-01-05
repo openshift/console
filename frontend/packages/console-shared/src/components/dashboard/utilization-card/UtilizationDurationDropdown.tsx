@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useCallback } from 'react';
 import {
   MenuToggle,
   MenuToggleElement,
@@ -11,10 +12,10 @@ import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/sr
 import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
 import { useUtilizationDuration } from '../../../hooks';
 
-export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownProps> = ({
+export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
   const { selectedKey, updateSelectedKey, updateDuration } = useUtilizationDuration(adjustDuration);
   const items = {
@@ -23,7 +24,7 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
     [DurationKeys.TwentyFourHours]: t('console-shared~24 hours'),
   };
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (event, newSelected) => {
       updateSelectedKey(newSelected);
       updateDuration(DURATION_VALUES[newSelected]);
@@ -35,7 +36,7 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
   return (
     <div data-test-id="duration-select">
       <Select
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             onClick={(open) => setIsOpen(open)}

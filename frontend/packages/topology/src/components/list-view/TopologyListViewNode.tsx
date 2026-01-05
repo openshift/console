@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   DataList,
@@ -38,7 +38,7 @@ type DispatchProps = {
   onSelectTab?: (name: string) => void;
 };
 
-const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> = ({
+const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
   selectedIds,
   onSelect,

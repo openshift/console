@@ -1,11 +1,12 @@
-import * as React from 'react';
+import type { SetStateAction } from 'react';
+import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import { createHash } from 'crypto-browserify';
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { RootState } from '@console/internal/redux';
 import {
   createConfigMap,
   deserializeData,
@@ -22,11 +23,11 @@ if (alwaysUseFallbackLocalStorage) {
 }
 
 const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
-  const counterRef = React.useRef<number>(initialValue);
-  const increment = React.useCallback(() => {
+  const counterRef = useRef<number>(initialValue);
+  const increment = useCallback(() => {
     counterRef.current += 1;
   }, []);
-  const decrement = React.useCallback(() => {
+  const decrement = useCallback(() => {
     counterRef.current -= 1;
   }, []);
   return [counterRef.current !== initialValue, increment, decrement];
@@ -34,29 +35,29 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
 
 export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
   // Mount status for safety state updates
-  const mounted = React.useRef(true);
-  React.useEffect(() => {
+  const mounted = useRef(true);
+  useEffect(() => {
     return () => {
       mounted.current = false;
     };
   }, []);
 
   // Keys and values
-  const keyRef = React.useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
-  const defaultValueRef = React.useRef<T>(defaultValue);
+  const keyRef = useRef<string>(key?.replace(/[^-._a-zA-Z0-9]/g, '_'));
+  const defaultValueRef = useRef<T>(defaultValue);
 
   // Settings
-  const [settings, setSettingsUnsafe] = React.useState<T>();
-  const setSettings: typeof setSettingsUnsafe = React.useCallback(
+  const [settings, setSettingsUnsafe] = useState<T>();
+  const setSettings: typeof setSettingsUnsafe = useCallback(
     (...args) => mounted.current && setSettingsUnsafe(...args),
     [setSettingsUnsafe],
   );
-  const settingsRef = React.useRef<T>(settings);
+  const settingsRef = useRef<T>(settings);
   settingsRef.current = settings;
 
   // Loaded
-  const [loaded, setLoadedUnsafe] = React.useState(false);
-  const setLoaded: typeof setLoadedUnsafe = React.useCallback(
+  const [loaded, setLoadedUnsafe] = useState(false);
+  const setLoaded: typeof setLoadedUnsafe = useCallback(
     (...args) => mounted.current && setLoadedUnsafe(...args),
     [setLoadedUnsafe],
   );
@@ -88,10 +89,10 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
 
   // Fallback
-  const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = React.useState<boolean>(
+  const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = useState<boolean>(
     alwaysUseFallbackLocalStorage,
   );
-  const setFallbackLocalStorage: typeof setFallbackLocalStorageUnsafe = React.useCallback(
+  const setFallbackLocalStorage: typeof setFallbackLocalStorageUnsafe = useCallback(
     (...args) => mounted.current && setFallbackLocalStorageUnsafe(...args),
     [setFallbackLocalStorageUnsafe],
   );
@@ -107,7 +108,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     impersonate,
   );
 
-  const configMapResource = React.useMemo(
+  const configMapResource = useMemo(
     () =>
       !userUid || isLocalStorage
         ? null
@@ -121,7 +122,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!userUid || isLocalStorage) {
       return;
     }
@@ -184,8 +185,8 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cfLoadError, cfLoaded, isLocalStorage]);
 
-  const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
-    (action: React.SetStateAction<T>) => {
+  const callback = useCallback<React.Dispatch<React.SetStateAction<T>>>(
+    (action: SetStateAction<T>) => {
       const previousSettings = settingsRef.current;
       const newState =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
@@ -205,7 +206,7 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
     [cfData, cfLoaded, decreaseRequest, increaseRequest, setSettings],
   );
 
-  const resultedSettings = React.useMemo(() => {
+  const resultedSettings = useMemo(() => {
     if (sync && cfLoaded && cfData && !isRequestPending) {
       /**
        * If key is deleted from the config map then return default value

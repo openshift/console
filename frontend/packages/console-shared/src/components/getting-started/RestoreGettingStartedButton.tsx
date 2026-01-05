@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useGettingStartedShowState, GettingStartedShowState } from './useGettingStartedShowState';
@@ -7,7 +7,7 @@ interface RestoreGettingStartedButtonProps {
   userSettingsKey: string;
 }
 
-export const RestoreGettingStartedButton: React.FC<RestoreGettingStartedButtonProps> = ({
+export const RestoreGettingStartedButton: FC<RestoreGettingStartedButtonProps> = ({
   userSettingsKey,
 }) => {
   const { t } = useTranslation();

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
@@ -51,11 +52,11 @@ type StorageProvisionerMap = {
   [provisioner: string]: ProvisionerDetails;
 };
 
-const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
+const StorageClassFormInner: FC<StorageClassFormProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [newStorageClass, setNewStorageClass] = React.useState<{
+  const [newStorageClass, setNewStorageClass] = useState<{
     name: string;
     description: string;
     type: any;
@@ -74,16 +75,16 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     volumeBindingMode: 'WaitForFirstConsumer',
     expansion: true,
   });
-  const [customParams, setCustomParams] = React.useState([['', '']]);
-  const [validationSuccessful, setValidationSuccessful] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  const [fieldErrors, setFieldErrors] = React.useState<{ [k: string]: any }>({ parameters: {} });
+  const [customParams, setCustomParams] = useState([['', '']]);
+  const [validationSuccessful, setValidationSuccessful] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState<{ [k: string]: any }>({ parameters: {} });
 
-  const [needValidate, setNeedValidate] = React.useState(false);
+  const [needValidate, setNeedValidate] = useState(false);
 
-  const resources = React.useRef<{ [k: string]: any }>();
-  const previousName = React.useRef('');
+  const resources = useRef<{ [k: string]: any }>();
+  const previousName = useRef('');
 
   const defaultProvisionerObj: ProvisionerDetails = {
     title: '',
@@ -92,10 +93,10 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     allowVolumeExpansion: () => true,
   };
 
-  const storageTypes = React.useRef<{ [driverName: string]: ProvisionerDetails }>({});
+  const storageTypes = useRef<{ [driverName: string]: ProvisionerDetails }>({});
 
-  const CSIStorageTypes = React.useRef<StorageProvisionerMap>({});
-  const defaultStorageTypes = React.useRef<StorageProvisionerMap>({});
+  const CSIStorageTypes = useRef<StorageProvisionerMap>({});
+  const defaultStorageTypes = useRef<StorageProvisionerMap>({});
 
   const getExtensions = (extensions) => {
     extensions.forEach((ext: ResolvedStorageClassProvisioner) => {
@@ -239,9 +240,9 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     setValidationSuccessful(successful);
   };
 
-  const prevProps = React.useRef(props);
+  const prevProps = useRef(props);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const [extensions, extensionsLoaded] = props.extensions;
     if (extensionsLoaded && !_.isEqual(props.extensions, prevProps.current.extensions)) {
       getExtensions(extensions);
@@ -280,7 +281,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     setNeedValidate(runValidation);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (needValidate) {
       validateForm();
     }
@@ -376,7 +377,7 @@ const StorageClassFormInner: React.FC<StorageClassFormProps> = (props) => {
     return _.merge(dataParameters, getCustomParams());
   };
 
-  const createStorageClass = (e: React.FormEvent<EventTarget>) => {
+  const createStorageClass = (e: FormEvent<EventTarget>) => {
     e.preventDefault();
 
     setLoading(true);

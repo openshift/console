@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash-es';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -23,26 +24,17 @@ import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
   ConsoleDataView,
-  initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  ConsoleDataViewColumn,
-  ConsoleDataViewRow,
-  GetDataViewRows,
-} from '@console/app/src/components/data-view/types';
-import { RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
 
-const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
-  data: RowProps<GroupKind, undefined>[],
-  columns: ConsoleDataViewColumn<GroupKind>[],
-): ConsoleDataViewRow[] => {
+const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const { metadata } = obj;
     const resourceKind = referenceForModel(GroupModel);
@@ -67,9 +59,7 @@ const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
       },
       [tableColumnInfo[3].id]: {
         cell: <LazyActionMenu context={context} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -87,7 +77,7 @@ const getDataViewRows: GetDataViewRows<GroupKind, undefined> = (
 
 const useGroupColumns = (): TableColumn<GroupKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -126,28 +116,27 @@ const useGroupColumns = (): TableColumn<GroupKind>[] => {
   );
 };
 
-export const GroupList: React.FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
+export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation();
   const columns = useGroupColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<GroupKind>
         {...props}
         data={data}
         loaded={loaded}
         label={t('public~Groups')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-export const GroupPage: React.FC<GroupPageProps> = (props) => {
+export const GroupPage: FC<GroupPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage
@@ -161,7 +150,7 @@ export const GroupPage: React.FC<GroupPageProps> = (props) => {
   );
 };
 
-const UserKebab: React.FC<UserKebabProps> = ({ group, user }) => {
+const UserKebab: FC<UserKebabProps> = ({ group, user }) => {
   const { t } = useTranslation();
   const showConfirm = useWarningModal({
     title: t('public~Remove User from Group?'),
@@ -191,7 +180,7 @@ const UserKebab: React.FC<UserKebabProps> = ({ group, user }) => {
   return <Kebab options={options} />;
 };
 
-const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
+const UsersTable: FC<UsersTableProps> = ({ group, users }) => {
   const { t } = useTranslation();
   return _.isEmpty(users) ? (
     <EmptyBox label={t('public~Users')} />
@@ -219,7 +208,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
   );
 };
 
-const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
+const GroupDetails: FC<GroupDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const users: string[] = obj.users ? [...obj.users].sort() : [];
   return (
@@ -240,7 +229,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
   );
 };
 
-const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
+const RoleBindingsTab: FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
     staticFilters={{ 'role-binding-group': obj.metadata.name }}
@@ -249,13 +238,13 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   />
 );
 
-export const GroupDetailsPage: React.FC = (props) => {
+export const GroupDetailsPage: FC = (props) => {
   return (
     <DetailsPage
       {...props}
       kind={referenceForModel(GroupModel)}
-      customActionMenu={(obj: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: obj }} />
+      customActionMenu={(_kindObj, data: K8sResourceKind) => (
+        <LazyActionMenu context={{ [referenceForModel(GroupModel)]: data }} />
       )}
       pages={[
         navFactory.details(GroupDetails),

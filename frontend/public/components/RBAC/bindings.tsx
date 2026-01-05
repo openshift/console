@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useMemo, useCallback, useState, useEffect, Suspense } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -98,7 +98,7 @@ const tableColumnInfo = [
 
 const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -190,7 +190,7 @@ const bindingType = (binding: BindingKind) => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const getDataViewRows: GetDataViewRows<BindingKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
   return data.map(({ obj: binding }) => {
     const rowCells = {
       [tableColumnInfo[0].id]: {
@@ -215,9 +215,7 @@ const getDataViewRows: GetDataViewRows<BindingKind, undefined> = (data, columns)
       },
       [tableColumnInfo[5].id]: {
         cell: <BindingKebab binding={binding} />,
-        props: {
-          ...actionsCellProps,
-        },
+        props: actionsCellProps,
       },
     };
 
@@ -239,7 +237,7 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
 
   const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
 
-  const kindFilterOptions = React.useMemo(() => {
+  const kindFilterOptions = useMemo(() => {
     const options = hasCRBindings
       ? [
           {
@@ -268,7 +266,9 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
     return options;
   }, [hasCRBindings, t]);
 
-  const additionalFilterNodes = React.useMemo<React.ReactNode[]>(
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+
+  const additionalFilterNodes = useMemo<React.ReactNode[]>(
     () => [
       <DataViewCheckboxFilter
         key="role-kind"
@@ -281,7 +281,7 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
     [kindFilterOptions, t],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (binding: BindingKind, filters: BindingFilters) =>
       !filters['role-kind'] ||
       filters['role-kind'].length === 0 ||
@@ -292,15 +292,18 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   const { data, loaded, staticFilters } = props;
 
   // Apply staticFilters to filter the data using table filters
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!staticFilters || !data) {
       return data;
     }
 
     const filtersMap = tableFilters(false); // false for fuzzy search
 
+    // Convert staticFilters to array format if it's an object
+    const filtersArray = Array.isArray(staticFilters) ? staticFilters : [staticFilters];
+
     return data.filter((binding) => {
-      return staticFilters.every((filter) => {
+      return filtersArray.every((filter) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
@@ -313,20 +316,20 @@ export const BindingsList: React.FCC<BindingsListTableProps> = (props) => {
   }, [data, staticFilters]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<BindingKind, undefined, BindingFilters>
         {...props}
         data={filteredData}
         loaded={loaded}
         label={t('public~RoleBindings')}
         columns={columns}
-        initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+        initialFilters={initialFilters}
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
@@ -356,7 +359,7 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
     },
   });
 
-  const data = React.useMemo(() => flatten(resources), [resources]);
+  const data = useMemo(() => flatten(resources), [resources]);
 
   const loaded = Object.values(resources)
     .filter((r) => !r.loadError)
@@ -428,9 +431,9 @@ const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
 
   const { fixed, saveButtonText } = props;
 
-  const [data, setData] = React.useState({} as any);
-  const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState('');
+  const [data, setData] = useState({} as any);
+  const [inProgress, setInProgress] = useState(false);
+  const [error, setError] = useState('');
 
   const subjectIndex = props.subjectIndex || 0;
 
@@ -442,7 +445,7 @@ const BaseEditRoleBinding: React.FCC<BaseEditRoleBindingProps> = (props) => {
   const { subjectKind, subjectName } = fixed.subjectRef || {};
 
   // constructor/didmount
-  React.useEffect(() => {
+  useEffect(() => {
     const obj = _.defaultsDeep({}, _.omit(fixed, 'subjectRef'), existingData, {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',

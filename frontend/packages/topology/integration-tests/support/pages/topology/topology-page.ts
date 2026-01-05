@@ -1,4 +1,3 @@
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import {
   devNavigationMenu,
   displayOptions,
@@ -6,13 +5,15 @@ import {
   sideBarTabs,
 } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
 import {
-  createHelmRelease,
   app,
   createForm,
   navigateTo,
-} from '@console/dev-console/integration-tests/support/pages';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
+} from '@console/dev-console/integration-tests/support/pages/app';
+// eslint-disable-next-line import/no-cycle
+import { createHelmRelease } from '@console/dev-console/integration-tests/support/pages/functions/createHelmRelease';
+// eslint-disable-next-line import/no-cycle
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
@@ -347,7 +348,6 @@ export const topologyPage = {
   clickOnApplicationGroupings: (appName: string) => {
     cy.reload();
     app.waitForLoad();
-    guidedTour.close();
     cy.get('[data-id="odc-topology-graph"]').click();
     const id = `[data-id="group:${appName}"] .odc-resource-icon-application`;
     cy.log(id);
@@ -364,7 +364,6 @@ export const topologyPage = {
   verifyApplicationGroupingsDeleted: (appName: string) => {
     cy.reload();
     app.waitForLoad();
-    guidedTour.close();
     const id = `[data-id="group:${appName}"]`;
     cy.get(id, { timeout: 50000 }).should('not.exist');
   },

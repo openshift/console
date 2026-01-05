@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import NamespaceSection from './NamespaceSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 import IconSection from './section/IconSection';
 
-const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
+const DeployImageForm: FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
   errors,
   handleSubmit,

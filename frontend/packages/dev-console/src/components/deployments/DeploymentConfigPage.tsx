@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { StatusBox } from '@console/internal/components/utils';
@@ -9,7 +9,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import EditDeployment from './EditDeployment';
 import { getDefaultDeploymentConfig } from './utils/deployment-utils';
 
-const DeploymentConfigPage: React.FC = () => {
+const DeploymentConfigPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, name } = useParams();
 

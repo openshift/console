@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useCallback } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -6,7 +7,7 @@ import { FLAGS, useActiveNamespace, useFlag } from '@console/shared';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import ProjectListPage, { ProjectListPageProps } from './ProjectListPage';
 
-type LazySubTitleRender = (openProjectModal: () => void) => React.ReactNode;
+type LazySubTitleRender = (openProjectModal: () => void) => ReactNode;
 export interface CreateProjectListPageProps extends ProjectListPageProps {
   title: string;
   children: LazySubTitleRender;
@@ -17,7 +18,7 @@ type CreateAProjectButtonProps = {
   openProjectModal: () => void;
 };
 
-export const CreateAProjectButton: React.FC<CreateAProjectButtonProps> = ({ openProjectModal }) => {
+export const CreateAProjectButton: FC<CreateAProjectButtonProps> = ({ openProjectModal }) => {
   const { t } = useTranslation();
   const canCreateNs = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
@@ -48,7 +49,7 @@ export const CreateAProjectButton: React.FC<CreateAProjectButtonProps> = ({ open
   return null;
 };
 
-const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
+const CreateProjectListPage: FC<CreateProjectListPageProps> = ({
   onCreate,
   title,
   children,
@@ -56,7 +57,7 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
 }) => {
   const [, setActiveNamespace] = useActiveNamespace();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
-  const openProjectModal = React.useCallback(() => {
+  const openProjectModal = useCallback(() => {
     const handleSubmit = (project: K8sResourceKind) => {
       setActiveNamespace(project.metadata?.name);
       onCreate && onCreate(project);

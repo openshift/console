@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useMemo, useCallback } from 'react';
 import {
   AlertVariant,
   Alert,
@@ -25,7 +26,7 @@ export interface ImportStrategySectionProps {
   builderImages: NormalizedBuilderImages;
 }
 
-const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderImages }) => {
+const ImportStrategySection: FC<ImportStrategySectionProps> = ({ builderImages }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setValues } = useFormikContext<FormikValues>();
   const {
@@ -41,9 +42,9 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     devfile,
     docker,
   } = values;
-  const recommendedValues = React.useRef<FormikValues>(null);
+  const recommendedValues = useRef<FormikValues>(null);
 
-  const strategySections = React.useMemo(
+  const strategySections = useMemo(
     () => ({
       [ImportStrategy.DEVFILE]: <DevfileStrategySection />,
       [ImportStrategy.DOCKERFILE]: <DockerSection />,
@@ -55,7 +56,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     [builderImages],
   );
 
-  const recommendedStrategyDescriptions = React.useMemo(
+  const recommendedStrategyDescriptions = useMemo(
     () => ({
       [ImportStrategy.DEVFILE]: t('devconsole~The Devfile at {{filePath}} is recommended.', {
         filePath: devfile?.devfilePath,
@@ -71,7 +72,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     [devfile, docker, t],
   );
 
-  const alertInfo = React.useMemo(() => {
+  const alertInfo = useMemo(() => {
     let title;
     let description;
     let variant;
@@ -117,7 +118,7 @@ const ImportStrategySection: React.FC<ImportStrategySectionProps> = ({ builderIm
     selectedStrategy.name,
   ]);
 
-  const handleEditStrategy = React.useCallback(() => {
+  const handleEditStrategy = useCallback(() => {
     if (showEditImportStrategy) {
       setValues(recommendedValues.current);
     } else {

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
@@ -11,11 +12,11 @@ import { FavoriteNavItem } from './FavoriteNavItem';
 
 import './FavoriteNavItems.scss';
 
-export const FavoriteNavItems: React.FC = () => {
+export const FavoriteNavItems: FC = () => {
   const { t } = useTranslation();
   const triggerTelemetry = useTelemetry();
-  const [activeGroup, setActiveGroup] = React.useState('');
-  const [activeItem, setActiveItem] = React.useState('');
+  const [activeGroup, setActiveGroup] = useState('');
+  const [activeItem, setActiveItem] = useState('');
   const currentUrlPath = window.location.pathname;
 
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
@@ -25,7 +26,7 @@ export const FavoriteNavItems: React.FC = () => {
     true,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded && favorites) {
       const currentFavorite = favorites.find((favorite) => favorite.url === currentUrlPath);
       if (currentFavorite) {
@@ -37,7 +38,7 @@ export const FavoriteNavItems: React.FC = () => {
     }
   }, [loaded, favorites, currentUrlPath]);
 
-  const navList = React.useMemo(() => {
+  const navList = useMemo(() => {
     const handleUnfavorite = (favoriteUrl: string) => {
       const updatedFavorites = favorites?.filter((favorite) => favorite.url !== favoriteUrl);
       setFavorites(updatedFavorites);

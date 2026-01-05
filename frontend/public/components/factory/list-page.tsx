@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { ComponentType, FC, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { Button, Grid, GridItem, TextInput, TextInputProps } from '@patternfly/react-core';
+import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
-import { KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
@@ -51,41 +50,10 @@ type CreateProps = {
   id?: string;
 };
 
-type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
-  label?: string;
-};
-
-export const TextFilter: React.FC<TextFilterProps> = (props) => {
-  const { label, placeholder, autoFocus = false, ...otherInputProps } = props;
-  const { ref } = useDocumentListener<HTMLInputElement>();
-  const { t } = useTranslation();
-  const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
-
-  return (
-    <div className="co-text-filter">
-      <TextInput
-        {...otherInputProps}
-        className="co-text-filter__text-input"
-        data-test-id="item-filter"
-        aria-label={placeholderText}
-        placeholder={placeholderText}
-        ref={ref}
-        autoFocus={autoFocus}
-        tabIndex={0}
-        type="text"
-      />
-      <span className="co-text-filter__feedback">
-        <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
-      </span>
-    </div>
-  );
-};
-TextFilter.displayName = 'TextFilter';
-
 // TODO (jon) make this into "withListPageFilters" HOC
 
 type ListPageWrapperProps<L = any, C = any> = {
-  ListComponent: React.ComponentType<L>;
+  ListComponent: ComponentType<L>;
   kinds: string[];
   filters?: any;
   flatten?: Flatten;
@@ -108,7 +76,7 @@ type ListPageWrapperProps<L = any, C = any> = {
   omitFilterToolbar?: boolean;
 };
 
-export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
+export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
   const {
     flatten,
     ListComponent,
@@ -128,7 +96,7 @@ export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
   const dispatch = useDispatch();
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!_.isNil(nameFilter)) {
       memoizedIds.forEach((id) => dispatch(filterList(id, 'name', { selected: [nameFilter] })));
     }
@@ -177,14 +145,14 @@ export type FireManProps = {
   fieldSelector?: string;
   filterLabel?: string;
   resources: FirehoseResource[];
-  badge?: React.ReactNode;
-  helpText?: React.ReactNode;
-  helpAlert?: React.ReactNode;
+  badge?: ReactNode;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
   title?: string;
   autoFocus?: boolean;
 };
 
-export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
+export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
   const {
     resources,
     textFilter,
@@ -199,11 +167,11 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
   } = props;
   const navigate = useNavigate();
 
-  const [reduxIDs, setReduxIDs] = React.useState([]);
+  const [reduxIDs, setReduxIDs] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [expand] = React.useState();
+  const [expand] = useState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     params.forEach((v, k) => applyFilter(k, v));
 
@@ -214,7 +182,7 @@ export const FireMan: React.FC<FireManProps & { filterList?: typeof filterList }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const reduxId = resources.map((r) =>
       makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
     );
@@ -340,8 +308,8 @@ export type Flatten<
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
-  helpText?: React.ReactNode;
-  helpAlert?: React.ReactNode;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
   selector?: Selector;
   fieldSelector?: string;
   createHandler?: () => void;
@@ -478,10 +446,10 @@ type PageCommonProps<L = any, C = any> = {
   filterLabel?: string;
   textFilter?: string;
   rowFilters?: RowFilter[];
-  ListComponent: React.ComponentType<L>;
+  ListComponent: ComponentType<L>;
   namespace?: string;
   customData?: C;
-  badge?: React.ReactNode;
+  badge?: ReactNode;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
   columnLayout?: ColumnLayout;
@@ -500,15 +468,15 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   };
   label?: string;
   hideTextFilter?: boolean;
-  helpText?: React.ReactNode;
-  helpAlert?: React.ReactNode;
+  helpText?: ReactNode;
+  helpAlert?: ReactNode;
   resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
 };
 
-export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
+export const MultiListPage: FC<MultiListPageProps> = (props) => {
   const {
     autoFocus,
     canCreate,

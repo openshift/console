@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ServiceKind } from '../../types';
@@ -12,7 +12,7 @@ export interface TestFunctionProps {
   close?: () => void;
 }
 
-const TestFunction: React.FC<TestFunctionProps> = ({ service, cancel, close }) => {
+const TestFunction: FC<TestFunctionProps> = ({ service, cancel, close }) => {
   const svcName = service.data.metadata.name;
   const svcNamespace = service.data.metadata.namespace;
   const initialValues: TestFunctionFormikValues = {

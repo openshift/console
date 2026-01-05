@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { forwardRef } from 'react';
 import { useSize, createSvgIdUrl } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
@@ -11,12 +12,12 @@ interface SvgTypedIconProps {
   height: number;
   padding?: number;
   iconClass?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
 const FILTER_ID = 'SvgTypedIconDropShadowFilterId';
 
-const CircledIcon = React.forwardRef<SVGCircleElement, SvgTypedIconProps>(
+const CircledIcon = forwardRef<SVGCircleElement, SvgTypedIconProps>(
   ({ className, x, y, width, height, iconClass, icon, padding = 4 }, circleRef) => {
     const [typedIconSize, typedIconRef] = useSize([]);
 

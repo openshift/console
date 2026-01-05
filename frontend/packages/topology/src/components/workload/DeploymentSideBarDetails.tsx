@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   DescriptionListDescription,
   DescriptionListGroup,
@@ -22,7 +22,7 @@ type DeploymentSideBarDetailsProps = {
   deployment: DeploymentKind;
 };
 
-const DeploymentSideBarDetails: React.FC<DeploymentSideBarDetailsProps> = ({ deployment: d }) => {
+const DeploymentSideBarDetails: FC<DeploymentSideBarDetailsProps> = ({ deployment: d }) => {
   const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">

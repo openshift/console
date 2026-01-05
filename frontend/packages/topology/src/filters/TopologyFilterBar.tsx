@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState } from 'react';
 import {
   Toolbar,
   ToolbarGroup,
@@ -13,7 +14,7 @@ import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circ
 import { Visualization, isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import PDBAlert from '@console/app/src/components/pdb/PDBAlert';
+import { PDBAlert } from '@console/app/src/components/pdb/PDBAlert';
 import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
 import { setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -62,7 +63,7 @@ type OwnProps = {
 
 type TopologyFilterBarProps = StateProps & OwnProps;
 
-const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
+const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   supportedFilters,
   supportedKinds,
   isDisabled,
@@ -72,8 +73,8 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   setIsQuickSearchOpen,
 }) => {
   const { t } = useTranslation();
-  const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
-  const [labelFilterInput, setLabelFilterInput] = React.useState('');
+  const { filters, setTopologyFilters: onFiltersChange } = useContext(FilterContext);
+  const [labelFilterInput, setLabelFilterInput] = useState('');
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),

@@ -1,14 +1,19 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
+import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils/router';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
+import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
+import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/const';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { useFlag } from '../../hooks/flag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
@@ -29,11 +34,11 @@ type CatalogControllerProps = CatalogService & {
   enableDetailsPanel?: boolean;
   hideSidebar?: boolean;
   title: string;
-  description: string | React.ReactElement;
+  description: string | ReactElement;
   categories?: CatalogCategory[];
 };
 
-const CatalogController: React.FC<CatalogControllerProps> = ({
+const CatalogController: FC<CatalogControllerProps> = ({
   type,
   items,
   itemsMap,
@@ -50,8 +55,13 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
+  const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
+  const olmv1Enabled = useFlag(FLAG_OLMV1_ENABLED);
 
-  const typeExtension: ResolvedExtension<CatalogItemType> = React.useMemo(
+  // TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs
+  const showOLMv1Alert = techPreviewEnabled && olmv1Enabled && type === 'operator';
+
+  const typeExtension: ResolvedExtension<CatalogItemType> = useMemo(
     () => catalogExtensions?.find((extension) => extension.properties.type === type),
     [catalogExtensions, type],
   );
@@ -68,11 +78,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     return defaultDescription;
   };
 
-  const filterGroups: string[] = React.useMemo(() => {
+  const filterGroups: string[] = useMemo(() => {
     return typeExtension?.properties.filters?.map((filter) => filter.attribute) ?? [];
   }, [typeExtension]);
 
-  const filterGroupMap: CatalogFilterGroupMap = React.useMemo(() => {
+  const filterGroupMap: CatalogFilterGroupMap = useMemo(() => {
     return (
       typeExtension?.properties.filters?.reduce((map, filter) => {
         map[filter.attribute] = filter;
@@ -81,7 +91,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     );
   }, [typeExtension]);
 
-  const groupings: CatalogStringMap = React.useMemo(() => {
+  const groupings: CatalogStringMap = useMemo(() => {
     return (
       typeExtension?.properties.groupings?.reduce((map, group) => {
         map[group.attribute] = group.label;
@@ -90,7 +100,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     );
   }, [typeExtension]);
 
-  const breadcrumbs = React.useMemo(() => {
+  const breadcrumbs = useMemo(() => {
     const categoryParam = queryParams.get(CatalogQueryParams.CATEGORY);
     const keywordParam = queryParams.get(CatalogQueryParams.KEYWORD);
     const sortParam = queryParams.get(CatalogQueryParams.SORT_ORDER);
@@ -116,12 +126,12 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     return crumbs;
   }, [pathname, queryParams, t, title, type]);
 
-  const selectedItem = React.useMemo(() => {
+  const selectedItem = useMemo(() => {
     const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
     return items.find((it) => selectedId === it.uid);
   }, [items, queryParams]);
 
-  const catalogTypes: CatalogType[] = React.useMemo(() => {
+  const catalogTypes: CatalogType[] = useMemo(() => {
     const types = catalogExtensions
       .map((extension) => ({
         label: extension.properties.title,
@@ -133,26 +143,22 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     return _.sortBy(types, ({ label }) => label.toLowerCase());
   }, [catalogExtensions, disabledSubCatalogs]);
 
-  const catalogItems = React.useMemo(() => (type ? itemsMap[type] : items), [
-    items,
-    itemsMap,
-    type,
-  ]);
+  const catalogItems = useMemo(() => (type ? itemsMap[type] : items), [items, itemsMap, type]);
 
-  const availableFilters: CatalogFilters = React.useMemo(
+  const availableFilters: CatalogFilters = useMemo(
     () => determineAvailableFilters({}, catalogItems, filterGroups),
     [catalogItems, filterGroups],
   );
 
-  const openDetailsPanel = React.useCallback((item: CatalogItem): void => {
+  const openDetailsPanel = useCallback((item: CatalogItem): void => {
     setQueryArgument(CatalogQueryParams.SELECTED_ID, item.uid);
   }, []);
 
-  const closeDetailsPanel = React.useCallback((): void => {
+  const closeDetailsPanel = useCallback((): void => {
     removeQueryArgument(CatalogQueryParams.SELECTED_ID);
   }, []);
 
-  const renderTile = React.useCallback(
+  const renderTile = useCallback(
     (item: CatalogItem) => (
       <CatalogTile
         item={item}
@@ -183,6 +189,12 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
           breadcrumbs={type ? breadcrumbs : null}
           helpText={getCatalogTypeDescription()}
         />
+        {/* TODO(CONSOLE-4823): Remove this hard-coded alert when OLMv1 GAs */}
+        {showOLMv1Alert && (
+          <div className="pf-v6-u-mx-md">
+            <OLMv1Alert />
+          </div>
+        )}
         <StatusBox
           skeleton={skeletonCatalog}
           data={items}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { t } from '../../../../../../../__mocks__/i18next';
@@ -10,7 +10,7 @@ jest.mock('@console/shared/src/components/query-browser', () => ({
 }));
 
 describe('Monitoring Dashboard graph', () => {
-  let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;
+  let monitoringDashboardGraphProps: ComponentProps<typeof MonitoringDashboardGraph>;
 
   beforeAll(() => {
     const query = monitoringDashboardQueries(t)[1];

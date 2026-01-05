@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import {
@@ -16,17 +17,17 @@ import {
   FileUploadContext,
 } from '@console/app/src/components/file-upload/file-upload-context';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  useResolvedExtensions,
   isTopologyCreateConnector,
-  isTopologyDecoratorProvider as isDynamicTopologyDecoratorProvider,
-  isTopologyDisplayFilters as isDynamicTopologyDisplayFilters,
+  isTopologyDecoratorProvider,
+  isTopologyDisplayFilters,
   TopologyCreateConnector,
-  TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
-  TopologyDisplayFilters as DynamicTopologyDisplayFilters,
+  TopologyDecoratorProvider,
+  TopologyDisplayFilters,
   TopologyRelationshipProvider,
   isTopologyRelationshipProvider,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getQueryArgument,
@@ -40,12 +41,6 @@ import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '../../const';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
-import {
-  isTopologyDecoratorProvider,
-  isTopologyDisplayFilters,
-  TopologyDecoratorProvider,
-  TopologyDisplayFilters,
-} from '../../extensions/topology';
 import {
   getTopologySearchQuery,
   TOPOLOGY_LABELS_FILTER_KEY,
@@ -99,7 +94,7 @@ export interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const ConnectedTopologyView: React.FC<ComponentProps> = ({
+export const ConnectedTopologyView: FC<ComponentProps> = ({
   model,
   namespace,
   viewType,
@@ -113,19 +108,19 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
-  const [filteredModel, setFilteredModel] = React.useState<Model>();
-  const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
-  const [visualization, setVisualization] = React.useState<Visualization>();
-  const [showTopologyAnyway, setShowTopologyAnyway] = React.useState(false);
+  const { setTopologyFilters: onFiltersChange } = useContext(FilterContext);
+  const [filteredModel, setFilteredModel] = useState<Model>();
+  const [selectedEntity, setSelectedEntity] = useState<GraphElement>(null);
+  const [visualization, setVisualization] = useState<Visualization>();
+  const [showTopologyAnyway, setShowTopologyAnyway] = useState(false);
   const displayFilters = useDisplayFilters();
   const filters = useDeepCompareMemoize(displayFilters);
-  const applicationRef = React.useRef<string>(null);
+  const applicationRef = useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
-  const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
+  const [isQuickSearchOpen, setIsQuickSearchOpen] = useState<boolean>(
     typeof getQueryArgument('catalogSearch') === 'string',
   );
-  const setIsQuickSearchOpenAndFireEvent = React.useCallback(
+  const setIsQuickSearchOpenAndFireEvent = useCallback(
     (open: boolean) => {
       if (open) {
         fireTelemetryEvent('Quick Search Accessed');
@@ -135,34 +130,26 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [fireTelemetryEvent],
   );
   const appliedFilters = useAppliedDisplayFilters();
+
   const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
     TopologyDisplayFilters
   >(isTopologyDisplayFilters);
-
-  const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
-    TopologyDecoratorProvider
-  >(isTopologyDecoratorProvider);
-
-  const [
-    dynamicDisplayFilterExtensions,
-    dynamicDisplayFilterExtensionsResolved,
-  ] = useResolvedExtensions<DynamicTopologyDisplayFilters>(isDynamicTopologyDisplayFilters);
   const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
     TopologyCreateConnector
   >(isTopologyCreateConnector);
-  const [dynamicExtensionDecorators, dynamicExtensionDecoratorsResolved] = useResolvedExtensions<
-    DynamicTopologyDecoratorProvider
-  >(isDynamicTopologyDecoratorProvider);
+  const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
+    TopologyDecoratorProvider
+  >(isTopologyDecoratorProvider);
   const [relationshipProvider] = useResolvedExtensions<TopologyRelationshipProvider>(
     isTopologyRelationshipProvider,
   );
 
-  const [topologyDecorators, setTopologyDecorators] = React.useState<{
+  const [topologyDecorators, setTopologyDecorators] = useState<{
     [key: string]: TopologyDecorator[];
   }>({});
-  const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
+  const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);
   const queryParams = useQueryParams();
-  const { extensions: supportedFileExtensions } = React.useContext<FileUploadContextType>(
+  const { extensions: supportedFileExtensions } = useContext<FileUploadContextType>(
     FileUploadContext,
   );
 
@@ -170,7 +157,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const labelParams = queryParams.get(TOPOLOGY_LABELS_FILTER_KEY);
   const fileTypes = supportedFileExtensions.map((ex) => `.${ex}`).toString();
 
-  const onSelect = React.useCallback(
+  const onSelect = useCallback(
     (entity?: GraphElement) => {
       // set empty selection when selecting the graph
       const selEntity = isGraph(entity) ? undefined : entity;
@@ -189,7 +176,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [namespace],
   );
 
-  const graphData: GraphData = React.useMemo(
+  const graphData: GraphData = useMemo(
     () => ({
       createResourceAccess,
       namespace,
@@ -211,15 +198,15 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     ],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visualization) {
       visualization.getGraph().setData(graphData);
     }
   }, [visualization, graphData]);
 
-  React.useEffect(() => {
-    if (extensionDecoratorsResolved && dynamicExtensionDecoratorsResolved) {
-      const allDecorators = [...extensionDecorators, ...dynamicExtensionDecorators].reduce(
+  useEffect(() => {
+    if (extensionDecoratorsResolved) {
+      const allDecorators = extensionDecorators.reduce(
         (acc, extensionDecorator) => {
           const decorator: TopologyDecorator = extensionDecorator.properties;
           if (!acc[decorator.quadrant]) {
@@ -240,17 +227,12 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       );
       setTopologyDecorators(allDecorators);
     }
-  }, [
-    dynamicExtensionDecorators,
-    dynamicExtensionDecoratorsResolved,
-    extensionDecorators,
-    extensionDecoratorsResolved,
-  ]);
+  }, [extensionDecorators, extensionDecoratorsResolved]);
 
-  React.useEffect(() => {
-    if (displayFilterExtensionsResolved && dynamicDisplayFilterExtensionsResolved) {
+  useEffect(() => {
+    if (displayFilterExtensionsResolved) {
       const updateFilters = [...filters];
-      [...displayFilterExtensions, ...dynamicDisplayFilterExtensions].forEach((extension) => {
+      displayFilterExtensions.forEach((extension) => {
         const extFilters = extension.properties.getTopologyFilters();
         extFilters?.forEach((filter) => {
           if (!updateFilters.find((f) => f.id === filter.id)) {
@@ -266,22 +248,15 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
     // Only update on extension changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    displayFilterExtensionsResolved,
-    dynamicDisplayFilterExtensionsResolved,
-    displayFilterExtensions,
-    dynamicDisplayFilterExtensions,
-  ]);
+  }, [displayFilterExtensionsResolved, displayFilterExtensions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (filtersLoaded) {
       const newModel = updateModelFromFilters(
         model,
         filters,
         application,
-        [...displayFilterExtensions, ...dynamicDisplayFilterExtensions].map(
-          (extension) => extension.properties.applyDisplayOptions,
-        ),
+        displayFilterExtensions.map((extension) => extension.properties.applyDisplayOptions),
         onSupportedFiltersChange,
         onSupportedKindsChange,
       );
@@ -296,10 +271,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     onSupportedFiltersChange,
     onSupportedKindsChange,
     displayFilterExtensions,
-    dynamicDisplayFilterExtensions,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (filters.find((f) => f.type !== TopologyDisplayFilterType.kind)) {
       const updatedFilters = filters.filter((f) => f.type !== TopologyDisplayFilterType.kind);
       onFiltersChange(updatedFilters);
@@ -308,7 +282,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const searchQuery = getTopologySearchQuery();
     if (searchQuery.length > 0) {
       document.body.classList.add(FILTER_ACTIVE_CLASS);
@@ -319,7 +293,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
 
   const nodesLength = filteredModel?.nodes?.length ?? 0;
 
-  const viewContent = React.useMemo(
+  const viewContent = useMemo(
     () =>
       nodesLength <= MAX_NODES_LIMIT || showTopologyAnyway ? (
         viewType === TopologyViewType.list ? (

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo, useRef, useState, useCallback, useEffect } from 'react';
 import {
   Visualization,
   VisualizationSurface,
@@ -23,11 +24,11 @@ import {
 import * as _ from 'lodash';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
-  useResolvedExtensions,
-  isTopologyComponentFactory as isDynamicTopologyComponentFactory,
-  TopologyComponentFactory as DynamicTopologyComponentFactory,
-} from '@console/dynamic-plugin-sdk';
+  isTopologyComponentFactory,
+  TopologyComponentFactory,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { RootState } from '@console/internal/redux';
 import {
   useQueryParams,
@@ -37,7 +38,6 @@ import {
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
-import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
 import { componentFactory } from './components';
@@ -82,7 +82,7 @@ interface TopologyGraphViewProps {
   dragHint?: string;
 }
 
-const TopologyGraphView: React.FC<TopologyGraphViewProps> = React.memo(
+const TopologyGraphView: FC<TopologyGraphViewProps> = memo(
   ({ visualizationReady, visualization, controlsDisabled, selectedId, dragHint }) => {
     if (!visualizationReady) {
       return null;
@@ -129,7 +129,7 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: React.FC<
+const Topology: FC<
   TopologyProps & StateProps & DispatchProps & WithUserSettingsCompatibilityProps<object>
 > = ({
   model,
@@ -142,20 +142,17 @@ const Topology: React.FC<
   userSettingState: topologyLayoutDataJson,
   setUserSettingState: setTopologyLayoutData,
 }) => {
-  const applicationRef = React.useRef<string>(null);
-  const [visualizationReady, setVisualizationReady] = React.useState<boolean>(false);
-  const [dragHint, setDragHint] = React.useState<string>('');
-  const storedLayoutApplied = React.useRef<boolean>(false);
+  const applicationRef = useRef<string>(null);
+  const [visualizationReady, setVisualizationReady] = useState<boolean>(false);
+  const [dragHint, setDragHint] = useState<string>('');
+  const storedLayoutApplied = useRef<boolean>(false);
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
-  const [componentFactoryExtensions, isStaticResolved] = useResolvedExtensions<
+  const [componentFactoryExtensions, extensionsResolved] = useResolvedExtensions<
     TopologyComponentFactory
   >(isTopologyComponentFactory);
-  const [dynamicComponentFactoryExtensions, isDynamicResolved] = useResolvedExtensions<
-    DynamicTopologyComponentFactory
-  >(isDynamicTopologyComponentFactory);
 
-  const createVisualization = React.useCallback(() => {
+  const createVisualization = useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];
     const newVisualization = new Visualization();
     newVisualization.registerElementFactory(odcElementFactory);
@@ -205,18 +202,18 @@ const Topology: React.FC<
     return newVisualization;
   }, [namespace, onGraphModelChange, onSelect, setTopologyLayoutData, topologyLayoutDataJson]);
 
-  const visualizationRef = React.useRef<Visualization>();
+  const visualizationRef = useRef<Visualization>();
   if (!visualizationRef.current) {
     visualizationRef.current = createVisualization();
   }
   const visualization = visualizationRef.current;
-  React.useEffect(() => {
+  useEffect(() => {
     if (visualization) {
       setVisualization(visualization);
     }
   }, [setVisualization, visualization]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (model && visualizationReady) {
       if (!storedLayoutApplied.current) {
         const storedGraphModel = getStoredGraphModel(namespace);
@@ -295,13 +292,13 @@ const Topology: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, visualization, visualizationReady]);
 
-  React.useEffect(() => {
-    if (!isStaticResolved || !isDynamicResolved) {
+  useEffect(() => {
+    if (!extensionsResolved) {
       return;
     }
 
     visualization.registerComponentFactory(componentFactory);
-    [...componentFactoryExtensions, ...dynamicComponentFactoryExtensions].forEach((factory) => {
+    componentFactoryExtensions.forEach((factory) => {
       visualization.registerComponentFactory(factory.properties.getFactory);
     });
 
@@ -312,15 +309,9 @@ const Topology: React.FC<
       },
     );
     setVisualizationReady(true);
-  }, [
-    visualization,
-    isStaticResolved,
-    isDynamicResolved,
-    componentFactoryExtensions,
-    dynamicComponentFactoryExtensions,
-  ]);
+  }, [visualization, extensionsResolved, componentFactoryExtensions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!applicationRef.current) {
       applicationRef.current = application;
       return;
@@ -334,7 +325,7 @@ const Topology: React.FC<
     }
   }, [application, visualization]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let resizeTimeout = null;
     if (visualization) {
       if (selectedId) {
@@ -397,7 +388,7 @@ export default withFallback(
       TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
       TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
       {},
-    )(React.memo(Topology)),
+    )(memo(Topology)),
   ),
   ErrorBoundaryFallbackPage,
 );

@@ -1,12 +1,13 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useEffect } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy, getGitService } from '@console/git-service/src';
 import { LoadingBox } from '@console/internal/components/utils';
 import { getStrategyType } from '@console/internal/components/utils/build-utils';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '@console/pipelines-plugin/src/const';
 import { EnvironmentField, useDebounceCallback, useFlag } from '@console/shared/src';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../../../const';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
@@ -24,7 +25,7 @@ type BuildSectionProps = {
   appResources?: AppResources;
 };
 
-export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources }) => {
+export const BuildSection: FC<BuildSectionProps> = ({ values, appResources }) => {
   const { t } = useTranslation();
   const {
     project: { name: namespace },
@@ -38,7 +39,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
 
   const [environments, envsLoaded] = useBuilderImageEnvironments(selectedImage, selectedTag);
 
-  const envs = React.useMemo(() => {
+  const envs = useMemo(() => {
     if (selectedStrategy.type === ImportStrategy.SERVERLESS_FUNCTION) {
       return buildEnv;
     }
@@ -99,11 +100,11 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     }
   }, 2000);
 
-  React.useEffect(() => {
+  useEffect(() => {
     autoSelectPipelines();
   }, [values?.git?.url, isRepositoryEnabled, setFieldValue, autoSelectPipelines]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (values?.formType === 'edit' && values?.pipeline?.enabled) {
       setFieldValue('build.option', BuildOptions.PIPELINES);
     }
@@ -115,7 +116,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
     }
   }, [values, setFieldValue]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       values?.formType !== 'edit' &&
       values.pipeline?.enabled &&
@@ -127,7 +128,7 @@ export const BuildSection: React.FC<BuildSectionProps> = ({ values, appResources
   }, [setFieldValue, values.pipeline?.enabled, values.build?.option, values.formType]);
 
   /** NOTE: Shipwright Builds are not supported with Devfile Import Strategy currently and if required ClusterBuildStrategy for the ImportType is not available */
-  React.useEffect(() => {
+  useEffect(() => {
     if (values?.formType !== 'edit') {
       if (
         values?.import?.selectedStrategy?.type === ImportStrategy.DEVFILE ||

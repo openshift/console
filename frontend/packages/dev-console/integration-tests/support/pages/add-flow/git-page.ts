@@ -1,6 +1,6 @@
 import { getResponseMocks, gitImportRepos } from '../../../testData/git-import/repos';
 import { gitAdvancedOptions, buildConfigOptions, builderImages, messages } from '../../constants';
-import { gitPO } from '../../pageObjects';
+import { gitPO } from '../../pageObjects/add-flow-po';
 import { app } from '../app';
 
 export const gitPage = {

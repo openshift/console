@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import { Component, useState, useMemo, useEffect } from 'react';
+import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel } from '../../models';
@@ -10,7 +9,8 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { BindingName, flatten as bindingsFlatten } from './bindings';
 import { RulesList } from './rules';
 import { DetailsPage } from '../factory/details';
-import { MultiListPage, TextFilter } from '../factory/list-page';
+import { MultiListPage } from '../factory/list-page';
+import { TextFilter } from '../factory/text-filter';
 import {
   ConsoleDataView,
   getNameCellProps,
@@ -20,7 +20,6 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
-import { Kebab, ResourceKebab } from '../utils/kebab';
 import { SectionHeading } from '../utils/headings';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { navFactory } from '../utils/horizontal-nav';
@@ -29,6 +28,7 @@ import { LoadingBox } from '../utils/status-box';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
+import { roleKind, roleType } from './role-type';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
@@ -39,34 +39,9 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-
-const { common } = Kebab.factory;
-
-export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
-
-// const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
-
-export const roleKind = (role) => (role.metadata.namespace ? 'Role' : 'ClusterRole');
-
-const menuActions = [
-  // This page is temporarily disabled until we update the safe resources list.
-  // (kind, role) => ({
-  //   label: 'Add Rule',
-  //   href: addHref(role.metadata.name, role.metadata.namespace),
-  // }),
-  (kind, role) => ({
-    label: i18next.t('public~Add RoleBinding'),
-    href: `/k8s/${
-      role.metadata.namespace
-        ? `ns/${role.metadata.namespace}/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-            role.metadata.name
-          }&namespace=${role.metadata.namespace}`
-        : `cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`
-    }`,
-  }),
-  Kebab.factory.Edit,
-  Kebab.factory.Delete,
-];
+import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { referenceForModel, referenceFor } from '../../module/k8s';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace-always-show' }, { id: 'actions' }];
 
@@ -91,7 +66,7 @@ const getDataViewRows = (data, columns) => {
         ),
       },
       [tableColumnInfo[2].id]: {
-        cell: <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />,
+        cell: <LazyActionMenu context={{ [referenceFor(role)]: role }} />,
         props: actionsCellProps,
       },
     };
@@ -229,7 +204,7 @@ const getBindingsDataViewRows = (data, columns) => {
 
 const useBindingsColumns = () => {
   const { t } = useTranslation();
-  return React.useMemo(
+  return useMemo(
     () => [
       {
         title: t('public~Name'),
@@ -276,15 +251,18 @@ const BindingsListComponent = (props) => {
   const { data, loaded, staticFilters } = props;
 
   // Apply staticFilters to filter the data using table filters
-  const filteredData = React.useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!staticFilters || !data) {
       return data;
     }
 
     const filtersMap = tableFilters(false); // false for fuzzy search
 
+    // Convert staticFilters to array format if it's an object
+    const filtersArray = Array.isArray(staticFilters) ? staticFilters : [staticFilters];
+
     return data.filter((binding) => {
-      return staticFilters.every((filter) => {
+      return filtersArray.every((filter) => {
         const filterKey = Object.keys(filter)[0];
         const filterValue = filter[filterKey];
 
@@ -297,18 +275,17 @@ const BindingsListComponent = (props) => {
   }, [data, staticFilters]);
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView
         {...props}
         data={filteredData}
         loaded={loaded}
         label={t('public~RoleBindings')}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getBindingsDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
@@ -370,6 +347,13 @@ export const RolesDetailsPage = (props) => {
   return (
     <DetailsPage
       {...props}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(k8sObj, obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(props.kindObj)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={[
         navFactory.details(DetailsWithTranslation),
         navFactory.editYaml(),
@@ -380,7 +364,6 @@ export const RolesDetailsPage = (props) => {
           component: BindingsForRolePage,
         },
       ]}
-      menuActions={menuActions}
       breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, location)}
     />
   );
@@ -390,13 +373,18 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
-  const actions = [...common];
   const location = useLocation();
 
   return (
     <DetailsPage
       {...props}
-      menuActions={actions}
+      kind={referenceForModel(props.kindObj)}
+      customActionMenu={(k8sObj, obj) => (
+        <LazyActionMenu
+          context={{ [referenceForModel(props.kindObj)]: obj }}
+          variant={ActionMenuVariant.DROPDOWN}
+        />
+      )}
       pages={pages}
       breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, location)}
     />
@@ -433,19 +421,9 @@ const useRolesColumns = () => {
   ];
 };
 
-export const roleType = (role) => {
-  if (!role) {
-    return undefined;
-  }
-  if (isSystemRole(role)) {
-    return 'system';
-  }
-  return role.metadata.namespace ? 'namespace' : 'cluster';
-};
-
 const useRoleFilterOptions = () => {
   const { t } = useTranslation();
-  return React.useMemo(() => {
+  return useMemo(() => {
     return [
       {
         value: 'cluster',
@@ -469,7 +447,9 @@ const RolesList = (props) => {
   const columns = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
-  const additionalFilterNodes = React.useMemo(
+  const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
+
+  const additionalFilterNodes = useMemo(
     () => [
       <DataViewCheckboxFilter
         key="role-kind"
@@ -482,14 +462,14 @@ const RolesList = (props) => {
     [roleFilterOptions, t],
   );
 
-  const matchesAdditionalFilters = React.useCallback(
+  const matchesAdditionalFilters = useCallback(
     (resource, filters) =>
       filters['role-kind'].length === 0 || filters['role-kind'].includes(roleType(resource)),
     [],
   );
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       {data.length === 0 ? (
         <ConsoleEmptyState title={t('public~No Roles found')}>
           {t(
@@ -503,13 +483,13 @@ const RolesList = (props) => {
           label={t('public~Roles')}
           columns={columns}
           getDataViewRows={getDataViewRows}
-          initialFilters={{ ...initialFiltersDefault, 'role-kind': [] }}
+          initialFilters={initialFilters}
           additionalFilterNodes={additionalFilterNodes}
           matchesAdditionalFilters={matchesAdditionalFilters}
           hideColumnManagement={true}
         />
       )}
-    </React.Suspense>
+    </Suspense>
   );
 };
 

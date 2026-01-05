@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +17,8 @@ interface DefaultDecoratorProps {
   y: number;
 }
 
-const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
-  const ref = React.useRef();
+const EditDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+  const ref = useRef();
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,

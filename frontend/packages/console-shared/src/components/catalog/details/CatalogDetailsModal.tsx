@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { Split, SplitItem, Divider, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ type CatalogDetailsModalProps = {
   onClose: () => void;
 };
 
-const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
+const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
   const { t } = useTranslation();
   const [to, label] = useCtaLink(item?.cta);
 

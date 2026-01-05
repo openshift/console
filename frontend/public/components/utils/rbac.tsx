@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import {
@@ -33,10 +34,10 @@ export const useMultipleAccessReviews = (
   multipleResourceAttributes: AccessReviewResourceAttributes[],
   impersonate?: ImpersonateKind,
 ): [AccessReviewsResult[], boolean] => {
-  const [loading, setLoading] = React.useState(true);
-  const [allowedArr, setAllowedArr] = React.useState<AccessReviewsResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [allowedArr, setAllowedArr] = useState<AccessReviewsResult[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const promises = multipleResourceAttributes.map((resourceAttributes) =>
       checkAccess(resourceAttributes, impersonate),
     );
@@ -60,7 +61,17 @@ export const useMultipleAccessReviews = (
   return [allowedArr, loading];
 };
 
-const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
+type RequireCreatePermissionOwnProps = {
+  model: K8sKind;
+  namespace?: string;
+  children?: ReactNode;
+};
+
+type RequireCreatePermissionProps = RequireCreatePermissionOwnProps & {
+  impersonate?: ImpersonateKind;
+};
+
+const RequireCreatePermission_: FC<RequireCreatePermissionProps> = ({
   model,
   namespace,
   impersonate,
@@ -77,15 +88,14 @@ const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
   );
   return isAllowed ? <>{children}</> : null;
 };
-export const RequireCreatePermission = connect(impersonateStateToProps)(RequireCreatePermission_);
-RequireCreatePermission.displayName = 'RequireCreatePermission';
 
-type RequireCreatePermissionProps = {
-  model: K8sKind;
-  namespace?: string;
-  impersonate?: ImpersonateKind;
-  children: React.ReactNode;
-};
+export const RequireCreatePermission = connect<
+  { impersonate?: ImpersonateKind },
+  {},
+  RequireCreatePermissionOwnProps
+>(impersonateStateToProps)(RequireCreatePermission_);
+
+RequireCreatePermission.displayName = 'RequireCreatePermission';
 
 type AccessReviewsResult = {
   resourceAttributes: AccessReviewResourceAttributes;

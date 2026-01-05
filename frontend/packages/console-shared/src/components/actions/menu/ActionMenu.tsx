@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action, MenuOption, useSafetyFirst } from '@console/dynamic-plugin-sdk';
@@ -14,29 +15,31 @@ type ActionMenuProps = {
   variant?: ActionMenuVariant;
   label?: string;
   className?: string;
+  appendTo?: ComponentProps<typeof Popper>['appendTo'];
 };
 
-const ActionMenu: React.FC<ActionMenuProps> = ({
+const ActionMenu: FC<ActionMenuProps> = ({
   actions,
   options,
   isDisabled,
   variant = ActionMenuVariant.KEBAB,
   label,
   className,
+  appendTo,
 }) => {
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
   const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-  const toggleRef = React.useRef<HTMLButtonElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const menuOptions = options?.length > 0 ? options : actions;
 
   const hideMenu = () => {
     setIsOpen(false);
   };
 
-  const handleHover = React.useCallback(() => {
+  const handleHover = useCallback(() => {
     // Check access when hovering over a kebab to minimize flicker when opened.
     // This depends on `checkAccess` being memoized.
     _.each(actions, (action: Action) => {
@@ -50,7 +53,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   }, [actions]);
 
   // Check if any actions are visible when actions have access reviews.
-  React.useEffect(() => {
+  useEffect(() => {
     if (!actions.length) {
       setVisible(false);
       return;
@@ -103,7 +106,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           popper={menu}
           placement="bottom-end"
           isVisible={isOpen}
-          appendTo={containerRef.current}
+          appendTo={appendTo || containerRef.current}
         />
       </div>
     )

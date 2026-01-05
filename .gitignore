@@ -9,7 +9,6 @@ cypress-a11y-report.json
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
 /frontend/.cache-loader
-/frontend/.claude/settings.local.json
 /frontend/.puppeteer
 /frontend/.webpack-cycles
 /frontend/__coverage__
@@ -26,4 +25,5 @@ cypress-a11y-report.json
 /dynamic-demo-plugin/**/npm-debug.log
 /dynamic-demo-plugin/**/yarn-error.log
 /dynamic-demo-plugin/**/dist
+**/.claude/settings.local.json
 **/chartstore-*/

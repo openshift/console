@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import { useCallback } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { DrawerPanelContent } from '@patternfly/react-core';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
@@ -7,7 +8,7 @@ import { TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY } from '../../const';
 import './TopologySideBarTabSection.scss';
 
 type TopologySideBarProps = {
-  children?: React.ReactNode;
+  children?: ReactNode;
   onClose: () => void;
 };
 
@@ -18,7 +19,7 @@ const TopologySideBar: React.FCC<TopologySideBarProps> = ({ children, onClose })
     TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY,
     DEFAULT_SIDE_BAR_SIZE,
   );
-  const handleResizeCallback = React.useCallback(
+  const handleResizeCallback = useCallback(
     (_event, width: number) => {
       setSideBarSize(width);
     },

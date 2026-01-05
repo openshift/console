@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 /* eslint-disable camelcase */
 import { t_color_blue_50 as blue300 } from '@patternfly/react-tokens';
@@ -11,7 +11,7 @@ import { calculateRadius } from '@console/shared/';
 
 const colorScale = [blue300.value, blue200.value, blue100.value];
 
-export const PodStatusChart: React.FC<PodStatusChartProps> = ({ statuses, subTitle }) => {
+export const PodStatusChart: FC<PodStatusChartProps> = ({ statuses, subTitle }) => {
   const [ref, width] = useRefWidth();
   const data = _.map(statuses, (podList, status) => {
     const x = status;

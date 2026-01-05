@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { environment } from '../../views/environment';
-import { guidedTour } from '../../views/guided-tour';
 import { listPage } from '../../views/list-page';
 import * as yamlEditor from '../../views/yaml-editor';
 
@@ -12,7 +11,6 @@ const WORKLOAD_NAME = `filter-${testName}`;
 describe('Interacting with the environment variable editor', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
     cy.visit(`/k8s/ns/${testName}/deployments`);
     listPage.clickCreateYAMLbutton();

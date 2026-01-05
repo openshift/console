@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   Edge,
   EdgeTerminalType,
@@ -15,16 +15,12 @@ import { EVENT_MARKER_RADIUS } from '../../const';
 type EventingPubSubLinkProps = {
   element: Edge;
   dragging: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 } & WithSourceDragProps &
   WithTargetDragProps &
   WithContextMenuProps;
 
-const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
-  element,
-  children,
-  ...others
-}) => {
+const EventingPubSubLink: FC<EventingPubSubLinkProps> = ({ element, children, ...others }) => {
   const resourceSourceObj = getTopologyResourceObject(element.getSource().getData());
   const edgeObj = getTopologyResourceObject(element.getData());
   const edgeHasFilter =

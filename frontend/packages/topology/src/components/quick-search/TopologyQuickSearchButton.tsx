@@ -1,14 +1,14 @@
-import * as React from 'react';
+import type { ComponentProps, FC } from 'react';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import QuickSearchIcon from '@console/shared/src/components/quick-search/QuickSearchIcon';
 
 interface QuickSearchButtonProps {
   onClick: () => void;
-  tooltipPosition?: React.ComponentProps<typeof Tooltip>['position'];
+  tooltipPosition?: ComponentProps<typeof Tooltip>['position'];
 }
 
-const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({
+const TopologyQuickSearchButton: FC<QuickSearchButtonProps> = ({
   onClick,
   tooltipPosition = 'bottom',
 }) => {

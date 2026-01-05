@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -22,7 +23,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
 
-const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
+const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
   cancel,
   close,
   descriptionKey,
@@ -35,7 +36,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
   resource,
 }) => {
   const [handlePromise, , errorMessage] = usePromiseHandler<K8sResourceCommon>();
-  const [labels, setLabels] = React.useState(
+  const [labels, setLabels] = useState(
     SelectorInput.arrayify(_.get(resource, path.split('/').slice(1))),
   );
   const [watchedResource, watchedResourceLoaded] = useK8sWatchResource<K8sResourceCommon>({
@@ -43,18 +44,18 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
     name: resource?.metadata?.name,
     namespace: resource?.metadata?.namespace,
   });
-  const [stale, setStale] = React.useState(false);
-  const [isInputValid, setIsInputValid] = React.useState(true);
+  const [stale, setStale] = useState(false);
+  const [isInputValid, setIsInputValid] = useState(true);
   const createPath = !labels.length;
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (watchedResourceLoaded && !_.isEmpty(watchedResource)) {
       setStale(!_.isEqual(resource?.metadata?.labels, watchedResource?.metadata?.labels));
     }
   }, [path, resource, watchedResource, watchedResourceLoaded]);
 
-  const submit = React.useCallback(
+  const submit = useCallback(
     (e): void => {
       e.preventDefault();
       const data = [
@@ -137,7 +138,7 @@ const BaseLabelsModal: React.FC<BaseLabelsModalProps> = ({
   );
 };
 
-export const LabelsModal: React.FC<LabelsModalProps> = (props) => (
+export const LabelsModal: FC<LabelsModalProps> = (props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
 );
 export const labelsModalLauncher = createModalLauncher<LabelsModalProps>(LabelsModal);

@@ -40,6 +40,8 @@ export enum ValidSubscriptionValue {
   RequiresSeparateSubscription = 'Requires separate subscription',
 }
 
+export type TokenizedAuthProvider = 'AWS' | 'Azure' | 'GCP';
+
 export type OperatorHubItem = {
   authentication: AuthenticationKind;
   catalogSource: string;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useContext, useState, useCallback } from 'react';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { TFunction } from 'i18next';
@@ -41,21 +42,21 @@ export const renderPortField = (
   );
 };
 
-export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+export const HTTPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
   const { t } = useTranslation();
   const {
     values: { healthChecks, resources },
     setFieldValue,
   } = useFormikContext<FormikValues>();
-  const { viewOnly } = React.useContext(HealthCheckContext);
+  const { viewOnly } = useContext(HealthCheckContext);
   const httpHeaders = healthChecks?.[probeType]?.data?.httpGet?.httpHeaders;
   const initialNameValuePairs = !_.isEmpty(httpHeaders)
     ? httpHeaders.map((val) => _.values(val))
     : [['', '']];
-  const [nameValue, setNameValue] = React.useState(initialNameValuePairs);
+  const [nameValue, setNameValue] = useState(initialNameValuePairs);
   const portFieldName = `healthChecks.${probeType}.data.httpGet.port`;
 
-  const handleNameValuePairs = React.useCallback(
+  const handleNameValuePairs = useCallback(
     ({ nameValuePairs }) => {
       const updatedNameValuePairs = _.compact(
         nameValuePairs.map(([name, value]) => {
@@ -108,22 +109,22 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
   );
 };
 
-export const TCPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+export const TCPRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
   const { t } = useTranslation();
   const {
     values: { resources },
   } = useFormikContext<FormikValues>();
-  const { viewOnly } = React.useContext(HealthCheckContext);
+  const { viewOnly } = useContext(HealthCheckContext);
   const portFieldName = `healthChecks.${probeType}.data.tcpSocket.port`;
   return renderPortField(portFieldName, resources, viewOnly, t);
 };
 
-export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType }) => {
+export const CommandRequestTypeForm: FC<RequestTypeFormProps> = ({ probeType }) => {
   const { t } = useTranslation();
   const {
     values: { healthChecks },
   } = useFormikContext<FormikValues>();
-  const { viewOnly } = React.useContext(HealthCheckContext);
+  const { viewOnly } = useContext(HealthCheckContext);
   const commands = healthChecks?.[probeType]?.data?.exec?.command || [''];
   return (
     <TextColumnField

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -23,11 +24,9 @@ const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
   }
   const params = new URLSearchParams();
   queries.forEach((q, index) => params.set(`query${index}`, q));
+  params.set('namespace', namespace);
   return (
-    <Link
-      aria-label={ariaChartLinkLabel}
-      to={`/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`}
-    >
+    <Link aria-label={ariaChartLinkLabel} to={`/monitoring/query-browser?${params.toString()}`}>
       {t('devconsole~Inspect')}
     </Link>
   );
@@ -48,7 +47,7 @@ type MonitoringDashboardGraphProps = {
 const DEFAULT_TIME_SPAN = 30 * 60 * 1000;
 const DEFAULT_SAMPLES = 30;
 
-export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> = ({
+export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
   query,
   namespace,
   title,
@@ -59,7 +58,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const onZoom = React.useCallback(
+  const onZoom = useCallback(
     (from, to) => {
       dispatch(dashboardsSetEndTime(to, 'dev'));
       dispatch(dashboardsSetTimespan(to - from, 'dev'));

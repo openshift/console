@@ -1,8 +1,9 @@
-import * as React from 'react';
+import type { ComponentType } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
-import { RESULTS_TYPE } from '../../reducers/dashboards';
+import { RESULTS_TYPE } from '../../reducers/dashboard-results';
 import { NotificationAlerts } from '../../reducers/observe';
 import {
   StopWatchPrometheusAction,
@@ -43,13 +44,13 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
 export const withDashboardResources = <P extends DashboardItemProps>(
-  WrappedComponent: React.ComponentType<P>,
+  WrappedComponent: ComponentType<P>,
 ) =>
   connect<StateProps, DispatchProps, Diff<P, DashboardItemProps>>(
     mapStateToProps,
     mapDispatchToProps,
   )(
-    class WithDashboardResources extends React.Component<
+    class WithDashboardResources extends Component<
       WithDashboardResourcesProps,
       WithDashboardResourcesState
     > {

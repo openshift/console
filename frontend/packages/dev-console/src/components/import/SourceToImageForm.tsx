@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import BuilderSection from './builder/BuilderSection';
@@ -13,7 +13,7 @@ import NamespaceSection from './NamespaceSection';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 
-const SourceToImageForm: React.FC<
+export const SourceToImageForm: FC<
   FormikProps<FormikValues & GitImportFormData> & SourceToImageFormProps
 > = ({
   values,
@@ -58,5 +58,3 @@ const SourceToImageForm: React.FC<
     </form>
   );
 };
-
-export default SourceToImageForm;

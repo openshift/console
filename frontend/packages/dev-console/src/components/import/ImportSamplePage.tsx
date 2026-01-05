@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -6,8 +7,6 @@ import { FirehoseResource, LoadingBox, history } from '@console/internal/compone
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PipelineType } from '@console/pipelines-plugin/src/components/import/import-types';
-import { defaultRepositoryFormValues } from '@console/pipelines-plugin/src/components/repository/consts';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
@@ -19,17 +18,19 @@ import {
   getSampleContextDir,
 } from '../../utils/imagestream-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import { PipelineType } from '../pipeline-section/import-types';
+import { defaultRepositoryFormValues } from '../pipeline-section/pipeline/utils';
 import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources } from './import-submit-utils';
 import { BaseFormData, BuildOptions, GitImportFormData } from './import-types';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
-const ImportSamplePage: React.FC = () => {
+const ImportSamplePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
 
-  const imageStreamResource: FirehoseResource = React.useMemo(
+  const imageStreamResource: FirehoseResource = useMemo(
     () => ({
       kind: ImageStreamModel.kind,
       prop: 'imageStreams',

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
-const HelpTourText: React.FC = () => {
+const HelpTourText: FC = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -18,7 +18,7 @@ const HelpTourText: React.FC = () => {
 
 export const helpTourText = <HelpTourText />;
 
-const UserPrefrencesTourText: React.FC = () => {
+const UserPrefrencesTourText: FC = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -31,7 +31,7 @@ const UserPrefrencesTourText: React.FC = () => {
 
 export const userPreferencesTourText = <UserPrefrencesTourText />;
 
-export const FinishTourText: React.FC = () => {
+export const FinishTourText: FC = () => {
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
     kind: referenceForModel(ConsoleLinkModel),

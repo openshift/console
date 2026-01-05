@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -7,7 +8,7 @@ import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import { SingleTypeaheadFieldProps, SelectInputOption } from './field-types';
 import { getFieldId } from './field-utils';
 
-const SingleTypeaheadField: React.FC<SingleTypeaheadFieldProps> = ({
+const SingleTypeaheadField: FC<SingleTypeaheadFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -23,8 +24,8 @@ const SingleTypeaheadField: React.FC<SingleTypeaheadFieldProps> = ({
 }) => {
   const [field, { touched, error }] = useField<string | string[]>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [newOptions, setNewOptions] = React.useState<SelectInputOption[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [newOptions, setNewOptions] = useState<SelectInputOption[]>([]);
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';

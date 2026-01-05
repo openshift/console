@@ -43,7 +43,7 @@ describe('translateExtension', () => {
       },
     };
 
-    const t = jest.fn((key) => `translated: ${key}`);
+    const t = jest.fn<string, [string]>((key) => `translated: ${key}`);
 
     expect(translateExtension(testExtension, t)).toEqual({
       type: 'Foo/Bar',
@@ -71,7 +71,7 @@ describe('translateExtension', () => {
 
   it('returns the same extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
-    const t = jest.fn<string>();
+    const t = jest.fn<string, []>();
 
     expect(translateExtension(testExtension, t)).toBe(testExtension);
     expect(t).not.toHaveBeenCalled();

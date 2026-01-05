@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getNameCellProps } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -13,17 +13,17 @@ import { tableColumnInfo } from './RepositoriesHeader';
 
 const revisionReference = referenceForModel(HelmChartRepositoryModel);
 
-const NamespaceCell: React.FC = () => {
+const NamespaceCell: FC = () => {
   const { t } = useTranslation();
   return <>{t('helm-plugin~All Namespaces')}</>;
 };
 
-const DisabledCell: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
+const DisabledCell: FC<{ disabled?: boolean }> = ({ disabled }) => {
   const { t } = useTranslation();
   return <>{disabled ? t('helm-plugin~True') : t('helm-plugin~False')}</>;
 };
 
-export const getDataViewRows: GetDataViewRows<K8sResourceKind, undefined> = (data, columns) => {
+export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   return data.map(({ obj }) => {
     const objReference = referenceFor(obj);
     const context = { [objReference]: obj };

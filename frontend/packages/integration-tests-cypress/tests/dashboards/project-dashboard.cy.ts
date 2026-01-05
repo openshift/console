@@ -1,10 +1,8 @@
 import { checkErrors, testName } from '../../support';
-import { guidedTour } from '../../views/guided-tour';
 
 describe('Project dashboard', () => {
   before(() => {
     cy.login();
-    guidedTour.close();
     cy.createProjectWithCLI(testName);
   });
 

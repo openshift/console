@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap } from '@console/dynamic-plugin-sdk';
 import { ConsoleEmptyState } from './utils/status-box';
@@ -15,7 +15,7 @@ export enum ConditionTypes {
   K8sResource = 'K8sResource',
 }
 
-export const Conditions: React.FC<ConditionsProps> = ({
+export const Conditions: FC<ConditionsProps> = ({
   conditions,
   type = ConditionTypes.K8sResource,
 }) => {

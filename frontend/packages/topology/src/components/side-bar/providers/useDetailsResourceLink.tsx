@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { Component } from 'react';
+import { useMemo } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import {
   DetailsResourceLink,
@@ -6,13 +7,11 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 
-export const useDetailsResourceLink = (
-  element: GraphElement,
-): React.Component | null | undefined => {
+export const useDetailsResourceLink = (element: GraphElement): Component | null | undefined => {
   const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(
     isDetailsResourceLink,
   );
-  const resourceLink = React.useMemo(() => {
+  const resourceLink = useMemo(() => {
     return resolved
       ? resurceLinkExtension
           .sort((a, b) => b.properties.priority - a.properties.priority)

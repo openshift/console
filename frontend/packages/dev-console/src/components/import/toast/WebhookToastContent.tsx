@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { RepositoryModel } from '@console/pipelines-plugin/src/models';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { RepositoryModel } from '../../../models/pipelines';
 import { GitData, GitReadableTypes } from '../import-types';
 
 interface WebhookToastContentProps {
@@ -11,7 +11,7 @@ interface WebhookToastContentProps {
   projectName: string;
 }
 
-const WebhookToastContent: React.FC<WebhookToastContentProps> = ({
+const WebhookToastContent: FC<WebhookToastContentProps> = ({
   repositoryName,
   git,
   projectName,

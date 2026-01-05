@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -20,7 +20,7 @@ const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-export const ClusterDashboard: React.FC<{}> = () => {
+export const ClusterDashboard: FC<{}> = () => {
   const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
     InfrastructureModel,
     'cluster',

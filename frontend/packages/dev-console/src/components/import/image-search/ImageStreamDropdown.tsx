@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext, useCallback, useEffect } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -21,9 +21,7 @@ const ImageStreamDropdown: React.FCC<{
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream, formType } = _.get(values, formContextField) || values;
   const { isi: initialIsi } = _.get(initialValues, formContextField) || initialValues;
-  const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
-    ImageStreamContext,
-  );
+  const { state, dispatch, hasImageStreams, setHasImageStreams } = useContext(ImageStreamContext);
   const { accessLoading, loading } = state;
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
@@ -42,7 +40,7 @@ const ImageStreamDropdown: React.FCC<{
       : t('devconsole~Select Image Stream');
   };
 
-  const onDropdownChange = React.useCallback(
+  const onDropdownChange = useCallback(
     (img: string) => {
       setFieldValue(
         `${fieldPrefix}imageStream.tag`,
@@ -79,12 +77,12 @@ const ImageStreamDropdown: React.FCC<{
     return namespace === imageStream.namespace;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     imageStream.image && onDropdownChange(imageStream.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.image, isStreamsAvailable]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     reloadCount && imageStream.image && onDropdownChange(imageStream.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadCount, isStreamsAvailable]);

@@ -1,23 +1,6 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { DetailsPage } from './factory/details';
-import { Table } from './factory/table';
-import { Kebab } from './utils/kebab';
-import { SectionHeading } from './utils/headings';
-import { navFactory } from './utils/horizontal-nav';
-import { ResourceSummary } from './utils/details-page';
-import { humanizeBinaryBytes } from './utils/units';
-import { resourcePath } from './utils/resource-link';
-import { ExampleDockerCommandPopover } from './image-stream';
-import { ImageStreamTimeline } from './image-stream-timeline';
-import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
-import { sortable } from '@patternfly/react-table';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -26,12 +9,23 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { DetailsPage } from './factory/details';
+import { SectionHeading } from './utils/headings';
+import { navFactory } from './utils/horizontal-nav';
+import { ResourceSummary } from './utils/details-page';
+import { humanizeBinaryBytes } from './utils/units';
+import { resourcePath } from './utils/resource-link';
+import { ExampleDockerCommandPopover } from './image-stream';
+import { ImageStreamTimeline } from './image-stream-timeline';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
-
-const { common } = Kebab.factory;
-const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
@@ -50,62 +44,9 @@ const splitEnv = (nameValue: string) => {
   };
 };
 
-const supportedPlatformColumnClasses = [
-  'pf-m-hidden pf-m-visible-on-sm',
-  'pf-m-hidden pf-m-visible-on-sm',
-  'pf-m-hidden pf-m-visible-on-lg',
-];
-
-const SupportedPlatformsTableRows = ({ componentProps: { data } }) => {
-  return _.map(data, (submanifest: RowSupportedPlatformData) => {
-    const { os, architecture, digest } = submanifest;
-    return [
-      {
-        title: os,
-        props: {
-          className: supportedPlatformColumnClasses[0],
-        },
-      },
-      {
-        title: architecture,
-        props: {
-          className: supportedPlatformColumnClasses[1],
-        },
-      },
-      {
-        title: digest,
-        props: {
-          className: supportedPlatformColumnClasses[2],
-        },
-      },
-    ];
-  });
-};
-
 export const SupportedPlatformsTable = (props) => {
   const { t } = useTranslation();
-  const { submanifests, policy, ...tableProps } = props;
-
-  const SupportedPlatformsTableHeader = () => [
-    {
-      title: t('public~OS'),
-      sortField: 'os',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[0] },
-    },
-    {
-      title: t('public~Architecture'),
-      sortField: 'architecture',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[1] },
-    },
-    {
-      title: t('public~Identifier'),
-      sortField: 'digest',
-      transforms: [sortable],
-      props: { className: supportedPlatformColumnClasses[2] },
-    },
-  ];
+  const { submanifests, policy, heading } = props;
 
   if (!policy || submanifests.length === 0) {
     // If the policy does not support Manifest Lists, it exits.
@@ -115,17 +56,27 @@ export const SupportedPlatformsTable = (props) => {
 
   return (
     <>
-      {props.heading && <SectionHeading text={props.heading} />}
-      <Table
-        {...tableProps}
-        aria-label={t('public~Supported Platforms')}
-        loaded={true}
-        label={props.heading}
-        data={submanifests}
-        Header={SupportedPlatformsTableHeader}
-        Rows={SupportedPlatformsTableRows}
-        virtualize={false}
-      />
+      {heading && <SectionHeading text={heading} />}
+      <div className="co-table-container">
+        <Table variant="compact" borders gridBreakPoint="">
+          <Thead>
+            <Tr>
+              <Th modifier="nowrap">{t('public~OS')}</Th>
+              <Th modifier="nowrap">{t('public~Architecture')}</Th>
+              <Th modifier="nowrap">{t('public~Identifier')}</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {submanifests.map((submanifest, index) => (
+              <Tr key={index}>
+                <Td>{submanifest.os}</Td>
+                <Td>{submanifest.architecture}</Td>
+                <Td>{submanifest.digest}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </div>
     </>
   );
 };
@@ -243,22 +194,22 @@ export const ImageStreamTagsDetails: React.FCC<ImageStreamTagsDetailsProps> = ({
           <span className="pf-v6-u-text-color-subtle">{t('public~No labels')}</span>
         ) : (
           <div className="co-table-container">
-            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v6-c-table__thead">
-                <tr className="pf-v6-c-table__tr">
-                  <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-                  <th className="pf-v6-c-table__th">{t('public~Value')}</th>
-                </tr>
-              </thead>
-              <tbody className="pf-v6-c-table__tbody">
+            <Table variant="compact" borders gridBreakPoint="">
+              <Thead>
+                <Tr>
+                  <Th>{t('public~Name')}</Th>
+                  <Th>{t('public~Value')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {_.map(sortedLabels, ({ name, value }) => (
-                  <tr className="pf-v6-c-table__tr" key={name}>
-                    <td className="pf-v6-c-table__td">{name}</td>
-                    <td className="pf-v6-c-table__td">{value}</td>
-                  </tr>
+                  <Tr key={name}>
+                    <Td>{name}</Td>
+                    <Td>{value}</Td>
+                  </Tr>
                 ))}
-              </tbody>
-            </table>
+              </Tbody>
+            </Table>
           </div>
         )}
       </PaneBodyGroup>
@@ -268,25 +219,25 @@ export const ImageStreamTagsDetails: React.FCC<ImageStreamTagsDetailsProps> = ({
           <span className="pf-v6-u-text-color-subtle">{t('public~No environment variables')}</span>
         ) : (
           <div className="co-table-container">
-            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v6-c-table__thead">
-                <tr className="pf-v6-c-table__tr">
-                  <th className="pf-v6-c-table__th">{t('public~Name')}</th>
-                  <th className="pf-v6-c-table__th">{t('public~Value')}</th>
-                </tr>
-              </thead>
-              <tbody className="pf-v6-c-table__tbody">
+            <Table variant="compact" borders gridBreakPoint="">
+              <Thead>
+                <Tr>
+                  <Th>{t('public~Name')}</Th>
+                  <Th>{t('public~Value')}</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {_.map(config.Env, (nameValueStr, i) => {
                   const pair = splitEnv(nameValueStr);
                   return (
-                    <tr className="pf-v6-c-table__tr" key={i}>
-                      <td className="pf-v6-c-table__td">{pair.name}</td>
-                      <td className="pf-v6-c-table__td">{pair.value}</td>
-                    </tr>
+                    <Tr key={i}>
+                      <Td>{pair.name}</Td>
+                      <Td>{pair.value}</Td>
+                    </Tr>
                   );
                 })}
-              </tbody>
-            </table>
+              </Tbody>
+            </Table>
           </div>
         )}
       </PaneBodyGroup>
@@ -309,7 +260,7 @@ const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
   return { imageStreamName, tag };
 };
 
-const ImageStreamTagHistory: React.FC<ImageStreamTagHistoryProps> = ({
+const ImageStreamTagHistory: React.FCC<ImageStreamTagHistoryProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
@@ -355,7 +306,6 @@ export const ImageStreamTagsDetailsPage: React.FCC<ImageStreamTagsDetailsPagePro
         ];
       }}
       kind={ImageStreamTagsReference}
-      menuActions={menuActions}
       resources={[
         {
           kind: ImageStreamsReference,

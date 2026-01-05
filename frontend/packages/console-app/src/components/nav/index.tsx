@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { Nav, NavProps, PageSidebar, PageSidebarBody } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import NavHeader from './NavHeader';
@@ -10,7 +11,7 @@ type NavigationProps = {
   isNavOpen: boolean;
 };
 
-export const Navigation: React.FC<NavigationProps> = React.memo(function Navigation({
+export const Navigation: FC<NavigationProps> = memo(function Navigation({
   isNavOpen,
   onNavSelect,
   onPerspectiveSelected,

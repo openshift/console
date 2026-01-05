@@ -1,5 +1,7 @@
-import * as React from 'react';
+import { useMemo, Suspense } from 'react';
+import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
@@ -16,12 +18,13 @@ import {
   referenceForModel,
   referenceFor,
   TableColumn,
+  podPhaseFilterReducer,
+  PodKind,
 } from '../module/k8s';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
 import { Firehose } from './utils/firehose';
 import { FirehoseResourcesResult } from './utils/types';
-import { Kebab } from './utils/kebab';
 import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
@@ -29,7 +32,7 @@ import { navFactory } from './utils/horizontal-nav';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
-import { PodList, getFilters as getPodFilters } from './pod';
+import { PodList } from './pod-list';
 import { JobsList } from './job';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
@@ -37,17 +40,40 @@ import {
   actionsCellProps,
   cellIsStickyProps,
   getNameCellProps,
-  initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from './utils/status-box';
-
-const { common } = Kebab.factory;
-export const menuActions = [...common];
+import * as _ from 'lodash';
 
 const kind = referenceForModel(CronJobModel);
+
+const getPodFilters = (t: TFunction): RowFilter<PodKind>[] => [
+  {
+    filterGroupName: t('public~Status'),
+    type: 'pod-status',
+    filter: (phases, pod) => {
+      if (!phases || !phases.selected || !phases.selected.length) {
+        return true;
+      }
+      const phase = podPhaseFilterReducer(pod);
+      return phases.selected.includes(phase) || !_.includes(phases.all, phase);
+    },
+    reducer: podPhaseFilterReducer,
+    items: [
+      { id: 'Running', title: t('public~Running') },
+      { id: 'Pending', title: t('public~Pending') },
+      { id: 'Terminating', title: t('public~Terminating') },
+      { id: 'CrashLoopBackOff', title: t('public~CrashLoopBackOff') },
+      // Use title "Completed" to match what appears in the status column for the pod.
+      // The pod phase is "Succeeded," but the container state is "Completed."
+      { id: 'Succeeded', title: t('public~Completed') },
+      { id: 'Failed', title: t('public~Failed') },
+      { id: 'Unknown', title: t('public~Unknown') },
+    ],
+  },
+];
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -64,7 +90,7 @@ const BooleanDisplay: React.FCC<{ value?: boolean }> = ({ value }) => {
   return value ? t('public~True') : t('public~False');
 };
 
-const getDataViewRows: GetDataViewRows<CronJobKind, undefined> = (data, columns) => {
+const getDataViewRows: GetDataViewRows<CronJobKind> = (data, columns) => {
   return data.map(({ obj: cronjob }) => {
     const { name, namespace } = cronjob.metadata;
     const resourceKind = referenceFor(cronjob);
@@ -214,7 +240,7 @@ const getPodsWatcher = (namespace: string) => {
 
 export const CronJobPodsComponent: React.FCC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const podFilters = React.useMemo(() => getPodFilters(t), [t]);
+  const podFilters = useMemo(() => getPodFilters(t), [t]);
   return (
     <PaneBody>
       <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
@@ -277,7 +303,7 @@ export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj
 
 const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   const { t } = useTranslation();
-  const columns: TableColumn<CronJobKind>[] = React.useMemo(() => {
+  const columns: TableColumn<CronJobKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
@@ -344,18 +370,17 @@ export const CronJobsList: React.FCC<CronJobsListProps> = ({ data, loaded, ...pr
   const columns = useCronJobsColumns();
 
   return (
-    <React.Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox />}>
       <ConsoleDataView<CronJobKind>
         {...props}
         label={CronJobModel.labelPlural}
         data={data}
         loaded={loaded}
         columns={columns}
-        initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
       />
-    </React.Suspense>
+    </Suspense>
   );
 };
 

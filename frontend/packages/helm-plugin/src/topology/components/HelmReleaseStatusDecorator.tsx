@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
@@ -13,13 +14,13 @@ type HelmReleaseStatusDecoratorProps = {
   y: number;
 };
 
-const HelmReleaseStatusDecorator: React.FC<HelmReleaseStatusDecoratorProps> = ({
+const HelmReleaseStatusDecorator: FC<HelmReleaseStatusDecoratorProps> = ({
   element,
   radius,
   x,
   y,
 }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const { t } = useTranslation();
   const { data } = element.getData();
 

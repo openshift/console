@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useMemo } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -32,7 +33,7 @@ type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
-const CreateKnatifyPage: React.FunctionComponent = () => {
+const CreateKnatifyPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();
@@ -44,7 +45,7 @@ const CreateKnatifyPage: React.FunctionComponent = () => {
   const perspectiveExtensions = usePerspectives();
   const [hpa, hpaLoaded, hpaError] = useRelatedHPA(apiVersion, kind, appName, namespace);
 
-  const watchedResources = React.useMemo(
+  const watchedResources = useMemo(
     () => ({
       projects: {
         kind: ProjectModel.kind,
