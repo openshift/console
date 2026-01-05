@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Status } from '@console/shared/src/components/status/Status';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';

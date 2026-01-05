@@ -1,5 +1,5 @@
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';

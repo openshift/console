@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, MouseEvent, Ref, ReactNode, ComponentProps, ComponentType } from 'react';
 import { useState } from 'react';
 import { connect } from 'react-redux';

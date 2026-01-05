@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 

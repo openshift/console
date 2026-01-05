@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { STORAGE_PREFIX } from '@console/shared/src/constants';
 import { coFetchJSON } from '../../co-fetch';

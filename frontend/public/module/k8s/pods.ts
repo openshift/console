@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import i18next from 'i18next';
 import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';

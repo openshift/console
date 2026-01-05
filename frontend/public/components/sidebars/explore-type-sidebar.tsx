@@ -1,6 +1,6 @@
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import {
   Breadcrumb,
   BreadcrumbItem,

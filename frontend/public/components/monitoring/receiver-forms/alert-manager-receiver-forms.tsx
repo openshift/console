@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, tsdoc/syntax */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { FC, memo, useEffect, useReducer, useState, Ref } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ReactElement } from 'react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';

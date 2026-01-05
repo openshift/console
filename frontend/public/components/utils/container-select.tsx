@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { FC, Ref, useState } from 'react';
 import {
   Divider,

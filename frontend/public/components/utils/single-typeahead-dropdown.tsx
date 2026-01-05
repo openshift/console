@@ -13,7 +13,7 @@ import {
   TextInputGroupUtilities,
   TextInputGroupMainProps,
 } from '@patternfly/react-core';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';

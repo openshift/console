@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Component } from 'react';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

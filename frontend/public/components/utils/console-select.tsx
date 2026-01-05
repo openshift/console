@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';

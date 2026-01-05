@@ -1,5 +1,5 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {

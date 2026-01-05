@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '@console/dynamic-plugin-sdk';
 

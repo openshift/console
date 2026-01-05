@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { K8sModel, UserInfo } from '@console/internal/module/k8s';

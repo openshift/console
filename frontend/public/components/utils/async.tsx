@@ -1,5 +1,5 @@
 import { Component as ReactComponent, ComponentType, ComponentProps } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { LoadingBox } from './status-box';
 

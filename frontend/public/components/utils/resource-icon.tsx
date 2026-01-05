@@ -1,5 +1,5 @@
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ResourceIconProps } from '@console/dynamic-plugin-sdk';

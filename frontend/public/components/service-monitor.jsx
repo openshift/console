@@ -1,5 +1,5 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { DASH } from '@console/shared/src/constants/ui';
 
 import { ListPage } from './factory';

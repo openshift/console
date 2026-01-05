@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Fragment } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Button, Divider } from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

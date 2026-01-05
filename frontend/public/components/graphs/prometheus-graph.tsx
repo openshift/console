@@ -1,5 +1,5 @@
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, ComponentType, ReactNode, Ref } from 'react';
 import { forwardRef } from 'react';
 import { connect } from 'react-redux';

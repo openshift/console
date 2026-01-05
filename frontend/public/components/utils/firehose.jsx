@@ -1,5 +1,5 @@
 /* eslint-disable tsdoc/syntax */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { memo, Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';

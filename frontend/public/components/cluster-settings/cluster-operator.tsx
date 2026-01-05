@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useLocation } from 'react-router-dom-v5-compat';
 import {
   Alert,

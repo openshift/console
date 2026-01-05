@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { OAuthModel } from '../../models';
 import { IdentityProvider, k8sGet, k8sPatch, OAuthKind } from '../../module/k8s';

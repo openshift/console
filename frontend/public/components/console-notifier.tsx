@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared/src/constants/common';

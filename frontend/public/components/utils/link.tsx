@@ -1,6 +1,6 @@
 import type { ReactNode, ComponentProps } from 'react';
 import { useState } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';

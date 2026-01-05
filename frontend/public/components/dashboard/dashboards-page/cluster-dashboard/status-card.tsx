@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Link } from 'react-router-dom-v5-compat';
