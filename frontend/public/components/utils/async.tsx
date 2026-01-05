@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component as ReactComponent, ComponentType, ComponentProps } from 'react';
 import * as _ from 'lodash-es';
 
 import { LoadingBox } from './status-box';
@@ -6,15 +6,14 @@ import { LoadingBox } from './status-box';
 /**
  * FIXME: Comparing two functions is not the *best* solution, but we can handle false negatives.
  */
-const sameLoader = (a: () => Promise<React.ComponentType>) => (
-  b: () => Promise<React.ComponentType>,
-) => a?.name === b?.name && (a || 'a').toString() === (b || 'b').toString();
+const sameLoader = (a: () => Promise<ComponentType>) => (b: () => Promise<ComponentType>) =>
+  a?.name === b?.name && (a || 'a').toString() === (b || 'b').toString();
 
 enum AsyncComponentError {
   ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
 
-export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncComponentState> {
+export class AsyncComponent extends ReactComponent<AsyncComponentProps, AsyncComponentState> {
   state: AsyncComponentState = { Component: null, loader: null };
   props: AsyncComponentProps;
 
@@ -91,14 +90,12 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
   }
 }
 
-export type AsyncComponentProps = Pick<React.ComponentProps<typeof LoadingBox>, 'blame'> & {
-  loader: () => Promise<React.ComponentType>;
-  LoadingComponent?: React.ComponentType<
-    Partial<Pick<React.ComponentProps<typeof LoadingBox>, 'blame'>>
-  >;
+export type AsyncComponentProps = Pick<ComponentProps<typeof LoadingBox>, 'blame'> & {
+  loader: () => Promise<ComponentType>;
+  LoadingComponent?: ComponentType<Partial<Pick<ComponentProps<typeof LoadingBox>, 'blame'>>>;
 } & any;
 
 export type AsyncComponentState = {
-  Component: React.ComponentType;
-  loader: () => Promise<React.ComponentType>;
+  Component: ComponentType;
+  loader: () => Promise<ComponentType>;
 };

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { configure, render, screen } from '@testing-library/react';
 import * as FileUploadContextModule from '@console/app/src/components/file-upload/file-upload-context';
 import * as AddToProjectAccessModule from '@console/dev-console/src/utils/useAddToProjectAccess';
@@ -46,7 +46,7 @@ jest.mock('@console/app/src/components/file-upload/file-upload-context', () => (
 const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
 const useIsMobileMock = SharedHooks.useIsMobile as jest.Mock;
 const useAddToProjectAccessMock = AddToProjectAccessModule.useAddToProjectAccess as jest.Mock;
-const useContextMock = React.useContext as jest.Mock;
+const useContextMock = useContext as jest.Mock;
 
 configure({ testIdAttribute: 'data-test-id' });
 
@@ -93,7 +93,7 @@ describe('TopologyPageToolbar tests', () => {
   });
 
   it('should not show toolbar when no namespace is set', () => {
-    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+    useContextMock.mockImplementation((ctx) => {
       if (ctx === FileUploadContextModule.FileUploadContext) {
         return { extensions: [] };
       }
@@ -113,7 +113,7 @@ describe('TopologyPageToolbar tests', () => {
   });
 
   it('should disable view switcher when model is empty', () => {
-    jest.spyOn(React, 'useContext').mockImplementation((ctx) => {
+    useContextMock.mockImplementation((ctx) => {
       if (ctx === FileUploadContextModule.FileUploadContext) {
         return { extensions: [] };
       }

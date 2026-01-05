@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, ComponentType, memo, useCallback, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import {
   Accordion,
@@ -70,7 +70,7 @@ const getTop3Groups = (
   return groupIDs.sort((a, b) => groupStatuses.indexOf(a) - groupStatuses.indexOf(b)).slice(0, 3);
 };
 
-export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
+export const InventoryItem: FC<InventoryItemProps> = memo(
   ({
     isLoading,
     title,
@@ -83,8 +83,8 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     dataTest,
   }) => {
     const { t } = useTranslation();
-    const [expanded, setExpanded] = React.useState(false);
-    const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
+    const [expanded, setExpanded] = useState(false);
+    const onClick = useCallback(() => setExpanded(!expanded), [expanded]);
     const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
     return ExpandedComponent ? (
       <Accordion
@@ -139,12 +139,12 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
   },
 );
 
-export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
+export const Status: FC<StatusProps> = ({ groupID, count }) => {
   const [groupExtensions] = useResolvedExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
 
-  const statusGroupIcons = React.useMemo(() => {
+  const statusGroupIcons = useMemo(() => {
     const extensions = groupExtensions.map((e) => e.properties);
     return getStatusGroupIcons(extensions);
   }, [groupExtensions]);
@@ -158,7 +158,7 @@ export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
   return <InventoryItemStatus count={count} icon={groupIcon} />;
 };
 
-const StatusLink: React.FC<StatusLinkProps> = ({
+const StatusLink: FC<StatusLinkProps> = ({
   groupID,
   count,
   statusIDs,
@@ -171,7 +171,7 @@ const StatusLink: React.FC<StatusLinkProps> = ({
     isDashboardsInventoryItemGroup,
   );
 
-  const statusGroupIcons = React.useMemo(() => {
+  const statusGroupIcons = useMemo(() => {
     const extensions = groupExtensions.map((e) => e.properties);
     return getStatusGroupIcons(extensions);
   }, [groupExtensions]);
@@ -189,7 +189,7 @@ const StatusLink: React.FC<StatusLinkProps> = ({
   return <InventoryItemStatus count={count} icon={groupIcon} linkTo={to} />;
 };
 
-const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
+const ResourceTitleComponent: FC<ResourceTitleComponentComponent> = ({
   kind,
   namespace,
   children,
@@ -201,7 +201,7 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
   </Link>
 );
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
+export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = ({
   kind,
   TitleComponent,
   title,
@@ -218,7 +218,7 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   dataTest,
 }) => {
   const { t } = useTranslation();
-  let Title: React.ComponentType = React.useCallback(
+  let Title: ComponentType = useCallback(
     (props) => (
       <ResourceTitleComponent
         kind={kind}
@@ -231,19 +231,21 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
     [kind, namespace, basePath, dataTest],
   );
 
-  if (TitleComponent) Title = TitleComponent;
+  if (TitleComponent) {
+    Title = TitleComponent;
+  }
 
   const [groupExtensions] = useResolvedExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
 
-  const groups = React.useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
+  const groups = useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
     mapper,
     resources,
     additionalResources,
   ]);
 
-  const top3Groups = React.useMemo(() => {
+  const top3Groups = useMemo(() => {
     const extensions = groupExtensions.map((e) => e.properties);
     return getTop3Groups(
       extensions,
@@ -252,7 +254,7 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   }, [groupExtensions, groups]);
 
   // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
-  const totalCount = React.useMemo(
+  const totalCount = useMemo(
     () =>
       mapper
         ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
@@ -313,10 +315,10 @@ type InventoryItemProps = {
   title: string;
   titlePlural?: string;
   count: number;
-  children?: React.ReactNode;
+  children?: ReactNode;
   error?: boolean;
-  TitleComponent?: React.ComponentType<{ children?: React.ReactNode }>;
-  ExpandedComponent?: React.ComponentType<{}>;
+  TitleComponent?: ComponentType<{ children?: ReactNode }>;
+  ExpandedComponent?: ComponentType<{}>;
   dataTest?: string;
 };
 

@@ -1,6 +1,7 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import {
   Button,
+  ButtonProps,
   Form,
   FormGroup,
   FormHelperText,
@@ -28,10 +29,10 @@ type FavoriteButtonProps = {
 export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
-  const [isStarred, setIsStarred] = React.useState(false);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [name, setName] = React.useState<string>('');
-  const [error, setError] = React.useState<string | null>(null);
+  const [isStarred, setIsStarred] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
@@ -42,14 +43,14 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
 
   const currentUrlPath = window.location.pathname;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       const isCurrentlyFavorited = favorites?.some((favorite) => favorite.url === currentUrlPath);
       setIsStarred(isCurrentlyFavorited);
     }
   }, [loaded, favorites, currentUrlPath]);
 
-  const handleStarClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleStarClick: ButtonProps['onClick'] = (e) => {
     e.preventDefault();
     e.stopPropagation();
     const isCurrentlyFavorited = favorites?.some((favorite) => favorite.url === currentUrlPath);

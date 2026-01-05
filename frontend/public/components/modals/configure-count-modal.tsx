@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Modal,
   ModalHeader,
@@ -17,7 +16,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sResourceKind, K8sModel } from '../../module/k8s';
-import { NumberSpinner } from '../utils/number-spinner';
+import { NumberSpinner, NumberSpinnerProps } from '../utils/number-spinner';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
@@ -40,11 +39,11 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
     closeOverlay,
   } = props;
   const getPath = path ? path.substring(1).replace('/', '.') : '';
-  const [value, setValue] = React.useState<number>(_.get(resource, getPath) ?? defaultValue);
+  const [value, setValue] = useState<number>(_.get(resource, getPath) ?? defaultValue);
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const submit = React.useCallback(
+  const submit = useCallback(
     (e) => {
       e.preventDefault();
 
@@ -75,7 +74,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
     messageVariablesSafe.resourceKinds = t(labelKey, titleVariables);
   }
 
-  const onValueChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const onValueChange: NumberSpinnerProps['onChange'] = (event) => {
     const eventValue = (event.target as HTMLInputElement).value;
     const numericValue = Number(eventValue);
     if (!isNaN(numericValue)) {
