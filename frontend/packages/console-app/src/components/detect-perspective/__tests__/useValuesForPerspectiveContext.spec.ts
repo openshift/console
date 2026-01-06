@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import {
   acmPerspectiveExtension,
   mockPerspectiveExtensions,
@@ -38,7 +38,7 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useNavigate: jest.fn(),
 }));
 
-const useStateMock = React.useState as jest.Mock;
+const useStateMock = useState as jest.Mock;
 const usePerspectiveExtensionMock = usePerspectiveExtension as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
 const useLastPerspectiveMock = useLastPerspective as jest.Mock;

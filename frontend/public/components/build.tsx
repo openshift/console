@@ -1,5 +1,5 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
 import { Trans, useTranslation } from 'react-i18next';
 import {

@@ -1,5 +1,5 @@
 import { Children, cloneElement, isValidElement } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { modelFor, kindForReference, K8sResourceKindReference, K8sModel } from '../../module/k8s';
 

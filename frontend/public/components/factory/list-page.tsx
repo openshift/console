@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';

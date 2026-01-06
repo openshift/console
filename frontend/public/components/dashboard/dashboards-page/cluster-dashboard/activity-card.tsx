@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, memo } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';

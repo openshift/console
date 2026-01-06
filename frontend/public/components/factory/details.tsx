@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import { useLocation, useParams, Location } from 'react-router-dom-v5-compat';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';

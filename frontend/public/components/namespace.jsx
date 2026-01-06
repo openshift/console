@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax */
 import { Suspense, useEffect, useMemo, useState, useCallback } from 'react';
 
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { css } from '@patternfly/react-styles';
 import {

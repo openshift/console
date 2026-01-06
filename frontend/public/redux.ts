@@ -1,5 +1,5 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import thunk from 'redux-thunk';
 import {
   ResolvedExtension,

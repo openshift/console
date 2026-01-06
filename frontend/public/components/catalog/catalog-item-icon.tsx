@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import { returnIfValidURL } from '@console/shared/src/utils/utils';
 

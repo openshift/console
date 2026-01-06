@@ -1,5 +1,5 @@
 import { useMemo, useCallback, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import i18next, { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';

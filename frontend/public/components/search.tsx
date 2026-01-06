@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';

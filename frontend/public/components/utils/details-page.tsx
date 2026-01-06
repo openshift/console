@@ -1,6 +1,6 @@
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Button, DescriptionList } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';

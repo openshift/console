@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, Ref } from 'react';
 import {
   Button,
   Alert,
@@ -9,6 +9,7 @@ import {
   MenuToggleElement,
   Content,
   ContentVariants,
+  SelectProps,
 } from '@patternfly/react-core';
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
@@ -40,11 +41,11 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [networkPolicy, setNetworkPolicy] = React.useState(allow);
-  const [name, setName] = React.useState('');
-  const [labels, setLabels] = React.useState([]);
+  const [inProgress, setInProgress] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [networkPolicy, setNetworkPolicy] = useState(allow);
+  const [name, setName] = useState('');
+  const [labels, setLabels] = useState([]);
 
   const thenPromise = (res) => {
     setInProgress(false);
@@ -123,18 +124,15 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     </SelectOption>
   ));
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const defaultNetworkPolicy = defaultNetworkPolicies[0].value;
-  const [selected, setSelected] = React.useState<string>(defaultNetworkPolicy);
+  const [selected, setSelected] = useState<string>(defaultNetworkPolicy);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
-  ) => {
+  const onSelect: SelectProps['onSelect'] = (_e, value) => {
     setIsOpen(!isOpen);
     setSelected(value as string);
     if (value === defaultNetworkPolicy) {
@@ -144,7 +142,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     }
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
       {selected}
     </MenuToggle>
@@ -158,6 +156,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
       onClose={closeModal}
       actions={[
         <Button
+          key="confirm-action"
           type="submit"
           variant="primary"
           disabled={inProgress}
@@ -168,6 +167,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           {t('console-shared~Create')}
         </Button>,
         <Button
+          key="cancel-action"
           type="button"
           variant="secondary"
           disabled={inProgress}
@@ -176,7 +176,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
         >
           {t('console-shared~Cancel')}
         </Button>,
-        ...(inProgress ? [<LoadingInline />] : []),
+        ...(inProgress ? [<LoadingInline key="loading-inline" />] : []),
       ]}
     >
       <form onSubmit={submit} name="form" className="modal-content">

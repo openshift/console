@@ -31,7 +31,7 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
   );
 };
 
-type NumberSpinnerProps = {
+export type NumberSpinnerProps = {
   value: number;
   className?: string;
   changeValueBy: (operation: number) => void;

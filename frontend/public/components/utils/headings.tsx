@@ -9,7 +9,7 @@ import { Status, YellowExclamationTriangleIcon } from '@console/shared/src/compo
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

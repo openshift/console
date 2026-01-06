@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { plural } from 'pluralize';
 import i18next, { TFunction } from 'i18next';
 

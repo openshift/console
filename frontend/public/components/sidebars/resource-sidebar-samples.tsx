@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';

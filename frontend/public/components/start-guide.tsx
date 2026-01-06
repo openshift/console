@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';

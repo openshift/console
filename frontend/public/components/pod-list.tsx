@@ -30,7 +30,7 @@ import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';

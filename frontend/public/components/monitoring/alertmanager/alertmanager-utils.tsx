@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
 

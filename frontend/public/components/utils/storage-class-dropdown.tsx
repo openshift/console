@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ReactNode } from 'react';
 import { Component } from 'react';
 import * as fuzzy from 'fuzzysearch';

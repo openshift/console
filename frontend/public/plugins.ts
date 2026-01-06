@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import { ActivePlugin } from '@console/plugin-sdk/src/typings';
 import { getURLSearchParams } from './components/utils/link';

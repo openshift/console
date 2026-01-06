@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';

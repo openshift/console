@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';

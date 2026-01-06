@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Dispatch } from 'redux';
 import { ActionType as Action } from 'typesafe-actions';
 import { checkAccess } from '@console/internal/components/utils/rbac';

@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { memo, useState } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import {
   ClipboardCopyButton,
   CodeBlock,

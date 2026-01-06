@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { Base64 } from 'js-base64';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { detect } from 'chardet';
 import {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';

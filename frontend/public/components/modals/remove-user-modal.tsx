@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FormEventHandler } from 'react';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 

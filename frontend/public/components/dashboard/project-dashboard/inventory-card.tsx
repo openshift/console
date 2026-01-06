@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';

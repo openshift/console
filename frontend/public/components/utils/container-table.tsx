@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ContainerSpec } from '../../module/k8s';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';

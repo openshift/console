@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
 import {

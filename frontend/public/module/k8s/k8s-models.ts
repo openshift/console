@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 
 import { getModelExtensionMetadata } from './get-resources';

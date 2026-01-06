@@ -1,5 +1,5 @@
 import { GroupVersionKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { referenceForGroupVersionKind } from './k8s-ref';
 import { CustomResourceDefinitionKind } from './types';
 

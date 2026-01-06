@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, SyntheticEvent, useEffect, useLayoutEffect, useState } from 'react';
 import {
   DataList,
   DataListItem,
@@ -10,6 +10,7 @@ import {
   Label,
   Content,
   ContentVariants,
+  DataListProps,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
@@ -31,15 +32,12 @@ interface QuickSearchListProps {
   searchTerm: string;
   namespace: string;
   limitItemCount?: number;
-  onSelectListItem: (
-    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
-    itemId: string,
-  ) => void;
+  onSelectListItem: DataListProps['onSelectDataListItem'];
   onListChange?: (items: number) => void;
   closeModal: () => void;
 }
 
-const QuickSearchList: React.FC<QuickSearchListProps> = ({
+const QuickSearchList: FC<QuickSearchListProps> = ({
   listItems,
   catalogItemTypes,
   viewAll,
@@ -51,7 +49,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-  const [itemsCount, setItemsCount] = React.useState<number>(limitItemCount || listItems.length);
+  const [itemsCount, setItemsCount] = useState<number>(limitItemCount || listItems.length);
   const listHeight = document.querySelector('.ocs-quick-search-list__list')?.clientHeight || 0;
 
   const getIcon = (item: CatalogItem) => {
@@ -64,7 +62,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
       />
     );
   };
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (selectedItemId) {
       const element = document.getElementById(selectedItemId);
       if (element) {
@@ -73,7 +71,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     }
   }, [selectedItemId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (listHeight > 0 && limitItemCount > 0) {
       const rowHeight = document.querySelector('.ocs-quick-search-list__item')?.clientHeight || 0;
       const count =
@@ -106,7 +104,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               className={css('ocs-quick-search-list__item', {
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
-              onDoubleClick={(e: React.SyntheticEvent) => {
+              onDoubleClick={(e: SyntheticEvent) => {
                 handleCta(e, item, closeModal, fireTelemetryEvent);
               }}
             >
