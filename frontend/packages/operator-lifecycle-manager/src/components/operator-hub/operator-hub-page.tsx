@@ -79,8 +79,10 @@ const OperatorHubEmptyState = () => {
     />,
   ];
   return (
-    <ConsoleEmptyState title={t('No OperatorHub items found')} primaryActions={actions}>
-      {t('Check that the OperatorHub is running and that you have created a valid CatalogSource.')}
+    <ConsoleEmptyState title={t('No Software Catalog items found')} primaryActions={actions}>
+      {t(
+        'Check that the Software Catalog is running and that you have created a valid CatalogSource.',
+      )}
     </ConsoleEmptyState>
   );
 };
