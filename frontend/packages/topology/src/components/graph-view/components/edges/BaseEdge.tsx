@@ -60,4 +60,4 @@ const BaseEdge: FC<BaseEdgeProps> = ({
   );
 };
 
-export default observer(BaseEdge);
+export default observer<typeof BaseEdge>(BaseEdge);

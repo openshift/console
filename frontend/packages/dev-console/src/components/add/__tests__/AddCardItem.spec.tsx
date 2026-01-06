@@ -52,6 +52,9 @@ describe('AddCardItem', () => {
       const addAction: ResolvedExtension<AddAction> = addActionExtensions[0];
       const addActionWithoutValidIcon: ResolvedExtension<AddAction> = {
         ...addAction,
+        // TODO(react18): switch to ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - we are intentionally setting an invalid component type for testing
         properties: { ...addAction.properties, icon: {} },
       };
       props = {

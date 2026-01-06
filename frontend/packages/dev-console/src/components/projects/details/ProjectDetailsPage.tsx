@@ -110,7 +110,7 @@ export const PageContents: FC<MonitoringPageProps> = ({ noProjectsAvailable, ...
   );
 };
 
-const PageContentsWithStartGuide = withStartGuide(PageContents);
+const PageContentsWithStartGuide = withStartGuide<MonitoringPageProps>(PageContents);
 
 export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();
