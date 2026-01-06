@@ -54,6 +54,7 @@ import {
   ResourceMetadata,
 } from '@console/app/src/components/data-view/types';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { TdProps } from '@patternfly/react-table';
 import { DASH } from '@console/shared/src/constants/ui';
 
 export enum InitialReceivers {
@@ -374,7 +375,7 @@ const getReceiverDataViewRows = (
           ),
         props: {
           'data-test': `data-view-cell-${receiver.name}-integration-types`,
-        },
+        } as TdProps, // TODO(CONSOLE-4630): remove type assertion - data-test is not part of TdProps
       },
       [tableColumnInfo[2].id]: {
         cell: isDefaultReceiver
@@ -384,7 +385,7 @@ const getReceiverDataViewRows = (
             }),
         props: {
           'data-test': `data-view-cell-${receiver.name}-routing-labels`,
-        },
+        } as TdProps, // TODO(CONSOLE-4630): remove type assertion - data-test is not part of TdProps
       },
       [tableColumnInfo[3].id]: {
         cell: <Kebab options={receiverMenuItems(receiver.name)} />,

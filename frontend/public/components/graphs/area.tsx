@@ -139,7 +139,13 @@ export const AreaChart: FC<AreaChartProps> = ({
         />
       );
     }
-    return <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} activateData={false} />;
+    return (
+      <ChartVoronoiContainer
+        voronoiDimension="x"
+        labels={(prop) => getLabel(prop)}
+        activateData={false}
+      />
+    );
   }, [formatDate, getLabel, mainDataName, multiLine, processedData, showAllTooltip]);
 
   return (

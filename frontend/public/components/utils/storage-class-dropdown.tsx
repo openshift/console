@@ -262,10 +262,12 @@ export type StorageClassDropdownInnerState = {
 export type StorageClassDropdownInnerProps = WithTranslation & {
   id?: string;
   loaded?: boolean;
+  loadError?: any;
   resources?: any;
   name: string;
   onChange: (object) => void;
   describedBy: string;
+  desc?: string;
   defaultClass: string;
   required?: boolean;
   hideClassName?: string;

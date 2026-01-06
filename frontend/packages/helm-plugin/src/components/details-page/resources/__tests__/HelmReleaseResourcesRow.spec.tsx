@@ -1,12 +1,13 @@
 import { screen, configure } from '@testing-library/react';
-import { K8sResourceKind, TableColumn, RowProps } from '@console/internal/module/k8s';
+import { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import { K8sResourceKind, RowProps } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 
 configure({ testIdAttribute: 'data-test' });
 
 let testData: RowProps<K8sResourceKind>[];
-let testColumns: TableColumn<K8sResourceKind>[];
+let testColumns: ConsoleDataViewColumn<K8sResourceKind>[];
 
 describe('getDataViewRows', () => {
   beforeEach(() => {
@@ -27,11 +28,11 @@ describe('getDataViewRows', () => {
     ];
 
     testColumns = [
-      { id: 'name', title: 'Name' },
-      { id: 'type', title: 'Type' },
-      { id: 'status', title: 'Status' },
-      { id: 'created', title: 'Created' },
-    ] as TableColumn<K8sResourceKind>[];
+      { id: 'name', title: 'Name', cell: null },
+      { id: 'type', title: 'Type', cell: null },
+      { id: 'status', title: 'Status', cell: null },
+      { id: 'created', title: 'Created', cell: null },
+    ] as ConsoleDataViewColumn<K8sResourceKind>[];
   });
 
   it('should return data view rows with correct structure', () => {
