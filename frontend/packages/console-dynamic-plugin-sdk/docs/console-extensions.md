@@ -1208,7 +1208,7 @@ DetailsResourceLink contributes a link for specific topology context or graph el
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `link` | `CodeRef<(element: GraphElement) => Component \| undefined>` | no | Return the resource link if provided, otherwise undefined.<br/>Use ResourceIcon and ResourceLink for styles. |
+| `link` | `CodeRef<(element: GraphElement) => ReactNode>` | no | Return the resource link if provided, otherwise undefined.<br/>Use ResourceIcon and ResourceLink for styles. |
 | `priority` | `number` | yes | A higher priority factory will get the first chance to create the link. |
 
 ---
@@ -1243,7 +1243,7 @@ DetailsTabSection contributes a section for a specific tab in topology details p
 | `id` | `string` | no | A unique identifier for this details tab section. |
 | `tab` | `string` | no | The parent tab ID that this section should contribute to. |
 | `provider` | `CodeRef<DetailsTabSectionExtensionHook>` | no | A hook that returns a component or null/undefined that will be rendered<br/>in the topology sidebar.<br/>SDK component: <Section title={<optional>}>... padded area </Section> |
-| `section` | `CodeRef<(element: GraphElement, renderNull?: () => null) => Component \| undefined>` | no | @deprecated Fallback if no provider is defined. renderNull is a no-op already. |
+| `section` | `CodeRef<(element: GraphElement, renderNull?: () => null) => ReactNode>` | no | @deprecated Fallback if no provider is defined. renderNull is a no-op already. |
 | `insertBefore` | `string \| string[]` | yes | Insert this item before the item referenced here.<br/>For arrays, the first one found in order is used. |
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here.<br/>For arrays, the first one found in order is used.<br/>insertBefore takes precedence. |
 
