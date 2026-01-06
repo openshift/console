@@ -5,7 +5,12 @@ import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { BasicCodeEditor } from './BasicCodeEditor';
 import { CodeEditorToolbar } from './CodeEditorToolbar';
 import { useShortcutPopover } from './ShortcutsPopover';
-import { registerYAMLinMonaco, registerAutoFold, defaultEditorOptions } from './yaml-editor-utils';
+import {
+  registerYAMLinMonaco,
+  registerAutoFold,
+  defaultEditorOptions,
+  getConsoleYamlSchemas,
+} from './yaml-editor-utils';
 import './CodeEditor.scss';
 
 export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref) => {
@@ -13,6 +18,9 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
 
   const [editorRef, setEditorRef] = useState<CodeEditorRef['editor'] | null>(null);
   const [monacoRef, setMonacoRef] = useState<CodeEditorRef['monaco'] | null>(null);
+  const [monacoYAML, setMonacoYAML] = useState<ReturnType<typeof registerYAMLinMonaco> | null>(
+    null,
+  );
   const [usesValue] = useState<boolean>(value !== undefined);
 
   const shortcutPopover = useShortcutPopover(props.shortcutsPopoverProps);
@@ -27,7 +35,7 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
       editor.focus();
       switch (currentLanguage) {
         case 'yaml':
-          registerYAMLinMonaco(monaco);
+          setMonacoYAML(registerYAMLinMonaco(monaco));
           registerAutoFold(editor, usesValue);
           break;
         case 'json':
@@ -41,6 +49,23 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
     },
     [onSave, usesValue, onEditorDidMount],
   );
+
+  // keep swagger definitions up to date with what we currently have
+  const updateSwaggerDefinitions = useCallback(() => {
+    if (monacoYAML) {
+      const schemas = getConsoleYamlSchemas();
+      monacoYAML.update({ schemas });
+    }
+  }, [monacoYAML]);
+
+  useEffect(() => {
+    updateSwaggerDefinitions(); // ensure our swag stays fresh on mount
+
+    window.addEventListener('console_swagger_refresh', updateSwaggerDefinitions);
+    return () => {
+      window.removeEventListener('console_swagger_refresh', updateSwaggerDefinitions);
+    };
+  }, [updateSwaggerDefinitions]);
 
   // expose the editor instance to the parent component via ref
   useImperativeHandle(
