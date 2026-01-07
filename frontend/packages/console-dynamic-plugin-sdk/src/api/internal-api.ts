@@ -19,6 +19,8 @@ import {
   QuickStartsLoaderProps,
   UseURLPoll,
   UseLastNamespace,
+  ConsoleDataViewProps,
+  DefinitionFor,
 } from './internal-types';
 import { UseUserSettings } from '../extensions/console-types';
 
@@ -87,3 +89,10 @@ export const useURLPoll: UseURLPoll = require('@console/internal/components/util
 
 export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
   .useLastNamespace;
+
+export const ConsoleDataView: <TData = unknown, TCustomRowData = unknown, TFilters extends import('./internal-types').ResourceFilters = import('./internal-types').ResourceFilters>(
+  props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
+) => JSX.Element = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
+
+export const definitionFor: DefinitionFor = require('@console/internal/module/k8s/swagger')
+  .definitionFor;

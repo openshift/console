@@ -11,6 +11,7 @@ import {
   StatusGroupMapper,
   TopConsumerPopoverProps,
 } from '../extensions/console-types';
+import type { TableColumn, ColumnLayout, RowProps } from '../extensions/console-types';
 import { Alert, K8sModel } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
@@ -284,3 +285,70 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
+
+export type ResourceFilters = {
+  name: string;
+  label: string;
+};
+
+export type ResourceMetadata = {
+  name: string;
+  labels?: { [key: string]: string };
+};
+
+export type ConsoleDataViewColumn<TData> = {
+  id: string;
+  title: string;
+  sortFunction?: string | ((filteredData: TData[], sortDirection: 'asc' | 'desc') => TData[]);
+};
+
+export type ConsoleDataViewRow = any[];
+
+export type GetDataViewRows<TData, TCustomRowData = any> = (
+  data: RowProps<TData, TCustomRowData>[],
+  columns: ConsoleDataViewColumn<TData>[],
+) => ConsoleDataViewRow[];
+
+export type ConsoleDataViewProps<
+  TData,
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters
+> = {
+  label?: string;
+  data: TData[];
+  loaded: boolean;
+  loadError?: unknown;
+  columns: TableColumn<TData>[];
+  columnLayout?: ColumnLayout;
+  columnManagementID?: string;
+  initialFilters?: TFilters;
+  additionalFilterNodes?: ReactNode[];
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
+  getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
+  customRowData?: TCustomRowData;
+  showNamespaceOverride?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
+  mock?: boolean;
+};
+
+export type SwaggerDefinition = {
+  definitions?: SwaggerDefinitions;
+  description?: string;
+  type?: string[] | string;
+  enum?: string[];
+  $ref?: string;
+  items?: SwaggerDefinition;
+  required?: string[];
+  properties?: {
+    [prop: string]: SwaggerDefinition;
+  };
+};
+
+export type SwaggerDefinitions = {
+  [name: string]: SwaggerDefinition;
+};
+
+export type DefinitionFor = (model: K8sModel) => SwaggerDefinition;
