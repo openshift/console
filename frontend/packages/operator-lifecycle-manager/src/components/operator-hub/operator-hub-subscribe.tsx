@@ -1235,7 +1235,11 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
 };
 
 const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
-  <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
+  <StatusBox
+    data={props.packageManifest?.data?.[0]}
+    loaded={props.loaded}
+    loadError={props.loadError}
+  >
     <OperatorHubSubscribeForm {...props} />
   </StatusBox>
 );
@@ -1268,8 +1272,10 @@ export const OperatorHubSubscribePage: FC = () => {
     },
   });
 
-  const loaded = Object.values(resources).every((r) => r.loaded);
-  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
+  const resourceValues = Object.values(resources);
+  const loaded =
+    resourceValues.length === 0 || resourceValues.every((r) => r.loaded || r.loadError);
+  const loadError = resourceValues.find((r) => r.loadError)?.loadError;
 
   return (
     <OperatorHubSubscribe
