@@ -33,10 +33,10 @@ import { K8sResourceKind } from '../../../module/k8s';
 import { LazyAlertRoutingModalOverlay } from '../../modals';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { Firehose } from '../../utils/firehose';
 import { Kebab } from '../../utils/kebab';
 import { SectionHeading } from '../../utils/headings';
 import { StatusBox } from '../../utils/status-box';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -598,6 +598,13 @@ export const AlertmanagerConfig: FC = () => {
 
   const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
 
+  const [secret, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
+    kind: 'Secret',
+    name: 'alertmanager-main',
+    namespace: 'openshift-monitoring',
+    isList: false,
+  });
+
   return (
     <>
       <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
@@ -613,19 +620,7 @@ export const AlertmanagerConfig: FC = () => {
           },
         ]}
       />
-      <Firehose
-        resources={[
-          {
-            kind: 'Secret',
-            name: 'alertmanager-main',
-            namespace: 'openshift-monitoring',
-            isList: false,
-            prop: 'obj',
-          },
-        ]}
-      >
-        <AlertmanagerConfigWrapper />
-      </Firehose>
+      <AlertmanagerConfigWrapper obj={{ data: secret, loaded, loadError }} />
     </>
   );
 };

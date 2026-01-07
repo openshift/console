@@ -10,13 +10,22 @@ import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginComm
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Firehose } from './utils/firehose';
-import { FirehoseResult } from './utils/types';
-import { connectToFlags } from '../reducers/connectToFlags';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { LoadingBox } from './utils/status-box';
+
+type CLIDownload = K8sResourceCommon & {
+  spec: {
+    displayName: string;
+    description?: string;
+    links: { href: string; text?: string }[];
+  };
+};
 
 export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -26,7 +35,7 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
     externalLoginCommand,
   );
   const showCopyLoginCommand = requestTokenURL || externalLoginCommand;
-  const data = _.sortBy(_.get(obj, 'data'), 'spec.displayName');
+  const data = _.sortBy(obj.data, 'spec.displayName');
   const cliData = _.remove(data, (item) => item.metadata.name === 'oc-cli-downloads');
 
   const additionalCommandLineTools = _.map(cliData.concat(data), (tool, index) => {
@@ -82,26 +91,35 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
   );
 };
 
-export const CommandLineToolsPage = connectToFlags(FLAGS.CONSOLE_CLI_DOWNLOAD)(
-  ({ flags, ...props }) => {
-    const resources = flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
-      ? [
-          {
-            kind: referenceForModel(ConsoleCLIDownloadModel),
-            isList: true,
-            prop: 'obj',
-          },
-        ]
-      : [];
+export const CommandLineToolsPage = () => {
+  const { t } = useTranslation();
+  const shouldFetch = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
+  const [cliDownloads, loaded, loadError] = useK8sWatchResource(
+    shouldFetch
+      ? {
+          kind: referenceForModel(ConsoleCLIDownloadModel),
+          isList: true,
+        }
+      : null,
+  );
 
+  if (!loaded && !loadError) {
     return (
-      <Firehose resources={resources}>
-        <CommandLineTools {...(props as any)} />
-      </Firehose>
+      <>
+        <DocumentTitle>{t('public~Command Line Tools')}</DocumentTitle>
+        <PageHeading title={t('public~Command Line Tools')} />
+        <LoadingBox />
+      </>
     );
-  },
-);
+  }
+
+  return <CommandLineTools obj={{ data: cliDownloads as CLIDownload[], loaded, loadError }} />;
+};
 
 type CommandLineToolsProps = {
-  obj: FirehoseResult;
+  obj: {
+    data: CLIDownload[];
+    loaded: boolean;
+    loadError?: unknown;
+  };
 };
