@@ -219,6 +219,7 @@ This section documents notable changes in Console provided shared modules and ot
 
 - Upgraded from `react-redux` v7 to v8. Plugins must use `react-redux` v8 to be compatible
   with Console.
+- Upgraded from `react` v17 to v18. Plugins must use `react` 18 to be compatible with Console.
 
 ### PatternFly 5+ dynamic modules
 
