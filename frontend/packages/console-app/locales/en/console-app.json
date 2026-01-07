@@ -432,6 +432,7 @@
   "Node status": "Node status",
   "This node's {{conditionDescription}}. Performance may be degraded.": "This node's {{conditionDescription}}. Performance may be degraded.",
   "<0>To use host binaries, run <1>chroot /host</1></0>": "<0>To use host binaries, run <1>chroot /host</1></0>",
+  "Debug pod not found or was deleted.": "Debug pod not found or was deleted.",
   "The debug pod failed. ": "The debug pod failed. ",
   "This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.": "This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.",
   "This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.": "This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.",

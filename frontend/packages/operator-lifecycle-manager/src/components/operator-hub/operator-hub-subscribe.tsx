@@ -1268,7 +1268,9 @@ export const OperatorHubSubscribePage: FC = () => {
     },
   });
 
-  const loaded = Object.values(resources).every((r) => r.loaded);
+  const loaded = Object.values(resources)
+    .filter((r) => !r.loadError)
+    .every((r) => r.loaded);
   const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
 
   return (

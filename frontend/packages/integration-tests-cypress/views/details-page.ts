@@ -13,7 +13,10 @@ export const detailsPage = {
   clickPageActionButton: (action: string) => {
     cy.byLegacyTestID('details-actions').contains(action).click();
   },
-  isLoaded: () => cy.byTestID('skeleton-detail-view').should('not.exist'),
+  isLoaded: () => {
+    cy.byTestID('skeleton-detail-view').should('not.exist');
+    cy.get('[data-test-id="resource-title"]', { timeout: 30000 }).should('not.be.empty');
+  },
   breadcrumb: (breadcrumbIndex: number) => cy.byLegacyTestID(`breadcrumb-link-${breadcrumbIndex}`),
   selectTab: (name: string) => {
     cy.get(`a[data-test-id="horizontal-link-${name}"]`).should('exist').click();
