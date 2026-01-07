@@ -46,7 +46,6 @@ import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
-import { Firehose } from '../utils/firehose';
 import { getQueryArgument } from '../utils/router';
 import { kindObj } from '../utils/inject';
 import type { ListDropdownProps } from '../utils/list-dropdown';
@@ -56,7 +55,7 @@ import { ResourceName } from '../utils/resource-icon';
 import { StatusBox, LoadingBox } from '../utils/status-box';
 import { useAccessReview } from '../utils/rbac';
 import { flagPending } from '../../reducers/features';
-import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import { useK8sWatchResource, useK8sWatchResources } from '../utils/k8s-watch-hook';
 
 // Split each binding into one row per subject
 export const flatten = (resources): BindingKind[] =>
@@ -184,14 +183,16 @@ const bindingType = (binding: BindingKind) => {
   if (!binding) {
     return undefined;
   }
-  if (binding.roleRef.name.startsWith('system:')) {
+  if (binding.roleRef?.name?.startsWith('system:')) {
     return 'system';
   }
-  return binding.metadata.namespace ? 'namespace' : 'cluster';
+  return binding.metadata?.namespace ? 'namespace' : 'cluster';
 };
 
 const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
-  return data.map(({ obj: binding }) => {
+  return data.map((row) => {
+    // Extract the actual binding from the row object
+    const binding = (row as any).obj || row;
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
@@ -783,52 +784,81 @@ const getSubjectIndex = () => {
 };
 
 const BindingLoadingWrapper: React.FCC<BindingLoadingWrapperProps> = (props) => {
+  const { obj, loaded, loadError, fixedKeys } = props;
   const [, setActiveNamespace] = useActiveNamespace();
+
+  // Don't render the form until data is loaded and valid
+  if (!loaded) {
+    return <LoadingBox />;
+  }
+
+  if (loadError) {
+    return <StatusBox data={obj} loaded={loaded} loadError={loadError} />;
+  }
+
+  // Guard against empty/invalid data
+  if (!obj || _.isEmpty(obj)) {
+    return <StatusBox data={obj} loaded={loaded} loadError={loadError} />;
+  }
+
   const fixed: { [key: string]: any } = {};
-  _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
+  _.each(fixedKeys, (k) => (fixed[k] = _.get(obj, k)));
+
   return (
-    <StatusBox {...props.obj}>
-      <BaseEditRoleBinding
-        {...props}
-        setActiveNamespace={setActiveNamespace}
-        fixed={fixed}
-        obj={props.obj.data}
-      />
-    </StatusBox>
+    <BaseEditRoleBinding
+      {...props}
+      setActiveNamespace={setActiveNamespace}
+      fixed={fixed}
+      obj={obj}
+    />
   );
 };
 
 export const EditRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
+
+  const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
+    kind,
+    name: params.name,
+    namespace: params.ns,
+    isList: false,
+  });
+
   return (
-    <Firehose
-      resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
-    >
-      <BindingLoadingWrapper
-        fixedKeys={['kind', 'metadata', 'roleRef']}
-        subjectIndex={getSubjectIndex()}
-        titleVerbAndKind={t('public~Edit RoleBinding')}
-        saveButtonText={t('public~Save')}
-      />
-    </Firehose>
+    <BindingLoadingWrapper
+      obj={obj}
+      loaded={loaded}
+      loadError={loadError}
+      fixedKeys={['kind', 'metadata', 'roleRef']}
+      subjectIndex={getSubjectIndex()}
+      titleVerbAndKind={t('public~Edit RoleBinding')}
+      saveButtonText={t('public~Save')}
+    />
   );
 };
 
 export const CopyRoleBinding: React.FCC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
+
+  const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
+    kind,
+    name: params.name,
+    namespace: params.ns,
+    isList: false,
+  });
+
   return (
-    <Firehose
-      resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
-    >
-      <BindingLoadingWrapper
-        fixedKeys={['kind']}
-        subjectIndex={getSubjectIndex()}
-        isCreate={true}
-        titleVerbAndKind={t('public~Duplicate RoleBinding')}
-      />
-    </Firehose>
+    <BindingLoadingWrapper
+      obj={obj}
+      loaded={loaded}
+      loadError={loadError}
+      fixedKeys={['kind']}
+      subjectIndex={getSubjectIndex()}
+      isCreate={true}
+      titleVerbAndKind={t('public~Duplicate RoleBinding')}
+    />
   );
 };
 
@@ -880,9 +910,9 @@ type BindingLoadingWrapperProps = {
   titleVerbAndKind: string;
   saveButtonText?: string;
   isCreate?: boolean;
-  obj?: {
-    data: RoleBindingKind | ClusterRoleBindingKind;
-  };
+  obj?: RoleBindingKind | ClusterRoleBindingKind;
+  loaded: boolean;
+  loadError: any;
 };
 
 type EditRoleBindingProps = {

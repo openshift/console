@@ -23,8 +23,8 @@ import {
   K8sResourceKindReference,
   K8sResourceKind,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { Firehose } from '../utils/firehose';
 import { HorizontalNav } from '../utils/horizontal-nav';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { Page } from '../utils/horizontal-nav';
 import {
   ConnectedPageHeading,
@@ -113,6 +113,35 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
     titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
   };
 
+  // Build resources to watch
+  const allResources = [...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])];
+  const watchResources = allResources.reduce((acc, r) => {
+    const key = r.prop || r.kind;
+    acc[key] = {
+      kind: r.kind,
+      name: r.name,
+      namespace: r.namespace,
+      isList: r.isList,
+      selector: r.selector,
+      fieldSelector: r.fieldSelector,
+      limit: r.limit,
+      namespaced: r.namespaced,
+      optional: r.optional,
+    };
+    return acc;
+  }, {});
+
+  const watchedResources = useK8sWatchResources(watchResources);
+
+  // Transform watched resources to match the expected format for child components
+  const transformedResources = Object.keys(watchedResources).reduce((acc, key) => {
+    acc[key] = watchedResources[key];
+    return acc;
+  }, {});
+
+  // Extract obj from watched resources if it was being watched
+  const objData = _.isNil(props.obj) ? watchedResources.obj : props.obj;
+
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       {resolvedBreadcrumbExtension && (
@@ -124,42 +153,40 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         />
       )}
 
-      <Firehose
-        resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
-      >
-        <ConnectedPageHeading
-          obj={props.obj}
-          title={props.title || props.name}
-          titleFunc={props.titleFunc}
-          menuActions={props.menuActions}
-          buttonActions={props.buttonActions}
-          customActionMenu={props.customActionMenu}
-          kind={props.customKind || props.kind}
-          icon={props.icon}
-          breadcrumbs={pluginBreadcrumbs}
-          breadcrumbsFor={
-            props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, params, location) : undefined)
-          }
-          resourceKeys={resourceKeys}
-          getResourceStatus={props.getResourceStatus}
-          customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
-          OverrideTitle={props.OverrideTitle}
-          helpText={props.helpText}
-          helpAlert={props.helpAlert}
-        />
-        <HorizontalNav
-          obj={props.obj}
-          pages={allPages}
-          pagesFor={props.pagesFor}
-          className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
-          label={props.label || (props.kind as any).label}
-          resourceKeys={resourceKeys}
-          customData={props.customData}
-          createRedirect={props.createRedirect}
-        />
-      </Firehose>
+      <ConnectedPageHeading
+        obj={objData}
+        title={props.title || props.name}
+        titleFunc={props.titleFunc}
+        menuActions={props.menuActions}
+        buttonActions={props.buttonActions}
+        customActionMenu={props.customActionMenu}
+        kind={props.customKind || props.kind}
+        icon={props.icon}
+        breadcrumbs={pluginBreadcrumbs}
+        breadcrumbsFor={
+          props.breadcrumbsFor ??
+          (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, params, location) : undefined)
+        }
+        resourceKeys={resourceKeys}
+        getResourceStatus={props.getResourceStatus}
+        customData={props.customData}
+        badge={props.badge || getBadgeFromType(kindObj?.badge)}
+        OverrideTitle={props.OverrideTitle}
+        helpText={props.helpText}
+        helpAlert={props.helpAlert}
+        {...transformedResources}
+      />
+      <HorizontalNav
+        obj={objData}
+        pages={allPages}
+        pagesFor={props.pagesFor}
+        className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
+        label={props.label || (props.kind as any).label}
+        resourceKeys={resourceKeys}
+        customData={props.customData}
+        createRedirect={props.createRedirect}
+        {...(transformedResources as any)}
+      />
     </PageTitleContext.Provider>
   );
 }, ErrorBoundaryFallbackPage);

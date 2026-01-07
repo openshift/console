@@ -18,9 +18,9 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/flags';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
 import { removeQueryArgument } from './utils/router';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import type { RootState } from '../redux';
 import { setActiveApplication } from '../actions/ui';
@@ -112,6 +112,16 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   const useProjects = useSelector<RootState, boolean>(({ k8s }) =>
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
+
+  const [namespaces, loaded, loadError] = useK8sWatchResource(
+    hideProjects
+      ? null
+      : {
+          kind: getModel(useProjects).kind,
+          isList: true,
+        },
+  );
+
   return (
     <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
       {hideProjects ? (
@@ -119,20 +129,17 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
           {children}
         </div>
       ) : (
-        // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
+        // Data from useK8sWatchResource is not used directly by the NamespaceDropdown nor the children.
         // Data is used to determine if the StartGuide should be shown.
         // See NamespaceBarDropdowns_  above.
-        <Firehose
-          resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
+        <NamespaceBarDropdowns
+          useProjects={useProjects}
+          isDisabled={isDisabled}
+          onNamespaceChange={onNamespaceChange}
+          namespace={{ data: namespaces as any, loaded, loadError }}
         >
-          <NamespaceBarDropdowns
-            useProjects={useProjects}
-            isDisabled={isDisabled}
-            onNamespaceChange={onNamespaceChange}
-          >
-            {children}
-          </NamespaceBarDropdowns>
-        </Firehose>
+          {children}
+        </NamespaceBarDropdowns>
       )}
     </div>
   );

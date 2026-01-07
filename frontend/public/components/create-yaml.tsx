@@ -9,8 +9,8 @@ import {
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose } from './utils/firehose';
 import { LoadingBox } from './utils/status-box';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   K8sKind,
   apiVersionForModel,
@@ -115,29 +115,25 @@ export const CreateYAML = (props) => {
 
 export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
   const params = useParams();
-  const Wrapper = (wrapperProps) => (
+  const [obj, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
+    kind: props.kind,
+    name: params.name,
+    namespace: params.ns,
+  });
+
+  if (!loaded && !loadError) {
+    return <LoadingBox />;
+  }
+
+  return (
     <AsyncComponent
       blame="EditYamlPage"
-      {...wrapperProps}
-      obj={wrapperProps.obj.data}
+      obj={obj}
+      loaded={loaded}
+      loadError={loadError}
       loader={() => import('./edit-yaml').then((c) => c.EditYAML)}
       create={false}
     />
-  );
-  return (
-    <Firehose
-      resources={[
-        {
-          kind: props.kind,
-          name: params.name,
-          namespace: params.ns,
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <Wrapper />
-    </Firehose>
   );
 };
 

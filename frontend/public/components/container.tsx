@@ -35,7 +35,6 @@ import {
   getContainerStatus,
   getPullPolicyLabel,
 } from '../module/k8s/container';
-import { Firehose } from './utils/firehose';
 import { HorizontalNav } from './utils/horizontal-nav';
 import { ConsoleEmptyState, LoadingBox } from './utils/status-box';
 import { NodeLink, resourcePath, ResourceLink } from './utils/resource-link';
@@ -46,6 +45,7 @@ import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumb
 import i18n from 'i18next';
 import { ErrorPage404 } from './error';
 import { ContainerLastState } from './pod';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 
 const formatComputeResources = (resources: ResourceList) =>
   _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
@@ -460,21 +460,13 @@ ContainerDetailsList.displayName = 'ContainerDetailsList';
 
 export const ContainersDetailsPage: FC = (props) => {
   const params = useParams();
-  return (
-    <Firehose
-      resources={[
-        {
-          name: params.podName,
-          namespace: params.ns,
-          kind: 'Pod',
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <ContainerDetails {...props} />
-    </Firehose>
-  );
+  const [pod, loaded, loadError] = useK8sWatchResource({
+    name: params.podName,
+    namespace: params.ns,
+    kind: 'Pod',
+    isList: false,
+  });
+  return <ContainerDetails {...props} obj={{ data: pod }} loaded={loaded} loadError={loadError} />;
 };
 ContainersDetailsPage.displayName = 'ContainersDetailsPage';
 
@@ -557,4 +549,5 @@ export type ContainerDetailsListProps = {
 export type ContainerDetailsProps = {
   obj?: any;
   loaded?: boolean;
+  loadError?: any;
 };

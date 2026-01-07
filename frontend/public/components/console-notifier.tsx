@@ -4,10 +4,10 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 
 type ConsoleNotifierProps = {
   location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
@@ -62,19 +62,21 @@ ConsoleNotifier_.displayName = 'ConsoleNotifier_';
 export const ConsoleNotifier = connectToFlags<ConsoleNotifierProps & WithFlagsProps>(
   FLAGS.CONSOLE_NOTIFICATION,
 )(({ flags, ...props }) => {
-  const resources = flags[FLAGS.CONSOLE_NOTIFICATION]
-    ? [
-        {
+  const shouldFetch = flags[FLAGS.CONSOLE_NOTIFICATION];
+  const [notifications, loaded, loadError] = useK8sWatchResource(
+    shouldFetch
+      ? {
           kind: referenceForModel(ConsoleNotificationModel),
           isList: true,
-          prop: 'obj',
-        },
-      ]
-    : [];
+        }
+      : null,
+  );
+
   return (
-    <Firehose resources={resources}>
-      <ConsoleNotifier_ {...(props as PrivateConsoleNotifierProps)} />
-    </Firehose>
+    <ConsoleNotifier_
+      {...(props as PrivateConsoleNotifierProps)}
+      obj={{ data: notifications as any, loaded, loadError }}
+    />
   );
 });
 ConsoleNotifier.displayName = 'ConsoleNotifier';

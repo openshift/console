@@ -24,9 +24,9 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { AsyncComponent } from './utils/async';
 import { ButtonBar } from './utils/button-bar';
-import { Firehose } from './utils/firehose';
 import type { FirehoseResult } from './utils/types';
 import { NameValueEditorPair } from './utils/types';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { resourceObjPath } from './utils/resource-link';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
@@ -782,14 +782,17 @@ export const ConnectedStorageClassForm = connect(
 });
 
 export const StorageClassForm = (props) => {
-  const resources = [
-    { kind: StorageClassModel.kind, isList: true, prop: 'sc' },
-    { kind: referenceForModel(CSIDriverModel), isList: true, prop: 'csi' },
-  ];
+  const resources = useK8sWatchResources({
+    sc: { kind: StorageClassModel.kind, isList: true },
+    csi: { kind: referenceForModel(CSIDriverModel), isList: true },
+  });
+
   return (
-    <Firehose resources={resources}>
-      <ConnectedStorageClassForm {...props} />
-    </Firehose>
+    <ConnectedStorageClassForm
+      {...props}
+      sc={{ data: resources.sc.data, loaded: resources.sc.loaded, loadError: resources.sc.loadError }}
+      csi={{ data: resources.csi.data, loaded: resources.csi.loaded, loadError: resources.csi.loadError }}
+    />
   );
 };
 

@@ -26,8 +26,8 @@ import { safeLoad } from 'js-yaml';
 import { APIError } from '@console/shared/src/types/resource';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ButtonBar } from '../../utils/button-bar';
-import { Firehose } from '../../utils/firehose';
 import { StatusBox } from '../../utils/status-box';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -563,36 +563,42 @@ const ReceiverWrapper: FC<ReceiverFormsWrapperProps> = memo(({ obj, ...props }) 
   );
 });
 
-const resources = [
-  {
+
+export const CreateReceiver = () => {
+  const { t } = useTranslation();
+  const [secret, loaded, loadError] = useK8sWatchResource({
     kind: 'Secret',
     name: 'alertmanager-main',
     namespace: 'openshift-monitoring',
     isList: false,
-    prop: 'obj',
-  },
-];
+  });
 
-export const CreateReceiver = () => {
-  const { t } = useTranslation();
   return (
-    <Firehose resources={resources}>
-      <ReceiverWrapper titleVerb={t('public~Create')} saveButtonText={t('public~Create')} />
-    </Firehose>
+    <ReceiverWrapper
+      titleVerb={t('public~Create')}
+      saveButtonText={t('public~Create')}
+      obj={{ data: secret as K8sResourceKind, loaded, loadError }}
+    />
   );
 };
 
 export const EditReceiver = () => {
   const { t } = useTranslation();
   const params = useParams();
+  const [secret, loaded, loadError] = useK8sWatchResource({
+    kind: 'Secret',
+    name: 'alertmanager-main',
+    namespace: 'openshift-monitoring',
+    isList: false,
+  });
+
   return (
-    <Firehose resources={resources}>
-      <ReceiverWrapper
-        titleVerb={t('public~Edit')}
-        saveButtonText={t('public~Save')}
-        editReceiverNamed={params.name}
-      />
-    </Firehose>
+    <ReceiverWrapper
+      titleVerb={t('public~Edit')}
+      saveButtonText={t('public~Save')}
+      editReceiverNamed={params.name}
+      obj={{ data: secret as K8sResourceKind, loaded, loadError }}
+    />
   );
 };
 

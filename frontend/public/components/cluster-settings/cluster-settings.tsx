@@ -88,8 +88,6 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
 import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
-import { Firehose } from '../utils/firehose';
-import type { FirehoseResource } from '../utils/types';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
@@ -1170,23 +1168,24 @@ export const ClusterSettingsPage: FC = () => {
   const { t } = useTranslation();
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('public~Cluster Settings');
-  const resources: FirehoseResource[] = [
-    {
-      kind: clusterVersionReference,
-      name: 'version',
-      isList: false,
-      prop: 'obj',
-    },
-  ];
-  if (hasClusterAutoscaler) {
-    resources.push({
-      kind: clusterAutoscalerReference,
-      isList: true,
-      prop: 'autoscalers',
-      optional: true,
-    });
-  }
-  const resourceKeys = _.map(resources, 'prop');
+
+  const [objData, objLoaded, objLoadError] = useK8sWatchResource<ClusterVersionKind>({
+    kind: clusterVersionReference,
+    name: 'version',
+  });
+
+  const [autoscalersData, autoscalersLoaded, autoscalersLoadError] = useK8sWatchResource<
+    K8sResourceKind[]
+  >(
+    hasClusterAutoscaler
+      ? {
+          kind: clusterAutoscalerReference,
+          isList: true,
+        }
+      : null,
+  );
+
+  const resourceKeys = hasClusterAutoscaler ? ['obj', 'autoscalers'] : ['obj'];
   const pages = [
     {
       href: '',
@@ -1211,12 +1210,25 @@ export const ClusterSettingsPage: FC = () => {
     telemetryPrefix: 'Cluster Settings',
     titlePrefix: title,
   };
+
+  const loaded = hasClusterAutoscaler ? objLoaded && autoscalersLoaded : objLoaded;
+  const loadError = objLoadError || autoscalersLoadError;
+
+  const horizontalNavProps = {
+    pages,
+    resourceKeys,
+    obj: { data: objData, loaded: objLoaded },
+    ...(hasClusterAutoscaler && {
+      autoscalers: { data: autoscalersData, loaded: autoscalersLoaded },
+    }),
+    loaded,
+    loadError,
+  };
+
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
-      <Firehose resources={resources}>
-        <HorizontalNav pages={pages} resourceKeys={resourceKeys} />
-      </Firehose>
+      <HorizontalNav {...(horizontalNavProps as any)} />
     </PageTitleContext.Provider>
   );
 };

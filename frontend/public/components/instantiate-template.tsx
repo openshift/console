@@ -35,9 +35,9 @@ import {
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
 import { ButtonBar } from './utils/button-bar';
-import { Firehose } from './utils/firehose';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { NsDropdown } from './utils/list-dropdown';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -394,24 +394,24 @@ export const InstantiateTemplatePage: FC<{}> = (props) => {
   const templateName = searchParams.get('template');
   const templateNamespace = searchParams.get('template-ns');
   const preselectedNamespace = searchParams.get('preselected-ns');
-  const resources = [
-    {
-      kind: 'Template',
-      name: templateName,
-      namespace: templateNamespace,
-      isList: false,
-      prop: 'obj',
-    },
-  ];
+
+  const [template, loaded, loadError] = useK8sWatchResource({
+    kind: 'Template',
+    name: templateName,
+    namespace: templateNamespace,
+    isList: false,
+  });
 
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
       <PaneBody>
-        <Firehose resources={resources}>
-          <TemplateForm preselectedNamespace={preselectedNamespace} {...(props as any)} />
-        </Firehose>
+        <TemplateForm
+          preselectedNamespace={preselectedNamespace}
+          {...(props as any)}
+          obj={{ data: template, loaded, loadError }}
+        />
       </PaneBody>
     </>
   );

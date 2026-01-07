@@ -7,8 +7,8 @@ import * as fuzzy from 'fuzzysearch';
 import { WithTranslation, withTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceName, ResourceIcon } from './resource-icon';
 import { isDefaultClass } from '../storage-class';
 import { css } from '@patternfly/react-styles';
@@ -212,10 +212,26 @@ export const StorageClassDropdownInner = withTranslation()(
 );
 
 export const StorageClassDropdown = (props) => {
+  const [data, loaded, loadError] = useK8sWatchResource({
+    kind: 'StorageClass',
+    isList: true,
+  });
+
+  const resources = {
+    StorageClass: {
+      data,
+      loaded,
+      loadError,
+    },
+  };
+
   return (
-    <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
-      <StorageClassDropdownInner {...props} />
-    </Firehose>
+    <StorageClassDropdownInner
+      {...props}
+      resources={resources}
+      loaded={loaded}
+      loadError={loadError}
+    />
   );
 };
 

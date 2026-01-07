@@ -23,9 +23,9 @@ import {
 } from '../module/k8s';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
-import { Firehose } from './utils/firehose';
 import { FirehoseResourcesResult } from './utils/types';
 import { ResourceLink } from './utils/resource-link';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
@@ -215,63 +215,57 @@ export type CronJobPodsComponentProps = {
   obj: K8sResourceKind;
 };
 
-const getJobsWatcher = (namespace: string) => {
-  return [
-    {
-      prop: 'jobs',
-      isList: true,
-      kind: 'Job',
-      namespace,
-    },
-  ];
-};
-
-const getPodsWatcher = (namespace: string) => {
-  return [
-    ...getJobsWatcher(namespace),
-    {
-      prop: 'pods',
-      isList: true,
-      kind: 'Pod',
-      namespace,
-    },
-  ];
-};
 
 export const CronJobPodsComponent: React.FCC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
   const podFilters = useMemo(() => getPodFilters(t), [t]);
+  const resources = useK8sWatchResources({
+    jobs: {
+      isList: true,
+      kind: 'Job',
+      namespace: obj.metadata.namespace,
+    },
+    pods: {
+      isList: true,
+      kind: 'Pod',
+      namespace: obj.metadata.namespace,
+    },
+  });
+
+  const _resources = {
+    jobs: { data: resources.jobs.data as K8sResourceCommon[], loaded: resources.jobs.loaded },
+    pods: { data: resources.pods.data as K8sResourceCommon[], loaded: resources.pods.loaded },
+  };
+
   return (
     <PaneBody>
-      <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
-        <ListPageWrapper
-          flatten={(
-            _resources: FirehoseResourcesResult<{
-              jobs: K8sResourceCommon[];
-              pods: K8sResourceCommon[];
-            }>,
-          ) => {
-            if (!_resources.jobs.loaded || !_resources.pods.loaded) {
-              return [];
-            }
-            const jobs = _resources.jobs.data.filter((job) =>
-              job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
-            );
-            return (
-              jobs &&
-              jobs.reduce((acc, job) => {
-                acc.push(...getPodsForResource(job, _resources));
-                return acc;
-              }, [])
-            );
-          }}
-          kinds={['Pods']}
-          ListComponent={PodList}
-          rowFilters={podFilters}
-          hideColumnManagement={true}
-          omitFilterToolbar={true}
-        />
-      </Firehose>
+      <ListPageWrapper
+        flatten={(
+          __resources: FirehoseResourcesResult<{
+            jobs: K8sResourceCommon[];
+            pods: K8sResourceCommon[];
+          }>,
+        ) => {
+          if (!_resources.jobs.loaded || !_resources.pods.loaded) {
+            return [];
+          }
+          const jobs = _resources.jobs.data.filter((job) =>
+            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+          );
+          return (
+            jobs &&
+            jobs.reduce((acc, job) => {
+              acc.push(...getPodsForResource(job, _resources));
+              return acc;
+            }, [])
+          );
+        }}
+        kinds={['Pods']}
+        ListComponent={PodList}
+        rowFilters={podFilters}
+        hideColumnManagement={true}
+        omitFilterToolbar={true}
+      />
     </PaneBody>
   );
 };
@@ -280,11 +274,25 @@ export type CronJobJobsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj }) => (
-  <PaneBody>
-    <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
+export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj }) => {
+  const resources = useK8sWatchResources({
+    jobs: {
+      isList: true,
+      kind: 'Job',
+      namespace: obj.metadata.namespace,
+    },
+  });
+
+  const _resources = {
+    jobs: { data: resources.jobs.data as K8sResourceCommon[], loaded: resources.jobs.loaded },
+  };
+
+  return (
+    <PaneBody>
       <ListPageWrapper
-        flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
+        flatten={(
+          __resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>,
+        ) => {
           if (!_resources.jobs.loaded) {
             return [];
           }
@@ -297,9 +305,9 @@ export const CronJobJobsComponent: React.FCC<CronJobJobsComponentProps> = ({ obj
         hideColumnManagement={true}
         omitFilterToolbar={true}
       />
-    </Firehose>
-  </PaneBody>
-);
+    </PaneBody>
+  );
+};
 
 const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
   const { t } = useTranslation();

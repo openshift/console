@@ -34,8 +34,8 @@ import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
 import { managedResourceSaveModal } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
 import { checkAccess } from './utils/rbac';
-import { Firehose } from './utils/firehose';
 import { Loading } from './utils/status-box';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
 import { FirehoseResult } from './utils/types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -987,20 +987,17 @@ export const EditYAML_ = connect(stateToProps)(EditYAMLInner);
 
 export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
   ({ flags, ...props }) => {
-    const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
-      ? [
-          {
+    const watchResources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
+      ? {
+          yamlSamplesList: {
             kind: referenceForModel(ConsoleYAMLSampleModel),
             isList: true,
-            prop: 'yamlSamplesList',
           },
-        ]
-      : [];
+        }
+      : {};
 
-    return (
-      <Firehose resources={resources}>
-        <EditYAML_ {...props} />
-      </Firehose>
-    );
+    const resources = useK8sWatchResources(watchResources);
+
+    return <EditYAML_ {...props} yamlSamplesList={resources.yamlSamplesList as FirehoseResult} />;
   },
 );

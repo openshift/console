@@ -21,13 +21,13 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Firehose } from '../utils/firehose';
 import {
   FirehoseResource,
   FirehoseResourcesResult,
   FirehoseResultObject,
   FirehoseResult,
 } from '../utils/types';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
@@ -516,6 +516,26 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
     prop: r.prop || r.kind,
   }));
 
+  // Convert resources array to object for useK8sWatchResources hook
+  const watchResources = mock
+    ? {}
+    : resources.reduce((acc, r) => {
+        acc[r.prop] = {
+          kind: r.kind,
+          namespace: r.namespace,
+          isList: r.isList,
+          name: r.name,
+          selector: r.selector,
+          fieldSelector: r.fieldSelector,
+          limit: r.limit,
+          namespaced: r.namespaced,
+          optional: r.optional,
+        };
+        return acc;
+      }, {});
+
+  const watchedResources = useK8sWatchResources(watchResources);
+
   return (
     <FireMan
       autoFocus={autoFocus}
@@ -531,27 +551,26 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       title={showTitle ? title : undefined}
       badge={badge}
     >
-      <Firehose resources={mock ? [] : resources}>
-        <ListPageWrapper
-          flatten={flatten}
-          kinds={_.map(resources, 'kind')}
-          label={label}
-          ListComponent={ListComponent}
-          textFilter={textFilter}
-          rowFilters={rowFilters}
-          staticFilters={staticFilters}
-          customData={customData}
-          hideLabelFilter={hideLabelFilter}
-          hideNameLabelFilters={hideNameLabelFilters}
-          hideColumnManagement={hideColumnManagement}
-          columnLayout={columnLayout}
-          nameFilterPlaceholder={nameFilterPlaceholder}
-          labelFilterPlaceholder={labelFilterPlaceholder}
-          nameFilter={nameFilter}
-          namespace={namespace}
-          omitFilterToolbar={omitFilterToolbar}
-        />
-      </Firehose>
+      <ListPageWrapper
+        flatten={flatten}
+        kinds={_.map(resources, 'kind')}
+        label={label}
+        ListComponent={ListComponent}
+        textFilter={textFilter}
+        rowFilters={rowFilters}
+        staticFilters={staticFilters}
+        customData={customData}
+        hideLabelFilter={hideLabelFilter}
+        hideNameLabelFilters={hideNameLabelFilters}
+        hideColumnManagement={hideColumnManagement}
+        columnLayout={columnLayout}
+        nameFilterPlaceholder={nameFilterPlaceholder}
+        labelFilterPlaceholder={labelFilterPlaceholder}
+        nameFilter={nameFilter}
+        namespace={namespace}
+        omitFilterToolbar={omitFilterToolbar}
+        resources={watchedResources}
+      />
     </FireMan>
   );
 };

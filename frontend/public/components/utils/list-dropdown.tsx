@@ -6,8 +6,8 @@ import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceName } from './resource-icon';
 import { flagPending } from '../../reducers/features';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
@@ -197,13 +197,46 @@ const ListDropdown_: React.FCC<ListDropdownProps> = ({
 };
 
 export const ListDropdown: React.FCC<ListDropdownProps> = (props) => {
-  const resources = _.map(props.resources, (resource) =>
-    _.assign({ isList: true, prop: resource.kind }, resource),
-  );
+  // Convert resources array to object for useK8sWatchResources
+  const watchResources = useMemo(() => {
+    if (!props.resources || props.resources.length === 0) {
+      return {};
+    }
+    return props.resources.reduce((acc, resource) => {
+      acc[resource.kind] = {
+        kind: resource.kind,
+        isList: true,
+        namespace: resource.namespace,
+        selector: resource.selector,
+        fieldSelector: resource.fieldSelector,
+        limit: resource.limit,
+        namespaced: resource.namespaced,
+        optional: resource.optional,
+      };
+      return acc;
+    }, {} as any);
+  }, [props.resources]);
+
+  const watchedResources = useK8sWatchResources<any>(watchResources);
+
+  // Determine loaded and loadError states
+  const loaded = useMemo(() => {
+    return Object.values(watchedResources).every((r: any) => r.loaded);
+  }, [watchedResources]);
+
+  const loadError = useMemo(() => {
+    return Object.values(watchedResources).some((r: any) => r.loadError);
+  }, [watchedResources]);
+
+  // watchedResources is already in the correct format (object keyed by kind)
+  // ListDropdown_ expects resources as an object, not an array
   return (
-    <Firehose resources={resources}>
-      <ListDropdown_ {...props} />
-    </Firehose>
+    <ListDropdown_
+      {...props}
+      resources={watchedResources as any}
+      loaded={loaded}
+      loadError={loadError}
+    />
   );
 };
 

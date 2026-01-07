@@ -10,13 +10,13 @@ import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginComm
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 
 export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
   const { t } = useTranslation();
@@ -84,21 +84,17 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
 
 export const CommandLineToolsPage = connectToFlags(FLAGS.CONSOLE_CLI_DOWNLOAD)(
   ({ flags, ...props }) => {
-    const resources = flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
-      ? [
-          {
+    const shouldFetch = flags[FLAGS.CONSOLE_CLI_DOWNLOAD];
+    const [cliDownloads, loaded, loadError] = useK8sWatchResource(
+      shouldFetch
+        ? {
             kind: referenceForModel(ConsoleCLIDownloadModel),
             isList: true,
-            prop: 'obj',
-          },
-        ]
-      : [];
-
-    return (
-      <Firehose resources={resources}>
-        <CommandLineTools {...(props as any)} />
-      </Firehose>
+          }
+        : null,
     );
+
+    return <CommandLineTools {...(props as any)} obj={{ data: cliDownloads, loaded, loadError }} />;
   },
 );
 

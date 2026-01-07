@@ -32,10 +32,10 @@ import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config
 import { K8sResourceKind } from '../../../module/k8s';
 import { createAlertRoutingModal } from '../../modals';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { Firehose } from '../../utils/firehose';
 import { Kebab } from '../../utils/kebab';
 import { SectionHeading } from '../../utils/headings';
 import { StatusBox } from '../../utils/status-box';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -596,6 +596,13 @@ export const AlertmanagerConfig: FC = () => {
 
   const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
 
+  const [secret, loaded, loadError] = useK8sWatchResource({
+    kind: 'Secret',
+    name: 'alertmanager-main',
+    namespace: 'openshift-monitoring',
+    isList: false,
+  });
+
   return (
     <>
       <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
@@ -611,19 +618,7 @@ export const AlertmanagerConfig: FC = () => {
           },
         ]}
       />
-      <Firehose
-        resources={[
-          {
-            kind: 'Secret',
-            name: 'alertmanager-main',
-            namespace: 'openshift-monitoring',
-            isList: false,
-            prop: 'obj',
-          },
-        ]}
-      >
-        <AlertmanagerConfigWrapper />
-      </Firehose>
+      <AlertmanagerConfigWrapper obj={{ data: secret as K8sResourceKind, loaded, loadError }} />
     </>
   );
 };
