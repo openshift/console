@@ -22,6 +22,7 @@ table in [Console dynamic plugins README](./README.md).
 - **Type breaking**: Changed the default type parameters of `Extension<any>` to `Extension<string, AnyObject>` ([CONSOLE-3769], [#15778])
 - **Type breaking**: Fix inaccurate types in `console.topology/details/resource-link` and
   `console.topology/details/tab-section`. ([CONSOLE-4630], [#15893])
+- Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630], [#15893])
 
 ## 4.21.0-prerelease.1 - 2025-12-04
 

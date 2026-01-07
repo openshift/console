@@ -7,6 +7,7 @@ import {
   DocumentTitleProps,
   ErrorBoundaryFallbackProps,
   HorizontalNavProps,
+  InventoryItemProps,
   InventoryItemBodyProps,
   InventoryItemStatusProps,
   InventoryItemTitleProps,
@@ -504,7 +505,7 @@ export const OverviewGrid: FC<OverviewGridProps> = require('@console/shared/src/
  *   )
  * ```
  */
-export const InventoryItem: FC = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
+export const InventoryItem: FC<InventoryItemProps> = require('@console/shared/src/components/dashboard/inventory-card/InventoryCard')
   .default;
 
 /**

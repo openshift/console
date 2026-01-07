@@ -569,7 +569,7 @@ export type StatusComponentProps = {
 
 export type OverviewProps = {
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export enum GridPosition {
@@ -589,6 +589,10 @@ export type OverviewGridProps = {
   mainCards: OverviewGridCard[];
   leftCards?: OverviewGridCard[];
   rightCards?: OverviewGridCard[];
+};
+
+export type InventoryItemProps = {
+  children: ReactNode;
 };
 
 export type InventoryItemTitleProps = {
@@ -731,6 +735,7 @@ export type ErrorBoundaryFallbackProps = {
   componentStack: string;
   stack: string;
   title: string;
+  children?: ReactNode;
 };
 
 export type FormatSeriesTitle = (labels: PrometheusLabels, i?: number) => string;

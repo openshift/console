@@ -140,7 +140,7 @@ export const TestModalPage: React.FC<{ closeComponent: any }> = () => {
 
   const AsyncTestComponent = ({ closeModal, ...rest }) => {
     return (
-      <React.Suspense fallback={LoadingComponent}>
+      <React.Suspense fallback={<LoadingComponent />}>
         <Component closeModal={closeModal} {...rest} />
       </React.Suspense>
     );

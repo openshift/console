@@ -11,6 +11,7 @@ type DemoErrorBoundaryState = {
 type DemoErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
   t: TFunction;
+  children?: React.ReactNode;
 };
 
 const DefaultFallback: React.FC = () => <div />;
@@ -40,4 +41,3 @@ class DemoErrorBoundaryWithTranslation extends React.Component<DemoErrorBoundary
 }
 
 export const DemoErrorBoundary = withTranslation()(DemoErrorBoundaryWithTranslation);
-
