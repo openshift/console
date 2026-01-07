@@ -66,7 +66,7 @@ export const ServiceAccountDropdown: FC<ServiceAccountDropdownProps> = ({
           : []
       }
       desc={ServiceAccountModel.label}
-      placeholder={t('public~Select service account')}
+      placeholder={t('olm-v1~Select service account')}
       selectedKey={selectedKey}
       selectedKeyKind={ServiceAccountModel.kind}
       onChange={handleOnChange}
