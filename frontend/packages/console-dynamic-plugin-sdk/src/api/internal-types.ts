@@ -344,16 +344,12 @@ export type CellIsStickyProps = {
 
 export type GetNameCellProps = (
   name: string,
-) => {
-  isStickyColumn: true;
-  stickyMinWidth: '0';
+) => CellIsStickyProps & {
   hasRightBorder: true;
   'data-test': string;
 };
 
-export type ActionsCellProps = {
-  isStickyColumn: true;
-  stickyMinWidth: '0';
+export type ActionsCellProps = CellIsStickyProps & {
   hasLeftBorder: true;
   isActionCell: true;
 };
