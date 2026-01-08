@@ -13,7 +13,7 @@ import {
   StatusGroupMapper,
   TopConsumerPopoverProps,
 } from '../extensions/console-types';
-import type { TableColumn, ColumnLayout, RowProps } from '../extensions/console-types';
+import type { ColumnLayout, RowProps } from '../extensions/console-types';
 import { Alert, K8sModel } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
@@ -320,7 +320,7 @@ export type ConsoleDataViewProps<
   data: TData[];
   loaded: boolean;
   loadError?: unknown;
-  columns: TableColumn<TData>[];
+  columns: ConsoleDataViewColumn<TData>[];
   columnLayout?: ColumnLayout;
   columnManagementID?: string;
   initialFilters?: TFilters;
