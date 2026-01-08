@@ -78,11 +78,8 @@ export const useOperatorCatalogItems = () => {
     clusterServiceVersionsLoaded,
     clusterServiceVersionsLoadError,
   ] = useClusterServiceVersions(namespace);
-  const [
-    cloudCredentials,
-    cloudCredentialsLoaded,
-    cloudCredentialsLoadError,
-  ] = useClusterCloudCredentialConfig();
+  // cloudCredentials are optional
+  const [cloudCredentials] = useClusterCloudCredentialConfig();
   const [
     infrastructure,
     infrastructureLoaded,
@@ -103,12 +100,10 @@ export const useOperatorCatalogItems = () => {
       operatorHubPackageManifestsLoaded &&
       subscriptionsLoaded &&
       clusterServiceVersionsLoaded &&
-      cloudCredentialsLoaded &&
       infrastructureLoaded &&
       authenticationLoaded,
     [
       authenticationLoaded,
-      cloudCredentialsLoaded,
       clusterServiceVersionsLoaded,
       infrastructureLoaded,
       operatorGroupsLoaded,
@@ -124,13 +119,11 @@ export const useOperatorCatalogItems = () => {
         operatorHubPackageManifestsLoadError,
         subscriptionsLoadError,
         clusterServiceVersionsLoadError,
-        cloudCredentialsLoadError,
         infrastructureLoadError,
         authenticationLoadError,
       ),
     [
       authenticationLoadError,
-      cloudCredentialsLoadError,
       clusterServiceVersionsLoadError,
       infrastructureLoadError,
       operatorHubPackageManifestsLoadError,
