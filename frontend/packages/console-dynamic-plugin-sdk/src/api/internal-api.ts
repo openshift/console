@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { FC } from 'react';
+import type { FC, ReactElement } from 'react';
 import {
   ActivityItemProps,
   ActivityBodyProps,
@@ -100,7 +100,7 @@ export const ConsoleDataView: <
   TFilters extends ResourceFilters = ResourceFilters
 >(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
-) => JSX.Element = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
+) => ReactElement = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
 
 export const cellIsStickyProps: CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
   .cellIsStickyProps;
