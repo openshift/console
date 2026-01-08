@@ -450,15 +450,41 @@ func TestInstallChartFromURL(t *testing.T) {
 			err := GetOCIRegistry(actionConfig, tt.skipTLSVerify, tt.plainHTTP)
 			require.NoError(t, err)
 
-			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, tt.chartVersion)
-			if tt.releaseName == "valid-chart-path" {
-				require.NoError(t, err)
-				require.Equal(t, tt.releaseName, rel.Name)
-				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
-				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
+			objs := []runtime.Object{}
+			clientInterface := k8sfake.NewSimpleClientset(objs...)
+			coreClient := clientInterface.CoreV1()
 
-			} else if tt.releaseName == "invalid-chart-path" {
-				require.Error(t, err)
+			var rel *v1.Secret
+			go func() {
+				rel, err = InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+				if tt.releaseName == "valid-chart-path" {
+					require.NoError(t, err)
+					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), rel.ObjectMeta.Name)
+				} else if tt.releaseName == "invalid-chart-path" {
+					require.Error(t, err)
+				}
+			}()
+			if tt.releaseName == "valid-chart-path" {
+				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
+				r := release.Release{
+					Name:      tt.releaseName,
+					Namespace: "test-namespace",
+					Info: &release.Info{
+						FirstDeployed: helmTime.Time{},
+						Status:        "pending-install",
+					},
+					Version: 1,
+					Chart: &chart.Chart{
+						Metadata: &chart.Metadata{
+							Name:        tt.chartName,
+							Version:     tt.chartVersion,
+							Annotations: map[string]string{"chart_url": tt.chartPath},
+						},
+					},
+				}
+				time.Sleep(10 * time.Second)
+				err = secretsDriver.Create(fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), &r)
+				require.NoError(t, err)
 			}
 		})
 	}

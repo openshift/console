@@ -69,6 +69,13 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
           : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
     },
+    helmChartInstallation: {
+      label:
+        projectHelmChartCreateAccess || helmChartCreateAccess
+          ? t('helm-plugin~Helm Chart URL')
+          : undefined,
+      onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
+    },
   };
 
   const pages: Page[] = [
