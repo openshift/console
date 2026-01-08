@@ -6,7 +6,7 @@ import {
   QuickStartTaskStatus,
   getTaskStatusKey,
 } from '@patternfly/quickstarts';
-import Pseudo from 'i18next-pseudo';
+import Pseudo from 'i18next-pseudo/es';
 import { useTranslation } from 'react-i18next';
 import useInlineExecuteCommandShowdownExtension from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
 import MarkdownExecuteSnippet from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
