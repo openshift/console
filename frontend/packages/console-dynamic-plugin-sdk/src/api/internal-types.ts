@@ -358,6 +358,9 @@ export type ActionsCellProps = {
   isActionCell: true;
 };
 
+// Swagger types
+// Note: These types are duplicated from @console/internal/module/k8s/swagger
+// to avoid circular dependency issues with the SDK package
 export type SwaggerDefinition = {
   definitions?: SwaggerDefinitions;
   description?: string;
