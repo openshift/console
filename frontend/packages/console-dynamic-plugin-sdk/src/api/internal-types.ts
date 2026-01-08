@@ -1,5 +1,7 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
+import { DataViewTh } from '@patternfly/react-data-view';
+import { SortByDirection } from '@patternfly/react-table';
 import { Map as ImmutableMap } from 'immutable';
 import {
   FirehoseResult,
@@ -296,10 +298,10 @@ export type ResourceMetadata = {
   labels?: { [key: string]: string };
 };
 
-export type ConsoleDataViewColumn<TData> = {
+export type ConsoleDataViewColumn<TData> = DataViewTh & {
   id: string;
   title: string;
-  sortFunction?: string | ((filteredData: TData[], sortDirection: 'asc' | 'desc') => TData[]);
+  sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
 };
 
 export type ConsoleDataViewRow = any[];
@@ -332,6 +334,28 @@ export type ConsoleDataViewProps<
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   mock?: boolean;
+};
+
+// ConsoleDataView helper types
+export type CellIsStickyProps = {
+  isStickyColumn: true;
+  stickyMinWidth: '0';
+};
+
+export type GetNameCellProps = (
+  name: string,
+) => {
+  isStickyColumn: true;
+  stickyMinWidth: '0';
+  hasRightBorder: true;
+  'data-test': string;
+};
+
+export type ActionsCellProps = {
+  isStickyColumn: true;
+  stickyMinWidth: '0';
+  hasLeftBorder: true;
+  isActionCell: true;
 };
 
 export type SwaggerDefinition = {

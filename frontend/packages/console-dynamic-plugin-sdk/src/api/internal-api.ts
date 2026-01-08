@@ -90,9 +90,25 @@ export const useURLPoll: UseURLPoll = require('@console/internal/components/util
 export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
   .useLastNamespace;
 
-export const ConsoleDataView: <TData = unknown, TCustomRowData = unknown, TFilters extends import('./internal-types').ResourceFilters = import('./internal-types').ResourceFilters>(
+export const ConsoleDataView: <
+  TData = unknown,
+  TCustomRowData = unknown,
+  TFilters extends import('./internal-types').ResourceFilters = import('./internal-types').ResourceFilters
+>(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
 ) => JSX.Element = require('@console/app/src/components/data-view/ConsoleDataView').ConsoleDataView;
+
+export const cellIsStickyProps: import('./internal-types').CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
+  .cellIsStickyProps;
+
+export const getNameCellProps: import('./internal-types').GetNameCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
+  .getNameCellProps;
+
+export const actionsCellProps: import('./internal-types').ActionsCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
+  .actionsCellProps;
+
+export const initialFiltersDefault: import('./internal-types').ResourceFilters = require('@console/app/src/components/data-view/ConsoleDataView')
+  .initialFiltersDefault;
 
 export const definitionFor: DefinitionFor = require('@console/internal/module/k8s/swagger')
   .definitionFor;
