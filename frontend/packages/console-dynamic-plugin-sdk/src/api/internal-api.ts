@@ -91,8 +91,8 @@ export const useLastNamespace: UseLastNamespace = require('@console/app/src/comp
   .useLastNamespace;
 
 export const ConsoleDataView: <
-  TData = unknown,
-  TCustomRowData = unknown,
+  TData,
+  TCustomRowData = any,
   TFilters extends import('./internal-types').ResourceFilters = import('./internal-types').ResourceFilters
 >(
   props: ConsoleDataViewProps<TData, TCustomRowData, TFilters>,
