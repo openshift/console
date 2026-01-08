@@ -89,8 +89,6 @@ For older 1.x plugin SDK packages, refer to the following version compatibility 
 
 | Console Version | SDK Package                                     | Last Package Version |
 | --------------- | ----------------------------------------------- | -------------------- |
-| 4.18.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.8.0                |
-|                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.3.0                |
 | 4.17.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.6.0                |
 |                 | `@openshift-console/dynamic-plugin-sdk-webpack` | 1.2.0                |
 | 4.16.x          | `@openshift-console/dynamic-plugin-sdk`         | 1.4.0                |
@@ -123,7 +121,7 @@ Refer to [PatternFly Upgrade Notes][console-pf-upgrade-notes] containing links t
 
 ## Shared modules
 
-Console is [configured](./src/shared-modules.ts) to share specific modules with its dynamic plugins.
+Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with its dynamic plugins.
 
 The following shared modules are provided by Console, without plugins providing their own fallback:
 
@@ -211,6 +209,7 @@ This section documents notable changes in Console provided shared modules and ot
 > [!WARNING]
 > Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
 > as a courtesy for plugins which use these unsupported CSS classes.
+
 - Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
   [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
 - Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.

@@ -1,9 +1,9 @@
 import type { ComponentType } from 'react';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { Extension, CodeRef } from '../types';
 import { Humanize, TopConsumerPopoverProps } from './console-types';
 
 /** Adds a new inventory item into project overview page. */
-export type ProjectOverviewInventoryItem = ExtensionDeclaration<
+export type ProjectOverviewInventoryItem = Extension<
   'console.project-overview/inventory-item',
   {
     /** The component to be rendered. */
@@ -14,7 +14,7 @@ export type ProjectOverviewInventoryItem = ExtensionDeclaration<
 export type GetProjectQuery = (projectName: string) => string;
 
 /** Adds a new project overview utilization item. */
-export type ProjectOverviewUtilizationItem = ExtensionDeclaration<
+export type ProjectOverviewUtilizationItem = Extension<
   'console.project-overview/utilization-item',
   {
     /** The title of the utilization item. */

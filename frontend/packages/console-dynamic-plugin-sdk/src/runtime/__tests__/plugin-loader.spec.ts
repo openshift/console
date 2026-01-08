@@ -1,6 +1,6 @@
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import * as utilsModule from '@console/shared/src/utils/utils';
-import { StandardConsolePluginManifest, LegacyConsolePluginManifest } from '../../build-types';
+import { ConsolePluginManifest } from '../../build-types';
 import { Extension, RemoteEntryModule } from '../../types';
 import {
   getPluginManifest,
@@ -33,7 +33,6 @@ const {
   loadDynamicPlugin,
   getPluginEntryCallback,
   registerPluginEntryCallback,
-  adaptPluginManifest,
   loadAndEnablePlugin,
   getStateForTestPurposes,
   resetStateAndEnvForTestPurposes,
@@ -59,7 +58,7 @@ describe('getScriptElementID', () => {
 describe('loadDynamicPlugin', () => {
   const getAllScripts = () => Array.from(document.scripts);
 
-  const getFirstPluginScript = (manifest: StandardConsolePluginManifest) =>
+  const getFirstPluginScript = (manifest: ConsolePluginManifest) =>
     getAllScripts().find(
       (element) => element.id === getScriptElementID(manifest.name, manifest.loadScripts[0]),
     );
@@ -314,45 +313,6 @@ describe('window.loadPluginEntry', () => {
   });
 });
 
-describe('adaptPluginManifest', () => {
-  it('returns the same manifest if it already meets the standard format', () => {
-    const manifest = getPluginManifest('Test', '1.2.3');
-    const adaptedManifest = adaptPluginManifest(manifest, 'http://example.com/Test/');
-
-    expect(adaptedManifest).toBe(manifest);
-  });
-
-  it('adapts the legacy manifest to the standard format', () => {
-    const manifest: LegacyConsolePluginManifest = {
-      name: 'Test',
-      version: '1.2.3',
-      extensions: [],
-      displayName: 'Test Plugin',
-      description: 'Test Plugin Description',
-      disableStaticPlugins: ['StaticTest'],
-      dependencies: { RequiredTest: '*' },
-    };
-
-    const adaptedManifest = adaptPluginManifest(manifest, 'http://example.com/Test/');
-
-    expect(adaptedManifest).not.toBe(manifest);
-
-    expect(adaptedManifest.name).toBe(manifest.name);
-    expect(adaptedManifest.version).toBe(manifest.version);
-    expect(adaptedManifest.extensions).toBe(manifest.extensions);
-    expect(adaptedManifest.dependencies).toBe(manifest.dependencies);
-    expect(adaptedManifest.baseURL).toBe('http://example.com/Test/');
-    expect(adaptedManifest.loadScripts).toEqual(['plugin-entry.js']);
-    expect(adaptedManifest.registrationMethod).toBe('callback');
-
-    expect(adaptedManifest.customProperties.console.displayName).toBe(manifest.displayName);
-    expect(adaptedManifest.customProperties.console.description).toBe(manifest.description);
-    expect(adaptedManifest.customProperties.console.disableStaticPlugins).toBe(
-      manifest.disableStaticPlugins,
-    );
-  });
-});
-
 // Skip loadAndEnablePlugin tests: These tests rely on mocking loadDynamicPlugin,
 // but with ES modules, internal function calls within the same module cannot be mocked.
 // loadAndEnablePlugin calls loadDynamicPlugin directly, bypassing the module mock.
@@ -362,7 +322,7 @@ describe.skip('loadAndEnablePlugin', () => {
   let setDynamicPluginEnabled: jest.SpyInstance;
   // Placeholder for the mock that would be needed if this test were enabled
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const loadDynamicPluginMock = jest.fn<Promise<string>, [StandardConsolePluginManifest]>();
+  const loadDynamicPluginMock = jest.fn<Promise<string>, [ConsolePluginManifest]>();
 
   beforeEach(() => {
     pluginStore = new PluginStore([], ['Test']);
@@ -405,30 +365,6 @@ describe.skip('loadAndEnablePlugin', () => {
     [fetchPluginManifest, resolvePluginDependencies, loadDynamicPluginMock].forEach((mock) => {
       expect(mock).toHaveBeenCalledTimes(2);
     });
-  });
-
-  it('ensures that the plugin manifest is adapted to the standard format', async () => {
-    const manifest: LegacyConsolePluginManifest = {
-      name: 'Test',
-      version: '1.2.3',
-      extensions: [],
-      displayName: 'Test Plugin',
-      description: 'Test Plugin Description',
-      disableStaticPlugins: ['StaticTest'],
-      dependencies: { RequiredTest: '*' },
-    };
-
-    fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
-    resolvePluginDependencies.mockImplementation(() => Promise.resolve());
-    loadDynamicPluginMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
-
-    window.SERVER_FLAGS.basePath = '/';
-
-    await loadAndEnablePlugin('Test', pluginStore);
-
-    expect(loadDynamicPluginMock).toHaveBeenLastCalledWith(
-      adaptPluginManifest(manifest, '/api/plugins/Test/'),
-    );
   });
 
   it('enables the plugin if it was loaded successfully', async () => {
