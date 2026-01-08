@@ -1,7 +1,7 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
-import { DataViewTh } from '@patternfly/react-data-view';
-import { SortByDirection } from '@patternfly/react-table';
+import type { DataViewTh } from '@patternfly/react-data-view';
+import type { SortByDirection } from '@patternfly/react-table';
 import { Map as ImmutableMap } from 'immutable';
 import {
   FirehoseResult,
