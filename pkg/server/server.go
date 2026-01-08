@@ -86,6 +86,8 @@ const (
 	tokenizerPageTemplateName             = "tokener.html"
 	updatesEndpoint                       = "/api/check-updates"
 	crdSchemaEndpoint                     = "/api/console/crd-columns/"
+	ociChartEndpoint                      = "/api/helm/oci-chart/"
+	ociChartGetEndpoint                   = "/api/helm/oci-chart-get"
 )
 
 type CustomFaviconPath struct {
@@ -635,6 +637,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
+	handle("/api/helm/oci-chart-get", authHandlerWithUser(helmHandlers.HandleOCIChartGet))
 	handle("/api/helm/oci-chart", authHandlerWithUser(helmHandlers.HandleInstallOCIChart))
 	handle("/api/helm/release/history", authHandlerWithUser(helmHandlers.HandleGetReleaseHistory))
 	handle("/api/helm/charts/index.yaml", authHandlerWithUser(helmHandlers.HandleIndexFile))

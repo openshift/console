@@ -135,3 +135,10 @@ export interface HelmChartRepositoryData {
   formData: HelmChartRepositoryFormData;
   formReloadCount?: number;
 }
+
+export interface HelmOCIChart {
+  name: string;
+  namespace: string;
+  chartURL: string;
+  version: number | string;
+}

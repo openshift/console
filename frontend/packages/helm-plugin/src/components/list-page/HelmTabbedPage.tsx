@@ -67,6 +67,10 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
           : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
     },
+    helmChartInstallation: {
+      label: t('helm-plugin~OCI Chart'),
+      onSelection: () => `/helm/ns/${namespace || 'default'}/oci-chart`,
+    },
   };
 
   const pages: Page[] = [

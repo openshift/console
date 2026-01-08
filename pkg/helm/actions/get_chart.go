@@ -62,3 +62,13 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	}()
 	return loader.Load(chartPath)
 }
+
+func GetOCIChart(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error) {
+	cmd := action.NewInstall(conf)
+	cmd.Namespace = namespace
+	chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
+	if err != nil {
+		return nil, fmt.Errorf("error getting OCI chart: %v", err)
+	}
+	return loader.Load(chartLocation)
+}
