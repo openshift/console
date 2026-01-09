@@ -2,7 +2,7 @@ package actions
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"regexp"
@@ -26,7 +26,7 @@ func setSettings(settings *cli.EnvSettings) {
 // Test binaries often have no build info (see https://go.dev/issue/33976), so we parse go.mod instead.
 func helmVersionFromGoMod() string {
 	for _, path := range []string{"go.mod", "../go.mod", "../../go.mod", "../../../go.mod"} {
-		data, err := ioutil.ReadFile(path)
+		data, err := os.ReadFile(path)
 		if err != nil {
 			continue
 		}
@@ -174,13 +174,13 @@ func ExecuteScript(filepath string, waitForCompletion bool, args ...string) erro
 	tlsCmd.Stderr = os.Stderr
 	err := tlsCmd.Start()
 	if err != nil {
-		bytes, _ := ioutil.ReadAll(os.Stderr)
+		bytes, _ := io.ReadAll(os.Stderr)
 		return fmt.Errorf("Error starting program :%s:%s:%w", filepath, string(bytes), err)
 	}
 	if waitForCompletion {
 		err = tlsCmd.Wait()
 		if err != nil {
-			bytes, _ := ioutil.ReadAll(os.Stderr)
+			bytes, _ := io.ReadAll(os.Stderr)
 			return fmt.Errorf("Error waiting program :%s:%s:%w", filepath, string(bytes), err)
 		}
 	}

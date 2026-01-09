@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -398,7 +397,7 @@ func main() {
 	case "in-cluster":
 		k8sEndpoint = &url.URL{Scheme: "https", Host: "kubernetes.default.svc"}
 		var err error
-		k8sCertPEM, err = ioutil.ReadFile(k8sInClusterCA)
+		k8sCertPEM, err = os.ReadFile(k8sInClusterCA)
 		if err != nil {
 			klog.Fatalf("Error inferring Kubernetes config from environment: %v", err)
 		}
@@ -426,7 +425,7 @@ func main() {
 
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
-			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
+			serviceCertPEM, err := os.ReadFile(*fServiceCAFile)
 			if err != nil {
 				klog.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
