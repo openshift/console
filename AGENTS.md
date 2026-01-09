@@ -19,15 +19,18 @@ All AI assistants reference these files to understand:
 ```bash
 # Clone & install
 git clone https://github.com/openshift/console.git && cd console
-make install          # yarn + go deps
+cd frontend && yarn install
 
 # Development server
-make start
+cd frontend && yarn dev
 
 # Core commands
-make lint             # ESLint + Prettier
-make test             # Jest unit + Cypress E2E
-make build            # Production build
+cd frontend && yarn lint       # ESLint + Prettier
+cd frontend && yarn test       # Jest unit tests
+cd frontend && yarn build      # Production build
+
+# Full build (frontend + backend)
+./build.sh
 ```
 
 ### Frontend Development Commands
