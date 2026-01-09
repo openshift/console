@@ -1,5 +1,5 @@
+import { applyCodeRefSymbol } from '@openshift/dynamic-plugin-sdk';
 import { ConsolePluginManifest } from '../build-types';
-import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
 import { Extension } from '../types';
 
 export const getPluginManifest = (
@@ -35,7 +35,7 @@ export const getExecutableCodeRefMock = <T = unknown>(
   };
 
   // Apply the CodeRef symbol (must be the only symbol for isExecutableCodeRef to pass)
-  applyCodeRefSymbol<T>(fn);
+  applyCodeRefSymbol(fn);
 
   // Add mock-like properties for test assertions
   Object.defineProperty(fn, 'mock', {

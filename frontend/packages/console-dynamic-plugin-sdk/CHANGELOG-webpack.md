@@ -10,6 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.2 - TBD
+
+- **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`. Migrate by
+  building your plugin with a 4.22 or later of `ConsoleRemotePlugin`. Runtime support for older plugins
+  built for 4.21 or older will be removed in a future version of OCP Console. ([CONSOLE-3769], [#15904])
+
 ## 4.22.0-prerelease.1 - 2025-01-21
 
 - **Breaking**: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
@@ -129,5 +135,6 @@ table in [Console dynamic plugins README](./README.md).
 [#15183]: https://github.com/openshift/console/pull/15183
 [#15479]: https://github.com/openshift/console/pull/15479
 [#15802]: https://github.com/openshift/console/pull/15802
+[#15904]: https://github.com/openshift/console/pull/15904
 [#15945]: https://github.com/openshift/console/pull/15945
 [#15934]: https://github.com/openshift/console/pull/15934

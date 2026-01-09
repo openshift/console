@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
 import { PluginStore } from '@console/plugin-sdk/src/store';
+import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { getURLSearchParams } from './components/utils/link';
 import type { Middleware } from 'redux';
 import type { RootState } from './redux';
+import { valid as semver } from 'semver';
+import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 
 const getEnabledDynamicPluginNames = () => {
   const allPluginNames = window.SERVER_FLAGS.consolePlugins;
@@ -21,7 +24,19 @@ const getEnabledDynamicPluginNames = () => {
 
 const dynamicPluginNames = getEnabledDynamicPluginNames();
 
-export const pluginStore = new PluginStore(undefined, dynamicPluginNames);
+export const pluginStore = new PluginStore(
+  {
+    loaderOptions: {
+      sharedScope: getSharedScope(),
+      fetchImpl: consoleFetch,
+      fixedPluginDependencyResolutions: {
+        // Allows plugins to target a specific version of OpenShift via semver
+        '@console/pluginAPI': semver(window.SERVER_FLAGS.releaseVersion),
+      },
+    },
+  },
+  dynamicPluginNames,
+);
 
 // Console local plugins module has its source generated during webpack build,
 // so we use dynamic require() instead of the usual static import statement.

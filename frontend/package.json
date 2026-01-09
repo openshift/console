@@ -126,6 +126,7 @@
       "./__mocks__/mutationObserver.js",
       "./__mocks__/serverFlags.js",
       "./__mocks__/textEncoderDecoder.ts",
+      "./__mocks__/webpack.ts",
       "./__mocks__/websocket.js"
     ],
     "setupFilesAfterEnv": [
