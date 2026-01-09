@@ -16,10 +16,10 @@ import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelCon
 
 interface DataModelExtensionProps {
   dataModelFactory: ResolvedExtension<TopologyDataModelFactory>['properties'];
-  pluginID: string;
+  uid: string;
 }
 
-const DataModelExtension: FC<DataModelExtensionProps> = ({ dataModelFactory, pluginID }) => {
+const DataModelExtension: FC<DataModelExtensionProps> = ({ dataModelFactory, uid }) => {
   const dataModelContext = useContext<ExtensibleModel>(ModelContext);
   const {
     id,
@@ -67,7 +67,7 @@ const DataModelExtension: FC<DataModelExtensionProps> = ({ dataModelFactory, plu
           // CRD not found - log warning and skip
           // eslint-disable-next-line no-console
           console.warn(
-            `Plugin "${pluginID}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determine version. Please add a required flag to the extension to suppress this warning. The resource "${key}" will not be loaded and ignored in the topology view for now.`,
+            `Extension "${uid}": Could not find model (CRD) for group "${model.group}" and kind "${model.kind}" to determine version. Please add a required flag to the extension to suppress this warning. The resource "${key}" will not be loaded and ignored in the topology view for now.`,
           );
           return;
         }
@@ -82,7 +82,7 @@ const DataModelExtension: FC<DataModelExtensionProps> = ({ dataModelFactory, plu
     });
 
     return converted;
-  }, [rawResources, dataModelContext.namespace, pluginID]);
+  }, [rawResources, dataModelContext.namespace, uid]);
 
   const extensionContext = useRef<ModelExtensionContext>({
     priority,

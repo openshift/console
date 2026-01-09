@@ -1,10 +1,35 @@
+import { useMemo, useRef } from 'react';
 import { useExtensions as useExtensionsSDK } from '@openshift/dynamic-plugin-sdk';
 import type {
   Extension,
   ExtensionTypeGuard,
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
+import { dynamicPluginNames } from '../utils/allowed-plugins';
 import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
+
+const pluginOrderMap = new Map(dynamicPluginNames.map((name, index) => [name, index]));
+
+/**
+ * OCPBUGS-43792: Sort extensions by the order in {@link dynamicPluginNames}, so
+ * that the order can be controlled using the console operator config.
+ *
+ * The extensions will resolve in the same order as the list of enabled plugins
+ * in the console operator config. This means that cluster admins can choose
+ * which plugin takes priority when there are extension collisions for extension
+ * points like the Project modal where only one extension can be resolved and rendered.
+ *
+ * Extensions from plugins not in the list (static plugins) are placed at the start.
+ */
+const sortExtensionsByPluginOrder = <E extends Extension>(
+  extensions: LoadedExtension<E>[],
+): LoadedExtension<E>[] => {
+  return [...extensions].sort(
+    (a, b) =>
+      (pluginOrderMap.get(a.pluginName) ?? Number.MIN_SAFE_INTEGER) -
+      (pluginOrderMap.get(b.pluginName) ?? Number.MIN_SAFE_INTEGER),
+  );
+};
 
 /**
  * React hook for consuming Console extensions.
@@ -45,8 +70,26 @@ export const useExtensions = <E extends Extension>(
     throw new Error('You must pass at least one type guard to useExtensions');
   }
 
-  // TODO: we are missing pluginID
-  const extensions = useExtensionsSDK(...typeGuards) as LoadedExtension<E>[];
+  const extensions = useExtensionsSDK(...typeGuards);
+  const translatedExtensions = useTranslatedExtensions<E>(extensions);
 
-  return useTranslatedExtensions<E>(extensions);
+  // Track the previous result and UIDs for referential stability
+  const previousResultRef = useRef<LoadedExtension<E>[]>([]);
+  const previousUIDsRef = useRef<string>('');
+
+  return useMemo(() => {
+    const sorted = sortExtensionsByPluginOrder(translatedExtensions);
+    const currentUIDs = sorted.map((e) => e.uid).join(',');
+
+    // Return previous result if the extensions haven't changed
+    if (currentUIDs === previousUIDsRef.current) {
+      return previousResultRef.current;
+    }
+
+    // Update refs and return new result
+    previousResultRef.current = sorted;
+    previousUIDsRef.current = currentUIDs;
+
+    return sorted;
+  }, [translatedExtensions]);
 };
