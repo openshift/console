@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { AnyObject } from '@openshift/dynamic-plugin-sdk';
+import { AnyObject, applyCodeRefSymbol } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import type {
   Extension,
@@ -14,12 +14,17 @@ import type {
 import { deepForOwn } from '../utils/object';
 import { settleAllPromises } from '../utils/promise';
 
-const codeRefSymbol = Symbol('CodeRef');
+/**
+ * Extract the SDK's internal CodeRef symbol by applying it to a dummy function.
+ *
+ * This ensures we can detect code refs created by the SDK, which uses its own
+ * private Symbol instance.
+ */
+const codeRefSymbol = Object.getOwnPropertySymbols(applyCodeRefSymbol(() => Promise.resolve()))[0];
 
-export const applyCodeRefSymbol = <T = any>(ref: CodeRef<T>) => {
-  ref[codeRefSymbol] = true;
-  return ref;
-};
+if (!codeRefSymbol) {
+  throw new Error('Failed to extract CodeRef symbol from the SDK');
+}
 
 export const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
   _.isPlainObject(obj) &&
@@ -113,6 +118,9 @@ export const resolveEncodedCodeRefs = (
 
 /**
  * Returns an extension with its `CodeRef` properties replaced with referenced objects.
+ *
+ * The resulting Promise resolves with a new extension instance; its `properties` object
+ * is cloned in order to preserve the original extension.
  */
 export const resolveExtension = async <
   E extends Extension<string, P>,
@@ -121,9 +129,10 @@ export const resolveExtension = async <
 >(
   extension: E,
 ): Promise<R> => {
+  const clonedProperties = _.cloneDeep(extension.properties);
   const valueResolutions: Promise<void>[] = [];
 
-  deepForOwn<CodeRef>(extension.properties, isExecutableCodeRef, (ref, key, obj) => {
+  deepForOwn<CodeRef>(clonedProperties, isExecutableCodeRef, (ref, key, obj) => {
     if (isCodeRefError(ref)) {
       throw getCodeRefError(ref);
     }
@@ -145,5 +154,9 @@ export const resolveExtension = async <
 
   await settleAllPromises(valueResolutions);
 
-  return (extension as unknown) as R;
+  // Return a new extension object with the resolved properties
+  return ({
+    ...extension,
+    properties: clonedProperties,
+  } as unknown) as R;
 };

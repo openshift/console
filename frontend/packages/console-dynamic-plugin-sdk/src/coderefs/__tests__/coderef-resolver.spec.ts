@@ -7,8 +7,8 @@ import {
   ModuleFactoryMock,
   RemoteEntryModuleMock,
 } from '../../utils/test-utils';
+import { applyCodeRefSymbol } from '@openshift/dynamic-plugin-sdk';
 import {
-  applyCodeRefSymbol,
   isEncodedCodeRef,
   isExecutableCodeRef,
   parseEncodedCodeRefValue,
@@ -30,21 +30,6 @@ beforeEach(() => {
 afterEach(() => {
   // eslint-disable-next-line no-console
   ['log', 'info', 'warn', 'error'].forEach((key) => (console[key] = originalConsole[key]));
-});
-
-describe('applyCodeRefSymbol', () => {
-  it('marks the given function with CodeRef symbol', () => {
-    const ref: CodeRef = () => Promise.resolve('qux');
-    expect(isExecutableCodeRef(ref)).toBe(false);
-
-    const updatedRef = applyCodeRefSymbol(ref);
-    expect(isExecutableCodeRef(updatedRef)).toBe(true);
-  });
-
-  it('returns the same function instance', () => {
-    const ref: CodeRef = () => Promise.resolve('qux');
-    expect(applyCodeRefSymbol(ref)).toBe(ref);
-  });
 });
 
 describe('isEncodedCodeRef', () => {
@@ -349,7 +334,7 @@ describe('resolveExtension', () => {
     );
   });
 
-  it('returns the same extension instance', async () => {
+  it('clones the extension instance', async () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
@@ -361,8 +346,8 @@ describe('resolveExtension', () => {
       },
     ];
 
-    expect(await resolveExtension(extensions[0])).toBe(extensions[0]);
-    expect(await resolveExtension(extensions[1])).toBe(extensions[1]);
+    expect(await resolveExtension(extensions[0])).not.toBe(extensions[0]);
+    expect(await resolveExtension(extensions[1])).not.toBe(extensions[1]);
   });
 
   it('continuously reject code refs which have failed to resolve', async () => {

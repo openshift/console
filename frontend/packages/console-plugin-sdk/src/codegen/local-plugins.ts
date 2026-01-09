@@ -185,7 +185,7 @@ export const getLocalPluginsModuleData = (
   const code = getLocalPluginsModule(
     pluginPackages,
     () => `
-      import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+      import { applyCodeRefSymbol } from '@openshift/dynamic-plugin-sdk';
     `,
     (pkg) =>
       getDynamicExtensions(
