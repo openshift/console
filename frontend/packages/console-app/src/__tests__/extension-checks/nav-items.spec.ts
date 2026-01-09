@@ -1,8 +1,9 @@
 import { isNavItem, isPerspective } from '@console/dynamic-plugin-sdk';
-import { testedExtensions } from '../plugin-test-utils';
+import { getTestedExtensions } from '../plugin-test-utils';
 
 describe('NavItem', () => {
-  it('referring to non-existing perspective is not allowed', () => {
+  it('referring to non-existing perspective is not allowed', async () => {
+    const testedExtensions = await getTestedExtensions();
     const perspectiveIds = testedExtensions
       .toArray()
       .filter(isPerspective)

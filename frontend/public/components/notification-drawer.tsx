@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-import type { DynamicPluginInfo } from '@console/plugin-sdk/src/store';
+import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
 import { resourcePath } from '@console/internal/components/utils/resource-link';
@@ -148,7 +148,7 @@ export const getAlertActions = (
 const getUpdateNotificationEntries = (
   canUpgrade: boolean,
   cv: ClusterVersionKind,
-  pluginInfoEntries: DynamicPluginInfo[],
+  pluginInfoEntries: PluginInfoEntry[],
   itemOnClick: (location: string) => void,
 ): ReactNode[] => {
   if (!cv || !canUpgrade) {

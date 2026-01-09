@@ -4,7 +4,6 @@ import { LoadedExtension } from '../../types';
 
 export const acmPerspectiveExtension: LoadedExtension<Perspective> = {
   type: 'console.perspective',
-  pluginID: '',
   pluginName: '',
   uid: '',
   properties: {
@@ -19,7 +18,6 @@ export const acmPerspectiveExtension: LoadedExtension<Perspective> = {
 export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
   {
     type: 'console.perspective',
-    pluginID: '',
     pluginName: '',
     uid: '',
     properties: {
@@ -32,7 +30,6 @@ export const mockPerspectiveExtensions: LoadedExtension<Perspective>[] = [
   },
   {
     type: 'console.perspective',
-    pluginID: '',
     pluginName: '',
     uid: '',
     properties: {

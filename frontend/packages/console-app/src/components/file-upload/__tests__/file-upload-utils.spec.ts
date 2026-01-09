@@ -7,7 +7,6 @@ describe('file-upload-utils', () => {
   const handler2 = () => {};
   const fileUploadExtensions: ResolvedExtension<FileUpload>[] = [
     {
-      pluginID: '@console/dev-console',
       pluginName: '@console/dev-console',
       properties: {
         fileExtensions: ['jar'],
@@ -17,14 +16,13 @@ describe('file-upload-utils', () => {
       uid: '@console/dev-console[47]',
     },
     {
-      pluginID: '@console/dev-console',
       pluginName: '@console/dev-console',
       properties: {
         fileExtensions: ['zip'],
         handler: handler2,
       },
       type: 'console.file-upload',
-      uid: '@console/dev-console[47]',
+      uid: '@console/dev-console[48]',
     },
   ];
 

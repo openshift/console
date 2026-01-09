@@ -8,7 +8,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test1',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -17,7 +16,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test2',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -26,7 +24,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test3',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -35,7 +32,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test4',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -44,7 +40,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test5',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -53,7 +48,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test6',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },
@@ -62,7 +56,6 @@ const mockNavItems: LoadedExtension<NavExtension>[] = [
     properties: {
       id: 'test7',
     },
-    pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',
     uid: 'test-plugin-uid',
   },

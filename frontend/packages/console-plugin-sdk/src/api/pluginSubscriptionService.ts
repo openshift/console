@@ -1,4 +1,5 @@
 import { PluginEventType } from '@openshift/dynamic-plugin-sdk';
+import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import { Store } from 'redux';
 import type {
@@ -7,7 +8,6 @@ import type {
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
 import type { RootState } from '@console/internal/redux';
-import { PluginStore } from '../store';
 
 let subscriptionServiceInitialized = false;
 
