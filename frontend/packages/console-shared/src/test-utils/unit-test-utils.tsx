@@ -1,4 +1,5 @@
 import type { FC, ReactElement, ReactNode } from 'react';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { Form } from '@patternfly/react-core';
 import {
   render,
@@ -15,6 +16,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { combineReducers, createStore } from 'redux';
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
+import { pluginStore } from '@console/internal/plugins';
 import { RootState, baseReducers } from '@console/internal/redux';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
@@ -52,7 +54,9 @@ export function renderWithProviders(
   function Wrapper({ children }: WrapperProps): JSX.Element {
     return (
       <Provider store={store}>
-        <MemoryRouter>{children}</MemoryRouter>
+        <PluginStoreProvider store={pluginStore}>
+          <MemoryRouter>{children}</MemoryRouter>
+        </PluginStoreProvider>
       </Provider>
     );
   }

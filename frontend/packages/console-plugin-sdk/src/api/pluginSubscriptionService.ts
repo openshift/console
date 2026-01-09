@@ -10,7 +10,6 @@ import type { RootState } from '@console/internal/redux';
 import { PluginStore } from '../store';
 
 let subscriptionServiceInitialized = false;
-let getPluginStoreInstance: () => PluginStore = () => undefined;
 
 const extensionSubscriptions: ExtensionSubscription[] = [];
 
@@ -36,7 +35,6 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
   }
 
   subscriptionServiceInitialized = true;
-  getPluginStoreInstance = () => pluginStore;
 
   const getExtensions = () => pluginStore.getExtensions();
   const getFlags = () => reduxStore.getState().FLAGS;
@@ -87,13 +85,6 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   // Invoke listeners registered prior to initializing subscription service
   invokeAllExtensionListeners();
-};
-
-/**
- * Provides access to the Console `PluginStore` instance.
- */
-export const getPluginStore = (): PluginStore => {
-  return getPluginStoreInstance();
 };
 
 /**

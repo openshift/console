@@ -1,13 +1,10 @@
-import { useRef, useCallback, useEffect } from 'react';
-import * as _ from 'lodash';
+import { useExtensions as useExtensionsSDK } from '@openshift/dynamic-plugin-sdk';
 import type {
   Extension,
   ExtensionTypeGuard,
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
-import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
-import { subscribeToExtensions } from './pluginSubscriptionService';
 
 /**
  * React hook for consuming Console extensions.
@@ -48,43 +45,8 @@ export const useExtensions = <E extends Extension>(
     throw new Error('You must pass at least one type guard to useExtensions');
   }
 
-  const forceRender = useForceRender();
+  // TODO: we are missing pluginID
+  const extensions = useExtensionsSDK(...typeGuards) as LoadedExtension<E>[];
 
-  const isMountedRef = useRef(true);
-  const unsubscribeRef = useRef<VoidFunction>(null);
-  const extensionsInUseRef = useRef<LoadedExtension<E>[]>([]);
-  const latestTypeGuardsRef = useRef<ExtensionTypeGuard<E>[]>(typeGuards);
-
-  const trySubscribe = useCallback(() => {
-    if (unsubscribeRef.current === null) {
-      unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
-        extensionsInUseRef.current = extensions;
-        isMountedRef.current && forceRender();
-      }, ...latestTypeGuardsRef.current);
-    }
-  }, [forceRender]);
-
-  const tryUnsubscribe = useCallback(() => {
-    if (unsubscribeRef.current !== null) {
-      unsubscribeRef.current();
-      unsubscribeRef.current = null;
-    }
-  }, []);
-
-  if (!_.isEqual(latestTypeGuardsRef.current, typeGuards)) {
-    latestTypeGuardsRef.current = typeGuards;
-    tryUnsubscribe();
-  }
-
-  trySubscribe();
-
-  useEffect(
-    () => () => {
-      isMountedRef.current = false;
-      tryUnsubscribe();
-    },
-    [tryUnsubscribe],
-  );
-
-  return useTranslatedExtensions<E>(extensionsInUseRef.current);
+  return useTranslatedExtensions<E>(extensions);
 };
