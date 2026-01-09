@@ -12,6 +12,8 @@ import CloseButton from '@console/shared/src/components/close-button';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
+import { pluginStore } from '@console/internal/plugins';
 
 /** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
 export const createModal: CreateModal = (getModalElement) => {
@@ -71,17 +73,19 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
 
     return (
       <Provider store={store}>
-        <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-          <CompatRouter>
-            {modalWrapper ? (
-              <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
+        <PluginStoreProvider store={pluginStore}>
+          <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
+            <CompatRouter>
+              {modalWrapper ? (
+                <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
+                  <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+                </ModalWrapper>
+              ) : (
                 <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-              </ModalWrapper>
-            ) : (
-              <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-            )}
-          </CompatRouter>
-        </Router>
+              )}
+            </CompatRouter>
+          </Router>
+        </PluginStoreProvider>
       </Provider>
     );
   };

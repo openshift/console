@@ -10,7 +10,7 @@ import { ResolvedClusterConfigurationGroup } from './types';
 const useClusterConfigurationGroups = (): [
   ResolvedClusterConfigurationGroup[],
   boolean,
-  Error[],
+  unknown[],
 ] => {
   const [resolvedExtensions, resolved, errors] = useResolvedExtensions<ClusterConfigurationGroup>(
     isClusterConfigurationGroup,

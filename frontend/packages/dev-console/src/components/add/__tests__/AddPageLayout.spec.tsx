@@ -1,6 +1,5 @@
-import { render, screen, cleanup } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { screen, cleanup } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import * as utils from '../../../utils/useAddActionExtensions';
 import AddPageLayout from '../AddPageLayout';
 import * as accessFilterHook from '../hooks/useAccessFilterExtensions';
@@ -40,16 +39,13 @@ describe('AddPageLayout', () => {
     jest.clearAllMocks();
   });
 
-  const renderWithProvider = (ui: React.ReactNode) =>
-    render(<Provider store={store}>{ui}</Provider>);
-
   describe('Details switch', () => {
     it('should show correct text for switch when it is checked', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
 
-      renderWithProvider(<AddPageLayout {...props} />);
+      renderWithProviders(<AddPageLayout {...props} />);
 
       expect(screen.getByText('Details on')).toBeInTheDocument();
     });
@@ -59,7 +55,7 @@ describe('AddPageLayout', () => {
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
 
-      renderWithProvider(<AddPageLayout {...props} />);
+      renderWithProviders(<AddPageLayout {...props} />);
 
       expect(screen.getByText('Details off')).toBeInTheDocument();
     });
@@ -69,7 +65,7 @@ describe('AddPageLayout', () => {
       useAddActionExtensionsSpy.mockReturnValue([[], false]);
       useAccessFilterExtensionsSpy.mockReturnValue([[], true]);
 
-      renderWithProvider(<AddPageLayout {...props} />);
+      renderWithProviders(<AddPageLayout {...props} />);
 
       expect(screen.getByTestId('add-page-skeleton')).toBeInTheDocument();
     });
@@ -79,7 +75,7 @@ describe('AddPageLayout', () => {
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       useAccessFilterExtensionsSpy.mockReturnValue([[], false]);
 
-      renderWithProvider(<AddPageLayout {...props} />);
+      renderWithProviders(<AddPageLayout {...props} />);
 
       expect(screen.getByTestId('add-page-skeleton')).toBeInTheDocument();
     });

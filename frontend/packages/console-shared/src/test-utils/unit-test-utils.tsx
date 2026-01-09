@@ -1,7 +1,9 @@
 import type { FC, ReactElement, ReactNode } from 'react';
+import { PluginStore, PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { Form } from '@patternfly/react-core';
 import {
   render,
+  renderHook,
   RenderOptions,
   screen,
   fireEvent,
@@ -15,11 +17,13 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { combineReducers, createStore } from 'redux';
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
+import { pluginStore as defaultPluginStore } from '@console/internal/plugins';
 import { RootState, baseReducers } from '@console/internal/redux';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   initialState?: Partial<RootState>;
   store?: ReturnType<typeof setupStore>;
+  pluginStore?: PluginStore;
 }
 
 type WrapperProps = {
@@ -36,28 +40,68 @@ const setupStore = (initialState?: Partial<RootState>) => {
 };
 
 /**
+ * Create a Wrapper component containing mock providers for redux store,
+ * PluginStore, and react-router
+ *
+ * @param reduxStore - Redux store instance
+ * @param pluginStore - Plugin store instance
+ * @returns
+ */
+const createWrapper = (
+  reduxStore: ReturnType<typeof setupStore>,
+  pluginStore: PluginStore,
+): FC<WrapperProps> => ({ children }) => (
+  <Provider store={reduxStore}>
+    <PluginStoreProvider store={pluginStore}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </PluginStoreProvider>
+  </Provider>
+);
+
+/**
  * Custom render function wrapper for Redux Provider and React Router
+ *
  * @param ui - React element to render
  * @param options - Extended render options including initialState and store
  */
-export function renderWithProviders(
+export const renderWithProviders = (
   ui: React.ReactElement,
   {
     initialState = {},
     // Create a store instance if no custom store was passed in
     store = setupStore(initialState),
+    pluginStore = defaultPluginStore,
     ...renderOptions
   }: ExtendedRenderOptions = {},
-) {
-  function Wrapper({ children }: WrapperProps): JSX.Element {
-    return (
-      <Provider store={store}>
-        <MemoryRouter>{children}</MemoryRouter>
-      </Provider>
-    );
-  }
-  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
-}
+) => ({
+  store,
+  pluginStore,
+  ...render(ui, { wrapper: createWrapper(store, pluginStore), ...renderOptions }),
+});
+
+/**
+ * Custom renderHook function wrapper for Redux Provider and React Router
+ *
+ * @param callback - Hook function to render
+ * @param options - Extended render options including initialState and store
+ */
+export const renderHookWithProviders = <TResult, TProps>(
+  hook: (initialProps: TProps) => TResult,
+  {
+    initialState = {},
+    // Create a store instance if no custom store was passed in
+    store = setupStore(initialState),
+    pluginStore = defaultPluginStore,
+    ...renderOptions
+  }: ExtendedRenderOptions = {},
+) => ({
+  store,
+  pluginStore,
+  ...renderHook<TResult, TProps>(hook, {
+    wrapper: createWrapper(store, pluginStore),
+    ...renderOptions,
+  }),
+});
 
 interface FormikWrapperProps {
   children?: ReactNode;

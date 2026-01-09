@@ -11,6 +11,7 @@ import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
@@ -521,24 +522,26 @@ graphQLReady.onReady(() => {
   render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <AppInitSDK
-              configurations={{
-                appFetch: appInternalFetch,
-                apiDiscovery: initApiDiscovery,
-                initPlugins,
-              }}
-            >
-              <ToastProvider>
-                <PollConsoleUpdates />
-                <AdmissionWebhookWarningNotifications />
-                <AppRouter />
-              </ToastProvider>
-            </AppInitSDK>
-          </HelmetProvider>
-        </ThemeProvider>
+        <PluginStoreProvider store={pluginStore}>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+              <AppInitSDK
+                configurations={{
+                  appFetch: appInternalFetch,
+                  apiDiscovery: initApiDiscovery,
+                  initPlugins,
+                }}
+              >
+                <ToastProvider>
+                  <PollConsoleUpdates />
+                  <AdmissionWebhookWarningNotifications />
+                  <AppRouter />
+                </ToastProvider>
+              </AppInitSDK>
+            </HelmetProvider>
+          </ThemeProvider>
+        </PluginStoreProvider>
       </Provider>
     </Suspense>,
     document.getElementById('app'),

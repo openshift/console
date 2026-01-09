@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from 'react';
+import { usePluginStore } from '@openshift/dynamic-plugin-sdk';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPluginCSPViolations, PluginCSPViolations } from '@console/internal/actions/ui';
 import { RootState } from '@console/internal/redux';
-import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
 import { useToast } from '@console/shared/src/components/toast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { ONE_DAY } from '@console/shared/src/constants/time';
