@@ -92,22 +92,12 @@ func (h *helmHandlers) HandleHelmRenderManifests(user *auth.User, w http.Respons
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, coreClientErr := NewCoreClient(conf)
-	if coreClientErr != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	resp, err := h.renderManifests(req.Name, req.ChartUrl, req.Values, conf, client, coreClient, req.Namespace, req.IndexEntry, false)
+	resp, err := h.renderManifests(req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, req.Namespace, req.IndexEntry, false)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to render manifests: %v", err)})
 		return
@@ -127,22 +117,12 @@ func (h *helmHandlers) HandleHelmInstall(user *auth.User, w http.ResponseWriter,
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, coreClientErr := NewCoreClient(conf)
-	if coreClientErr != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	resp, err := h.installChart(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, client, coreClient, true, req.IndexEntry)
+	resp, err := h.installChart(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, true, req.IndexEntry)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
 		return
@@ -163,22 +143,12 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, coreClientErr := NewCoreClient(conf)
-	if coreClientErr != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	resp, err := h.installChartAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, client, coreClient, true, req.IndexEntry)
+	resp, err := h.installChartAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, true, req.IndexEntry)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
 		return
@@ -240,22 +210,12 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	indexEntry := params.Get("indexEntry")
 	// scope request to default namespace
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, err := NewCoreClient(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	resp, err := h.getChart(chartUrl, conf, namespace, client, coreClient, true, indexEntry)
+	resp, err := h.getChart(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, indexEntry)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
 		return
@@ -277,18 +237,12 @@ func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWrit
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, err := NewCoreClient(conf)
-	resp, err := h.upgradeRelease(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, client, coreClient, false, req.IndexEntry)
+	resp, err := h.upgradeRelease(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
@@ -313,18 +267,12 @@ func (h *helmHandlers) HandleUpgradeReleaseAsync(user *auth.User, w http.Respons
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	restConfig, err := conf.RESTClientGetter.ToRESTConfig()
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	client, err := DynamicClient(restConfig)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-	coreClient, err := NewCoreClient(conf)
-	resp, err := h.upgradeReleaseAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, client, coreClient, false, req.IndexEntry)
+	resp, err := h.upgradeReleaseAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, false, req.IndexEntry)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to rollback helm releases: %v", err)})
@@ -448,12 +396,12 @@ func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.Respo
 	rel := params.Get("name")
 	version := params.Get("version")
 	conf := h.getActionConfigurations(h.ApiServerHost, ns, user.Token, &h.Transport)
-	coreClient, err := NewCoreClient(conf)
+	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("error forming core client: %s", err.Error())})
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	err = h.uninstallReleaseAsync(rel, ns, version, conf, coreClient)
+	err = h.uninstallReleaseAsync(rel, ns, version, conf, handlerClients.CoreClient)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseNotFound.Error() {
 			serverutils.SendResponse(w, http.StatusNotFound, serverutils.ApiError{Err: fmt.Sprintf("Failed to uninstall helm release: %v", err)})
