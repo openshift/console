@@ -5,7 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -136,7 +136,7 @@ func Parse(fs *flag.FlagSet, args []string, envPrefix string) (*Config, error) {
 
 // SetFlagsFromConfigFile sets flag values based on a YAML config file.
 func SetFlagsFromConfigFile(fs *flag.FlagSet, filename string) (*Config, error) {
-	content, err := ioutil.ReadFile(filename)
+	content, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}

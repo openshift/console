@@ -2,7 +2,7 @@ package actions
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -40,7 +40,7 @@ func TestGetReleaseHistory(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
@@ -96,7 +96,7 @@ func TestNonExistGetReleaseHistory(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}

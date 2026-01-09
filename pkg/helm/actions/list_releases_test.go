@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -44,7 +44,7 @@ func TestListReleases(t *testing.T) {
 			err := store.Create(&tt.release)
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}

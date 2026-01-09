@@ -1,7 +1,7 @@
 package chartproxy
 
 import (
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -121,7 +121,7 @@ func TestProxy_IndexFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var indexFileContents []string
 			for _, f := range tt.indexFiles {
-				content, err := ioutil.ReadFile(f)
+				content, err := os.ReadFile(f)
 				if err != nil {
 					t.Error(err)
 				}
@@ -161,7 +161,7 @@ func TestProxy_IndexFile(t *testing.T) {
 				t.Error(err)
 			}
 			if tt.mergedFile != "" {
-				data, err := ioutil.ReadFile(tt.mergedFile)
+				data, err := os.ReadFile(tt.mergedFile)
 				if err != nil {
 					t.Error(err)
 				}

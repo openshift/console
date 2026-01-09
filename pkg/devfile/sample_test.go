@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path"
 	"strings"
 	"testing"
@@ -138,7 +138,7 @@ func TestGetRegistrySamples(t *testing.T) {
 				registryServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					// fmt.Printf("Mock registry server handles %s\n", r.URL.Path)
 					if r.URL.Path == "/index/sample" {
-						samples, loadErr := ioutil.ReadFile(path.Join(test.registryFolder, "sample.json"))
+						samples, loadErr := os.ReadFile(path.Join(test.registryFolder, "sample.json"))
 						if loadErr != nil {
 							t.Errorf("Could not read samples: %v", loadErr)
 							w.WriteHeader(http.StatusInternalServerError)

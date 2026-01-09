@@ -3,7 +3,7 @@ package chartproxy
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -375,7 +375,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 								if err != nil {
 									t.Error(err)
 								}
-								resp.Body = ioutil.NopCloser(r)
+								resp.Body = io.NopCloser(r)
 							}
 							return resp
 						}),
@@ -392,7 +392,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 				if tt.expectedIndexFile != "" {
 					expectedIndexPath = tt.expectedIndexFile
 				}
-				data, err := ioutil.ReadFile(expectedIndexPath)
+				data, err := os.ReadFile(expectedIndexPath)
 				if err != nil {
 					t.Error(err)
 				}
@@ -595,9 +595,9 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			}
 			// create a secret in required namespace
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					"tls.key": key,
@@ -630,13 +630,13 @@ func ExecuteScript(filepath string, waitForCompletion bool) error {
 	tlsCmd.Stderr = os.Stderr
 	err := tlsCmd.Start()
 	if err != nil {
-		bytes, _ := ioutil.ReadAll(os.Stderr)
+		bytes, _ := io.ReadAll(os.Stderr)
 		return fmt.Errorf("Error starting command :%s:%s:%w", filepath, string(bytes), err)
 	}
 	if waitForCompletion {
 		err = tlsCmd.Wait()
 		if err != nil {
-			bytes, _ := ioutil.ReadAll(os.Stderr)
+			bytes, _ := io.ReadAll(os.Stderr)
 			return fmt.Errorf("Error waiting command :%s:%s:%w", filepath, string(bytes), err)
 		}
 	}
