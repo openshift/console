@@ -1,15 +1,12 @@
 import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import type { Store } from 'redux';
 import {
   initSharedScope,
   getSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
-import type { RootState } from '@console/internal/redux';
-import { initSubscriptionService } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
+import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
 import type { ConsoleSupportedCustomProperties } from '../build-types';
 import type { ErrorWithCause } from '../utils/error/custom-error';
-import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
 import { resolveURL } from '../utils/url';
 
 /**
@@ -32,7 +29,7 @@ const loadAndEnablePlugin = async (
     )
     .catch((err: ErrorWithCause) => {
       // ErrorWithCause isn't the exact type but it's close enough for our use
-      onError(`[loadAndEnablePlugin] ${pluginName} loading failed: ${err.message}`, err.cause);
+      onError(`[loadAndEnablePlugin] ${pluginName} loadPlugin failed: ${err.message}`, err.cause);
     });
 
   const plugin = pluginStore.getPluginInfo().find((p) => p.manifest.name === pluginName);
@@ -79,7 +76,15 @@ const registerLegacyPluginEntryCallback = () => {
   const previousConsoleCallbackName = 'loadPluginEntry';
 
   window[previousConsoleCallbackName] = (pluginName: string, entryModule: any) => {
-    const patchedPluginName = pluginName.split('@')[0];
+    const patchedPluginName = pluginName.includes('@')
+      ? pluginName.slice(0, pluginName.lastIndexOf('@'))
+      : pluginName;
+
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[DEPRECATION WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
+    );
+
     window[sdkCallbackName](patchedPluginName, entryModule);
   };
 
@@ -89,30 +94,33 @@ const registerLegacyPluginEntryCallback = () => {
   );
 };
 
-export const initConsolePlugins = _.once(
-  (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
-    // Initialize dynamic plugin infrastructure
-    initSubscriptionService(pluginStore, reduxStore);
-    registerLegacyPluginEntryCallback();
+/**
+ * Loads and enables all dynamic plugins listed in `dynamicPluginNames`.
+ *
+ * Precondition: Application {@link PluginStore} must be initialized.
+ */
+export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
+  // Initialize dynamic plugin infrastructure
+  registerLegacyPluginEntryCallback();
 
-    // Initialize webpack share scope object and start loading plugins
-    initSharedScope()
-      .then(() => {
-        dynamicPluginNames.forEach((pluginName) => {
-          loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-            // eslint-disable-next-line no-console
-            console.error(..._.compact([errorMessage, errorCause]));
-          });
+  // Initialize webpack share scope object and start loading plugins
+  initSharedScope()
+    .then(() => {
+      dynamicPluginNames.forEach((pluginName) => {
+        loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
+          // eslint-disable-next-line no-console
+          console.error(..._.compact([errorMessage, errorCause]));
+          window.windowError = `${window.windowError ?? ''};${errorMessage}: ${String(errorCause)}`;
         });
-
-        if (process.env.NODE_ENV !== 'production') {
-          // Expose webpack share scope object for debugging
-          window.webpackSharedScope = getSharedScope();
-        }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Failed to initialize webpack share scope for dynamic plugins', err);
       });
-  },
-);
+
+      if (process.env.NODE_ENV !== 'production') {
+        // Expose webpack share scope object for debugging
+        window.webpackSharedScope = getSharedScope();
+      }
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to initialize webpack share scope for dynamic plugins', err);
+    });
+});
