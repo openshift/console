@@ -3,7 +3,6 @@ import { useRef, useState, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   useResolvedExtensions,
   isYAMLTemplate,
@@ -16,7 +15,7 @@ import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
 import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
-import { getResourceSidebarSamples } from '../../utils';
+import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { CodeEditorFieldProps } from './field-types';
 
 import './CodeEditorField.scss';
@@ -40,7 +39,6 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
   const editorRef = useRef();
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
@@ -49,17 +47,11 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
     SampleResource,
   );
 
-  const { samples, snippets } = model
-    ? getResourceSidebarSamples(
-        model,
-        {
-          data: sampleResources,
-          loaded,
-          loadError,
-        },
-        t,
-      )
-    : { samples: [], snippets: [] };
+  const { samples, snippets } = useResourceSidebarSamples(model, {
+    data: sampleResources,
+    loaded,
+    loadError,
+  });
 
   const definition = model ? definitionFor(model) : { properties: [] };
   const hasSchema = !!schema || (!!definition && !isEmpty(definition.properties));

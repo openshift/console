@@ -8,7 +8,7 @@ import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
-import { Sample } from '@console/shared/src/utils/sample-utils';
+import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { useTranslation } from 'react-i18next';
 
 import { K8sKind, referenceFor } from '../../module/k8s';
@@ -93,12 +93,12 @@ const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
   const [yamlPreview, setYamlPreview] = useState<string>(yaml);
   const [yamlPreviewOpen, setYamlPreviewOpen] = useState(false);
 
-  const resolveYaml = async (callback: (resolvedYaml: string) => void) => {
+  const resolveYaml = (callback: (resolvedYaml: string) => void) => {
     if (yaml) {
       callback(yaml);
     } else if (lazyYaml) {
       try {
-        callback(await lazyYaml());
+        callback(lazyYaml());
       } catch (error) {
         // eslint-disable-next-line no-console
         console.warn(`Error while running lazy yaml snippet ${id} (${title})`, error);
