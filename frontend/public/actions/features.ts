@@ -2,21 +2,8 @@ import { Dispatch } from 'redux';
 import * as _ from 'lodash';
 
 import { FLAGS } from '@console/shared/src/constants/common';
-import { K8sModel, UserInfo } from '@console/internal/module/k8s';
-import {
-  subscribeToExtensions,
-  extensionDiffListener,
-} from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import {
-  FeatureFlag,
-  isFeatureFlag,
-  isModelFeatureFlag,
-  ModelFeatureFlag,
-  SetFeatureFlag,
-} from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import { UserInfo } from '@console/internal/module/k8s';
 import { setUser } from '@console/dynamic-plugin-sdk/src/app/core/actions/core';
-import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import store from '../redux';
 import { ClusterVersionKind } from '../module/k8s/types';
 import { setClusterID, setCreateProjectMessage } from './common';
 import client, { fetchURL } from '../graphql/client';
@@ -27,7 +14,7 @@ import {
   SSRQueryType,
 } from '../../@types/console/generated/graphql-schema';
 
-import { handleError, retryFlagDetection, setFlag, ssarChecks, updateModelFlags } from './flags';
+import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
 
 export const defaults = _.mapValues(FLAGS, (flag) =>
   flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
@@ -136,36 +123,3 @@ export const detectFeatures = () => (dispatch: Dispatch) => {
     ...ssarCheckActions,
   ].forEach((detect) => detect(dispatch));
 };
-
-const featureFlagController: SetFeatureFlag = (flag, enabled) => {
-  const currentValue = store.getState().FLAGS.get(flag);
-  if (currentValue !== enabled) {
-    store.dispatch(setFlag(flag, enabled));
-  }
-};
-
-subscribeToExtensions<FeatureFlag>(
-  extensionDiffListener((added) => {
-    added.forEach((e) => {
-      resolveExtension(e)
-        .then((resolvedExtension) => {
-          resolvedExtension.properties.handler(featureFlagController);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Resolve extension failed:', error);
-        });
-    });
-  }),
-  isFeatureFlag,
-);
-
-subscribeToExtensions<ModelFeatureFlag>(
-  extensionDiffListener((added, removed) => {
-    // The feature reducer can't access state from the k8s reducer, so get the
-    // models here and include them in the action payload.
-    const models: K8sModel[] = store.getState().k8s.getIn(['RESOURCES', 'models']);
-    store.dispatch(updateModelFlags(added, removed, models));
-  }),
-  isModelFeatureFlag,
-);
