@@ -1,0 +1,80 @@
+tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
+
+early_access: false
+reviews:
+  # Disable fortune messages for professional reviews
+  in_progress_fortune: false
+
+  # Assertive profile for thorough, senior-engineer-level reviews
+  # This ensures comprehensive feedback on architecture, security, performance, and best practices
+  profile: chill
+
+  # Request changes workflow to ensure quality standards
+  request_changes_workflow: false
+
+  # Enable high-level summaries for better PR understanding
+  high_level_summary: true
+
+  # Disable poems for professional tone
+  poem: false
+
+  # Show review status for transparency
+  review_status: true
+
+  # Auto-review configuration
+  auto_review:
+    enabled: true
+    # Review drafts to catch issues early
+    drafts: true
+    ignore_title_keywords:
+      - WIP
+      - '[WIP]'
+      - do-not-merge
+      - work-in-progress
+    labels:
+      - '!do-not-merge/work-in-progress'
+
+  # Commit status integration
+  commit_status: true
+
+  # Don't fail commit status to allow merges with comments
+  fail_commit_status: false
+
+  # Don't collapse walkthrough for better visibility
+  collapse_walkthrough: false
+
+  # Show summary of changed files
+  changed_files_summary: true
+
+  # Generate sequence diagrams for complex flows
+  sequence_diagrams: false
+
+  # Estimate code review effort
+  # Helps prioritize and allocate review time appropriately
+  estimate_code_review_effort: true
+
+  # Assess linked issues for business context and requirements
+  assess_linked_issues: true
+
+  # Show related issues
+  related_issues: true
+
+  # Show related PRs
+  related_prs: true
+
+  # Suggest labels based on changes
+  # Helps categorize and track changes
+  suggested_labels: true
+
+# Knowledge base configuration - Reference documentation for accurate reviews
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      # Repository documentation
+      - "STYLEGUIDE.md"
+      - "CONTRIBUTING.md"
+      - "README.md"
+      # AI context with project architecture and conventions
+      - ".ai/context.md"
+      - ".ai/README.md"
