@@ -236,7 +236,7 @@ const config: Configuration = {
           },
         },
         'vendor-plugins-shared': {
-          test(module: { resource?: string }) {
+          test(module: webpack.NormalModule) {
             return (
               module.resource &&
               sharedPluginModulesTest.test(module.resource) &&
@@ -322,15 +322,7 @@ const config: Configuration = {
       ],
     }),
     extractCSS,
-    ...(REACT_REFRESH
-      ? [
-          new ReactRefreshWebpackPlugin({
-            overlay: {
-              sockPort: WDS_PORT,
-            },
-          }),
-        ]
-      : []),
+    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : []),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',

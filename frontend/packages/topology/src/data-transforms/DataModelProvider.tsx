@@ -30,7 +30,7 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
   // State to track resolved factories (with async resources resolved)
   const [resolvedFactories, setResolvedFactories] = useState<
     | {
-        properties: ResolvedExtension<TopologyDataModelFactory>['properties'] & {
+        properties: Omit<ResolvedExtension<TopologyDataModelFactory>['properties'], 'resources'> & {
           resources?: WatchK8sResourcesGeneric;
         };
         pluginID: string;
@@ -72,7 +72,10 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
           }
 
           // Resources are already static, no resolution needed
-          return factory;
+          return {
+            properties: { ...rest, resources },
+            pluginID: factory.pluginID,
+          };
         }),
       );
 

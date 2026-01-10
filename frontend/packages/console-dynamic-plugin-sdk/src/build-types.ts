@@ -1,5 +1,8 @@
-import { PluginBuildMetadata, PluginManifest } from '@openshift/dynamic-plugin-sdk-webpack';
-import { PackageJson } from 'read-pkg';
+import type {
+  PluginBuildMetadata,
+  RemotePluginManifest,
+} from '@openshift/dynamic-plugin-sdk-webpack';
+import type { PackageJson } from 'read-pkg';
 
 /**
  * Note: this metadata should be supported in upstream plugin SDK.
@@ -46,4 +49,4 @@ export type ConsolePluginManifest = {
     [customNamespace: string]: unknown;
   };
 } & ExtraPluginManifestProperties &
-  PluginManifest;
+  RemotePluginManifest;
