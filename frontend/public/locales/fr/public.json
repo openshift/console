@@ -423,6 +423,7 @@
   "Configure alert receivers": "Configurer les destinataires d’alerte",
   "Take console tour": "Visite guidée de la console",
   "View all steps in documentation": "Afficher toutes les étapes dans la documentation",
+  "View all events": "Afficher tous les événements",
   "Set up your cluster": "Configurer votre cluster",
   "Finish setting up your cluster with recommended configurations.": "Terminez la configuration de votre cluster avec les configurations recommandées.",
   "Add identity providers": "Ajouter des fournisseurs d’identité",

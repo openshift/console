@@ -162,7 +162,7 @@ const RecentEventFooter = withDashboardResources(
         <Divider />
         <CardFooter>
           <Link to={viewEvents} data-test="events-view-all-link">
-            {t('console-shared~View all events')}
+            {t('public~View all events')}
           </Link>
         </CardFooter>
       </>

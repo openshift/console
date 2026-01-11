@@ -423,6 +423,7 @@
   "Configure alert receivers": "配置警报接收器",
   "Take console tour": "控制台导览",
   "View all steps in documentation": "查看文档中的所有步骤",
+  "View all events": "查看所有事件",
   "Set up your cluster": "设置您的集群",
   "Finish setting up your cluster with recommended configurations.": "使用推荐的配置完成集群设置。",
   "Add identity providers": "添加身份供应商",

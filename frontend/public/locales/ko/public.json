@@ -423,6 +423,7 @@
   "Configure alert receivers": "경고 수신자 구성",
   "Take console tour": "콘솔 둘러보기",
   "View all steps in documentation": "문서의 모든 단계보기",
+  "View all events": "모든 이벤트 표시",
   "Set up your cluster": "클러스터 설정",
   "Finish setting up your cluster with recommended configurations.": "권장 구성을 사용하여 클러스터 설정을 완료합니다.",
   "Add identity providers": "아이덴티티 공급자 추가",
