@@ -1,9 +1,9 @@
 import { useMemo, useEffect } from 'react';
 import { Map as ImmutableMap } from 'immutable';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { getReduxIdPayload } from '../../../app/k8s/reducers/k8sSelector';
-import { SDKStoreState } from '../../../app/redux-types';
+import type { SDKDispatch, SDKStoreState } from '../../../app/redux-types';
 import { UseK8sWatchResource } from '../../../extensions/console-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
@@ -33,7 +33,7 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
 
   const reduxID = useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<SDKDispatch>();
 
   useEffect(() => {
     if (reduxID) {
@@ -46,9 +46,9 @@ export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
     };
   }, [dispatch, reduxID]);
 
-  const resourceK8s = useSelector<SDKStoreState, ImmutableMap<string, any>>((state) =>
+  const resourceK8s = useSelector<SDKStoreState>((state) =>
     reduxID ? getReduxIdPayload(state, reduxID.id) : null,
-  );
+  ) as ImmutableMap<string, any>;
 
   return useMemo(() => {
     if (!resource) {

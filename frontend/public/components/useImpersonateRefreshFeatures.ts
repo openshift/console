@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../actions/ui';
 
@@ -12,8 +13,8 @@ import * as UIActions from '../actions/ui';
  * clearing them to a PENDING state.
  */
 export const useImpersonateRefreshFeatures = () => {
-  const dispatch = useDispatch();
-  const impersonate = useSelector(getImpersonate);
+  const dispatch = useConsoleDispatch();
+  const impersonate = useConsoleSelector(getImpersonate);
   const prevImpersonate = useRef(impersonate);
 
   useEffect(() => {
