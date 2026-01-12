@@ -431,7 +431,7 @@
   "Installing": "Instalación",
   "Valid subscriptions": "Suscripciones válidas",
   "Pending": "Pendiente",
-  "OK": "DE ACUERDO",
+  "OK": "De acuerdo",
   "Failed": "Fallido",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.": "Este operador incluye un complemento de consola que proporciona una interfaz personalizada que se puede incluir en la consola. El complemento de la consola solicitará que se actualice la consola una vez que se haya habilitado. Asegúrese de confiar en este complemento de consola antes de habilitarlo.",
   "Hide operator description": "Ocultar descripción del operador",
