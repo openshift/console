@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import {
   Alert,
@@ -104,7 +104,7 @@ const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> 
       let secretData: string;
 
       if (method === 'upload') {
-        secretData = Base64.encode(fileData);
+        secretData = Base64.encode(fileData || '');
       } else {
         const elements = event.currentTarget.elements as any;
         const formData: FormData = {

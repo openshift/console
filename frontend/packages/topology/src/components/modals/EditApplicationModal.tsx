@@ -64,7 +64,7 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
   );
 };
 
-const EditApplicationModal: React.FC<EditApplicationModalProps> = (props) => {
+const EditApplicationModal: FC<EditApplicationModalProps> = (props) => {
   const { resourceKind, resource, close } = props;
   const [handlePromise] = usePromiseHandler();
 
