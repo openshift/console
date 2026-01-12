@@ -22,6 +22,7 @@ type SharedModuleMetadata = Partial<{
  * Modules shared between the Console application and its dynamic plugins.
  */
 export const sharedPluginModules = [
+  '@openshift/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk-internal',
   '@patternfly/react-topology',
@@ -41,6 +42,7 @@ export type SharedModuleNames = typeof sharedPluginModules[number];
  * Metadata associated with the shared modules.
  */
 const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
+  '@openshift/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk-internal': {},
   '@patternfly/react-topology': {},

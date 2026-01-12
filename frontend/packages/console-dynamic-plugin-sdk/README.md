@@ -131,6 +131,7 @@ Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share sp
 
 The following shared modules are provided by Console, without plugins providing their own fallback:
 
+- `@openshift/dynamic-plugin-sdk`
 - `@openshift-console/dynamic-plugin-sdk`
 - `@openshift-console/dynamic-plugin-sdk-internal`
 - `@patternfly/react-topology`
