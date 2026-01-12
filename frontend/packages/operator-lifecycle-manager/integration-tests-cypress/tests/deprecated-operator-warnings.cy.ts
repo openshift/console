@@ -6,7 +6,6 @@ const TIMEOUT = { timeout: 300000 };
 const testOperatorName = 'Kiali Community Operator';
 const testOperator = {
   name: 'Kiali Operator',
-  operatorHubCardTestID: 'datagrid-redhat-operators-openshift-marketplace',
 };
 const deprecatedBadge = 'Deprecated';
 const deprecatedPackageMessage =
@@ -53,7 +52,7 @@ describe('Deprecated operator warnings', () => {
     checkErrors();
   });
 
-  it('verify deprecated operator warning badge on the OperatorHub tile', () => {
+  it('verify deprecated Operator warning badge on the Operator tile', () => {
     cy.visit(
       `/k8s/ns/${testDeprecatedCatalogSource.metadata.namespace}/operators.coreos.com~v1alpha1~CatalogSource/test-community-operator-deprecation`,
     );
@@ -74,7 +73,8 @@ describe('Deprecated operator warnings', () => {
     cy.log('verify the Deprecated badge on Kiali Community Operator tile');
     cy.byTestID('Deprecated-badge').contains(deprecatedBadge).should('exist');
   });
-  it('verify deprecated operator warnings in the OperatorHub details panel', () => {
+
+  it('verify deprecated Operator warnings in the Operator details panel', () => {
     cy.visit(
       `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
@@ -87,7 +87,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated channel warnings in the OperatorHub details panel', () => {
+  it('verify deprecated channel warnings in the Operator details panel', () => {
     cy.visit(
       `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
@@ -112,7 +112,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprectaed version warnings in the OperatorHub details panel', () => {
+  it('verify deprecated version warnings in the Operator details panel', () => {
     cy.visit(
       `/catalog/ns/${testName}?catalogType=operator&keyword=kia&selectedId=kiali-test-community-operator-deprecation-openshift-marketplace&channel=stable&version=1.83.0`,
     );
@@ -138,7 +138,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated operator warnings on Install Operator details page', () => {
+  it('verify deprecated Operator warnings on Install Operator details page', () => {
     cy.log('visit the Install Operator details page');
     cy.visit(
       '/operatorhub/subscribe?pkg=kiali&catalog=test-community-operator-deprecation&catalogNamespace=openshift-marketplace&targetNamespace=undefined&channel=alpha&version=1.68.0',
@@ -159,7 +159,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated operator warning badge on Installed Operators page', () => {
+  it('verify deprecated Operator warning badge on Installed Operators page', () => {
     cy.log(
       'install the Kiali Community Operator with the deprecated package, channel and version messages',
     );
@@ -181,14 +181,14 @@ describe('Deprecated operator warnings', () => {
       `oc patch installplan $(oc get installplan -n ${testDeprecatedSubscription.metadata.namespace} --no-headers | grep kiali-operator.v1.68.0 | grep Manual | awk '{print $1}') -n ${testDeprecatedSubscription.metadata.namespace} --type merge --patch '{"spec":{"approved":true}}'`,
     );
 
-    cy.log('visit the Installed Operators details page and verify the deprecated operator badge');
+    cy.log('visit the Installed Operators details page and verify the deprecated Operator badge');
     operator.installedSucceeded(testOperator.name, 'openshift-operators');
     cy.byTestID(DEPRECATED_OPERATOR_WARNING_BADGE_ID, TIMEOUT)
       .contains(deprecatedBadge)
       .should('exist');
   });
 
-  it('verify deprecated operator warnings on installed operator details page', () => {
+  it('verify deprecated operator warnings on Installed Operator details page', () => {
     cy.log('visit the Installed Operators details page');
     cy.visit(
       `/k8s/ns/${testDeprecatedSubscription.metadata.namespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/kiali-operator.v1.68.0`,
@@ -198,7 +198,7 @@ describe('Deprecated operator warnings', () => {
     cy.byTestID(DEPRECATED_OPERATOR_WARNING_BADGE_ID).contains(deprecatedBadge).should('exist');
 
     cy.log(
-      'verify that the deprecated messages for package, channel, and version are displayed on the installed operator details tab.',
+      'verify that the deprecated messages for package, channel, and version are displayed on the Installed Operator details tab.',
     );
     cy.byTestID(DEPRECATED_OPERATOR_WARNING_PACKAGE_ID)
       .contains(deprecatedPackageMessage)
@@ -211,14 +211,14 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated operator warnings on installed operator details subscription tab', () => {
+  it('verify deprecated operator warnings on Installed Operator details subscription tab', () => {
     cy.log('visit the Installed Operators subscription tab');
     cy.visit(
       `/k8s/ns/${testDeprecatedSubscription.metadata.namespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/kiali-operator.v1.68.0/subscription`,
     );
 
     cy.log(
-      'verify that the deprecated messages for package, channel, and version are displayed on the installed operator subscription tab.',
+      'verify that the deprecated messages for package, channel, and version are displayed on the Installed Operator subscription tab.',
     );
     cy.byTestID(DEPRECATED_OPERATOR_WARNING_PACKAGE_ID)
       .contains(deprecatedPackageMessage)
