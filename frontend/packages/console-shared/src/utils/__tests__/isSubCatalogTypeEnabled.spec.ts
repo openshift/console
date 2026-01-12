@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   useGetAllDisabledSubCatalogs,
   isCatalogTypeEnabled,
@@ -8,12 +8,12 @@ import {
 } from '@console/shared';
 import { mockExtensions } from './catalogTypeExtensions.data';
 
-jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
-  useResolvedExtensions: jest.fn(),
+jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
+  useExtensions: jest.fn(),
 }));
 
-const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
-useResolvedExtensionsMock.mockReturnValue([mockExtensions, true]);
+const useExtensionsMock = useExtensions as jest.Mock;
+useExtensionsMock.mockReturnValue(mockExtensions);
 
 beforeEach(() => {
   delete window.SERVER_FLAGS.developerCatalogTypes;
@@ -100,7 +100,7 @@ describe('useIsSoftwareCatalogEnabled - check if software catalog is enabled or 
     const { result } = renderHook(() => useIsSoftwareCatalogEnabled());
     expect(result.current).toBe(true);
   });
-  it('should show software catalog as enabled when enabled attribute is not added', () => {
+  it('should show software catalog as disabled when disabled attribute is not added', () => {
     window.SERVER_FLAGS.developerCatalogTypes = '{"state" : "Disabled" }';
     const { result } = renderHook(() => useIsSoftwareCatalogEnabled());
     expect(result.current).toBe(false);
