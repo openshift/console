@@ -584,7 +584,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const filteredItems = filterByArchAndOS(props.items);
 
   // Watch for the installing state by checking if subscription exists and CSV phase is not Succeeded
-  const isOperatorInstalling = React.useMemo(() => {
+  const isOperatorInstalling = useMemo(() => {
     if (!detailsItem?.subscription) return false;
     // If there's a subscription but no CSV or CSV phase is not Succeeded, it's installing
     const csvPhase = detailsItem?.subscription?.status?.currentCSV
