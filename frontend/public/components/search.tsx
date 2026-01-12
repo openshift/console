@@ -50,6 +50,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
 const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   const { plural } = useParams<{ plural?: string }>();
@@ -68,7 +69,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
   return (
     <AsyncComponent
       loader={componentLoader}
-      namespace={ns}
+      namespace={ns === ALL_NAMESPACES_KEY ? undefined : ns}
       selector={selector}
       nameFilter={nameFilter}
       kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
