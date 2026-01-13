@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-import { Namespace } from 'i18next';
-import { useTranslation, UseTranslationOptions } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { isTranslatableString, getTranslationKey } from './extension-i18n';
 
 /**
@@ -8,8 +7,8 @@ import { isTranslatableString, getTranslationKey } from './extension-i18n';
  *
  * Translatable strings in Console application must use the `%key%` pattern.
  */
-const useTranslationExt = (ns?: Namespace, options?: UseTranslationOptions<undefined>) => {
-  const result = useTranslation(ns, options);
+const useTranslationExt = (ns?: string | string[]) => {
+  const result = useTranslation(ns);
   const { t } = result;
   const cb = useCallback(
     (value: string) => (isTranslatableString(value) ? t(getTranslationKey(value)) : value),

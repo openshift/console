@@ -6,9 +6,8 @@ import {
   PrometheusValue,
   SubsystemHealth,
 } from '@console/dynamic-plugin-sdk';
+import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { ConfigMap } from '../resources';
-
-export type TranslationFunction = (key: string, options?: Record<string, unknown>) => string;
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],
@@ -16,7 +15,7 @@ const getPrometheusMetricValue = (
 ): PrometheusValue | undefined => prometheusResult.find((r) => r.metric.reason === reason)?.value;
 
 export const getVSphereHealth = (
-  t: TranslationFunction,
+  t: ConsoleTFunction,
   responses: PrometheusHealthPopupProps['responses'],
   configMapResult: PrometheusHealthPopupProps['k8sResult'],
 ): SubsystemHealth => {
@@ -73,7 +72,7 @@ export const getVSphereHealth = (
   const syncErr = getPrometheusMetricValue(prometheusResult, 'SyncError');
   if (toInteger(syncErr?.[1])) {
     // TODO: Add timestamp to the message
-    return { state: HealthState.WARNING, message: 'vsphere-plugin~Synchronization failed' };
+    return { state: HealthState.WARNING, message: t('vsphere-plugin~Synchronization failed') };
   }
 
   const anyFailingMetric = prometheusResult.find((r) => toInteger(r.value?.[1]) > 0);

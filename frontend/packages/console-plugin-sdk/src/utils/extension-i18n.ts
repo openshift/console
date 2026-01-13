@@ -27,10 +27,8 @@ export const translateExtensionDeep = <E extends Extension>(
  * Recursively updates the extension's properties, replacing all translatable string values
  * via the provided `t` function.
  */
-export const translateExtension = <E extends Extension>(
-  extension: E,
-  t: TFunction | ((key: string) => string),
-): E => {
+export type ConsoleTFunction = TFunction | ((key: string, options?: any) => string);
+export const translateExtension = <E extends Extension>(extension: E, t: ConsoleTFunction): E => {
   translateExtensionDeep(extension, isTranslatableString, (value, key, obj) => {
     obj[key] = t(value);
   });

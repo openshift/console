@@ -2,7 +2,7 @@ import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { RESOURCE_NAME_REGEX } from './regex';
 
-export const nameValidationSchema = (t: TFunction<'metal3-plugin'>, maxLength = 263) =>
+export const nameValidationSchema = (t: TFunction, maxLength = 263) =>
   yup
     .string()
     .matches(RESOURCE_NAME_REGEX, {

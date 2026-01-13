@@ -8,6 +8,7 @@
   "Not configured yet": "Not configured yet",
   "Prometheus query failed.": "Prometheus query failed.",
   "Invalid credentials": "Invalid credentials",
+  "Synchronization failed": "Synchronization failed",
   "Failing {{reason}}": "Failing {{reason}}",
   "vCenter": "vCenter",
   "Enter the network address of the vCenter server. It can either be a domain name or IP address": "Enter the network address of the vCenter server. It can either be a domain name or IP address",

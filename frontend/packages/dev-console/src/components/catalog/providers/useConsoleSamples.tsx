@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/shared/src';
 import { ConsoleSample } from '../../../types/samples';
 import {
@@ -12,10 +11,7 @@ import {
   useSamples,
 } from '../../../utils/samples';
 
-export const normalizeConsoleSamples = (
-  activeNamespace: string,
-  t: TFunction | ((key: string) => string),
-) => {
+export const normalizeConsoleSamples = (activeNamespace: string, t: ConsoleTFunction) => {
   const createLabel = t('devconsole~Create');
 
   return (sample: ConsoleSample): CatalogItem<ConsoleSample> | null => {
