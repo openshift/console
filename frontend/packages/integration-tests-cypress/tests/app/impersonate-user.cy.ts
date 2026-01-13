@@ -209,12 +209,11 @@ EOF`,
         cy.get('[data-test="user-dropdown-toggle"]').then(($toggle) => {
           if ($toggle.length > 0 && $toggle.is(':visible')) {
             cy.wrap($toggle).click();
-            cy.get('body').then(($body2) => {
-              if ($body2.find('[data-test="stop-impersonate"]').length > 0) {
-                cy.byTestID('stop-impersonate').click();
-                cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
-              }
-            });
+            // Wait for dropdown menu to render
+            cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+            // Use text selector as data-test attribute may not render in PF6 DropdownItem
+            cy.contains('.pf-v6-c-menu__item', 'Stop impersonating').click();
+            cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
           }
         });
       }
@@ -248,7 +247,10 @@ EOF`,
   // Helper function to start impersonation
   const startImpersonation = (username: string, groups: string[] = []) => {
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-    cy.byTestID('impersonate-user').should('be.visible').click();
+    // Wait for dropdown menu to render before looking for menu item
+    cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+    // Use text selector as data-test attribute may not render in PF6 DropdownItem
+    cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
     cy.byTestID('username-input').should('be.visible').clear().type(username);
 
     if (groups.length > 0) {
@@ -272,8 +274,13 @@ EOF`,
   // Helper function to stop impersonation
   const stopImpersonation = () => {
     cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-    cy.byTestID('stop-impersonate').should('be.visible').click();
+    // Wait for dropdown menu to render before looking for menu item
+    cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+    // Use text selector as data-test attribute may not render in PF6 DropdownItem
+    cy.contains('.pf-v6-c-menu__item', 'Stop impersonating').should('be.visible').click();
     cy.contains('You are impersonating', { timeout: 10000 }).should('not.exist');
+    // Wait for page to reload after stopping impersonation
+    cy.wait(1000);
   };
 
   describe('Single Group Access Control', () => {
@@ -562,8 +569,13 @@ EOF`,
 
   describe('Group Search and Filter with Real Groups', () => {
     it('should filter and find our test groups', () => {
+      // Wait for page to be ready after previous test's stopImpersonation reload
+      cy.wait(1000);
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-      cy.byTestID('impersonate-user').should('be.visible').click();
+      // Wait for dropdown menu to render before looking for menu item
+      cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+      // Use text selector as data-test attribute may not render in PF6 DropdownItem
+      cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
 
       // Type to filter for our test groups
       cy.get('[placeholder="Enter groups"]')
@@ -592,7 +604,10 @@ EOF`,
 
     it('should show "No results found" when filter matches nothing', () => {
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-      cy.byTestID('impersonate-user').should('be.visible').click();
+      // Wait for dropdown menu to render before looking for menu item
+      cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+      // Use text selector as data-test attribute may not render in PF6 DropdownItem
+      cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
 
       cy.get('[placeholder="Enter groups"]')
         .should('be.visible')
@@ -612,7 +627,10 @@ EOF`,
   describe('Group Selection and Deselection', () => {
     it('should allow removing selected groups and verify access changes', () => {
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-      cy.byTestID('impersonate-user').should('be.visible').click();
+      // Wait for dropdown menu to render before looking for menu item
+      cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+      // Use text selector as data-test attribute may not render in PF6 DropdownItem
+      cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
 
       cy.byTestID('username-input').should('be.visible').type(testUser);
 
@@ -685,7 +703,10 @@ EOF`,
   describe('Edge Cases and Security', () => {
     it('should not allow impersonating with empty groups array after selection', () => {
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-      cy.byTestID('impersonate-user').should('be.visible').click();
+      // Wait for dropdown menu to render before looking for menu item
+      cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+      // Use text selector as data-test attribute may not render in PF6 DropdownItem
+      cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
 
       cy.byTestID('username-input').should('be.visible').type(testUser);
 
@@ -709,7 +730,10 @@ EOF`,
       const specialUser = 'user@example-org.com';
 
       cy.byTestID('user-dropdown-toggle').should('be.visible').click();
-      cy.byTestID('impersonate-user').should('be.visible').click();
+      // Wait for dropdown menu to render before looking for menu item
+      cy.get('.pf-v6-c-menu__list', { timeout: 10000 }).should('be.visible');
+      // Use text selector as data-test attribute may not render in PF6 DropdownItem
+      cy.contains('.pf-v6-c-menu__item', 'Impersonate User').should('be.visible').click();
 
       cy.byTestID('username-input').should('be.visible').type(specialUser);
 
