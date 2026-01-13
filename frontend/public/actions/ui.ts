@@ -48,6 +48,7 @@ export type NodeMetrics = {
   totalMemory: MetricValuesByName;
   usedStorage: MetricValuesByName;
   totalStorage: MetricValuesByName;
+  runningVms: MetricValuesByName;
 };
 
 export type PVCMetrics = {
