@@ -1,6 +1,6 @@
 import { PureComponent } from 'react';
 import * as PropTypes from 'prop-types';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 

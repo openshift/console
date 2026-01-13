@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom-v5-compat';
 import { connect } from 'react-redux';
 import { Banner, Flex } from '@patternfly/react-core';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 
 import { KUBE_ADMIN_USERNAMES, useCanClusterUpgrade } from '@console/shared';

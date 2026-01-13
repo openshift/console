@@ -1,6 +1,6 @@
+import { createHash } from 'crypto';
 import type { SetStateAction } from 'react';
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
-import { createHash } from 'crypto-browserify';
 import { useSelector } from 'react-redux';
 import { UseUserSettings, getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

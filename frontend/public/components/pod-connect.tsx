@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';

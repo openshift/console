@@ -423,7 +423,7 @@ const DisabledPopover: FC<DisabledPopoverProps> = ({ operatorHub, sourceName }) 
     >
       <p>
         {t(
-          'olm~Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.',
+          'olm~Operators provided by this source will not appear in Software Catalog and any operators installed from this source will not receive updates until this source is re-enabled.',
         )}
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>

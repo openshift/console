@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, Suspense } from 'react';
 import {

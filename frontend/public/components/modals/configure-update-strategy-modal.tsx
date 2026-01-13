@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useCallback, useState } from 'react';
 import {
   FormGroup,

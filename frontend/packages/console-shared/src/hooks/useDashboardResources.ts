@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  RequestMap,
-  UseDashboardResources,
-} from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import { UseDashboardResources } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   stopWatchPrometheusQuery,
   stopWatchURL,
   watchPrometheusQuery,
   watchURL,
 } from '@console/internal/actions/dashboards';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboard-results';
-import { RootState } from 'public/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useNotificationAlerts } from './useNotificationAlerts';
 
 export const useDashboardResources: UseDashboardResources = ({
@@ -24,7 +20,7 @@ export const useDashboardResources: UseDashboardResources = ({
     notificationAlertLabelSelectors,
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   useEffect(() => {
     prometheusQueries?.forEach((query) =>
       dispatch(watchPrometheusQuery(query.query, null, query.timespan)),
@@ -39,10 +35,8 @@ export const useDashboardResources: UseDashboardResources = ({
     };
   }, [dispatch, prometheusQueries, urls]);
 
-  const urlResults = useSelector<RootState, RequestMap<any>>((state) =>
-    state.dashboards.get(RESULTS_TYPE.URL),
-  );
-  const prometheusResults = useSelector<RootState, RequestMap<PrometheusResponse>>((state) =>
+  const urlResults = useConsoleSelector((state) => state.dashboards.get(RESULTS_TYPE.URL));
+  const prometheusResults = useConsoleSelector((state) =>
     state.dashboards.get(RESULTS_TYPE.PROMETHEUS),
   );
 

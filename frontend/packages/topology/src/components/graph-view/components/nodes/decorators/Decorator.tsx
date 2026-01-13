@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, ReactNode, Ref, MouseEvent as ReactMouseEvent } from 'react';
 import { Decorator as PfDecorator } from '@patternfly/react-topology';
 import { Link } from 'react-router-dom-v5-compat';
 
@@ -8,15 +8,15 @@ type DecoratorTypes = {
   x: number;
   y: number;
   radius: number;
-  onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
+  onClick?(event: ReactMouseEvent<SVGGElement, MouseEvent>): void;
   href?: string;
   ariaLabel?: string;
   external?: boolean;
-  circleRef?: React.Ref<SVGCircleElement>;
-  children?: React.ReactNode;
+  circleRef?: Ref<SVGCircleElement>;
+  children?: ReactNode;
 };
 
-const Decorator: React.FunctionComponent<DecoratorTypes> = ({
+const Decorator: FC<DecoratorTypes> = ({
   x,
   y,
   radius,
@@ -34,7 +34,6 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
 
   if (href) {
     return external ? (
-      // eslint-disable-next-line jsx-a11y/anchor-is-valid
       <a
         className="odc-decorator__link"
         href={href}

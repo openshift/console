@@ -2,7 +2,7 @@
 import type { FC } from 'react';
 
 import { useMemo, memo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { Link, useNavigate } from 'react-router-dom-v5-compat';

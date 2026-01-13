@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ReactNode } from 'react';
 import { Children, cloneElement } from 'react';
 import { Alert, AlertGroup } from '@patternfly/react-core';

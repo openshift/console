@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import * as Immutable from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { setFlag } from '@console/internal/actions/flags';
 import { receivedResources } from '../../actions/k8s';

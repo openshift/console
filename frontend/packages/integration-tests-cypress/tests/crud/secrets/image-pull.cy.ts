@@ -20,7 +20,7 @@ describe('Image pull secrets', () => {
   });
 
   after(() => {
-    cy.deleteProjectWithCLI(testName);
+    cy.exec(`oc delete project ${testName} --wait=false`);
   });
 
   it(`Creates, edits, and deletes an image registry credentials pull secret`, () => {

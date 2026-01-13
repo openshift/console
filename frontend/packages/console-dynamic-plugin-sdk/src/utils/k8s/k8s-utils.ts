@@ -171,12 +171,6 @@ export const k8sWatch = (
   return new WSFactory(path, wsOptionsUpdated as WSOptions);
 };
 
-/** @deprecated - This function is now a noop and will be removed in future releases. */
-export const setPluginStore = (store: any) => {
-  // eslint-disable-next-line no-void
-  void store;
-};
-
 const modelKey = (model: K8sModel): string => {
   // TODO: Use `referenceForModel` even for known API objects
   return model.crd ? getReferenceForModel(model) : model.kind;

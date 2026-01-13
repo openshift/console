@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64';
 import { action, ActionType as Action } from 'typesafe-actions';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';

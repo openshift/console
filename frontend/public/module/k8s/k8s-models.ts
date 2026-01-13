@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
 
 import { getModelExtensionMetadata } from './get-resources';
@@ -10,7 +10,7 @@ import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 import store from '../../redux';
 import type { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   isModelMetadata,
   K8sResourceKindReference,

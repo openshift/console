@@ -61,14 +61,14 @@ const parseExtensionTypeInfo = (
     return null;
   }
 
-  const refToExtensionDeclaration = getTypeReferenceNode(typeDeclaration, 'ExtensionDeclaration');
+  const refToExtension = getTypeReferenceNode(typeDeclaration, 'Extension');
 
-  if (refToExtensionDeclaration?.typeArguments?.length !== 2) {
-    errors.push(`Extension type '${typeString}' must reference ExtensionDeclaration<T, P> type`);
+  if (refToExtension?.typeArguments?.length !== 2) {
+    errors.push(`Extension type '${typeString}' must reference Extension<T, P> type`);
     return null;
   }
 
-  const [typeArgT, typeArgP] = refToExtensionDeclaration.typeArguments;
+  const [typeArgT, typeArgP] = refToExtension.typeArguments;
 
   if (!ts.isLiteralTypeNode(typeArgT) || !ts.isStringLiteral(typeArgT.literal)) {
     errors.push(`Extension type '${typeString}' must declare T type parameter as string literal`);

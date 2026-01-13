@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/react-core';

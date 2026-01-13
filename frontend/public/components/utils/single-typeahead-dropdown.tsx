@@ -11,9 +11,10 @@ import {
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
+  TextInputGroupMainProps,
 } from '@patternfly/react-core';
-import * as _ from 'lodash-es';
-import * as React from 'react';
+import * as _ from 'lodash';
+import { FC, Ref, useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
@@ -39,7 +40,7 @@ export type SingleTypeaheadDropdownProps = {
   /** Whether to enable creating new items */
   enableCreateNew?: boolean;
   /** The component to use render the dropdown options */
-  OptionComponent?: React.FC<SelectOptionProps>;
+  OptionComponent?: FC<SelectOptionProps>;
 
   /** Additional props to pass to MenuToggle */
   menuToggleProps?: Partial<MenuToggleProps>;
@@ -66,7 +67,7 @@ const getTextWidth = (text: string, font: string): number => {
 };
 
 /** A PF Select with typeahead filtering and single selection */
-export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = ({
+export const SingleTypeaheadDropdown: FC<SingleTypeaheadDropdownProps> = ({
   items,
   onChange,
   onClear,
@@ -82,32 +83,30 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
   selectProps = {},
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selectOptions, setSelectOptions] = React.useState<SelectOptionProps[]>(items);
-  const selectedValue = React.useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectOptions, setSelectOptions] = useState<SelectOptionProps[]>(items);
+  const selectedValue = useMemo(() => selectOptions.find((i) => i.value === selectedKey), [
     selectOptions,
     selectedKey,
   ]);
-  const [inputValue, setInputValue] = React.useState<string>(String(selectedValue?.children) || '');
-  const [filterValue, setFilterValue] = React.useState<string>('');
-  const [filteredSelectOptions, setFilteredSelectOptions] = React.useState<SelectOptionProps[]>(
-    items,
-  );
-  const [focusedItemIndex, setFocusedItemIndex] = React.useState<number | null>(null);
-  const [activeItemId, setActiveItemId] = React.useState<string | null>(null);
-  const textInputRef = React.useRef<HTMLInputElement>();
+  const [inputValue, setInputValue] = useState<string>(String(selectedValue?.children) || '');
+  const [filterValue, setFilterValue] = useState<string>('');
+  const [filteredSelectOptions, setFilteredSelectOptions] = useState<SelectOptionProps[]>(items);
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number | null>(null);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const textInputRef = useRef<HTMLInputElement>();
 
   const ID_PREFIX = _.uniqueId('select-typeahead-'); // for aria to work, ids have to be unique
   const NO_RESULTS = 'typeahead-dropdown__no-results';
   const CREATE_NEW = 'typeahead-dropdown__create-new';
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectOptions([...selectOptions, ..._.differenceBy(items, selectOptions, 'value')]);
     inputValue === '' && setFilteredSelectOptions(selectOptions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let newSelectOptions: SelectOptionProps[] = selectOptions;
 
     // Filter menu items based on the text input value when one exists
@@ -171,10 +170,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     closeMenu();
   };
 
-  const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
-  ) => {
+  const onSelect: SelectProps['onSelect'] = (_e, value) => {
     if (enableCreateNew && value === CREATE_NEW) {
       if (!selectOptions.some((item) => item.value === filterValue)) {
         setSelectOptions([...selectOptions, { value: filterValue, children: filterValue }]);
@@ -188,11 +184,11 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setInputValue(selectedValue?.children ?? selectedValue?.value ?? '');
   }, [selectedValue]);
 
-  const onTextInputChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const onTextInputChange: TextInputGroupMainProps['onChange'] = (_e, value) => {
     setInputValue(value);
     setFilterValue(value);
     onInputChange && onInputChange(value);
@@ -248,7 +244,9 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     setActiveAndFocusedItem(indexToFocus);
   };
 
-  const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputKeyDown: TextInputGroupMainProps['onKeyDown'] = (event) => {
+    event.key === 'Enter' && event.preventDefault(); // prevent accidental form submission
+
     const focusedItem = focusedItemIndex !== null ? filteredSelectOptions[focusedItemIndex] : null;
 
     switch (event.key) {
@@ -291,7 +289,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     onClear && onClear(selectedKey);
   };
 
-  const selectedItemWidth = React.useMemo(() => {
+  const selectedItemWidth = useMemo(() => {
     // font is hardcoded because canvas can't read the non-global CSS variables
     return (
       resizeToFit &&
@@ -300,7 +298,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
     );
   }, [resizeToFit, selectedValue]);
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       variant="typeahead"
@@ -313,10 +311,7 @@ export const SingleTypeaheadDropdown: React.FC<SingleTypeaheadDropdownProps> = (
           value={inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          onKeyDown={(ev: React.KeyboardEvent<HTMLInputElement>) => {
-            ev.key === 'Enter' && ev.preventDefault(); // prevent accidental form submission
-            onInputKeyDown(ev);
-          }}
+          onKeyDown={onInputKeyDown}
           id={`${ID_PREFIX}-input`}
           autoComplete="off"
           innerRef={textInputRef}

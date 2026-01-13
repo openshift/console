@@ -1,7 +1,7 @@
 import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';

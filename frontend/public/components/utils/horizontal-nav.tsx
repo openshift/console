@@ -1,7 +1,7 @@
 import type { ComponentType, FC, ReactNode } from 'react';
 import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';

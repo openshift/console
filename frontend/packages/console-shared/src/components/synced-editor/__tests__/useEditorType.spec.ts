@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import {
   PREFERRED_CREATE_EDIT_METHOD_USER_SETTING_VALUE_LATEST,
   usePreferredCreateEditMethod,
@@ -19,15 +19,26 @@ jest.mock(
   }),
 );
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn(),
+}));
+
 const mockUserSettings = useUserSettings as jest.Mock;
 const mockUsePreferredCreateEditMethod = usePreferredCreateEditMethod as jest.Mock;
+const mockUseState = useState as jest.Mock;
+const actualUseState = jest.requireActual('react').useState;
 
 describe('useEditorType', () => {
   const lastViewUserSettingKey = 'key';
   const defaultValue = EditorType.Form;
 
+  beforeEach(() => {
+    mockUseState.mockImplementation(actualUseState);
+  });
+
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should return editor type corresponding to preferred editor type if it is defined and enabled', () => {
@@ -105,7 +116,7 @@ describe('useEditorType', () => {
   it('should return false for loaded if resources have loaded and defaultValue is defined but activeEditorType is not defined', () => {
     mockUserSettings.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    jest.spyOn(React, 'useState').mockReturnValue([null, jest.fn()]);
+    mockUseState.mockReturnValue([null, jest.fn()]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
@@ -115,7 +126,7 @@ describe('useEditorType', () => {
   it('should return true for loaded if all resources have loaded but activeEditorType and defaultValue are not defined', () => {
     mockUserSettings.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    jest.spyOn(React, 'useState').mockReturnValue([null, jest.fn()]);
+    mockUseState.mockReturnValue([null, jest.fn()]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, null));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);

@@ -1,83 +1,75 @@
 import { Translation } from 'react-i18next';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent } from '../utils/promise-component';
+import {
+  createModalLauncher,
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalComponentProps,
+} from '../factory/modal';
 
-interface ConfirmModalProps {
-  btnText: string | React.ReactNode;
-  btnTextKey: string;
-  cancel: () => void;
-  cancelText: string | React.ReactNode;
-  cancelTextKey: string;
-  close: () => void;
+interface ConfirmModalProps extends ModalComponentProps {
+  btnText?: string | React.ReactNode;
+  btnTextKey?: string;
+  cancelText?: string | React.ReactNode;
+  cancelTextKey?: string;
   executeFn: (
     e?: React.FormEvent<EventTarget>,
     opts?: { supressNotifications: boolean },
   ) => Promise<any>;
-  message: string | React.ReactNode;
-  messageKey: string;
-  title: string | React.ReactNode;
-  titleKey: string;
-  submitDanger: boolean;
+  message?: string | React.ReactNode;
+  messageKey?: string;
+  title?: string | React.ReactNode;
+  titleKey?: string;
+  submitDanger?: boolean;
 }
 
-interface ConfirmModalState {
-  inProgress: boolean;
-  errorMessage: string;
-}
+const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-class ConfirmModal extends PromiseComponent<ConfirmModalProps, ConfirmModalState> {
-  _cancel: () => void;
-
-  constructor(props) {
-    super(props);
-    this._submit = this._submit.bind(this);
-    this._cancel = this.props.cancel.bind(this);
-  }
-
-  _submit(event) {
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    this.handlePromise(
-      this.props.executeFn(null, {
+    handlePromise(
+      props.executeFn(null, {
         supressNotifications: true,
       }),
-    ).then(this.props.close);
-  }
+    ).then(props.close);
+  };
 
-  render() {
-    const {
-      title,
-      titleKey,
-      message,
-      messageKey,
-      btnText,
-      btnTextKey,
-      cancelText,
-      cancelTextKey,
-      submitDanger,
-    } = this.props;
+  const {
+    title,
+    titleKey,
+    message,
+    messageKey,
+    btnText,
+    btnTextKey,
+    cancelText,
+    cancelTextKey,
+    submitDanger,
+    cancel,
+  } = props;
 
-    return (
-      <Translation>
-        {(t) => (
-          <form onSubmit={this._submit} name="form" className="modal-content">
-            <ModalTitle>{titleKey ? t(titleKey) : title}</ModalTitle>
-            <ModalBody>{messageKey ? t(messageKey) : message}</ModalBody>
-            <ModalSubmitFooter
-              errorMessage={this.state.errorMessage}
-              inProgress={this.state.inProgress}
-              submitText={btnTextKey ? t(btnTextKey) : btnText || t('Confirm')}
-              cancel={this._cancel}
-              cancelText={cancelTextKey ? t(cancelTextKey) : cancelText || t('Cancel')}
-              submitDanger={submitDanger}
-            />
-          </form>
-        )}
-      </Translation>
-    );
-  }
-}
+  return (
+    <Translation>
+      {(t) => (
+        <form onSubmit={submit} name="form" className="modal-content">
+          <ModalTitle>{titleKey ? t(titleKey) : title}</ModalTitle>
+          <ModalBody>{messageKey ? t(messageKey) : message}</ModalBody>
+          <ModalSubmitFooter
+            errorMessage={errorMessage}
+            inProgress={inProgress}
+            submitText={btnTextKey ? t(btnTextKey) : btnText || t('Confirm')}
+            cancel={cancel}
+            cancelText={cancelTextKey ? t(cancelTextKey) : cancelText || t('Cancel')}
+            submitDanger={submitDanger}
+          />
+        </form>
+      )}
+    </Translation>
+  );
+};
 
 /** @deprecated use `useWarningModal` instead */
 export const confirmModal = createModalLauncher(ConfirmModal);

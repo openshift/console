@@ -1,6 +1,6 @@
 import { useMemo, Fragment, Suspense } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as semver from 'semver';
 import { Table as PfTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import {

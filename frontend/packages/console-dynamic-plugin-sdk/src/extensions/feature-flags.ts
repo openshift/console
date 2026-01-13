@@ -1,8 +1,8 @@
 import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, CodeRef } from '../types';
 
 /** Gives full control over Console feature flags. */
-export type FeatureFlag = ExtensionDeclaration<
+export type FeatureFlag = Extension<
   'console.flag',
   {
     /** Used to set/unset arbitrary feature flags. */
@@ -11,7 +11,7 @@ export type FeatureFlag = ExtensionDeclaration<
 >;
 
 /** Adds new Console feature flag driven by the presence of a CRD on the cluster. */
-export type ModelFeatureFlag = ExtensionDeclaration<
+export type ModelFeatureFlag = Extension<
   'console.flag/model',
   {
     /** The name of the flag to set once the CRD is detected. */
@@ -22,7 +22,7 @@ export type ModelFeatureFlag = ExtensionDeclaration<
 >;
 
 /** Gives full control over Console feature flags with hook handlers. */
-export type FeatureFlagHookProvider = ExtensionDeclaration<
+export type FeatureFlagHookProvider = Extension<
   'console.flag/hookProvider',
   {
     /** Used to set/unset arbitrary feature flags. */

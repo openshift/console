@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 import { Component } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';

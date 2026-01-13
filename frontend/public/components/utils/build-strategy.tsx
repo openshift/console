@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { CodeBlock, CodeBlockCode, DescriptionList } from '@patternfly/react-core';
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { DetailsItem } from './details-item';

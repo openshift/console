@@ -1,7 +1,8 @@
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
-import * as _ from 'lodash-es';
-import { useSelector, useDispatch } from 'react-redux';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
@@ -44,7 +45,6 @@ import { getReportBugLink } from '../../module/k8s/cluster-settings';
 import redhatLogoImg from '../../imgs/logos/redhat.svg';
 import { TourContext, TourActions } from '@console/app/src/components/tour';
 import { ClusterVersionModel, ConsoleLinkModel } from '../../models';
-import { RootState } from '../../redux';
 import { FeedbackModal } from '@patternfly/react-user-feedback';
 import '@patternfly/react-user-feedback/dist/esm/Feedback/Feedback.css';
 import { useFeedbackLocal } from './feedback-local';
@@ -160,7 +160,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
   const consoleCLIDownloadFlag = useFlag(FLAGS.CONSOLE_CLI_DOWNLOAD);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
@@ -168,7 +168,7 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, alertCount, canAccessNS, impersonate } = useSelector((state: RootState) => ({
+  const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector((state) => ({
     clusterID: state.UI.get('clusterID'),
     alertCount: state.observe.getIn(['alertCount']),
     canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),

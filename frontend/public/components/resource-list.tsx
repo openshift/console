@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, tsdoc/syntax */
-import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
+import { FC, memo, useEffect, useReducer, useState, Ref } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
@@ -17,6 +17,7 @@ import {
   MenuToggleElement,
   Select,
   SelectOption,
+  SelectProps,
   TextInput,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -158,7 +159,7 @@ const getRouteLabelsForEditor = (
   return !isDefaultReceiver && _.isEmpty(routeLabels) ? [''] : routeLabels;
 };
 
-const AlertMsg: React.FC<AlertMsgProps> = ({ type }) => {
+const AlertMsg: FC<AlertMsgProps> = ({ type }) => {
   const { t } = useTranslation();
   switch (type) {
     case InitialReceivers.Default:
@@ -178,7 +179,7 @@ const AlertMsg: React.FC<AlertMsgProps> = ({ type }) => {
   }
 };
 
-const ReceiverInfoTip: React.FC<ReceiverInfoTipProps> = ({ type }) => {
+const ReceiverInfoTip: FC<ReceiverInfoTipProps> = ({ type }) => {
   const { t } = useTranslation();
   return (
     <Alert isInline variant="info" title={`${type} ${t('public~Receiver')}`}>
@@ -189,7 +190,7 @@ const ReceiverInfoTip: React.FC<ReceiverInfoTipProps> = ({ type }) => {
   );
 };
 
-const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
+const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
   obj: secret, // Secret "alertmanager-main" which contains alertmanager.yaml config
   titleVerb,
   saveButtonText,
@@ -198,8 +199,8 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [saveErrorMsg, setSaveErrorMsg] = React.useState<string>();
-  const [inProgress, setInProgress] = React.useState<boolean>(false);
+  const [saveErrorMsg, setSaveErrorMsg] = useState<string>();
+  const [inProgress, setInProgress] = useState<boolean>(false);
   const { config, errorMessage: loadErrorMsg } = getAlertmanagerConfig(secret);
 
   const doesReceiverNameAlreadyExist = (receiverName: string): boolean => {
@@ -275,9 +276,9 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     route?.routes ?? [],
   );
 
-  const [formValues, dispatchFormChange] = React.useReducer(formReducer, INITIAL_STATE);
-  const [isTypeOpen, setIsTypeOpen] = React.useState(false);
-  const [selectedType, setSelectedType] = React.useState<string>(
+  const [formValues, dispatchFormChange] = useReducer(formReducer, INITIAL_STATE);
+  const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<string>(
     receiverTypes[formValues.receiverType] ?? t('public~Select receiver type...'),
   );
 
@@ -285,10 +286,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     setIsTypeOpen(!isTypeOpen);
   };
 
-  const onTypeSelect = (
-    _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string,
-  ) => {
+  const onTypeSelect: SelectProps['onSelect'] = (_e, value: string) => {
     setSelectedType(value);
     setIsTypeOpen(false);
     dispatchFormChange({
@@ -299,7 +297,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     });
   };
 
-  const typeToggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const typeToggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={onTypeToggleClick}
@@ -515,13 +513,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   );
 };
 
-const ReceiverWrapper: React.FC<ReceiverFormsWrapperProps> = React.memo(({ obj, ...props }) => {
+const ReceiverWrapper: FC<ReceiverFormsWrapperProps> = memo(({ obj, ...props }) => {
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
-  const [alertmanagerGlobals, setAlertmanagerGlobals] = React.useState();
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadError, setLoadError] = React.useState<APIError>();
+  const [alertmanagerGlobals, setAlertmanagerGlobals] = useState();
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<APIError>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!alertManagerBaseURL) {
       setLoadError({ message: `Error alertManagerBaseURL not set` });
       return;

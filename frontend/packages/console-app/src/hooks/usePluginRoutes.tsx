@@ -3,7 +3,7 @@ import { useMemo, lazy, useEffect, useCallback } from 'react';
 import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   getDeploymentConfigVersion,

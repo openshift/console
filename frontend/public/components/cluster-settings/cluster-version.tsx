@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, memo } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -192,7 +192,7 @@ const RecentEventFooter = withDashboardResources(
         <Divider />
         <CardFooter>
           <Link to={viewEvents} data-test="events-view-all-link">
-            {t('console-shared~View all events')}
+            {t('public~View all events')}
           </Link>
         </CardFooter>
       </>

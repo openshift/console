@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { useTranslation } from 'react-i18next';
 import * as PropTypes from 'prop-types';

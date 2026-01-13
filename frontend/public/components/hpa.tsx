@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Table as PfTable, Th, Tr, Thead, Tbody, Td } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

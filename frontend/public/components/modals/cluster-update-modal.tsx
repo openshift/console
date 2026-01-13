@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FormEvent, FormEventHandler } from 'react';
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';

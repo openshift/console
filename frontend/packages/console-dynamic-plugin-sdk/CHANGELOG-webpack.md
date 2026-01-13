@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.1 - TBD
+
+- BREAKING: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
+
 ## 4.21.0-prerelease.1 - 2025-12-04
 
 - Remove usage of direct `webpack` imports in favor of `compiler.webpack` ([OCPBUGS-66345], [#15802])
@@ -87,6 +91,7 @@ table in [Console dynamic plugins README](./README.md).
 - Optimize module federation of PatternFly packages via dynamic modules ([CONSOLE-3853], [#13521])
 
 [CONSOLE-3705]: https://issues.redhat.com/browse/CONSOLE-3705
+[CONSOLE-3769]: https://issues.redhat.com/browse/CONSOLE-3769
 [CONSOLE-3853]: https://issues.redhat.com/browse/CONSOLE-3853
 [CONSOLE-4379]: https://issues.redhat.com/browse/CONSOLE-4379
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
@@ -121,3 +126,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15183]: https://github.com/openshift/console/pull/15183
 [#15479]: https://github.com/openshift/console/pull/15479
 [#15802]: https://github.com/openshift/console/pull/15802
+[#15945]: https://github.com/openshift/console/pull/15945
