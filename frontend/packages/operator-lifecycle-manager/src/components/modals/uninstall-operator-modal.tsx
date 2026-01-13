@@ -427,7 +427,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
         inProgress={isSubmitInProgress}
         cancel={cancel}
         submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
-        submitText={t(isSubmitFinished ? 'olm~OK' : 'olm~Uninstall')}
+        submitText={isSubmitFinished ? t('olm~OK') : t('olm~Uninstall')}
         submitDisabled={isSubmitInProgress}
       />
     </form>
