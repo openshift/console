@@ -135,8 +135,12 @@ export const ContainerLastState: FC<ContainerLastStateProps> = ({ containerLastS
 export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
-  const startedAt = _.get(cstate, 'startedAt');
-  const finishedAt = _.get(cstate, 'finishedAt');
+  const startedAt =
+    _.get(cstate, 'startedAt') ||
+    _.get(cstatus, 'lastState.running.startedAt') ||
+    _.get(cstatus, 'lastState.terminated.startedAt');
+  const finishedAt =
+    _.get(cstate, 'finishedAt') || _.get(cstatus, 'lastState.terminated.finishedAt');
 
   return (
     <Tr>
@@ -446,7 +450,7 @@ const EnvironmentPage = (props: {
   readOnly: boolean;
 }) => (
   <AsyncComponent
-    loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
+    loader={() => import('./environment').then((c) => c.EnvironmentPage)}
     {...(props as Record<string, unknown>)}
   />
 );
