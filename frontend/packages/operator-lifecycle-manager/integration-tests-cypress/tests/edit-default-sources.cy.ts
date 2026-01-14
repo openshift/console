@@ -15,13 +15,13 @@ describe('Create namespace from install operators', () => {
     checkErrors();
   });
 
-  it('disables default catalog sources from operatorHub details page', () => {
-    cy.log('navigate to operatorHub page');
+  it('disables default catalog sources from OperatorHub details page', () => {
+    cy.log('navigate to OperatorHub page');
     cy.visit(`/settings/cluster`);
     cy.byLegacyTestID('horizontal-link-Configuration').click();
     cy.byLegacyTestID('OperatorHub').click();
 
-    // verfiy operatorHub details page is open
+    // verfiy OperatorHub details page is open
     detailsPage.sectionHeaderShouldExist('OperatorHub details');
 
     // Toggle default sources modal

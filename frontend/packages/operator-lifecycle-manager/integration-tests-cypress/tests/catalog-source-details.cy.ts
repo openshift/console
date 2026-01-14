@@ -23,7 +23,7 @@ describe(`Interacting with CatalogSource page`, () => {
     cy.byTestID('loading-indicator').should('not.exist');
     cy.byLegacyTestID('OperatorHub').scrollIntoView().click();
 
-    // verfiy operatorHub details page is open
+    // verfiy OperatorHub details page is open
     detailsPage.sectionHeaderShouldExist('OperatorHub details');
 
     // navigate to Catalog Sources list

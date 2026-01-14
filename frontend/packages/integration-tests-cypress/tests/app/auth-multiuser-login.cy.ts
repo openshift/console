@@ -42,7 +42,7 @@ describe('Auth test', () => {
       nav.sidenav.shouldNotHaveNavSection(['Administration', 'Custom Resource Definitions']);
 
       cy.log('does not show admin nav items in Ecosystem to test user');
-      nav.sidenav.shouldNotHaveNavSection(['Ecosystem', 'OperatorHub']);
+      nav.sidenav.shouldNotHaveNavSection(['Ecosystem', 'Software Catalog']);
 
       cy.log('does not show admin nav items in Storage to test user');
       nav.sidenav.shouldNotHaveNavSection(['Storage', 'Persistent Volumes']);

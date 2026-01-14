@@ -5,7 +5,7 @@ import { operator, TestOperandProps } from '../views/operator.view';
 
 const testOperator = {
   name: 'Data Grid',
-  operatorHubCardTestID: 'operator-Data Grid',
+  operatorCardTestID: 'operator-Data Grid',
   installedNamespace: testName,
 };
 
@@ -27,7 +27,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
     cy.createProjectWithCLI(testName);
     operator.install(
       testOperator.name,
-      testOperator.operatorHubCardTestID,
+      testOperator.operatorCardTestID,
       testOperator.installedNamespace,
     );
     operator.installedSucceeded(testOperator.name, testName);
