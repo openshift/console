@@ -352,7 +352,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
       return {
         name: pluginName,
         enabled,
-        status: notLoadedPluginInfo?.status || 'Pending',
+        status: notLoadedPluginInfo?.status || 'pending',
         errorMessage:
           notLoadedPluginInfo?.status === 'failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:
