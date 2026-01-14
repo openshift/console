@@ -13,19 +13,22 @@ reviews:
   request_changes_workflow: false
 
   # Enable high-level summaries for better PR understanding
-  high_level_summary: true
+  high_level_summary: false
 
   # Disable poems for professional tone
   poem: false
 
-  # Show review status for transparency
-  review_status: true
+  # Disable review status to prevent repeated status comments on each review
+  review_status: false
 
   # Auto-review configuration
   auto_review:
     enabled: true
+    # Disable incremental reviews - only review once per PR, not on every commit
+    # This prevents repeated summaries and review comments on each push
+    auto_incremental_review: false
     # Review drafts to catch issues early
-    drafts: true
+    drafts: false
     ignore_title_keywords:
       - WIP
       - '[WIP]'
@@ -41,30 +44,30 @@ reviews:
   fail_commit_status: false
 
   # Don't collapse walkthrough for better visibility
-  collapse_walkthrough: false
+  collapse_walkthrough: true
 
   # Show summary of changed files
-  changed_files_summary: true
+  changed_files_summary: false
 
   # Generate sequence diagrams for complex flows
   sequence_diagrams: false
 
   # Estimate code review effort
   # Helps prioritize and allocate review time appropriately
-  estimate_code_review_effort: true
+  estimate_code_review_effort: false
 
   # Assess linked issues for business context and requirements
-  assess_linked_issues: true
+  assess_linked_issues: false
 
   # Show related issues
-  related_issues: true
+  related_issues: false
 
   # Show related PRs
-  related_prs: true
+  related_prs: false
 
   # Suggest labels based on changes
   # Helps categorize and track changes
-  suggested_labels: true
+  suggested_labels: false
 
 # Knowledge base configuration - Reference documentation for accurate reviews
 knowledge_base:
