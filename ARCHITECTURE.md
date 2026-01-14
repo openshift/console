@@ -22,10 +22,11 @@ For the complete list of console plugins, see `console-app/package.json` depende
   
 ### Extension Types
 
-OpenShift Console provides 75+ extension types for plugin integration. See the [complete extension type reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) for:
-- Full type definitions and properties
-- Naming convention: `console.*` (e.g., `console.page/route`, `console.navigation/href`)
-- Usage examples and deprecation notices
+OpenShift Console provides 75+ extension types for plugin integration. **For comprehensive documentation, see [frontend/packages/console-dynamic-plugin-sdk/README.md](frontend/packages/console-dynamic-plugin-sdk/README.md).**
+
+Additional resources:
+- [Extension type reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - Full type definitions, naming convention (`console.*`), and deprecation notices
+- [API documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, and utilities
 
 Common categories include navigation, pages, resources, actions, dashboards, catalog, and perspectives.
 
@@ -88,8 +89,9 @@ The dynamic plugin SDK re-exports APIs from multiple Console packages:
 - **`@console/internal`** - Core UI, editors, hooks, K8s utilities
 - **`@console/plugin-sdk`** - Extension system, plugin infrastructure
 - **`@console/app`** - Application context
+- **`@console/topology`** - Topology components, data transforms, graph views
 
-**BEFORE MODIFYING ANYTHING IN THESE PACKAGES, YOU MUST VERIFY IMPACT ON THE SDK TO AVOID BREAKING THE PUBLIC API.** See `frontend/packages/console-dynamic-plugin-sdk/src/api/` for specific re-exported modules.
+**BEFORE MODIFYING ANYTHING IN THESE OR OTHER PACKAGES:** Verify SDK re-exports by checking `frontend/packages/console-dynamic-plugin-sdk/src/api/internal-*.ts` files to avoid breaking the public API.
 
 ### SDK Utilities
 - **Resource Hooks**: `useK8sWatchResource`, `useActivePerspective`, `useActiveNamespace`
