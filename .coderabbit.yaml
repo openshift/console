@@ -13,7 +13,7 @@ reviews:
   request_changes_workflow: false
 
   # Enable high-level summaries for better PR understanding
-  high_level_summary: false
+  high_level_summary: true
 
   # Disable poems for professional tone
   poem: false
@@ -75,6 +75,9 @@ knowledge_base:
     enabled: true
     filePatterns:
       # Repository documentation
+      - "ARCHITECTURE.md"
+      - "CONVENTIONS.md"
+      - "TESTING.md"
       - "STYLEGUIDE.md"
       - "CONTRIBUTING.md"
       - "README.md"
