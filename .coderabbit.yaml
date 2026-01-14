@@ -43,7 +43,7 @@ reviews:
   # Don't fail commit status to allow merges with comments
   fail_commit_status: false
 
-  # Don't collapse walkthrough for better visibility
+  # Collapse walkthrough for better visibility
   collapse_walkthrough: true
 
   # Show summary of changed files
