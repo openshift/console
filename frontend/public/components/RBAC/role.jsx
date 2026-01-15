@@ -21,7 +21,6 @@ import {
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
 import { SectionHeading } from '../utils/headings';
-import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { navFactory } from '../utils/horizontal-nav';
 import { ResourceLink, resourceListPathFromModel } from '../utils/resource-link';
 import { LoadingBox } from '../utils/status-box';
@@ -443,7 +442,7 @@ const useRoleFilterOptions = () => {
 
 const RolesList = (props) => {
   const { t } = useTranslation();
-  const { data } = props;
+  const { data, loaded } = props;
   const columns = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
@@ -470,25 +469,18 @@ const RolesList = (props) => {
 
   return (
     <Suspense fallback={<LoadingBox />}>
-      {data.length === 0 ? (
-        <ConsoleEmptyState title={t('public~No Roles found')}>
-          {t(
-            'public~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
-          )}
-        </ConsoleEmptyState>
-      ) : (
-        <ConsoleDataView
-          {...props}
-          data={data}
-          label={t('public~Roles')}
-          columns={columns}
-          getDataViewRows={getDataViewRows}
-          initialFilters={initialFilters}
-          additionalFilterNodes={additionalFilterNodes}
-          matchesAdditionalFilters={matchesAdditionalFilters}
-          hideColumnManagement={true}
-        />
-      )}
+      <ConsoleDataView
+        {...props}
+        data={data}
+        loaded={loaded}
+        label={t('public~Roles')}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        initialFilters={initialFilters}
+        additionalFilterNodes={additionalFilterNodes}
+        matchesAdditionalFilters={matchesAdditionalFilters}
+        hideColumnManagement={true}
+      />
     </Suspense>
   );
 };

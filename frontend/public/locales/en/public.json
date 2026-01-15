@@ -1241,8 +1241,6 @@
   "Namespace Roles": "Namespace Roles",
   "System Roles": "System Roles",
   "Filter by role": "Filter by role",
-  "No Roles found": "No Roles found",
-  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.": "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.",
   "Roles": "Roles",
   "Create Role": "Create Role",
   "API groups": "API groups",
