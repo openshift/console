@@ -7,6 +7,9 @@
   "Graph": "Graphique",
   "List": "Liste",
   "Move connector": "Déplacer le connecteur",
+  "Delete Connector?": "Supprimer le connecteur ?",
+  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "La suppression du connecteur visuel supprime l’annotation « connects-to » des ressources. Voulez-vous vraiment supprimer le connecteur visuel ?",
+  "Delete": "Supprimer",
   "Delete connector": "Supprimer le connecteur",
   "Edit application grouping": "Modifier le regroupement d’applications",
   "View all {{size}}": "Afficher l’ensemble des {{size}}",
@@ -164,9 +167,6 @@
   "Are you sure you want to move <1>{{nodeLabel}}</1> from {{sourceLabel}} to {{targetLabel}}?": "Voulez-vous vraiment déplacer <1>{{nodeLabel}}</1> de {{sourceLabel}} vers {{targetLabel}} ?",
   "Are you sure you want to remove <1>{{nodeLabel}}</1> from {{sourceLabel}}?": "Voulez-vous vraiment supprimer <1>{{nodeLabel}}</1> de {{sourceLabel}} ?",
   "Remove": "Supprimer",
-  "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "La suppression du connecteur visuel supprime l’annotation « connects-to » des ressources. Voulez-vous vraiment supprimer le connecteur visuel ?",
-  "Delete Connector?": "Supprimer le connecteur ?",
-  "Delete": "Supprimer",
   "Unable to update application, invalid resource type: {{kind}}": "Impossible de mettre à jour l’application. Type de ressource non valide : {{kind}}",
   "Can not create a connection from a node to itself.": "Impossible de créer une connexion d’un nœud avec lui-même."
 }

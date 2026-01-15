@@ -1,11 +1,15 @@
 {
-  "Extension Catalog": "Catalogue d'extensions",
-  "Installed Extensions": "Extensions installées",
-  "Extension Catalog Items": "Articles du catalogue d'extension",
-  "Source": "Source",
-  "Provider": "Fournisseur",
-  "Capability level": "Niveau de capacité",
-  "Infrastructure features": "Caractéristiques de l’infrastructure",
-  "Valid subscription": "Abonnement valide",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "Découvrez les opérateurs de la communauté Kubernetes et des partenaires Red Hat, sélectionnés par Red Hat. Vous pouvez installer des opérateurs sur vos clusters pour fournir des modules complémentaires et des services partagés à vos développeurs."
+  "Installed Operators": "Opérateurs installés",
+  "Operators": "Opérateurs",
+  "OLMv1 Catalog": "Catalogue OLMv1",
+  "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "Activez l'expérience de catalogue OLMv1. OLMv1 est une fonctionnalité en avant-première qui offre une interface de catalogue opérateur mise à jour.",
+  "Enable OLMv1 catalog": "Activer le catalogue OLMv1",
+  "Operator Lifecycle Management version 1": "Gestion du cycle de vie des opérateurs version 1",
+  "Learn more about OLMv1": "En savoir plus sur OLMv1",
+  "With OLMv1, you'll get a much simpler API that's easier to work with and understand. Plus, you have more direct control over updates. You can define update ranges and decide exactly how they are rolled out.": "Avec OLMv1, vous bénéficiez d'une API beaucoup plus simple, plus facile à utiliser et à comprendre. De plus, vous avez un contrôle plus direct sur les mises à jour. Vous pouvez définir des plages de mises à jour et décider précisément de leur déploiement.",
+  "Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.": "Permet d'utiliser OLMv1 (aperçu technique), une version remaniée et simplifiée d'OLMv0. OLMv1 simplifie la gestion des opérateurs grâce à des API déclaratives, une sécurité renforcée et un contrôle direct et compatible GitOps des mises à niveau.",
+  "Enable OLMv1": "Activer OLMv1",
+  "Toggle OLMv1 UI": "Basculer l'interface utilisateur OLMv1",
+  "Tech Preview": "Aperçu technique",
+  "OLMv1 information": "Informations OLMv1"
 }
