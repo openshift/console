@@ -270,7 +270,7 @@ export type ModalSubmitFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
-  cancel: (e: SyntheticEvent<any, Event>) => void;
+  cancel?: (e: SyntheticEvent<any, Event>) => void;
   cancelText?: ReactNode;
   className?: string;
   resetText?: ReactNode;

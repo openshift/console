@@ -91,7 +91,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
   };
 
   const handleStorageClass = (updatedStorageClass: StorageClassResourceKind) => {
-    setPVCStorageClass(updatedStorageClass?.metadata.name || '');
+    setPVCStorageClass(updatedStorageClass?.metadata?.name || '');
     setUpdatedProvisioner(updatedStorageClass?.provisioner);
   };
 
@@ -109,7 +109,7 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
         dataSource: {
           name: snapshotName,
           kind: VolumeSnapshotModel.kind,
-          apiGroup: VolumeSnapshotModel.apiGroup,
+          apiGroup: VolumeSnapshotModel.apiGroup || '',
         },
         accessModes: [restoreAccessMode],
         volumeMode,
@@ -121,14 +121,14 @@ const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
       },
     };
 
-    handlePromise(k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }))
-      .then((newPVC) => {
-        close();
-        history.push(
-          resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
-        );
-      })
-      .catch(() => {});
+    return handlePromise(
+      k8sCreate(PersistentVolumeClaimModel, restorePVCTemplate, { ns: namespace }),
+    ).then((newPVC) => {
+      close?.();
+      history.push(
+        resourcePathFromModel(PersistentVolumeClaimModel, newPVC.metadata.name, namespace),
+      );
+    });
   };
   return (
     <form onSubmit={submit} name="form" className="modal-content pf-v6-c-form pf-v6-c-form--no-gap">
