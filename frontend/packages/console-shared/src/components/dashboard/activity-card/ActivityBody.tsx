@@ -36,7 +36,9 @@ export const Activity: FC<ActivityProps> = ({ timestamp, children }) => {
 };
 
 export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
-  events,
+  eventsData,
+  eventsLoaded,
+  eventsLoadError,
   filter,
   paused,
   setPaused,
@@ -44,15 +46,15 @@ export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   const { t } = useTranslation();
   const ref = useRef<EventKind[]>([]);
   useEffect(() => {
-    if (paused && events) {
-      ref.current = events.data;
+    if (paused && eventsData) {
+      ref.current = eventsData;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused]);
-  if (!paused && events) {
-    ref.current = events.data;
+  if (!paused && eventsData) {
+    ref.current = eventsData;
   }
-  const eventsData = ref.current;
+  const currentEventsData = ref.current;
   const [expanded, setExpanded] = useState<string[]>([]);
   const onToggle = useCallback(
     (uid: string) => {
@@ -70,10 +72,10 @@ export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
     [expanded],
   );
 
-  if (events && events.loadError) {
+  if (eventsLoadError) {
     return <ErrorLoadingEvents />;
   }
-  if (!(events && events.loaded)) {
+  if (!eventsLoaded) {
     return (
       <div className="co-status-card__alerts-body">
         <div className="co-status-card__alert-item co-status-card__alert-item--loading">
@@ -87,7 +89,7 @@ export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
     );
   }
 
-  const filteredEvents = filter ? eventsData.filter(filter) : eventsData;
+  const filteredEvents = filter ? currentEventsData.filter(filter) : currentEventsData;
   const sortedEvents: EventKind[] = sortEvents(filteredEvents);
   const lastEvents = sortedEvents.slice(0, 50);
   if (sortedEvents.length === 0) {

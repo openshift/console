@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import {
   Gallery,
   GalleryItem,
@@ -13,10 +13,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { Alert, StatusIconAndText } from '@console/dynamic-plugin-sdk';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';
@@ -27,6 +23,7 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,
   HOST_HARDWARE_ERROR_STATES,
@@ -97,20 +94,16 @@ const PowerStatus = ({ obj }: { obj: BareMetalHostKind }) => {
   );
 };
 
-const HealthCard: FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
+const HealthCard: FC = () => {
   const { t } = useTranslation();
   const { obj, machine, node, nodeMaintenance } = useContext(BareMetalHostDashboardContext);
 
-  useEffect(() => {
-    watchAlerts();
-    return () => stopWatchAlerts();
-  }, [watchAlerts, stopWatchAlerts]);
+  const [data, loaded, loadError] = useNotificationAlerts();
 
   const status = getHostStatus({ host: obj, machine, node, nodeMaintenance });
 
   const hwHealth = getHostHardwareHealthState(obj);
 
-  const { data, loaded, loadError } = notificationAlerts || {};
   const alerts = useMemo(() => filterAlerts(data), [data]);
 
   const hasPowerMgmt = hasPowerManagement(obj);
@@ -174,13 +167,9 @@ const HealthCard: FC<HealthCardProps> = ({ watchAlerts, stopWatchAlerts, notific
   );
 };
 
-export default withDashboardResources(HealthCard);
+export default HealthCard;
 
 type HostHealthState = {
   state: HealthState;
   titleKey: string;
-};
-
-type HealthCardProps = DashboardItemProps & {
-  obj: BareMetalHostKind;
 };

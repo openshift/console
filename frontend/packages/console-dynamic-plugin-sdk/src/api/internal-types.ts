@@ -4,7 +4,6 @@ import type { DataViewTh } from '@patternfly/react-data-view';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Map as ImmutableMap } from 'immutable';
 import {
-  FirehoseResult,
   HealthState,
   K8sResourceCommon,
   LIMIT_STATE,
@@ -34,7 +33,9 @@ export type AlertsBodyProps = WithClassNameProps<{
 }>;
 
 export type RecentEventsBodyProps = {
-  events: FirehoseResult<EventKind[]>;
+  eventsData: EventKind[];
+  eventsLoaded: boolean;
+  eventsLoadError?: any;
   filter?: (arg: EventKind) => boolean;
   moreLink?: string;
 };

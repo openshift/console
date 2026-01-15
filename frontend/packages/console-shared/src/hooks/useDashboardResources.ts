@@ -25,7 +25,7 @@ export const useDashboardResources: UseDashboardResources = ({
     prometheusQueries?.forEach((query) =>
       dispatch(watchPrometheusQuery(query.query, null, query.timespan)),
     );
-    urls?.forEach((url) => dispatch(watchURL(url?.url)));
+    urls?.forEach((url) => dispatch(watchURL(url?.url, url?.fetch)));
 
     return () => {
       prometheusQueries?.forEach((query) => {
