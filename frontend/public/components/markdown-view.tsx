@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MarkdownView, MarkdownProps } from '@openshift-console/plugin-shared/src';
+import { MarkdownView, MarkdownProps } from '@console/shared/src/components/markdown/MarkdownView';
 import { ThemeContext, updateThemeClass } from './ThemeProvider';
 
 type SyncMarkdownProps = Omit<MarkdownProps, 'theme' | 'updateThemeClass' | 'emptyMsg'> & {

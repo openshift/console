@@ -21,7 +21,7 @@ import {
   CustomOverviewDetailItem as CustomOverviewDetailItemType,
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
-import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
+import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';

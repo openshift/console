@@ -11,7 +11,7 @@ import {
   Button,
   DescriptionList,
 } from '@patternfly/react-core';
-import { OverviewDetailItem } from '@openshift-console/plugin-shared/src';
+import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { getName } from '@console/shared/src/selectors/common';
 import { getRequester } from '@console/shared/src/selectors/namespace';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';

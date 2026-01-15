@@ -1,5 +1,4 @@
 import type { ComponentType } from 'react';
-import { OverviewDetailItemProps } from '@openshift-console/plugin-shared/src';
 import { Extension, CodeRef } from '../types';
 import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
 
@@ -65,7 +64,11 @@ export type OverviewDetailItem = Extension<
 /** Adds an item to the Details card of Overview Dashboard */
 export type CustomOverviewDetailItem = Extension<
   'console.dashboards/custom/overview/detail/item',
-  Omit<OverviewDetailItemProps, 'children' | 'isLoading' | 'error'> & {
+  {
+    /** Details card title */
+    title: string;
+    /** Optional class name for the value */
+    valueClassName?: string;
     /** The value, rendered by the OverviewDetailItem component */
     component: CodeRef<ComponentType>;
     /** Function returning the loading state of the component */

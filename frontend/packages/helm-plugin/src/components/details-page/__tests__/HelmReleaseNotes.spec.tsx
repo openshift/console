@@ -4,7 +4,7 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseNotes from '../notes/HelmReleaseNotes';
 
-jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 

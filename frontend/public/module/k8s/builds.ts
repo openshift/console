@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { BuildModel, BuildConfigModel } from '../../models';
 import { k8sCreate } from './';
-import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
+import { formatPrometheusDuration } from '@console/shared/src/utils/datetime';
 
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 

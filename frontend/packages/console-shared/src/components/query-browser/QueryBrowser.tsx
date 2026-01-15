@@ -1,10 +1,6 @@
 import type { FC, Ref, ReactNode, KeyboardEvent, MouseEvent } from 'react';
 import { memo, useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import {
-  formatPrometheusDuration,
-  parsePrometheusDuration,
-} from '@openshift-console/plugin-shared/src/datetime/prometheus';
-import {
   Chart,
   ChartArea,
   ChartAxis,
@@ -66,6 +62,10 @@ import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { humanizeNumberSI } from '@console/internal/components/utils/units';
 import { RootState } from '@console/internal/redux';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '@console/shared/src/utils/datetime';
 import { usePoll } from '../../hooks/usePoll';
 import withFallback from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';

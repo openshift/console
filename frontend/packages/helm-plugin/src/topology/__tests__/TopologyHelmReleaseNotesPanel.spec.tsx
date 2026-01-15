@@ -5,7 +5,7 @@ import TopologyGroupResourcesPanel from '@console/topology/src/components/side-b
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { mockManifest, mockReleaseNotes } from './mockData';
 
-jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 

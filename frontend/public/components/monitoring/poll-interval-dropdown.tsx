@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
-} from '@openshift-console/plugin-shared/src/datetime/prometheus';
+} from '@console/shared/src/utils/datetime';
 import {
   Select,
   SelectList,
