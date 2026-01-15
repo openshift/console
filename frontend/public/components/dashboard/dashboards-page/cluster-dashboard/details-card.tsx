@@ -22,8 +22,6 @@ import {
   OverviewDetailItem as OverviewDetailItemType,
 } from '@console/dynamic-plugin-sdk';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
-
-import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
 import {
   ServiceLevel,
@@ -101,217 +99,212 @@ const clusterVersionResource: WatchK8sResource = {
   isList: false,
 };
 
-export const DetailsCard = withDashboardResources(
-  ({ watchK8sResource, stopWatchK8sResource }: DetailsCardProps) => {
-    const { t } = useTranslation();
-    const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
-    const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
-      ClusterDashboardContext,
-    );
-    const [k8sVersion, setK8sVersion] = useState<Response>();
-    const [k8sVersionError, setK8sVersionError] = useState();
-    const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
-      ClusterVersionKind
-    >(clusterVersionResource);
-    const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
-      isOverviewDetailItem,
-    );
-    const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItemType>(
-      isCustomOverviewDetailItem,
-    );
+export const DetailsCard: React.FC = () => {
+  const { t } = useTranslation();
+  const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
+    ClusterDashboardContext,
+  );
+  const [k8sVersion, setK8sVersion] = useState<{ gitVersion?: string }>();
+  const [k8sVersionError, setK8sVersionError] = useState();
+  const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
+    ClusterVersionKind
+  >(clusterVersionResource);
+  const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
+    isOverviewDetailItem,
+  );
+  const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItemType>(
+    isCustomOverviewDetailItem,
+  );
 
-    useEffect(() => {
-      if (flagPending(openshiftFlag)) {
-        return;
+  useEffect(() => {
+    if (flagPending(openshiftFlag)) {
+      return;
+    }
+    const fetchK8sVersion = async () => {
+      try {
+        const response = await fetch('version');
+        const version = await response.json();
+        setK8sVersion(version);
+      } catch (error) {
+        setK8sVersionError(error);
       }
-      const fetchK8sVersion = async () => {
-        try {
-          const version = await fetch('version');
-          setK8sVersion(version);
-        } catch (error) {
-          setK8sVersionError(error);
-        }
-      };
-      fetchK8sVersion();
-    }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
-    const serviceLevelTitle = useServiceLevelTitle();
+    };
+    fetchK8sVersion();
+  }, [openshiftFlag]);
+  const serviceLevelTitle = useServiceLevelTitle();
 
-    const clusterID = getClusterID(clusterVersionData);
-    const openShiftVersion = getOpenShiftVersion(clusterVersionData);
-    const cvChannel = getClusterVersionChannel(clusterVersionData);
+  const clusterID = getClusterID(clusterVersionData);
+  const openShiftVersion = getOpenShiftVersion(clusterVersionData);
+  const cvChannel = getClusterVersionChannel(clusterVersionData);
 
-    const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
-    const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
+  const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
 
-    const k8sGitVersion = getK8sGitVersion(k8sVersion);
+  const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
-    return (
-      <Card data-test-id="details-card">
-        <CardHeader
-          actions={{
-            actions: (
+  return (
+    <Card data-test-id="details-card">
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Link to="/settings/cluster/" data-test="details-card-view-settings">
+                {t('public~View settings')}
+              </Link>
+            </>
+          ),
+          hasNoOffset: false,
+          className: 'co-overview-card__actions',
+        }}
+      >
+        <CardTitle>{t('public~Details')}</CardTitle>
+      </CardHeader>
+      <CardBody>
+        {flagPending(openshiftFlag) ? (
+          <LoadingInline />
+        ) : (
+          <DescriptionList>
+            {openshiftFlag ? (
               <>
-                <Link to="/settings/cluster/" data-test="details-card-view-settings">
-                  {t('public~View settings')}
-                </Link>
-              </>
-            ),
-            hasNoOffset: false,
-            className: 'co-overview-card__actions',
-          }}
-        >
-          <CardTitle>{t('public~Details')}</CardTitle>
-        </CardHeader>
-        <CardBody>
-          {flagPending(openshiftFlag) ? (
-            <LoadingInline />
-          ) : (
-            <DescriptionList>
-              {openshiftFlag ? (
-                <>
-                  <OverviewDetailItem
-                    title={t('public~Cluster API address')}
-                    isLoading={!infrastructureLoaded}
-                    error={
-                      !!infrastructureError || (infrastructure && !infrastuctureApiUrl)
-                        ? t('public~Not available')
-                        : undefined
-                    }
-                    valueClassName="co-select-to-copy"
-                  >
-                    {infrastuctureApiUrl}
-                  </OverviewDetailItem>
-                  <OverviewDetailItem
-                    title={t('public~Cluster ID')}
-                    error={
-                      !!clusterVersionError || (clusterVersionLoaded && !clusterID)
-                        ? t('public~Not available')
-                        : undefined
-                    }
-                    isLoading={!clusterVersionLoaded}
-                  >
-                    <div className="co-select-to-copy">{clusterID}</div>
-                    {window.SERVER_FLAGS.branding !== 'okd' &&
-                      window.SERVER_FLAGS.branding !== 'azure' && (
-                        <ExternalLink
-                          text={t('public~OpenShift Cluster Manager')}
-                          href={getOCMLink(clusterID)}
-                        />
-                      )}
-                  </OverviewDetailItem>
-                  <OverviewDetailItem
-                    title={t('public~Infrastructure provider')}
-                    error={
-                      !!infrastructureError || (infrastructure && !infrastructurePlatform)
-                        ? t('public~Not available')
-                        : undefined
-                    }
-                    isLoading={!infrastructureLoaded}
-                    valueClassName="co-select-to-copy"
-                  >
-                    {infrastructurePlatform}
-                  </OverviewDetailItem>
-                  <OverviewDetailItem
-                    title={t('public~OpenShift version')}
-                    error={
-                      !!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)
-                        ? t('public~Not available')
-                        : undefined
-                    }
-                    isLoading={!clusterVersionLoaded}
-                  >
-                    <ClusterVersion cv={clusterVersionData} />
-                  </OverviewDetailItem>
-
-                  <ServiceLevel
-                    clusterID={clusterID}
-                    loading={
-                      <OverviewDetailItem title={serviceLevelTitle}>
-                        <ServiceLevelLoading />
-                      </OverviewDetailItem>
-                    }
-                  >
-                    <OverviewDetailItem title={serviceLevelTitle}>
-                      {/* Service Level handles loading and error state */}
-                      <ServiceLevelText clusterID={clusterID} />
-                    </OverviewDetailItem>
-                  </ServiceLevel>
-
-                  <OverviewDetailItem
-                    title={t('public~Update channel')}
-                    isLoading={!clusterVersionLoaded && !clusterVersionError}
-                    error={
-                      !!clusterVersionError || (clusterVersionLoaded && !cvChannel)
-                        ? t('public~Not available')
-                        : undefined
-                    }
-                    valueClassName="co-select-to-copy"
-                  >
-                    {cvChannel}
-                  </OverviewDetailItem>
-                  {isSingleNode(infrastructure) && (
-                    <OverviewDetailItem
-                      title={t('public~Control plane high availability')}
-                      isLoading={false}
-                      valueClassName="co-select-to-copy"
-                    >
-                      {t('public~No (single control plane node)')}
-                    </OverviewDetailItem>
-                  )}
-                  {detailItemsExtensions.map((e) => {
-                    const Component = e.properties.component;
-                    return (
-                      <ErrorBoundaryInline
-                        key={e.uid}
-                        wrapper={({ children }) => (
-                          <OverviewDetailItem title="">{children}</OverviewDetailItem>
-                        )}
-                      >
-                        <Component />
-                      </ErrorBoundaryInline>
-                    );
-                  })}
-                  {customDetailItemsExtensions.map((e) => {
-                    const { component: Component, error, isLoading, ...props } = e.properties;
-                    return (
-                      <ErrorBoundaryInline
-                        key={e.uid}
-                        wrapper={({ children }) => (
-                          <OverviewDetailItem title="">{children}</OverviewDetailItem>
-                        )}
-                      >
-                        <OverviewDetailItem {...props} error={error?.()} isLoading={isLoading?.()}>
-                          <Component />
-                        </OverviewDetailItem>
-                      </ErrorBoundaryInline>
-                    );
-                  })}
-                </>
-              ) : (
                 <OverviewDetailItem
-                  key="kubernetes"
-                  title={t('public~Kubernetes version')}
+                  title={t('public~Cluster API address')}
+                  isLoading={!infrastructureLoaded}
                   error={
-                    !!k8sVersionError || (k8sVersion && !k8sGitVersion)
+                    !!infrastructureError || (infrastructure && !infrastuctureApiUrl)
                       ? t('public~Not available')
                       : undefined
                   }
-                  isLoading={!k8sVersion}
                   valueClassName="co-select-to-copy"
                 >
-                  {k8sGitVersion}
+                  {infrastuctureApiUrl}
                 </OverviewDetailItem>
-              )}
-            </DescriptionList>
-          )}
-        </CardBody>
-      </Card>
-    );
-  },
-);
+                <OverviewDetailItem
+                  title={t('public~Cluster ID')}
+                  error={
+                    !!clusterVersionError || (clusterVersionLoaded && !clusterID)
+                      ? t('public~Not available')
+                      : undefined
+                  }
+                  isLoading={!clusterVersionLoaded}
+                >
+                  <div className="co-select-to-copy">{clusterID}</div>
+                  {window.SERVER_FLAGS.branding !== 'okd' &&
+                    window.SERVER_FLAGS.branding !== 'azure' && (
+                      <ExternalLink
+                        text={t('public~OpenShift Cluster Manager')}
+                        href={getOCMLink(clusterID)}
+                      />
+                    )}
+                </OverviewDetailItem>
+                <OverviewDetailItem
+                  title={t('public~Infrastructure provider')}
+                  error={
+                    !!infrastructureError || (infrastructure && !infrastructurePlatform)
+                      ? t('public~Not available')
+                      : undefined
+                  }
+                  isLoading={!infrastructureLoaded}
+                  valueClassName="co-select-to-copy"
+                >
+                  {infrastructurePlatform}
+                </OverviewDetailItem>
+                <OverviewDetailItem
+                  title={t('public~OpenShift version')}
+                  error={
+                    !!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)
+                      ? t('public~Not available')
+                      : undefined
+                  }
+                  isLoading={!clusterVersionLoaded}
+                >
+                  <ClusterVersion cv={clusterVersionData} />
+                </OverviewDetailItem>
 
-type DetailsCardProps = DashboardItemProps & {
-  openshiftFlag: boolean;
+                <ServiceLevel
+                  clusterID={clusterID}
+                  loading={
+                    <OverviewDetailItem title={serviceLevelTitle}>
+                      <ServiceLevelLoading />
+                    </OverviewDetailItem>
+                  }
+                >
+                  <OverviewDetailItem title={serviceLevelTitle}>
+                    {/* Service Level handles loading and error state */}
+                    <ServiceLevelText clusterID={clusterID} />
+                  </OverviewDetailItem>
+                </ServiceLevel>
+
+                <OverviewDetailItem
+                  title={t('public~Update channel')}
+                  isLoading={!clusterVersionLoaded && !clusterVersionError}
+                  error={
+                    !!clusterVersionError || (clusterVersionLoaded && !cvChannel)
+                      ? t('public~Not available')
+                      : undefined
+                  }
+                  valueClassName="co-select-to-copy"
+                >
+                  {cvChannel}
+                </OverviewDetailItem>
+                {isSingleNode(infrastructure) && (
+                  <OverviewDetailItem
+                    title={t('public~Control plane high availability')}
+                    isLoading={false}
+                    valueClassName="co-select-to-copy"
+                  >
+                    {t('public~No (single control plane node)')}
+                  </OverviewDetailItem>
+                )}
+                {detailItemsExtensions.map((e) => {
+                  const Component = e.properties.component;
+                  return (
+                    <ErrorBoundaryInline
+                      key={e.uid}
+                      wrapper={({ children }) => (
+                        <OverviewDetailItem title="">{children}</OverviewDetailItem>
+                      )}
+                    >
+                      <Component />
+                    </ErrorBoundaryInline>
+                  );
+                })}
+                {customDetailItemsExtensions.map((e) => {
+                  const { component: Component, error, isLoading, ...props } = e.properties;
+                  return (
+                    <ErrorBoundaryInline
+                      key={e.uid}
+                      wrapper={({ children }) => (
+                        <OverviewDetailItem title="">{children}</OverviewDetailItem>
+                      )}
+                    >
+                      <OverviewDetailItem {...props} error={error?.()} isLoading={isLoading?.()}>
+                        <Component />
+                      </OverviewDetailItem>
+                    </ErrorBoundaryInline>
+                  );
+                })}
+              </>
+            ) : (
+              <OverviewDetailItem
+                key="kubernetes"
+                title={t('public~Kubernetes version')}
+                error={
+                  !!k8sVersionError || (k8sVersion && !k8sGitVersion)
+                    ? t('public~Not available')
+                    : undefined
+                }
+                isLoading={!k8sVersion}
+                valueClassName="co-select-to-copy"
+              >
+                {k8sGitVersion}
+              </OverviewDetailItem>
+            )}
+          </DescriptionList>
+        )}
+      </CardBody>
+    </Card>
+  );
 };
 
 type ClusterVersionProps = {

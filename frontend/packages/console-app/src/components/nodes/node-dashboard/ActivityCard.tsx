@@ -24,13 +24,22 @@ const nodeEventsFilter = (event: EventKind, uid: string, kind: string, name: str
 };
 
 const RecentEvent: FC<RecentEventProps> = ({ node }) => {
-  const [data, loaded, loadError] = useK8sWatchResource<EventKind[]>(eventsResource);
+  const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
+    eventsResource,
+  );
   const { uid, name } = node.metadata;
   const eventsFilter = useCallback((event) => nodeEventsFilter(event, uid, NodeModel.kind, name), [
     uid,
     name,
   ]);
-  return <RecentEventsBody events={{ data, loaded, loadError }} filter={eventsFilter} />;
+  return (
+    <RecentEventsBody
+      eventsData={eventsData}
+      eventsLoaded={eventsLoaded}
+      eventsLoadError={eventsLoadError}
+      filter={eventsFilter}
+    />
+  );
 };
 
 const ActivityCard: FC = () => {
