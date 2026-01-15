@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import type { TourDataType } from '@console/app/src/components/tour';
-import type {
-  Extension,
-  ExtensionDeclaration,
-  CodeRef,
-} from '@console/dynamic-plugin-sdk/src/types';
+import type { Extension, CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 
 // This extension is not part of the console dynamic plugin SDK public API.
 // It is intended for internal use only. Please do not use it. Pretty please?
@@ -16,7 +12,7 @@ import type {
 // 3. We do not guarantee the stability of the extension properties and type.
 
 /** @hidden */
-export type INTERNAL_DO_NOT_USE_GuidedTour = ExtensionDeclaration<
+export type INTERNAL_DO_NOT_USE_GuidedTour = Extension<
   'INTERNAL_DO_NOT_USE.guided-tour',
   {
     perspective: string;

@@ -12,6 +12,11 @@ export const secrets = {
     cy.byTestID('console-select-search-input').type(resourceName);
     cy.byTestID('console-select-item').click();
   },
+  addKeyValue: (key: string, value: string) => {
+    cy.byTestID('add-credentials-button').click();
+    cy.byTestID('secret-key').last().clear().type(key);
+    cy.byLegacyTestID('file-input-textarea').last().clear().type(value);
+  },
   checkSecret: (keyValuesToCheck: object, jsonOutput: boolean = false) => {
     secrets.clickRevealValues();
     const renderedKeyValues = {};
@@ -30,6 +35,12 @@ export const secrets = {
         expect(renderedKeyValues).toEqual(keyValuesToCheck);
       });
   },
+  checkKeyValueExist: (key: string, value: string) => {
+    // Just for one new added key/value
+    secrets.clickRevealValues();
+    cy.byTestID('secret-data-term').first().should('have.text', key);
+    cy.get('code').first().should('have.text', value);
+  },
   clickAddCredentialsButton: () => cy.byTestID('add-credentials-button').click(),
   clickRemoveEntryButton: () => cy.byTestID('remove-entry-button').first().click(),
   clickRevealValues: () => {
@@ -37,7 +48,7 @@ export const secrets = {
   },
   clickCreateSecretDropdownButton: (secretType: string) => {
     cy.byTestID('item-create')
-      .click()
+      .click({ force: true })
       .get('body')
       .then(($body) => {
         if ($body.find(`[data-test-dropdown-menu=${secretType}]`).length) {

@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';

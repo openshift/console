@@ -1,4 +1,14 @@
-import * as React from 'react';
+import {
+  FC,
+  useMemo,
+  useState,
+  MouseEvent as ReactMouseEvent,
+  Ref,
+  MutableRefObject,
+  useRef,
+  useCallback,
+  ChangeEvent,
+} from 'react';
 import {
   Button,
   Divider,
@@ -35,9 +45,9 @@ import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';
 
-export const NoResults: React.FC<{
+export const NoResults: FC<{
   isProjects: boolean;
-  onClear: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClear: (event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }> = ({ isProjects, onClear }) => {
   const { t } = useTranslation();
   return (
@@ -72,8 +82,8 @@ export const NoResults: React.FC<{
 
 /* ****************************************** */
 
-export const Filter: React.FC<{
-  filterRef: React.Ref<any>;
+export const Filter: FC<{
+  filterRef: Ref<any>;
   onFilterChange: (filterText: string) => void;
   filterText: string;
   isProject: boolean;
@@ -107,7 +117,7 @@ export const Filter: React.FC<{
 
 /* ****************************************** */
 
-const SystemSwitch: React.FC<{
+const SystemSwitch: FC<{
   hasSystemNamespaces: boolean;
   isProject: boolean;
   isChecked: boolean;
@@ -140,7 +150,7 @@ const SystemSwitch: React.FC<{
 
 /* ****************************************** */
 
-export const NamespaceGroup: React.FC<{
+export const NamespaceGroup: FC<{
   isProjects: boolean;
   isFavorites?: boolean;
   options: { key: string; title: string }[];
@@ -180,7 +190,7 @@ export const NamespaceGroup: React.FC<{
 
 /* ****************************************** */
 
-export const Footer: React.FC<{
+export const Footer: FC<{
   canCreateNew: boolean;
   isProject?: boolean;
   setOpen: (isOpen: boolean) => void;
@@ -213,18 +223,18 @@ export const Footer: React.FC<{
 
 /* ****************************************** */
 
-const NamespaceMenu: React.FC<{
+const NamespaceMenu: FC<{
   setOpen: (isOpen: boolean) => void;
-  onSelect: (event: React.MouseEvent, itemId: string) => void;
+  onSelect: (event: ReactMouseEvent, itemId: string) => void;
   selected?: string;
   isProjects: boolean;
   allNamespacesTitle: string;
   onCreateNew: () => void;
-  menuRef: React.MutableRefObject<HTMLDivElement>;
+  menuRef: MutableRefObject<HTMLDivElement>;
 }> = ({ setOpen, onSelect, selected, isProjects, allNamespacesTitle, onCreateNew, menuRef }) => {
-  const filterRef = React.useRef(null);
+  const filterRef = useRef(null);
 
-  const [filterText, setFilterText] = React.useState('');
+  const [filterText, setFilterText] = useState('');
 
   // Bookmarking / favorites (note in <= 4.8 this feature was known as bookmarking)
   const favoritesUserSettingsKey = `${NAMESPACE_USERSETTINGS_PREFIX}.bookmarks`;
@@ -246,7 +256,7 @@ const NamespaceMenu: React.FC<{
     optional: true,
   });
 
-  const optionItems = React.useMemo(() => {
+  const optionItems = useMemo(() => {
     if (!optionsLoaded) {
       return [];
     }
@@ -265,12 +275,12 @@ const NamespaceMenu: React.FC<{
     return items;
   }, [allNamespacesTitle, canList, options, optionsLoaded, selected]);
 
-  const hasSystemNamespaces = React.useMemo(
+  const hasSystemNamespaces = useMemo(
     () => optionItems.some((option) => isSystemNamespace(option)),
     [optionItems],
   );
 
-  const onSetFavorite = React.useCallback(
+  const onSetFavorite = useCallback(
     (key, active) => {
       setFavorites((oldFavorites) => ({
         ...oldFavorites,
@@ -287,9 +297,9 @@ const NamespaceMenu: React.FC<{
     true,
   );
 
-  const isFavorite = React.useCallback((option) => !!favorites?.[option.key], [favorites]);
+  const isFavorite = useCallback((option) => !!favorites?.[option.key], [favorites]);
 
-  const isOptionShown = React.useCallback(
+  const isOptionShown = useCallback(
     (option, checkIsFavorite: boolean) => {
       const containsFilterText = fuzzysearch(filterText.toLowerCase(), option.title.toLowerCase());
 
@@ -305,7 +315,7 @@ const NamespaceMenu: React.FC<{
     [filterText, isFavorite, systemNamespaces],
   );
 
-  const { filteredOptions, filteredFavorites } = React.useMemo(
+  const { filteredOptions, filteredFavorites } = useMemo(
     () =>
       optionItems.reduce(
         (filtered, option) => {
@@ -326,11 +336,11 @@ const NamespaceMenu: React.FC<{
     <Menu
       className="co-namespace-dropdown__menu"
       ref={menuRef}
-      onSelect={(event: React.MouseEvent, itemId: string) => {
+      onSelect={(event: ReactMouseEvent, itemId: string) => {
         setOpen(false);
         onSelect(event, itemId);
       }}
-      onActionClick={(event: React.MouseEvent, itemID: string) => {
+      onActionClick={(event: ReactMouseEvent, itemID: string) => {
         const isCurrentFavorite = favorites?.[itemID];
         onSetFavorite(itemID, !isCurrentFavorite);
       }}
@@ -388,7 +398,7 @@ const NamespaceMenu: React.FC<{
 
 /* ****************************************** */
 
-export const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
+export const NamespaceDropdown: FC<NamespaceDropdownProps> = ({
   disabled,
   isProjects,
   onSelect,
@@ -397,8 +407,8 @@ export const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   shortCut,
 }) => {
   const { t } = useTranslation();
-  const menuRef = React.useRef(null);
-  const [isOpen, setOpen] = React.useState(false);
+  const menuRef = useRef(null);
+  const [isOpen, setOpen] = useState(false);
   const allNamespacesTitle = isProjects
     ? t('console-shared~All Projects')
     : t('console-shared~All Namespaces');
@@ -438,7 +448,7 @@ export const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
 type NamespaceDropdownProps = {
   disabled?: boolean;
   isProjects?: boolean; // Does this drop down contain projects.  If not, assuming namespaces
-  onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
+  onSelect?: (event: ReactMouseEvent | ChangeEvent, value: string) => void;
   onCreateNew?: () => void;
   shortCut?: string;
   selected?: string;

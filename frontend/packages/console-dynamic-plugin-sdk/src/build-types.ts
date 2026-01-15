@@ -1,5 +1,8 @@
-import { PluginBuildMetadata, PluginManifest } from '@openshift/dynamic-plugin-sdk-webpack';
-import { PackageJson } from 'read-pkg';
+import type {
+  PluginBuildMetadata,
+  RemotePluginManifest,
+} from '@openshift/dynamic-plugin-sdk-webpack';
+import type { PackageJson } from 'read-pkg';
 
 /**
  * Note: this metadata should be supported in upstream plugin SDK.
@@ -40,34 +43,10 @@ export type ConsolePluginPackageJSON = PackageJson & {
 /**
  * Standard Console dynamic plugin manifest format.
  */
-export type StandardConsolePluginManifest = {
+export type ConsolePluginManifest = {
   customProperties?: {
     console?: ConsoleSupportedCustomProperties;
     [customNamespace: string]: unknown;
   };
 } & ExtraPluginManifestProperties &
-  PluginManifest;
-
-/**
- * Legacy Console dynamic plugin manifest format.
- */
-export type LegacyConsolePluginManifest = Pick<
-  PluginManifest,
-  'name' | 'version' | 'dependencies' | 'extensions'
-> &
-  ConsoleSupportedCustomProperties;
-
-/**
- * This type supports both standard and legacy Console dynamic plugin manifest formats.
- *
- * Console application automatically adapts the manifest to standard format when loading
- * the given plugin.
- */
-export type AnyConsolePluginManifest = StandardConsolePluginManifest | LegacyConsolePluginManifest;
-
-export const isStandardPluginManifest = (
-  m: AnyConsolePluginManifest,
-): m is StandardConsolePluginManifest =>
-  // Standard plugin manifests must have a string valued baseURL property
-  // eslint-disable-next-line dot-notation
-  m['baseURL'] && typeof m['baseURL'] === 'string';
+  RemotePluginManifest;

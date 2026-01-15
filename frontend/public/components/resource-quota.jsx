@@ -1,5 +1,5 @@
 import { useMemo, Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useParams } from 'react-router-dom-v5-compat';
 import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';

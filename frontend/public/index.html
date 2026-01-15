@@ -3,7 +3,6 @@
   <head>
     <base href="[[ .ServerFlags.BasePath ]]" />
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     [[ if .ServerFlags.CustomProductName ]]
     <title>[[ .ServerFlags.CustomProductName ]]</title>
     <meta name="application-name" content="[[ .ServerFlags.CustomProductName ]]" />
@@ -36,11 +35,6 @@
       href="<%= require('./imgs/okd-apple-touch-icon-precomposed.png') %>"
     />
     <link rel="mask-icon" href="<%= require('./imgs/okd-mask-icon.svg') %>" color="#DB242F" />
-    <meta name="msapplication-TileColor" content="#000000" />
-    <meta
-      name="msapplication-TileImage"
-      content="<%= require('./imgs/okd-mstile-144x144.png') %>"
-    />
     [[ else ]]
     <link rel="icon" href="<%= require('./imgs/openshift-favicon.png') %>" />
     <link
@@ -49,11 +43,6 @@
       href="<%= require('./imgs/openshift-apple-touch-icon-precomposed.png') %>"
     />
     <link rel="mask-icon" href="<%= require('./imgs/openshift-mask-icon.svg') %>" color="#DB242F" />
-    <meta name="msapplication-TileColor" content="#000000" />
-    <meta
-      name="msapplication-TileImage"
-      content="<%= require('./imgs/openshift-mstile-144x144.png') %>"
-    />
     [[ end ]] [[ end ]]
 
     <meta name="description" content="" />

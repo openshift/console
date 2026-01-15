@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { ActionGroup, Button, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getName } from '@console/shared/src/selectors/common';

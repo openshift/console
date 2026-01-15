@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
 import { Button, AlertVariant } from '@patternfly/react-core';

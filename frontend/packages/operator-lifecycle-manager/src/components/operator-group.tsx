@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component as ReactComponent, ComponentClass, ComponentType, FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -27,7 +27,7 @@ export const operatorNamespaceFor = (obj: K8sResourceKind) =>
 export const operatorGroupFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
-export const NoOperatorGroupMsg: React.FC = () => {
+export const NoOperatorGroupMsg: FC = () => {
   const { t } = useTranslation();
   const actions = [
     <Link
@@ -46,7 +46,7 @@ export const NoOperatorGroupMsg: React.FC = () => {
   );
 };
 
-export const OperatorGroupSelector: React.FC<OperatorGroupSelectorProps> = (props) => {
+export const OperatorGroupSelector: FC<OperatorGroupSelectorProps> = (props) => {
   const { t } = useTranslation();
   return (
     <AsyncComponent
@@ -74,9 +74,9 @@ export const OperatorGroupSelector: React.FC<OperatorGroupSelectorProps> = (prop
 };
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
-  Component: React.ComponentType<P>,
+  Component: ComponentType<P>,
 ) => {
-  return class RequireOperatorGroup extends React.Component<P> {
+  return class RequireOperatorGroup extends ReactComponent<P> {
     static WrappedComponent = Component;
 
     render() {
@@ -85,7 +85,7 @@ export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
 
       return namespaceEnabled ? <Component {...this.props} /> : <NoOperatorGroupMsg />;
     }
-  } as React.ComponentClass<P> & { WrappedComponent: React.ComponentType<P> };
+  } as ComponentClass<P> & { WrappedComponent: ComponentType<P> };
 };
 
 export type InstallModeSet = { type: InstallModeType; supported: boolean }[];

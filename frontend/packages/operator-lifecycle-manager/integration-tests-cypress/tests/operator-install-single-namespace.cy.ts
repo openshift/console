@@ -5,7 +5,7 @@ import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/o
 
 const testOperator = {
   name: 'Data Grid',
-  operatorHubCardTestID: 'operator-Data Grid',
+  operatorCardTestID: 'operator-Data Grid',
   installedNamespace: testName,
 };
 
@@ -34,7 +34,7 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   it(`Installs ${testOperator.name} operator in test namespace and creates ${testOperand.name} operand instance`, () => {
     operator.install(
       testOperator.name,
-      testOperator.operatorHubCardTestID,
+      testOperator.operatorCardTestID,
       testOperator.installedNamespace,
     );
     operator.installedSucceeded(testOperator.name, testName);

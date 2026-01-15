@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
 import { SquareIcon } from '@patternfly/react-icons/dist/esm/icons/square-icon';
 import { useTranslation } from 'react-i18next';

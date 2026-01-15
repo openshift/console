@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC } from 'react';
 import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import { Link } from 'react-router-dom-v5-compat';

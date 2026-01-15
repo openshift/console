@@ -60,6 +60,24 @@ module.exports = {
       { varsIgnorePattern: 'React', args: 'after-used' },
     ],
     '@typescript-eslint/no-use-before-define': 2,
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: 'lodash-es',
+            message: 'Use lodash instead. webpack is configured to use lodash-es automatically.',
+          },
+          {
+            name: 'react',
+            importNames: ['default', '*'],
+            // Future ESM-only React versions will remove the default export,
+            // and namespace imports may negatively impact tree-shaking
+            message: 'Use named imports instead.',
+          },
+        ],
+      },
+    ],
     'no-var': 2,
     'object-shorthand': ['error', 'properties'],
     'prefer-const': ['error', { destructuring: 'all' }],

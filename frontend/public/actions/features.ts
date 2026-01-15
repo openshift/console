@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { K8sModel, UserInfo } from '@console/internal/module/k8s';
@@ -137,8 +137,11 @@ export const detectFeatures = () => (dispatch: Dispatch) => {
   ].forEach((detect) => detect(dispatch));
 };
 
-export const featureFlagController: SetFeatureFlag = (flag, enabled) => {
-  store.dispatch(setFlag(flag, enabled));
+const featureFlagController: SetFeatureFlag = (flag, enabled) => {
+  const currentValue = store.getState().FLAGS.get(flag);
+  if (currentValue !== enabled) {
+    store.dispatch(setFlag(flag, enabled));
+  }
 };
 
 subscribeToExtensions<FeatureFlag>(

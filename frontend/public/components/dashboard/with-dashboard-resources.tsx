@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { RESULTS_TYPE } from '../../reducers/dashboard-results';
 import { NotificationAlerts } from '../../reducers/observe';

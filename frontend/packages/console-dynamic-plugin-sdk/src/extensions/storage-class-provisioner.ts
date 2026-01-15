@@ -1,5 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { CodeRef, ExtensionDeclaration } from '../types';
+import { CodeRef, Extension } from '../types';
 import { StorageClass } from './console-types';
 
 export type ProvisionerProps = {
@@ -40,7 +39,7 @@ export type ProvisionerDetails = {
 };
 
 /** Adds a new storage class provisioner as an option during storage class creation. */
-export type StorageClassProvisioner = ExtensionDeclaration<
+export type StorageClassProvisioner = Extension<
   'console.storage-class/provisioner',
   {
     [provisionerType in keyof typeof ProvisionerType]?: ProvisionerDetails;

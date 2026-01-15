@@ -8,9 +8,7 @@ import {
   CatalogItem,
   CatalogItemBadge,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { parseList, PlainList, strConcat } from '@console/shared/src';
-import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { parseList, strConcat } from '@console/shared/src';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
 import {
@@ -20,23 +18,26 @@ import {
   InfrastructureFeature,
   TokenizedAuthProvider,
 } from '../components/operator-hub/index';
+import { OperatorCapability } from '../components/operator-hub/operator-capability';
 import {
   OperatorVersionSelect,
   OperatorChannelSelect,
 } from '../components/operator-hub/operator-channel-version-select';
-import {
-  CapabilityLevel,
-  OperatorDescription,
-} from '../components/operator-hub/operator-hub-item-details';
+import { OperatorContainerImage } from '../components/operator-hub/operator-container-image';
+import { OperatorCreatedAt } from '../components/operator-hub/operator-created-at';
+import { OperatorDescription } from '../components/operator-hub/operator-hub-item-details';
 import {
   getInfrastructureFeatures,
   getPackageSource,
-  getSupportWorkflowUrl,
   getValidSubscription,
   isAWSSTSCluster,
   isAzureWIFCluster,
   isGCPWIFCluster,
 } from '../components/operator-hub/operator-hub-utils';
+import { OperatorInfrastructureFeatures } from '../components/operator-hub/operator-infrastructure-features';
+import { OperatorRepository } from '../components/operator-hub/operator-repository';
+import { OperatorSupport } from '../components/operator-hub/operator-support';
+import { OperatorValidSubscriptions } from '../components/operator-hub/operator-valid-subscriptions';
 import { PackageManifestModel, SubscriptionModel } from '../models';
 import { PackageManifestKind } from '../types';
 import { clusterServiceVersionFor } from '../utils/clusterserviceversions';
@@ -78,11 +79,8 @@ export const useOperatorCatalogItems = () => {
     clusterServiceVersionsLoaded,
     clusterServiceVersionsLoadError,
   ] = useClusterServiceVersions(namespace);
-  const [
-    cloudCredentials,
-    cloudCredentialsLoaded,
-    cloudCredentialsLoadError,
-  ] = useClusterCloudCredentialConfig();
+  // cloudCredentials are optional
+  const [cloudCredentials] = useClusterCloudCredentialConfig();
   const [
     infrastructure,
     infrastructureLoaded,
@@ -103,12 +101,10 @@ export const useOperatorCatalogItems = () => {
       operatorHubPackageManifestsLoaded &&
       subscriptionsLoaded &&
       clusterServiceVersionsLoaded &&
-      cloudCredentialsLoaded &&
       infrastructureLoaded &&
       authenticationLoaded,
     [
       authenticationLoaded,
-      cloudCredentialsLoaded,
       clusterServiceVersionsLoaded,
       infrastructureLoaded,
       operatorGroupsLoaded,
@@ -124,13 +120,11 @@ export const useOperatorCatalogItems = () => {
         operatorHubPackageManifestsLoadError,
         subscriptionsLoadError,
         clusterServiceVersionsLoadError,
-        cloudCredentialsLoadError,
         infrastructureLoadError,
         authenticationLoadError,
       ),
     [
       authenticationLoadError,
-      cloudCredentialsLoadError,
       clusterServiceVersionsLoadError,
       infrastructureLoadError,
       operatorHubPackageManifestsLoadError,
@@ -248,8 +242,6 @@ export const useOperatorCatalogItems = () => {
         const uninstallLink = subscription
           ? `/k8s/ns/${subscription.metadata.namespace}/${SubscriptionModel.plural}/${subscription.metadata.name}?showDelete=true`
           : null;
-
-        const supportWorkflowUrl = getSupportWorkflowUrl(marketplaceSupportWorkflow);
 
         const cta =
           installed && uninstallLink
@@ -376,38 +368,40 @@ export const useOperatorCatalogItems = () => {
               },
               {
                 label: t('Capability level'),
-                value: <CapabilityLevel capability={capabilities} />,
+                value: <OperatorCapability packageManifest={pkg} />,
               },
               { label: t('Source'), value: source || '-' },
               { label: t('Provider'), value: provider || '-' },
               {
                 label: t('Infrastructure features'),
-                value: infrastructureFeatures?.length ? (
-                  <PlainList items={infrastructureFeatures} />
-                ) : (
-                  '-'
+                value: (
+                  <OperatorInfrastructureFeatures
+                    packageManifest={pkg}
+                    clusterIsAWSSTS={clusterIsAWSSTS}
+                    clusterIsAzureWIF={clusterIsAzureWIF}
+                    clusterIsGCPWIF={clusterIsGCPWIF}
+                  />
                 ),
               },
               {
                 label: t('Valid subscriptions'),
-                value: validSubscription?.length ? <PlainList items={validSubscription} /> : '-',
+                value: <OperatorValidSubscriptions packageManifest={pkg} />,
               },
               {
                 label: t('Repository'),
-                value: repository ? <ExternalLink href={repository} text={repository} /> : '-',
+                value: <OperatorRepository packageManifest={pkg} />,
               },
-              { label: t('Container image'), value: containerImage || '-' },
+              {
+                label: t('Container image'),
+                value: <OperatorContainerImage packageManifest={pkg} />,
+              },
               {
                 label: t('Created at'),
-                value: createdAt ? <Timestamp timestamp={createdAt} /> : '-',
+                value: <OperatorCreatedAt packageManifest={pkg} />,
               },
               {
                 label: t('Support'),
-                value: supportWorkflowUrl ? (
-                  <ExternalLink href={supportWorkflowUrl}>{t('Get support')}</ExternalLink>
-                ) : (
-                  support || '-'
-                ),
+                value: <OperatorSupport packageManifest={pkg} />,
               },
             ],
             descriptions: [
@@ -416,7 +410,6 @@ export const useOperatorCatalogItems = () => {
                   <OperatorDescription
                     catalogSource={catalogSource}
                     description={description}
-                    infraFeatures={infrastructureFeatures}
                     installed={installed}
                     isInstalling={isInstalling}
                     subscription={subscription}

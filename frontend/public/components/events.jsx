@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as PropTypes from 'prop-types';

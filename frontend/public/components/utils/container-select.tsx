@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
+import { FC, Ref, useState } from 'react';
 import {
   Divider,
   MenuToggle,
@@ -8,6 +8,7 @@ import {
   SelectGroup,
   SelectList,
   SelectOption,
+  SelectProps,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -15,11 +16,11 @@ import { ContainerModel } from '@console/internal/models';
 import { ContainerSpec } from '@console/internal/module/k8s';
 import { ResourceName } from './resource-icon';
 
-export const ContainerLabel: React.FC<ContainerLabelProps> = ({ name }) => (
+export const ContainerLabel: FC<ContainerLabelProps> = ({ name }) => (
   <ResourceName name={name} kind={ContainerModel.kind} />
 );
 
-const ContainerSelectOptions: React.FC<ContainerSelectOptionsProps> = ({ containers }) => (
+const ContainerSelectOptions: FC<ContainerSelectOptionsProps> = ({ containers }) => (
   <>
     {Object.values(containers ?? {}).map(({ name }) => (
       <SelectOption key={name} value={name} data-test-dropdown-menu={name}>
@@ -29,14 +30,14 @@ const ContainerSelectOptions: React.FC<ContainerSelectOptionsProps> = ({ contain
   </>
 );
 
-export const ContainerSelect: React.FC<ContainerSelectProps> = ({
+export const ContainerSelect: FC<ContainerSelectProps> = ({
   containers,
   currentKey,
   initContainers,
   onChange,
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>(
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState<string>(
     currentKey || Object.values(containers ?? {})?.[0]?.name,
   );
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ export const ContainerSelect: React.FC<ContainerSelectProps> = ({
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
-  const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, value: string) => {
+  const onSelect: SelectProps['onSelect'] = (_event, value: string) => {
     onChange(value);
     setSelected(value);
     setIsOpen(false);
@@ -60,7 +61,7 @@ export const ContainerSelect: React.FC<ContainerSelectProps> = ({
       selected={selected}
       onSelect={onSelect}
       onOpenChange={(open) => setIsOpen(open)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           onClick={onToggleClick}

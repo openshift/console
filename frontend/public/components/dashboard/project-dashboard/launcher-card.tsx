@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import LauncherBody from '@console/shared/src/components/dashboard/launcher-card/LauncherBody';

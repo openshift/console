@@ -1,6 +1,6 @@
 import type { FC, ComponentType, CSSProperties } from 'react';
 import { Component, useState, useCallback, useEffect } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import {
   AutoSizer,
   List as VirtualList,

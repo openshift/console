@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Status } from '@console/shared/src/components/status/Status';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
@@ -212,7 +212,7 @@ export const DeploymentConfigsDetails: React.FCC<{ obj: K8sResourceKind }> = ({ 
 
 const EnvironmentPage = (props) => (
   <AsyncComponent
-    loader={() => import('./environment.jsx').then((c) => c.EnvironmentPage)}
+    loader={() => import('./environment').then((c) => c.EnvironmentPage)}
     {...props}
   />
 );

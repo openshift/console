@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Alert, AlertVariant, Button, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 

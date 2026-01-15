@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -63,19 +63,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
   const { t } = useTranslation();
 
   return (
-    <FormSection
-      title={
-        <>
-          {t('public~Routing labels')}{' '}
-          {!isDefaultReceiver && (
-            <span className="pf-v6-c-form__label-required" aria-hidden="true">
-              {' '}
-              *
-            </span>
-          )}
-        </>
-      }
-    >
+    <FormSection title={t('public~Routing labels')}>
       <Content component={ContentVariants.p} className="pf-v6-u-mb-0">
         <Trans ns="public">
           Firing alerts with labels that match all of these{' '}
@@ -88,7 +76,7 @@ export const RoutingLabelEditor = ({ formValues, dispatchFormChange, isDefaultRe
           {isDefaultReceiver && (
             <InputGroup>
               <InputGroupItem isFill>
-                <TextInput type="text" value={DEFAULT_RECEIVER_LABEL} isDisabled isRequired />
+                <TextInput type="text" value={DEFAULT_RECEIVER_LABEL} isDisabled />
               </InputGroupItem>
             </InputGroup>
           )}

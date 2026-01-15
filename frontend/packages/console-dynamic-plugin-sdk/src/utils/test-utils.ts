@@ -1,4 +1,4 @@
-import { StandardConsolePluginManifest } from '../build-types';
+import { ConsolePluginManifest } from '../build-types';
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
 import { Extension } from '../types';
 
@@ -7,7 +7,7 @@ export const getPluginManifest = (
   version: string,
   extensions: Extension[] = [],
   disableStaticPlugins?: string[],
-): StandardConsolePluginManifest => ({
+): ConsolePluginManifest => ({
   name,
   version,
   extensions,

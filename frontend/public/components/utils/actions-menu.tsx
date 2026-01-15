@@ -4,7 +4,7 @@ import {
   useSafetyFirst,
 } from '@console/dynamic-plugin-sdk';
 import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
-import { some } from 'lodash-es';
+import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';

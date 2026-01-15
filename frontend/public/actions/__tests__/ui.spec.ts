@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import '../../../__mocks__/localStorage';

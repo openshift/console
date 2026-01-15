@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { useState, FormEvent } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
@@ -60,7 +60,7 @@ export const SecretFormWrapper: React.FCC<BaseEditSecretProps_> = (props) => {
   const [stringData, setStringData] = useState(
     Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
       if (isBinary(null, Buffer.from(value, 'base64'))) {
-        return null;
+        return acc;
       }
       acc[key] = value ? Base64.decode(value) : '';
       return acc;

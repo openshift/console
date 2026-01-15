@@ -1,6 +1,6 @@
 import type { FormEvent, KeyboardEvent, Ref } from 'react';
 import { useState, useRef, useEffect, Fragment } from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import { css } from '@patternfly/react-styles';

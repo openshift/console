@@ -414,7 +414,7 @@ const isJSONString = (str: string): boolean => {
 /**
  * Fetches the task run logs from the Tekton Results API.
  */
-const fetchTaskRunLogs = async <T>(taskRunLogRequest: TaskRunLogRequest): Promise<T> => {
+const fetchTaskRunLogs = async <T>(taskRunLogRequest: TaskRunLogRequest): Promise<T | string> => {
   const TEKTON_RESULTS_TASKRUN_LOGS_URL = '/api/dev-console/tekton-results/logs';
   const taskRunLogResponse: DevConsoleEndpointResponse = await consoleFetchJSON.post(
     TEKTON_RESULTS_TASKRUN_LOGS_URL,

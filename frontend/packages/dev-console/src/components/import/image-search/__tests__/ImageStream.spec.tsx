@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useReducer, useState } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { render, screen } from '@testing-library/react';
 import * as formik from 'formik';
@@ -34,6 +34,7 @@ jest.mock('formik', () => ({
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useReducer: jest.fn(),
+  useState: jest.fn(),
 }));
 
 jest.mock('../../../../utils/imagestream-utils', () => ({
@@ -42,7 +43,8 @@ jest.mock('../../../../utils/imagestream-utils', () => ({
 }));
 
 const spyUseFormikContext = formik.useFormikContext as jest.Mock;
-const spyUseReducer = React.useReducer as jest.Mock;
+const spyUseReducer = useReducer as jest.Mock;
+const spyUseState = useState as jest.Mock;
 const spyGetImageStreamTags = imgUtils.getImageStreamTags as jest.Mock;
 
 const mockReducerState = {
@@ -51,10 +53,13 @@ const mockReducerState = {
   selectedImageStream: appResources.imageStream.data[0],
 };
 
+const actualUseState = jest.requireActual('react').useState;
+
 describe('ImageStream', () => {
   beforeEach(() => {
     spyGetImageStreamTags.mockReturnValue({ 3.6: 3.6 });
     spyUseReducer.mockImplementation(() => [mockReducerState, jest.fn()]);
+    spyUseState.mockImplementation(actualUseState);
     spyUseFormikContext.mockReturnValue({
       ...formikFormProps,
       values: internalImageValues,
@@ -100,7 +105,6 @@ describe('ImageStream', () => {
   });
 
   it('should render oc command alert when current namespace and imagestream namespace are not equal', () => {
-    const spyUseState = jest.spyOn(React, 'useState');
     spyUseState.mockReturnValueOnce([ValidatedOptions.default, jest.fn()]); // validated state
     spyUseState.mockReturnValueOnce([true, jest.fn()]); // hasImageStreams state
 
@@ -122,8 +126,6 @@ describe('ImageStream', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByText(/You can grant authority with the command/)).toBeInTheDocument();
-
-    spyUseState.mockRestore();
   });
 
   it('should render imagestream not found alert when there are no imagestreams', () => {

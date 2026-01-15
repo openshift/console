@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Component } from 'react';
 import * as PropTypes from 'prop-types';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';

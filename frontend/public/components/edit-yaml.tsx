@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { act } from 'react-dom/test-utils';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom-v5-compat';
@@ -9,6 +9,11 @@ import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { usePreferredNamespace } from '../../user-preferences/namespace/usePreferredNamespace';
 import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn(),
+}));
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -43,6 +48,7 @@ const useLocationMock = useLocation as jest.Mock;
 const useLastNamespaceMock = useLastNamespace as jest.Mock;
 const usePreferredNamespaceMock = usePreferredNamespace as jest.Mock;
 const k8sGetMock = k8sGet as jest.Mock;
+const useStateMock = useState as jest.Mock;
 
 const activeNamespace = 'active-ns';
 const urlNamespace: string = 'url-ns';
@@ -54,6 +60,7 @@ const preferredNamespace: string = 'preferred-ns';
 
 describe('useValuesForNamespaceContext', () => {
   beforeEach(() => {
+    useStateMock.mockImplementation(jest.requireActual('react').useState);
     useDispatchMock.mockReturnValue(jest.fn);
   });
 
@@ -82,7 +89,7 @@ describe('useValuesForNamespaceContext', () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
-    jest.spyOn(React, 'useState').mockReturnValue([activeNamespace, jest.fn()]);
+    useStateMock.mockReturnValue([activeNamespace, jest.fn()]);
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 

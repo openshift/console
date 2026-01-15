@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import type { FC, ReactText, ReactNode, ComponentType } from 'react';
 import { memo, useMemo, useState, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';

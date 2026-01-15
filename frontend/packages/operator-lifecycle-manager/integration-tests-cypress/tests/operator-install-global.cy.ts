@@ -3,7 +3,7 @@ import { operator, GlobalInstalledNamespace, TestOperandProps } from '../views/o
 
 const testOperator = {
   name: 'Data Grid',
-  operatorHubCardTestID: 'operator-Data Grid',
+  operatorCardTestID: 'operator-Data Grid',
 };
 
 const testOperand: TestOperandProps = {
@@ -18,7 +18,7 @@ const testOperand: TestOperandProps = {
 describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
-    operator.install(testOperator.name, testOperator.operatorHubCardTestID);
+    operator.install(testOperator.name, testOperator.operatorCardTestID);
   });
 
   afterEach(() => {

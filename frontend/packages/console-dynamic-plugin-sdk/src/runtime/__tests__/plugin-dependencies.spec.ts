@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as pluginSubscriptionServiceModule from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { LoadedDynamicPluginInfo, NotLoadedDynamicPluginInfo } from '@console/plugin-sdk/src/store';
-import { StandardConsolePluginManifest } from '../../build-types';
+import { ConsolePluginManifest } from '../../build-types';
 import { getPluginManifest } from '../../utils/test-utils';
 import {
   resolvePluginDependencies,
@@ -30,7 +30,7 @@ beforeEach(() => {
 
 describe('resolvePluginDependencies', () => {
   const getLoadedDynamicPluginInfo = (
-    manifest: StandardConsolePluginManifest,
+    manifest: ConsolePluginManifest,
   ): LoadedDynamicPluginInfo => ({
     status: 'loaded',
     pluginID: getPluginID(manifest),
@@ -39,14 +39,14 @@ describe('resolvePluginDependencies', () => {
   });
 
   const getPendingDynamicPluginInfo = (
-    manifest: StandardConsolePluginManifest,
+    manifest: ConsolePluginManifest,
   ): NotLoadedDynamicPluginInfo => ({
     status: 'pending',
     pluginName: manifest.name,
   });
 
   const getFailedDynamicPluginInfo = (
-    manifest: StandardConsolePluginManifest,
+    manifest: ConsolePluginManifest,
   ): NotLoadedDynamicPluginInfo => ({
     status: 'failed',
     pluginName: manifest.name,

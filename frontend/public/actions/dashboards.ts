@@ -133,8 +133,11 @@ export type WatchPrometheusQueryAction = (
   namespace?: string,
   timespan?: number,
 ) => ThunkAction;
-export type StopWatchURLAction = (url: string) => void;
-export type StopWatchPrometheusAction = (query: string, timespan?: number) => void;
+export type StopWatchURLAction = (url: string) => ReturnType<typeof stopWatch>;
+export type StopWatchPrometheusAction = (
+  query: string,
+  timespan?: number,
+) => ReturnType<typeof stopWatch>;
 
 type FetchPeriodically = (
   dispatch: Dispatch,

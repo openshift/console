@@ -1,11 +1,11 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { plural } from 'pluralize';
 import i18next, { TFunction } from 'i18next';
 
 import { K8sKind, K8sVerb } from '../../module/k8s';
 import { isModelMetadata, ModelMetadata } from '@console/dynamic-plugin-sdk';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   getTranslationKey,
   isTranslatableString,

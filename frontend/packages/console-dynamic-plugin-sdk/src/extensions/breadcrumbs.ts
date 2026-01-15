@@ -1,12 +1,12 @@
 import { K8sModel } from '../api/common-types';
-import { CodeRef, Extension, ExtensionDeclaration } from '../types';
+import { Extension, CodeRef } from '../types';
 
 export type DetailsPageBreadCrumbsHook = (
   kind: K8sModel,
   urlMatch: any,
 ) => { name: string; path: string }[];
 
-export type DetailPageBreadCrumbs = ExtensionDeclaration<
+export type DetailPageBreadCrumbs = Extension<
   'dev-console.detailsPage/breadcrumbs',
   {
     /**
