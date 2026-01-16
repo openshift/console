@@ -266,8 +266,7 @@ export const getIconProps = (item: CatalogItem) => {
   }
   if (icon.url) {
     // Use a custom icon node with loading="lazy" for efficient loading
-    // eslint-disable-next-line jsx-a11y/alt-text
-    const iconNode = <img src={icon.url} loading="lazy" className="catalog-tile-pf-icon" />;
+    const iconNode = <img src={icon.url} loading="lazy" className="catalog-tile-pf-icon" alt="" />;
     return { iconImg: null, iconClass: null, icon: iconNode };
   }
   if (icon.class) {
