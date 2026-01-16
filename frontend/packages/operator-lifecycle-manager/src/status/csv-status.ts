@@ -42,18 +42,18 @@ export const getCSVStatus = (
   // TODO Get rid of let.
   let status: ClusterServiceVersionStatus;
   if (pendingPhases.includes(statusPhase)) {
-    status = i18n.t('olm~Pending');
+    status = ClusterServiceVersionStatus.Pending;
   } else {
     switch (statusPhase) {
       case ClusterServiceVersionPhase.CSVPhaseSucceeded:
-        status = i18n.t('olm~OK');
+        status = ClusterServiceVersionStatus.OK;
         break;
       case ClusterServiceVersionPhase.CSVPhaseFailed:
-        status = i18n.t('olm~Failed');
+        status = ClusterServiceVersionStatus.Failed;
         break;
       default:
         return {
-          status: i18n.t('olm~Unknown'),
+          status: ClusterServiceVersionStatus.Unknown,
           title: statusPhase,
         };
     }

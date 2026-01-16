@@ -2,6 +2,9 @@
   "name": "@console/dynamic-demo-plugin",
   "version": "0.0.0",
   "private": true,
+  "resolutions": {
+    "@types/react": "17.0.39"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "yarn clean && NODE_ENV=production yarn ts-node node_modules/.bin/webpack",
@@ -20,7 +23,7 @@
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-icons": "^6.2.2",
     "@patternfly/react-table": "^6.2.2",
-    "@types/react": "16.8.13",
+    "@types/react": "17.0.39",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "copy-webpack-plugin": "^6.4.1",
@@ -31,7 +34,7 @@
     "js-yaml": "^4.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-i18next": "^11.7.3",
+    "react-i18next": "~15.1.4",
     "react-router": "5.3.x",
     "react-router-dom": "5.3.x",
     "react-router-dom-v5-compat": "^6.11.2",

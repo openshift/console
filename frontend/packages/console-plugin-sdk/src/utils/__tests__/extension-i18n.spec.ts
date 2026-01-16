@@ -43,7 +43,8 @@ describe('translateExtension', () => {
       },
     };
 
-    const t = jest.fn<string, [string]>((key) => `translated: ${key}`);
+    const mockFn = jest.fn((key) => `translated: ${key}`);
+    const t = mockFn;
 
     expect(translateExtension(testExtension, t)).toEqual({
       type: 'Foo/Bar',
@@ -59,8 +60,8 @@ describe('translateExtension', () => {
       },
     });
 
-    expect(t.mock.calls.length).toBe(5);
-    expect(t.mock.calls).toEqual([
+    expect(mockFn.mock.calls.length).toBe(5);
+    expect(mockFn.mock.calls).toEqual([
       ['%test~1%'],
       ['%test~3%'],
       ['%test~5%'],
@@ -71,9 +72,10 @@ describe('translateExtension', () => {
 
   it('returns the same extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
-    const t = jest.fn<string, []>();
+    const mockFn = jest.fn((key) => key);
+    const t = mockFn;
 
     expect(translateExtension(testExtension, t)).toBe(testExtension);
-    expect(t).not.toHaveBeenCalled();
+    expect(mockFn).not.toHaveBeenCalled();
   });
 });

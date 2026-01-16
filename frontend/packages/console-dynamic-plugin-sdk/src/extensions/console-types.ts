@@ -11,6 +11,7 @@ import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-edi
 import { ButtonProps } from '@patternfly/react-core';
 import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
 import { LocationDescriptor } from 'history';
+import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import type {
   ExtensionK8sGroupKindModel,
@@ -282,6 +283,8 @@ export type ConsoleFetchJSON<T = any> = {
 };
 
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
+
+export type ConsoleTFunction = TFunction | ((key: string, options?: any) => string);
 
 /* Horizontal Nav Types */
 export type NavPage = {

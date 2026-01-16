@@ -92,28 +92,34 @@ const LoginErrorMessage: FC = () => {
   const error = urlSearchParams.get('error');
   switch (errorType) {
     case 'oauth_error':
-      return t('public~There was an error generating OAuth client from OIDC client.');
+      return <>{t('public~There was an error generating OAuth client from OIDC client.')}</>;
     case 'login_state_error':
-      return t('public~There was an error generating login state.');
+      return <>{t('public~There was an error generating login state.')}</>;
     case 'cookie_error':
-      return t('public~There was an error setting login state cookie.');
+      return <>{t('public~There was an error setting login state cookie.')}</>;
     case 'logout_error':
-      return t('public~There was an error logging you out. Please try again.');
+      return <>{t('public~There was an error logging you out. Please try again.')}</>;
     case 'auth':
       // When the error type is set as auth
       switch (error) {
         case 'missing_state':
-          return t('public~There was an error parsing your state cookie.');
+          return <>{t('public~There was an error parsing your state cookie.')}</>;
         case 'invalid_state':
-          return t(
-            'public~There was an error verifying your session. Please log out and try again.',
+          return (
+            <>
+              {t('public~There was an error verifying your session. Please log out and try again.')}
+            </>
           );
         case 'missing_code':
-          return t('public~Auth code is missing in query param.');
+          return <>{t('public~Auth code is missing in query param.')}</>;
         case 'invalid_code':
-          return t('public~There was an error logging you in. Please log out and try again.');
+          return (
+            <>{t('public~There was an error logging you in. Please log out and try again.')}</>
+          );
         default:
-          return t('public~There was an authentication error. Please log out and try again.');
+          return (
+            <>{t('public~There was an authentication error. Please log out and try again.')}</>
+          );
       }
     default:
       return (

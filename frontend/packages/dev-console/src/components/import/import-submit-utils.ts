@@ -1,7 +1,6 @@
 import * as GitUrlParse from 'git-url-parse';
-import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { Perspective } from '@console/dynamic-plugin-sdk';
+import { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
@@ -778,7 +777,7 @@ export const createDevfileResources = async (
 };
 
 export const createOrUpdateResources = async (
-  t: TFunction,
+  t: ConsoleTFunction,
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   createNewProject?: boolean,

@@ -9,9 +9,9 @@ import {
   t_color_green_50 as okColor,
   t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
-import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
+import { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import {
   StatusPopupItem,
   StatusPopupSection,
@@ -48,7 +48,7 @@ const getWorstIconState = (states: OperatorHealthType[]): OperatorHealthType['ic
   return worst.icon;
 };
 
-const useOperatorHealth = (t: TFunction, name: string): OperatorHealthType => {
+const useOperatorHealth = (t: ConsoleTFunction, name: string): OperatorHealthType => {
   const [operator, isLoaded, error] = useK8sWatchResource<ClusterOperator>({
     groupVersionKind: { group: 'config.openshift.io', version: 'v1', kind: 'ClusterOperator' },
     name,

@@ -1,5 +1,5 @@
 import { safeLoad, dump } from 'js-yaml';
-import { TFunction } from 'react-i18next';
+import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import {
   k8sCreate,
   k8sGet,
@@ -92,7 +92,7 @@ const getPersistSecretOp = async (
 };
 
 const getPatchKubeControllerManagerOp = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: ConsoleTFunction,
   kubeControllerManagerModel: K8sModel,
 ): Promise<PersistOp> => {
   let cm: KubeControllerManager;
@@ -129,7 +129,7 @@ const getPatchKubeControllerManagerOp = async (
 };
 
 const updateYamlFormat = (
-  t: TFunction<'vsphere-plugin'>,
+  t: ConsoleTFunction,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
   cloudProviderConfig: ConfigMap,
@@ -249,7 +249,7 @@ const getUpdatedConfigMapResourcePool = (
 };
 
 const updateIniFormat = (
-  t: TFunction<'vsphere-plugin'>,
+  t: ConsoleTFunction,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
   cloudProviderConfig: ConfigMap,
@@ -301,9 +301,7 @@ const updateIniFormat = (
 
   if (result.expectedValues.length > 0) {
     throw new PersistError(
-      t('Failed to parse cloud provider config {{cm}}', {
-        cm: cloudProviderConfig.metadata.name,
-      }),
+      t('Failed to parse cloud provider config {{cm}}', { cm: cloudProviderConfig.metadata.name }),
       t('The following content was expected to be defined in the configMap: {{ expectedValues }}', {
         expectedValues: result.expectedValues.join(', '),
       }),
@@ -360,7 +358,7 @@ const fixConfigMap = (values: ConnectionFormFormikValues) => {
 };
 
 const getPersistProviderConfigMapOp = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: ConsoleTFunction,
   configMapModel: K8sModel,
   values: ConnectionFormFormikValues,
   initValues: ConnectionFormFormikValues,
@@ -551,7 +549,7 @@ const runPatches = async ({
   addTaints,
   queryParams,
 }: {
-  t: TFunction<'vsphere-plugin'>;
+  t: ConsoleTFunction;
   persistSecret: PersistOp;
   persistKubeControllerManager: PersistOp;
   persistProviderCM: PersistOp;
@@ -563,9 +561,7 @@ const runPatches = async ({
     await persistSecret(queryParams);
   } catch (e) {
     throw new PersistError(
-      t('Failed to persist {{secret}}', {
-        secret: VSPHERE_CREDS_SECRET_NAME,
-      }),
+      t('Failed to persist {{secret}}', { secret: VSPHERE_CREDS_SECRET_NAME }),
       getErrorMessage(t, e),
     );
   }
@@ -599,7 +595,7 @@ const runPatches = async ({
 };
 
 export const persist = async (
-  t: TFunction<'vsphere-plugin'>,
+  t: ConsoleTFunction,
   {
     secretModel,
     configMapModel,
