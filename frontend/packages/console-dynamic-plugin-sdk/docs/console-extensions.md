@@ -826,8 +826,8 @@ Adds new standalone page (rendered outside the common page layout) to Console ro
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
 | `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
 
 ---

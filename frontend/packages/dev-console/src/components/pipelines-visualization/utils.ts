@@ -1,4 +1,3 @@
-import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src';
 import {
   DefaultTaskGroup,
   getEdgesFromNodes,
@@ -17,6 +16,7 @@ import {
   ModelKind,
 } from '@patternfly/react-topology/src/types';
 import * as _ from 'lodash';
+import { formatPrometheusDuration } from '@console/shared/src/utils/datetime';
 import {
   ComputedStatus,
   SucceedConditionReason,

@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { OverviewDetailItem as OverviewDetailItemShared } from '@openshift-console/plugin-shared';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
+
+import './OverviewDetailItem.css';
 
 /* The value of an added item to the Details dashboard-card on the Overview page */
 const OverviewDetailItem: React.FC = () => {
@@ -8,21 +14,20 @@ const OverviewDetailItem: React.FC = () => {
 
   return (
     <>
-      <OverviewDetailItemShared
-        title={t('Added title')}
-        isLoading={false}
-        valueClassName="co-select-to-copy"
-      >
-        {t('My value')}
-      </OverviewDetailItemShared>
-      <OverviewDetailItemShared
-        title={t('Added title - error')}
-        isLoading={false}
-        error={t('Error text')}
-        valueClassName="co-select-to-copy"
-      >
-        {t('My value')}
-      </OverviewDetailItemShared>
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('Added title')}</DescriptionListTerm>
+        <DescriptionListDescription className="console-demo-plugin-select-to-copy">
+          {t('My value')}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+      <DescriptionListGroup>
+        <DescriptionListTerm>
+          {t('Added title - error')}
+        </DescriptionListTerm>
+        <DescriptionListDescription className="console-demo-plugin-select-to-copy">
+          <span className="pf-v6-u-text-color-subtle">{t('My value')}</span>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
     </>
   );
 };

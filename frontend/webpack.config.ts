@@ -165,7 +165,7 @@ const config: Configuration = {
       },
       {
         test: /\.s?css$/,
-        exclude: /node_modules\/(?!(@patternfly(-\S+)?|@console\/plugin-shared)\/).*/,
+        exclude: /node_modules\/(?!(@patternfly(-\S+)?)\/).*/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,

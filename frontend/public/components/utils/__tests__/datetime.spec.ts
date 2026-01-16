@@ -1,7 +1,7 @@
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
-} from '@openshift-console/plugin-shared/src/datetime/prometheus';
+} from '@console/shared/src/utils/datetime';
 import { getDuration, isValid } from '../../../components/utils/datetime';
 
 describe('isValid', () => {

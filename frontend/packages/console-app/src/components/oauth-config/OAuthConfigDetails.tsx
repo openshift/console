@@ -1,6 +1,5 @@
 import type { FC, Ref } from 'react';
 import { useState } from 'react';
-import { formatPrometheusDuration } from '@openshift-console/plugin-shared/src/datetime/prometheus';
 import {
   Alert,
   DescriptionListDescription,
@@ -25,6 +24,7 @@ import { OAuthKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { IDP_TYPES } from '@console/shared/src/constants/auth';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { formatPrometheusDuration } from '@console/shared/src/utils/datetime';
 import { IdentityProviders } from './IdentityProviders';
 
 // Convert to ms for formatPrometheusDuration

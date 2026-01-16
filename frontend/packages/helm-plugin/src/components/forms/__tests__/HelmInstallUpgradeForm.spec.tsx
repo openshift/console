@@ -26,7 +26,7 @@ jest.mock('../install-upgrade/HelmChartVersionDropdown', () => ({
   default: () => 'HelmChartVersionDropdown',
 }));
 
-jest.mock('@openshift-console/plugin-shared/src/hooks/useResizeObserver', () => ({
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 
