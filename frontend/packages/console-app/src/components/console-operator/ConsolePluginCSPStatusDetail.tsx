@@ -12,7 +12,11 @@ const ConsolePluginCSPStatusDetail: FC<DetailsItemComponentProps> = ({ obj }) =>
     UI.get('pluginCSPViolations'),
   );
 
-  return <ConsolePluginCSPStatus hasViolations={pluginName ? cspViolations[pluginName] ?? false : false} />;
+  return (
+    <ConsolePluginCSPStatus
+      hasViolations={pluginName ? cspViolations[pluginName] ?? false : false}
+    />
+  );
 };
 
 export default ConsolePluginCSPStatusDetail;

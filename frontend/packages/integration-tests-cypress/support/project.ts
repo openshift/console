@@ -33,7 +33,21 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
 });
 
 Cypress.Commands.add('createProjectWithCLI', (name: string) => {
-  cy.exec(`oc new-project ${name}`).its('stdout').should('contain', `Now using project "${name}"`);
+  // Try to create or switch to the project
+  // Accept both "Now using project" (new) and "Already on project" (existing)
+  cy.exec(`oc new-project ${name}`, { failOnNonZeroExit: false }).then((result) => {
+    if (result.code === 0) {
+      // Success - either created new or switched to existing
+      expect(result.stdout).to.satisfy(
+        (stdout: string) =>
+          stdout.includes(`Now using project "${name}"`) ||
+          stdout.includes(`Already on project "${name}"`),
+      );
+    } else {
+      // Failed - throw error with details
+      throw new Error(`Failed to create/switch to project ${name}: ${result.stderr}`);
+    }
+  });
 });
 
 Cypress.Commands.add('deleteProject', (name: string) => {
