@@ -1,5 +1,7 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
+import type { DataViewTh } from '@patternfly/react-data-view';
+import type { SortByDirection } from '@patternfly/react-table';
 import { Map as ImmutableMap } from 'immutable';
 import {
   FirehoseResult,
@@ -11,6 +13,7 @@ import {
   StatusGroupMapper,
   TopConsumerPopoverProps,
 } from '../extensions/console-types';
+import type { ColumnLayout, RowProps } from '../extensions/console-types';
 import { Alert, K8sModel } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
@@ -284,3 +287,91 @@ export type UseURLPoll = <R>(
   delay?: number,
   ...dependencies: any[]
 ) => [R, any, boolean];
+
+export type ResourceFilters = {
+  name: string;
+  label: string;
+};
+
+export type ResourceMetadata = {
+  name: string;
+  labels?: { [key: string]: string };
+};
+
+export type ConsoleDataViewColumn<TData> = DataViewTh & {
+  id: string;
+  title: string;
+  sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+};
+
+export type ConsoleDataViewRow = any[];
+
+export type GetDataViewRows<TData, TCustomRowData = any> = (
+  data: RowProps<TData, TCustomRowData>[],
+  columns: ConsoleDataViewColumn<TData>[],
+) => ConsoleDataViewRow[];
+
+export type ConsoleDataViewProps<
+  TData,
+  TCustomRowData = any,
+  TFilters extends ResourceFilters = ResourceFilters
+> = {
+  label?: string;
+  data: TData[];
+  loaded: boolean;
+  loadError?: unknown;
+  columns: ConsoleDataViewColumn<TData>[];
+  columnLayout?: ColumnLayout;
+  columnManagementID?: string;
+  initialFilters?: TFilters;
+  additionalFilterNodes?: ReactNode[];
+  getObjectMetadata?: (obj: TData) => ResourceMetadata;
+  matchesAdditionalFilters?: (obj: TData, filters: TFilters) => boolean;
+  getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
+  customRowData?: TCustomRowData;
+  showNamespaceOverride?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  hideColumnManagement?: boolean;
+  mock?: boolean;
+};
+
+// ConsoleDataView helper types
+export type CellIsStickyProps = {
+  isStickyColumn: true;
+  stickyMinWidth: '0';
+};
+
+export type GetNameCellProps = (
+  name: string,
+) => CellIsStickyProps & {
+  hasRightBorder: true;
+  'data-test': string;
+};
+
+export type ActionsCellProps = CellIsStickyProps & {
+  hasLeftBorder: true;
+  isActionCell: true;
+};
+
+// Swagger types
+// Note: These types are duplicated from @console/internal/module/k8s/swagger
+// to avoid circular dependency issues with the SDK package
+export type SwaggerDefinition = {
+  definitions?: SwaggerDefinitions;
+  description?: string;
+  type?: string[] | string;
+  enum?: string[];
+  $ref?: string;
+  items?: SwaggerDefinition;
+  required?: string[];
+  properties?: {
+    [prop: string]: SwaggerDefinition;
+  };
+};
+
+export type SwaggerDefinitions = {
+  [name: string]: SwaggerDefinition;
+};
+
+export type DefinitionFor = (model: K8sModel) => SwaggerDefinition;
