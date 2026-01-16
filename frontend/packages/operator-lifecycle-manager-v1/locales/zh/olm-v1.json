@@ -1,11 +1,15 @@
 {
-  "Extension Catalog": "扩展目录",
-  "Installed Extensions": "安装的扩展",
-  "Extension Catalog Items": "扩展目录项",
-  "Source": "源",
-  "Provider": "供应商",
-  "Capability level": "能力级别",
-  "Infrastructure features": "基础架构功能",
-  "Valid subscription": "有效订阅",
-  "Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat. You can install Operators on your clusters to provide optional add-ons and shared services to your developers.": "从 Kubernetes 社区及红帽合作伙伴处查找由红帽策展的 Operator。您可以在集群上安装 Operator，为您的开发人员提供可选的附加组件和共享服务。"
+  "Installed Operators": "安装的 Operators",
+  "Operators": "Operator",
+  "OLMv1 Catalog": "OLMv1 目录",
+  "Enable the OLMv1 catalog experience. OLMv1 is a technology preview feature that provides an updated operator catalog interface.": "启用 OLMv1 目录体验。OLMv1 是一个技术预览功能，它提供了一个更新的 Operator 目录接口。",
+  "Enable OLMv1 catalog": "启用 OLMv1 目录",
+  "Operator Lifecycle Management version 1": "Operator Lifecycle Management 版本 1",
+  "Learn more about OLMv1": "了解更多与 OLMv1 相关的信息",
+  "With OLMv1, you'll get a much simpler API that's easier to work with and understand. Plus, you have more direct control over updates. You can define update ranges and decide exactly how they are rolled out.": "OLMv1 为您提供了更加简单、易于理解的 API。另外，您对更新有更多的控制，您可以定义更新范围，并确定它们的具体推出方式。",
+  "Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.": "使用 OLMv1（技术预览），它是 OLMv0 的一个重新设计的精简版本。OLMv1 使用声明性 API 简化了 Operator 管理，增强了安全性，并可以直接通过 GitOps 友好的方式控制升级。",
+  "Enable OLMv1": "启用 OLMv1",
+  "Toggle OLMv1 UI": "切换 OLMv1 UI",
+  "Tech Preview": "技术预览",
+  "OLMv1 information": "OLMv1 信息"
 }
