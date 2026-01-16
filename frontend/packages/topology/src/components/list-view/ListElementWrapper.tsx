@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { Node, isNode } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
@@ -11,6 +11,7 @@ interface ListElementWrapperProps {
   item: Node;
   selectedIds: string[];
   onSelect: (ids: string[]) => void;
+  children?: ReactNode;
 }
 
 // in a separate component so that changes to behaviors do not re-render children

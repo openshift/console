@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import CloseButton from '@console/shared/src/components/close-button';
 
@@ -23,6 +23,7 @@ const sidebarScrollTop = () => {
 const ResourceSidebarWrapper: FC<{
   label: string;
   toggleSidebar: () => void;
+  children?: ReactNode;
 }> = (props) => {
   const { t } = useTranslation();
   const { label, children, toggleSidebar } = props;

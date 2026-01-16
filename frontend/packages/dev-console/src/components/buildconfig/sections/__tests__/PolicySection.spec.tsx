@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -7,7 +7,11 @@ import userEvent from '../../__tests__/user-event';
 import { BuildConfigRunPolicy } from '../../types';
 import PolicySection, { PolicySectionFormData } from '../PolicySection';
 
-const Wrapper: FC<FormikConfig<PolicySectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<PolicySectionFormData> {
+  children?: ReactNode;
+}
+
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

@@ -1770,6 +1770,7 @@ Component for displaying a progressing status popover.
 | `noTooltip` | (optional) if true, tooltip is not displayed |
 | `className` | (optional) additional class name for the component |
 | `popoverTitle` | (optional) title for popover |
+| `children` | (optional) children for the component |
 
 
 

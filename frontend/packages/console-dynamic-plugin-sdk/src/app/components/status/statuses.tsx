@@ -45,6 +45,7 @@ InfoStatus.displayName = 'InfoStatus';
  * @param {boolean} [noTooltip] - (optional) if true, tooltip is not displayed
  * @param {string} [className] - (optional) additional class name for the component
  * @param {string} [popoverTitle] - (optional) title for popover
+ * @param {ReactNode} [children] - (optional) children for the component
  * @example
  * ```tsx
  * <ProgressStatus title={progressMsg} />

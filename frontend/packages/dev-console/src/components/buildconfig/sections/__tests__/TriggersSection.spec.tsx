@@ -1,10 +1,14 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import userEvent from '../../__tests__/user-event';
 import TriggersSection, { TriggersSectionFormData } from '../TriggersSection';
 
-const Wrapper: FC<FormikConfig<TriggersSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<TriggersSectionFormData> {
+  children?: ReactNode;
+}
+
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Formik {...formikConfig}>
     {(formikProps) => (
       <form onSubmit={formikProps.handleSubmit}>

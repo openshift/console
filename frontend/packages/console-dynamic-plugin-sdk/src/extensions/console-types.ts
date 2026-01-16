@@ -387,6 +387,7 @@ export type CreateWithPermissionsProps = {
     groupVersionKind: K8sResourceKindReference | K8sGroupVersionKind;
     namespace?: string;
   };
+  children?: ReactNode;
 };
 
 export type ListPageCreateProps = CreateWithPermissionsProps & {
@@ -563,6 +564,7 @@ export type StatusComponentProps = {
   noTooltip?: boolean;
   className?: string;
   popoverTitle?: string;
+  children?: ReactNode;
 };
 
 export type OverviewProps = {
