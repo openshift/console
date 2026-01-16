@@ -1,2 +1,6 @@
+approvers:
+  - jhadvig
+  - logonoff
+  - vojtechszocs
 labels:
   - kind/demo-plugin
