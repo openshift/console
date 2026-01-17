@@ -5,6 +5,7 @@ import { SortByDirection, ThProps } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom-v5-compat';
+import { ConsoleDataViewTh } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { TableColumn, RowProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
@@ -12,7 +13,7 @@ import { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
 const isDataViewConfigurableColumn = (
-  column: DataViewTh,
+  column: ConsoleDataViewTh,
 ): column is Extract<DataViewTh, { cell: ReactNode }> => {
   return (column as any)?.cell !== undefined;
 };
