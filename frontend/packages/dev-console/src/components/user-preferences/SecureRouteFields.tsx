@@ -138,7 +138,6 @@ const SecureRouteFields: FC = () => {
       onClick={onTLSTerminationToggle}
       isExpanded={isTLSTerminationOpen}
       isDisabled={!preferredRoutingOptionsLoaded}
-      placeholder={t('devconsole~Select termination type')}
       aria-label={t('devconsole~Select termination type')}
       style={
         {
@@ -158,7 +157,6 @@ const SecureRouteFields: FC = () => {
       onClick={onInsecureTrafficToggle}
       isExpanded={isInsecureTrafficOpen}
       isDisabled={!preferredRoutingOptionsLoaded}
-      placeholder={t('devconsole~Select insecure traffic type')}
       aria-label={t('devconsole~Select insecure traffic type')}
       style={
         {

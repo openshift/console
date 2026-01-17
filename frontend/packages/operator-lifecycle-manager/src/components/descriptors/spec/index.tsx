@@ -21,6 +21,7 @@ import {
 } from '@console/internal/components/utils';
 import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
@@ -84,7 +85,7 @@ const Label: FC<SpecCapabilityProps<LabelListProps['labels']>> = ({
     {_.isObject(value) ? (
       <LabelList kind={model.kind} labels={value} />
     ) : (
-      <span>{value || '-'}</span>
+      <span>{typeof value === 'string' ? value || DASH : DASH}</span>
     )}
   </DetailsItem>
 );

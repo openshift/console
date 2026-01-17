@@ -103,7 +103,13 @@ export const StackChart: FC<AreaChartProps> = ({
         />
       );
     }
-    return <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} activateData={false} />;
+    return (
+      <ChartVoronoiContainer
+        voronoiDimension="x"
+        labels={(prop) => getLabel(prop)}
+        activateData={false}
+      />
+    );
   }, [formatDate, getLabel, humanize, mainDataName, multiLine, processedData, unit]);
 
   return (

@@ -55,7 +55,7 @@ export const ExamplePage: React.FC<{ title: string }> = ({ title }) => {
           <StackItem>
             {error && (
               <Alert variant="warning" data-test="demo-plugin_prometheus-error" title={t('Prometheus error')}>
-                {error}
+                {error instanceof Error ? error.message : String(error)}
               </Alert>
             )}
             {!loaded && (

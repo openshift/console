@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import { Formik, FormikConfig } from 'formik';
 import { Provider } from 'react-redux';
@@ -12,7 +12,11 @@ jest.mock('@console/internal/components/utils/firehose', () => ({
   Firehose: ({ children }) => children,
 }));
 
-const Wrapper: FC<FormikConfig<SecretsSectionFormData>> = ({ children, ...formikConfig }) => (
+interface WrapperProps extends FormikConfig<SecretsSectionFormData> {
+  children?: ReactNode;
+}
+
+const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
   <Provider store={store}>
     <Formik {...formikConfig}>
       {(formikProps) => (

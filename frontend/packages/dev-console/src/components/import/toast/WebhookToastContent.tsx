@@ -26,7 +26,7 @@ const WebhookToastContent: FC<WebhookToastContentProps> = ({
           Repository Page
         </ExternalLink>{' '}
         and attach it to the{' '}
-        <ExternalLink href={git.url}>{{ translatedGitType }} repository</ExternalLink> manually.
+        <ExternalLink href={git.url}>{'{{translatedGitType}}'} repository</ExternalLink> manually.
       </Trans>
     </>
   );

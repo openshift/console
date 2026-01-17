@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { Node } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from '@console/helm-plugin/src/topology/components/const';
 import HelmReleaseListViewNode from '@console/helm-plugin/src/topology/listView/HelmReleaseListViewNode';
@@ -16,6 +16,7 @@ export const listViewNodeComponentFactory = (
       item: Node;
       selectedIds: string[];
       onSelect: (ids: string[]) => void;
+      children?: ReactNode;
     }>
   | undefined => {
   // TODO: Move to plugins

@@ -1,4 +1,4 @@
-import type { Component, ReactNode, ReactElement } from 'react';
+import type { ReactNode, ReactElement } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { ExtensionHook } from '../api/common-types';
 import { CodeRef, Extension } from '../types';
@@ -41,7 +41,7 @@ export type DetailsTabSection = Extension<
     /** Returns a section for the graph element or undefined if not provided.
      * @deprecated Fallback if no provider is defined. renderNull is a no-op already.
      */
-    section: CodeRef<(element: GraphElement, renderNull?: () => null) => Component | undefined>;
+    section: CodeRef<(element: GraphElement, renderNull?: () => null) => ReactNode>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -63,7 +63,7 @@ export type DetailsResourceLink = Extension<
     /** Return the resource link if provided, otherwise undefined.
      * Use ResourceIcon and ResourceLink for styles.
      * */
-    link: CodeRef<(element: GraphElement) => Component | undefined>;
+    link: CodeRef<(element: GraphElement) => ReactNode>;
   }
 >;
 
@@ -151,7 +151,7 @@ export type DetailsResourceAlertContent = {
    * State will be store in user settings, once dismissed alert won't show up again untill user settings state resets
    */
   dismissible?: boolean;
-  content: Component | undefined | JSX.Element | string;
+  content: ReactNode;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'custom';
   actionLinks?: ReactNode;
 };

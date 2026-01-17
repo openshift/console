@@ -387,6 +387,7 @@ export type CreateWithPermissionsProps = {
     groupVersionKind: K8sResourceKindReference | K8sGroupVersionKind;
     namespace?: string;
   };
+  children?: ReactNode;
 };
 
 export type ListPageCreateProps = CreateWithPermissionsProps & {
@@ -563,11 +564,12 @@ export type StatusComponentProps = {
   noTooltip?: boolean;
   className?: string;
   popoverTitle?: string;
+  children?: ReactNode;
 };
 
 export type OverviewProps = {
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export enum GridPosition {
@@ -587,6 +589,10 @@ export type OverviewGridProps = {
   mainCards: OverviewGridCard[];
   leftCards?: OverviewGridCard[];
   rightCards?: OverviewGridCard[];
+};
+
+export type InventoryItemProps = {
+  children: ReactNode;
 };
 
 export type InventoryItemTitleProps = {
@@ -729,6 +735,7 @@ export type ErrorBoundaryFallbackProps = {
   componentStack: string;
   stack: string;
   title: string;
+  children?: ReactNode;
 };
 
 export type FormatSeriesTitle = (labels: PrometheusLabels, i?: number) => string;

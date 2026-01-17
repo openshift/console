@@ -85,7 +85,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   return (
     <Modal isOpen onClose={closeOverlay} variant="small">
       <ModalHeader
-        title={titleKey ? t(titleKey, titleVariables) : title}
+        title={titleKey ? (t(titleKey, titleVariables) as string) : title}
         labelId="configure-count-modal-title"
         description={messageKey ? t(messageKey, messageVariablesSafe) : message}
       />

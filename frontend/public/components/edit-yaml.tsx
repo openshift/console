@@ -328,7 +328,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   );
 
   const loadYaml = useCallback(
-    (reloaded = false, obj = props.obj) => {
+    (reloaded = false, obj: K8sResourceKind | string = props.obj) => {
       if (initialized && !reloaded) {
         return;
       }

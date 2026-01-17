@@ -40,6 +40,7 @@ import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import type { TdProps } from '@patternfly/react-table';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
@@ -161,7 +162,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
         ),
         props: {
           modifier: 'breakWord',
-        },
+        } as TdProps, // TODO(CONSOLE-4630): remove type assertion
       },
       [tableColumnInfo[2].id]: {
         cell: _.get(obj, 'spec.config.ignition.version') || DASH,
@@ -170,7 +171,7 @@ const getDataViewRows: GetDataViewRows<MachineConfigKind> = (data, columns) => {
         cell: _.get(obj, 'spec.osImageURL') || DASH,
         props: {
           modifier: 'breakWord',
-        },
+        } as TdProps, // TODO(CONSOLE-4630): remove type assertion
       },
       [tableColumnInfo[4].id]: {
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,

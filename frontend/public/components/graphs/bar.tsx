@@ -57,6 +57,8 @@ export const BarChart: FC<BarChartProps> = ({
                 <div className="graph-bar__label" data-test={`bar-label-${index}`}>
                   {LabelComponent ? (
                     <LabelComponent title={datum.x} metric={datum.metric} />
+                  ) : datum.x instanceof Date ? (
+                    datum.x.toLocaleString()
                   ) : (
                     datum.x
                   )}

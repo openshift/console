@@ -1,4 +1,10 @@
-import type { ComponentType, ReactElement, FunctionComponent, ComponentProps } from 'react';
+import type {
+  ComponentType,
+  ReactElement,
+  FunctionComponent,
+  ComponentProps,
+  ReactNode,
+} from 'react';
 import { isValidElement, useState, useRef, useMemo, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
@@ -271,10 +277,9 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
 ) => (WrappedComponent: ComponentType<Partial<P>>) => {
-  const Component: FunctionComponent<Omit<P, keyof WithCreateConnectorProps>> = ({
-    children,
-    ...props
-  }) => {
+  const Component: FunctionComponent<
+    Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }
+  > = ({ children, ...props }) => {
     const [show, setShow] = useState(false);
     const [alive, setKeepAlive] = useState(false);
     const onShowCreateConnector = useCallback(() => setShow(true), []);

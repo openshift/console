@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-data-view';
 import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { ColumnsIcon } from '@patternfly/react-icons';
-import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
+import { InnerScrollContainer, Tbody, Td, Tr, TdProps } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import type {
   ResourceFilters,
@@ -223,11 +223,11 @@ export const getNameCellProps = (name: string) => {
   return {
     ...nameCellProps,
     'data-test': `data-view-cell-${name}-name`,
-  };
+  } as TdProps; // TODO(CONSOLE-4630): remove type assertion - data-test is not part of TdProps
 };
 
 export const actionsCellProps = {
   ...cellIsStickyProps,
   hasLeftBorder: true,
   isActionCell: true,
-};
+} as TdProps; // TODO(CONSOLE-4630): remove type assertion

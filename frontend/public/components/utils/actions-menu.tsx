@@ -77,7 +77,7 @@ const ActionsMenuDropdown: React.FCC<ActionsMenuDropdownProps> = ({ actions, tit
   );
 };
 
-export const ActionsMenu: React.FCC<ActionsMenuProps> = connect(impersonateStateToProps)(
+export const ActionsMenu = connect(impersonateStateToProps)(
   ({
     actions,
     impersonate,

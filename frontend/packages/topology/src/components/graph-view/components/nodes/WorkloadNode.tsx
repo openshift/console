@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   NodeStatus,
@@ -136,6 +136,7 @@ export const getAggregateStatus = (
 
 type WorkloadPodsNodeProps = WorkloadNodeProps & {
   donutStatus: PodRCData;
+  children?: ReactNode;
 };
 
 const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPodsNode({
