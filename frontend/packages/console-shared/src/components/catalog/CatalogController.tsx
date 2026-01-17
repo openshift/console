@@ -73,7 +73,8 @@ const CatalogController: FC<CatalogControllerProps> = ({
       return typeExtension?.properties?.catalogDescription;
     }
     if (typeof typeExtension?.properties?.catalogDescription === 'function') {
-      return typeExtension?.properties?.catalogDescription();
+      const Component = typeExtension.properties.catalogDescription;
+      return <Component />;
     }
     return defaultDescription;
   };

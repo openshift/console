@@ -240,7 +240,7 @@ This extension allows plugins to contribute a new type of catalog item. For exam
 | ---- | ---------- | -------- | ----------- |
 | `type` | `string` | no | Type for the catalog item. |
 | `title` | `string` | no | Title for the catalog item. |
-| `catalogDescription` | `string \| CodeRef<ReactNode>` | yes | Description for the type specific catalog. |
+| `catalogDescription` | `string \| CodeRef<ComponentType>` | yes | Description for the type specific catalog. |
 | `typeDescription` | `string` | yes | Description for the catalog item type. |
 | `sortFilterGroups` | `boolean` | yes | Determine if filter groups should be sorted alphabetically. Defaults to true. |
 | `filters` | `CatalogItemAttribute[]` | yes | Custom filters specific to the catalog item. |
