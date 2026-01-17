@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ComponentType } from 'react';
 import { useMemo, lazy, useEffect, useCallback } from 'react';
 import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
@@ -9,21 +9,26 @@ import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>
   (extension.properties.perspective ?? activePerspective) === activePerspective;
 
-const LazyDynamicRoutePage: React.FCC<LazyDynamicRoutePageProps> = ({ component }) => {
-  const LazyComponent = useMemo(
-    () =>
-      lazy(async () => {
-        const Component = await component();
-        // TODO do not wrap as `default` when we support module code refs
-        return { default: Component };
-      }),
-    [component],
-  );
-  return <LazyComponent />;
-};
+// Cache lazy components by extension UID to prevent recreation on re-renders
+const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
 
 const LazyRoutePage: React.FCC<LazyRoutePageProps> = ({ extension }) => {
-  return <LazyDynamicRoutePage component={extension.properties.component} />;
+  const { uid, properties } = extension;
+  const { component } = properties;
+  const LazyComponent = useMemo(() => {
+    if (!lazyComponentCache.has(uid)) {
+      lazyComponentCache.set(
+        uid,
+        lazy(async () => {
+          const Component = await component();
+          return { default: Component };
+        }),
+      );
+    }
+    return lazyComponentCache.get(uid);
+  }, [uid, component]);
+
+  return <LazyComponent />;
 };
 
 const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
@@ -105,10 +110,6 @@ type IsRouteExtensionActive = (
   extension: LoadedRoutePageExtension,
   activePerspective: string,
 ) => boolean;
-
-type LazyDynamicRoutePageProps = {
-  component: RoutePage['properties']['component'];
-};
 
 type LazyRoutePageProps = { extension: LoadedRoutePageExtension };
 
