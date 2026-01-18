@@ -1764,13 +1764,13 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-5.4.0.tgz#97dc2006ba2d495ed84d2f8d7269b6e19a9f834f"
   integrity sha512-9B33M4N0/KDyss6NpCwAhz18za7R+sXYiFrUObhGoJ1Cmg06SeScVrEAjT4yJwAClWUlKh604Af9wE4D7IF8Lg==
 
-"@patternfly/quickstarts@5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-5.4.0.tgz#c21b0bea61ef6dba8b231679af5db629ddce7a85"
-  integrity sha512-ucabjYxoLY1IqdYnhEZpIBpHwFwD1o+UhBz9kB2H3K1hAwbmAB5fRssxYMjFjhHuvWy2E0NvKoDb6jZ5AKNflA==
+"@patternfly/quickstarts@5.4.5":
+  version "5.4.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-5.4.5.tgz#53548201f342d12160912eded6d7770f3838442a"
+  integrity sha512-W7s8cVSUh1hx9M7gQv9iuAYZpX+DojI/Adt9IHvD2RsmSsk9R1UqonCs8SWMdZwT+gXilpqA2igCI211MPFFeA==
   dependencies:
     "@patternfly/react-catalog-view-extension" "^5.0.0"
-    dompurify "^2.4.9"
+    dompurify "^3.2.4"
     history "^5.0.0"
 
 "@patternfly/react-catalog-view-extension@5.0.0", "@patternfly/react-catalog-view-extension@^5.0.0":
@@ -7266,7 +7266,7 @@ domhandler@^4.2.0, domhandler@^4.3.1:
   dependencies:
     domelementtype "^2.2.0"
 
-dompurify@3.2.7, dompurify@^2.2.6, dompurify@^2.4.9:
+dompurify@3.2.7, dompurify@^2.2.6, dompurify@^3.2.4:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.2.7.tgz#721d63913db5111dd6dfda8d3a748cfd7982d44a"
   integrity sha512-WhL/YuveyGXJaerVlMYGWhvQswa7myDG17P7Vu65EWC05o8vfeNbvNf4d/BOvH99+ZW+LlQsc1GDKMa1vNK6dw==
@@ -12136,6 +12136,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+marked@15.0.6:
+  version "15.0.6"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-15.0.6.tgz#8165f16afb6f4b30a35bdcee657c3b8415820a8f"
+  integrity sha512-Y07CUOE+HQXbVDCGl3LXggqJDbXDP2pArc2C1N1RRMN0ONiShoSsIInMd5Gsxupe7fKLpgimTV+HOJ9r7bA+pg==
 
 matcher-collection@^2.0.0:
   version "2.0.1"
