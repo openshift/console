@@ -105,6 +105,13 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
+      "<rootDir>/public/dist",
+      "<rootDir>/.*/integration-tests",
+      "<rootDir>/.*/integration-tests-cypress"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/public/dist",
+      "<rootDir>/.*/integration-tests",
       "<rootDir>/.*/integration-tests-cypress"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
@@ -118,6 +125,7 @@
       "./__mocks__/matchMedia.js",
       "./__mocks__/mutationObserver.js",
       "./__mocks__/serverFlags.js",
+      "./__mocks__/textEncoderDecoder.ts",
       "./__mocks__/websocket.js"
     ],
     "setupFilesAfterEnv": [
@@ -233,7 +241,7 @@
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^12.1.4",
+    "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/git-url-parse": "^9.0.0",
     "@types/glob": "7.x",
@@ -255,7 +263,6 @@
     "@yarnpkg/lockfile": "^1.1.0",
     "axe-core": "^4.10.2",
     "babel-loader": "^9.2.1",
-    "browser-env": "3.x",
     "chalk": "2.4.x",
     "circular-dependency-plugin": "^5.2.2",
     "comment-json": "4.x",

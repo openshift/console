@@ -1,4 +1,4 @@
-import { cleanup } from '@testing-library/react';
+import { cleanup, act } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -17,8 +17,10 @@ describe('Add Identity Provider: GitLab', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddGitLabPage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddGitLabPage />);
+    });
   });
 
   afterEach(() => {

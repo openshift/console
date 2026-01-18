@@ -232,7 +232,8 @@ describe('ClusterServiceVersionLogo', () => {
       <ClusterServiceVersionLogo icon={icon[0]} displayName={displayName} provider={provider} />,
     );
 
-    const image = screen.getByRole('img');
+    // Image has alt="" for decorative purposes, so it has role="presentation" not "img"
+    const image = screen.getByRole('presentation');
     expect(image).toHaveAttribute('src', `data:${icon[0].mediatype};base64,${icon[0].base64data}`);
   });
 
@@ -243,7 +244,8 @@ describe('ClusterServiceVersionLogo', () => {
       <ClusterServiceVersionLogo icon={null} displayName={displayName} provider={provider} />,
     );
 
-    const image = screen.getByRole('img');
+    // Image has alt="" for decorative purposes, so it has role="presentation" not "img"
+    const image = screen.getByRole('presentation');
     expect(image).toHaveAttribute('src', operatorLogo);
   });
 

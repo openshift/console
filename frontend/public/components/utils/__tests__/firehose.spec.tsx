@@ -242,6 +242,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
     rerender(
       <Wrapper>
@@ -273,6 +274,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -371,6 +373,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -459,6 +462,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     expect(k8sListMock).toHaveBeenCalledTimes(1);
@@ -551,6 +555,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     expect(k8sGetMock).toHaveBeenCalledTimes(1);
@@ -638,6 +643,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     // Assert that API calls are just triggered once
@@ -787,6 +793,7 @@ describe('Firehose', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     // Assert that API calls are just triggered once
@@ -1014,6 +1021,7 @@ describe('Firehose together with useK8sWatchResources', () => {
         </Firehose>
         <WatchResources initResources={initResources} />
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     // Finish API calls
@@ -1104,6 +1112,7 @@ describe('Firehose together with useK8sWatchResources', () => {
           <Child />
         </Firehose>
       </Wrapper>,
+      { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
     );
 
     // Finish API calls
@@ -1189,6 +1198,7 @@ describe('Firehose together with useK8sWatchResources', () => {
           </Firehose>
           <WatchResources initResources={initResources} />
         </Wrapper>,
+        { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
       );
 
       // Finish API calls
@@ -1287,6 +1297,7 @@ describe('Firehose together with useK8sWatchResources', () => {
             <Child />
           </Firehose>
         </Wrapper>,
+        { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
       );
 
       // Finish API calls
@@ -1386,6 +1397,7 @@ describe('Firehose together with useK8sWatchResources', () => {
           </Firehose>
           <WatchResources initResources={initResources} />
         </Wrapper>,
+        { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
       );
 
       // Finish API calls
@@ -1502,6 +1514,7 @@ describe('Firehose together with useK8sWatchResources', () => {
             <Child />
           </Firehose>
         </Wrapper>,
+        { legacyRoot: true }, // TODO(react18): Remove Firehose before using ReactDOM.createRoot
       );
 
       // Finish API calls

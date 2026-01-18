@@ -381,6 +381,16 @@ describe('useUserSettings', () => {
         expect(oldValue).toEqual('default value');
         return 'new value';
       });
+    });
+
+    // With sync=true, the hook returns the value from cfData after the request completes.
+    // Simulate the server update by updating the mock to return the new value.
+    await act(async () => {
+      useK8sWatchResourceMock.mockReturnValue([
+        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+        true,
+        null,
+      ]);
       rerender();
     });
 
@@ -447,6 +457,16 @@ describe('useUserSettings', () => {
         expect(oldValue).toEqual('saved value');
         return 'new value';
       });
+    });
+
+    // With sync=true, the hook returns the value from cfData after the request completes.
+    // Simulate the server update by updating the mock to return the new value.
+    await act(async () => {
+      useK8sWatchResourceMock.mockReturnValue([
+        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+        true,
+        null,
+      ]);
       rerender();
     });
 
@@ -544,6 +564,16 @@ describe('useUserSettings', () => {
         expect(oldValue).toEqual('magically changed value');
         return 'new value';
       });
+    });
+
+    // With sync=true, the hook returns the value from cfData after the request completes.
+    // Simulate the server update by updating the mock to return the new value.
+    await act(async () => {
+      useK8sWatchResourceMock.mockReturnValue([
+        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+        true,
+        null,
+      ]);
       rerender();
     });
 

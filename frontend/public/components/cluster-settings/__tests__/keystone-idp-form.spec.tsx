@@ -1,4 +1,4 @@
-import { cleanup } from '@testing-library/react';
+import { cleanup, act } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
@@ -17,8 +17,10 @@ describe('Add Identity Provider: Keystone Authentication', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddKeystonePage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddKeystonePage />);
+    });
   });
 
   afterEach(() => {

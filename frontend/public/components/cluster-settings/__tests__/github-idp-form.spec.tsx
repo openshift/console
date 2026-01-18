@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react';
+import { cleanup, screen, act } from '@testing-library/react';
 import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
@@ -18,8 +18,10 @@ describe('Add Identity Provider: GitHub', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddGitHubPage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddGitHubPage />);
+    });
   });
 
   afterEach(() => {

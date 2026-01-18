@@ -1,4 +1,4 @@
-import { cleanup } from '@testing-library/react';
+import { cleanup, act } from '@testing-library/react';
 import { AddBasicAuthPage } from '../../cluster-settings/basicauth-idp-form';
 import {
   renderWithProviders,
@@ -17,8 +17,10 @@ describe('Add Identity Provider: Basic Authentication', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddBasicAuthPage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddBasicAuthPage />);
+    });
   });
 
   afterEach(() => {
