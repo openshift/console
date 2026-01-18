@@ -1,4 +1,4 @@
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { checkTerminalAvailable } from '../cloud-shell-utils';
 import { useCloudShellAvailable } from '../useCloudShellAvailable';

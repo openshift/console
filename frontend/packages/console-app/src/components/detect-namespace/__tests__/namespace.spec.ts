@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';

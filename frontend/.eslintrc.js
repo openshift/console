@@ -75,6 +75,12 @@ module.exports = {
             // and namespace imports may negatively impact tree-shaking
             message: 'Use named imports instead.',
           },
+          {
+            name: 'react',
+            importNames: ['act'],
+            // https://testing-library.com/docs/react-testing-library/api/#act
+            message: "For consistency, import { act } from '@testing-library/react'",
+          },
         ],
       },
     ],

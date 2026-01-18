@@ -1,4 +1,4 @@
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';

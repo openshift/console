@@ -1,4 +1,4 @@
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { checkAccess } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
