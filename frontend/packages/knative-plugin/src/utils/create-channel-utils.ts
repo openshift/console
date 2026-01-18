@@ -5,7 +5,7 @@ import {
   getCommonAnnotations,
   getAppLabels,
 } from '@console/dev-console/src/utils/resource-label-utils';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';

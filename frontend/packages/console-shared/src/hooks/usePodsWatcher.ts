@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect } from 'react';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRCData } from '../types';
