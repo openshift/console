@@ -14,17 +14,20 @@ const sourceSchema = () =>
         .oneOf(['git', 'dockerfile', 'binary']),
       git: yup.object().when('type', {
         is: 'git',
-        then: yup.object({
-          git: yup.object({
-            url: yup.string().required(i18n.t('devconsole~Required')),
-            ref: yup.string(),
-            dir: yup.string(),
+        then: (schema) =>
+          schema.shape({
+            git: yup.object({
+              url: yup.string().required(i18n.t('devconsole~Required')),
+              ref: yup.string(),
+              dir: yup.string(),
+            }),
           }),
-        }),
+        otherwise: (schema) => schema,
       }),
       dockerfile: yup.string().when('type', {
         is: 'dockerfile',
-        then: yup.string(),
+        then: (schema) => schema,
+        otherwise: (schema) => schema,
       }),
     })
     .required(i18n.t('devconsole~Required'));
@@ -34,21 +37,25 @@ const imageSchema = (allowedTypes: string[]) =>
     type: yup.string().required(i18n.t('devconsole~Required')).oneOf(allowedTypes),
     imageStreamTag: yup.object().when('type', {
       is: 'imageStreamTag',
-      then: yup.object({
-        imageStream: yup.object({
-          namespace: yup.string().required(i18n.t('devconsole~Required')),
-          image: yup.string().required(i18n.t('devconsole~Required')),
-          tag: yup.string().required(i18n.t('devconsole~Required')),
+      then: (schema) =>
+        schema.shape({
+          imageStream: yup.object({
+            namespace: yup.string().required(i18n.t('devconsole~Required')),
+            image: yup.string().required(i18n.t('devconsole~Required')),
+            tag: yup.string().required(i18n.t('devconsole~Required')),
+          }),
         }),
-      }),
+      otherwise: (schema) => schema,
     }),
     imageStreamImage: yup.string().when('type', {
       is: 'imageStreamImage',
-      then: yup.string().required(i18n.t('devconsole~Required')),
+      then: (schema) => schema.required(i18n.t('devconsole~Required')),
+      otherwise: (schema) => schema,
     }),
     dockerImage: yup.string().when('type', {
       is: 'dockerImage',
-      then: yup.string().required(i18n.t('devconsole~Required')),
+      then: (schema) => schema.required(i18n.t('devconsole~Required')),
+      otherwise: (schema) => schema,
     }),
   });
 
@@ -82,7 +89,7 @@ const formDataSchema = () =>
 
 export const validationSchema = () =>
   yup.mixed().test({
-    test(values: BuildConfigFormikValues) {
+    async test(values: BuildConfigFormikValues) {
       const formYamlDefinition = yup.object({
         editorType: yup
           .string()
@@ -90,14 +97,17 @@ export const validationSchema = () =>
           .required(i18n.t('devconsole~Required')),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: formDataSchema(),
+          then: (schema) => schema.concat(formDataSchema()),
+          otherwise: (schema) => schema,
         }),
         yamlData: yup.mixed().when('editorType', {
           is: EditorType.YAML,
-          then: yup.string().required(i18n.t('devconsole~Required')),
+          then: (schema) => schema.concat(yup.string().required(i18n.t('devconsole~Required'))),
+          otherwise: (schema) => schema,
         }),
       });
 
-      return formYamlDefinition.validate(values, { abortEarly: false });
+      await formYamlDefinition.validate(values, { abortEarly: false });
+      return true;
     },
   });

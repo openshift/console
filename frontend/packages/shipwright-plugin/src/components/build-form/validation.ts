@@ -43,7 +43,7 @@ export const formDataSchema = () =>
 
 export const validationSchema = () =>
   yup.mixed().test({
-    test(values: BuildFormikValues) {
+    async test(values: BuildFormikValues) {
       const formYamlDefinition = yup.object({
         editorType: yup
           .string()
@@ -51,14 +51,18 @@ export const validationSchema = () =>
           .required(i18n.t('shipwright-plugin~Required')),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: formDataSchema(),
+          then: (schema) => schema.concat(formDataSchema()),
+          otherwise: (schema) => schema,
         }),
         yamlData: yup.mixed().when('editorType', {
           is: EditorType.YAML,
-          then: yup.string().required(i18n.t('shipwright-plugin~Required')),
+          then: (schema) =>
+            schema.concat(yup.string().required(i18n.t('shipwright-plugin~Required'))),
+          otherwise: (schema) => schema,
         }),
       });
 
-      return formYamlDefinition.validate(values, { abortEarly: false });
+      await formYamlDefinition.validate(values, { abortEarly: false });
+      return true;
     },
   });

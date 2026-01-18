@@ -20,13 +20,14 @@ const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
 export const newNamespaceValidationSchema = yup.string().when('namespace', {
   is: CREATE_NAMESPACE_KEY,
-  then: yup
-    .string()
-    .matches(
-      projectNameRegex,
-      "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
-    )
-    .required('Required'),
+  then: (schema) =>
+    schema
+      .matches(
+        projectNameRegex,
+        "Name must consist of lower case alphanumeric characters or '-' and must start and end with an alphanumeric character.",
+      )
+      .required('Required'),
+  otherwise: (schema) => schema,
 });
 
 export const advancedOptionsValidationSchema = yup.object().shape({

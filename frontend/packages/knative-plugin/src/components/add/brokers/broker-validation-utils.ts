@@ -12,11 +12,13 @@ export const brokerValidationSchema = (t: TFunction) =>
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
       is: EditorType.Form,
-      then: yup.object().shape({
-        project: projectNameValidationSchema,
-        application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-      }),
+      then: (schema) =>
+        schema.shape({
+          project: projectNameValidationSchema,
+          application: applicationNameValidationSchema,
+          name: nameValidationSchema(t),
+        }),
+      otherwise: (schema) => schema,
     }),
     yamlData: yup.string(),
   });
