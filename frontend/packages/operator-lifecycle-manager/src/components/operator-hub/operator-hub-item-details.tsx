@@ -34,7 +34,12 @@ import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/
 import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';
 import { OperatorChannelSelect, OperatorVersionSelect } from './operator-channel-version-select';
-import { isAWSSTSCluster, isAzureWIFCluster, isGCPWIFCluster } from './operator-hub-utils';
+import {
+  isAWSSTSCluster,
+  isAzureWIFCluster,
+  isGCPWIFCluster,
+  getInfrastructureFeatures,
+} from './operator-hub-utils';
 import { InfrastructureFeature, OperatorHubItem } from './index';
 
 // t('olm~Basic Install'),
@@ -225,7 +230,6 @@ const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (
 export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
   catalogSource,
   description,
-  infraFeatures,
   installed,
   isInstalling,
   subscription,
@@ -251,6 +255,24 @@ export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
   const currentCSVDescription = useCurrentCSVDescription(packageManifest);
   const selectedChannelDescription = currentCSVDescription?.description || longDescription;
   const packageManifestStatus = packageManifest?.status;
+
+  // Get infrastructure features from the current channel's CSV description
+  const infraFeatures = React.useMemo(() => {
+    const currentCSVAnnotations = currentCSVDescription?.annotations ?? {};
+    return getInfrastructureFeatures(currentCSVAnnotations, {
+      clusterIsAWSSTS,
+      clusterIsAzureWIF,
+      clusterIsGCPWIF,
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Error parsing infrastructure features from PackageManifest "${packageManifest?.metadata?.name}":`,
+          error,
+        );
+      },
+    });
+  }, [currentCSVDescription, clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF, packageManifest]);
+
   const [isTokenAuth, isTokenAuthGCP] = React.useMemo(() => {
     return [
       (infraFeatures ?? []).includes(InfrastructureFeature.TokenAuth),
@@ -337,7 +359,6 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
     catalogSource,
     source,
     description,
-    infraFeatures,
     installed,
     isInstalling,
     longDescription,
@@ -363,6 +384,28 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
 
   const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
+  const selectedUpdateChannel = updateChannel || defaultChannelNameFor(obj);
+  const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
+  const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
+
+  // Get infrastructure features from the current channel's CSV description
+  const infraFeatures = React.useMemo(() => {
+    const currentCSVAnnotations = currentCSVDescription?.annotations ?? {};
+    return getInfrastructureFeatures(currentCSVAnnotations, {
+      clusterIsAWSSTS,
+      clusterIsAzureWIF,
+      clusterIsGCPWIF,
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Error parsing infrastructure features from PackageManifest "${obj?.metadata?.name}":`,
+          error,
+        );
+      },
+    });
+  }, [currentCSVDescription, clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF, obj]);
+
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
@@ -379,11 +422,6 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
     }
     return null;
   }, [marketplaceSupportWorkflow]);
-
-  const selectedUpdateChannel = updateChannel || defaultChannelNameFor(obj);
-  const clusterIsAWSSTS = isAWSSTSCluster(cloudCredentials, infrastructure, authentication);
-  const clusterIsAzureWIF = isAzureWIFCluster(cloudCredentials, infrastructure, authentication);
-  const clusterIsGCPWIF = isGCPWIFCluster(cloudCredentials, infrastructure, authentication);
 
   return item ? (
     <div className="modal-body modal-body-border">
@@ -453,7 +491,6 @@ export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
           <OperatorDescription
             catalogSource={catalogSource}
             description={description}
-            infraFeatures={infraFeatures}
             installed={installed}
             isInstalling={isInstalling}
             subscription={subscription}
@@ -496,7 +533,6 @@ type OperatorHubItemDetailsHintProps = {
 export type OperatorDescriptionProps = {
   catalogSource: string;
   description: string;
-  infraFeatures: InfrastructureFeature[];
   installed: boolean;
   isInstalling: boolean;
   subscription: SubscriptionKind;
