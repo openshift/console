@@ -236,7 +236,9 @@ export const ImpersonateUserModal: FC<ImpersonateUserModalProps> = ({
           <Alert
             variant={AlertVariant.warning}
             isInline
-            title={t('public~Impersonating a user or group grants you their exact permissions.')}
+            title={t(
+              'public~Impersonating a user grants you their exact permissions. You must enter username, but you can also enter a group to simulate the permissions of a member of that group.',
+            )}
           />
 
           {groupsLoadError && (

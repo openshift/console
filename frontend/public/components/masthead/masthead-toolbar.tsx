@@ -852,8 +852,8 @@ const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
             dispatch(UIActions.startImpersonate('User', userName));
           }
           setIsImpersonateModalOpen(false);
-          // Use navigate instead of window.location to preserve Redux state
-          navigate(window.SERVER_FLAGS.basePath || '/');
+          // Redirect to projects page to prevent RBAC issues for impersonated users
+          navigate('/k8s/cluster/projects');
         }}
         prefilledUsername=""
         isUsernameReadonly={false}
