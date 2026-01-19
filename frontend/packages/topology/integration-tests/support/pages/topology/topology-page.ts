@@ -75,11 +75,11 @@ export const topologyPage = {
     });
   },
   verifyToplogyPageNotEmpty: () => {
-    cy.get('*[class="odc-topology"]').then(($el) => {
-      if ($el.find('[data-test="no-resources-found"]').length) {
-        throw new Error(`No workload has been created till now.`);
-      }
-    });
+    cy.get('.odc-topology', { timeout: 60000 })
+      .should('be.visible')
+      .within(() => {
+        cy.get('[data-test="no-resources-found"]').should('not.exist');
+      });
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>

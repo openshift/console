@@ -24,13 +24,16 @@ const sinkServiceSchema = (t: TFunction) =>
     .object()
     .when('sinkType', {
       is: SinkType.Resource,
-      then: yup.object().shape({
-        name: yup.string().required(t('knative-plugin~Required')),
-      }),
+      then: (schema) =>
+        schema.shape({
+          name: yup.string().required(t('knative-plugin~Required')),
+        }),
+      otherwise: (schema) => schema,
     })
     .when('sinkType', {
       is: SinkType.Uri,
-      then: sinkTypeUriValidation(t),
+      then: (schema) => schema.concat(sinkTypeUriValidation(t)),
+      otherwise: (schema) => schema,
     });
 
 export const sourceDataSpecSchema = (t: TFunction) =>
@@ -38,119 +41,130 @@ export const sourceDataSpecSchema = (t: TFunction) =>
     .object()
     .when('type', {
       is: EventSources.PingSource,
-      then: yup.object().shape({
-        [EventSources.PingSource]: yup.object().shape({
-          data: yup.string().max(253, t('knative-plugin~Cannot be longer than 253 characters.')),
-          schedule: yup
-            .string()
-            .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-            .required(t('knative-plugin~Required')),
+      then: (schema) =>
+        schema.shape({
+          [EventSources.PingSource]: yup.object().shape({
+            data: yup.string().max(253, t('knative-plugin~Cannot be longer than 253 characters.')),
+            schedule: yup
+              .string()
+              .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
+              .required(t('knative-plugin~Required')),
+          }),
         }),
-      }),
+      otherwise: (schema) => schema,
     })
     .when('type', {
       is: EventSources.SinkBinding,
-      then: yup.object().shape({
-        [EventSources.SinkBinding]: yup.object().shape({
-          subject: yup.object().shape({
-            selector: yup.object().shape({
-              matchLabels: yup.object(),
+      then: (schema) =>
+        schema.shape({
+          [EventSources.SinkBinding]: yup.object().shape({
+            subject: yup.object().shape({
+              selector: yup.object().shape({
+                matchLabels: yup.object(),
+              }),
+              name: yup.string().when('selector.matchLabels', {
+                is: (obj: object) => !obj,
+                then: (nameSchema) => nameSchema.required(t('knative-plugin~Required')),
+                otherwise: (nameSchema) => nameSchema,
+              }),
+              apiVersion: yup
+                .string()
+                .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
+                .required(t('knative-plugin~Required')),
+              kind: yup
+                .string()
+                .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
+                .required(t('knative-plugin~Required')),
             }),
-            name: yup.string().when('selector.matchLabels', {
-              is: (obj: object) => !obj,
-              then: yup.string().required(t('knative-plugin~Required')),
-            }),
-            apiVersion: yup
-              .string()
-              .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-              .required(t('knative-plugin~Required')),
-            kind: yup
-              .string()
-              .max(253, t('knative-plugin~Cannot be longer than 253 characters.'))
-              .required(t('knative-plugin~Required')),
           }),
         }),
-      }),
+      otherwise: (schema) => schema,
     })
     .when('type', {
       is: EventSources.ApiServerSource,
-      then: yup.object().shape({
-        [EventSources.ApiServerSource]: yup.object().shape({
-          resources: yup
-            .array()
-            .of(
-              yup.object({
-                apiVersion: yup.string().required(t('knative-plugin~Required')),
-                kind: yup.string().required(t('knative-plugin~Required')),
-              }),
-            )
-            .required(t('knative-plugin~Required')),
+      then: (schema) =>
+        schema.shape({
+          [EventSources.ApiServerSource]: yup.object().shape({
+            resources: yup
+              .array()
+              .of(
+                yup.object({
+                  apiVersion: yup.string().required(t('knative-plugin~Required')),
+                  kind: yup.string().required(t('knative-plugin~Required')),
+                }),
+              )
+              .required(t('knative-plugin~Required')),
+          }),
         }),
-      }),
+      otherwise: (schema) => schema,
     })
     .when('type', {
       is: EventSources.KafkaSource,
-      then: yup.object().shape({
-        [EventSources.KafkaSource]: yup.object().shape({
-          bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
-          consumerGroup: yup.string().required(t('knative-plugin~Required')),
-          topics: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
-          net: yup.object().shape({
-            sasl: yup.object().shape({
-              enable: yup.boolean(),
-              user: yup.object().shape({
-                secretKeyRef: yup.object().shape({
-                  name: yup.string(),
-                  key: yup.string(),
+      then: (schema) =>
+        schema.shape({
+          [EventSources.KafkaSource]: yup.object().shape({
+            bootstrapServers: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
+            consumerGroup: yup.string().required(t('knative-plugin~Required')),
+            topics: yup.array().of(yup.string()).min(1, t('knative-plugin~Required')),
+            net: yup.object().shape({
+              sasl: yup.object().shape({
+                enable: yup.boolean(),
+                user: yup.object().shape({
+                  secretKeyRef: yup.object().shape({
+                    name: yup.string(),
+                    key: yup.string(),
+                  }),
+                }),
+                password: yup.object().shape({
+                  secretKeyRef: yup.object().shape({
+                    name: yup.string(),
+                    key: yup.string(),
+                  }),
                 }),
               }),
-              password: yup.object().shape({
-                secretKeyRef: yup.object().shape({
-                  name: yup.string(),
-                  key: yup.string(),
+              tls: yup.object().shape({
+                enable: yup.boolean(),
+                caCert: yup.object().shape({
+                  secretKeyRef: yup.object().shape({
+                    name: yup.string(),
+                    key: yup.string(),
+                  }),
                 }),
-              }),
-            }),
-            tls: yup.object().shape({
-              enable: yup.boolean(),
-              caCert: yup.object().shape({
-                secretKeyRef: yup.object().shape({
-                  name: yup.string(),
-                  key: yup.string(),
+                cert: yup.object().shape({
+                  secretKeyRef: yup.object().shape({
+                    name: yup.string(),
+                    key: yup.string(),
+                  }),
                 }),
-              }),
-              cert: yup.object().shape({
-                secretKeyRef: yup.object().shape({
-                  name: yup.string(),
-                  key: yup.string(),
-                }),
-              }),
-              key: yup.object().shape({
-                secretKeyRef: yup.object().shape({
-                  name: yup.string(),
-                  key: yup.string(),
+                key: yup.object().shape({
+                  secretKeyRef: yup.object().shape({
+                    name: yup.string(),
+                    key: yup.string(),
+                  }),
                 }),
               }),
             }),
           }),
         }),
-      }),
+      otherwise: (schema) => schema,
     })
     .when('type', {
       is: EventSources.ContainerSource,
-      then: yup.object().shape({
-        [EventSources.ContainerSource]: yup.object().shape({
-          template: yup.object({
-            spec: yup.object({
-              containers: yup.array().of(
-                yup.object({
-                  image: yup.string().required(t('knative-plugin~Required')),
-                }),
-              ),
+      then: (schema) =>
+        schema.shape({
+          [EventSources.ContainerSource]: yup.object().shape({
+            template: yup.object({
+              spec: yup.object({
+                containers: yup.array().of(
+                  yup.object({
+                    image: yup.string().required(t('knative-plugin~Required')),
+                  }),
+                ),
+              }),
             }),
           }),
         }),
-      }),
+      otherwise: (schema) => schema,
     });
 
 export const eventSourceValidationSchema = (t: TFunction) =>
@@ -158,13 +172,15 @@ export const eventSourceValidationSchema = (t: TFunction) =>
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
       is: EditorType.Form,
-      then: yup.object().shape({
-        project: projectNameValidationSchema,
-        application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-        sink: sinkServiceSchema(t),
-        data: sourceDataSpecSchema(t),
-      }),
+      then: (schema) =>
+        schema.shape({
+          project: projectNameValidationSchema,
+          application: applicationNameValidationSchema,
+          name: nameValidationSchema(t),
+          sink: sinkServiceSchema(t),
+          data: sourceDataSpecSchema(t),
+        }),
+      otherwise: (schema) => schema,
     }),
     yamlData: yup.string(),
   });
@@ -174,13 +190,15 @@ export const addChannelValidationSchema = (t: TFunction) =>
     editorType: yup.string(),
     formData: yup.object().when('editorType', {
       is: EditorType.Form,
-      then: yup.object().shape({
-        project: projectNameValidationSchema,
-        application: applicationNameValidationSchema,
-        name: nameValidationSchema(t),
-        data: yup.object(),
-        type: yup.string(),
-      }),
+      then: (schema) =>
+        schema.shape({
+          project: projectNameValidationSchema,
+          application: applicationNameValidationSchema,
+          name: nameValidationSchema(t),
+          data: yup.object(),
+          type: yup.string(),
+        }),
+      otherwise: (schema) => schema,
     }),
     yamlData: yup.string(),
   });

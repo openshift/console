@@ -32,16 +32,18 @@ export const createHelmChartRepositoryValidationSchema = (t: TFunction) =>
 
 export const validationSchema = (t: TFunction) =>
   yup.mixed().test({
-    test(formValues: HelmChartRepositoryData) {
+    async test(formValues: HelmChartRepositoryData) {
       const formYamlDefinition = yup.object({
         editorType: yup.string().oneOf(Object.values(EditorType)),
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: createHelmChartRepositoryValidationSchema(t),
+          then: (schema) => schema.concat(createHelmChartRepositoryValidationSchema(t)),
+          otherwise: (schema) => schema,
         }),
       });
 
-      return formYamlDefinition.validate(formValues, { abortEarly: false });
+      await formYamlDefinition.validate(formValues, { abortEarly: false });
+      return true;
     },
   });

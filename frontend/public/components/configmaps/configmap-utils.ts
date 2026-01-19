@@ -197,7 +197,7 @@ const formDataSchema = (values: ConfigMapFormInitialValues) =>
 
 export const validationSchema = () =>
   yup.mixed().test({
-    test(values: ConfigMapFormInitialValues) {
+    async test(values: ConfigMapFormInitialValues) {
       const formYamlDefinition = yup.object({
         editorType: yup
           .string()
@@ -205,14 +205,17 @@ export const validationSchema = () =>
           .required(i18next.t('public~Required')),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: formDataSchema(values),
+          then: (schema) => schema.concat(formDataSchema(values)),
+          otherwise: (schema) => schema,
         }),
         yamlData: yup.mixed().when('editorType', {
           is: EditorType.YAML,
-          then: yup.string().required(i18next.t('public~Required')),
+          then: (schema) => schema.concat(yup.string().required(i18next.t('public~Required'))),
+          otherwise: (schema) => schema,
         }),
       });
 
-      return formYamlDefinition.validate(values, { abortEarly: false });
+      await formYamlDefinition.validate(values, { abortEarly: false });
+      return true;
     },
   });

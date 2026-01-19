@@ -57,7 +57,16 @@ const ImageStreamTagDropdown: FC<{
           formContextField && setFieldValue(`${fieldPrefix}imageStreamTag`, imageStreamImport);
           const imgStreamLabels = _.pick(labels, imageStreamLabels);
           const name = imageStream.image;
-          const isi = { name, image, tag, status };
+          // Ensure status has the required structure for validation (isi.status.status must be a string)
+          // ImageStreamTag status may not have the nested status.status property, so we normalize it
+          const normalizedStatus = status?.status
+            ? status
+            : {
+                ...(status || {}),
+                status: 'Success',
+                metadata: status?.metadata || {},
+              };
+          const isi = { name, image, tag, status: normalizedStatus };
           const ports = getPorts(isi);
           setFieldValue(`${fieldPrefix}isSearchingForImage`, false);
           setFieldValue(`${fieldPrefix}isi.name`, name);
@@ -66,6 +75,7 @@ const ImageStreamTagDropdown: FC<{
             _.merge(image, { metadata: { labels: imgStreamLabels } }),
           );
           setFieldValue(`${fieldPrefix}isi.tag`, selectedTag);
+          setFieldValue(`${fieldPrefix}isi.status`, normalizedStatus);
           setFieldValue(`${fieldPrefix}isi.ports`, ports);
           setFieldValue(`${fieldPrefix}image.ports`, ports);
           formType !== 'edit' &&
