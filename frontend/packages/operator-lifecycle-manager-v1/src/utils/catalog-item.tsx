@@ -99,7 +99,9 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
       descriptions: [{ value: <SyncMarkdownView content={markdownDescription || description} /> }],
     },
     displayName,
-    icon: { url: `/api/olm/catalog-icons/${encodeURIComponent(catalog)}/${encodeURIComponent(name)}` },
+    icon: {
+      url: `/api/olm/catalog-icons/${encodeURIComponent(catalog)}/${encodeURIComponent(name)}`,
+    },
     name: displayName || name,
     supportUrl: support,
     provider,
