@@ -64,6 +64,8 @@ export const secrets = {
     listPage.rows.shouldNotExist(secretName);
   },
   detailsPageIsLoaded: (secretName: string) => {
+    // Wait for URL to contain the secret name (ensures navigation completed)
+    cy.url().should('include', secretName);
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(secretName);

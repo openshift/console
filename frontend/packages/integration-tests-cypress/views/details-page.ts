@@ -1,5 +1,9 @@
 export const detailsPage = {
-  titleShouldContain: (title: string) => cy.get('[data-test="page-heading"] h1').contains(title),
+  titleShouldContain: (title: string) =>
+    cy
+      .get('[data-test="page-heading"]')
+      .find('[data-test-id="resource-title"], h1')
+      .should('contain.text', title),
   sectionHeaderShouldExist: (sectionHeading: string) =>
     cy.get(`[data-test-section-heading="${sectionHeading}"]`).should('exist'),
   labelShouldExist: (labelName: string) => cy.byTestID('label-list').contains(labelName),

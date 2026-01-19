@@ -34,7 +34,7 @@ const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }
       enabled={
         developmentMode
           ? (pluginInfo?.status === 'loaded' && pluginInfo.enabled) ?? false
-          : enabledPlugins.includes(pluginName) ?? false
+          : enabledPlugins.includes(pluginName)
       }
     />
   ) : (

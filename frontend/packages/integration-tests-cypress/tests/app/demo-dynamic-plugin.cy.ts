@@ -53,17 +53,16 @@ const enableDemoPlugin = (enable: boolean) => {
       cy.byTestID('edit-console-plugin').contains(enable ? 'Enabled' : 'Disabled');
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
-  cy.byTestID(`${PLUGIN_NAME}-status`)
-    .should('include.text', enable ? 'loaded' : '-')
-    .then(() => {
-      if (!enable) {
-        cy.byLegacyTestID(PLUGIN_NAME).click();
-        detailsPage.titleShouldContain(PLUGIN_NAME);
-        detailsPage.clickPageActionFromDropdown('Delete ConsolePlugin');
-        modal.shouldBeOpened();
-        modal.submit();
-      }
-    });
+  if (enable) {
+    cy.byTestID(`${PLUGIN_NAME}-status`).should('include.text', 'loaded');
+  } else {
+    cy.byTestID(`${PLUGIN_NAME}-status`).should('not.include.text', 'loaded');
+    cy.byLegacyTestID(PLUGIN_NAME).click();
+    detailsPage.titleShouldContain(PLUGIN_NAME);
+    detailsPage.clickPageActionFromDropdown('Delete ConsolePlugin');
+    modal.shouldBeOpened();
+    modal.submit();
+  }
 };
 
 const dynamicNavTest = (navID: string) => {

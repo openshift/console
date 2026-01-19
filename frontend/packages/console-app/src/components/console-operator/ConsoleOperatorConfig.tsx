@@ -200,7 +200,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
 
   const compare = useCallback<Comparator<ConsolePluginTableRow>>(
     (a, b) => {
-      const { index, direction } = sortBy;
+      const { index = 0, direction } = sortBy;
       const { id } = columns[index];
       const desc = direction === SortByDirection.desc;
       const left = (desc ? b : a)[id];
@@ -247,7 +247,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
           <Thead>
             <Tr>
               {columns.map(({ id, name, sortable }, columnIndex) => (
-                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : null}>
+                <Th key={id} sort={sortable ? { sortBy, onSort, columnIndex } : undefined}>
                   {name}
                 </Th>
               ))}
@@ -341,7 +341,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         .find((i) => i?.pluginName === pluginName);
       if (loadedPluginInfo) {
         return {
-          name: plugin?.metadata?.name,
+          name: pluginName,
           version: loadedPluginInfo?.metadata?.version,
           description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
           enabled,
@@ -350,9 +350,9 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         };
       }
       return {
-        name: plugin?.metadata?.name,
+        name: pluginName,
         enabled,
-        status: notLoadedPluginInfo?.status,
+        status: notLoadedPluginInfo?.status || 'pending',
         errorMessage:
           notLoadedPluginInfo?.status === 'failed' ? notLoadedPluginInfo?.errorMessage : undefined,
         errorCause:
@@ -412,7 +412,7 @@ export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<typeof DetailsP
 };
 
 export type ConsolePluginTableRow = {
-  name: string;
+  name?: string;
   version?: string;
   description?: string;
   status: PluginInfoEntry['status'];
@@ -437,7 +437,7 @@ type ConsolePluginStatusProps = {
 };
 
 type ConsolePluginEnabledStatusProps = {
-  pluginName: string;
+  pluginName?: string;
   enabled: boolean;
 };
 

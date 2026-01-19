@@ -7,7 +7,7 @@ export const getValueForNamespace = async (
   useProjects: boolean,
   activeNamespace?: string,
 ): Promise<string> => {
-  if (await checkNamespaceExists(activeNamespace, useProjects)) {
+  if (activeNamespace && (await checkNamespaceExists(activeNamespace, useProjects))) {
     return activeNamespace;
   }
   if (await checkNamespaceExists(preferredNamespace, useProjects)) {
