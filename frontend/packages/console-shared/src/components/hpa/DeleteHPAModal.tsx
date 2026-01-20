@@ -4,12 +4,13 @@ import { Form } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalBody,
   ModalSubmitFooter,
   ModalTitle,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -21,7 +22,7 @@ type DeleteHPAModalProps = ModalComponentProps & {
   workload: K8sResourceCommon;
 };
 
-const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, hpa, workload }) => {
+const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload }) => {
   const [submitError, setSubmitError] = useState<string>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -79,11 +80,29 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, hpa, workload }) => {
           submitText={t('console-shared~Remove')}
           submitDanger
           submitDisabled={!!submitError}
-          cancel={close}
+          cancel={cancel}
         />
       </div>
     </Form>
   );
 };
 
-export default createModalLauncher(DeleteHPAModal);
+type DeleteHPAModalProviderProps = {
+  hpa: HorizontalPodAutoscalerKind;
+  workload: K8sResourceCommon;
+};
+
+const DeleteHPAModalProvider: OverlayComponent<DeleteHPAModalProviderProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DeleteHPAModal
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+        hpa={props.hpa}
+        workload={props.workload}
+      />
+    </ModalWrapper>
+  );
+};
+
+export default DeleteHPAModalProvider;
