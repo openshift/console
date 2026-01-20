@@ -6,6 +6,7 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
 import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { DetailsItem } from './details-item';
 import { LabelList } from './label-list';
 import { OwnerReferences } from './owner-references';
@@ -21,7 +22,7 @@ import {
   referenceFor,
   Toleration,
 } from '../../module/k8s';
-import { configureClusterUpstreamModal } from '../modals';
+import { LazyConfigureClusterUpstreamModalOverlay } from '../modals';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 
@@ -206,6 +207,7 @@ export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
 export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ resource }) => {
   const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
+  const launchModal = useOverlay();
   return (
     <DetailsItem label={t('public~Upstream configuration')} obj={resource} path="spec.upstream">
       <div>
@@ -216,7 +218,7 @@ export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ 
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            canUpgrade && configureClusterUpstreamModal({ cv: resource });
+            canUpgrade && launchModal(LazyConfigureClusterUpstreamModalOverlay, { cv: resource });
           }}
           variant="link"
           isDisabled={!canUpgrade}
