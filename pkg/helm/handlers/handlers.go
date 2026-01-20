@@ -39,7 +39,6 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		uninstallReleaseAsync:   actions.UninstallReleaseAsync,
 		rollbackRelease:         actions.RollbackRelease,
 		getReleaseHistory:       actions.GetReleaseHistory,
-		getDefaultOCIRegistry:   actions.GetDefaultOCIRegistry,
 	}
 
 	h.newProxy = func(bearerToken string) (getter chartproxy.Proxy, err error) {
@@ -73,7 +72,6 @@ type helmHandlers struct {
 	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
 	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
-	getDefaultOCIRegistry func(*action.Configuration) error
 }
 
 func (h *helmHandlers) restConfig(bearerToken string) *rest.Config {
@@ -119,11 +117,6 @@ func (h *helmHandlers) HandleHelmInstall(user *auth.User, w http.ResponseWriter,
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	err = h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -150,11 +143,6 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	err = h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -222,11 +210,6 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	indexEntry := params.Get("indexEntry")
 	// scope request to default namespace
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
-	err := h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -254,11 +237,6 @@ func (h *helmHandlers) HandleUpgradeRelease(user *auth.User, w http.ResponseWrit
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	err = h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -289,11 +267,6 @@ func (h *helmHandlers) HandleUpgradeReleaseAsync(user *auth.User, w http.Respons
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	err = h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -341,11 +314,6 @@ func (h *helmHandlers) HandleRollbackRelease(user *auth.User, w http.ResponseWri
 	}
 
 	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
-	err = h.getDefaultOCIRegistry(conf)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to get default registry: %v", err)})
-		return
-	}
 	rel, err := h.rollbackRelease(req.Name, req.Version, conf)
 	if err != nil {
 		if err.Error() == actions.ErrReleaseRevisionNotFound.Error() {

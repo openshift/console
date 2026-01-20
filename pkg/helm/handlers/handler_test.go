@@ -63,7 +63,6 @@ var fakeReleaseManifest = "manifest-data"
 func fakeHelmHandler() helmHandlers {
 	return helmHandlers{
 		getActionConfigurations: getFakeActionConfigurations,
-		getDefaultOCIRegistry:   fakeGetDefaultOCIRegistry,
 	}
 }
 
@@ -200,10 +199,6 @@ func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *ac
 	return &action.Configuration{
 		RESTClientGetter: FakeConfig{},
 	}
-}
-
-func fakeGetDefaultOCIRegistry(conf *action.Configuration) error {
-	return nil
 }
 
 func TestHelmHandlers_HandleHelmList(t *testing.T) {
