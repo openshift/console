@@ -21,10 +21,14 @@ export const confirmModal = (props) =>
 export const errorModal = (props) =>
   import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
 
-export const configureNamespacePullSecretModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
+export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
-  ).then((m) => m.configureNamespacePullSecretModal(props));
+  ).then((m) => ({
+    default: m.ConfigureNamespacePullSecretModalOverlay,
+  })),
+);
 
 export const labelsModalLauncher = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
