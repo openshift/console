@@ -1,6 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { act, screen, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
-import { act } from 'react-dom/test-utils';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as useToastModule from '@console/shared/src/components/toast/useToast';
 import * as useUserSettingsModule from '@console/shared/src/hooks/useUserSettings';

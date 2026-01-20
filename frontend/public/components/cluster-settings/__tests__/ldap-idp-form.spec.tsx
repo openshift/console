@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react';
+import { cleanup, screen, act } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -18,8 +18,10 @@ describe('Add Identity Provider: LDAP', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddLDAPPage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddLDAPPage />);
+    });
   });
 
   afterEach(() => {

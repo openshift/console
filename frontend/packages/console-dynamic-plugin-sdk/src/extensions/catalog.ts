@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentType } from 'react';
 import { ExtensionHook } from '../api/common-types';
 import { Extension, CodeRef } from '../types';
 
@@ -12,7 +12,7 @@ export type CatalogItemType = Extension<
     /** Title for the catalog item. */
     title: string;
     /** Description for the type specific catalog. */
-    catalogDescription?: string | CodeRef<ReactNode>;
+    catalogDescription?: string | CodeRef<ComponentType>;
     /** Description for the catalog item type. */
     typeDescription?: string;
     /** Determine if filter groups should be sorted alphabetically. Defaults to true. */

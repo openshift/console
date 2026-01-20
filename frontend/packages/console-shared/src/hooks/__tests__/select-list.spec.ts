@@ -1,4 +1,4 @@
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { data, visibleRows, onRowSelected } from '../__mocks__/select-list-data';
 import { useSelectList } from '../select-list';

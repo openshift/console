@@ -1,4 +1,4 @@
-import { cleanup, screen } from '@testing-library/react';
+import { cleanup, screen, act } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -18,8 +18,10 @@ describe('Add Identity Provider: OpenID Connect', () => {
     setupFileReaderMock();
   });
 
-  beforeEach(() => {
-    renderWithProviders(<AddOpenIDIDPPage />);
+  beforeEach(async () => {
+    await act(async () => {
+      renderWithProviders(<AddOpenIDIDPPage />);
+    });
   });
 
   afterEach(() => {

@@ -18,10 +18,12 @@ table in [Console dynamic plugins README](./README.md).
 
 - **Breaking**: Removed ability to load plugins that use legacy plugin manifest format ([CONSOLE-3769], [#15778])
 - **Breaking**: Removed `setPluginStore` function in `k8s-utils.ts` ([CONSOLE-3769], [#15778])
+- **Breaking**: Removed `useSafetyFirst` ([CONSOLE-5039], [#14869])
 - **Type breaking**: Removed `ExtensionDeclaration` from `types.ts`. Plugins should use `Extension` type instead ([CONSOLE-3769], [#15778])
 - **Type breaking**: Changed the default type parameters of `Extension<any>` to `Extension<string, AnyObject>` ([CONSOLE-3769], [#15778])
 - **Type breaking**: Fix inaccurate types in `console.topology/details/resource-link` and
   `console.topology/details/tab-section`. ([CONSOLE-4630], [#15893])
+- **Type breaking**: Fix inaccurate types in `console.catalog/item-type`. ([CONSOLE-4402], [#14869])
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630], [#15893])
 
 ## 4.21.0-prerelease.1 - 2025-12-04
@@ -158,6 +160,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4263]: https://issues.redhat.com/browse/CONSOLE-4263
 [CONSOLE-4269]: https://issues.redhat.com/browse/CONSOLE-4269
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
+[CONSOLE-4402]: https://issues.redhat.com/browse/CONSOLE-4402
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
 [CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
@@ -168,6 +171,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
+[CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -218,6 +222,7 @@ table in [Console dynamic plugins README](./README.md).
 [#14663]: https://github.com/openshift/console/pull/14663
 [#14863]: https://github.com/openshift/console/pull/14863
 [#14864]: https://github.com/openshift/console/pull/14864
+[#14869]: https://github.com/openshift/console/pull/14869
 [#14876]: https://github.com/openshift/console/pull/14876
 [#15017]: https://github.com/openshift/console/pull/15017
 [#15139]: https://github.com/openshift/console/pull/15139

@@ -1,8 +1,5 @@
-import {
-  ImpersonateKind,
-  impersonateStateToProps,
-  useSafetyFirst,
-} from '@console/dynamic-plugin-sdk';
+import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';

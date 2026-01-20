@@ -258,10 +258,19 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
+      // Open dropdown first
+      await act(async () => {
+        fireEvent.click(groupsInput);
+      });
+
+      // Wait for dropdown to open
+      await waitFor(() => {
+        expect(screen.getByText('developers')).toBeInTheDocument();
+      });
+
       // Type to filter
       await act(async () => {
         fireEvent.change(groupsInput, { target: { value: 'dev' } });
-        fireEvent.click(groupsInput);
       });
 
       await waitFor(() => {
@@ -283,9 +292,19 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
+      // Open dropdown first
+      await act(async () => {
+        fireEvent.click(groupsInput);
+      });
+
+      // Wait for dropdown to open
+      await waitFor(() => {
+        expect(screen.getByText('developers')).toBeInTheDocument();
+      });
+
+      // Type to filter with non-matching text
       await act(async () => {
         fireEvent.change(groupsInput, { target: { value: 'nonexistent' } });
-        fireEvent.click(groupsInput);
       });
 
       await waitFor(() => {

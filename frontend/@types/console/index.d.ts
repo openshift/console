@@ -1,3 +1,4 @@
+/// <reference path="./i18next.d.ts" />
 /// <reference path="./react.d.ts" />
 /// <reference path="./generated/graphql-queries.d.ts" />
 

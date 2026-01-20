@@ -27,7 +27,10 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useTranslation } from 'react-i18next';
@@ -122,7 +125,7 @@ const NoDataEmptyMsg = () => {
   );
 };
 
-const useUsersColumns = () => {
+const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
   const { t } = useTranslation();
   return useMemo(
     () => [

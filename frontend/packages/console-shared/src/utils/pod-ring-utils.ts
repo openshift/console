@@ -4,7 +4,8 @@ import { ChartLabel } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { ImpersonateKind, useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
 import {
   K8sResourceKind,

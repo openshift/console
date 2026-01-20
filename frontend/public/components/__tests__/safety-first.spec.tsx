@@ -1,9 +1,8 @@
-import type { FCC } from 'react';
-import { useState } from 'react';
+import type { FC } from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk';
+import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 
 type Props = {
   loader: () => Promise<void>;
@@ -11,48 +10,8 @@ type Props = {
 
 const warning = 'perform a React state update on an unmounted component.';
 
-describe('When calling setter from `useState()` hook in an unsafe React component', () => {
-  const Unsafe: FCC<Props> = (props) => {
-    const [inFlight, setInFlight] = useState(true);
-
-    const onClick = () => props.loader().then(() => setInFlight(false));
-
-    return <button onClick={onClick}>Load{inFlight ? 'ing...' : 'ed'}</button>;
-  };
-
-  it('throws warning when updating state after unmounting', async () => {
-    const consoleErrorSpy = jest.spyOn(global.console, 'error').mockImplementation(() => {});
-
-    const loader = () =>
-      new Promise<void>((resolve) => {
-        // Verify loading state is displayed
-        expect(screen.getByText('Loading...')).toBeInTheDocument();
-        resolve();
-      });
-
-    const { rerender } = renderWithProviders(<Unsafe loader={loader} />);
-
-    // Click the button to trigger the async operation
-    fireEvent.click(screen.getByRole('button', { name: /loading/i }));
-
-    // Unmount the component by rerendering with different content
-    rerender(<div data-test="unmounted" />);
-
-    // Wait for the async operation to complete and check for warning
-    await waitFor(() => {
-      expect(
-        consoleErrorSpy.mock.calls
-          .map((call) => call[0] as string)
-          .some((text) => text.includes(warning)),
-      ).toBe(true);
-    });
-
-    jest.restoreAllMocks();
-  });
-});
-
 describe('useSafetyFirst hook', () => {
-  const Safe: FCC<Props> = (props) => {
+  const Safe: FC<Props> = (props) => {
     const [inFlight, setInFlight] = useSafetyFirst(true);
 
     const onClick = () => props.loader().then(() => setInFlight(false));

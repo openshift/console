@@ -1,4 +1,4 @@
-import { act } from 'react-dom/test-utils';
+import { act } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { fetchK8s } from '@console/internal/graphql/client';
