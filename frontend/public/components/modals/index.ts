@@ -41,10 +41,14 @@ export const rollbackModal = (props) =>
     m.rollbackModal(props),
   );
 
-export const configureUpdateStrategyModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Update Strategy Modal
+export const LazyConfigureUpdateStrategyModalOverlay = lazy(() =>
   import(
     './configure-update-strategy-modal' /* webpackChunkName: "configure-update-strategy-modal" */
-  ).then((m) => m.configureUpdateStrategyModal(props));
+  ).then((m) => ({
+    default: m.ConfigureUpdateStrategyModalOverlay,
+  })),
+);
 
 export const annotationsModalLauncher = (props) =>
   import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModalLauncher(props));
