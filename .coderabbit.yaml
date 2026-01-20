@@ -75,12 +75,11 @@ knowledge_base:
     enabled: true
     filePatterns:
       # Repository documentation
+      - "AGENTS.md"
       - "ARCHITECTURE.md"
       - "CONVENTIONS.md"
       - "TESTING.md"
       - "STYLEGUIDE.md"
       - "CONTRIBUTING.md"
       - "README.md"
-      # AI context with project architecture and conventions
-      - ".ai/context.md"
-      - ".ai/README.md"
+      - "INTERNATIONALIZATION.md"
