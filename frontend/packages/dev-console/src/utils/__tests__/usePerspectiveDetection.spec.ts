@@ -1,5 +1,5 @@
+import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { usePerspectiveDetection } from '../perspective';
 
 jest.mock('react-redux', () => ({
@@ -13,12 +13,11 @@ describe('usePerspectiveDetection', () => {
       CAN_GET_NS: undefined,
     }));
 
-    testHook(() => {
-      const [enablePerspective, loading] = usePerspectiveDetection();
+    const { result } = renderHook(() => usePerspectiveDetection());
+    const [enablePerspective, loading] = result.current;
 
-      expect(enablePerspective).toBe(true);
-      expect(loading).toBe(true);
-    });
+    expect(enablePerspective).toBe(true);
+    expect(loading).toBe(true);
   });
 
   it('should return loading as false if CAN_GET_NS flag is loaded', () => {
@@ -26,11 +25,10 @@ describe('usePerspectiveDetection', () => {
       CAN_GET_NS: false,
     }));
 
-    testHook(() => {
-      const [enablePerspective, loading] = usePerspectiveDetection();
+    const { result } = renderHook(() => usePerspectiveDetection());
+    const [enablePerspective, loading] = result.current;
 
-      expect(enablePerspective).toBe(true);
-      expect(loading).toBe(false);
-    });
+    expect(enablePerspective).toBe(true);
+    expect(loading).toBe(false);
   });
 });

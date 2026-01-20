@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import {
   CatalogItemType,
   CatalogItemTypeMetadata,
@@ -5,7 +6,6 @@ import {
   CatalogItemFilter,
   CatalogItemMetadataProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import useCatalogExtensions from '../useCatalogExtensions';
 
 let mockExtensions: (
@@ -38,9 +38,9 @@ describe('useCatalogExtensions', () => {
         },
       },
     ];
-    const allExtensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[0];
+    const allExtensions = renderHook(() => useCatalogExtensions('test-catalog')).result.current[0];
     expect(allExtensions).toEqual([mockExtensions[0], mockExtensions[1]]);
-    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type2')).result
+    const extensions = renderHook(() => useCatalogExtensions('test-catalog', 'type2')).result
       .current[0];
     expect(extensions).toEqual([mockExtensions[1]]);
   });
@@ -105,7 +105,7 @@ describe('useCatalogExtensions', () => {
         },
       },
     ];
-    const catalogTypeExtensions = testHook(() => useCatalogExtensions('test-catalog')).result
+    const catalogTypeExtensions = renderHook(() => useCatalogExtensions('test-catalog')).result
       .current[0];
     expect(catalogTypeExtensions).toEqual([
       mockExtensions[0],
@@ -161,10 +161,10 @@ describe('useCatalogExtensions', () => {
       },
     ];
 
-    const allExtensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[1];
+    const allExtensions = renderHook(() => useCatalogExtensions('test-catalog')).result.current[1];
     expect(allExtensions).toEqual([mockExtensions[0], mockExtensions[1]]);
 
-    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type2')).result
+    const extensions = renderHook(() => useCatalogExtensions('test-catalog', 'type2')).result
       .current[1];
     expect(extensions).toEqual([mockExtensions[1]]);
   });
@@ -189,10 +189,10 @@ describe('useCatalogExtensions', () => {
       },
     ];
 
-    const allExtensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[2];
+    const allExtensions = renderHook(() => useCatalogExtensions('test-catalog')).result.current[2];
     expect(allExtensions).toEqual([mockExtensions[0], mockExtensions[1]]);
 
-    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type2')).result
+    const extensions = renderHook(() => useCatalogExtensions('test-catalog', 'type2')).result
       .current[2];
     expect(extensions).toEqual([mockExtensions[1]]);
   });
@@ -217,10 +217,10 @@ describe('useCatalogExtensions', () => {
       },
     ];
 
-    const allExtensions = testHook(() => useCatalogExtensions('test-catalog')).result.current[3];
+    const allExtensions = renderHook(() => useCatalogExtensions('test-catalog')).result.current[3];
     expect(allExtensions).toEqual([mockExtensions[0], mockExtensions[1]]);
 
-    const extensions = testHook(() => useCatalogExtensions('test-catalog', 'type2')).result
+    const extensions = renderHook(() => useCatalogExtensions('test-catalog', 'type2')).result
       .current[3];
     expect(extensions).toEqual([mockExtensions[1]]);
   });

@@ -1,10 +1,9 @@
-import { act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { checkAccess } from '@console/internal/components/utils';
 import {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
 } from '@console/internal/module/k8s';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAddActionsAccessReviews, AccessReviewStatus } from '../useAddActionsAccessReviews';
 
@@ -30,7 +29,7 @@ describe('useAddActionsAccessReviews', () => {
     const extensionsWithAccessReview = addActionExtensions.filter(
       (action) => !!action.properties.accessReview,
     );
-    const { result, rerender } = testHook(() =>
+    const { result, rerender } = renderHook(() =>
       useAddActionsAccessReviews(namespace, extensionsWithAccessReview),
     );
     await act(async () => {
@@ -45,7 +44,7 @@ describe('useAddActionsAccessReviews', () => {
     const extensionsWithoutAccessReview = addActionExtensions.filter(
       (action) => !action.properties.accessReview,
     );
-    const { result } = testHook(() =>
+    const { result } = renderHook(() =>
       useAddActionsAccessReviews(namespace, extensionsWithoutAccessReview),
     );
     const accessReviewResults = Object.values(result.current);
@@ -58,7 +57,7 @@ describe('useAddActionsAccessReviews', () => {
     const extensionsWithAccessReview = addActionExtensions.filter(
       (action) => !!action.properties.accessReview,
     );
-    const { result, rerender } = testHook(() =>
+    const { result, rerender } = renderHook(() =>
       useAddActionsAccessReviews(namespace, extensionsWithAccessReview),
     );
     await act(async () => {
@@ -84,7 +83,7 @@ describe('useAddActionsAccessReviews', () => {
       (resourceAttributes: AccessReviewResourceAttributes) =>
         createCheckAccessPromise(resourceAttributes.group === mockAccessGroup),
     );
-    const { result, rerender } = testHook(() =>
+    const { result, rerender } = renderHook(() =>
       useAddActionsAccessReviews(namespace, addActionExtensions),
     );
     await act(async () => {

@@ -1,9 +1,9 @@
+import { renderHook } from '@testing-library/react';
 import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/useActivePerspective';
 import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
 import { usePerspectives } from '@console/shared/src';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserSettingsCompatibility } from '../useUserSettingsCompatibility';
 
@@ -69,7 +69,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect default pins
     expect(result.current).toEqual([
@@ -88,7 +88,7 @@ describe('usePinnedResources', () => {
     // Mock user settings
     useUserSettingsCompatibilityMock.mockReturnValue([null, setPinnedResourcesMock, false]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect empty data and loaded=false
     expect(result.current).toEqual([[], expect.any(Function), false]);
@@ -104,7 +104,7 @@ describe('usePinnedResources', () => {
     usePerspectivesMock.mockClear();
     usePerspectivesMock.mockReturnValue([]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect empty array
     expect(result.current).toEqual([[], expect.any(Function), true]);
@@ -128,7 +128,7 @@ describe('usePinnedResources', () => {
       },
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect empty array
     expect(result.current).toEqual([[], expect.any(Function), true]);
@@ -148,7 +148,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Do not expect pins
     expect(result.current).toEqual([[], expect.any(Function), true]);
@@ -168,7 +168,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Do not expect pins
     expect(result.current).toEqual([
@@ -191,7 +191,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect default pins
     expect(result.current).toEqual([
@@ -215,7 +215,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect pins customized by the admin
     expect(result.current).toEqual([['apps~v1~Deployment'], expect.any(Function), true]);
@@ -235,7 +235,7 @@ describe('usePinnedResources', () => {
       true,
     ]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect pins from user settings
     expect(result.current).toEqual([
@@ -255,7 +255,7 @@ describe('usePinnedResources', () => {
     useActivePerspectiveMock.mockReturnValue(['dev']);
     useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
 
-    const { result } = testHook(() => usePinnedResources());
+    const { result } = renderHook(() => usePinnedResources());
 
     // Expect pins customized by the admin
     expect(result.current).toEqual([['core~~', 'core~v1~ConfigMap'], expect.any(Function), true]);

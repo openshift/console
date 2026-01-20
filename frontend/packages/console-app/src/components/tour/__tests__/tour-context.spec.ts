@@ -1,7 +1,7 @@
+import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { TourActions } from '../const';
 import { tourReducer, useTourValuesForContext, useTourStateForPerspective } from '../tour-context';
 import { TourDataType } from '../type';
@@ -104,20 +104,18 @@ describe('guided-tour-context', () => {
         () => null,
         true,
       ]);
-      testHook(() => {
-        const contextValue = useTourValuesForContext();
-        const { tourState, tour, totalSteps } = contextValue;
-        expect(tourState).toEqual({
-          startTour: true,
-          completedTour: false,
-          stepNumber: 0,
-        });
-        expect(tour).toEqual({
-          ...mockTour,
-          steps: [{ flags: ['A'], heading: 'g', content: 'h' }],
-        });
-        expect(totalSteps).toEqual(1);
+      const { result } = renderHook(() => useTourValuesForContext());
+      const { tourState, tour, totalSteps } = result.current;
+      expect(tourState).toEqual({
+        startTour: true,
+        completedTour: false,
+        stepNumber: 0,
       });
+      expect(tour).toEqual({
+        ...mockTour,
+        steps: [{ flags: ['A'], heading: 'g', content: 'h' }],
+      });
+      expect(totalSteps).toEqual(1);
     });
 
     it('should return tour null from the hook', () => {
@@ -130,13 +128,11 @@ describe('guided-tour-context', () => {
         () => null,
         true,
       ]);
-      testHook(() => {
-        const contextValue = useTourValuesForContext();
-        const { tourState, tour, totalSteps } = contextValue;
-        expect(tourState).toEqual(undefined);
-        expect(tour).toEqual(null);
-        expect(totalSteps).toEqual(undefined);
-      });
+      const { result } = renderHook(() => useTourValuesForContext());
+      const { tourState, tour, totalSteps } = result.current;
+      expect(tourState).toEqual(undefined);
+      expect(tour).toEqual(null);
+      expect(totalSteps).toEqual(undefined);
     });
 
     it('should return null from the hook if tour is available but data isnot loaded', () => {
@@ -150,13 +146,11 @@ describe('guided-tour-context', () => {
         () => null,
         false,
       ]);
-      testHook(() => {
-        const contextValue = useTourValuesForContext();
-        const { tourState, tour, totalSteps } = contextValue;
-        expect(tourState).toEqual(undefined);
-        expect(tour).toEqual(null);
-        expect(totalSteps).toEqual(undefined);
-      });
+      const { result } = renderHook(() => useTourValuesForContext());
+      const { tourState, tour, totalSteps } = result.current;
+      expect(tourState).toEqual(undefined);
+      expect(tour).toEqual(null);
+      expect(totalSteps).toEqual(undefined);
     });
   });
 
@@ -167,11 +161,10 @@ describe('guided-tour-context', () => {
         () => null,
         true,
       ]);
-      testHook(() => {
-        const [state, , loaded] = useTourStateForPerspective('dev');
-        expect(state).toEqual({ a: true });
-        expect(loaded).toEqual(true);
-      });
+      const { result } = renderHook(() => useTourStateForPerspective('dev'));
+      const [state, , loaded] = result.current;
+      expect(state).toEqual({ a: true });
+      expect(loaded).toEqual(true);
     });
   });
 });

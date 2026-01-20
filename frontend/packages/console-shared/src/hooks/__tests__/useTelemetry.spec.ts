@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import {
   useResolvedExtensions,
   ResolvedExtension,
@@ -8,7 +9,6 @@ import {
   USER_TELEMETRY_ANALYTICS,
   useUserSettings,
 } from '@console/shared';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import {
   getClusterProperties,
   updateClusterPropertiesFromTests,
@@ -159,7 +159,7 @@ describe('useTelemetry', () => {
       telemetry: { STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 1');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -177,7 +177,7 @@ describe('useTelemetry', () => {
       telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 2');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -195,7 +195,7 @@ describe('useTelemetry', () => {
       telemetry: { CLUSTER_TYPE: 'OSD', STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 3', { 'a-string': 'works fine', 'a-boolean': true });
     expect(listener).toHaveBeenCalledTimes(1);
@@ -219,7 +219,7 @@ describe('useTelemetry', () => {
       },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 4');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -241,7 +241,7 @@ describe('useTelemetry', () => {
       },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 5');
     expect(listener).toHaveBeenCalledTimes(0);
@@ -259,7 +259,7 @@ describe('useTelemetry', () => {
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 6');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -277,7 +277,7 @@ describe('useTelemetry', () => {
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 7');
     expect(listener).toHaveBeenCalledTimes(0);
@@ -295,7 +295,7 @@ describe('useTelemetry', () => {
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 8');
     expect(listener).toHaveBeenCalledTimes(1);
@@ -313,7 +313,7 @@ describe('useTelemetry', () => {
     };
     mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 9');
     expect(listener).toHaveBeenCalledTimes(0);
@@ -331,7 +331,7 @@ describe('useTelemetry', () => {
     };
     mockUserSettings.mockReturnValue(['', jest.fn(), true]);
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 10');
     expect(listener).toHaveBeenCalledTimes(0);
@@ -348,7 +348,7 @@ describe('useTelemetry', () => {
       },
     };
     updateClusterPropertiesFromTests();
-    const { result } = testHook(() => useTelemetry());
+    const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 11');
     expect(listener).toHaveBeenCalledTimes(1);
