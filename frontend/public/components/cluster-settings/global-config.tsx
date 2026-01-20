@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
@@ -90,7 +91,7 @@ const useConfigResources = () => {
   return [adjustedConfigResources, clusterOperatorConfigResources];
 };
 
-export const GlobalConfigPage: React.FCC = () => {
+export const GlobalConfigPage: FC = () => {
   const { t } = useTranslation();
   const [globalConfigs] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
   const [configResources, clusterOperatorConfigResources] = useConfigResources();

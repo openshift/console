@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -126,7 +127,7 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
   );
 };
 
-export const ConfigMaps: React.FCC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
+export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
   const columns = useConfigMapsColumns();
 
   return (
@@ -144,7 +145,7 @@ export const ConfigMaps: React.FCC<ConfigMapsProps> = ({ data, loaded, ...props 
   );
 };
 
-export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
+export const ConfigMapsPage: FC<ConfigMapsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/configmaps/~new/form`,
   };
@@ -160,7 +161,7 @@ export const ConfigMapsPage: React.FCC<ConfigMapsPageProps> = (props) => {
   );
 };
 
-export const ConfigMapsDetailsPage: React.FCC = (props) => {
+export const ConfigMapsDetailsPage: FC = (props) => {
   const { t } = useTranslation();
   const ConfigMapDetails = ({ obj: configMap }: { obj: ConfigMapKind }) => {
     return (

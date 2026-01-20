@@ -1,4 +1,4 @@
-import type { FormEvent, KeyboardEvent, Ref } from 'react';
+import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
 import { useState, useRef, useEffect, Fragment } from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -40,7 +40,7 @@ const blacklistResources = ImmutableSet([
   'events.k8s.io/v1beta1.Event',
 ]);
 
-const ResourceListDropdown_: React.FCC<ResourceListDropdownProps> = (props) => {
+const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, recentList, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);

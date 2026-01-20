@@ -1,4 +1,5 @@
+import type { FC } from 'react';
 import { Loading } from './Loading';
 
-export const LoadingInline: React.FCC = () => <Loading isInline />;
+export const LoadingInline: FC = () => <Loading isInline />;
 LoadingInline.displayName = 'LoadingInline';

@@ -171,7 +171,7 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
   );
 };
 
-export const ResourcePodCount: React.FCC<ResourcePodCountProps> = ({ resource }) => {
+export const ResourcePodCount: FC<ResourcePodCountProps> = ({ resource }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -203,9 +203,7 @@ export const RuntimeClass: FC<RuntimeClassProps> = ({ obj, path }) => {
   );
 };
 
-export const UpstreamConfigDetailsItem: React.FCC<UpstreamConfigDetailsItemProps> = ({
-  resource,
-}) => {
+export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ resource }) => {
   const { t } = useTranslation();
   const canUpgrade = useCanClusterUpgrade();
   return (

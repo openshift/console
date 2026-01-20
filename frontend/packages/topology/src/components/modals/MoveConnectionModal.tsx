@@ -127,7 +127,7 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
   );
 };
 
-const MoveConnectionModal: React.FC<MoveConnectionModalProps> = (props) => {
+const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
   const { edge, close } = props;
   const { t } = useTranslation();
   const [handlePromise] = usePromiseHandler();

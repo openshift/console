@@ -618,7 +618,7 @@ export const ResourcesEventStream = ({ filters, namespace }) => (
 
 /**
  * @typedef {import('@console/dynamic-plugin-sdk/src/extensions').ResourceEventStreamProps} ResourceEventStreamProps
- * @augments React.FC<ResourceEventStreamProps>
+ * @augments FC<ResourceEventStreamProps>
  */
 export const WrappedResourceEventStream = ({ resource }) => <ResourceEventStream_ obj={resource} />;
 

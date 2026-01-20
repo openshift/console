@@ -404,12 +404,7 @@ const getDataViewRows = (
   });
 };
 
-const MachineSetListContent: React.FCC<MachineSetListProps> = ({
-  data,
-  loaded,
-  loadError,
-  ...props
-}) => {
+const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
   const columns = useMachineSetColumns();
 
   return (
@@ -428,12 +423,7 @@ const MachineSetListContent: React.FCC<MachineSetListProps> = ({
   );
 };
 
-export const MachineSetList: React.FCC<MachineSetListProps> = ({
-  data,
-  loaded,
-  loadError,
-  ...props
-}) => {
+export const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
   const [machines] = useK8sWatchResource<MachineKind[]>(MachinesResource);
   const [nodes] = useK8sWatchResource<NodeKind[]>(NodesResource);
 

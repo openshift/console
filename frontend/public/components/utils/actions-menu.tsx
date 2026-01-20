@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
@@ -21,7 +22,7 @@ type ActionsMenuDropdownProps = {
   active?: boolean;
 };
 
-const ActionsMenuDropdown: React.FCC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
+const ActionsMenuDropdown: FC<ActionsMenuDropdownProps> = ({ actions, title, active }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(!!active);

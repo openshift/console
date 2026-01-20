@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, createRef } from 'react';
+import type { FC, ReactElement, JSXElementConstructor, MouseEvent } from 'react';
 import {
   Tabs,
   Tab,
@@ -36,7 +37,7 @@ import UserPreferenceForm from './UserPreferenceForm';
 import { getUserPreferenceGroups } from './utils/getUserPreferenceGroups';
 import './UserPreferencePage.scss';
 
-const UserPreferencePage: React.FC = () => {
+const UserPreferencePage: FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
 
@@ -61,20 +62,14 @@ const UserPreferencePage: React.FC = () => {
   const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = useMemo<
-    [
-      React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
-      React.ReactElement<TabContentProps>[],
-    ]
+    [ReactElement<TabProps, JSXElementConstructor<TabProps>>[], ReactElement<TabContentProps>[]]
   >(() => {
     const populatedUserPreferenceGroups: UserPreferenceTabGroup[] = getUserPreferenceGroups(
       sortedUserPreferenceGroups,
       sortedUserPreferenceItems,
     );
     const [tabs, tabContents] = populatedUserPreferenceGroups.reduce<
-      [
-        React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>[],
-        React.ReactElement<TabContentProps>[],
-      ]
+      [ReactElement<TabProps, JSXElementConstructor<TabProps>>[], ReactElement<TabContentProps>[]]
     >(
       (acc, currGroup) => {
         const { id, label, items } = currGroup;
@@ -123,7 +118,7 @@ const UserPreferencePage: React.FC = () => {
   }, [groupIdFromUrl, spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
 
   // utils and callbacks
-  const handleTabClick = (event: React.MouseEvent<HTMLElement>, eventKey: string) => {
+  const handleTabClick = (event: MouseEvent<HTMLElement>, eventKey: string) => {
     if (isModifiedEvent(event)) {
       return;
     }

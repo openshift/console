@@ -65,7 +65,7 @@ const DataListRow: FC<DataListRowProps> = ({
   </DataListItem>
 );
 
-const NamespaceColumnHelpText: React.FCC = () => {
+const NamespaceColumnHelpText: FC = () => {
   const { t } = useTranslation();
   return <>{t('public~The namespace column is only shown when in "All projects"')}</>;
 };

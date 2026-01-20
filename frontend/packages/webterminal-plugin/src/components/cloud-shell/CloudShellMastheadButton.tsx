@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
 import { css } from '@patternfly/react-styles';
@@ -7,7 +8,7 @@ import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dis
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import { useCloudShellAvailable } from './useCloudShellAvailable';
 
-export const CloudShellMastheadButton: React.FCC = () => {
+export const CloudShellMastheadButton: FC = () => {
   const terminalAvailable = useCloudShellAvailable();
   const fireTelemetryEvent = useTelemetry();
   const open = useIsCloudShellExpanded();

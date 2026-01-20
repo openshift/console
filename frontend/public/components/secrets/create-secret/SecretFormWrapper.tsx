@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useState, FormEvent } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -36,7 +37,7 @@ import {
 import { SecretSubForm } from './SecretSubForm';
 import { isBinary } from 'istextorbinary';
 
-export const SecretFormWrapper: React.FCC<BaseEditSecretProps_> = (props) => {
+export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
   const { formType, isCreate, modal, onCancel } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();

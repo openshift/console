@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { SecretStringData } from './types';
 
-export const BasicAuthSubform: React.FCC<BasicAuthSubformProps> = ({ onChange, stringData }) => {
+export const BasicAuthSubform: FC<BasicAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation();
 
   const handleUsernameChange = (_event: FormEvent<HTMLInputElement>, value: string) => {

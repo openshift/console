@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveList from '../ProgressiveList';
@@ -7,11 +7,11 @@ import ProgressiveListItem from '../ProgressiveListItem';
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
-const DummyComponent: React.FCC = () => <div>Dummy Component</div>;
-const BarComponent: React.FCC = () => <div>Bar Component</div>;
-const FooComponent: React.FCC = () => <div>Foo Component</div>;
+const DummyComponent: FC = () => <div>Dummy Component</div>;
+const BarComponent: FC = () => <div>Bar Component</div>;
+const FooComponent: FC = () => <div>Foo Component</div>;
 
-const Footer: React.FCC<{ children?: ReactNode }> = ({ children }) => {
+const Footer: FC<{ children?: ReactNode }> = ({ children }) => {
   return <div>Click on the names to access advanced options for {children}.</div>;
 };
 

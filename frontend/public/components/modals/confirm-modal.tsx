@@ -1,6 +1,6 @@
 import { Translation } from 'react-i18next';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-
+import type { ReactNode, FormEvent, FC } from 'react';
 import {
   createModalLauncher,
   ModalTitle,
@@ -10,25 +10,22 @@ import {
 } from '../factory/modal';
 
 interface ConfirmModalProps extends ModalComponentProps {
-  btnText?: string | React.ReactNode;
+  btnText?: string | ReactNode;
   btnTextKey?: string;
-  cancelText?: string | React.ReactNode;
+  cancelText?: string | ReactNode;
   cancelTextKey?: string;
-  executeFn: (
-    e?: React.FormEvent<EventTarget>,
-    opts?: { supressNotifications: boolean },
-  ) => Promise<any>;
-  message?: string | React.ReactNode;
+  executeFn: (e?: FormEvent<EventTarget>, opts?: { supressNotifications: boolean }) => Promise<any>;
+  message?: string | ReactNode;
   messageKey?: string;
-  title?: string | React.ReactNode;
+  title?: string | ReactNode;
   titleKey?: string;
   submitDanger?: boolean;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
+const ConfirmModal: FC<ConfirmModalProps> = (props) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     handlePromise(

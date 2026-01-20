@@ -458,7 +458,7 @@ const pathToArray = (path: string): (string | number)[] =>
     return /^\d+$/.test(subPath) ? _.parseInt(subPath) : subPath;
   });
 
-const FieldGroup: React.FCC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
+const FieldGroup: FC<FieldGroupProps> = ({ children, isExpanded = false, id, label }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
 
   const onToggle = (event) => {

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import type { FC, Ref } from 'react';
 import {
   Alert,
   EmptyState,
@@ -14,6 +15,7 @@ import {
   SelectOption,
   Switch,
   Banner,
+  SelectProps,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
@@ -43,7 +45,7 @@ type NodeLogsProps = {
 
 type LogControlsProps = {
   onTogglePath: () => void;
-  onChangePath: (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => void;
+  onChangePath: SelectProps['onSelect'];
   path: string;
   isPathOpen: boolean;
   setPathOpen: (value: boolean) => void;
@@ -54,7 +56,7 @@ type LogControlsProps = {
   isLoadingFilenames: boolean;
   logFilenamesExist: boolean;
   onToggleFilename: () => void;
-  onChangeFilename: (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => void;
+  onChangeFilename: SelectProps['onSelect'];
   setFilenameOpen: (value: boolean) => void;
   logFilename: string;
   isFilenameOpen: boolean;
@@ -64,7 +66,7 @@ type LogControlsProps = {
   showSearch: boolean;
 };
 
-const LogControls: React.FC<LogControlsProps> = ({
+const LogControls: FC<LogControlsProps> = ({
   onTogglePath,
   onChangePath,
   path,
@@ -108,7 +110,7 @@ const LogControls: React.FC<LogControlsProps> = ({
             onSelect={onChangePath}
             selected={path}
             isOpen={isPathOpen}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            toggle={(toggleRef: Ref<MenuToggleElement>) => (
               <MenuToggle
                 ref={toggleRef}
                 onClick={onTogglePath}
@@ -135,7 +137,7 @@ const LogControls: React.FC<LogControlsProps> = ({
                   selected={logFilename}
                   isOpen={isFilenameOpen}
                   className="co-node-logs__log-select"
-                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                  toggle={(toggleRef: Ref<MenuToggleElement>) => (
                     <MenuToggle ref={toggleRef} onClick={onToggleFilename} data-test="select-file">
                       {logFilename || t('public~Select a log file')}
                     </MenuToggle>
@@ -169,14 +171,14 @@ const LogControls: React.FC<LogControlsProps> = ({
   );
 };
 
-const HeaderBanner: React.FCC<{ lineCount: number }> = ({ lineCount }) => {
+const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
   const { t } = useTranslation('public');
   const count = lineCount === 0 ? lineCount : lineCount - 1;
   const headerText = t('{{count}} line', { count });
   return <Banner>{headerText}</Banner>;
 };
 
-const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
+const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const {
     kind,
     metadata: { labels, name, namespace: ns },
@@ -192,30 +194,30 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
   const unitQueryArgument = 'unit';
   const logQueryArgument = 'log';
 
-  const [path, setPath] = React.useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
-  const [logURL, setLogURL] = React.useState('');
-  const [logFilenames, setLogFilenames] = React.useState([]);
-  const [unit, setUnit] = React.useState(getQueryArgument(unitQueryArgument));
-  const [logFilename, setLogFilename] = React.useState(getQueryArgument(logQueryArgument));
-  const [isLoadingLog, setLoadingLog] = React.useState(true);
-  const [isLoadingFilenames, setLoadingFilenames] = React.useState(true);
-  const [error, setError] = React.useState('');
-  const [isPathOpen, setPathOpen] = React.useState(false);
-  const [isFilenameOpen, setFilenameOpen] = React.useState(false);
-  const [content, setContent] = React.useState('');
-  const [trimmedContent, setTrimmedContent] = React.useState('');
-  const [lineCount, setLineCount] = React.useState(0);
+  const [path, setPath] = useState(getQueryArgument(pathQueryArgument) || pathItems[0]);
+  const [logURL, setLogURL] = useState('');
+  const [logFilenames, setLogFilenames] = useState([]);
+  const [unit, setUnit] = useState(getQueryArgument(unitQueryArgument));
+  const [logFilename, setLogFilename] = useState(getQueryArgument(logQueryArgument));
+  const [isLoadingLog, setLoadingLog] = useState(true);
+  const [isLoadingFilenames, setLoadingFilenames] = useState(true);
+  const [error, setError] = useState('');
+  const [isPathOpen, setPathOpen] = useState(false);
+  const [isFilenameOpen, setFilenameOpen] = useState(false);
+  const [content, setContent] = useState('');
+  const [trimmedContent, setTrimmedContent] = useState('');
+  const [lineCount, setLineCount] = useState(0);
   const [isWrapLines, setWrapLines] = useUserSettings<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
     true,
   );
   const { t } = useTranslation();
-  const theme = React.useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   const isJournal = path === 'journal';
 
-  const fetchLog = React.useCallback(
+  const fetchLog = useCallback(
     (url: string) => {
       coFetch(url)
         .then((response) => response.text())
@@ -241,7 +243,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     urlObj.searchParams.set('tailLines', MAX_LINE_COUNT.toString());
     return urlObj.toString();
   };
-  const getLogURL = React.useCallback(
+  const getLogURL = useCallback(
     (ext?: string, unitText?: string) => {
       const baseURL = `proxy/logs/${path}`;
       let extendedURL;
@@ -260,7 +262,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     [kind, name, ns, path],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!path || isJournal) {
       const journalLogURL = getLogURL('', unit);
       setLogURL(journalLogURL);
@@ -292,13 +294,13 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     }
   }, [kind, name, ns, path, isJournal, isWindows, logFilename, getLogURL, t, unit]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (logURL) {
       fetchLog(addTailLinesToURL(logURL));
     }
   }, [logURL, fetchLog]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (content.length > MAX_LINE_LENGTH) {
       const index = content.indexOf('\n', content.length - MAX_LINE_LENGTH);
       const newTrimmedContent = content.substr(index + 1);
@@ -310,7 +312,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
     }
   }, [content]);
 
-  const onChangePath = (event: React.MouseEvent<Element, MouseEvent>, newAPI: string) => {
+  const onChangePath: SelectProps['onSelect'] = (event, newAPI: string) => {
     event.preventDefault();
     setPathOpen(false);
     setPath(newAPI);
@@ -330,7 +332,7 @@ const NodeLogs: React.FC<NodeLogsProps> = ({ obj: node }) => {
       ? removeQueryArgument(unitQueryArgument)
       : setQueryArgument(unitQueryArgument, value);
   };
-  const onChangeFilename = (event: React.MouseEvent<Element, MouseEvent>, newFilename: string) => {
+  const onChangeFilename: SelectProps['onSelect'] = (event, newFilename: string) => {
     event.preventDefault();
     setFilenameOpen(false);
     setLogFilename(newFilename);

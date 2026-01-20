@@ -136,7 +136,7 @@ const ControlPlaneMachineSetCounts: FC<ControlPlaneMachineSetCountsProps> = ({ r
   );
 };
 
-const ControlPlaneMachineSetDetails: React.FCC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
+const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -259,11 +259,7 @@ const useControlPlaneMachineSetColumns = (): TableColumn<ControlPlaneMachineSetK
   return columns;
 };
 
-export const MachinesCell: React.FCC<MachinesCellProps> = ({
-  desiredReplicas,
-  readyReplicas,
-  path,
-}) => {
+export const MachinesCell: FC<MachinesCellProps> = ({ desiredReplicas, readyReplicas, path }) => {
   const { t } = useTranslation();
   return (
     <Link to={`${path}/machines`}>

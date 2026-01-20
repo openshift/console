@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
@@ -11,7 +12,7 @@ import {
   newPullSecretCredential,
 } from './utils';
 
-export const PullSecretCredentialsForm: React.FCC<PullSecretCredentialsFormProps> = ({
+export const PullSecretCredentialsForm: FC<PullSecretCredentialsFormProps> = ({
   onChange,
   stringData,
   onError,

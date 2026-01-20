@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 
@@ -9,11 +10,7 @@ import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
-export const ResourceIcon: React.FCC<ResourceIconProps> = ({
-  className,
-  groupVersionKind,
-  kind,
-}) => {
+export const ResourceIcon: FC<ResourceIconProps> = ({ className, groupVersionKind, kind }) => {
   // if no kind or groupVersionKind, return null so an empty icon isn't rendered
   if (!kind && !groupVersionKind) {
     return null;
@@ -49,7 +46,7 @@ export type ResourceNameProps = {
   name: string;
 };
 
-export const ResourceName: React.FCC<ResourceNameProps> = (props) => (
+export const ResourceName: FC<ResourceNameProps> = (props) => (
   <span className="co-resource-item">
     <ResourceIcon kind={props.kind} />{' '}
     <span className="co-resource-item__resource-name">{props.name}</span>

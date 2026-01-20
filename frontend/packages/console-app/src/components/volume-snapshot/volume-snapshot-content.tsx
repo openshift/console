@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -153,7 +154,7 @@ const useVolumeSnapshotContentColumns = (): TableColumn<VolumeSnapshotContentKin
   return columns;
 };
 
-const VolumeSnapshotContentTable: React.FCC<VolumeSnapshotContentTableProps> = ({
+const VolumeSnapshotContentTable: FC<VolumeSnapshotContentTableProps> = ({
   data,
   loaded,
   ...props
@@ -175,7 +176,7 @@ const VolumeSnapshotContentTable: React.FCC<VolumeSnapshotContentTableProps> = (
   );
 };
 
-const VolumeSnapshotContentPage: React.FCC<VolumeSnapshotContentPageProps> = ({
+const VolumeSnapshotContentPage: FC<VolumeSnapshotContentPageProps> = ({
   showTitle = true,
   canCreate = true,
 }) => {

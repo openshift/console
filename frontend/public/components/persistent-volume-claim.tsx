@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import i18next, { TFunction } from 'i18next';
@@ -102,7 +103,7 @@ const getVACAlertState = (pvc: PersistentVolumeClaimKind) => {
   return { hasVacErrorCondition, isVacPending };
 };
 
-export const PVCStatusComponent: React.FCC<PVCStatusProps> = ({ pvc }) => {
+export const PVCStatusComponent: FC<PVCStatusProps> = ({ pvc }) => {
   const { t } = useTranslation();
   const [pvcStatusExtensions, resolved] = useResolvedExtensions<PVCStatus>(isPVCStatus);
 
@@ -256,7 +257,7 @@ const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKin
   return columns;
 };
 
-const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
+const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   const flags = useFlag(FLAGS.CAN_LIST_PV);
   const { t } = useTranslation();
 
@@ -508,7 +509,7 @@ const PVCDetails: React.FCC<PVCDetailsProps> = ({ obj: pvc }) => {
   );
 };
 
-export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps> = ({
+export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   data,
   loaded,
   ...props
@@ -588,7 +589,7 @@ export const PersistentVolumeClaimList: React.FCC<PersistentVolumeClaimListProps
   );
 };
 
-export const PersistentVolumeClaimsPage: React.FCC<PersistentVolumeClaimsPageProps> = ({
+export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = ({
   namespace,
   ...props
 }) => {
@@ -655,7 +656,7 @@ export const PersistentVolumeClaimsPage: React.FCC<PersistentVolumeClaimsPagePro
   );
 };
 
-export const PersistentVolumeClaimsDetailsPage: React.FCC<DetailsPageProps> = (props) => {
+export const PersistentVolumeClaimsDetailsPage: FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
 
   const customActionMenu = (kindObj, obj) => {

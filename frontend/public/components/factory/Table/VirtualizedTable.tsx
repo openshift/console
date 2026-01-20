@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -60,12 +61,7 @@ const isColumnVisible = <D extends any>(
   return true;
 };
 
-export const TableData: React.FCC<TableDataProps> = ({
-  className,
-  id,
-  activeColumnIDs,
-  children,
-}) =>
+export const TableData: FC<TableDataProps> = ({ className, id, activeColumnIDs, children }) =>
   (activeColumnIDs.has(id) || id === '') && (
     <Td data-label={id} className={className} role="gridcell">
       {children}

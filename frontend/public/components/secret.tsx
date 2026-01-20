@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -95,7 +96,7 @@ const getDataViewRows: GetDataViewRows<SecretKind> = (data, columns) => {
   });
 };
 
-const SecretDetails: React.FCC<{ obj: SecretKind }> = ({ obj }) => {
+const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
   const { t } = useTranslation();
   const { data, type } = obj;
   return (
@@ -179,7 +180,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
   return columns;
 };
 
-const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) => {
+const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
   const columns = useSecretsColumns();
 
   return (
@@ -198,7 +199,7 @@ const SecretsList: React.FCC<SecretsListProps> = ({ data, loaded, ...props }) =>
 };
 SecretsList.displayName = 'SecretsList';
 
-const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
+const SecretsPage: FC<SecretsPageProps> = (props) => {
   const { t } = useTranslation();
   const createItems = {
     generic: t('public~Key/value secret'),
@@ -260,7 +261,7 @@ const SecretsPage: React.FCC<SecretsPageProps> = (props) => {
   );
 };
 
-const SecretsDetailsPage: React.FCC<SecretDetailsPageProps> = (props) => {
+const SecretsDetailsPage: FC<SecretDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name: secretName, namespace, kindObj } = props;
 

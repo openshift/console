@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { CombinedErrorDetails } from './log-snippet-types';
 import LogSnippetFromPod from './LogSnippetFromPod';
 
@@ -8,7 +8,7 @@ type LogSnippetBlockProps = {
   namespace: string;
 };
 
-const LogSnippetBlock: React.FCC<LogSnippetBlockProps> = ({ children, logDetails, namespace }) => {
+const LogSnippetBlock: FC<LogSnippetBlockProps> = ({ children, logDetails, namespace }) => {
   return 'podName' in logDetails ? (
     <LogSnippetFromPod
       containerName={logDetails.containerName}

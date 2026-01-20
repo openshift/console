@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useContext, useCallback, useEffect } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -7,7 +8,7 @@ import { getProjectResource, BuilderImagesNamespace } from '../../../utils/image
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamNsDropdown: React.FCC<{
+const ImageStreamNsDropdown: FC<{
   disabled?: boolean;
   formContextField?: string;
   className?: string;

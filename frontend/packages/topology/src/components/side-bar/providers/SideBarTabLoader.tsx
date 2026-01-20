@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { Tab } from '@console/internal/components/utils';
 import SideBarTabHookResolver from './SideBarTabHookResolver';
@@ -10,7 +10,7 @@ type SideBarTabLoaderProps = {
   children: (tabs: Tab[], loaded: boolean) => ReactElement;
 };
 
-const SideBarTabLoader: React.FCC<SideBarTabLoaderProps> = ({ element, children }) => {
+const SideBarTabLoader: FC<SideBarTabLoaderProps> = ({ element, children }) => {
   const tabExtensions = useDetailsTab();
   const [tabSectionExtensions, tabSectionExtensionsResolved] = useDetailsTabSection();
 

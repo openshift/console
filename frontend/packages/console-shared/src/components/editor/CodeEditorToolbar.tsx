@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { MagicIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,7 @@ import { ActionType } from '@console/internal/reducers/ols';
 import { useOLSConfig } from '@console/shared/src/hooks/ols-hook';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
-export const AskOpenShiftLightspeedButton: React.FCC = () => {
+export const AskOpenShiftLightspeedButton: FC = () => {
   const { t } = useTranslation('console-shared');
   const openOLS = () => action(ActionType.OpenOLS);
   const showLightspeedButton = useOLSConfig();
@@ -28,7 +29,7 @@ export const AskOpenShiftLightspeedButton: React.FCC = () => {
   ) : null;
 };
 
-export const CodeEditorToolbar: React.FCC<CodeEditorToolbarProps> = ({ toolbarLinks }) => {
+export const CodeEditorToolbar: FC<CodeEditorToolbarProps> = ({ toolbarLinks }) => {
   if (!toolbarLinks?.length) return null;
 
   return (

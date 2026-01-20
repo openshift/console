@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useContext, useRef, useEffect, useMemo } from 'react';
 import {
   WatchK8sResources,
@@ -18,7 +19,7 @@ interface DataModelExtensionProps {
   pluginID: string;
 }
 
-const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory, pluginID }) => {
+const DataModelExtension: FC<DataModelExtensionProps> = ({ dataModelFactory, pluginID }) => {
   const dataModelContext = useContext<ExtensibleModel>(ModelContext);
   const {
     id,

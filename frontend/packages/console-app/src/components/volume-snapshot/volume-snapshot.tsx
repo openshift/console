@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
@@ -212,7 +213,7 @@ const useVolumeSnapshotColumns = (
   return columns;
 };
 
-const VolumeSnapshotTable: React.FCC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
+const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const canListVSC = useFlag(FLAGS.CAN_LIST_VSC);
 
@@ -292,7 +293,7 @@ const VolumeSnapshotTable: React.FCC<VolumeSnapshotTableProps> = ({ data, loaded
   );
 };
 
-export const VolumeSnapshotPage: React.FCC<VolumeSnapshotPageProps> = ({
+export const VolumeSnapshotPage: FC<VolumeSnapshotPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,
@@ -340,7 +341,7 @@ const checkPVCSnapshot = (
       getNamespace(snapshot) === getNamespace(pvc),
   );
 
-export const VolumeSnapshotPVCPage: React.FCC<VolumeSnapshotPVCPage> = ({ ns, obj }) => {
+export const VolumeSnapshotPVCPage: FC<VolumeSnapshotPVCPage> = ({ ns, obj }) => {
   const params = useParams();
   const namespace = ns || params?.ns;
 

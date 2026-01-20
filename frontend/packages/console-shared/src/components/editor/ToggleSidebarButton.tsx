@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { CodeEditorControl, CodeEditorControlProps } from '@patternfly/react-code-editor';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +26,7 @@ interface ToggleSidebarButtonProps extends Partial<CodeEditorControlProps> {
   alignToEnd?: boolean;
 }
 
-export const ToggleSidebarButton: React.FCC<ToggleSidebarButtonProps> = ({
+export const ToggleSidebarButton: FC<ToggleSidebarButtonProps> = ({
   isSidebarOpen,
   toggleSidebar,
   alignToEnd = false,

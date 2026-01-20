@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Fragment, Suspense } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
@@ -99,11 +100,7 @@ export const getMostRecentBuilderTag = (imageStream: K8sResourceKind) => {
 // - It has a corresponding status tag
 export const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
 
-const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
-  imageStream,
-  specTag,
-  statusTag,
-}) => {
+const ImageStreamTagsRow: FC<ImageStreamTagsRowProps> = ({ imageStream, specTag, statusTag }) => {
   const imageStreamStatus = _.get(imageStream, 'status');
   const latest = _.get(statusTag, ['items', 0]);
   const from = _.get(specTag, 'from');
@@ -165,7 +162,7 @@ const ImageStreamTagsRow: React.FCC<ImageStreamTagsRowProps> = ({
   );
 };
 
-export const ExampleDockerCommandPopover: React.FCC<ImageStreamManipulationHelpProps> = ({
+export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> = ({
   imageStream,
   tag,
 }) => {
@@ -222,7 +219,7 @@ export const ExampleDockerCommandPopover: React.FCC<ImageStreamManipulationHelpP
   );
 };
 
-export const ImageStreamsDetails: React.FCC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
+export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
   const { t } = useTranslation();
 
   const getImportErrors = (): string[] => {
@@ -316,7 +313,7 @@ export const ImageStreamsDetails: React.FCC<ImageStreamsDetailsProps> = ({ obj: 
   );
 };
 
-const ImageStreamHistory: React.FCC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
+const ImageStreamHistory: FC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
   const imageStreamStatusTags = _.get(imageStream, 'status.tags');
   return (
     <ImageStreamTimeline
@@ -333,7 +330,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamHistory),
 ];
-export const ImageStreamsDetailsPage: React.FCC = (props) => (
+export const ImageStreamsDetailsPage: FC = (props) => (
   <DetailsPage {...props} kind={referenceForModel(ImageStreamModel)} pages={pages} />
 );
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
@@ -431,7 +428,7 @@ const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-export const ImageStreamsList: React.FCC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
+export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
   const columns: TableColumn<K8sResourceKind>[] = useImageStreamColumns();
 
   return (
@@ -453,7 +450,7 @@ ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const buildPhase = (build) => build.status.phase;
 
-export const ImageStreamsPage: React.FCC<ImageStreamsPageProps> = (props) => {
+export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ListPage

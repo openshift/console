@@ -1,3 +1,4 @@
+import type { FC, ReactNode, ComponentType } from 'react';
 import {
   isResourceActionProvider,
   ResourceActionProvider,
@@ -10,7 +11,6 @@ import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHe
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import type { ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +38,7 @@ export const ResourceItemDeleting = () => {
   );
 };
 
-export const ActionButtons: React.FCC<ActionButtonsProps> = ({ actionButtons }) => (
+export const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
   <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
@@ -192,7 +192,7 @@ export const ConnectedPageHeading = connectToModel(
   },
 );
 
-export const SectionHeading: React.FCC<SectionHeadingProps> = ({
+export const SectionHeading: FC<SectionHeadingProps> = ({
   text,
   children,
   style,
@@ -211,7 +211,7 @@ export const SectionHeading: React.FCC<SectionHeadingProps> = ({
   </SecondaryHeading>
 );
 
-export const SidebarSectionHeading: React.FCC<SidebarSectionHeadingProps> = ({
+export const SidebarSectionHeading: FC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,

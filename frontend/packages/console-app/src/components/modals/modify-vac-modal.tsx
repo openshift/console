@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState } from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -13,11 +14,7 @@ import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const ModifyVACModalComponent: React.FCC<ModifyVACModalComponentProps> = ({
-  resource,
-  close,
-  cancel,
-}) => {
+const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, close, cancel }) => {
   const { t } = useTranslation();
   const [volumeAttributesClass, setVolumeAttributesClass] = useState(
     resource?.spec?.volumeAttributesClassName || '',
@@ -74,7 +71,7 @@ const ModifyVACModalComponent: React.FCC<ModifyVACModalComponentProps> = ({
   );
 };
 
-export const ModifyVACModal: React.FC<ModifyVACModalProps> = ({ closeOverlay, resource }) => {
+export const ModifyVACModal: FC<ModifyVACModalProps> = ({ closeOverlay, resource }) => {
   return (
     <ModalWrapper blocking onClose={closeOverlay}>
       <ModifyVACModalComponent close={closeOverlay} cancel={closeOverlay} resource={resource} />

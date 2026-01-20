@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useCallback } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
@@ -11,7 +12,7 @@ import './NamespaceSection.scss';
 
 type NamespaceSectionProps = WithFlagsProps;
 
-const NamespaceSection: React.FCC<NamespaceSectionProps> = ({ flags }) => {
+const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
   const canCreateNs = flags[FLAGS.CAN_CREATE_NS];
   const canCreateProject = flags[FLAGS.CAN_CREATE_PROJECT];
   const canCreate = canCreateNs || canCreateProject;

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -40,7 +41,7 @@ import { WorkloadTableHeader, getWorkloadDataViewRows, useWorkloadColumns } from
 
 const kind = referenceForModel(DeploymentModel);
 
-export const DeploymentDetailsList: React.FCC<DeploymentDetailsListProps> = ({ deployment }) => {
+export const DeploymentDetailsList: FC<DeploymentDetailsListProps> = ({ deployment }) => {
   const { t } = useTranslation();
   return (
     <DescriptionList>
@@ -95,7 +96,7 @@ export const DeploymentDetailsList: React.FCC<DeploymentDetailsListProps> = ({ d
 };
 DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
-const DeploymentDetails: React.FCC<DeploymentDetailsProps> = ({ obj: deployment }) => {
+const DeploymentDetails: FC<DeploymentDetailsProps> = ({ obj: deployment }) => {
   const { t } = useTranslation();
 
   return (
@@ -158,7 +159,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicaSetsTab: React.FCC<ReplicaSetsTabProps> = ({ obj }) => {
+const ReplicaSetsTab: FC<ReplicaSetsTabProps> = ({ obj }) => {
   const {
     metadata: { namespace },
     spec: { selector },
@@ -175,7 +176,7 @@ const ReplicaSetsTab: React.FCC<ReplicaSetsTabProps> = ({ obj }) => {
   );
 };
 
-export const DeploymentsDetailsPage: React.FCC = (props) => {
+export const DeploymentsDetailsPage: FC = (props) => {
   const prometheusIsAvailable = usePrometheusGate();
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
@@ -224,7 +225,7 @@ const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentModel);
 };
 
-export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
+export const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
   const columns = useWorkloadColumns<DeploymentKind>();
 
   return (
@@ -242,7 +243,7 @@ export const DeploymentsList: React.FCC<DeploymentsListProps> = ({ data, loaded,
 };
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: React.FCC<DeploymentsPageProps> = (props) => {
+export const DeploymentsPage: FC<DeploymentsPageProps> = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/deployments/~new/form`,
   };

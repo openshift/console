@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { GroupVersionKind, kindForReference } from '@console/internal/module/k8s';
@@ -9,7 +9,7 @@ type ModelStatusBoxProps = {
   children?: ReactNode;
 };
 
-const ModelStatusBox: React.FCC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
+const ModelStatusBox: FC<ModelStatusBoxProps> = ({ groupVersionKind, children }) => {
   const { t } = useTranslation();
   const [model, inFlight] = useK8sModel(groupVersionKind);
 

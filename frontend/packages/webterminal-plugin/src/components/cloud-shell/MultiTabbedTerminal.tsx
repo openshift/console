@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Tabs, Tab } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +14,7 @@ interface MultiTabbedTerminalProps {
   onClose?: () => void;
 }
 
-export const MultiTabbedTerminal: React.FCC<MultiTabbedTerminalProps> = ({ onClose }) => {
+export const MultiTabbedTerminal: FC<MultiTabbedTerminalProps> = ({ onClose }) => {
   const [terminalTabs, setTerminalTabs] = useState<number[]>([1]);
   const [activeTabKey, setActiveTabKey] = useState<number>(1);
   const [tickNamespace, setTickNamespace] = useState<string>(null);

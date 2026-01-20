@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useState, useEffect, useCallback, createContext } from 'react';
 import { useUserSettingsCompatibility } from '@console/shared';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
@@ -76,7 +76,7 @@ interface FilterProviderProps {
   children?: ReactNode;
 }
 
-export const FilterProvider: React.FCC<FilterProviderProps> = ({ children }) => {
+export const FilterProvider: FC<FilterProviderProps> = ({ children }) => {
   const [filters, appliedFilters, loaded, setTopologyFilters] = useFilterContextValues();
   return (
     <FilterContext.Provider value={{ filters, appliedFilters, setTopologyFilters }}>

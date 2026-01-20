@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
@@ -48,7 +49,7 @@ type PodConnectProps = {
   infoMessage?: React.ReactNode;
 };
 
-export const PodConnect: React.FCC<PodConnectProps> = ({
+export const PodConnect: FC<PodConnectProps> = ({
   obj,
   attach,
   initialContainer,

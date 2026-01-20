@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import {
   Button,
@@ -58,7 +59,7 @@ const MAX_ANNOTATION_LENGTH = 262144 - 2048;
  */
 const MAX_UPLOAD_SIZE = Math.floor((3 * (MAX_ANNOTATION_LENGTH - 700)) / 4);
 
-export const CustomIconModal: React.FCC<CustomIconModalProps> = ({
+export const CustomIconModal: FC<CustomIconModalProps> = ({
   isModalOpen,
   setModalOpen,
   customIcon,

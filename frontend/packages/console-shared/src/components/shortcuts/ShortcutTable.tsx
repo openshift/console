@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 
 interface ShortcutTableProps {
   children?: ReactNode;
 }
 
-const ShortcutTable: React.FCC<ShortcutTableProps> = ({ children }) => (
+const ShortcutTable: FC<ShortcutTableProps> = ({ children }) => (
   <table>
     <tbody>{children}</tbody>
   </table>

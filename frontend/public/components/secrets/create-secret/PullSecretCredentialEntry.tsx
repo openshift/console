@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
@@ -13,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
-export const PullSecretCredentialEntry: React.FCC<PullSecretCredentialEntryProps> = ({
+export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   id,
   address,
   email,

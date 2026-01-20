@@ -1,5 +1,5 @@
+import type { FC, ReactElement } from 'react';
 import * as _ from 'lodash';
-import type { ReactElement } from 'react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
@@ -52,7 +52,7 @@ export interface ListDropdownProps {
   loadError?: boolean;
 }
 
-const ListDropdown_: React.FCC<ListDropdownProps> = ({
+const ListDropdown_: FC<ListDropdownProps> = ({
   desc,
   placeholder,
   loaded,
@@ -196,7 +196,7 @@ const ListDropdown_: React.FCC<ListDropdownProps> = ({
   );
 };
 
-export const ListDropdown: React.FCC<ListDropdownProps> = (props) => {
+export const ListDropdown: FC<ListDropdownProps> = (props) => {
   const resources = _.map(props.resources, (resource) =>
     _.assign({ isList: true, prop: resource.kind }, resource),
   );
@@ -222,7 +222,7 @@ export const useProjectOrNamespaceModel = (): [K8sModel, boolean] | [] => {
   return [model, canCreate];
 };
 
-export const NsDropdown: React.FCC<ListDropdownProps> = (props) => {
+export const NsDropdown: FC<ListDropdownProps> = (props) => {
   const { t } = useTranslation();
   const createNamespaceModal = useCreateNamespaceModal();
   const createProjectModal = useCreateProjectModal();

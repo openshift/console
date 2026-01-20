@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { ConsoleEmptyState } from '../empty-state';
 import { Loading } from './Loading';
 
@@ -17,7 +17,7 @@ interface LoadingBoxProps {
   children?: ReactNode;
 }
 
-export const LoadingBox: React.FCC<LoadingBoxProps> = ({ blame = 'LoadingBox', children }) => {
+export const LoadingBox: FC<LoadingBoxProps> = ({ blame = 'LoadingBox', children }) => {
   return (
     <ConsoleEmptyState
       data-test="loading-box"

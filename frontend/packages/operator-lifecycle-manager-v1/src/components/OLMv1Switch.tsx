@@ -1,4 +1,5 @@
 import { useCallback, FormEvent } from 'react';
+import type { FC } from 'react';
 import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,7 @@ import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
  * Uses user settings to persist the toggle state.
  */
-export const OLMv1Switch: React.FC = () => {
+export const OLMv1Switch: FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(

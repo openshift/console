@@ -13,7 +13,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
@@ -60,7 +60,7 @@ interface ConfigureNamespacePullSecretProps extends ModalComponentProps {
   pullSecret?: K8sResourceKind;
 }
 
-const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> = (props) => {
+const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (props) => {
   const { namespace, cancel, close } = props;
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
@@ -69,11 +69,11 @@ const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> 
   const [fileData, setFileData] = useState<string | null>(null);
   const [invalidJson, setInvalidJson] = useState(false);
 
-  const onMethodChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onMethodChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setMethod(event.target.value as 'form' | 'upload');
   }, []);
 
-  const onFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setInvalidJson(false);
     setFileData(null);
 
@@ -98,7 +98,7 @@ const ConfigureNamespacePullSecret: React.FC<ConfigureNamespacePullSecretProps> 
   }, []);
 
   const submit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
       let secretData: string;

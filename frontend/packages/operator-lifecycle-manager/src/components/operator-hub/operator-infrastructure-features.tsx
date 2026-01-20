@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PlainList } from '@console/shared/src';
 import { useCurrentChannel } from '../../hooks/useCurrentChannel';
 import { PackageManifestKind } from '../../types';
 import { getInfrastructureFeatures } from './operator-hub-utils';
 import type { CSVAnnotations } from './index';
 
-export const OperatorInfrastructureFeatures: React.FC<OperatorInfrastructureFeaturesProps> = ({
+export const OperatorInfrastructureFeatures: FC<OperatorInfrastructureFeaturesProps> = ({
   packageManifest,
   clusterIsAWSSTS,
   clusterIsAzureWIF,

@@ -1,8 +1,9 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DroppableFileInput } from './DropableFileInput';
 import { SecretStringData } from './types';
 
-export const SSHAuthSubform: React.FCC<SSHAuthSubformProps> = ({ onChange, stringData }) => {
+export const SSHAuthSubform: FC<SSHAuthSubformProps> = ({ onChange, stringData }) => {
   const { t } = useTranslation();
   const onFileChange = (fileData: string) => {
     const value = fileData.endsWith('\n') ? fileData : `${fileData}\n`;

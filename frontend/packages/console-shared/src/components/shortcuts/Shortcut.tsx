@@ -1,4 +1,4 @@
-import type { ReactNode, FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { MouseIcon } from '@patternfly/react-icons/dist/esm/icons/mouse-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ interface ShortcutCommandProps {
   children?: ReactNode;
 }
 
-export const ShortcutCommand: React.FCC<ShortcutCommandProps> = ({ children }) => (
+export const ShortcutCommand: FC<ShortcutCommandProps> = ({ children }) => (
   <span className="ocs-shortcut__command">
     <kbd className="co-kbd">{children}</kbd>
   </span>

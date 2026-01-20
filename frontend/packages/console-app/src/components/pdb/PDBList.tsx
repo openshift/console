@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -139,11 +140,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
   return columns;
 };
 
-const PodDisruptionBudgetList: React.FCC<PodDisruptionBudgetsListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+const PodDisruptionBudgetList: FC<PodDisruptionBudgetsListProps> = ({ data, loaded, ...props }) => {
   const columns = usePDBColumns();
 
   return (

@@ -1,3 +1,4 @@
+import type { ComponentProps, FC } from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils/link';
@@ -38,7 +39,7 @@ export const getRouteWebURL = (route: RouteKind): string => {
   return url;
 };
 
-export const RouteLinkAndCopy: React.FC<RouteLinkAndCopyProps> = ({ route, className }) => {
+export const RouteLinkAndCopy: FC<RouteLinkAndCopyProps> = ({ route, className }) => {
   const link = getRouteWebURL(route);
   return (
     <ExternalLinkWithCopy className={className} href={link} text={link} dataTestID="route-link" />
@@ -70,7 +71,7 @@ const getRouteLabel = (route: RouteKind): string => {
 };
 
 // Renders LinkAndCopy for non subdomains
-export const RouteLocation: React.FC<RouteHostnameProps> = ({ obj }) => (
+export const RouteLocation: FC<RouteHostnameProps> = ({ obj }) => (
   <div className="co-break-word">
     {isWebRoute(obj) ? <RouteLinkAndCopy route={obj} /> : getRouteLabel(obj)}
   </div>
@@ -100,5 +101,5 @@ type RouteHostnameProps = {
 
 type RouteLinkAndCopyProps = {
   route: RouteKind;
-  className?: React.ComponentProps<typeof ExternalLinkWithCopy>['className'];
+  className?: ComponentProps<typeof ExternalLinkWithCopy>['className'];
 };

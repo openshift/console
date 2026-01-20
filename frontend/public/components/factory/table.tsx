@@ -199,7 +199,7 @@ export type TableDataProps = {
   showNamespaceOverride?: boolean;
 };
 
-const RowMemo = memo<RowFunctionArgs & { Row: React.FC<RowFunctionArgs> }>(({ Row, ...props }) => (
+const RowMemo = memo<RowFunctionArgs & { Row: FC<RowFunctionArgs> }>(({ Row, ...props }) => (
   <Row {...props} />
 ));
 
@@ -339,7 +339,7 @@ const getActiveColumns = (
 };
 
 // TODO Replace with ./Table/VirtualizedTable
-const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
+const VirtualizedTable: FC<VirtualizedTableProps> = ({
   ariaLabel,
   columns,
   customData,
@@ -392,7 +392,7 @@ const VirtualizedTable: React.FCC<VirtualizedTableProps> = ({
   );
 };
 
-const StandardTable: React.FCC<StandardTableProps> = ({
+const StandardTable: FC<StandardTableProps> = ({
   columns,
   customData,
   data,

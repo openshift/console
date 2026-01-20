@@ -1,5 +1,5 @@
+import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import * as _ from 'lodash';
-import type { ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
@@ -77,7 +77,7 @@ export type ConsoleSelectProps = {
   renderInline?: boolean;
 };
 
-const ConsoleSelectItem: React.FCC<{
+const ConsoleSelectItem: FC<{
   itemKey: string;
   content: ReactNode;
   selected: boolean;
@@ -113,7 +113,7 @@ const useInsideLegacyModal = (ref: RefObject<HTMLElement>) => {
  *
  * Due to this components complexity, prefer `@patternfly/react-templates` components when possible.
  */
-export const ConsoleSelect: React.FCC<ConsoleSelectProps> = ({
+export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   actionItems,
   active,
   ariaLabel,

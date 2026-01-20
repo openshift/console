@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
@@ -20,7 +20,7 @@ interface KnativeRevisionListViewNodeProps {
   onSelect: (ids: string[]) => void;
 }
 
-const ObservedKnativeRevisionListViewNode: React.FCC<KnativeRevisionListViewNodeProps> = ({
+const ObservedKnativeRevisionListViewNode: FC<KnativeRevisionListViewNodeProps> = ({
   item,
   selectedIds,
   onSelect,

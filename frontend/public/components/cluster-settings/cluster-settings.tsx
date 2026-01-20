@@ -298,7 +298,7 @@ const ChannelHeader: FC<{}> = () => {
   );
 };
 
-const Channel: React.FCC<ChannelProps> = ({ children, endOfLife }) => {
+const Channel: FC<ChannelProps> = ({ children, endOfLife }) => {
   return (
     <div
       className={css('co-channel', {
@@ -311,11 +311,11 @@ const Channel: React.FCC<ChannelProps> = ({ children, endOfLife }) => {
   );
 };
 
-const ChannelLine: React.FCC<ChannelLineProps> = ({ children, start }) => {
+const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => {
   return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
-export const ChannelName: React.FCC<ChannelNameProps> = ({ children, current }) => {
+export const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={css('co-channel-name', {
@@ -328,7 +328,7 @@ export const ChannelName: React.FCC<ChannelNameProps> = ({ children, current }) 
   );
 };
 
-const ChannelPath: React.FCC<ChannelPathProps> = ({ children, current }) => {
+const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => {
   return (
     <ul
       className={css('co-channel-path', {
@@ -419,11 +419,11 @@ const ChannelVersionDot: FC<ChannelVersionDotProps> = ({ current, updateBlocked,
   );
 };
 
-const UpdatesBar: React.FCC<UpdatesBarProps> = ({ children }) => {
+const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-export const UpdatesGroup: React.FCC<UpdatesGroupProps> = ({ children, divided }) => {
+export const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={css('co-cluster-settings__updates-group', {
@@ -436,7 +436,7 @@ export const UpdatesGroup: React.FCC<UpdatesGroupProps> = ({ children, divided }
   );
 };
 
-export const UpdatesProgress: React.FCC<UpdatesProgressProps> = ({ children }) => {
+export const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
   return (
     <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
       {children}
@@ -444,7 +444,7 @@ export const UpdatesProgress: React.FCC<UpdatesProgressProps> = ({ children }) =
   );
 };
 
-const UpdatesType: React.FCC<UpdatesTypeProps> = ({ children }) => {
+const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 

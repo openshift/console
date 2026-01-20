@@ -51,10 +51,7 @@ const cancelUpdate = (
   );
 };
 
-const StatusMessagePopover: React.FCC<CVStatusMessagePopoverProps> = ({
-  bodyContent,
-  children,
-}) => {
+const StatusMessagePopover: FC<CVStatusMessagePopoverProps> = ({ bodyContent, children }) => {
   return (
     <Popover bodyContent={truncateMiddle(bodyContent, { length: 256 })}>
       <Button variant="link" isInline>

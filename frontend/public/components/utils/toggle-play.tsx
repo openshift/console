@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Button, ButtonProps } from '@patternfly/react-core';
 import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
@@ -10,7 +11,7 @@ export interface TogglePlayProps {
   onClick: ButtonProps['onClick'];
 }
 
-export const TogglePlay: React.FCC<TogglePlayProps> = ({ active, className, onClick }) => {
+export const TogglePlay: FC<TogglePlayProps> = ({ active, className, onClick }) => {
   const { t } = useTranslation();
 
   return (

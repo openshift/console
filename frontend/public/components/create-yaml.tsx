@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -113,7 +114,7 @@ export const CreateYAML = (props) => {
   return <CreateYAML_ {...props} params={params} />;
 };
 
-export const EditYAMLPage: React.FCC<EditYAMLPageProps> = (props) => {
+export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {
   const params = useParams();
   const Wrapper = (wrapperProps) => (
     <AsyncComponent

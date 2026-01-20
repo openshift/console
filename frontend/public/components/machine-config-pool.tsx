@@ -84,9 +84,7 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
   return null;
 };
 
-const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristicsProps> = ({
-  obj,
-}) => {
+const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps> = ({ obj }) => {
   const configuration = _.get(obj, 'status.configuration');
   const maxUnavailable = _.get(obj, 'spec.maxUnavailable', 1);
   const { t } = useTranslation();
@@ -137,7 +135,7 @@ const MachineConfigPoolCharacteristics: React.FCC<MachineConfigPoolCharacteristi
   );
 };
 
-const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj }) => {
+const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -202,7 +200,7 @@ const MachineConfigPoolCounts: React.FCC<MachineConfigPoolCountsProps> = ({ obj 
   );
 };
 
-const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ obj }) => {
+const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const { t } = useTranslation();
   return (
@@ -217,7 +215,7 @@ const MachineConfigPoolSummary: React.FCC<MachineConfigPoolSummaryProps> = ({ ob
   );
 };
 
-const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
+const MachineConfigList: FC<MachineConfigListProps> = ({ obj }) => (
   <MachineConfigPage
     canCreate={false}
     showTitle={false}
@@ -225,7 +223,7 @@ const MachineConfigList: React.FCC<MachineConfigListProps> = ({ obj }) => (
   />
 );
 
-const MachineConfigPoolDetails: React.FCC<MachineConfigPoolDetailsProps> = ({ obj }) => {
+const MachineConfigPoolDetails: FC<MachineConfigPoolDetailsProps> = ({ obj }) => {
   const paused = _.get(obj, 'spec.paused');
   const { t } = useTranslation();
   return (
@@ -281,7 +279,7 @@ const MachineConfigPoolUpdateStatus: FC<MachineConfigPoolUpdateStatusProps> = ({
   }
 };
 
-export const MachineConfigPoolDetailsPage: React.FCC<any> = (props) => {
+export const MachineConfigPoolDetailsPage: FC<any> = (props) => {
   return (
     <DetailsPage
       {...props}
@@ -422,7 +420,7 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   );
 };
 
-export const MachineConfigPoolPage: React.FCC<any> = (props) => (
+export const MachineConfigPoolPage: FC<any> = (props) => (
   <ListPage
     {...props}
     ListComponent={MachineConfigPoolList}

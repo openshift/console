@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import {
   Drawer,
@@ -37,7 +37,7 @@ const getMastheadHeight = (): number => {
 
 const HEADER_HEIGHT = `calc(${pfSplitterHeight.var} + var(--co-cloud-shell-header-height))`;
 
-export const CloudShellDrawer: React.FCC<CloudShellDrawerProps> = ({
+export const CloudShellDrawer: FC<CloudShellDrawerProps> = ({
   open = true,
   onClose = () => undefined,
   children,

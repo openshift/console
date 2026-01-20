@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,7 @@ type ClusterServiceVersionHeaderIconProps = {
   icon: ClusterServiceVersionIcon | string;
 };
 
-export const ClusterServiceVersionHeaderIcon: React.FCC<ClusterServiceVersionHeaderIconProps> = ({
+export const ClusterServiceVersionHeaderIcon: FC<ClusterServiceVersionHeaderIconProps> = ({
   icon,
 }) => {
   const imgSrc: string = _.isString(icon)
@@ -39,7 +40,7 @@ type ClusterServiceVersionHeaderTitleProps = {
   version?: string;
 } & DeprecatedOperatorWarning;
 
-export const ClusterServiceVersionHeaderTitle: React.FCC<ClusterServiceVersionHeaderTitleProps> = ({
+export const ClusterServiceVersionHeaderTitle: FC<ClusterServiceVersionHeaderTitleProps> = ({
   displayName,
   provider,
   version,
@@ -73,7 +74,7 @@ export const ClusterServiceVersionHeaderTitle: React.FCC<ClusterServiceVersionHe
 export type ClusterServiceVersionLogoProps = ClusterServiceVersionHeaderIconProps &
   ClusterServiceVersionHeaderTitleProps;
 
-export const ClusterServiceVersionLogo: React.FCC<ClusterServiceVersionLogoProps> = ({
+export const ClusterServiceVersionLogo: FC<ClusterServiceVersionLogoProps> = ({
   icon,
   displayName,
   provider,

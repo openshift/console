@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { useCallback, useState } from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -31,7 +32,7 @@ export const getNumberOrPercent = (value) => {
   return _.toInteger(value);
 };
 
-export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = ({
+export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   showDescription = true,
   strategyType,
   uid,

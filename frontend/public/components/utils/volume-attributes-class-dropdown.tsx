@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,7 @@ const getTitle = (vac: VolumeAttributesClassDropdownItem): React.ReactNode => {
   );
 };
 
-const VolumeAttributesClassDropdownEntry: React.FCC<{
+const VolumeAttributesClassDropdownEntry: FC<{
   kindLabel: string;
   name: string;
   driverName?: string;
@@ -42,7 +43,7 @@ const VolumeAttributesClassDropdownEntry: React.FCC<{
   );
 };
 
-export const VolumeAttributesClassDropdownInner: React.FCC<VolumeAttributesClassDropdownInnerProps> = ({
+export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerProps> = ({
   id,
   loaded,
   loadError,
@@ -204,9 +205,7 @@ export const VolumeAttributesClassDropdownInner: React.FCC<VolumeAttributesClass
   );
 };
 
-export const VolumeAttributesClassDropdown: React.FCC<VolumeAttributesClassDropdownProps> = (
-  props,
-) => {
+export const VolumeAttributesClassDropdown: FC<VolumeAttributesClassDropdownProps> = (props) => {
   const isVACSupported = useFlag(FLAGS.VAC_PLATFORM_SUPPORT);
 
   const [data, loaded, loadError] = useK8sWatchResource<VolumeAttributesClassKind[]>({

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, FormGroup } from '@patternfly/react-core';
@@ -6,7 +7,7 @@ import { AUTHS_KEY } from './const';
 import { DroppableFileInput } from './DropableFileInput';
 import { getPullSecretFileName } from './utils';
 
-export const PullSecretUploadForm: React.FCC<PullSecretUploadFormProps> = ({
+export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
   onChange,
   stringData,
   secretType,

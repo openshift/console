@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAG_DEVWORKSPACE } from '../../const';
 import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
@@ -8,7 +9,7 @@ interface CloudShellProps {
   children: React.ReactNode;
 }
 
-const CloudShell: React.FCC<CloudShellProps> = ({ children }) => {
+const CloudShell: FC<CloudShellProps> = ({ children }) => {
   const onClose = useToggleCloudShellExpanded();
   const open = useIsCloudShellExpanded();
   const devWorkspaceAvailable = useFlag(FLAG_DEVWORKSPACE);

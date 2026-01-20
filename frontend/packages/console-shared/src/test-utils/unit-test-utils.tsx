@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import type { FC, ReactElement, ReactNode } from 'react';
 import { Form } from '@patternfly/react-core';
 import {
   render,
@@ -68,7 +68,7 @@ export const mockFormikRenderer = (
   initialValues?: FormikValues,
   options?: Omit<RenderOptions, 'wrapper'>,
 ) => {
-  const FormikWrapper: React.FC<FormikWrapperProps> = ({ children }) => (
+  const FormikWrapper: FC<FormikWrapperProps> = ({ children }) => (
     <Formik initialValues={initialValues} onSubmit={() => {}}>
       {({ handleSubmit }) => <Form onSubmit={handleSubmit}>{children}</Form>}
     </Formik>
