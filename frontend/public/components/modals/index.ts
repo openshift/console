@@ -108,10 +108,14 @@ export const LazyClonePVCModalOverlay = lazy(() =>
   ).then((m) => ({ default: m.ClonePVCModalOverlay })),
 );
 
-export const configureClusterUpstreamModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Cluster Upstream Modal
+export const LazyConfigureClusterUpstreamModalOverlay = lazy(() =>
   import(
     './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
-  ).then((m) => m.configureClusterUpstreamModal(props));
+  ).then((m) => ({
+    default: m.ConfigureClusterUpstreamModalOverlay,
+  })),
+);
 
 export const createAlertRoutingModal = (props) =>
   import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) =>
