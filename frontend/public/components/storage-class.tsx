@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
@@ -156,7 +157,7 @@ const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
   return columns;
 };
 
-export const StorageClassList: React.FCC<StorageClassListProps> = ({ data, loaded, ...props }) => {
+export const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useStorageClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
@@ -176,7 +177,7 @@ export const StorageClassList: React.FCC<StorageClassListProps> = ({ data, loade
   );
 };
 
-const StorageClassDetails: React.FCC<StorageClassDetailsProps> = ({ obj }) => {
+const StorageClassDetails: FC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
   return (
@@ -209,7 +210,7 @@ const StorageClassDetails: React.FCC<StorageClassDetailsProps> = ({ obj }) => {
   );
 };
 
-export const StorageClassPage: React.FCC = ({ ...props }) => {
+export const StorageClassPage: FC = ({ ...props }) => {
   const { t } = useTranslation();
 
   const createProps = {
@@ -230,7 +231,7 @@ export const StorageClassPage: React.FCC = ({ ...props }) => {
   );
 };
 
-export const StorageClassDetailsPage: React.FCC<DetailsPageProps> = (props) => {
+export const StorageClassDetailsPage: FC<DetailsPageProps> = (props) => {
   const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
   const customActionMenu = (kindObj, obj) => {

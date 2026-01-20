@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
@@ -6,7 +7,7 @@ import { DroppableFileInput } from './DropableFileInput';
 import { OpaqueSecretFormEntryProps } from './types';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 
-export const OpaqueSecretFormEntry: React.FCC<OpaqueSecretFormEntryProps> = ({
+export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
   onChange,
   entry,
   key,

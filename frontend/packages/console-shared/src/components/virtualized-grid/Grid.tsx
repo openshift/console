@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useContext } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
@@ -14,7 +14,7 @@ type GridProps = {
   children: (props: GridChildrenProps) => ReactNode;
 };
 
-const Grid: React.FCC<GridProps> = ({ height, width, scrollTop, items, children }) => {
+const Grid: FC<GridProps> = ({ height, width, scrollTop, items, children }) => {
   const {
     cache,
     cellWidth,

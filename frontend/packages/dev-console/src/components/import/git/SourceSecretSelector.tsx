@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
@@ -13,7 +14,7 @@ import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 const CLEAR_SOURCE_SECRET = 'clear-source-secret';
 
-const SourceSecretSelector: React.FCC<{
+const SourceSecretSelector: FC<{
   formContextField?: string;
 }> = ({ formContextField }) => {
   const fieldPrefix = formContextField ? `${formContextField}.` : '';

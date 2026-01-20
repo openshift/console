@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, useEffect } from 'react';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import {
@@ -55,7 +56,7 @@ const levels = [
   'Auto Pilot',
 ];
 
-export const CapabilityLevel: React.FCC<CapabilityLevelProps> = ({ capability }) => {
+export const CapabilityLevel: FC<CapabilityLevelProps> = ({ capability }) => {
   const { t } = useTranslation();
   const capabilityLevelIndex = levels.indexOf(capability);
 
@@ -89,7 +90,7 @@ type CapabilityLevelProps = {
   capability: string;
 };
 
-const InstalledHint: React.FCC<InstalledHintProps> = ({
+const InstalledHint: FC<InstalledHintProps> = ({
   latestVersion,
   subscription,
   installedChannel,
@@ -139,7 +140,7 @@ const InstalledHint: React.FCC<InstalledHintProps> = ({
   );
 };
 
-const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
+const InstallingHint: FC<InstallingHintProps> = ({ subscription }) => {
   const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
     subscription?.status?.installedCSV
@@ -174,7 +175,7 @@ const InstallingHint: React.FCC<InstallingHintProps> = ({ subscription }) => {
   );
 };
 
-const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (props) => {
+const OperatorHubItemDetailsHint: FC<OperatorHubItemDetailsHintProps> = (props) => {
   const { t } = useTranslation();
   const {
     installed,
@@ -227,7 +228,7 @@ const OperatorHubItemDetailsHint: React.FCC<OperatorHubItemDetailsHintProps> = (
   return null;
 };
 
-export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
+export const OperatorDescription: FC<OperatorDescriptionProps> = ({
   catalogSource,
   description,
   installed,
@@ -347,7 +348,7 @@ export const OperatorDescription: React.FCC<OperatorDescriptionProps> = ({
   );
 };
 
-export const OperatorHubItemDetails: React.FCC<OperatorHubItemDetailsProps> = ({
+export const OperatorHubItemDetails: FC<OperatorHubItemDetailsProps> = ({
   item,
   updateChannel,
   setUpdateChannel,

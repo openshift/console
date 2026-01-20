@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -42,7 +43,7 @@ export type CloudShellTerminalProps = {
 
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
-const CloudShellTerminal: React.FCC<
+const CloudShellTerminal: FC<
   CloudShellTerminalInternalProps & WithUserSettingsCompatibilityProps<string>
 > = ({
   user,

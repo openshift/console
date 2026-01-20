@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
 import {
@@ -14,7 +15,7 @@ import ActionsLoader from './loader/ActionsLoader';
 import { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
-const ActionServiceProvider: React.FCC<ActionServiceProviderProps> = ({ context, children }) => {
+const ActionServiceProvider: FC<ActionServiceProviderProps> = ({ context, children }) => {
   const [contextMap, setContextMap] = useState<ActionContext>(context);
   const [actionsMap, setActionsMap] = useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = useState<any>();

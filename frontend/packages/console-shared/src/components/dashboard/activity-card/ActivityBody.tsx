@@ -18,7 +18,7 @@ import EventItem from './EventItem';
 
 import './activity-card.scss';
 
-export const Activity: React.FCC<ActivityProps> = ({ timestamp, children }) => {
+export const Activity: FC<ActivityProps> = ({ timestamp, children }) => {
   const { t } = useTranslation();
   return (
     <div className="co-activity-item__ongoing" data-test="activity">
@@ -201,7 +201,7 @@ export const OngoingActivityBody: FC<OngoingActivityBodyProps> = ({
   );
 };
 
-const ActivityBody: React.FCC<ActivityBodyProps> = ({ children, className }) => (
+const ActivityBody: FC<ActivityBodyProps> = ({ children, className }) => (
   <div className={css('co-activity-card__body', className)} id="activity-body">
     {children}
   </div>

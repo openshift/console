@@ -71,7 +71,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
   );
 };
 
-const DeleteResourceModal: React.FC<DeleteResourceModalProps> = (props) => {
+const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
   const [handlePromise] = usePromiseHandler();
 
   const handleSubmit = (values: FormikValues, actions) => {

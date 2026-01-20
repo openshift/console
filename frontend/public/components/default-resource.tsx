@@ -87,7 +87,7 @@ const ResourceActionsMenu: FC<ResourceActionsMenuProps> = ({ resource, variant, 
   return <ActionMenu actions={menuActions} variant={variant} appendTo={appendTo} />;
 };
 
-const NamespaceCell: React.FCC<NamespaceCellProps> = ({ namespace }) => {
+const NamespaceCell: FC<NamespaceCellProps> = ({ namespace }) => {
   const { t } = useTranslation();
   return namespace ? <ResourceLink kind="Namespace" name={namespace} /> : <>{t('public~None')}</>;
 };

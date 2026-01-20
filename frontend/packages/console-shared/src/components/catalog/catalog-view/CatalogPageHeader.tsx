@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 
 type CatalogPageHeaderProps = {
   children: ReactNode;
 };
 
-const CatalogPageHeader: React.FCC<CatalogPageHeaderProps> = ({ children }) => (
+const CatalogPageHeader: FC<CatalogPageHeaderProps> = ({ children }) => (
   <div className="co-catalog-page__header">{children}</div>
 );
 

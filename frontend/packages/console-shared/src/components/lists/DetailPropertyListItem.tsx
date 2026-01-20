@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { ListItem } from '@patternfly/react-core';
 
 import './DetailPropertyList.scss';
@@ -8,7 +8,7 @@ type DetailPropertyListItemProps = {
   children?: ReactNode;
 };
 
-const DetailPropertyListItem: React.FCC<DetailPropertyListItemProps> = ({ title, children }) => (
+const DetailPropertyListItem: FC<DetailPropertyListItemProps> = ({ title, children }) => (
   <ListItem>
     {title && <span className="co-detail-property-list__item-title">{title}: </span>}
     {children}

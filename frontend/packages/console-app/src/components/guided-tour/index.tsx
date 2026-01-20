@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TourDataType } from '@console/app/src/components/tour';
@@ -7,7 +8,7 @@ import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedT
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
-const IntroductionText: React.FC = () => {
+const IntroductionText: FC = () => {
   const { t } = useTranslation();
   return (
     <>

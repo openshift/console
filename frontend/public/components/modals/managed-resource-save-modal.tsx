@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -6,7 +7,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 
 import { ResourceLink } from '../utils/resource-link';
 
-const ManagedResourceSaveModal: React.FCC<ManagedResourceSaveModalProps> = (props) => {
+const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   const submit = (event) => {
     event.preventDefault();
     props.onSubmit();

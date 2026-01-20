@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { ListPageHeaderProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageSection } from '@patternfly/react-core';
@@ -10,7 +11,7 @@ import { PageSection } from '@patternfly/react-core';
  * - If no <title> is provided, it renders a `PageSection` with the children, badge, helpAlert, and helpText.
  * - If no <title>, <children>, <badge>, <helpAlert>, or <helpText> are provided, it renders nothing.
  */
-const ListPageHeader: React.FCC<ListPageHeaderProps> = ({
+const ListPageHeader: FC<ListPageHeaderProps> = ({
   badge,
   children,
   helpAlert,

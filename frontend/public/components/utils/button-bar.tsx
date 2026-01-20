@@ -1,5 +1,5 @@
+import type { FC, ReactNode } from 'react';
 import * as _ from 'lodash';
-import type { ReactNode } from 'react';
 import { Children, cloneElement } from 'react';
 import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +54,7 @@ export interface ButtonBarProps {
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-export const ButtonBar: React.FCC<ButtonBarProps> = ({
+export const ButtonBar: FC<ButtonBarProps> = ({
   children,
   className,
   errorMessage,

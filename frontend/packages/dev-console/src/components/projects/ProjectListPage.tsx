@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { FC, ComponentType, ReactNode } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -10,7 +10,7 @@ export type ProjectListPageProps = {
   badge?: ReactNode;
   helpText?: ReactNode;
 };
-const ProjectListPage: React.FCC<ProjectListPageProps> = ({
+const ProjectListPage: FC<ProjectListPageProps> = ({
   badge,
   title,
   listComponent,

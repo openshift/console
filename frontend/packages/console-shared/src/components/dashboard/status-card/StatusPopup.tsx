@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import {
   StatusPopupSectionProps,
   StatusPopupItemProps,
@@ -5,7 +6,7 @@ import {
 
 import './status-popup.scss';
 
-export const StatusPopupSection: React.FCC<StatusPopupSectionProps> = ({
+export const StatusPopupSection: FC<StatusPopupSectionProps> = ({
   firstColumn,
   secondColumn,
   children,
@@ -19,7 +20,7 @@ export const StatusPopupSection: React.FCC<StatusPopupSectionProps> = ({
   </>
 );
 
-const Status: React.FCC<StatusPopupItemProps> = ({ value, icon, children }) => (
+const Status: FC<StatusPopupItemProps> = ({ value, icon, children }) => (
   <div className="co-status-popup__row">
     {children}
     {(value || icon) && (

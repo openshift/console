@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
+import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
   Alert,
@@ -353,7 +354,7 @@ interface EnvironmentPageProps {
   useLoadingInline?: boolean;
 }
 
-export const EnvironmentPage: React.FC<EnvironmentPageProps> = (props) => {
+export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
   const {
     rawEnvData = {},
     obj = {},

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import {
   ResponsiveAction,
@@ -30,11 +30,11 @@ import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 
-export const BodyLoading: React.FCC<{ columns: number }> = ({ columns }) => {
+export const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
   return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
 };
 
-export const BodyEmpty: React.FCC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+export const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation();
   return (
     <Tbody>

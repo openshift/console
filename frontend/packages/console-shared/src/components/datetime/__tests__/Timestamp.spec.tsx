@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { updateTimestamps } from '@console/internal/actions/ui';
@@ -11,7 +11,7 @@ interface WrapperProps {
   children?: ReactNode;
 }
 
-const TestWrapper: React.FC<WrapperProps> = ({ children }) => (
+const TestWrapper: FC<WrapperProps> = ({ children }) => (
   <Provider store={store}>{children}</Provider>
 );
 

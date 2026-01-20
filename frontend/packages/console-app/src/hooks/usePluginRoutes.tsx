@@ -1,4 +1,4 @@
-import type { ReactElement, ComponentType } from 'react';
+import type { FC, ReactElement, ComponentType } from 'react';
 import { useMemo, lazy, useEffect, useCallback } from 'react';
 import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
@@ -12,7 +12,7 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
 // Cache lazy components by extension UID to prevent recreation on re-renders
 const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
 
-const LazyRoutePage: React.FCC<LazyRoutePageProps> = ({ extension }) => {
+const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
   const { uid, properties } = extension;
   const { component } = properties;
   const LazyComponent = useMemo(() => {
@@ -31,7 +31,7 @@ const LazyRoutePage: React.FCC<LazyRoutePageProps> = ({ extension }) => {
   return <LazyComponent />;
 };
 
-const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
+const InactiveRoutePage: FC<InactiveRoutePageProps> = ({
   extension,
   path,
   setActivePerspective,
@@ -42,11 +42,7 @@ const InactiveRoutePage: React.FCC<InactiveRoutePageProps> = ({
   return null;
 };
 
-const RoutePage: React.FCC<RoutePageProps> = ({
-  extension,
-  activePerspective,
-  setActivePerspective,
-}) => {
+const RoutePage: FC<RoutePageProps> = ({ extension, activePerspective, setActivePerspective }) => {
   const active = isRoutePageExtensionActive(extension, activePerspective);
   const location = useLocation();
   return active ? (

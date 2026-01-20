@@ -1,8 +1,9 @@
+import type { FC } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLimitField } from '@console/shared';
 
-const TimeoutSection: React.FCC = () => {
+const TimeoutSection: FC = () => {
   const { t } = useTranslation();
 
   const TimeoutUnits = {

@@ -37,7 +37,7 @@ export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ ki
   );
 };
 
-const EditButton: React.FCC<EditButtonProps> = (props) => {
+const EditButton: FC<EditButtonProps> = (props) => {
   return (
     <Button
       icon={<PencilAltIcon />}

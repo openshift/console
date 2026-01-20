@@ -200,7 +200,7 @@ export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, load
   );
 };
 
-export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props) => {
+export const TemplateInstancePage: FC<TemplateInstancePageProps> = (props) => {
   const { t } = useTranslation();
 
   return (
@@ -215,7 +215,7 @@ export const TemplateInstancePage: React.FCC<TemplateInstancePageProps> = (props
   );
 };
 
-const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj }) => {
+const TemplateInstanceDetails: FC<TemplateInstanceDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const status = getTemplateInstanceStatus(obj);
   const secretName = _.get(obj, 'spec.secret.name');
@@ -297,7 +297,7 @@ const TemplateInstanceDetails: React.FCC<TemplateInstanceDetailsProps> = ({ obj 
   );
 };
 
-export const TemplateInstanceDetailsPage: React.FCC = (props) => (
+export const TemplateInstanceDetailsPage: FC = (props) => (
   <DetailsPage
     {...props}
     kind={templateInstanceReference}

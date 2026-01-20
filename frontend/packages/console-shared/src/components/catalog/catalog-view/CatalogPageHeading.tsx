@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { Title, TitleSizes } from '@patternfly/react-core';
 
 type CatalogPageHeadingProps = {
   children: ReactNode;
 };
 
-const CatalogPageHeading: React.FCC<CatalogPageHeadingProps> = ({ children }) => (
+const CatalogPageHeading: FC<CatalogPageHeadingProps> = ({ children }) => (
   <Title
     headingLevel="h2"
     size={TitleSizes.lg}

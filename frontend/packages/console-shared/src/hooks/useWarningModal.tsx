@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { WarningModal, WarningModalProps } from '@patternfly/react-component-groups';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -5,7 +6,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.
  */
-const ControlledWarningModal: React.FCC<WarningModalProps> = (props) => {
+const ControlledWarningModal: FC<WarningModalProps> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const onClose: WarningModalProps['onClose'] = (e) => {

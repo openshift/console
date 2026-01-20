@@ -110,7 +110,7 @@ export const ModalTitle: FC<ModalTitleProps> = ({
 );
 
 /** @deprecated Use PF modals instead */
-export const ModalBody: React.FCC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: FC<ModalBodyProps> = ({ children }) => (
   <div className="modal-body">
     <div className="modal-body-content">{children}</div>
   </div>

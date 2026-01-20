@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Button, EmptyState, EmptyStateBody, EmptyStateFooter } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
@@ -53,7 +54,7 @@ export type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlags
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-const CloudShellExec: React.FCC<CloudShellExecProps> = ({
+const CloudShellExec: FC<CloudShellExecProps> = ({
   workspaceName,
   workspaceId,
   container,

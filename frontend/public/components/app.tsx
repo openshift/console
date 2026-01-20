@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
+import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
@@ -82,16 +83,16 @@ initI18n();
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-const EnhancedProvider: React.FC<{
-  provider: React.Provider<any>;
+const EnhancedProvider: FC<{
+  provider: ProviderComponent<any>;
   useValueHook: () => any;
-  children: React.ReactNode;
+  children: ReactNode;
 }> = ({ provider: Component, useValueHook, children }) => {
   const value = useValueHook();
   return <Component value={value}>{children}</Component>;
 };
 
-const App: React.FC<{
+const App: FC<{
   contextProviderExtensions: ResolvedExtension<ContextProvider>[];
 }> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
@@ -316,7 +317,7 @@ const App: React.FC<{
   );
 };
 
-const AppWithExtensions: React.FC = () => {
+const AppWithExtensions: FC = () => {
   const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
     isReduxReducer,
   );
@@ -334,7 +335,7 @@ const AppWithExtensions: React.FC = () => {
 
 render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
-const AppRouter: React.FC = () => {
+const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   // Treat the authentication error page as a standalone route. There is no need to render the rest
   // of the app if we know authentication has failed.

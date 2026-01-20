@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Component } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
@@ -8,7 +9,7 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 /* eslint-enable import/named */
 import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
 
-export const Label: React.FCC<LabelProps> = ({ kind, name, value, expand }) => {
+export const Label: FC<LabelProps> = ({ kind, name, value, expand }) => {
   const href = `/search?kind=${kind}&q=${value ? encodeURIComponent(`${name}=${value}`) : name}`;
   const kindOf = `co-m-${kindForReference(kind.toLowerCase())}`;
   const klass = css(kindOf, { 'co-m-expand': expand }, 'co-label');

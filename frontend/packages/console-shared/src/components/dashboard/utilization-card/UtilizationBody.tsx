@@ -33,7 +33,7 @@ const UtilizationAxis: FC = () => {
   );
 };
 
-export const UtilizationBody: React.FCC<UtilizationBodyProps> = ({ children }) => {
+export const UtilizationBody: FC<UtilizationBodyProps> = ({ children }) => {
   const { t } = useTranslation();
   const axis = (
     <div className="co-utilization-card__item co-utilization-card__item-header">

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, Ref, MouseEvent as ReactMouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,7 +13,7 @@ import { SecretType, SecretSubFormProps, SecretStringData } from './types';
 import { BasicAuthSubform } from './BasicAuthSubform';
 import { SSHAuthSubform } from './SSHAuthSubform';
 
-export const AuthSecretForm: React.FCC<SecretSubFormProps> = ({
+export const AuthSecretForm: FC<SecretSubFormProps> = ({
   onChange,
   stringData,
   isCreate,

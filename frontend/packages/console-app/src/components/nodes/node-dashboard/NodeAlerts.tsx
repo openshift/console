@@ -148,7 +148,7 @@ interface NodeAlertsProps {
   children?: ReactNode;
 }
 
-const NodeAlerts: React.FCC<NodeAlertsProps> = ({ children }) => {
+const NodeAlerts: FC<NodeAlertsProps> = ({ children }) => {
   const { cpuLimit, memoryLimit, healthCheck } = useContext(NodeDashboardContext);
   const { t } = useTranslation();
 

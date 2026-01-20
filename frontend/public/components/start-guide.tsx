@@ -1,5 +1,5 @@
+import type { FC, ComponentType } from 'react';
 import * as _ from 'lodash';
-import type { ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
-export const OpenShiftGettingStarted: React.FCC<OpenShiftGettingStartedProps> = () => {
+export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   const { t } = useTranslation();
   const [, setActiveNamespace] = useActiveNamespace();
   const [perspective] = useActivePerspective();

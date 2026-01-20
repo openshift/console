@@ -1,4 +1,4 @@
-import type { ReactEventHandler } from 'react';
+import type { FC, ReactEventHandler } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import {
   Button,
@@ -30,7 +30,7 @@ import { CloudShellResource } from './cloud-shell-utils';
 import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
 
-const WebTerminalConfiguration: React.FCC<{ readonly: boolean }> = ({ readonly }) => {
+const WebTerminalConfiguration: FC<{ readonly: boolean }> = ({ readonly }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [operatorNamespace] = useCloudShellNamespace();

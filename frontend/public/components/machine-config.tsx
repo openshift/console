@@ -43,7 +43,7 @@ import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMen
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 
-const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) => (
+const MachineConfigSummary: FC<MachineConfigSummaryProps> = ({ obj, t }) => (
   <ResourceSummary resource={obj}>
     <DescriptionListGroup>
       <DescriptionListTerm>{t('public~OS image URL')}</DescriptionListTerm>
@@ -52,7 +52,7 @@ const MachineConfigSummary: React.FCC<MachineConfigSummaryProps> = ({ obj, t }) 
   </ResourceSummary>
 );
 
-const MachineConfigDetails: React.FCC<MachineConfigDetailsProps> = ({ obj }) => {
+const MachineConfigDetails: FC<MachineConfigDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   const files = obj.spec.config?.storage?.files;
 
@@ -127,7 +127,7 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const MachineConfigDetailsPage: React.FCC<any> = (props) => {
+export const MachineConfigDetailsPage: FC<any> = (props) => {
   return <DetailsPage {...props} kind={machineConfigReference} pages={pages} />;
 };
 
@@ -271,7 +271,7 @@ const MachineConfigList: FC<MachineConfigListProps> = ({ data, loaded, loadError
   );
 };
 
-export const MachineConfigPage: React.FCC<any> = ({ canCreate = true, ...rest }) => (
+export const MachineConfigPage: FC<any> = ({ canCreate = true, ...rest }) => (
   <ListPage
     {...rest}
     canCreate={canCreate}

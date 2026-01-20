@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
 import { isText } from 'istextorbinary';
@@ -62,7 +63,7 @@ const useDropErrorMessage = (): ((errorCode: DropzoneErrorCode, fileName: string
   );
 };
 
-export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
+export const DroppableEditYAML: FC<DroppableEditYAMLProps> = ({
   allowMultiple,
   initialResource,
   create = false,
@@ -171,7 +172,7 @@ export const DroppableEditYAML: React.FCC<DroppableEditYAMLProps> = ({
 };
 
 // Prevents SDK users from passing additional props
-export const ResourceYAMLEditor: React.FCC<ResourceYAMLEditorProps> = ({
+export const ResourceYAMLEditor: FC<ResourceYAMLEditorProps> = ({
   initialResource,
   header,
   onSave,

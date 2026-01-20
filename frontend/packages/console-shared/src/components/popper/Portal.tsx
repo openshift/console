@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useState, useLayoutEffect } from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -12,7 +12,7 @@ type PortalProps = {
 const getContainer = (container: GetContainer): Element | null | undefined =>
   typeof container === 'function' ? container() : container;
 
-const Portal: React.FCC<PortalProps> = ({ children, container }) => {
+const Portal: FC<PortalProps> = ({ children, container }) => {
   const [containerNode, setContainerNode] = useState<Element>();
 
   useLayoutEffect(() => {

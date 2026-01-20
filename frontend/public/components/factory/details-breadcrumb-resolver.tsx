@@ -1,5 +1,6 @@
 import { DetailsPageBreadCrumbsHook } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
 import { useEffect } from 'react';
+import type { FC } from 'react';
 import { K8sKind } from '../../module/k8s';
 
 type DetailsBreadcrumbResolverType = {
@@ -9,7 +10,7 @@ type DetailsBreadcrumbResolverType = {
   urlMatch: any;
 };
 
-const DetailsBreadcrumbResolver: React.FC<DetailsBreadcrumbResolverType> = ({
+const DetailsBreadcrumbResolver: FC<DetailsBreadcrumbResolverType> = ({
   useBreadcrumbs,
   onBreadcrumbsResolved,
   kind,

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +121,7 @@ const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[]
   return columns;
 };
 
-const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
+const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   data,
   loaded,
   ...props
@@ -144,7 +145,7 @@ const VolumeSnapshotClassTable: React.FCC<VolumeSnapshotClassTableProps> = ({
   );
 };
 
-export const VolumeSnapshotClassPage: React.FCC<VolumeSnapshotClassPageProps> = ({
+export const VolumeSnapshotClassPage: FC<VolumeSnapshotClassPageProps> = ({
   canCreate = true,
   showTitle = true,
   namespace,

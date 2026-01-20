@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect } from 'react';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
@@ -49,7 +49,7 @@ interface ThemeProviderProps {
   children?: ReactNode;
 }
 
-export const ThemeProvider: React.FCC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const htmlTagElement = document.documentElement;
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserSettings(

@@ -1,10 +1,11 @@
+import type { FC } from 'react';
 import { useState, useRef, useCallback } from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
 import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useQuickStarts } from '../utils/useQuickStarts';
 import { QuickStartPermissionChecker } from './QuickStartPermissionChecker';
 
-export const QuickStartsLoader: React.FCC<QuickStartsLoaderProps> = ({ children }) => {
+export const QuickStartsLoader: FC<QuickStartsLoaderProps> = ({ children }) => {
   const [quickStarts, quickStartsLoaded] = useQuickStarts();
 
   const [allowedQuickStarts, setAllowedQuickStarts] = useState<QuickStart[]>([]);

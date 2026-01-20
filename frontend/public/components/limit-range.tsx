@@ -132,7 +132,7 @@ export const LimitRangeListPage: FC<LimitRangeListPageProps> = (props) => (
   />
 );
 
-export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
+export const LimitRangeDetailsRow: FC<LimitRangeDetailsRowProps> = ({
   limitType,
   resource,
   limit,
@@ -150,7 +150,7 @@ export const LimitRangeDetailsRow: React.FCC<LimitRangeDetailsRowProps> = ({
   );
 };
 
-const LimitRangeDetailsRows: React.FCC<LimitRangeDetailsRowsProps> = ({ limit }) => {
+const LimitRangeDetailsRows: FC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];
   const resources = {};
   _.each(properties, (property) => {

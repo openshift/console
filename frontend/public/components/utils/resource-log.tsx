@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import {
   MouseEventHandler,
   ReactNode,
@@ -209,7 +210,7 @@ const showDebugAction = (pod: PodKind, containerName: string) => {
 };
 
 // Component for log stream controls
-const LogControls: React.FCC<LogControlsProps> = ({
+const LogControls: FC<LogControlsProps> = ({
   dropdown,
   toggleFullscreen,
   currentLogURL,
@@ -502,14 +503,14 @@ const LogControls: React.FCC<LogControlsProps> = ({
 };
 
 /** helper for opening a new window with raw logs. this is so we don't mess with the previous i18n string */
-const LogLink: React.FCC<{ children: ReactNode; href: string }> = ({ children, href }) => (
+const LogLink: FC<{ children: ReactNode; href: string }> = ({ children, href }) => (
   <ExternalLink component="button" onClick={handleRawLogs(href)}>
     {children}
   </ExternalLink>
 );
 
 // Resource agnostic log component
-export const ResourceLog: React.FCC<ResourceLogProps> = ({
+export const ResourceLog: FC<ResourceLogProps> = ({
   bufferSize = DEFAULT_BUFFER_SIZE,
   containerName,
   dropdown,

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +80,7 @@ interface FeedbackModalLocalizedProps {
   reportBugLink: ReturnType<typeof getReportBugLink>;
 }
 
-const FeedbackModalLocalized: React.FCC<FeedbackModalLocalizedProps> = ({
+const FeedbackModalLocalized: FC<FeedbackModalLocalizedProps> = ({
   isOpen,
   onClose,
   reportBugLink,
@@ -106,7 +107,7 @@ interface StatusButtonProps {
   };
 }
 
-const SystemStatusButton: React.FCC<StatusButtonProps> = ({ statusPageData }) => {
+const SystemStatusButton: FC<StatusButtonProps> = ({ statusPageData }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statusPageData, 'incidents')) ? (
     <ExternalLinkButton
@@ -125,7 +126,7 @@ interface MastheadAction {
   callback?: (e) => void;
   externalLink?: boolean;
   image?: React.ReactNode;
-  component?: React.FC;
+  component?: FC;
   dataTest?: string;
 }
 
@@ -147,7 +148,7 @@ const isTroubleshootingPanelPluginActive =
   window.SERVER_FLAGS.consolePlugins.includes('troubleshooting-panel-console-plugin');
 
 // TODO break this down into smaller components and hooks
-const MastheadToolbarContents: React.FCC<MastheadToolbarContentsProps> = ({
+const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   consoleLinks,
   cv,
   isMastheadStacked,
@@ -866,7 +867,7 @@ interface MastheadToolbarProps {
   isMastheadStacked: boolean;
 }
 
-export const MastheadToolbar: React.FCC<MastheadToolbarProps> = ({ isMastheadStacked }) => {
+export const MastheadToolbar: FC<MastheadToolbarProps> = ({ isMastheadStacked }) => {
   const consoleLinkFlag = useFlag(FLAGS.CONSOLE_LINK);
   const clusterVersionFlag = useFlag(FLAGS.CLUSTER_VERSION);
 

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +15,7 @@ import { BuildPhase } from '../module/k8s/builds';
 import { PageComponentProps } from './utils/horizontal-nav';
 import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-const PipelineLogMessage: React.FCC<{
+const PipelineLogMessage: FC<{
   build: K8sResourceKind;
 }> = ({ build }) => {
   const { t } = useTranslation();
@@ -50,7 +51,7 @@ const buildPhaseToLogSourceStatus = (phase: BuildPhase) => {
   }
 };
 
-export const BuildLogs: React.FCC<PageComponentProps> = ({ obj: build }) => {
+export const BuildLogs: FC<PageComponentProps> = ({ obj: build }) => {
   const phase = _.get(build, 'status.phase');
   const status = buildPhaseToLogSourceStatus(phase);
 

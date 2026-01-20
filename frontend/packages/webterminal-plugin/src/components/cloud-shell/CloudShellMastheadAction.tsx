@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { useTranslation } from 'react-i18next';
@@ -5,7 +6,7 @@ import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dis
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import { useCloudShellAvailable } from './useCloudShellAvailable';
 
-export const CloudShellMastheadAction: React.FCC<{ className?: string }> = ({ className }) => {
+export const CloudShellMastheadAction: FC<{ className?: string }> = ({ className }) => {
   const terminalAvailable = useCloudShellAvailable();
   const toggleCloudShellExpanded = useToggleCloudShellExpanded();
   const open = useIsCloudShellExpanded();

@@ -163,7 +163,7 @@ const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
   );
 };
 
-export const UserList: React.FCC<UserListProps> = (props) => {
+export const UserList: FC<UserListProps> = (props) => {
   const { t } = useTranslation();
   const columns = useUsersColumns();
   const { data, loaded } = props;

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
@@ -243,11 +244,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   );
 };
 
-export const PersistentVolumeList: React.FCC<PersistentVolumeListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+export const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = usePersistentVolumeColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
@@ -282,7 +279,7 @@ export const PersistentVolumesPage = (props: ListPageProps) => {
   );
 };
 
-export const PersistentVolumesDetailsPage: React.FCC<DetailsPageProps> = (props) => (
+export const PersistentVolumesDetailsPage: FC<DetailsPageProps> = (props) => (
   <DetailsPage
     {...props}
     kind={persistentVolumeReference}

@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useContext, useCallback, useEffect } from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -8,7 +9,7 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FCC<{
+const ImageStreamDropdown: FC<{
   disabled?: boolean;
   formContextField?: string;
   reloadCount?: number;

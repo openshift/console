@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useMemo, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -31,7 +32,7 @@ import { useConfigureCountModal } from './modals/configure-count-modal';
 import { AlertmanagerModel } from '../models';
 import { LoadingBox } from './utils/status-box';
 
-const Details: React.FCC<DetailsProps> = (props) => {
+const Details: FC<DetailsProps> = (props) => {
   const alertManager = props.obj;
   const { metadata, spec } = alertManager;
   const launchModal = useConfigureCountModal({
@@ -217,7 +218,7 @@ const useAlertManagerColumns = (): TableColumn<K8sResourceKind>[] => {
   return columns;
 };
 
-const AlertManagersList: React.FCC<AlertManagersListProps> = ({ data, loaded, ...props }) => {
+const AlertManagersList: FC<AlertManagersListProps> = ({ data, loaded, ...props }) => {
   const columns = useAlertManagerColumns();
 
   return (

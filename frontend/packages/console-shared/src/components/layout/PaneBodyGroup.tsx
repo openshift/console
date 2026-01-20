@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 
-const PaneBodyGroup: React.FCC<PaneBodyGroupProps> = ({ children, ...props }) => {
+const PaneBodyGroup: FC<PaneBodyGroupProps> = ({ children, ...props }) => {
   return (
     <div className="co-m-pane__body-group" {...props}>
       {children}

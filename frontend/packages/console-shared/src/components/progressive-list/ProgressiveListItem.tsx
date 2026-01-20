@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useRef, useEffect } from 'react';
 
 import './ProgressiveListItem.scss';
@@ -8,7 +8,7 @@ export interface ProgressiveListItemProps {
   name: string;
 }
 
-const ProgressiveListItem: React.FCC<ProgressiveListItemProps> = ({ children }) => {
+const ProgressiveListItem: FC<ProgressiveListItemProps> = ({ children }) => {
   const element = useRef<HTMLDivElement>();
   useEffect(() => {
     element.current.scrollIntoView({ behavior: 'smooth' });

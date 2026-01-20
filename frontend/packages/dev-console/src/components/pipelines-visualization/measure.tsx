@@ -1,4 +1,4 @@
-import type { MutableRefObject, FC } from 'react';
+import type { FC, MutableRefObject } from 'react';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { getResizeObserver } from '@patternfly/react-core';
 
@@ -24,7 +24,7 @@ interface MeasureProps {
 /**
  * Limited clone of `react-measure` to measure the bounds of a component
  */
-const MeasureBounds: React.FCC<MeasureProps> = ({ onResize, children }) => {
+const MeasureBounds: FC<MeasureProps> = ({ onResize, children }) => {
   const measureRef = useRef<HTMLDivElement>(null);
   const [contentRect, setContentRect] = useState<ContentRect>({
     bounds: { width: 0, height: 0 },

@@ -1,9 +1,10 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MultiTabbedTerminal } from './MultiTabbedTerminal';
 
 import './CloudShellTab.scss';
 
-const CloudShellTab: React.FCC = () => {
+const CloudShellTab: FC = () => {
   const { t } = useTranslation('webterminal-plugin');
 
   return (

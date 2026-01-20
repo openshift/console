@@ -1,4 +1,4 @@
-import type { ReactElement, FC } from 'react';
+import type { ReactNode, FC } from 'react';
 import { Fragment } from 'react';
 import { Button } from '@patternfly/react-core';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
@@ -6,7 +6,7 @@ import { getLastLanguage } from '@console/app/src/components/user-preferences/la
 export interface ProgressiveListFooterProps {
   items: string[];
   onShowItem: (item: string) => void;
-  Footer: (children) => ReactElement;
+  Footer: FC<{ children?: ReactNode }>;
 }
 
 const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({ items, onShowItem, Footer }) => {

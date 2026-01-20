@@ -1,4 +1,4 @@
-import type { ReactNode, ReactElement, FC } from 'react';
+import type { ComponentProps, ReactNode, ReactElement, FC } from 'react';
 import { Children, Fragment } from 'react';
 import ProgressiveListFooter from './ProgressiveListFooter';
 import ProgressiveListItem from './ProgressiveListItem';
@@ -7,7 +7,7 @@ type ProgressiveListProps = {
   children?: ReactNode;
   visibleItems: string[];
   onVisibleItemChange: (item: string) => void;
-  Footer: (children) => ReactElement;
+  Footer: ComponentProps<typeof ProgressiveListFooter>['Footer'];
 };
 
 const ProgressiveList: FC<ProgressiveListProps> = ({
