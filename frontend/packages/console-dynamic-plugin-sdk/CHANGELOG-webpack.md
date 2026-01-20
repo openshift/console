@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.1 - TBD
+## 4.22.0-prerelease.1 - 2025-01-21
 
 - **Breaking**: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
 - **Breaking**: Minimum compatible version of `typescript` increased to `^5.9.3` ([CONSOLE-3769], [#15945])

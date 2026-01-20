@@ -65,12 +65,12 @@ as a reference point for writing an OLM operator that ships with its own Console
 
 ## Distributable SDK package overview
 
-| Package Name                                      | Description                                                                      |
-| ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Package Name                                       | Description                                                                      |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `@openshift-console/dynamic-plugin-sdk` ★         | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
 | `@openshift-console/dynamic-plugin-sdk-webpack` ★ | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
-| `@openshift-console/dynamic-plugin-sdk-internal`  | Internal package exposing additional Console code.                               |
-| `@openshift-console/plugin-shared`                | Provides reusable components and utility functions to build OCP dynamic plugins. |
+| `@openshift-console/dynamic-plugin-sdk-internal`   | Internal package exposing additional Console code.                               |
+| `@openshift-console/plugin-shared`                 | Provides reusable components and utility functions to build OCP dynamic plugins. |
 
 Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
 used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
@@ -105,7 +105,7 @@ For older 1.x plugin SDK packages, refer to the following version compatibility 
 Note: this table includes Console versions which currently receive technical support, as per
 [Red Hat OpenShift Container Platform Life Cycle Policy](https://access.redhat.com/support/policy/updates/openshift).
 
-## OpenShift Console Versions vs PatternFly Versions
+## PatternFly
 
 Each Console version supports specific version(s) of [PatternFly](https://www.patternfly.org/) in terms
 of CSS styling. This table will help align compatible versions of PatternFly to versions of the OpenShift
@@ -117,7 +117,14 @@ Console.
 | 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
 | 4.12.x - 4.14.x | 4.x                 |                                       |
 
-Refer to [PatternFly Upgrade Notes][console-pf-upgrade-notes] containing links to PatternFly documentation.
+Console application is responsible for loading base styles for all supported PatternFly version(s).
+
+Plugins should only include styles that are specific to their user interfaces to be evaluated on
+top of base PatternFly styles. Avoid importing styles such as `@patternfly/react-styles/**/*.css`
+or any styles from `@patternfly/patternfly` package in your plugin.
+
+Plugins should use PatternFly components and styles for a consistent user interface. Refer to the relevant
+[release notes](./release-notes) for more details on PatternFly versions supported by each Console version.
 
 ## Shared modules
 
@@ -140,100 +147,13 @@ The following shared modules are provided by Console, without plugins providing 
 Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
 in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
 
-### Changes in shared modules and APIs
+## How to upgrade your plugins
 
-This section documents notable changes in Console provided shared modules and other plugin APIs.
+Refer to the `CHANGELOG.md` in `@openshift-console/dynamic-plugin-sdk` and `@openshift-console/dynamic-plugin-sdk-webpack`
+for each release for package-specific changes.
 
-#### Console 4.14.x
-
-- Added `react-router-dom-v5-compat` shared module to allow plugins to migrate to React Router v6.
-  Check the [Official v5 to v6 Migration Guide](https://github.com/remix-run/react-router/discussions/8753)
-  (section "Migration Strategy" and beyond) for details.
-
-#### Console 4.15.x
-
-- The Console application now uses React Router v6 code internally. Plugins that only target OpenShift
-  Console 4.15 or later should fully upgrade to React Router v6 via `react-router-dom-v5-compat` module.
-
-#### Console 4.16.x
-
-- Removed `react-helmet` shared module.
-- All Console provided PatternFly 4.x shared modules are deprecated and will be removed in the future.
-  See [PatternFly Upgrade Notes][console-pf-upgrade-notes] for details on upgrading to PatternFly 5.
-- All Console provided React Router v5 shared modules are deprecated and will be removed in the future.
-  Plugins should upgrade to React Router v6 via `react-router-dom-v5-compat` module.
-
-#### Console 4.19.x
-
-- Removed PatternFly 4.x shared modules. Console now uses PatternFly 6.x and provides PatternFly 5.x
-  styles for compatibility with existing plugins.
-- Added `@patternfly/react-topology` shared module. This allows plugins to use PatternFly's topology
-  components with consistent React context and styling.
-- `react-router-dom-v5-compat` shared module is deprecated and will be removed in the future. Plugins
-  should continue using `react-router-dom-v5-compat` module in order to consume React Router v6 APIs.
-- `VirtualizedTable`, `ListPageFilter` and `useListPageFilter` are deprecated and will be removed in
-  the future. Use PatternFly's [Data view](https://www.patternfly.org/extensions/data-view/overview)
-  instead. See this [proof of concept](https://github.com/openshift/console/pull/14897) for an example.
-
-##### CSS styling
-
-- Support for PatternFly 5.x within Console is deprecated and will be removed in the future.
-
-> [!WARNING]
-> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
-> as a courtesy for plugins which use these unsupported CSS classes.
-
-- Removed `@fortawesome/font-awesome` and `openshift-logos-icon`. Plugins should use PatternFly icons
-  from `@patternfly/react-icons` instead. The `fa-spin` class remains but is deprecated and will be
-  removed in the future. Plugins should provide their own CSS to spin icons if needed.
-- Removed styling for generic HTML heading elements (e.g., `<h1>`). Use PatternFly components to achieve
-  correct styling.
-  Removed styling for generic HTML description list elements (e.g., `<dl>`, `<dt>`, `<dd>`). Use PatternFly
-  components to achieve correct styling.
-- Removed `co-m-horizontal-nav` styling. Use [PatternFly Tabs](https://www.patternfly.org/components/tabs/)
-  instead.
-- Removed `co-m-page__body` styling. Use [PatternFly Flex](https://www.patternfly.org/layouts/flex) instead.
-- Removed `co-m-pane__body` spacing styling. Use
-  [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
-- Removed `co-m-nav-title` spacing styling. Use
-  [PatternFly PageSection](https://www.patternfly.org/components/page#pagesection) instead.
-- Removed `co-button-help-icon`, `co-inline`, `co-resource-list*`, `co-toolbar*` styling.
-- Removed Bootstrap `table`, `text-muted`, `text-secondary` styling.
-- Removed `co-m-pane__details` and `details-item` styling. Use
-  [PatternFly DescriptionList](https://www.patternfly.org/components/description-list) instead.
-
-#### Console 4.20.x
-
-##### CSS styling
-
-> [!WARNING]
-> Usage of non-PatternFly CSS provided by Console in plugins is not supported. This section only serves
-> as a courtesy for plugins which use these unsupported CSS classes.
-
-- Removed support for the Bootstrap Grid system (`.row`, `.col-*`, etc.). Use
-  [PatternFly Grid](https://www.patternfly.org/layouts/grid) instead.
-- Removed `co-external-link` styling. Use PatternFly Buttons with `variant="link"` instead.
-- Removed `co-disabled` styling.
-
-#### Console 4.22.X
-
-- Upgraded from `react-redux` v7 to v8. Plugins must use `react-redux` v8 to be compatible
-  with Console.
-- Upgraded from `react` v17 to v18. Plugins must use `react` 18 to be compatible with Console.
-
-### PatternFly 5+ dynamic modules
-
-Newer versions of `@openshift-console/dynamic-plugin-sdk-webpack` package include support for automatic
-detection and sharing of individual PatternFly 5+ dynamic modules.
-
-Plugins using PatternFly 5.x and newer should avoid non-index imports, for example:
-
-```ts
-// Do _not_ do this:
-import { MonitoringIcon } from '@patternfly/react-icons/dist/esm/icons/monitoring-icon';
-// Instead, do this:
-import { MonitoringIcon } from '@patternfly/react-icons';
-```
+For general changes made to Console's API, such as changes to shared modules, refer to the relevant
+[release notes](./release-notes).
 
 ## Content Security Policy
 
@@ -251,43 +171,6 @@ for details on the current Console CSP implementation.
 
 Refer to [Dynamic Plugins feature page][console-doc-feature-page] section on Content Security Policy
 for more details.
-
-### Changes in Console CSP
-
-This section documents notable changes in the Console Content Security Policy implementation.
-
-#### Console 4.18.x
-
-Console CSP feature is disabled by default. To test your plugins with CSP, enable the
-`ConsolePluginContentSecurityPolicy` feature gate on a test cluster. This feature gate
-should **not** be enabled on production clusters. Enabling this feature gate allows you
-to set `spec.contentSecurityPolicy` in your `ConsolePlugin` resource to extend existing
-CSP directives, for example:
-
-```yaml
-apiVersion: console.openshift.io/v1
-kind: ConsolePlugin
-metadata:
-  name: cron-tab
-spec:
-  displayName: 'Cron Tab'
-  contentSecurityPolicy:
-    - directive: 'ScriptSrc'
-      values:
-        - 'https://example1.com/'
-        - 'https://example2.com/'
-```
-
-When enabled, Console CSP operates in report-only mode; CSP violations will be logged in
-the browser and CSP violation data will be reported through telemetry service in production
-deployments.
-
-In a future release, Console will begin enforcing CSP. Consider testing and preparing your
-plugins now to avoid CSP related issues in future.
-
-#### Console 4.19.x
-
-The CSP feature is enabled by default. CSP implementation remains in report-only mode.
 
 ## Plugin metadata
 
@@ -613,20 +496,6 @@ still applies to the appropriate package version:
 npm dist-tag add <package-name>@<version> latest
 ```
 
-## Future Deprecations in Shared Plugin Dependencies
-
-Console provides certain packages as shared modules to all of its dynamic plugins. Some of these shared
-modules may be removed in the future. Plugin authors will need to manually add these items to their webpack
-configs or choose other options.
-
-The list of shared modules planned for deprecation:
-
-- Console provided React Router v5 shared modules
-  - `react-router`
-  - `react-router-dom`
-- Console provided React Router v6 compatibility module
-  - `react-router-dom-v5-compat`
-
 ## i18n translations for messages
 
 The following demonstrates how to translate messages in the console plugin using the [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/) libraries. Also included are the instructions for uploading/downloading strings to/from the Phrase Translation Memory System (TMS).
@@ -715,6 +584,5 @@ For more information on OpenShift Internationalization, see the console [Interna
 [console-doc-extensions]: ./docs/console-extensions.md
 [console-doc-api]: ./docs/api.md
 [console-doc-feature-page]: https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md
-[console-pf-upgrade-notes]: ./upgrade-PatternFly.md
 [console-plugin-template]: https://github.com/openshift/console-plugin-template
 [console-demo-plugin]: ../../../dynamic-demo-plugin/README.md
