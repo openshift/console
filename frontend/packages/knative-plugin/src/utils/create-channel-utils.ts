@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import {
   getCommonAnnotations,
   getAppLabels,
 } from '@console/dev-console/src/utils/resource-label-utils';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
@@ -40,7 +39,7 @@ export const getChannelKind = (ref: string): string => {
 };
 
 export const useChannelList = (namespace: string): ChannelListProps => {
-  const [accessData, setAccessData] = useSafetyFirst({ loaded: false, channelList: [] });
+  const [accessData, setAccessData] = useState({ loaded: false, channelList: [] });
   const { channels, loaded: channelsLoaded } = useChannelResourcesList();
   useEffect(() => {
     const accessList = [];

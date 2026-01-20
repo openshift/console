@@ -1,11 +1,10 @@
 import type { ReactElement } from 'react';
-import { createElement, useMemo, useEffect } from 'react';
+import { createElement, useMemo, useEffect, useState } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
 import {
   K8sResourceKind,
@@ -241,7 +240,7 @@ export const usePodScalingAccessStatus = (
   const isKnativeRevision = obj.kind === 'Revision';
   const isPod = obj.kind === 'Pod';
   const isScalingAllowed = !isKnativeRevision && !isPod && enableScaling;
-  const [editable, setEditable] = useSafetyFirst(false);
+  const [editable, setEditable] = useState(false);
 
   useEffect(() => {
     if (isScalingAllowed) {
