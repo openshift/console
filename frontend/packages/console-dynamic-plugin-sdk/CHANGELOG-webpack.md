@@ -12,7 +12,9 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.1 - TBD
 
-- BREAKING: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
+- **Breaking**: Minimum compatible version of `webpack` increased to `^5.100.0` ([CONSOLE-3769], [#15945])
+- **Breaking**: Minimum compatible version of `typescript` increased to `^5.9.3` ([CONSOLE-3769], [#15945])
+- `webpack` is now a required peer dependency ([CONSOLE-5050], [#15934])
 
 ## 4.21.0-prerelease.1 - 2025-12-04
 
@@ -96,6 +98,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4379]: https://issues.redhat.com/browse/CONSOLE-4379
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4623]: https://issues.redhat.com/browse/CONSOLE-4623
+[CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -127,3 +130,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15479]: https://github.com/openshift/console/pull/15479
 [#15802]: https://github.com/openshift/console/pull/15802
 [#15945]: https://github.com/openshift/console/pull/15945
+[#15934]: https://github.com/openshift/console/pull/15934
