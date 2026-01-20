@@ -1,6 +1,6 @@
 import { Range } from 'monaco-editor';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { configureMonacoYaml } from 'monaco-yaml';
+import { configureMonacoYaml, SchemasSettings } from 'monaco-yaml';
 import * as yaml from 'yaml-ast-parser';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
@@ -92,34 +92,41 @@ export const registerAutoFold = (
   });
 };
 
-export const registerYAMLinMonaco = (monacoInstance: typeof monaco) => {
-  /**
-   * This exists because we enabled globalAPI in the webpack config. This means that the
-   * the monaco instance may have already been setup with the YAML language features.
-   * Otherwise, we might register all the features again, getting duplicate results.
-   *
-   * Monaco does not provide any APIs for unregistering or checking if the features have already
-   * been registered for a language.
-   *
-   * We check that > 1 YAML language exists because one is the default and
-   * the other is the language server that we register.
+export const getConsoleYamlSchemas = (): SchemasSettings[] => {
+  // Prepare the schema
+  const yamlOpenAPI = getSwaggerDefinitions();
+
+  // Convert the openAPI schema to something the language server understands
+  const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
+
+  return [
+    {
+      uri: 'inmemory:yaml',
+      fileMatch: ['*'],
+      schema: kubernetesJSONSchema,
+    },
+  ];
+};
+
+/**
+ * This works because we enabled globalAPI in the webpack config. This means that the
+ * monaco instance is shared across all consumers of the console application.
+ */
+let currentMonacoYamlInstance: ReturnType<typeof configureMonacoYaml> | null = null;
+
+export const registerYAMLinMonaco = (
+  monacoInstance: typeof monaco,
+): typeof currentMonacoYamlInstance => {
+  /*
+   * monaco-yaml only supports one instance per monaco instance, and since globalAPI
+   * is enabled, we need to make sure we don't re-register our language service.
+   * We check for more than 1 registered language for YAML -- monaco-editor ships
+   * built-in YAML support, and we register our own.
    */
   if (monacoInstance.languages.getLanguages().filter((x) => x.id === 'yaml').length <= 1) {
-    // Prepare the schema
-    const yamlOpenAPI = getSwaggerDefinitions();
+    const schemas = getConsoleYamlSchemas();
 
-    // Convert the openAPI schema to something the language server understands
-    const kubernetesJSONSchema = openAPItoJSONSchema(yamlOpenAPI);
-
-    const schemas = [
-      {
-        uri: 'inmemory:yaml',
-        fileMatch: ['*'],
-        schema: kubernetesJSONSchema,
-      },
-    ];
-
-    configureMonacoYaml(monacoInstance, {
+    currentMonacoYamlInstance = configureMonacoYaml(monacoInstance, {
       isKubernetes: true,
       validate: true,
       schemas,
@@ -127,4 +134,6 @@ export const registerYAMLinMonaco = (monacoInstance: typeof monaco) => {
       completion: true,
     });
   }
+
+  return currentMonacoYamlInstance;
 };
