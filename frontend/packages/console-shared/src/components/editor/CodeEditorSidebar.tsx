@@ -1,11 +1,11 @@
 import type { MutableRefObject, FC } from 'react';
 import { useCallback } from 'react';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import { Range, Selection } from 'monaco-editor';
 import { CodeEditorRef } from '@console/dynamic-plugin-sdk';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
-import { K8sKind } from '@console/internal/module/k8s';
-import { Sample } from '../../utils';
+import type { K8sKind } from '@console/internal/module/k8s';
+import type { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { downloadYaml } from './yaml-download-utils';
 
 type CodeEditorSidebarProps = {

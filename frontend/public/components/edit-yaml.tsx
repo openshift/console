@@ -12,7 +12,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
-import { getResourceSidebarSamples } from '@console/shared/src/utils/sample-utils';
+import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 
@@ -212,8 +212,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     [models],
   );
 
+  const model = getModel(props.obj) || props.model;
+  const { samples, snippets } = useResourceSidebarSamples(model, yamlSamplesList);
+
   const navigateToResourceList = () => {
-    const model = getModel(props.obj) || props.model;
     if (model) {
       const namespace =
         model.namespaced && props.activeNamespace !== ALL_NAMESPACES_KEY
@@ -260,15 +262,15 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         return;
       }
 
-      const model = getModel(obj);
-      if (!model) {
+      const objModel = getModel(obj);
+      if (!objModel) {
         return;
       }
 
       const { name, namespace } = obj.metadata;
       const resourceAttributes: AccessReviewResourceAttributes = {
-        group: model.apiGroup,
-        resource: model.plural,
+        group: objModel.apiGroup,
+        resource: objModel.plural,
         verb: 'update',
         name,
         namespace,
@@ -284,7 +286,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
           console.warn('Error while check edit access', e);
         });
     },
-    [props.readOnly, props.impersonate, create, getModel, editorMounted],
+    [props.readOnly, props.impersonate, create, editorMounted, getModel],
   );
 
   const appendYAMLString = useCallback((yaml) => {
@@ -462,12 +464,12 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
   const updateYAML = useCallback(
     (obj) => {
-      const model = getModel(obj);
       setSuccess(null);
       setErrors(null);
+      const objModel = getModel(obj);
       const response = create
-        ? k8sCreate(model, _.omit(obj, ['metadata.resourceVersion']))
-        : k8sUpdate(model, obj, obj.metadata.namespace, obj.metadata.name);
+        ? k8sCreate(objModel, _.omit(obj, ['metadata.resourceVersion']))
+        : k8sUpdate(objModel, obj, obj.metadata.namespace, obj.metadata.name);
 
       response
         .then((o) => postFormSubmissionCallback(o))
@@ -539,8 +541,8 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         return t('public~No "kind" field found in YAML.');
       }
 
-      const model = getModel(obj);
-      if (!model) {
+      const objModel = getModel(obj);
+      if (!objModel) {
         return t(
           'public~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
           { kind: obj.kind, apiVersion: obj.apiVersion },
@@ -551,19 +553,19 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
         return t('public~No "metadata" field found in YAML.');
       }
 
-      if (obj.metadata.namespace && !model.namespaced) {
+      if (obj.metadata.namespace && !objModel.namespaced) {
         delete obj.metadata.namespace;
       }
 
       // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
-      if (!obj.metadata.namespace && model.namespaced) {
+      if (!obj.metadata.namespace && objModel.namespaced) {
         if (props.activeNamespace === ALL_NAMESPACES_KEY) {
           return t('public~No "metadata.namespace" field found in YAML.');
         }
         obj.metadata.namespace = props.activeNamespace;
       }
     },
-    [getModel, props.activeNamespace, t],
+    [props.activeNamespace, t, getModel],
   );
 
   const [saving, setSaving] = useState(false);
@@ -786,10 +788,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
 
   const readOnly = props.readOnly || notAllowed;
   const options: CodeEditorProps['options'] = { fontSize, readOnly, scrollBeyondLastLine: false };
-  const model = getModel(props.obj);
-  const { samples, snippets } = model
-    ? getResourceSidebarSamples(model, yamlSamplesList, t)
-    : { samples: [], snippets: [] };
   const definition = model ? definitionFor(model) : { properties: [] };
   const showSchema = definition && !_.isEmpty(definition.properties);
   const hasSidebarContent = showSchema || (create && !_.isEmpty(samples)) || !_.isEmpty(snippets);
