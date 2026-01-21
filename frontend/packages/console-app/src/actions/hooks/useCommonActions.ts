@@ -7,10 +7,10 @@ import {
   LazyAnnotationsModalOverlay,
   LazyDeleteModalOverlay,
   LazyLabelsModalOverlay,
-  taintsModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
+import TaintsModalProvider from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -143,7 +143,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          taintsModal({
+          launchModal(TaintsModalProvider, {
             resourceKind: kind,
             resource,
           }),
@@ -165,7 +165,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     // to prevent unnecessary re-renders
     // TODO: remove once all Modals have been updated to useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal],
+    [kind, resource, t, message, actualEditPath, launchModal]
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {
