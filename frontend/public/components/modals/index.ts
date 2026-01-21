@@ -139,7 +139,11 @@ export const LazyRestorePVCModalOverlay = lazy(() =>
   ).then((m) => ({ default: m.RestorePVCModalOverlay })),
 );
 
-export const managedResourceSaveModal = (props) =>
+// Lazy-loaded OverlayComponent for Managed Resource Save Modal
+export const LazyManagedResourceSaveModalOverlay = lazy(() =>
   import(
     './managed-resource-save-modal' /* webpackChunkName: "managed-resource-save-modal" */
-  ).then((m) => m.managedResourceSaveModal(props));
+  ).then((m) => ({
+    default: m.ManagedResourceSaveModalOverlay,
+  })),
+);
