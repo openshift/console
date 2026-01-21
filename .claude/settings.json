@@ -87,13 +87,6 @@
       "Bash(rm -rf:*)",
       "Bash(rm -fr:*)",
 
-      "Bash(oc delete:*)",
-      "Bash(oc apply:*)",
-      "Bash(oc create:*)",
-      "Bash(kubectl delete:*)",
-      "Bash(kubectl apply:*)",
-      "Bash(kubectl create:*)",
-
       "Bash(docker rm:*)",
       "Bash(docker rmi:*)",
       "Bash(docker stop:*)",
@@ -108,6 +101,13 @@
       "Bash(npm i:*)",
       "Bash(go get:*)",
       "Bash(go mod:*)",
+      
+      "Bash(oc delete:*)",
+      "Bash(oc apply:*)",
+      "Bash(oc create:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl create:*)",
 
       "Bash(git commit:*)",
       "Bash(git push:*)",
