@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import * as _ from 'lodash';
 import {
   useResolvedExtensions,
@@ -259,18 +260,19 @@ export const sortCatalogItems = (
   }
 };
 
-export const getIconProps = (item: CatalogItem) => {
+interface IconProps {
+  iconImg?: string | null;
+  iconClass?: string | null;
+  icon?: ReactNode;
+}
+
+export const getIconProps = (item: CatalogItem): IconProps => {
   const { icon } = item;
   if (!icon) {
-    return {};
+    return { iconImg: catalogImg, iconClass: null };
   }
   if (icon.url) {
-    // Use a custom icon node with loading="lazy" for efficient loading
-      onError={(e) => {
-        e.currentTarget.src = catalogImg;
-        e.currentTarget.onerror = null; // Prevent infinite loop
-      }}
-    return { iconImg: null, iconClass: null, icon: iconNode };
+    return { iconImg: icon.url, iconClass: null };
   }
   if (icon.class) {
     return { iconImg: null, iconClass: normalizeIconClass(icon.class) };
