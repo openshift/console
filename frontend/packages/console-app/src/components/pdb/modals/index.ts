@@ -1,6 +1,8 @@
-import { DeletePDBModalProps } from './DeletePDBModal';
+import { lazy } from 'react';
 
-export const deletePDBModal = (props: DeletePDBModalProps) =>
-  import('./DeletePDBModal' /* webpackChunkName: "shared-modals" */).then((m) =>
-    m.deletePDBModal(props),
-  );
+// Lazy-loaded OverlayComponent for Delete PDB Modal
+export const LazyDeletePDBModalOverlay = lazy(() =>
+  import('./DeletePDBModal' /* webpackChunkName: "delete-pdb-modal" */).then((m) => ({
+    default: m.DeletePDBModalOverlay,
+  })),
+);
