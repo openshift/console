@@ -127,11 +127,6 @@ export const createColumnManagementModal = (props) =>
     m.createColumnManagementModal(props),
   );
 
-export const removeUserModal = (props) =>
-  import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
-    m.removeUserModal(props),
-  );
-
 // Lazy-loaded OverlayComponent for Restore PVC Modal
 export const LazyRestorePVCModalOverlay = lazy(() =>
   import(
