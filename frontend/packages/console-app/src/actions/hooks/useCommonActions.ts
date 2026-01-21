@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import {
   annotationsModalLauncher,
   deleteModal,
   labelsModalLauncher,
   podSelectorModal,
-  taintsModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
+import TaintsModalProvider from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -43,6 +44,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
   const launchCountModal = useConfigureCountModal({
     resourceKind: kind,
     resource,
@@ -151,7 +153,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          taintsModal({
+          launchOverlay(TaintsModalProvider, {
             resourceKind: kind,
             resource,
           }),
@@ -170,7 +172,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath],
+    [kind, resource, t, message, actualEditPath, launchOverlay],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {
