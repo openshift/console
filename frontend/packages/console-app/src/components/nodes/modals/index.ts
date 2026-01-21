@@ -1,6 +1,10 @@
-import { NodeKind } from '@console/internal/module/k8s';
+import { lazy } from 'react';
 
-export const createConfigureUnschedulableModal = (props: { resource: NodeKind }) =>
+// Lazy-loaded OverlayComponent for Configure Unschedulable Modal
+export const LazyConfigureUnschedulableModalOverlay = lazy(() =>
   import(
     './ConfigureUnschedulableModal' /* webpackChunkName: "configure-unschedulable-modal" */
-  ).then((m) => m.default(props));
+  ).then((m) => ({
+    default: m.ConfigureUnschedulableModalOverlay,
+  })),
+);
