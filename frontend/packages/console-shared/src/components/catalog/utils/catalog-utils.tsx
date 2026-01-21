@@ -266,7 +266,10 @@ export const getIconProps = (item: CatalogItem) => {
   }
   if (icon.url) {
     // Use a custom icon node with loading="lazy" for efficient loading
-    const iconNode = <img src={icon.url} loading="lazy" className="catalog-tile-pf-icon" alt="" />;
+      onError={(e) => {
+        e.currentTarget.src = catalogImg;
+        e.currentTarget.onerror = null; // Prevent infinite loop
+      }}
     return { iconImg: null, iconClass: null, icon: iconNode };
   }
   if (icon.class) {
