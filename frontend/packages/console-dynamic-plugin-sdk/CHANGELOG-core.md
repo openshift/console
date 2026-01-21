@@ -25,6 +25,7 @@ table in [Console dynamic plugins README](./README.md).
   `console.topology/details/tab-section`. ([CONSOLE-4630], [#15893])
 - **Type breaking**: Fix inaccurate types in `console.catalog/item-type`. ([CONSOLE-4402], [#14869])
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630], [#15893])
+- Make all Console-provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
 
 ## 4.21.0-prerelease.1 - 2025-12-04
 
@@ -172,6 +173,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
+[CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -240,3 +242,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15735]: https://github.com/openshift/console/pull/15735
 [#15778]: https://github.com/openshift/console/pull/15778
 [#15893]: https://github.com/openshift/console/pull/15893
+[#15934]: https://github.com/openshift/console/pull/15934

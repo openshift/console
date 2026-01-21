@@ -47,8 +47,8 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
   ...pkg.dependencies,
 });
 
-const getPluginSDKPackageDependencies = () =>
-  loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').dependencies;
+const getPluginSDKPackagePeerDependencies = () =>
+  loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').peerDependencies;
 
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
@@ -56,7 +56,7 @@ const getPatternFlyStyles = (baseDir: string) =>
 // Shared modules that can be used by the dynamic plugin
 // https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
 const getWebpackSharedModules = () => {
-  const sdkPkgDeps = getPluginSDKPackageDependencies();
+  const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
 
   return sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
     const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
@@ -122,7 +122,7 @@ export const validateConsoleExtensionsFileSchema = (
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
   const pluginDeps = getPackageDependencies(pkg);
-  const sdkPkgDeps = getPluginSDKPackageDependencies();
+  const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
   const result = new ValidationResult('package.json');
 
   sharedPluginModules.forEach((moduleName) => {

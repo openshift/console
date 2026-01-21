@@ -122,10 +122,16 @@ export const getCorePackage: GetPackageDefinition = (
     ...commonManifestFields,
     dependencies: {
       ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
       ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
+    peerDependencies: {
+      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
+    },
+    peerDependenciesMeta: _.mapValues(
+      parseSharedModuleDeps(rootPackage, missingDepCallback),
+      () => ({ optional: true }),
+    ),
   },
   filesToCopy: {
     ...commonFiles,
@@ -144,12 +150,11 @@ export const getInternalPackage: GetPackageDefinition = (
   manifest: {
     name: '@openshift-console/dynamic-plugin-sdk-internal',
     version: sdkPackage.version,
-    description: 'Internal package exposing additional Console code.',
+    description: 'Internal package exposing additional Console code. No API stability guarantees.',
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
       ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseSharedModuleDeps(rootPackage, missingDepCallback),
       ...parseDeps(rootPackage, ['immutable'], missingDepCallback),
     },
   },
@@ -174,13 +179,14 @@ export const getWebpackPackage: GetPackageDefinition = (
       ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk-webpack'], missingDepCallback),
       ...parseDeps(
         rootPackage,
-        ['ajv', 'chalk', 'comment-json', 'find-up', 'glob', 'read-pkg', 'semver', 'webpack'],
+        ['ajv', 'chalk', 'comment-json', 'find-up', 'glob', 'read-pkg', 'semver'],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
       typescript: `>=${getMinDepVersion(rootPackage, 'typescript', missingDepCallback)}`,
+      webpack: `>=${getMinDepVersion(rootPackage, 'webpack', missingDepCallback)}`,
     },
   },
   filesToCopy: {
