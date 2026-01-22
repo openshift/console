@@ -9,7 +9,6 @@ import {
   MastheadBrand,
   PageToggleButton,
 } from '@patternfly/react-core';
-import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
@@ -59,9 +58,11 @@ export const Masthead = memo(({ isMastheadStacked, isNavOpen, onNavToggle }: Mas
     <PfMasthead id="page-main-header" display={{ default: isMastheadStacked ? 'stack' : 'inline' }}>
       <MastheadMain>
         <MastheadToggle>
-          <PageToggleButton onSidebarToggle={onNavToggle} isSidebarOpen={isNavOpen}>
-            <BarsIcon />
-          </PageToggleButton>
+          <PageToggleButton
+            onSidebarToggle={onNavToggle}
+            isSidebarOpen={isNavOpen}
+            isHamburgerButton
+          />
         </MastheadToggle>
         <MastheadBrand>
           <MastheadLogo

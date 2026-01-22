@@ -67,8 +67,6 @@ const TelemetryAnalyticsSelect: FC<{
     <Select
       toggle={toggle}
       isOpen={isOpen}
-      toggleId="telemetry"
-      // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
       onSelect={(_, selectedValue?: TelemetryAnalyticsSelectOptions) => {
         if (selectedValue) {
           onChange(selectedValue);
@@ -76,7 +74,6 @@ const TelemetryAnalyticsSelect: FC<{
         setIsOpen(false);
       }}
       aria-label={t('console-telemetry-plugin~Select option')}
-      maxHeight={300}
       onOpenChange={(open) => setIsOpen(open)}
     >
       <SelectList>

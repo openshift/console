@@ -4,11 +4,6 @@
 
 $masthead-logo-max-height: 60px;
 
-// TODO: Remove when upgrading to PF 6.3.0: https://github.com/patternfly/patternfly/pull/7420
-.catalog-tile-pf-title {
-  @include co-break-word;
-}
-
 .co-catalog-tile {
   .catalog-tile-pf-icon {
     font-size: unset !important;
@@ -47,14 +42,6 @@ $masthead-logo-max-height: 60px;
       --pf-t--global--background--color--primary--default
     );
   }
-}
-
-// Workaround for https://github.com/patternfly/patternfly/issues/7376
-// to align pf-v6-c-tabs--inset with PageSection
-.co-horizontal-nav {
-  --pf-v6-c-tabs--inset: #{$pf-v6-global-gutter-x};
-  --pf-v6-c-tabs--m-vertical--inset: #{$pf-v6-global-gutter-x};
-  --pf-v6-c-tabs--m-vertical--m-box--inset: #{$pf-v6-global-gutter-x};
 }
 
 .odc-catalog-tile {

@@ -39,7 +39,6 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import {
   BugIcon,
-  CogIcon,
   CompressIcon,
   DownloadIcon,
   ExpandIcon,
@@ -355,7 +354,7 @@ const LogControls: FC<LogControlsProps> = ({
           ref={toggleRef}
           onClick={() => setIsOptionsOpen((isOpen) => !isOpen)}
           isExpanded={isOptionsOpen}
-          icon={<CogIcon />}
+          isSettings
           data-test="resource-log-options-toggle"
         >
           <span className="pf-v6-u-display-none pf-v6-u-display-inline-on-lg">{t('Options')}</span>

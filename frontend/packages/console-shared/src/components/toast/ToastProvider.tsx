@@ -7,6 +7,9 @@ interface ToastProviderProps {
   children?: ReactNode;
 }
 
+/** Stable reference to append toast alerts to the document body */
+const appendTo = () => document.body;
+
 const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastOptions[]>([]);
 
@@ -54,7 +57,7 @@ const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
     <ToastContext.Provider value={controller}>
       {children}
       {toasts.length ? (
-        <AlertGroup appendTo={() => document.body} isToast>
+        <AlertGroup appendTo={appendTo} isToast>
           {toasts.map((toast) => (
             <Alert
               key={toast.id}

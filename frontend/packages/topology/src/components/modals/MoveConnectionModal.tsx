@@ -90,7 +90,6 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
           <FormGroup fieldId="target-node" label="Target">
             <Select
               id="target-node-dropdown"
-              // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
               onSelect={(_, value: Node) => {
                 if (value) {
                   setFieldValue('target', value);

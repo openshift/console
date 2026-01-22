@@ -192,11 +192,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
   // the div wrapper prevents the tabs from collapsing in a flexbox
   const tabs = (
     <div>
-      <Tabs
-        activeKey={defaultPage ? '' : lastElement}
-        component="nav"
-        className="co-horizontal-nav"
-      >
+      <Tabs activeKey={defaultPage ? '' : lastElement} component="nav" usePageInsets>
         {pages.map(({ name, nameKey, href }) => {
           const to = `${baseURL.replace(/\/$/, '')}/${encodeURIComponent(href)}`;
 
