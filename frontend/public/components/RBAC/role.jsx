@@ -149,7 +149,7 @@ class Details extends Component {
             */}
             <TextFilter
               label={t('public~rules by action or resource')}
-              onChange={this.changeFilter}
+              onChange={(e) => this.changeFilter(e.target.value)}
             />
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />
