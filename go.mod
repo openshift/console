@@ -12,6 +12,7 @@ require (
 	github.com/devfile/library/v2 v2.2.3-0.20250502201248-d0fa9c11591d
 	github.com/devfile/registry-support/index/generator v0.0.0-20240419194226-cca4c9a81f8d
 	github.com/devfile/registry-support/registry-library v0.0.0-20240521161747-89fc566cb024
+	github.com/fsnotify/fsnotify v1.8.0
 	github.com/golang/mock v1.6.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
@@ -89,7 +90,6 @@ require (
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
