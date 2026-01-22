@@ -2,6 +2,7 @@ import type { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose } from '@console/internal/components/utils';
+import { useSetupGlobalErrorModalLauncher } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { QUERY_PROPERTIES } from '../../const';
@@ -10,6 +11,7 @@ import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
 const DeployImagePage: FunctionComponent = () => {
+  useSetupGlobalErrorModalLauncher();
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

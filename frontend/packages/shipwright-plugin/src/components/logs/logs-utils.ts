@@ -2,7 +2,6 @@ import { saveAs } from 'file-saver';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { coFetchText } from '@console/internal/co-fetch';
-import { errorModal } from '@console/internal/components/modals';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,
@@ -18,6 +17,7 @@ import {
   resourceURL,
   k8sGet,
 } from '@console/internal/module/k8s';
+import { launchGlobalErrorModal } from '@console/shared';
 import { TaskRunKind } from '../../types';
 import { ComputedStatus, SucceedConditionReason } from './log-snippet-types';
 import { getTaskRunLog } from './tekton-results';
@@ -81,7 +81,9 @@ const getOrderedStepsFromPod = (name: string, ns: string): Promise<ContainerStat
       );
     })
     .catch((err) => {
-      errorModal({ error: err.message || i18next.t('shipwright-plugin~Error downloading logs.') });
+      launchGlobalErrorModal({
+        error: err.message || i18next.t('shipwright-plugin~Error downloading logs.'),
+      });
       return [];
     });
 };

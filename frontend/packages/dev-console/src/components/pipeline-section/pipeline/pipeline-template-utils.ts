@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { compare, gte, parse, SemVer } from 'semver';
 import { k8sGet, k8sList, k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getActiveUserName } from '@console/internal/actions/ui';
-import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
   ClusterServiceVersionModel,
   RouteModel,
@@ -24,6 +23,7 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionPhase,
 } from '@console/operator-lifecycle-manager/src/types';
+import { launchGlobalErrorModal } from '@console/shared';
 import {
   NameValueFromPair,
   NameValuePair,
@@ -928,7 +928,7 @@ export const exposeRoute = async (elName: string, ns: string, iteration = 0) => 
     );
     await k8sCreate(RouteModel, route, { ns });
   } catch (e) {
-    errorModal({
+    launchGlobalErrorModal({
       title: 'Error Exposing Route',
       error: e.message || 'Unknown error exposing the Webhook route',
     });

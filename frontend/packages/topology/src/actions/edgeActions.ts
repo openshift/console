@@ -4,7 +4,6 @@ import { Edge, isNode, Node } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
-import { errorModal } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import {
   TYPE_EVENT_SOURCE,
@@ -16,6 +15,7 @@ import {
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from '@console/knative-plugin/src/topology/const';
+import { launchGlobalErrorModal } from '@console/shared';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { useMoveConnectionModalLauncher } from '../components/modals/MoveConnectionModal';
 import { TYPE_CONNECTS_TO, TYPE_TRAFFIC_CONNECTOR } from '../const';
@@ -102,7 +102,12 @@ export const useDeleteConnectorAction = (
     confirmButtonVariant: ButtonVariant.danger,
     onConfirm: () => {
       return removeTopologyResourceConnection(element, resource).catch((err) => {
-        err && errorModal({ error: err.message });
+        if (err) {
+          launchGlobalErrorModal({
+            title: t('topology~Error deleting connector'),
+            error: err.message,
+          });
+        }
       });
     },
     ouiaId: 'TopologyDeleteConnectorConfirmation',

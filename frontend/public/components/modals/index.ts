@@ -17,10 +17,6 @@ export const confirmModal = (props) =>
     m.confirmModal(props),
   );
 
-/** @deprecated Use useErrorModalLauncher hook instead */
-export const errorModal = (props) =>
-  import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
-
 // Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
 export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(

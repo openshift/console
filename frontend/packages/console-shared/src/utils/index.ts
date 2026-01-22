@@ -22,3 +22,4 @@ export * from './keyword-filter';
 export * from './order-extensions';
 export * from './console-plugin';
 export * from './default-categories';
+export * from './error-modal-handler';
