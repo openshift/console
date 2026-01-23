@@ -41,7 +41,7 @@ import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY }
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
-import { useSetupMoveNodeToGroupErrorHandler } from '../../utils';
+import { useSetupMoveNodeToGroupHandlers } from '../../utils';
 import { componentFactory } from './components';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
@@ -154,8 +154,8 @@ const Topology: FC<
     TopologyComponentFactory
   >(isTopologyComponentFactory);
 
-  // Setup global error handlers for topology operations
-  useSetupMoveNodeToGroupErrorHandler();
+  // Setup global error and confirmation handlers for topology operations
+  useSetupMoveNodeToGroupHandlers();
   useSetupGlobalErrorModalLauncher();
 
   const createVisualization = useCallback(() => {

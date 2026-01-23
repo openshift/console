@@ -136,18 +136,23 @@ const nodeDragSourceSpec = (
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
         const controller = props.element.getController();
 
-        await moveNodeToGroup(
-          props.element as Node,
-          isNode(dropResult) ? (dropResult as Node) : null,
-        );
+        try {
+          await moveNodeToGroup(
+            props.element as Node,
+            isNode(dropResult) ? (dropResult as Node) : null,
+          );
 
-        // perform the optimistic update in an action so as not to render too soon
-        action(() => {
-          // FIXME: check shouldn't be necessary if we handled the async and backend data refresh correctly
-          if (controller.getNodeById(props.element.getId())) {
-            dropResult.appendChild(props.element);
-          }
-        })();
+          // perform the optimistic update in an action so as not to render too soon
+          action(() => {
+            // FIXME: check shouldn't be necessary if we handled the async and backend data refresh correctly
+            if (controller.getNodeById(props.element.getId())) {
+              dropResult.appendChild(props.element);
+            }
+          })();
+        } catch (error) {
+          // User cancelled or operation failed - don't perform the optimistic update
+          // The node will remain in its original position
+        }
       } else {
         // cancel operation
         return Promise.reject();

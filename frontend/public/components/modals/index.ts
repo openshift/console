@@ -11,12 +11,6 @@ export const configureJobParallelismModal = (props) =>
     m.configureJobParallelismModal(props),
   );
 
-/** @deprecated use `useWarningModal` instead */
-export const confirmModal = (props) =>
-  import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
-    m.confirmModal(props),
-  );
-
 // Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
 export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(

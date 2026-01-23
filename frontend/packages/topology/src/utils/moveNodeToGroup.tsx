@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { Node } from '@patternfly/react-topology';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { confirmModal } from '@console/internal/components/modals';
 import { ErrorModal, ErrorModalProps } from '@console/internal/components/modals/error-modal';
+import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { updateTopologyResourceApplication } from './topology-utils';
 
 // Module-level error handler that can be set by the Topology component
@@ -11,6 +11,31 @@ let globalErrorHandler: ((error: string) => void) | null = null;
 
 export const setMoveNodeToGroupErrorHandler = (handler: ((error: string) => void) | null) => {
   globalErrorHandler = handler;
+};
+
+// Module-level confirm handler that can be set by the Topology component
+let globalConfirmHandler:
+  | ((
+      title: string,
+      message: React.ReactNode,
+      confirmButtonText: string,
+      onConfirm: () => Promise<void>,
+      onCancel: () => void,
+    ) => void)
+  | null = null;
+
+export const setMoveNodeToGroupConfirmHandler = (
+  handler:
+    | ((
+        title: string,
+        message: React.ReactNode,
+        confirmButtonText: string,
+        onConfirm: () => Promise<void>,
+        onCancel: () => void,
+      ) => void)
+    | null,
+) => {
+  globalConfirmHandler = handler;
 };
 
 export const moveNodeToGroup = (
@@ -24,14 +49,14 @@ export const moveNodeToGroup = (
   }
 
   if (sourceGroup) {
-    // t('topology~Move component node')
-    // t('topology~Remove component node from application')
-    const titleKey = targetGroup
-      ? 'topology~Move component node'
-      : 'topology~Remove component node from application';
     const nodeLabel = node.getLabel();
     const sourceLabel = sourceGroup.getLabel();
     const targetLabel = targetGroup?.getLabel();
+
+    // t('topology~Move component node')
+    // t('topology~Remove component node from application')
+    const title = targetGroup ? 'Move component node' : 'Remove component node from application';
+
     const message = targetGroup ? (
       <Trans ns="topology">
         Are you sure you want to move <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }} to{' '}
@@ -42,37 +67,35 @@ export const moveNodeToGroup = (
         Are you sure you want to remove <strong>{{ nodeLabel }}</strong> from {{ sourceLabel }}?
       </Trans>
     );
+
     // t('topology~Move')
     // t('topology~Remove')
-    const btnTextKey = targetGroup ? 'topology~Move' : 'topology~Remove';
+    const confirmButtonText = targetGroup ? 'Move' : 'Remove';
 
     return new Promise((resolve, reject) => {
-      confirmModal({
-        titleKey,
-        message,
-        btnTextKey,
-        close: () => {
-          reject();
-        },
-        cancel: () => {
-          reject();
-        },
-        executeFn: () => {
-          return updateTopologyResourceApplication(
-            node,
-            targetGroup ? targetGroup.getLabel() : null,
-          )
-            .then(resolve)
-            .catch((err) => {
-              const error = err.message;
-              const errorHandler = onError || globalErrorHandler;
-              if (errorHandler) {
-                errorHandler(error);
-              }
-              reject(err);
-            });
-        },
-      });
+      if (!globalConfirmHandler) {
+        reject(new Error('Confirm handler not initialized'));
+        return;
+      }
+
+      const handleConfirm = () => {
+        return updateTopologyResourceApplication(node, targetGroup ? targetGroup.getLabel() : null)
+          .then(resolve)
+          .catch((err) => {
+            const error = err.message;
+            const errorHandler = onError || globalErrorHandler;
+            if (errorHandler) {
+              errorHandler(error);
+            }
+            reject(err);
+          });
+      };
+
+      const handleCancel = () => {
+        reject(new Error('User cancelled'));
+      };
+
+      globalConfirmHandler(title, message, confirmButtonText, handleConfirm, handleCancel);
     });
   }
 
@@ -86,6 +109,49 @@ export const moveNodeToGroup = (
 };
 
 /**
+ * Hook that sets up both error and confirm handling for moveNodeToGroup using useOverlay.
+ * This sets global handlers that will be used by all moveNodeToGroup calls.
+ */
+export const useSetupMoveNodeToGroupHandlers = () => {
+  const { t } = useTranslation();
+  const launcher = useOverlay();
+  const launchWarningModal = useWarningModal();
+
+  useEffect(() => {
+    const errorHandler = (error: string) => {
+      launcher<ErrorModalProps>(ErrorModal, { error });
+    };
+
+    const confirmHandler = (
+      title: string,
+      message: React.ReactNode,
+      confirmButtonText: string,
+      onConfirm: () => Promise<void>,
+      onCancel: () => void,
+    ) => {
+      launchWarningModal({
+        title: t(`topology~${title}`),
+        children: message,
+        confirmButtonLabel: t(`topology~${confirmButtonText}`),
+        onConfirm,
+        onClose: onCancel,
+      });
+    };
+
+    setMoveNodeToGroupErrorHandler(errorHandler);
+    setMoveNodeToGroupConfirmHandler(confirmHandler);
+
+    return () => {
+      setMoveNodeToGroupErrorHandler(null);
+      setMoveNodeToGroupConfirmHandler(null);
+    };
+    // Intentionally only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+};
+
+/**
+ * @deprecated Use useSetupMoveNodeToGroupHandlers in the parent component instead
  * Hook that sets up error handling for moveNodeToGroup using useOverlay.
  * This sets a global error handler that will be used by all moveNodeToGroup calls.
  */

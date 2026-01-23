@@ -6,7 +6,7 @@ import { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { findNodeMaintenance } from '../../selectors';
 import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
   const { t } = useTranslation();
@@ -24,9 +24,10 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     namespaced: false,
   });
 
-  const actions = useMemo(() => {
-    const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
+  const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
 
+  const actions = useMemo(() => {
     let action: Action = {
       id: 'start-node-maintenance',
       label: t('metal3-plugin~Start Maintenance'),
@@ -38,13 +39,13 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
       action = {
         id: 'stop-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: () => stopNodeMaintenanceModal(nodeMaintenance, t),
+        cta: () => stopNodeMaintenanceModalLauncher(),
         insertBefore: 'edit-labels',
       };
     }
     return [action];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maintenances, resource.metadata.name, t]);
+  }, [maintenances, resource.metadata.name, t, stopNodeMaintenanceModalLauncher]);
 
   return [actions, loading, loadError];
 };
