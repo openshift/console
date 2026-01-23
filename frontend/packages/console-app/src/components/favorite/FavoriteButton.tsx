@@ -11,7 +11,6 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ModalVariant } from '@patternfly/react-core/deprecated';
-import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import Modal from '@console/shared/src/components/modal/Modal';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -139,7 +138,8 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
     <div className="co-fav-actions-icon">
       <Tooltip content={tooltipText} position="top">
         <Button
-          icon={<StarIcon color={isStarred ? 'gold' : 'gray'} />}
+          isFavorite
+          isFavorited={isStarred}
           className="co-xl-icon-button"
           data-test="favorite-button"
           variant="plain"

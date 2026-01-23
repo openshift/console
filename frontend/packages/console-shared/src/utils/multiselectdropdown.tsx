@@ -1,4 +1,4 @@
-import type { FC, MouseEvent, ChangeEvent, KeyboardEvent } from 'react';
+import type { FC, KeyboardEvent } from 'react';
 import { useState, useMemo } from 'react';
 import { MultiTypeaheadSelect, MultiTypeaheadSelectOption } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({
     [selected, options],
   );
 
-  const onSelect = (event: MouseEvent | ChangeEvent, selections: string[]) => {
+  const onSelect = (event: React.UIEvent, selections: string[]) => {
     event.preventDefault();
     setSelected(selections);
     onChange(selections);
@@ -29,7 +29,6 @@ export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({
       initialOptions={initialOptions}
       placeholder={placeholder || t('console-shared~Select options')}
       noOptionsFoundMessage={t('console-shared~No results found')}
-      // @ts-expect-error FIXME: PatternFly's onSelect is typed wrong (value should be any)
       onSelectionChange={onSelect}
       aria-label={t('console-shared~Select input')}
       aria-labelledby={id}

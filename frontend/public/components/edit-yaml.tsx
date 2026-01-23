@@ -856,7 +856,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
             <div className={css('yaml-editor', customClass)} ref={editor}>
               {showReplaceCodeModal && <ReplaceCodeModal handleCodeReplace={handleCodeReplace} />}
               <CodeEditor
-                editorProps={theme === 'default' ? undefined : { theme: `console-${theme}` }}
+                {...(theme !== 'default' && { isDarkTheme: theme === 'dark' })}
                 options={options}
                 isCopyEnabled={canDownload}
                 ref={monacoRef}

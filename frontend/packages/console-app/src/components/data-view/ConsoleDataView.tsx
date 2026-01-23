@@ -196,6 +196,7 @@ export const ConsoleDataView = <
         <InnerScrollContainer>
           <DataViewTable
             aria-label={t(`public~{{label}} table`, { label })}
+            // @ts-expect-error - TODO(react18): CONSOLE-5040: Remove ConsoleDataViewColumn bodge
             columns={dataViewColumns}
             rows={dataViewRows}
             bodyStates={{ empty: bodyEmpty, loading: bodyLoading }}

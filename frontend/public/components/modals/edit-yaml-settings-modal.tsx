@@ -1,5 +1,4 @@
 import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import {
   Flex,
@@ -12,7 +11,13 @@ import {
   Switch,
   SwitchProps,
 } from '@patternfly/react-core';
-import { CogIcon } from '@patternfly/react-icons';
+import {
+  CogIcon,
+  PaintRollerIcon,
+  FontIcon,
+  ICursorIcon,
+  MouseIcon,
+} from '@patternfly/react-icons';
 import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,57 +31,6 @@ import {
   CUSTOM_YAML_EDITOR_FONT_SIZE_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { SimpleSelect, SimpleSelectOption } from '@patternfly/react-templates';
-
-/**!
- * Font Awesome Free 6.7.2 - https://fontawesome.com
- * License - https://fontawesome.com/license/free
- * Copyright 2025 Fonticons, Inc.
- */
-const PaintRollerIcon = createIcon({
-  name: 'PaintRollerIcon',
-  width: 512,
-  height: 512,
-  svgPath:
-    'M416 128V32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v96c0 17.67 14.33 32 32 32h352c17.67 0 32-14.33 32-32zm32-64v128c0 17.67-14.33 32-32 32H256c-35.35 0-64 28.65-64 64v32c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h64c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32v-32h160c53.02 0 96-42.98 96-96v-64c0-35.35-28.65-64-64-64z',
-});
-
-/**!
- * Font Awesome Free 6.7.2 - https://fontawesome.com
- * License - https://fontawesome.com/license/free
- * Copyright 2025 Fonticons, Inc.
- */
-const FontIcon = createIcon({
-  name: 'FontIcon',
-  width: 448,
-  height: 512,
-  svgPath:
-    'M432 416h-23.41L277.88 53.69A32 32 0 0 0 247.58 32h-47.16a32 32 0 0 0-30.3 21.69L39.41 416H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16h-19.58l23.3-64h152.56l23.3 64H304a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM176.85 272L224 142.51 271.15 272z',
-});
-/**!
- * Font Awesome Free 6.7.2 - https://fontawesome.com
- * License - https://fontawesome.com/license/free
- * Copyright 2025 Fonticons, Inc.
- */
-const ICursorIcon = createIcon({
-  name: 'ICursorIcon',
-  width: 256,
-  height: 512,
-  svgPath:
-    'M.1 29.3C-1.4 47 11.7 62.4 29.3 63.9l8 .7C70.5 67.3 96 95 96 128.3L96 224l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l32 0 0 95.7c0 33.3-25.5 61-58.7 63.8l-8 .7C11.7 449.6-1.4 465 .1 482.7s16.9 30.7 34.5 29.2l8-.7c34.1-2.8 64.2-18.9 85.4-42.9c21.2 24 51.2 40 85.4 42.9l8 .7c17.6 1.5 33.1-11.6 34.5-29.2s-11.6-33.1-29.2-34.5l-8-.7C185.5 444.7 160 417 160 383.7l0-95.7 32 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-95.7c0-33.3 25.5-61 58.7-63.8l8-.7c17.6-1.5 30.7-16.9 29.2-34.5S239-1.4 221.3 .1l-8 .7C179.2 3.6 149.2 19.7 128 43.7c-21.2-24-51.2-40-85.4-42.9l-8-.7C17-1.4 1.6 11.7 .1 29.3z',
-});
-
-/**!
- * Font Awesome Free 6.7.2 - https://fontawesome.com
- * License - https://fontawesome.com/license/free
- * Copyright 2025 Fonticons, Inc.
- */
-const MouseIcon = createIcon({
-  name: 'MouseIcon',
-  width: 384,
-  height: 512,
-  svgPath:
-    'M0 192l176 0L176 0 160 0C71.6 0 0 71.6 0 160l0 32zm0 32L0 352c0 88.4 71.6 160 160 160l64 0c88.4 0 160-71.6 160-160l0-128-192 0L0 224zm384-32l0-32C384 71.6 312.4 0 224 0L208 0l0 192 176 0z',
-});
 
 /*
  * The following is taken entirely from the PatternFly example

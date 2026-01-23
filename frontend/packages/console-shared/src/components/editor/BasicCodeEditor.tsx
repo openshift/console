@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
-import { defineThemes } from './theme';
 import './BasicCodeEditor.scss';
 
 // Avoid using monaco from CDN
@@ -39,13 +38,11 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
         emptyStateButton={t('Browse')}
         emptyStateLink={t('Start from scratch')}
         emptyStateTitle={t('Start editing')}
+        isDarkTheme={theme === 'dark'}
         {...props}
         className={css('co-code-editor', props.className)}
         editorProps={{
-          theme: `console-${theme}`,
-          ...props?.editorProps,
           beforeMount: (monacoInstance) => {
-            defineThemes(monacoInstance?.editor);
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },

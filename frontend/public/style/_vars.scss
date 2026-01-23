@@ -22,7 +22,7 @@ $pf-v6-global--breakpoint--lg-max: calc(#{$pf-v6-global--breakpoint--lg} - 1);
 
 $pf-v6-global-gutter-x: calc(
   var(--pf-v6-c-page__main-section--PaddingInlineStart) -
-    var(--pf-v6-c-page__main-container--BorderWidth)
+    var(--pf-v6-c-page__main-container--BorderInlineStartWidth)
 ); // Matches pf-v6-c-page__main-section
 $pf-v6-global-gutter-y: var(--pf-t--global--spacer--md); // Matches pf-v6-c-page__main-section
 
