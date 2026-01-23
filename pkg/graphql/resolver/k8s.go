@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 
@@ -29,7 +29,7 @@ func (r *K8sResolver) FetchURL(ctx context.Context, args struct{ URL string }) (
 	r.K8sProxy.ServeHTTP(rr, request)
 	result := rr.Result()
 	defer result.Body.Close()
-	body, err := ioutil.ReadAll(result.Body)
+	body, err := io.ReadAll(result.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (r *K8sResolver) SelfSubjectReview(ctx context.Context) (*SelfSubjectReview
 	result := rr.Result()
 	defer result.Body.Close()
 	if result.StatusCode < 200 || result.StatusCode > 299 {
-		body, err := ioutil.ReadAll(result.Body)
+		body, err := io.ReadAll(result.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -143,7 +143,7 @@ func (r *K8sResolver) SelfSubjectAccessReview(ctx context.Context, args SSARArgs
 	result := rr.Result()
 	defer result.Body.Close()
 	if result.StatusCode < 200 || result.StatusCode > 299 {
-		body, err := ioutil.ReadAll(result.Body)
+		body, err := io.ReadAll(result.Body)
 		if err != nil {
 			return nil, err
 		}

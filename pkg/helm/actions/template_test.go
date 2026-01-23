@@ -2,7 +2,7 @@ package actions
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -96,7 +96,7 @@ func TestRenderManifests(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -182,7 +182,7 @@ func TestRenderManifestsBasicAuth(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}

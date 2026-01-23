@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	configv1 "github.com/openshift/api/config/v1"
@@ -69,8 +69,8 @@ func TestAuthenticationDoesNotSetRepoURL(t *testing.T) {
 			}
 
 			if tt.hasTLS {
-				cert, _ := ioutil.ReadFile("./server.crt")
-				key, _ := ioutil.ReadFile("./server.key")
+				cert, _ := os.ReadFile("./server.crt")
+				key, _ := os.ReadFile("./server.key")
 				tlsSecret := &v1.Secret{
 					Data: map[string][]byte{
 						tlsSecretCertKey: cert,
