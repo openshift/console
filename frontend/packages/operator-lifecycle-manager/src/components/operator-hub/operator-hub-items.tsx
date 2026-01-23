@@ -7,12 +7,12 @@ import {
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateVariant,
+  Spinner,
   Truncate,
 } from '@patternfly/react-core';
-import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom-v5-compat';
 import { getQueryArgument } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
@@ -583,6 +583,16 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const installVersion = getQueryArgument('version');
   const filteredItems = filterByArchAndOS(props.items);
 
+  // Watch for the installing state by checking if subscription exists and CSV phase is not Succeeded
+  const isOperatorInstalling = useMemo(() => {
+    if (!detailsItem?.subscription) return false;
+    // If there's a subscription but no CSV or CSV phase is not Succeeded, it's installing
+    const csvPhase = detailsItem?.subscription?.status?.currentCSV
+      ? props.items?.find((item) => item.uid === detailsItem.uid)?.isInstalling
+      : false;
+    return detailsItem.isInstalling || csvPhase;
+  }, [detailsItem, props.items]);
+
   // Use useSearchParams to reactively get URL parameters that update on URL changes
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get('keyword');
@@ -1060,20 +1070,18 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
 
               <div className="co-catalog-page__overlay-actions">
                 {!detailsItem.installed ? (
-                  <Link
-                    className={css(
-                      'pf-v6-c-button',
-                      'pf-m-primary',
-                      {
-                        'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
-                      },
-                      'co-catalog-page__overlay-action',
-                    )}
+                  <Button
+                    className="co-catalog-page__overlay-action"
                     data-test-id="operator-install-btn"
-                    to={installLink}
+                    component={isOperatorInstalling || !detailsItem.obj ? undefined : 'a'}
+                    href={isOperatorInstalling || !detailsItem.obj ? undefined : installLink}
+                    isLoading={isOperatorInstalling}
+                    isDisabled={!detailsItem.obj || isOperatorInstalling}
+                    variant="primary"
+                    icon={isOperatorInstalling ? <Spinner size="sm" /> : undefined}
                   >
                     {t('olm~Install')}
-                  </Link>
+                  </Button>
                 ) : (
                   <Button
                     className="co-catalog-page__overlay-action"
