@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
   navFactory,
@@ -12,11 +13,12 @@ import {
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { OperatorHubModel } from '../../models';
 import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
-import { editDefaultSourcesModal } from '../modals/edit-default-sources-modal';
+import EditDefaultSourcesModalProvider from '../modals/edit-default-sources-modal';
 import { OperatorHubKind } from '.';
 
 const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
 
   const canEditDefaultSources = useAccessReview({
     group: OperatorHubModel.apiGroup,
@@ -42,7 +44,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
               obj={operatorHub}
               path="status.sources"
               canEdit={canEditDefaultSources}
-              onEdit={() => editDefaultSourcesModal({ operatorHub })}
+              onEdit={() => launchOverlay(EditDefaultSourcesModalProvider, { operatorHub })}
               editAsGroup
               hideEmpty
             >
