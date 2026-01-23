@@ -331,7 +331,7 @@
     "esbuild": "^0.27.2",
     "glob-parent": "^5.1.2",
     "hosted-git-info": "^3.0.8",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "postcss": "^8.2.13",
     "async": "^3.2.5"
   },
