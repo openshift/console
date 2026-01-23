@@ -79,6 +79,9 @@ export type K8sResourceKind = K8sResourceCommon & {
   status?: { [key: string]: any };
   data?: { [key: string]: any };
 };
+export type K8sResourceWithMetadata = K8sResourceCommon & {
+  metadata: ObjectMetadata;
+};
 
 export type AccessReviewResourceAttributes = {
   group?: string;
