@@ -41,7 +41,6 @@ const commonFiles: Record<string, string> = {
 
 const docFiles: Record<string, string> = {
   docs: 'docs',
-  'upgrade-PatternFly.md': 'upgrade-PatternFly.md',
 };
 
 const getReferencedAssets = (outDir: string) => {

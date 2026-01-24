@@ -500,8 +500,6 @@ Currently this feature is behind feature gate.
 [[API]](./frontend/packages/console-dynamic-plugin-sdk/docs/api.md)
 [[Console Extensions]](./frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)
 
-- [console-plugin-shared](./frontend/packages/console-plugin-shared/README.md)
-
 - [dev-console](./frontend/packages/dev-console/README.md)
 
 - [eslint-plugin-console](./frontend/packages/eslint-plugin-console/README.md)

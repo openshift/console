@@ -70,7 +70,6 @@ as a reference point for writing an OLM operator that ships with its own Console
 | `@openshift-console/dynamic-plugin-sdk` ★         | Provides core APIs, types and utilities used by dynamic plugins at runtime.      |
 | `@openshift-console/dynamic-plugin-sdk-webpack` ★ | Provides webpack `ConsoleRemotePlugin` used to build all dynamic plugin assets.  |
 | `@openshift-console/dynamic-plugin-sdk-internal`   | Internal package exposing additional Console code.                               |
-| `@openshift-console/plugin-shared`                 | Provides reusable components and utility functions to build OCP dynamic plugins. |
 
 Packages marked with ★ provide essential plugin APIs with backwards compatibility. Other packages may be
 used with multiple versions of OpenShift Console but don't provide any backwards compatibility guarantees.
