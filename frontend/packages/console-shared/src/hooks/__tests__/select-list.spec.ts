@@ -1,43 +1,35 @@
-import { act } from '@testing-library/react';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
+import type { FormEvent } from 'react';
+import { act, renderHook } from '@testing-library/react';
 import { data, visibleRows, onRowSelected } from '../__mocks__/select-list-data';
 import { useSelectList } from '../select-list';
 
+const dummyFormEvent: FormEvent<HTMLInputElement> = ({} as unknown) as FormEvent<HTMLInputElement>;
+
 describe('useSelectList', () => {
-  let onSelect;
-  let selectedRows;
-  let updateSelectedRows;
-
-  beforeEach(() => {
-    testHook(() => {
-      ({ onSelect, selectedRows, updateSelectedRows } = useSelectList(
-        data,
-        visibleRows,
-        onRowSelected,
-      ));
-    });
-  });
-
   it('onSelect should update selectedRows properly', () => {
+    const { result } = renderHook(() => useSelectList(data, visibleRows, onRowSelected));
+
     act(() => {
-      onSelect({}, true, -1);
+      result.current.onSelect(dummyFormEvent, true, -1, undefined, undefined);
     });
-    expect(selectedRows).toEqual(visibleRows);
+    expect(result.current.selectedRows).toEqual(visibleRows);
     act(() => {
-      onSelect({}, false, 1, { props: { id: '2' } });
+      result.current.onSelect(dummyFormEvent, false, 1, { props: { id: '2' } }, undefined);
     });
-    expect(selectedRows).toEqual(new Set(['1', '3']));
+    expect(result.current.selectedRows).toEqual(new Set(['1', '3']));
     act(() => {
-      onSelect({}, false, -1);
+      result.current.onSelect(dummyFormEvent, false, -1, undefined, undefined);
     });
-    expect(selectedRows).toEqual(new Set());
+    expect(result.current.selectedRows).toEqual(new Set());
   });
 
   it('updateSelectedRows should update selectedRows properly and call onRowSelected', () => {
+    const { result } = renderHook(() => useSelectList(data, visibleRows, onRowSelected));
+
     act(() => {
-      updateSelectedRows(data);
+      result.current.updateSelectedRows(data);
     });
-    expect(selectedRows).toEqual(visibleRows);
+    expect(result.current.selectedRows).toEqual(visibleRows);
     expect(onRowSelected).toHaveBeenCalled();
   });
 });

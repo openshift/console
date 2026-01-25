@@ -1,10 +1,9 @@
-import { act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
@@ -81,7 +80,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
-    testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     expect(fetchK8sMock).toHaveBeenCalledTimes(2);
     expect(fetchK8sMock.mock.calls[0]).toEqual([HelmChartRepositoryModel]);
     expect(fetchK8sMock.mock.calls[1]).toEqual([ProjectHelmChartRepositoryModel, null, ns]);
@@ -91,7 +90,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, { items: [] }], [], []]),
     );
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -103,7 +102,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[{ items: [] }, helmChartRepositoryList], [], []]),
     );
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -115,7 +114,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -127,7 +126,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[{ items: [] }, { items: [] }], [], []]),
     );
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -146,7 +145,7 @@ describe('useDetectHelmChartRepositories', () => {
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
 
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -160,7 +159,7 @@ describe('useDetectHelmChartRepositories', () => {
     } as Response);
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error200, error200], []]));
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });
@@ -172,7 +171,7 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
-    testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     expect(fetchK8sMock).toHaveBeenCalledTimes(2);
     jest.advanceTimersByTime(20 * 1000);
     expect(fetchK8sMock).toHaveBeenCalledTimes(6);
@@ -187,7 +186,7 @@ describe('useDetectHelmChartRepositories', () => {
     } as Response);
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
-    const { rerender } = testHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
     await act(async () => {
       rerender();
     });

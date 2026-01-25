@@ -1,5 +1,5 @@
+import { renderHook } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { Kafkas } from '../../utils/__tests__/knative-serving-data';
 import { useBootstrapServers } from '../useBootstrapServers';
 
@@ -14,7 +14,7 @@ describe('useBootstrapServers', () => {
       kafkaconnections: { data: [], loaded: false },
     });
 
-    const { result } = testHook(() => useBootstrapServers('app-test'));
+    const { result } = renderHook(() => useBootstrapServers('app-test'));
     expect(result.current).toEqual([
       [{ disabled: true, value: 'Loading bootstrap servers...' }],
       '...',
@@ -27,7 +27,7 @@ describe('useBootstrapServers', () => {
       kafkaconnections: { data: [], loaded: true, loadError: { message: 'loading error' } },
     });
 
-    const { result } = testHook(() => useBootstrapServers('app-test'));
+    const { result } = renderHook(() => useBootstrapServers('app-test'));
     expect(result.current).toEqual([
       [],
       'loading error, loading error. Try adding bootstrap servers manually.',
@@ -40,7 +40,7 @@ describe('useBootstrapServers', () => {
       kafkaconnections: { data: [], loaded: true },
     });
 
-    const { result } = testHook(() => useBootstrapServers('app-test'));
+    const { result } = renderHook(() => useBootstrapServers('app-test'));
     expect(result.current[0]).toHaveLength(5);
     expect(result.current[1]).toEqual('Add bootstrap servers');
   });

@@ -1,10 +1,9 @@
+import { renderHook } from '@testing-library/react';
 import { Base64 } from 'js-base64';
 
 import { SecretKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 
 import { useAlertReceiverLink } from '../cluster-setup-alert-receiver-link';
 
@@ -112,7 +111,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(false);
     useK8sWatchResourceMock.mockReturnValue([undefined, true, undefined]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
@@ -123,7 +122,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([undefined, false, undefined]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
@@ -140,7 +139,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([null, true, null]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
   });
@@ -150,7 +149,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
   });
@@ -164,7 +163,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toEqual({
       id: 'alert-receivers',
@@ -182,7 +181,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
   });
@@ -191,7 +190,7 @@ describe('useAlertReceiverLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Any error')]);
 
-    const { result } = testHook(() => useAlertReceiverLink());
+    const { result } = renderHook(() => useAlertReceiverLink());
 
     expect(result.current).toBe(null);
   });

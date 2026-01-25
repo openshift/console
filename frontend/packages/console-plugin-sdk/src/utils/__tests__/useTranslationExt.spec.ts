@@ -1,22 +1,20 @@
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
+import { renderHook } from '@testing-library/react';
 import useTranslationExt from '../useTranslationExt';
 
 describe('useTranslationExt', () => {
   it('should return the input if key does not match translation pattern', () => {
-    testHook(() => {
-      const { t: translate } = useTranslationExt();
-      expect(translate('%')).toBe('%');
-      expect(translate('a%')).toBe('a%');
-      expect(translate('%a')).toBe('%a');
-      expect(translate('%%')).toBe('%%');
-      expect(translate('foo')).toBe('foo');
-    });
+    const { result } = renderHook(() => useTranslationExt());
+    const { t: translate } = result.current;
+    expect(translate('%')).toBe('%');
+    expect(translate('a%')).toBe('a%');
+    expect(translate('%a')).toBe('%a');
+    expect(translate('%%')).toBe('%%');
+    expect(translate('foo')).toBe('foo');
   });
 
   it('should parse as a translation key', () => {
-    testHook(() => {
-      const { t: translate } = useTranslationExt();
-      expect(translate('%test~key%')).toBe('key');
-    });
+    const { result } = renderHook(() => useTranslationExt());
+    const { t: translate } = result.current;
+    expect(translate('%test~key%')).toBe('key');
   });
 });

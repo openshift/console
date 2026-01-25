@@ -1,17 +1,11 @@
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
+import { renderHook } from '@testing-library/react';
 import ToastProvider from '../ToastProvider';
 import useToast from '../useToast';
 
 describe('useToast', () => {
   it('should provide a context', () => {
-    let toastContext;
-    testHook(
-      () => {
-        toastContext = useToast();
-      },
-      { wrapper: ToastProvider },
-    );
-    expect(typeof toastContext.addToast).toBe('function');
-    expect(typeof toastContext.removeToast).toBe('function');
+    const { result } = renderHook(() => useToast(), { wrapper: ToastProvider });
+    expect(typeof result.current.addToast).toBe('function');
+    expect(typeof result.current.removeToast).toBe('function');
   });
 });

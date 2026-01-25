@@ -1,5 +1,5 @@
+import { renderHook } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { useProjectAccessRoles } from '../hooks';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import { clusterRolesMock } from './cluster-role-mock';
@@ -18,7 +18,7 @@ describe('project-access hooks', () => {
       loaded: true,
     };
     useK8sWatchResourcesMock.mockReturnValue({});
-    const { result } = testHook(() => useProjectAccessRoles());
+    const { result } = renderHook(() => useProjectAccessRoles());
     expect(result.current).toEqual(expectedAccessRoles);
   });
   it('should return available cluster roles', () => {
@@ -32,7 +32,7 @@ describe('project-access hooks', () => {
       admin: { data: clusterRolesMock[0], loaded: true },
       test1: { data: {}, loaded: false, loadError: { response: { status: 404 } } },
     });
-    const { result } = testHook(() => useProjectAccessRoles());
+    const { result } = renderHook(() => useProjectAccessRoles());
     expect(result.current).toEqual(expectedAccessRoles);
   });
   it('should not retrun roles if available cluster rules are not present in cluster', () => {
@@ -45,7 +45,7 @@ describe('project-access hooks', () => {
       data: {},
       loaded: true,
     };
-    const { result } = testHook(() => useProjectAccessRoles());
+    const { result } = renderHook(() => useProjectAccessRoles());
     expect(result.current).toEqual(expectedAccessRoles);
   });
   it('should return access roles with name display-name', () => {
@@ -58,7 +58,7 @@ describe('project-access hooks', () => {
       '3scale-kourier': { data: clusterRolesMock[4], loaded: true },
       'cluster-debugger': { data: clusterRolesMock[5], loaded: true },
     });
-    const { result } = testHook(() => useProjectAccessRoles());
+    const { result } = renderHook(() => useProjectAccessRoles());
     expect(result.current).toEqual(expectedAccessRoles);
   });
   it('should return access role if loadError is other than 404', () => {
@@ -71,7 +71,7 @@ describe('project-access hooks', () => {
       data: { 'custom-role': 'custom-role' },
       loaded: true,
     };
-    const { result } = testHook(() => useProjectAccessRoles());
+    const { result } = renderHook(() => useProjectAccessRoles());
     expect(result.current).toEqual(expectedAccessRoles);
   });
 });

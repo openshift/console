@@ -1,8 +1,7 @@
+import { renderHook } from '@testing-library/react';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { OAuthKind } from '@console/internal/module/k8s';
-
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
 
@@ -26,7 +25,7 @@ describe('useIdentityProviderLink', () => {
     useAccessReviewMock.mockReturnValue(false);
     useK8sWatchResourceMock.mockReturnValue([undefined, true, undefined]);
 
-    const { result } = testHook(() => useIdentityProviderLink());
+    const { result } = renderHook(() => useIdentityProviderLink());
 
     expect(result.current).toBe(null);
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
@@ -37,7 +36,7 @@ describe('useIdentityProviderLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([undefined, false, undefined]);
 
-    const { result } = testHook(() => useIdentityProviderLink());
+    const { result } = renderHook(() => useIdentityProviderLink());
 
     expect(result.current).toBe(null);
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
@@ -58,7 +57,7 @@ describe('useIdentityProviderLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([oauthData, true, null]);
 
-    const { result } = testHook(() => useIdentityProviderLink());
+    const { result } = renderHook(() => useIdentityProviderLink());
 
     expect(result.current).toEqual({
       id: 'identity-providers',
@@ -85,7 +84,7 @@ describe('useIdentityProviderLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([oauthData, true, null]);
 
-    const { result } = testHook(() => useIdentityProviderLink());
+    const { result } = renderHook(() => useIdentityProviderLink());
 
     expect(result.current).toBe(null);
   });
@@ -94,7 +93,7 @@ describe('useIdentityProviderLink', () => {
     useAccessReviewMock.mockReturnValue(true);
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Any error')]);
 
-    const { result } = testHook(() => useIdentityProviderLink());
+    const { result } = renderHook(() => useIdentityProviderLink());
 
     expect(result.current).toBe(null);
   });

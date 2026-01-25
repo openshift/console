@@ -1,7 +1,6 @@
-import { act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { DevfileSample } from '../../../import/devfile/devfile-types';
 import useDevfileSamples from '../useDevfileSamples';
 import { devfileSamples, expectedCatalogItems } from './useDevfileSamples.data';
@@ -29,7 +28,7 @@ describe('useDevfileSamples:', () => {
     let resolver: (samples: DevfileSample[]) => void;
     getMock.mockReturnValue(new Promise((resolve) => (resolver = resolve)));
 
-    const { result } = testHook(() => useDevfileSamples({}));
+    const { result } = renderHook(() => useDevfileSamples({}));
 
     expect(getMock).toHaveBeenCalledTimes(1);
     expect(getMock).toHaveBeenLastCalledWith(
@@ -47,7 +46,7 @@ describe('useDevfileSamples:', () => {
     let rejector: (error: Error) => void;
     getMock.mockReturnValue(new Promise((_, reject) => (rejector = reject)));
 
-    const { result } = testHook(() => useDevfileSamples({}));
+    const { result } = renderHook(() => useDevfileSamples({}));
 
     expect(getMock).toHaveBeenCalledTimes(1);
     expect(getMock).toHaveBeenLastCalledWith(

@@ -1,8 +1,8 @@
+import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 import { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { USER_SETTING_CONFIGMAP_NAMESPACE } from '../../utils/user-settings';
 import { useGetUserSettingConfigMap } from '../useGetUserSettingConfigMap';
 
@@ -55,7 +55,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(impersonateUserInfo);
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       // Should use impersonate name directly and return config map data
       expect(result.current).toEqual([mockConfigMapData, true, null]);
@@ -79,7 +79,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(userInfoWithUid);
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       // Should use uid directly and return config map data
       expect(result.current).toEqual([mockConfigMapData, true, null]);
@@ -102,7 +102,7 @@ describe('useGetUserSettingConfigMap', () => {
 
       useSelectorMock.mockReturnValue(emptyUserInfo);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       // Should return null config map resource when no user identifier
       expect(result.current).toEqual([null, true, null]);
@@ -120,7 +120,7 @@ describe('useGetUserSettingConfigMap', () => {
 
       useSelectorMock.mockReturnValue(userInfoWithUsername);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       // Initially, should return null since hashing is async
       expect(result.current[0]).toBeNull();
@@ -138,7 +138,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(userInfoWithUid);
       useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       expect(result.current).toEqual([null, false, null]);
     });
@@ -154,7 +154,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(userInfoWithUid);
       useK8sWatchResourceMock.mockReturnValue([null, false, error]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       expect(result.current).toEqual([null, false, error]);
     });
@@ -169,7 +169,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(userInfoWithUid);
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       expect(result.current).toEqual([mockConfigMapData, true, null]);
     });
@@ -184,7 +184,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(userInfo);
       useK8sWatchResourceMock.mockReturnValue([mockConfigMapData, true, null]);
 
-      testHook(() => useGetUserSettingConfigMap());
+      renderHook(() => useGetUserSettingConfigMap());
 
       // Verify useK8sWatchResource was called with correct resource spec
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
@@ -205,7 +205,7 @@ describe('useGetUserSettingConfigMap', () => {
       useSelectorMock.mockReturnValue(emptyUserInfo);
       useK8sWatchResourceMock.mockReturnValue([null, true, null]);
 
-      const { result } = testHook(() => useGetUserSettingConfigMap());
+      const { result } = renderHook(() => useGetUserSettingConfigMap());
 
       // Should call useK8sWatchResource with null
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);

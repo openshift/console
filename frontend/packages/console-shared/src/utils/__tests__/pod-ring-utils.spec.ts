@@ -1,8 +1,8 @@
+import { renderHook } from '@testing-library/react';
 import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { t } from '../../../../../__mocks__/i18next';
 import { ExtPodKind } from '../../types';
 import {
@@ -191,44 +191,40 @@ describe('usePodScalingAccessStatus', () => {
     jest.clearAllMocks();
   });
 
-  it('should return false for scaling when enableScaling is false', (done) => {
+  it('should return false for scaling when enableScaling is false', () => {
     obj.kind = 'Deployment';
-    testHook(() => {
-      expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], false)).toBe(false);
-      done();
-    });
+    const { result } = renderHook(() =>
+      usePodScalingAccessStatus(obj, DeploymentConfigModel, [], false),
+    );
+    expect(result.current).toBe(false);
   });
 
-  it('should return false for knative revisions', (done) => {
+  it('should return false for knative revisions', () => {
     obj.kind = 'Revision';
-    testHook(() => {
-      expect(usePodScalingAccessStatus(obj, RevisionModel, [], true)).toBe(false);
-      done();
-    });
+    const { result } = renderHook(() => usePodScalingAccessStatus(obj, RevisionModel, [], true));
+    expect(result.current).toBe(false);
   });
 
-  it('should return false for pods', (done) => {
+  it('should return false for pods', () => {
     obj.kind = 'Pod';
-    testHook(() => {
-      expect(usePodScalingAccessStatus(obj, PodModel, [], true)).toBe(false);
-      done();
-    });
+    const { result } = renderHook(() => usePodScalingAccessStatus(obj, PodModel, [], true));
+    expect(result.current).toBe(false);
   });
 
-  it('should return false when api call returns false for a resource', (done) => {
+  it('should return false when api call returns false for a resource', () => {
     obj.kind = 'DeploymentConfig';
-    testHook(() => {
-      expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
-      done();
-    });
+    const { result } = renderHook(() =>
+      usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true),
+    );
+    expect(result.current).toBe(false);
   });
 
-  it('should return false when API call results in an error', (done) => {
+  it('should return false when API call results in an error', () => {
     checkPodEditAccessMock.mockImplementation(() => Promise.reject(new Error('error')));
-    testHook(() => {
-      expect(usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true)).toBe(false);
-      done();
-    });
+    const { result } = renderHook(() =>
+      usePodScalingAccessStatus(obj, DeploymentConfigModel, [], true),
+    );
+    expect(result.current).toBe(false);
   });
 });
 

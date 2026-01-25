@@ -1,5 +1,5 @@
+import { renderHook } from '@testing-library/react';
 import { useResolvedExtensions, AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { testHook } from '@console/shared/src/test-utils/hooks-utils';
 import { useAddActionExtensions } from '../useAddActionExtensions';
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
@@ -72,11 +72,10 @@ describe('useAddActionExtensions', () => {
     ]);
     delete window.SERVER_FLAGS.addPage;
 
-    testHook(() => {
-      const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
-      expect(resolved).toEqual(true);
-    });
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
   });
 
   it('return all actions if SERVER_FLAGS.addPage customization is empty', () => {
@@ -86,11 +85,10 @@ describe('useAddActionExtensions', () => {
     ]);
     window.SERVER_FLAGS.addPage = '{}';
 
-    testHook(() => {
-      const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
-      expect(resolved).toEqual(true);
-    });
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction2, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
   });
 
   it('return filtered actions if SERVER_FLAGS.addPage contains some disabledActions', () => {
@@ -100,10 +98,9 @@ describe('useAddActionExtensions', () => {
     ]);
     window.SERVER_FLAGS.addPage = '{"disabledActions":["action2"]}';
 
-    testHook(() => {
-      const [addActionExtensions, resolved] = useAddActionExtensions();
-      expect(addActionExtensions).toEqual([addAction1, addAction3, addAction4]);
-      expect(resolved).toEqual(true);
-    });
+    const { result } = renderHook(() => useAddActionExtensions());
+    const [addActionExtensions, resolved] = result.current;
+    expect(addActionExtensions).toEqual([addAction1, addAction3, addAction4]);
+    expect(resolved).toEqual(true);
   });
 });
