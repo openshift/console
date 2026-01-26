@@ -20,60 +20,15 @@ For the complete list of console plugins, see `console-app/package.json` depende
 - **Type Safety**: Comprehensive TypeScript definitions for all extension points
 - **Code References**: Lazy loading with `$codeRef` for performance
   
-### Extension Types
+### Official Extension Types & API Documentation
 
 OpenShift Console provides 75+ extension types for plugin integration. **For comprehensive documentation, see [frontend/packages/console-dynamic-plugin-sdk/README.md](frontend/packages/console-dynamic-plugin-sdk/README.md).**
 
-Additional resources:
-- [Extension type reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - Full type definitions, naming convention (`console.*`), and deprecation notices
-- [API documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, and utilities
+**Before working with extensions or the plugin API, you MUST read:**
+- **[Extension Types Reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md)** - Complete extension type definitions, naming conventions (`console.*`), and deprecation notices
+- **[Console API Documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md)** - React components, hooks, utilities, and TypeScript types exported by the SDK
 
-Common categories include navigation, pages, resources, actions, dashboards, catalog, and perspectives.
-
-
-### Plugin Structure
-
-Dynamic plugins define their extensions in a `console-extensions.json` file (JSONC format) located in the plugin package root. Extension types use the naming convention `console.foo/bar`.
-
-**Example `console-extensions.json`:**
-```json
-[
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": "/my-plugin-page",
-      "component": { "$codeRef": "MyPluginPage" }
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "my-plugin-nav",
-      "name": "My Plugin",
-      "href": "/my-plugin-page",
-      "section": "home"
-    }
-  },
-  {
-    "type": "console.perspective",
-    "properties": {
-      "id": "my-perspective",
-      "name": "%my-plugin~My Perspective%",
-      "icon": { "$codeRef": "perspective.icon" },
-      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" }
-    }
-  }
-]
-```
-
-**Key Concepts:**
-- **File Location**: `console-extensions.json` in package root (e.g., `frontend/packages/my-plugin/console-extensions.json`)
-- **Type Naming**: `console.*` convention (e.g., `console.page/route`, `console.navigation/href`, `console.dashboards/card`)
-- **Code References**: Use `$codeRef` to lazily load components and functions for performance
-- **i18n**: Use `%namespace~key%` format for translatable strings (e.g., `"%my-plugin~My Label%"`)
-
-**Real-world examples:** See `console-extensions.json` files in `frontend/packages/dev-console/`, `frontend/packages/helm-plugin/`, etc.
+Common extension categories include navigation, pages, resources, actions, dashboards, catalog, and perspectives.
 
 ### Critical Considerations
 - **⚠️ BREAKING CHANGES REQUIRE EXTREME CARE**: This is a public API consumed by external plugins

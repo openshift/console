@@ -27,7 +27,7 @@ cd frontend && yarn dev
 # Core commands
 cd frontend && yarn lint       # ESLint + Prettier
 cd frontend && yarn test       # Jest unit tests
-cd frontend && yarn build      # Production build
+./build-frontend.sh            # Production build
 
 # Full build (frontend + backend)
 ./build.sh
