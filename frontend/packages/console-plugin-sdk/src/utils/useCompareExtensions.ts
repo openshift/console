@@ -2,6 +2,11 @@ import { useRef, useEffect } from 'react';
 import type { Extension, LoadedExtension } from '@openshift/dynamic-plugin-sdk';
 import { difference } from 'lodash';
 
+export type OnChange<TExtension extends Extension> = (
+  added: LoadedExtension<TExtension>[],
+  removed: LoadedExtension<TExtension>[],
+) => void;
+
 /**
  * Track changes in `extensions` array and invoke `onChange` function when new extensions
  * are added or existing extensions are removed.
@@ -12,7 +17,7 @@ import { difference } from 'lodash';
  */
 export const useCompareExtensions = <TExtension extends Extension>(
   extensions: LoadedExtension<TExtension>[],
-  onChange: (added: LoadedExtension<TExtension>[], removed: LoadedExtension<TExtension>[]) => void,
+  onChange: OnChange<TExtension>,
 ) => {
   const prevExtensionsRef = useRef<LoadedExtension<TExtension>[]>([]);
 
