@@ -6,9 +6,21 @@ import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugin
 import type { RootState } from './redux';
 import { valid as semver } from 'semver';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 
 /** Set by `console-operator` or `./bin/bridge -release-version` */
 const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion);
+
+/**
+ * Console local plugins module has its source generated during webpack build,
+ * so we use dynamic require() instead of the usual static import statement.
+ */
+const localPlugins =
+  process.env.NODE_ENV !== 'test'
+    ? (require('../get-local-plugins').default as LocalPluginManifest[])
+    : [];
+
+const localPluginNames = localPlugins.map((p) => p.name);
 
 /**
  * Provides access to Console plugins and their extensions.
@@ -30,15 +42,33 @@ export const pluginStore = new PluginStore({
           ? CURRENT_OPENSHIFT_VERSION // this is always provided by console-operator in production
           : CURRENT_OPENSHIFT_VERSION || '4.1337.67',
     },
+    // Additional validation for plugin manifest
+    transformPluginManifest: (manifest) => {
+      const isLocalPlugin = localPluginNames.includes(manifest.name);
+
+      // Local plugins can skip remote plugin validation
+      if (isLocalPlugin) {
+        return manifest;
+      }
+
+      // Only allow plugins listed in `dynamicPluginNames` to be loaded
+      if (!dynamicPluginNames.includes(manifest.name)) {
+        throw new Error(`Plugin "${manifest.name}" is not in the list of allowed plugins.`);
+      }
+
+      // Ensure plugin name can be a valid DNS subdomain name for loading
+      const result = new ValidationResult('Console plugin metadata');
+      result.assertions.validDNSSubdomainName(manifest.name, 'metadata.name');
+
+      if (result.hasErrors()) {
+        throw new Error(result.formatErrors());
+      }
+
+      // No issues, return manifest as-is
+      return manifest;
+    },
   },
 });
-
-// Console local plugins module has its source generated during webpack build,
-// so we use dynamic require() instead of the usual static import statement.
-const localPlugins =
-  process.env.NODE_ENV !== 'test'
-    ? (require('../get-local-plugins').default as LocalPluginManifest[])
-    : [];
 
 localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
 
@@ -68,7 +98,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV !== 'test') {
   // eslint-disable-next-line no-console
-  console.info(`Static plugins: [${localPlugins.map((p) => p.name).join(', ')}]`);
+  console.info(`Static plugins: [${localPluginNames.join(', ')}]`);
   // eslint-disable-next-line no-console
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ')}]`);
 }

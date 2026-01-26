@@ -1,50 +1,23 @@
 import { useMemo } from 'react';
-import { Extension, LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { isTranslatableString, translateExtensionDeep } from './extension-i18n';
+import { Extension, LoadedExtension } from '@openshift/dynamic-plugin-sdk';
+import { translateExtension } from './extension-i18n';
 import useTranslationExt from './useTranslationExt';
 
 /**
- * `translateExtensionDeep` mutates the extension for translations. We need to store a
- * semi-permanent mapping of the translation keys values.
+ * In each extension's `properties` object, replace `%key%` placeholders within string values
+ * with actual translations.
  *
- * Structured as: { [extension.UID]: { [propertyPathToTranslation]: translationKey } }
+ * This hook returns a deep copy of original extension objects, see {@link translateExtension}
+ * for details.
+ *
+ * The hook assumes that `extensions` array is referentially stable across re-renders.
+ *
+ * @returns List of translated extensions.
  */
-const translationKeyMap: Record<string, Record<string, string>> = {};
-
-export const useTranslatedExtensions = <E extends Extension>(
-  extensions: LoadedExtension<E>[],
-): typeof extensions => {
+export const useTranslatedExtensions = <TExtension extends Extension>(
+  extensions: LoadedExtension<TExtension>[],
+) => {
   const { t } = useTranslationExt();
 
-  useMemo(
-    // Mutate "extensions" parameter only if changed (i.e. a flag-enabled or translations changed)
-    () =>
-      extensions.forEach((e) => {
-        const UID = e.uid;
-        translateExtensionDeep(
-          e,
-          (value, path): value is string => {
-            let translatableString = value;
-            if (translationKeyMap[UID]?.[path]) {
-              translatableString = translationKeyMap[UID][path];
-            }
-            return isTranslatableString(translatableString);
-          },
-          (value, key, obj, path) => {
-            if (!translationKeyMap[UID]) {
-              translationKeyMap[UID] = {};
-            }
-            if (!translationKeyMap[UID][path]) {
-              translationKeyMap[UID][path] = value;
-            }
-            // TODO: Fix mutation of extension - mirrors work done in translateExtension
-            // @see translateExtension()
-            obj[key] = t(translationKeyMap[UID][path]);
-          },
-        );
-      }),
-    [t, extensions],
-  );
-
-  return extensions;
+  return useMemo(() => extensions.map((e) => translateExtension(e, t)), [extensions, t]);
 };

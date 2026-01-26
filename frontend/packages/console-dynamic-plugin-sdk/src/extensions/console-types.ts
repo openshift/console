@@ -6,6 +6,7 @@ import type {
   SetStateAction,
   Dispatch,
 } from 'react';
+import type { useResolvedExtensions } from '@openshift/dynamic-plugin-sdk';
 import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
 import { ButtonProps } from '@patternfly/react-core';
@@ -21,10 +22,8 @@ import type {
   PrometheusEndpoint,
   PrometheusLabels,
   PrometheusValue,
-  ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionTypeGuard } from '../types';
 import { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
@@ -258,9 +257,7 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
   initResources: WatchK8sResources<R>,
 ) => WatchK8sResults<R>;
 
-export type UseResolvedExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
-) => [ResolvedExtension<E>[], boolean, any[]];
+export type UseResolvedExtensions = typeof useResolvedExtensions;
 
 export type GetSegmentAnalytics = () => {
   // TODO: use proper Segment Analytics API type

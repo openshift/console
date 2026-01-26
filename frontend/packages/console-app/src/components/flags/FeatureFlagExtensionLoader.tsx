@@ -12,7 +12,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { setFlag, updateModelFlags } from '@console/internal/actions/flags';
-import { useCompareExtensions } from '@console/plugin-sdk/src/utils/useCompareExtensions';
+import { OnChange, useCompareExtensions } from '@console/plugin-sdk/src/utils/useCompareExtensions';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { FeatureFlagExtensionHookResolver } from './FeatureFlagExtensionHookResolver';
@@ -50,8 +50,10 @@ const useFeatureFlagController = () => {
  * handlers.
  */
 const useFeatureFlagExtensions = (featureFlagController: SetFeatureFlag) => {
-  const handleChange = useCallback(
-    (added: ResolvedExtension<FeatureFlag>[]) => {
+  const [resolvedExtensions] = useResolvedExtensions(isFeatureFlag);
+
+  const handleChange = useCallback<OnChange<ResolvedExtension<FeatureFlag>>>(
+    (added) => {
       added.forEach(({ properties: { handler }, pluginName }) => {
         try {
           handler(featureFlagController);
@@ -64,8 +66,6 @@ const useFeatureFlagExtensions = (featureFlagController: SetFeatureFlag) => {
     [featureFlagController],
   );
 
-  const [resolvedExtensions] = useResolvedExtensions(isFeatureFlag);
-
   useCompareExtensions(resolvedExtensions, handleChange);
 };
 
@@ -74,6 +74,8 @@ const useFeatureFlagExtensions = (featureFlagController: SetFeatureFlag) => {
  * model flag updates.
  */
 const useModelFeatureFlagExtensions = () => {
+  const [resolvedExtensions] = useResolvedExtensions(isModelFeatureFlag);
+
   const dispatch = useConsoleDispatch();
   const models = useConsoleSelector(({ k8s }) => k8s.getIn(['RESOURCES', 'models']));
 
@@ -83,19 +85,14 @@ const useModelFeatureFlagExtensions = () => {
     modelsRef.current = models;
   }, [models]);
 
-  const handleChange = useCallback(
-    (
-      added: ResolvedExtension<ModelFeatureFlag>[],
-      removed: ResolvedExtension<ModelFeatureFlag>[],
-    ) => {
+  const handleChange = useCallback<OnChange<ModelFeatureFlag>>(
+    (added, removed) => {
       // The feature reducer can't access state from the k8s reducer, so get the
       // models here and include them in the action payload.
       dispatch(updateModelFlags(added, removed, modelsRef.current));
     },
     [dispatch],
   );
-
-  const [resolvedExtensions] = useResolvedExtensions(isModelFeatureFlag);
 
   useCompareExtensions(resolvedExtensions, handleChange);
 };

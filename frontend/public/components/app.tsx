@@ -10,7 +10,7 @@ import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
-import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
+import { LoadedExtension, PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
@@ -94,7 +94,8 @@ const EnhancedProvider: FC<{
 };
 
 const App: FC<{
-  contextProviderExtensions: ResolvedExtension<ContextProvider>[];
+  // TODO(CONSOLE-3769): use LoadedAndResolvedExtension from @openshift/dynamic-plugin-sdk
+  contextProviderExtensions: ResolvedExtension<LoadedExtension<ContextProvider>>[];
 }> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();

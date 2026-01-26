@@ -15,16 +15,18 @@ import {
   isCatalogCategoriesProvider,
   CatalogCategoriesProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 const useCatalogExtensions = (
   catalogId: string,
   catalogType?: string,
 ): [
-  ResolvedExtension<CatalogItemType>[],
-  ResolvedExtension<CatalogItemProvider>[],
-  ResolvedExtension<CatalogItemFilter>[],
-  ResolvedExtension<CatalogItemMetadataProvider>[],
-  ResolvedExtension<CatalogCategoriesProvider>[],
+  // TODO(CONSOLE-3769): use LoadedAndResolvedExtension from @openshift/dynamic-plugin-sdk
+  ResolvedExtension<LoadedExtension<CatalogItemType>>[],
+  ResolvedExtension<LoadedExtension<CatalogItemProvider>>[],
+  ResolvedExtension<LoadedExtension<CatalogItemFilter>>[],
+  ResolvedExtension<LoadedExtension<CatalogItemMetadataProvider>>[],
+  ResolvedExtension<LoadedExtension<CatalogCategoriesProvider>>[],
   boolean,
 ] => {
   const [itemTypeExtensions, itemTypesResolved] = useResolvedExtensions<CatalogItemType>(
@@ -91,7 +93,7 @@ const useCatalogExtensions = (
     ),
   );
 
-  const catalogTypeExtensions = useMemo<ResolvedExtension<CatalogItemType>[]>(
+  const catalogTypeExtensions = useMemo<ResolvedExtension<LoadedExtension<CatalogItemType>>[]>(
     () =>
       (catalogType
         ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)
