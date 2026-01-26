@@ -1,13 +1,42 @@
-import { useMemo } from 'react';
-import { useResolvedExtensions as useResolvedExtensionsSDK } from '@openshift/dynamic-plugin-sdk';
-import { useSortedExtensions } from '@console/plugin-sdk/src/utils/useSortedExtensions';
-import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
+import { useState, useEffect } from 'react';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { resolveExtension } from '../coderefs/coderef-resolver';
 import { UseResolvedExtensions } from '../extensions/console-types';
+import type { Extension, ExtensionTypeGuard, ResolvedExtension } from '../types';
+import { settleAllPromises } from '../utils/promise';
 
-export const useResolvedExtensions: UseResolvedExtensions = (predicate, options) => {
-  const [resolvedExtensions, resolved, errors] = useResolvedExtensionsSDK(predicate, options);
-  const translatedExtensions = useTranslatedExtensions(resolvedExtensions);
-  const sortedExtensions = useSortedExtensions(translatedExtensions);
+export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension>(
+  ...typeGuards: ExtensionTypeGuard<E>[]
+): [ResolvedExtension<E>[], boolean, any[]] => {
+  const extensions = useExtensions<E>(...typeGuards);
 
-  return useMemo(() => [sortedExtensions, resolved, errors], [sortedExtensions, resolved, errors]);
+  const [resolvedExtensions, setResolvedExtensions] = useState<ResolvedExtension<E>[]>([]);
+  const [resolved, setResolved] = useState<boolean>(false);
+  const [errors, setErrors] = useState<any[]>([]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    // eslint-disable-next-line promise/catch-or-return
+    settleAllPromises(
+      extensions.map((e) => resolveExtension<typeof e, any, ResolvedExtension<E>>(e)),
+    ).then(([fulfilledValues, rejectedReasons]) => {
+      if (!disposed) {
+        setResolvedExtensions(fulfilledValues);
+        setErrors(rejectedReasons);
+        setResolved(true);
+
+        if (rejectedReasons.length > 0) {
+          // eslint-disable-next-line no-console
+          console.error('Detected errors while resolving Console extensions', rejectedReasons);
+        }
+      }
+    });
+
+    return () => {
+      disposed = true;
+    };
+  }, [extensions]);
+
+  return [resolvedExtensions, resolved, errors];
 };
