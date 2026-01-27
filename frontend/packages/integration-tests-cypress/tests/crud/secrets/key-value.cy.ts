@@ -1,5 +1,3 @@
-import 'cypress-file-upload';
-
 import { checkErrors, testName } from '../../../support';
 import { detailsPage } from '../../../views/details-page';
 import { listPage } from '../../../views/list-page';
@@ -12,7 +10,13 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.byLegacyTestID('file-input-textarea').should('exist');
   secrets.enterSecretName(name);
   cy.byTestID('secret-key').type(key);
-  cy.byTestID('file-input').attachFile(fileName);
+  cy.get('.co-file-input').selectFile(
+    `${Cypress.config('fileServerFolder')}/fixtures/${fileName}`,
+    {
+      action: 'drag-drop',
+      force: true,
+    },
+  );
 };
 
 const modifySecretForm = (key: string) => {
@@ -73,33 +77,34 @@ data:
   it(`Validate create and edit of a key/value secret whose value is a binary file`, () => {
     populateSecretForm(binarySecretName, secretKey, binaryFilename);
     cy.byLegacyTestID('file-input-textarea').should('not.exist');
-    cy.byTestID('alert-info').should('exist');
+    cy.byTestID('file-input-binary-alert').should('exist');
     secrets.save();
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(binarySecretName);
     cy.exec(
-      `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}' | base64 -d`,
+      `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${secretKey}}}'`,
       {
         failOnNonZeroExit: false,
       },
     ).then((value) => {
-      cy.fixture(binaryFilename, 'binary').then((binarySecret) => {
+      cy.fixture(binaryFilename, 'base64').then((binarySecret) => {
         expect(binarySecret).toEqual(value.stdout);
       });
     });
     modifySecretForm(modifiedSecretKey);
+    cy.byTestID('file-input-binary-alert').should('exist');
     secrets.save();
     cy.byTestID('loading-indicator').should('not.exist');
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(binarySecretName);
     cy.exec(
-      `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${modifiedSecretKey}}}' | base64 -d`,
+      `oc get secret -n ${testName} ${binarySecretName} --template '{{.data.${modifiedSecretKey}}}'`,
       {
         failOnNonZeroExit: false,
       },
     ).then((value) => {
-      cy.fixture(binaryFilename, 'binary').then((binarySecret) => {
+      cy.fixture(binaryFilename, 'base64').then((binarySecret) => {
         expect(binarySecret).toEqual(value.stdout);
       });
     });
@@ -109,7 +114,7 @@ data:
     populateSecretForm(asciiSecretName, secretKey, asciiFilename);
     cy.fixture(asciiFilename, 'ascii').then((asciiSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', asciiSecret);
-      cy.byTestID('alert-info').should('not.exist');
+      cy.byTestID('file-input-binary-alert').should('not.exist');
       secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();
@@ -129,7 +134,7 @@ data:
     populateSecretForm(unicodeSecretName, secretKey, unicodeFilename);
     cy.fixture(unicodeFilename, 'utf8').then((unicodeSecret) => {
       cy.byLegacyTestID('file-input-textarea').should('contain.text', unicodeSecret);
-      cy.byTestID('alert-info').should('not.exist');
+      cy.byTestID('file-input-binary-alert').should('not.exist');
       secrets.save();
       cy.byTestID('loading-indicator').should('not.exist');
       detailsPage.isLoaded();

@@ -124,17 +124,16 @@ export const AddHTPasswdPage = () => {
       <PaneBody>
         <form onSubmit={submit} name="form">
           <IDPNameInput value={name} onChange={(e) => setName(e.currentTarget.value)} />
-          <div className="form-group">
+          <div className="pf-v6-c-form" style={{ display: 'contents' }}>
             <DroppableFileInput
               onChange={(c: string) => setHtpasswdFileContent(c)}
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
               label={t('public~HTPasswd file')}
-              inputFieldHelpText={t(
+              filenamePlaceholder={t(
                 'public~Upload an HTPasswd file created using the htpasswd command.',
               )}
               isRequired
-              hideContents
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

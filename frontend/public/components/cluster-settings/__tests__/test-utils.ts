@@ -1,5 +1,6 @@
 // Reusable test utilities for Identity Provider (IDP) form components
 import { screen, fireEvent, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
 
 // Mock the cluster-settings module to prevent async API calls during tests
@@ -117,45 +118,45 @@ export const verifyPageTitleAndSubtitle = ({
 };
 
 // Verifies file input UI elements and test file upload selection functionality and filename verifications.
-export const verifyIDPFileFields = ({
+export const verifyIDPFileFields = async ({
   inputLabel,
-  idPrefix = 'ca-file-input',
-  isRequired = false,
   helpText,
   fileName = 'test-idp.pem',
   fileContent = mockData.testPemFileContent,
 }: {
   inputLabel: string;
-  idPrefix?: string;
-  isRequired?: boolean;
   helpText?: string;
   fileName?: string;
   fileContent?: string;
 }) => {
-  // Verify the label is visible, input element 'type' attribute and required status
-  const input = screen.getByLabelText(`${inputLabel} filename`);
-  verifyFormElementBasics(input, 'text', '');
+  // Wait for the async component to load and find the filename input by its aria-label
+  const filenameInput = await screen.findByLabelText(`${inputLabel} filename`);
+  verifyFormElementBasics(filenameInput, 'text', '');
 
-  // Verify browse button visible and input element 'type' attribute within its container
-  const browseContainer = screen.getByTestId(`${idPrefix}-file`);
-  expect(browseContainer).toBeInTheDocument();
-  const fileInput = within(browseContainer).getByLabelText('Browse...') as HTMLInputElement;
-  verifyFormElementBasics(fileInput, 'file');
+  // Find the file upload container by traversing up from the filename input
+  const fileUploadContainer = filenameInput.closest('.pf-v6-c-file-upload');
+  expect(fileUploadContainer).toBeInTheDocument();
 
-  const contentElement = screen.getByLabelText(inputLabel);
-  verifyFormElementBasics(contentElement, '', '', isRequired);
+  // Verify browse button is visible within the container
+  const browseButton = within(fileUploadContainer as HTMLElement).getByRole('button', {
+    name: 'Browse...',
+  });
+  expect(browseButton).toBeVisible();
 
-  // Verify help text if provided
+  // Find the hidden file input element within the container
+  const fileInput = fileUploadContainer.querySelector('input[type="file"]') as HTMLInputElement;
+  expect(fileInput).toBeTruthy();
+
+  // Verify help text if provided - in PF FileUpload, this is the placeholder attribute
   if (helpText) {
-    expect(screen.getByText(helpText)).toBeVisible();
+    expect(filenameInput).toHaveAttribute('placeholder', helpText);
   }
 
   // Create a simple file with the provided content and name
   const file = new File([fileContent], fileName, { type: 'text/plain' });
 
-  // Simulate user clicking browse button and selecting a file
-  // TODO: Use the 'userEvent.upload' instead of 'fireEvent.change' after Jest and React Testing Libraries upgrade
-  fireEvent.change(fileInput, { target: { files: [file] } });
+  // Simulate user selecting a file
+  await userEvent.upload(fileInput, file);
 
   // Verify the file was properly selected and assigned to the input element
   expect(fileInput.files).toBeTruthy();

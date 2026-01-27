@@ -272,7 +272,6 @@
     "cypress": "^14.2.1",
     "cypress-axe": "^1.6.0",
     "cypress-cucumber-preprocessor": "latest",
-    "cypress-file-upload": "^5.0.8",
     "cypress-jest-adapter": "^0.1.1",
     "cypress-multi-reporters": "^1.4.0",
     "esbuild-loader": "^4.4.2",

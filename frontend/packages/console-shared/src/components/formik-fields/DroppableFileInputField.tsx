@@ -24,7 +24,7 @@ const DroppableFileInputField: FC<DroppableFileInputFieldProps> = ({
           onChange && onChange(fileData);
         }}
         inputFileData={field.value}
-        inputFieldHelpText={helpText}
+        filenamePlaceholder={helpText}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
     </FormGroup>

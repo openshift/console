@@ -6,9 +6,6 @@ import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
 export interface FieldProps {
   name: string;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
-  helpTextInvalid?: React.ReactNode;
   required?: boolean;
   style?: React.CSSProperties;
   isReadOnly?: boolean;
@@ -20,6 +17,8 @@ export interface FieldProps {
 
 export interface DroppableFileInputFieldProps extends FieldProps {
   onChange?: (fileData: string) => void;
+  helpText?: string;
+  label?: string;
 }
 export interface BaseInputFieldProps extends FieldProps {
   type?: TextInputTypes;
@@ -27,6 +26,9 @@ export interface BaseInputFieldProps extends FieldProps {
   onChange?: (event) => void;
   onBlur?: (event) => void;
   autoComplete?: string;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
+  helpTextInvalid?: React.ReactNode;
 }
 
 export interface GroupInputProps extends BaseInputFieldProps {
@@ -41,6 +43,8 @@ export interface TextAreaProps extends FieldProps {
   onBlur?: (event) => void;
   rows?: number;
   resizeOrientation?: 'vertical' | 'horizontal' | 'both';
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export enum GroupTextType {
@@ -52,6 +56,8 @@ export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
   value?: string;
   onChange?: (val: boolean) => void;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface SearchInputFieldProps extends BaseInputFieldProps {
@@ -66,6 +72,8 @@ export interface DropdownFieldProps extends FieldProps {
   disabled?: ConsoleSelectProps['disabled'];
   autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
   onChange?: (value: string) => void;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export type FormSelectFieldOption<T = any> = {
@@ -75,21 +83,27 @@ export type FormSelectFieldOption<T = any> = {
   isDisabled?: boolean;
 };
 
-export type FormSelectFieldProps = FieldProps & {
+export interface FormSelectFieldProps extends FieldProps {
   isDisabled?: boolean;
   options: FormSelectFieldOption[];
   onChange?: (selectedValue: any) => void;
-};
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
+}
 
 export interface EnvironmentFieldProps extends FieldProps {
   obj: K8sResourceKind;
   envs?: (NameValuePair | NameValueFromPair)[];
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface ResourceLimitFieldProps extends FieldProps {
   unitName: string;
   unitOptions: object;
   fullWidth?: boolean;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface MultiColumnFieldProps extends FieldProps {
@@ -106,6 +120,8 @@ export interface MultiColumnFieldProps extends FieldProps {
   disableAddRow?: boolean;
   hideAddRow?: boolean;
   tooltipAddRow?: string;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface CodeEditorFieldProps extends FieldProps {
@@ -117,6 +133,8 @@ export interface CodeEditorFieldProps extends FieldProps {
   showShortcuts?: boolean;
   isMinimapVisible?: boolean;
   onSave?: () => void;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface NameValuePair {
@@ -148,6 +166,8 @@ export interface RadioButtonFieldProps extends FieldProps {
   description?: React.ReactNode;
   onChange?: (value: React.ReactText) => void;
   isChecked?: boolean;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface RadioGroupFieldProps extends FieldProps {
@@ -155,6 +175,8 @@ export interface RadioGroupFieldProps extends FieldProps {
   labelIcon?: React.ReactElement;
   options: RadioGroupOption[];
   onChange?: (value: React.ReactText) => void;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface RadioGroupOption {
@@ -181,6 +203,8 @@ export interface SelectInputFieldProps extends FieldProps {
   toggleOnSelection?: boolean;
   placeholderText?: string;
   onChange?: (selection: string) => void;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 export interface SingleDropdownFieldProps extends SelectInputFieldProps {

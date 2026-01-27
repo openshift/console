@@ -10,7 +10,6 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
   onChange,
   entry,
-  key,
   index,
   removeEntry,
   showRemoveButton,
@@ -53,7 +52,7 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
       )}
       <FormGroup label={t('public~Key')} isRequired fieldId="secret-key">
         <TextInput
-          id={`${key}-key`}
+          id={`${entry.uid}-key`}
           type="text"
           name="key"
           value={entry.key}
@@ -64,12 +63,11 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
       <DroppableFileInput
         onChange={handleValueChange}
         inputFileData={Base64.decode(entry.value)}
-        id={`${key}-value`}
+        id={`${entry.uid}-value`}
         label={t('public~Value')}
-        inputFieldHelpText={t(
+        filenamePlaceholder={t(
           'public~Drag and drop file with your value here or browse to upload it.',
         )}
-        inputFileIsBinary={entry.isBinary_}
       />
     </FormFieldGroup>
   );
