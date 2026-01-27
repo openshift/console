@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions } from '@console/internal/components/conditions';
 import type { RowFunctionArgs } from '@console/internal/components/factory';
@@ -86,7 +87,7 @@ import {
   DeprecatedOperatorWarningIcon,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
+import InstallPlanApprovalModalProvider from './modals/installplan-approval-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
@@ -556,6 +557,7 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
   const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
   const prevChannel = useRef(obj?.spec?.channel);
   const [waitingForUpdate, setWaitingForUpdate] = useState(false);
@@ -573,11 +575,17 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
     }
   }, [obj, waitingForUpdate]);
 
-  const k8sUpdateAndWait = (kind: K8sKind, resource: K8sResourceCommon) =>
-    k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true));
+  const k8sUpdateAndWait = useCallback(
+    (kind: K8sKind, resource: K8sResourceCommon) =>
+      k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true)),
+    [setWaitingForUpdate],
+  );
   const channelModal = () =>
     createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
-  const approvalModal = () => createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });
+  const approvalModal = useCallback(
+    () => launchOverlay(InstallPlanApprovalModalProvider, { obj, k8sUpdate: k8sUpdateAndWait }),
+    [obj, k8sUpdateAndWait, launchOverlay],
+  );
   const installPlanPhase = useMemo(() => {
     if (installPlan) {
       switch (installPlan.status?.phase as InstallPlanPhase) {
