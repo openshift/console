@@ -7,6 +7,8 @@ import { getFieldId } from './field-utils';
 
 interface SelectorInputFieldProps extends FieldProps {
   placeholder?: string;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 /**

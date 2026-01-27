@@ -24,7 +24,6 @@ export const IDPCAFileInput: FC<IDPCAFileInputProps> = ({
         id={id}
         label={t('public~CA file')}
         isRequired={isRequired}
-        hideContents
       />
     </div>
   );

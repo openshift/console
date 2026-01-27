@@ -130,11 +130,10 @@ export const AddHTPasswdPage = () => {
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
               label={t('public~HTPasswd file')}
-              inputFieldHelpText={t(
+              filenamePlaceholder={t(
                 'public~Upload an HTPasswd file created using the htpasswd command.',
               )}
               isRequired
-              hideContents
             />
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>

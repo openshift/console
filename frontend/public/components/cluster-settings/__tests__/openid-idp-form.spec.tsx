@@ -118,12 +118,11 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the More options sub heading and CA file label and input element', () => {
+  it('should render the More options sub heading and CA file label and input element', async () => {
     expect(screen.getByRole('heading', { name: 'More options' })).toBeVisible();
 
-    verifyIDPFileFields({
+    await verifyIDPFileFields({
       inputLabel: 'CA file',
-      idPrefix: 'ca-file-input',
     });
   });
 

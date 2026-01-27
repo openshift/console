@@ -211,8 +211,7 @@ export const AddBasicAuthPage: FC = () => {
               inputFileData={certFileContent}
               id="cert-file-input"
               label={t('public~Certificate')}
-              hideContents
-              inputFieldHelpText={t(
+              filenamePlaceholder={t(
                 'public~PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
@@ -223,8 +222,7 @@ export const AddBasicAuthPage: FC = () => {
               inputFileData={keyFileContent}
               id="key-file-input"
               label={t('public~Key')}
-              hideContents
-              inputFieldHelpText={t(
+              filenamePlaceholder={t(
                 'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />

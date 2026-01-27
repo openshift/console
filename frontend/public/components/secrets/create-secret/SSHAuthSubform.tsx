@@ -15,7 +15,7 @@ export const SSHAuthSubform: FC<SSHAuthSubformProps> = ({ onChange, stringData }
       inputFileData={stringData['ssh-privatekey'] || ''}
       id="ssh-privatekey"
       label={t('public~SSH private key')}
-      inputFieldHelpText={t(
+      filenamePlaceholder={t(
         'public~Drag and drop file with your private SSH key here or browse to upload it.',
       )}
       textareaFieldHelpText={t('public~Private SSH key file for Git authentication.')}

@@ -26,6 +26,7 @@ export type TextColumnFieldProps = FieldProps & {
   onChange?: OnChangeHandler;
   dndEnabled?: boolean;
   children?: TextColumnFieldChildProps;
+  helpText?: React.ReactNode;
 };
 
 export type TextColumnItemProps = TextColumnFieldProps & {
