@@ -31,18 +31,22 @@ const DataComponent: FC<DataComponentProps> = ({ x, y, datum }) => {
 };
 
 const LabelComponent = ({ clusterID, ...props }) => {
-  const href = `https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
-    riskSorting[props.datum?.id] + 1
-  }`;
+  const riskId = props.datum?.id;
+  const riskIndex = riskId != null ? riskSorting[riskId] : undefined;
+  const totalRisk = Number.isFinite(riskIndex) ? riskIndex + 1 : undefined;
+  const href =
+    clusterID && totalRisk != null
+      ? `https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${totalRisk}`
+      : undefined;
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer">
+    <a href={href} target="_blank" rel="noopener noreferrer" tabIndex={0}>
       <ChartLabel
         {...props}
         style={{
           ...props.style,
           fill: 'var(--pf-t--global--text--color--link--default)',
-          cursor: 'pointer',
+          cursor: href ? 'pointer' : undefined,
         }}
       />
     </a>
