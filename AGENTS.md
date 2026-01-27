@@ -19,15 +19,18 @@ All AI assistants reference these files to understand:
 ```bash
 # Clone & install
 git clone https://github.com/openshift/console.git && cd console
-make install          # yarn + go deps
+cd frontend && yarn install
 
 # Development server
-make start
+cd frontend && yarn dev
 
 # Core commands
-make lint             # ESLint + Prettier
-make test             # Jest unit + Cypress E2E
-make build            # Production build
+cd frontend && yarn lint       # ESLint + Prettier
+cd frontend && yarn test       # Jest unit tests
+./build-frontend.sh            # Production build
+
+# Full build (frontend + backend)
+./build.sh
 ```
 
 ### Frontend Development Commands
@@ -57,16 +60,19 @@ make build            # Production build
 
 **REQUIRED FOR ALL CODING AGENTS: Before generating or modifying code, always consult the relevant file(s) to ensure full compliance. These files are the single source of truth for architecture, coding standards, and testing.**
 
-
+**General:**
 - **[ARCHITECTURE.md](ARCHITECTURE.md)**
 - **[CONVENTIONS.md](CONVENTIONS.md)**
 - **[TESTING.md](TESTING.md)**
 - **[README.md](README.md)**
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**
-- **[STYLEGUIDE.md](STYLEGUIDE.md)**  
-- **[INTERNATIONALIZATION.md](INTERNATIONALIZATION.md)** 
+- **[STYLEGUIDE.md](STYLEGUIDE.md)**
+- **[INTERNATIONALIZATION.md](INTERNATIONALIZATION.md)**
+
+**Plugin Development:**
+- **[frontend/packages/console-dynamic-plugin-sdk/README.md](frontend/packages/console-dynamic-plugin-sdk/README.md)** - Comprehensive dynamic plugin SDK documentation
 
 **Tool-specific:**
-- Claude → [CLAUDE.md](CLAUDE.md) and `.claude/`  
-- Cursor → `.cursor/context.md`  
+- Claude → [CLAUDE.md](CLAUDE.md) and `.claude/`
+- Cursor → `.cursor/context.md`
 - CodeRabbit → [coderabbit.yaml](coderabbit.yaml)

@@ -12,10 +12,10 @@
 - **Routing**: Plugin routes go in plugin-specific route files
 - **Extensions**: Use console extension points for plugin integration
 - **Types**: Check existing types in `console-shared` before creating new ones
-- **Dynamic Plugins**: Prefer implementing new features using the console dynamic plugin SDK (`frontend/packages/console-dynamic-plugin-sdk/`) for extensibility
+- **Dynamic Plugins**: Use console extension points for plugin integration. The dynamic plugin SDK is a re-export layer - implement new features in source packages (`@console/shared`, `@console/internal`, etc.) first, refine them internally, then consider re-exporting to the SDK after stabilization
 - **Plugin SDK Changes**: Any updates to `console-dynamic-plugin-sdk` must maintain backward compatibility as it's a public API
 - **Styling**: SCSS modules co-located with components, PatternFly design system components
-- **i18n**: Use `useTranslation()` hook with `%namespace~key%` format for translation keys
+- **i18n**: Use `useTranslation('namespace')` hook with `key` format for translation keys
 - **Error Handling**: Use ErrorBoundary components and graceful degradation patterns
 - **File Naming**: PascalCase for components, kebab-case for utilities, `*.spec.ts(x)` for tests
 
@@ -35,7 +35,7 @@
 - **Interfaces**: Define clear interfaces for testability and dependency injection
 
 ### Code Quality
-- **Use modern JavaScript**
+- **Use modern JavaScript (ES6+):** Prefer const/let, arrow functions, async/await, destructuring, template literals, optional chaining, and array methods
 - **Add comments for complex logic**
 
 ### Performance
