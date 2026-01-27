@@ -9,6 +9,18 @@ import {
   SubscriptionChannelModalProps,
 } from '../subscription-channel-modal';
 
+jest.mock('@console/internal/components/factory/modal', () => ({
+  ...jest.requireActual('@console/internal/components/factory/modal'),
+  ModalTitle: jest.fn(({ children }) => children),
+  ModalBody: jest.fn(({ children }) => children),
+  ModalSubmitFooter: jest.fn(({ submitText, submitDisabled }) => (
+    <button type="submit" disabled={submitDisabled}>
+      {submitText}
+    </button>
+  )),
+  ModalWrapper: jest.fn(({ children }) => children),
+}));
+
 describe('SubscriptionChannelModal', () => {
   let subscriptionChannelModalProps: SubscriptionChannelModalProps;
   let k8sUpdate: jest.Mock;

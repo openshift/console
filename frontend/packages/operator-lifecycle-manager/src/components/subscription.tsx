@@ -98,7 +98,7 @@ import {
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
 import InstallPlanApprovalModalProvider from './modals/installplan-approval-modal';
-import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
+import SubscriptionChannelModalProvider from './modals/subscription-channel-modal';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
@@ -586,8 +586,15 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
       k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true)),
     [setWaitingForUpdate],
   );
-  const channelModal = () =>
-    createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
+  const channelModal = useCallback(
+    () =>
+      launchOverlay(SubscriptionChannelModalProvider, {
+        subscription: obj,
+        pkg,
+        k8sUpdate: k8sUpdateAndWait,
+      }),
+    [obj, pkg, k8sUpdateAndWait, launchOverlay],
+  );
   const approvalModal = useCallback(
     () => launchOverlay(InstallPlanApprovalModalProvider, { obj, k8sUpdate: k8sUpdateAndWait }),
     [obj, k8sUpdateAndWait, launchOverlay],

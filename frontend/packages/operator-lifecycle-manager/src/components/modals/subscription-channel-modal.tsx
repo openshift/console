@@ -2,11 +2,12 @@ import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
 import { Radio, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -96,9 +97,28 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   );
 };
 
-export const createSubscriptionChannelModal = createModalLauncher<SubscriptionChannelModalProps>(
-  SubscriptionChannelModal,
-);
+const SubscriptionChannelModalProvider: OverlayComponent<SubscriptionChannelModalProviderProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <SubscriptionChannelModal
+        subscription={props.subscription}
+        pkg={props.pkg}
+        k8sUpdate={props.k8sUpdate}
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+      />
+    </ModalWrapper>
+  );
+};
+
+type SubscriptionChannelModalProviderProps = {
+  subscription: SubscriptionKind;
+  pkg: PackageManifestKind;
+  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
+  // closeOverlay is added automatically by OverlayComponent wrapper
+};
 
 export type SubscriptionChannelModalProps = {
   cancel?: () => void;
@@ -107,3 +127,5 @@ export type SubscriptionChannelModalProps = {
   subscription: SubscriptionKind;
   pkg: PackageManifestKind;
 };
+
+export default SubscriptionChannelModalProvider;
