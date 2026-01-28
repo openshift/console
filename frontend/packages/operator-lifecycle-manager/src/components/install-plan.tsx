@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -63,7 +63,7 @@ import {
 } from '../models';
 import type { InstallPlanKind, Step } from '../types';
 import { InstallPlanApproval } from '../types';
-import { installPlanPreviewModal } from './modals/installplan-preview-modal';
+import InstallPlanPreviewModalProvider from './modals/installplan-preview-modal';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 
@@ -413,6 +413,12 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
     (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
   );
 
+  const previewModal = useCallback(
+    (stepResource: Step['resource']) =>
+      launchModal(InstallPlanPreviewModalProvider, { stepResource }),
+    [launchModal],
+  );
+
   const plan = obj?.status?.plan || [];
   const stepsByCSV = plan
     .reduce(
@@ -510,7 +516,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
                           <ResourceIcon kind={referenceForStepResource(step.resource)} />
                           <Button
                             type="button"
-                            onClick={() => installPlanPreviewModal({ stepResource: step.resource })}
+                            onClick={() => previewModal(step.resource)}
                             variant="link"
                           >
                             {step.resource.name}
