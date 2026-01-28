@@ -53,6 +53,7 @@ const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
     catalogFilterExtensions,
     catalogBadgeProviderExtensions,
     categoryProviderExtensions,
+    alertExtensions,
     extensionsResolved,
   ] = useCatalogExtensions(catalogId, catalogType);
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
@@ -178,6 +179,7 @@ const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
     loadError,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
+    alertExtensions,
     categories,
   };
 

@@ -45,6 +45,7 @@ const CatalogController: FC<CatalogControllerProps> = ({
   loaded,
   loadError,
   catalogExtensions,
+  alertExtensions,
   enableDetailsPanel,
   title: defaultTitle,
   description: defaultDescription,
@@ -203,6 +204,10 @@ const CatalogController: FC<CatalogControllerProps> = ({
           loadError={loadError}
           label={t('console-shared~Catalog items')}
         >
+          {alertExtensions?.map((extension) => {
+            const AlertComponent = extension.properties.component;
+            return <AlertComponent key={extension.uid} />;
+          })}
           <CatalogView
             catalogType={type}
             catalogTypes={catalogTypes}
