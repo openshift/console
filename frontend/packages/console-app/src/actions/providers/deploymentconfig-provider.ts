@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
+import { useDeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { DeploymentConfigKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
@@ -15,6 +15,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
   const [hpaActions, relatedHPAs] = useHPAActions(kindObj, resource);
   const [pdbActions] = usePDBActions(kindObj, resource);
   const retryRolloutAction = useRetryRolloutAction(resource);
+  const deleteResourceAction = useDeleteResourceAction(kindObj, resource);
   const [deploymentActions, deploymentActionsReady] = useDeploymentActions(kindObj, resource, [
     DeploymentActionCreator.StartDCRollout,
     DeploymentActionCreator.PauseRollout,
@@ -50,7 +51,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
             deploymentActions.EditDeployment,
             ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
             'OpenShiftWebConsole'
-              ? [DeleteResourceAction(kindObj, resource)]
+              ? [deleteResourceAction]
               : [commonActions.Delete]),
           ]
         : [],
@@ -64,6 +65,7 @@ export const useDeploymentConfigActionsProvider = (resource: DeploymentConfigKin
       commonActions,
       deploymentActions,
       isReady,
+      deleteResourceAction,
     ],
   );
 

@@ -41,6 +41,7 @@ import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import * as k8sActions from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   ConsoleLinkModel,
@@ -71,7 +72,7 @@ import {
 import { navFactory } from './utils/horizontal-nav';
 import { useAccessReview } from './utils/rbac';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { configureNamespacePullSecretModal } from './modals';
+import { LazyConfigureNamespacePullSecretModalOverlay } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar } from './graphs/bar';
 import { Area } from './graphs/area';
@@ -856,6 +857,7 @@ export const PullSecret = (props) => {
   const [error, setError] = useState(false);
   const { t } = useTranslation();
   const { namespace, canViewSecrets } = props;
+  const launchModal = useOverlay();
 
   useEffect(() => {
     k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {})
@@ -873,7 +875,11 @@ export const PullSecret = (props) => {
       });
   }, [namespace.metadata.name]);
 
-  const modal = () => configureNamespacePullSecretModal({ namespace, pullSecret: undefined });
+  const modal = () =>
+    launchModal(LazyConfigureNamespacePullSecretModalOverlay, {
+      namespace,
+      pullSecret: undefined,
+    });
 
   const secrets = () => {
     if (error) {

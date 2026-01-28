@@ -4,7 +4,7 @@ import { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { configureUpdateStrategyModal } from '@console/internal/components/modals';
+import { LazyConfigureUpdateStrategyModalOverlay } from '@console/internal/components/modals';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
@@ -107,7 +107,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
       [DeploymentActionCreator.UpdateStrategy]: (): Action => ({
         id: 'edit-update-strategy',
         label: t('console-app~Edit update strategy'),
-        cta: () => configureUpdateStrategyModal({ deployment: resource }),
+        cta: () => launchModal(LazyConfigureUpdateStrategyModalOverlay, { deployment: resource }),
         accessReview: {
           group: kind?.apiGroup,
           resource: kind?.plural,

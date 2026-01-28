@@ -31,7 +31,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { managedResourceSaveModal } from './modals';
+import { LazyManagedResourceSaveModalOverlay } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
 import { checkAccess } from './utils/rbac';
 import { Firehose } from './utils/firehose';
@@ -638,8 +638,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       }
 
       if (owner) {
-        managedResourceSaveModal({
-          kind: obj.kind,
+        launchModal(LazyManagedResourceSaveModalOverlay, {
           resource: obj,
           onSubmit: () => updateYAML(obj),
           owner,
@@ -648,7 +647,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       }
     }
     updateYAML(obj);
-  }, [create, owner, t, updateYAML, validate, onSave, props.obj, editorMounted]);
+  }, [create, owner, t, updateYAML, validate, onSave, props.obj, editorMounted, launchModal]);
 
   const save = () => {
     setErrors([]);
