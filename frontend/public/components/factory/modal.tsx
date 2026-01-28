@@ -24,7 +24,7 @@ export const createModal: CreateModal = (getModalElement) => {
       ReactDOM.unmountComponentAtNode(containerElement);
       resolve();
     };
-    Modal.setAppElement(document.getElementById('app-content'));
+    // Modal app element is now set globally in App component
     containerElement && ReactDOM.render(getModalElement(closeModal), containerElement);
   });
   return { result };
@@ -34,8 +34,10 @@ export const createModal: CreateModal = (getModalElement) => {
 export const ModalWrapper: FC<ModalWrapperProps> = ({ blocking, className, children, onClose }) => {
   const { t } = useTranslation();
   const parentSelector = useCallback(() => document.querySelector('#modal-container'), []);
+  const appElement = document.getElementById('app-content');
   return (
     <Modal
+      appElement={appElement}
       className={css('modal-dialog', className)}
       contentLabel={t('public~Modal')}
       isOpen

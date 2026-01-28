@@ -5,6 +5,7 @@ import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
+import * as Modal from 'react-modal';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
@@ -135,6 +136,14 @@ const App: FC<{
 
   useCSPViolationDetector();
   useNotificationPoller();
+
+  // Initialize react-modal app element for accessibility
+  useLayoutEffect(() => {
+    const appElement = document.getElementById('app-content');
+    if (appElement) {
+      Modal.setAppElement(appElement);
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener('resize', onResize);

@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { createContext, useState, useCallback } from 'react';
+import { createContext, useState, useCallback, Suspense } from 'react';
 import * as _ from 'lodash';
 import { UnknownProps } from '../common-types';
 
@@ -52,7 +52,9 @@ export const OverlayProvider: FC<OverlayProviderProps> = ({ children }) => {
   return (
     <OverlayContext.Provider value={{ launchOverlay, closeOverlay }}>
       {_.map(componentsMap, (c, id) => (
-        <c.Component {...c.props} key={id} closeOverlay={() => closeOverlay(id)} />
+        <Suspense key={id} fallback={null}>
+          <c.Component {...c.props} closeOverlay={() => closeOverlay(id)} />
+        </Suspense>
       ))}
       {children}
     </OverlayContext.Provider>

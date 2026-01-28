@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { K8sPodControllerKind, K8sModel, referenceFor } from '@console/internal/module/k8s';
-import { deletePDBModal } from '../../components/pdb/modals';
+import { LazyDeletePDBModalOverlay } from '../../components/pdb/modals';
 import { PodDisruptionBudgetKind } from '../../components/pdb/types';
 import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
 import { PodDisruptionBudgetModel } from '../../models';
@@ -42,6 +43,7 @@ export const usePDBActions = (
   const namespace = resource?.metadata?.namespace;
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const watchedResource = useMemo(
     () => ({
       isList: true,
@@ -88,16 +90,15 @@ export const usePDBActions = (
         id: 'delete-pdb',
         label: t('console-app~Remove PodDisruptionBudget'),
         insertBefore: 'edit-resource-limits',
-        cta: () => {
-          deletePDBModal({
+        cta: () =>
+          launchModal(LazyDeletePDBModalOverlay, {
             workloadName: resource.metadata.name,
             pdb: matchedPDB,
-          });
-        },
+          }),
         accessReview: asAccessReview(kindObj, resource, 'delete'),
       }),
     };
-  }, [loaded, kindObj, resource, matchedPDB, t]);
+  }, [loaded, kindObj, resource, matchedPDB, t, launchModal]);
 
   const actions = useMemo<Action[]>(() => {
     if (!loaded || !kindObj || !resource) return [];

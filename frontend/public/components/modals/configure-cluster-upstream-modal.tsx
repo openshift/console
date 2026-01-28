@@ -20,8 +20,9 @@ import {
   ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
-  createModalLauncher,
+  ModalWrapper,
 } from '../factory/modal';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
@@ -30,7 +31,6 @@ import {
   isUpstream,
 } from '../utils/documentation';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
@@ -166,9 +166,20 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
   );
 };
 
-export const configureClusterUpstreamModal = createModalLauncher(ConfigureClusterUpstreamModal);
+export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<ConfigureClusterUpstreamModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ConfigureClusterUpstreamModal
+        {...props}
+        cancel={props.closeOverlay}
+        close={props.closeOverlay}
+      />
+    </ModalWrapper>
+  );
+};
 
 export type ConfigureClusterUpstreamModalProps = {
   cv: ClusterVersionKind;
-  t: TFunction;
 } & ModalComponentProps;
