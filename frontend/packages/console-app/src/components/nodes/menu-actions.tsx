@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
@@ -14,7 +15,7 @@ import {
 } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
-import { createConfigureUnschedulableModal } from './modals';
+import { LazyConfigureUnschedulableModalOverlay } from './modals';
 
 const updateCSR = (csr: CertificateSigningRequestKind, type: 'Approved' | 'Denied') => {
   const approvedCSR = {
@@ -47,6 +48,7 @@ export const denyCSR = (csr: CertificateSigningRequestKind) => updateCSR(csr, 'D
 export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(obj));
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const deleteMessage = useMemo(
     () => (
       <p>
@@ -71,14 +73,14 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
       actions.push({
         id: 'mark-as-unschedulable',
         label: t('console-app~Mark as unschedulable'),
-        cta: () => createConfigureUnschedulableModal({ resource: obj }),
+        cta: () => launchModal(LazyConfigureUnschedulableModalOverlay, { resource: obj }),
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       });
     }
 
     actions.push(...commonActions);
     return actions;
-  }, [kindObj, obj, t, commonActions]);
+  }, [kindObj, obj, t, commonActions, launchModal]);
 
   return [nodeActions, !inFlight, undefined];
 };

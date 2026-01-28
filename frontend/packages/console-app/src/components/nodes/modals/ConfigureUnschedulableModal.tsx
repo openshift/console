@@ -1,10 +1,12 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
-  createModalLauncher,
+  ModalComponentProps,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { NodeKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -12,9 +14,7 @@ import { makeNodeUnschedulable } from '../../../k8s/requests/nodes';
 
 type ConfigureUnschedulableModalProps = {
   resource: NodeKind;
-  cancel?: () => void;
-  close?: () => void;
-};
+} & ModalComponentProps;
 
 const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   resource,
@@ -48,4 +48,14 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
   );
 };
 
-export default createModalLauncher(ConfigureUnschedulableModal);
+export const ConfigureUnschedulableModalOverlay: OverlayComponent<ConfigureUnschedulableModalProps> = (
+  props,
+) => (
+  <ModalWrapper blocking onClose={props.closeOverlay}>
+    <ConfigureUnschedulableModal
+      {...props}
+      cancel={props.closeOverlay}
+      close={props.closeOverlay}
+    />
+  </ModalWrapper>
+);

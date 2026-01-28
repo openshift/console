@@ -16,14 +16,15 @@ import { useTranslation } from 'react-i18next';
 import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { useState, useCallback } from 'react';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
   ModalComponentProps,
 } from '../factory/modal';
 import { ResourceIcon } from '../utils/resource-icon';
@@ -313,4 +314,16 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
   );
 };
 
-export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);
+export const ConfigureNamespacePullSecretModalOverlay: OverlayComponent<ConfigureNamespacePullSecretProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ConfigureNamespacePullSecret
+        {...props}
+        cancel={props.closeOverlay}
+        close={props.closeOverlay}
+      />
+    </ModalWrapper>
+  );
+};

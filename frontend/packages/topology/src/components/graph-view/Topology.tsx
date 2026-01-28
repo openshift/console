@@ -34,12 +34,14 @@ import {
   useQueryParams,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
+  useSetupGlobalErrorModalLauncher,
 } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
+import { useSetupMoveNodeToGroupErrorHandler } from '../../utils';
 import { componentFactory } from './components';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
@@ -151,6 +153,10 @@ const Topology: FC<
   const [componentFactoryExtensions, extensionsResolved] = useResolvedExtensions<
     TopologyComponentFactory
   >(isTopologyComponentFactory);
+
+  // Setup global error handlers for topology operations
+  useSetupMoveNodeToGroupErrorHandler();
+  useSetupGlobalErrorModalLauncher();
 
   const createVisualization = useCallback(() => {
     const storedLayout = topologyLayoutDataJson?.[namespace];

@@ -10,6 +10,7 @@
   "Delete Connector?": "Delete Connector?",
   "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?": "Deleting the visual connector removes the `connects-to` annotation from the resources. Are you sure you want to delete the visual connector?",
   "Delete": "Delete",
+  "Error deleting connector": "Error deleting connector",
   "Delete connector": "Delete connector",
   "Edit application grouping": "Edit application grouping",
   "View all {{size}}": "View all {{size}}",

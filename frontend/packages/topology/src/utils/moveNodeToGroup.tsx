@@ -1,9 +1,23 @@
+import { useCallback, useEffect } from 'react';
 import { Node } from '@patternfly/react-topology';
 import { Trans } from 'react-i18next';
-import { confirmModal, errorModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { confirmModal } from '@console/internal/components/modals';
+import { ErrorModal, ErrorModalProps } from '@console/internal/components/modals/error-modal';
 import { updateTopologyResourceApplication } from './topology-utils';
 
-export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> => {
+// Module-level error handler that can be set by the Topology component
+let globalErrorHandler: ((error: string) => void) | null = null;
+
+export const setMoveNodeToGroupErrorHandler = (handler: ((error: string) => void) | null) => {
+  globalErrorHandler = handler;
+};
+
+export const moveNodeToGroup = (
+  node: Node,
+  targetGroup: Node,
+  onError?: (error: string) => void,
+): Promise<void> => {
   const sourceGroup = node.getParent() !== node.getGraph() ? (node.getParent() as Node) : undefined;
   if (sourceGroup === targetGroup) {
     return Promise.reject();
@@ -51,7 +65,10 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
             .then(resolve)
             .catch((err) => {
               const error = err.message;
-              errorModal({ error });
+              const errorHandler = onError || globalErrorHandler;
+              if (errorHandler) {
+                errorHandler(error);
+              }
               reject(err);
             });
         },
@@ -61,6 +78,48 @@ export const moveNodeToGroup = (node: Node, targetGroup: Node): Promise<void> =>
 
   return updateTopologyResourceApplication(node, targetGroup.getLabel()).catch((err) => {
     const error = err.message;
-    errorModal({ error });
+    const errorHandler = onError || globalErrorHandler;
+    if (errorHandler) {
+      errorHandler(error);
+    }
   });
+};
+
+/**
+ * Hook that sets up error handling for moveNodeToGroup using useOverlay.
+ * This sets a global error handler that will be used by all moveNodeToGroup calls.
+ */
+export const useSetupMoveNodeToGroupErrorHandler = () => {
+  const launcher = useOverlay();
+
+  useEffect(() => {
+    const errorHandler = (error: string) => {
+      launcher<ErrorModalProps>(ErrorModal, { error });
+    };
+
+    setMoveNodeToGroupErrorHandler(errorHandler);
+
+    return () => {
+      setMoveNodeToGroupErrorHandler(null);
+    };
+    // Intentionally only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+};
+
+/**
+ * @deprecated Use useSetupMoveNodeToGroupErrorHandler in the parent component instead
+ * Hook that provides a moveNodeToGroup function with error handling using useOverlay.
+ */
+export const useMoveNodeToGroup = () => {
+  const launcher = useOverlay();
+
+  return useCallback(
+    (node: Node, targetGroup: Node) => {
+      return moveNodeToGroup(node, targetGroup, (error) => {
+        launcher<ErrorModalProps>(ErrorModal, { error });
+      });
+    },
+    [launcher],
+  );
 };

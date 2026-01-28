@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
-import { deleteModal } from '@console/internal/components/modals';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -116,32 +117,40 @@ export const editKnativeServiceResource = (
   };
 };
 
-export const deleteKnativeServiceResource = (
-  kind: K8sKind,
+export const useDeleteKnativeServiceResource = (
+  kind: K8sKind | undefined,
   obj: K8sResourceKind,
   serviceTypeValue: ServiceTypeValue,
   serviceCreatedFromWebFlag: boolean,
-): Action => ({
-  id: `delete-resource`,
-  label:
-    serviceTypeValue === ServiceTypeValue.Function
-      ? i18next.t('knative-plugin~Delete Function')
-      : i18next.t('knative-plugin~Delete Service'),
-  cta: () =>
-    deleteModal(
-      serviceCreatedFromWebFlag
-        ? {
-            kind,
-            resource: obj,
-            deleteAllResources: () => cleanUpWorkload(obj),
-          }
-        : {
-            kind,
-            resource: obj,
-          },
-    ),
-  accessReview: asAccessReview(kind, obj, 'delete'),
-});
+): Action => {
+  const launchModal = useOverlay();
+
+  return useMemo<Action>(
+    () => ({
+      id: `delete-resource`,
+      label:
+        serviceTypeValue === ServiceTypeValue.Function
+          ? i18next.t('knative-plugin~Delete Function')
+          : i18next.t('knative-plugin~Delete Service'),
+      cta: () =>
+        launchModal(
+          LazyDeleteModalOverlay,
+          serviceCreatedFromWebFlag
+            ? {
+                kind,
+                resource: obj,
+                deleteAllResources: () => cleanUpWorkload(obj),
+              }
+            : {
+                kind,
+                resource: obj,
+              },
+        ),
+      accessReview: asAccessReview(kind as K8sKind, obj, 'delete'),
+    }),
+    [kind, obj, serviceTypeValue, serviceCreatedFromWebFlag, launchModal],
+  );
+};
 
 export const moveSinkSource = (
   model: K8sKind,
