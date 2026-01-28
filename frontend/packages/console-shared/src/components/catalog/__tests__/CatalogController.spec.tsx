@@ -11,6 +11,11 @@ jest.mock('react-router-dom-v5-compat', () => ({
   },
 }));
 
+jest.mock('../utils/catalog-utils', () => ({
+  ...jest.requireActual('../utils/catalog-utils'),
+  useGetAllDisabledSubCatalogs: () => [[]],
+}));
+
 describe('Catalog Controller', () => {
   const spyUseMemo = jest.spyOn(React, 'useMemo');
   const spyUseQueryParams = jest.spyOn(UseQueryParams, 'useQueryParams');
