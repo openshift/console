@@ -87,11 +87,21 @@ const tableColumnInfo = [
 
 export const ReplicasCount: FC<ReplicasCountProps> = ({ obj, kind }) => {
   const { t } = useTranslation();
+
+  // DaemonSets use different status fields than Deployments
+  const isDaemonSet = kind?.includes('DaemonSet');
+  const statusReplicas = isDaemonSet
+    ? obj.status?.currentNumberScheduled ?? 0
+    : obj.status?.replicas ?? 0;
+  const specReplicas = isDaemonSet
+    ? obj.status?.desiredNumberScheduled ?? 0
+    : obj.spec?.replicas ?? 0;
+
   return (
     <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
       {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-        statusReplicas: obj.status.replicas || 0,
-        specReplicas: obj.spec.replicas,
+        statusReplicas,
+        specReplicas,
       })}
     </Link>
   );
