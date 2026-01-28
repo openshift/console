@@ -1,10 +1,10 @@
 import type {
   CodeRef as SDKCodeRef,
   Extension,
-  LoadedExtension as SDKLoadedExtension,
   ReplaceProperties as Update,
   MapCodeRefsToValues,
   AnyObject,
+  LoadedExtension,
 } from '@openshift/dynamic-plugin-sdk';
 
 export type {
@@ -14,14 +14,8 @@ export type {
   MapCodeRefsToValues as ResolvedCodeRefProperties,
   PluginEntryModule as RemoteEntryModule,
   ReplaceProperties as Update,
+  LoadedExtension,
 } from '@openshift/dynamic-plugin-sdk';
-
-/**
- * Runtime extension interface, exposing additional metadata.
- */
-export type LoadedExtension<E extends Extension = Extension> = SDKLoadedExtension<E> & {
-  pluginID: string;
-};
 
 /**
  * Code reference, encoded as an object literal.
@@ -29,11 +23,13 @@ export type LoadedExtension<E extends Extension = Extension> = SDKLoadedExtensio
  * The value of the `$codeRef` property should be formatted as `moduleName.exportName`
  * (referring to a named export) or `moduleName` (referring to the `default` export).
  */
+// TODO: remove and use base plugin SDK types instead
 export type EncodedCodeRef = { $codeRef: string };
 
 /**
  * Code reference, represented by a function that returns a promise for the object `T`.
  */
+// TODO: remove and use base plugin SDK types instead
 export type CodeRef<T = unknown> = SDKCodeRef<T>;
 
 /**

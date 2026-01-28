@@ -16,12 +16,7 @@ const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
   const pluginInfo = useMemo(
-    () =>
-      pluginInfoEntries.find((entry) =>
-        entry.status === 'loaded'
-          ? entry.metadata.name === pluginName
-          : entry.pluginName === pluginName,
-      ),
+    () => pluginInfoEntries.find((entry) => entry.manifest.name === pluginName),
     [pluginInfoEntries, pluginName],
   );
   const enabledPlugins = useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [

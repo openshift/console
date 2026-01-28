@@ -7,7 +7,7 @@ import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/Val
 import * as remotePluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 import { trimStartMultiLine } from '../../utils/string';
 import { getTemplatePackage } from '../../utils/test-utils';
-import * as activePluginsModule from '../active-plugins';
+import * as localPluginsModule from '../local-plugins';
 import { PluginPackage } from '../plugin-resolver';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/jsonc', () => ({
@@ -20,14 +20,6 @@ jest.mock('@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin', () => (
   validateConsoleExtensionsFileSchema: jest.fn(),
 }));
 
-jest.mock('../active-plugins', () => {
-  const actual = jest.requireActual('../active-plugins');
-  return {
-    ...actual,
-    getExecutableCodeRefSource: jest.fn(actual.getExecutableCodeRefSource),
-  };
-});
-
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
   existsSync: jest.fn(),
@@ -36,29 +28,21 @@ jest.mock('fs', () => ({
 const parseJSONC = jsoncModule.parseJSONC as jest.Mock;
 const fsExistsSyncMock = fs.existsSync as jest.Mock;
 const validateConsoleExtensionsFileSchema = remotePluginModule.validateConsoleExtensionsFileSchema as jest.Mock;
-const getExecutableCodeRefSourceMock = activePluginsModule.getExecutableCodeRefSource as jest.Mock;
 
 const {
-  getActivePluginsModule,
-  loadActivePluginsForTestPurposes,
+  getLocalPluginsModule,
+  loadLocalPluginsForTestPurposes,
   getExecutableCodeRefSource,
   getDynamicExtensions,
-} = activePluginsModule;
+} = localPluginsModule;
 
 beforeEach(() => {
-  [
-    parseJSONC,
-    validateConsoleExtensionsFileSchema,
-    fsExistsSyncMock,
-    getExecutableCodeRefSourceMock,
-  ].forEach((mock) => mock.mockReset());
-  // Reset getExecutableCodeRefSourceMock to call through by default
-  getExecutableCodeRefSourceMock.mockImplementation(
-    jest.requireActual('../active-plugins').getExecutableCodeRefSource,
+  [parseJSONC, validateConsoleExtensionsFileSchema, fsExistsSyncMock].forEach((mock) =>
+    mock.mockReset(),
   );
 });
 
-describe('getActivePluginsModule', () => {
+describe('getLocalPluginsModule', () => {
   it('returns module that exports the list of plugins based on pluginPackages', () => {
     const fooPluginPackage: PluginPackage = {
       ...getTemplatePackage({
@@ -98,26 +82,30 @@ describe('getActivePluginsModule', () => {
     });
 
     expect(
-      getActivePluginsModule([fooPluginPackage, barPluginPackage], moduleHook, extensionHook),
+      getLocalPluginsModule([fooPluginPackage, barPluginPackage], moduleHook, extensionHook),
     ).toBe(
       trimStartMultiLine(
         `
         import { moduleHookTest } from '@console/test';
         moduleHookTest();
 
-        const activePlugins = [];
+        const localPlugins = [];
 
-        activePlugins.push({
+        localPlugins.push({
           name: 'foo',
+          version: '0.0.0',
           extensions: ${JSON.stringify(fooDynamicExtensions)},
+          registrationMethod: 'local',
         });
 
-        activePlugins.push({
+        localPlugins.push({
           name: 'bar-plugin',
+          version: '0.0.0',
           extensions: ${JSON.stringify(barDynamicExtensions)},
+          registrationMethod: 'local',
         });
 
-        export default activePlugins;
+        export default localPlugins;
         `,
       ),
     );
@@ -131,7 +119,7 @@ describe('getActivePluginsModule', () => {
   });
 });
 
-describe('loadActivePluginsForTestPurposes', () => {
+describe('loadLocalPluginsForTestPurposes', () => {
   afterEach(() => {
     jest.resetModules();
   });
@@ -170,7 +158,7 @@ describe('loadActivePluginsForTestPurposes', () => {
     });
 
     expect(
-      loadActivePluginsForTestPurposes(
+      loadLocalPluginsForTestPurposes(
         [fooPluginPackage, barPluginPackage],
         moduleHook,
         extensionHook,
@@ -178,10 +166,14 @@ describe('loadActivePluginsForTestPurposes', () => {
     ).toEqual([
       {
         name: 'foo',
+        version: '0.0.0',
+        registrationMethod: 'local',
         extensions: fooDynamicExtensions,
       },
       {
         name: 'bar-plugin',
+        version: '0.0.0',
+        registrationMethod: 'local',
         extensions: barDynamicExtensions,
       },
     ]);
@@ -272,9 +264,7 @@ describe('getDynamicExtensions', () => {
     jest.clearAllMocks();
   });
 
-  // TODO: This test cannot work with ESM modules because it requires mocking an internal function call
-  // within the same module. The original jest.spyOn approach doesn't work with ESM exports.
-  xit('returns an array of dynamic extensions with transformed code references', () => {
+  it('returns an array of dynamic extensions with transformed code references', () => {
     const pluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'test-plugin',
@@ -297,7 +287,7 @@ describe('getDynamicExtensions', () => {
     parseJSONC.mockImplementation(() => extensionsJSON);
     validateConsoleExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
 
-    getExecutableCodeRefSourceMock.mockImplementation((ref: EncodedCodeRef) => {
+    const codeRefSourceGetter = jest.fn((ref: EncodedCodeRef) => {
       if (_.isEqual(ref, { $codeRef: 'a.b' })) {
         return "() => import('test-plugin/src/aaa.ts').then((m) => m.b)";
       }
@@ -308,7 +298,13 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        codeRefTransformer,
+        codeRefSourceGetter,
+      ),
     ).toBe(
       trimStartMultiLine(
         `
@@ -348,14 +344,14 @@ describe('getDynamicExtensions', () => {
       extensionsFilePath,
     );
 
-    expect(getExecutableCodeRefSourceMock.mock.calls.length).toBe(2);
-    expect(getExecutableCodeRefSourceMock.mock.calls[0]).toEqual([
+    expect(codeRefSourceGetter.mock.calls.length).toBe(2);
+    expect(codeRefSourceGetter.mock.calls[0]).toEqual([
       { $codeRef: 'a.b' },
       'mux',
       pluginPackage,
       expect.any(ValidationResult),
     ]);
-    expect(getExecutableCodeRefSourceMock.mock.calls[1]).toEqual([
+    expect(codeRefSourceGetter.mock.calls[1]).toEqual([
       { $codeRef: 'foo.bar' },
       'qux',
       pluginPackage,
@@ -374,11 +370,18 @@ describe('getDynamicExtensions', () => {
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
     const codeRefTransformer = jest.fn<string, [string]>(_.identity as (s: string) => string);
+    const codeRefSourceGetter = jest.fn();
 
     fsExistsSyncMock.mockImplementation(() => false);
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        codeRefTransformer,
+        codeRefSourceGetter,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).not.toHaveBeenCalled();
@@ -386,7 +389,7 @@ describe('getDynamicExtensions', () => {
     expect(fsExistsSyncMock).toHaveBeenCalledWith(extensionsFilePath);
     expect(parseJSONC).not.toHaveBeenCalled();
     expect(validateConsoleExtensionsFileSchema).not.toHaveBeenCalled();
-    expect(getExecutableCodeRefSourceMock).not.toHaveBeenCalled();
+    expect(codeRefSourceGetter).not.toHaveBeenCalled();
   });
 
   it('returns an empty array if the extensions file has schema validation errors', () => {
@@ -401,6 +404,7 @@ describe('getDynamicExtensions', () => {
     const extensionsFilePath = `${pluginPackage._path}/${extensionsFile}`;
     const errorCallback = jest.fn();
     const codeRefTransformer = jest.fn<string, [string]>(_.identity as (s: string) => string);
+    const getExecutableCodeRefSourceMock = jest.fn();
 
     fsExistsSyncMock.mockImplementation(() => true);
     parseJSONC.mockImplementation(() => extensionsJSON);
@@ -411,7 +415,13 @@ describe('getDynamicExtensions', () => {
     });
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        codeRefTransformer,
+        getExecutableCodeRefSourceMock,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));
@@ -425,9 +435,7 @@ describe('getDynamicExtensions', () => {
     expect(getExecutableCodeRefSourceMock).not.toHaveBeenCalled();
   });
 
-  // TODO: This test cannot work with ESM modules because it requires mocking an internal function call
-  // within the same module. The original jest.spyOn approach doesn't work with ESM exports.
-  xit('returns an empty array when code reference transformation yields errors', () => {
+  it('returns an empty array when code reference transformation yields errors', () => {
     const pluginPackage: PluginPackage = {
       ...getTemplatePackage({
         name: 'test-plugin',
@@ -448,11 +456,11 @@ describe('getDynamicExtensions', () => {
     parseJSONC.mockImplementation(() => extensionsJSON);
     validateConsoleExtensionsFileSchema.mockImplementation(() => new ValidationResult('test'));
 
-    getExecutableCodeRefSourceMock.mockImplementation(
+    const codeRefSourceGetter = jest.fn(
       (
         ref: EncodedCodeRef,
-        propName: string,
-        pkg: PluginPackage,
+        _propName: string,
+        _pkg: PluginPackage,
         validationResult: ValidationResult,
       ) => {
         if (_.isEqual(ref, { $codeRef: 'a.b' })) {
@@ -467,7 +475,13 @@ describe('getDynamicExtensions', () => {
     );
 
     expect(
-      getDynamicExtensions(pluginPackage, extensionsFilePath, errorCallback, codeRefTransformer),
+      getDynamicExtensions(
+        pluginPackage,
+        extensionsFilePath,
+        errorCallback,
+        codeRefTransformer,
+        codeRefSourceGetter,
+      ),
     ).toBe('[]');
 
     expect(errorCallback).toHaveBeenCalledWith(expect.any(String));
@@ -485,14 +499,14 @@ describe('getDynamicExtensions', () => {
       extensionsFilePath,
     );
 
-    expect(getExecutableCodeRefSourceMock.mock.calls.length).toBe(2);
-    expect(getExecutableCodeRefSourceMock.mock.calls[0]).toEqual([
+    expect(codeRefSourceGetter.mock.calls.length).toBe(2);
+    expect(codeRefSourceGetter.mock.calls[0]).toEqual([
       { $codeRef: 'a.b' },
       'mux',
       pluginPackage,
       expect.any(ValidationResult),
     ]);
-    expect(getExecutableCodeRefSourceMock.mock.calls[1]).toEqual([
+    expect(codeRefSourceGetter.mock.calls[1]).toEqual([
       { $codeRef: 'foo.bar' },
       'qux',
       pluginPackage,

@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.2 - TBD
+
+- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
+
 ## 4.22.0-prerelease.1 - 2025-01-21
 
 > [!IMPORTANT]
@@ -242,4 +246,5 @@ table in [Console dynamic plugins README](./README.md).
 [#15735]: https://github.com/openshift/console/pull/15735
 [#15778]: https://github.com/openshift/console/pull/15778
 [#15893]: https://github.com/openshift/console/pull/15893
+[#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934

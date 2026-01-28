@@ -1,6 +1,5 @@
-import { render, act, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { act, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { sendActivityTick } from '../cloud-shell-utils';
 import { MultiTabbedTerminal } from '../MultiTabbedTerminal';
 
@@ -42,26 +41,18 @@ describe('MultiTabTerminal', () => {
   });
 
   it('should initially load with only one console', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof render>;
+    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
     await act(async () => {
-      multiTabTerminalWrapper = render(
-        <Provider store={store}>
-          <MultiTabbedTerminal />
-        </Provider>,
-      );
+      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
     });
 
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(1);
   });
 
   it('should add terminals on add terminal icon click', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof render>;
+    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
     await act(async () => {
-      multiTabTerminalWrapper = render(
-        <Provider store={store}>
-          <MultiTabbedTerminal />
-        </Provider>,
-      );
+      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
     });
 
     const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
@@ -79,13 +70,9 @@ describe('MultiTabTerminal', () => {
   });
 
   it('should not allow more than 8 terminals', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof render>;
+    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
     await act(async () => {
-      multiTabTerminalWrapper = render(
-        <Provider store={store}>
-          <MultiTabbedTerminal />
-        </Provider>,
-      );
+      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
     });
 
     const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
@@ -95,13 +82,9 @@ describe('MultiTabTerminal', () => {
   });
 
   it('should remove terminals on remove terminal icon click', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof render>;
+    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
     await act(async () => {
-      multiTabTerminalWrapper = render(
-        <Provider store={store}>
-          <MultiTabbedTerminal />
-        </Provider>,
-      );
+      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
     });
 
     const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');

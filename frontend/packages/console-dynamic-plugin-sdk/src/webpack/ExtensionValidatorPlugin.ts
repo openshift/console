@@ -1,6 +1,6 @@
 import * as path from 'path';
 import type * as webpack from 'webpack';
-import { getExtensionsFilePath } from '@console/plugin-sdk/src/codegen/active-plugins';
+import { getExtensionsFilePath } from '@console/plugin-sdk/src/codegen/local-plugins';
 import { PluginPackage } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { ConsolePluginPackageJSON } from '../build-types';
 import { ConsoleExtensionsJSON } from '../schema/console-extensions';

@@ -414,10 +414,6 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       },
       extensions,
       sharedModules: { ...consoleProvidedSharedModules, ...sharedDynamicModules },
-      entryCallbackSettings: {
-        name: 'loadPluginEntry',
-        pluginID: `${name}@${version}`,
-      },
       entryScriptFilename:
         process.env.NODE_ENV === 'production'
           ? 'plugin-entry.[fullhash].min.js'

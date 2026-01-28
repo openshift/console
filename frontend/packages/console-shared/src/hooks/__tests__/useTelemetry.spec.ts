@@ -139,7 +139,6 @@ describe('useTelemetry', () => {
       {
         type: 'console.telemetry/listener',
         uid: 'mock-uid',
-        pluginID: 'mock-pluginID',
         pluginName: 'mock-pluginName',
         properties: {
           listener,

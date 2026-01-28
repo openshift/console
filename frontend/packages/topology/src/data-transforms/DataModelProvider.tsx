@@ -33,7 +33,7 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
         properties: Omit<ResolvedExtension<TopologyDataModelFactory>['properties'], 'resources'> & {
           resources?: WatchK8sResourcesGeneric;
         };
-        pluginID: string;
+        uid: string;
       }[]
     | null
   >(null);
@@ -56,17 +56,17 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
               const resolvedResources: WatchK8sResourcesGeneric = await resources();
               return {
                 properties: { ...rest, resources: resolvedResources },
-                pluginID: factory.pluginID,
+                uid: factory.uid,
               };
             } catch (error) {
               // eslint-disable-next-line no-console
               console.error(
-                `Failed to resolve resources for topology factory "${factory.properties.id}" from plugin "${factory.pluginID}":`,
+                `Failed to resolve resources for topology factory "${factory.properties.id}" from extension "${factory.uid}":`,
                 error,
               );
               return {
                 properties: { ...rest, resources: undefined },
-                pluginID: factory.pluginID,
+                uid: factory.uid,
               };
             }
           }
@@ -74,7 +74,7 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
           // Resources are already static, no resolution needed
           return {
             properties: { ...rest, resources },
-            pluginID: factory.pluginID,
+            uid: factory.uid,
           };
         }),
       );
@@ -93,7 +93,7 @@ const DataModelProvider: FC<DataModelProviderProps> = ({ namespace, children }) 
             <DataModelExtension
               key={factory.properties.id}
               dataModelFactory={factory.properties}
-              pluginID={factory.pluginID}
+              uid={factory.uid}
             />
           ))}
         </>
