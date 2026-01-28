@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { ImpersonateKind, impersonateStateToProps } from '@console/dynamic-plugin-sdk';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -81,7 +80,7 @@ export const ActionsMenu = connect(impersonateStateToProps)(
     impersonate,
     title = undefined,
   }: ActionsMenuProps & { impersonate?: ImpersonateKind }) => {
-    const [isVisible, setVisible] = useSafetyFirst(false);
+    const [isVisible, setVisible] = useState(false);
 
     // Check if any actions are visible when actions have access reviews.
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import { K8sVerb } from '../../../api/common-types';
 import {
@@ -10,7 +10,6 @@ import { k8sCreate } from '../../../utils/k8s/k8s-resource';
 import { getImpersonate } from '../../core/reducers/coreSelectors';
 import { ImpersonateKind } from '../../redux-types';
 import storeHandler from '../../storeHandler';
-import { useSafetyFirst } from '../safety-first';
 
 /**
  * It provides impersonation key based on data from the redux store.
@@ -109,8 +108,8 @@ export const useAccessReview = (
   impersonate?: ImpersonateKind,
   noCheckForEmptyGroupAndResource?: boolean,
 ): [boolean, boolean] => {
-  const [loading, setLoading] = useSafetyFirst(true);
-  const [isAllowed, setAllowed] = useSafetyFirst(false);
+  const [loading, setLoading] = useState(true);
+  const [isAllowed, setAllowed] = useState(false);
   // Destructure the attributes to pass them as dependencies to `useEffect`,
   // which doesn't do deep comparison of object dependencies.
   const {

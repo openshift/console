@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { chart_color_red_orange_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_300';
 import * as _ from 'lodash';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   K8sKind,
@@ -85,7 +84,7 @@ export const fetchEventSourcesCrd = async () => {
 };
 
 export const useEventSourceModels = (): EventSourcetData => {
-  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceModels: [] });
+  const [modelsData, setModelsData] = useState({ loaded: false, eventSourceModels: [] });
   useEffect(() => {
     if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
@@ -201,7 +200,7 @@ export const fetchChannelsCrd = async () => {
 };
 
 export const useChannelModels = () => {
-  const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceChannels: [] });
+  const [modelsData, setModelsData] = useState({ loaded: false, eventSourceChannels: [] });
   useEffect(() => {
     if (eventSourceData.eventSourceChannels.length === 0) {
       fetchChannelsCrd()
@@ -246,7 +245,7 @@ export const getDynamicEventingChannelWatchers = (namespace: string) => {
   }, {});
 };
 export const useChannelResourcesList = (): EventChannelData => {
-  const [modelRefs, setModelRefs] = useSafetyFirst<EventChannelData>({
+  const [modelRefs, setModelRefs] = useState<EventChannelData>({
     channels: [],
     loaded: false,
   });

@@ -3,7 +3,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Action, MenuOption } from '@console/dynamic-plugin-sdk';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 import { ActionMenuVariant } from '../types';
 import ActionMenuContent from './ActionMenuContent';
@@ -29,7 +28,7 @@ const ActionMenu: FC<ActionMenuProps> = ({
   appendTo,
 }) => {
   const isKebabVariant = variant === ActionMenuVariant.KEBAB;
-  const [isVisible, setVisible] = useSafetyFirst(isKebabVariant);
+  const [isVisible, setVisible] = useState(isKebabVariant);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
