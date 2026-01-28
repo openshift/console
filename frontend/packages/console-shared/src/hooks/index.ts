@@ -36,3 +36,4 @@ export * from './useCopyCodeModal';
 export * from './useCopyLoginCommands';
 export * from './useQuickStartContext';
 export * from './useUser';
+export * from './useTextInputModal';
