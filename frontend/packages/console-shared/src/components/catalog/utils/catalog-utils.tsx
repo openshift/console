@@ -1,9 +1,6 @@
+import { useMemo } from 'react';
 import * as _ from 'lodash';
-import {
-  useResolvedExtensions,
-  CatalogItemType,
-  isCatalogItemType,
-} from '@console/dynamic-plugin-sdk';
+import { CatalogItemType, isCatalogItemType } from '@console/dynamic-plugin-sdk';
 import {
   CatalogItem,
   CatalogItemDetails,
@@ -12,12 +9,36 @@ import {
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils/router';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
+import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { CatalogSortOrder, CatalogType, CatalogTypeCounts } from './types';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',
   Disabled = 'Disabled',
 }
+
+type SoftwareCatalogTypesConfig = {
+  state: CatalogVisibilityState;
+  enabled?: string[];
+  disabled?: string[];
+};
+
+/**
+ * Reads and parses the developerCatalogTypes config from SERVER_FLAGS.
+ * Has to be dynamic for unit tests to run
+ */
+const getSoftwareCatalogTypes = (): SoftwareCatalogTypesConfig | undefined => {
+  if (!window.SERVER_FLAGS.developerCatalogTypes) {
+    return undefined;
+  }
+  try {
+    return JSON.parse(window.SERVER_FLAGS.developerCatalogTypes) as SoftwareCatalogTypesConfig;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to parse developerCatalogTypes:', e);
+    return undefined;
+  }
+};
 
 // Enhanced scoring constants for operator relevance calculation
 const SCORE = {
@@ -362,8 +383,8 @@ export const applyCatalogItemMetadata = (
   });
 
 export const isCatalogTypeEnabled = (catalogType: string): boolean => {
-  if (window.SERVER_FLAGS.developerCatalogTypes) {
-    const softwareCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
+  const softwareCatalogTypes = getSoftwareCatalogTypes();
+  if (softwareCatalogTypes) {
     if (
       softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
       softwareCatalogTypes?.enabled?.length > 0
@@ -381,35 +402,36 @@ export const isCatalogTypeEnabled = (catalogType: string): boolean => {
 };
 
 export const useGetAllDisabledSubCatalogs = () => {
-  const [catalogExtensionsArray] = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
-  const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
-    return type.properties.type;
-  });
-  let disabledSubCatalogs = [];
-  if (window.SERVER_FLAGS.developerCatalogTypes) {
-    const softwareCatalogTypes = JSON.parse(window.SERVER_FLAGS.developerCatalogTypes);
-    if (
-      softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
-      softwareCatalogTypes?.enabled?.length > 0
-    ) {
-      disabledSubCatalogs = catalogTypeExtensions.filter(
-        (val) => !softwareCatalogTypes?.enabled.includes(val),
-      );
-      return [disabledSubCatalogs];
-    }
-    if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
-      if (softwareCatalogTypes?.disabled?.length > 0) {
-        return [softwareCatalogTypes?.disabled, catalogTypeExtensions];
+  const catalogExtensionsArray = useExtensions<CatalogItemType>(isCatalogItemType);
+  const softwareCatalogTypes = useMemo(() => getSoftwareCatalogTypes(), []);
+
+  return useMemo(() => {
+    const catalogTypeExtensions = catalogExtensionsArray.map((type) => type.properties.type);
+
+    if (softwareCatalogTypes) {
+      if (
+        softwareCatalogTypes?.state === CatalogVisibilityState.Enabled &&
+        softwareCatalogTypes?.enabled?.length > 0
+      ) {
+        const disabledSubCatalogs = catalogTypeExtensions.filter(
+          (val) => !softwareCatalogTypes?.enabled.includes(val),
+        );
+        return [disabledSubCatalogs];
       }
-      return [catalogTypeExtensions];
+      if (softwareCatalogTypes?.state === CatalogVisibilityState.Disabled) {
+        if (softwareCatalogTypes?.disabled?.length > 0) {
+          return [softwareCatalogTypes?.disabled];
+        }
+        return [catalogTypeExtensions];
+      }
     }
-  }
-  return [disabledSubCatalogs];
+    return [[]];
+  }, [catalogExtensionsArray, softwareCatalogTypes]);
 };
 
 export const useIsSoftwareCatalogEnabled = (): boolean => {
   const [disabledSubCatalogs] = useGetAllDisabledSubCatalogs();
-  const [catalogExtensionsArray] = useResolvedExtensions<CatalogItemType>(isCatalogItemType);
+  const catalogExtensionsArray = useExtensions<CatalogItemType>(isCatalogItemType);
   const catalogTypeExtensions = catalogExtensionsArray.map((type) => {
     return type.properties.type;
   });
