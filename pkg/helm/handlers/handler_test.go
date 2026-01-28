@@ -913,7 +913,7 @@ func TestHelmHandlers_HandleHelmInstallAsync(t *testing.T) {
 			name:             "Successful install returns release info in JSON format",
 			installedSecret:  fakeSecret,
 			httpStatusCode:   http.StatusCreated,
-			expectedResponse: `{"metadata":{"name":"Test","creationTimestamp":null}}`,
+			expectedResponse: `{"metadata":{"name":"Test"}}`,
 		},
 	}
 	for _, tt := range tests {
@@ -962,7 +962,7 @@ func TestHelmHandlers_HandleHelmUpgradeReleaseAsync(t *testing.T) {
 		},
 		{
 			name:                "Valid chart upgrade release",
-			expectedResponse:    `{"metadata":{"name":"Test","creationTimestamp":null}}`,
+			expectedResponse:    `{"metadata":{"name":"Test"}}`,
 			secret:              &fakeSecret,
 			expectedContentType: "application/json",
 			error:               nil,
@@ -1027,7 +1027,7 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			name:             "Successful uninstall returns secret info",
 			installedSecret:  fakeSecret,
 			httpStatusCode:   http.StatusCreated,
-			expectedResponse: `{"metadata":{"name":"Test","creationTimestamp":null}}`,
+			expectedResponse: `{"metadata":{"name":"Test"}}`,
 		},
 	}
 	for _, tt := range tests {
