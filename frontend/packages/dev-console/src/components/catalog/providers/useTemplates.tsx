@@ -93,7 +93,7 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   // Load templates for the current project.
   useEffect(() => {
     // Don't load templates from the `openshift` namespace twice if it's the current namespace
-    if (!namespace || namespace === 'openshift') {
+    if (namespace === 'openshift') {
       setProjectTemplates([]);
       setProjectTemplatesLoaded(true);
       setProjectTemplatesError(null);
