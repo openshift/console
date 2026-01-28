@@ -50,7 +50,7 @@ data:
 
   beforeEach(() => {
     // ensure the test project is selected to avoid flakes
-    cy.visit(`/k8s/cluster/projects/${testName}`);
+    cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${testName}`);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     listPage.titleShouldHaveText('Secrets');
     secrets.clickCreateSecretDropdownButton('generic');
