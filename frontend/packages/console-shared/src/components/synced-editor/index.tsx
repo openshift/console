@@ -161,7 +161,7 @@ type YAMLEditorProps = {
 };
 
 type SyncedEditorProps = {
-  context: {
+  context?: {
     formContext: { [key: string]: any };
     yamlContext: { [key: string]: any };
   };

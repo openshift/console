@@ -1785,6 +1785,7 @@
   "Disable": "Disable",
   "Disabled": "Disabled",
   "Enabled": "Enabled",
+  "Select service account": "Select service account",
   "Failed to load kubecontrollermanager": "Failed to load kubecontrollermanager",
   "Failed to parse cloud provider config {{cm}}": "Failed to parse cloud provider config {{cm}}",
   "The following content was expected to be defined in the configMap: {{ expectedValues }}": "The following content was expected to be defined in the configMap: {{ expectedValues }}",
