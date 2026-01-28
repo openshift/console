@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
 import * as _ from 'lodash';
+import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import * as PropTypes from 'prop-types';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
@@ -18,8 +17,8 @@ import {
 } from '@patternfly/react-core';
 
 import { Trans, useTranslation } from 'react-i18next';
+import { Action, MenuOption } from '@console/dynamic-plugin-sdk';
 
-import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory/text-filter';
 import {
@@ -32,7 +31,7 @@ import {
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
-import { connectToFlags } from '../reducers/connectToFlags';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
@@ -41,29 +40,94 @@ import { ResourceIcon } from './utils/resource-icon';
 import { ResourceLink, resourcePathFromModel } from './utils/resource-link';
 import { TogglePlay } from './utils/toggle-play';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventStreamList } from './utils/event-stream';
+import { EventStreamList, EventComponentProps } from './utils/event-stream';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import type { EventKind } from '../module/k8s/types';
+import type { EventInvolvedObject } from '../module/k8s/event';
+import type { CellMeasurerCache } from 'react-virtualized';
+import type { WSOptions } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
+import type {
+  K8sResourceCommon,
+  ResourceEventStreamProps,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const maxMessages = 500;
 const flushInterval = 500;
 
+// Extended EventKind type to include reportingComponent field present in v1 events
+interface ExtendedEventKind extends EventKind {
+  reportingComponent?: string;
+}
+
+// Types
+interface ActionsProps {
+  actions: Action[];
+  options?: MenuOption[];
+  list?: EventComponentProps['list'];
+  cache: CellMeasurerCache;
+  index: number;
+}
+
+interface InnerProps extends Omit<EventComponentProps, 'event'> {
+  event: ExtendedEventKind;
+}
+
+interface EventsListProps {
+  title?: string;
+  autoFocus?: boolean;
+  mock?: boolean;
+}
+
+interface NoMatchingEventsProps {
+  allCount: number;
+}
+
+type FilterFunction = (involvedObject: EventInvolvedObject, event: EventKind) => boolean;
+
+interface EventStreamProps {
+  namespace?: string;
+  fieldSelector?: string;
+  mock?: boolean;
+  resourceEventStream?: boolean;
+  kind?: string;
+  type?: string;
+  filter?: FilterFunction[];
+  textFilter?: string;
+}
+
+interface InternalResourceEventStreamProps {
+  obj: K8sResourceCommon;
+}
+
+interface InternalResourcesEventStreamProps {
+  filters: FilterFunction[];
+  namespace?: string;
+}
+
 // We have to check different properties depending on whether events were
 // created with the core/v1 events API or the new events.k8s.io API.
-const getFirstTime = (event) => event.firstTimestamp || event.eventTime;
-export const getLastTime = (event) => {
+const getFirstTime = (event: EventKind): string | undefined =>
+  event.firstTimestamp || event.eventTime;
+
+export const getLastTime = (event: EventKind): string | null | undefined => {
   const lastObservedTime = event.series ? event.series.lastObservedTime : null;
   return event.lastTimestamp || lastObservedTime || event.eventTime;
 };
-export const sortEvents = (events) => {
-  return _.orderBy(events, [getLastTime, getFirstTime, 'name'], ['desc', 'desc', 'asc']);
+
+export const sortEvents = (events: EventKind[] | Record<string, EventKind>): EventKind[] => {
+  return _.orderBy(
+    events,
+    [getLastTime, getFirstTime, 'name'],
+    ['desc', 'desc', 'asc'],
+  ) as EventKind[];
 };
 
 // Predicate function to filter by event "type" (normal, warning, or all)
-export const typeFilter = (eventType, event) => {
+export const typeFilter = (eventType: string, event: EventKind): boolean => {
   if (eventType === 'all') {
     return true;
   }
@@ -71,7 +135,7 @@ export const typeFilter = (eventType, event) => {
   return type.toLowerCase() === eventType;
 };
 
-const kindFilter = (reference, { involvedObject }) => {
+const kindFilter = (reference: string, { involvedObject }: EventKind): boolean => {
   if (!reference) {
     return true;
   }
@@ -95,11 +159,11 @@ const kindFilter = (reference, { involvedObject }) => {
   });
 };
 
-const Actions = ({ actions, options, list, cache, index }) => {
+const Actions: FC<ActionsProps> = ({ actions, options, list, cache, index }) => {
   useEffect(() => {
     // Actions contents will render after the initial row height calculation,
     // so recompute the row height.
-    cache.clear(index);
+    cache.clear(index, 0);
     list?.recomputeRowHeights(index);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -109,7 +173,7 @@ const Actions = ({ actions, options, list, cache, index }) => {
       {actions.length === 1 ? (
         <ActionMenuItem
           action={actions[0]}
-          component={(props) => (
+          component={(props: any) => (
             <Button variant={ButtonVariant.secondary} size={ButtonSize.sm} {...props} />
           )}
         />
@@ -120,9 +184,9 @@ const Actions = ({ actions, options, list, cache, index }) => {
   );
 };
 
-const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
-  const { t } = useTranslation();
-  const { event, flags, list, cache, index } = props;
+const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
+  const { t } = useTranslation('public');
+  const canListNode = useFlag(FLAGS.CAN_LIST_NODE);
   const { involvedObject: obj, source, message, reason, series, reportingComponent } = event;
 
   const tooltipMsg = `${reason} (${obj.kind})`;
@@ -134,7 +198,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
   // Events in v1beta1 apiVersion store the information about the reporting component
   // in the 'source.component' field. Events in v1 apiVersion are storing the information
   // in the `reportingComponent` field.
-  // Unfortunatelly we cannot determine which field to use based on the apiVersion since
+  // Unfortunately we cannot determine which field to use based on the apiVersion since
   // v1beta1 is internally converted to v1.
   const component = source.component ? source.component : reportingComponent;
 
@@ -170,10 +234,10 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
           <div className="co-sysevent__details">
             <span className="pf-v6-u-font-size-xs co-sysevent__source">
               {component !== 'kubelet' &&
-                t('public~Generated from {{ sourceComponent }}', {
+                t('Generated from {{ sourceComponent }}', {
                   sourceComponent: component,
                 })}
-              {component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
+              {component === 'kubelet' && canListNode && (
                 <Trans ns="public">
                   Generated from {{ sourceComponent: component }} on{' '}
                   <Link to={resourcePathFromModel(NodeModel, source.host)}>
@@ -182,8 +246,8 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
                 </Trans>
               )}
               {component === 'kubelet' &&
-                !flags[FLAGS.CAN_LIST_NODE] &&
-                t('public~Generated from {{ sourceComponent }} on {{ sourceHost }}', {
+                !canListNode &&
+                t('Generated from {{ sourceComponent }} on {{ sourceHost }}', {
                   sourceComponent: component,
                   sourceHost: source.host,
                 })}
@@ -225,21 +289,278 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)((props) => {
       </div>
     </div>
   );
-});
+};
 
-export const EventsList = (props) => {
-  const { t } = useTranslation();
-  const [type, setType] = useState('all');
-  const [textFilter, setTextFilter] = useState('');
-  const { ns } = useParams();
-  const [selected, setSelected] = useState(new Set([]));
-  const eventTypes = {
-    all: t('public~All types'),
-    normal: t('public~Normal'),
-    warning: t('public~Warning'),
+export const NoEvents: FC = () => {
+  const { t } = useTranslation('public');
+  return <ConsoleEmptyState>{t('No events')}</ConsoleEmptyState>;
+};
+
+export const NoMatchingEvents: FC<NoMatchingEventsProps> = ({ allCount }) => {
+  const { t } = useTranslation('public');
+  return (
+    <ConsoleEmptyState title={t('No matching events')}>
+      {allCount >= maxMessages
+        ? t('{{count}}+ event exist, but none match the current filter', {
+            count: maxMessages,
+          })
+        : t('{{count}} event exist, but none match the current filter', {
+            count: allCount,
+          })}
+    </ConsoleEmptyState>
+  );
+};
+
+export const ErrorLoadingEvents: FC = () => {
+  const { t } = useTranslation('public');
+  return (
+    <ConsoleEmptyState title={t('Error loading events')}>
+      {t('An error occurred during event retrieval. Attempting to reconnect...')}
+    </ConsoleEmptyState>
+  );
+};
+
+interface FilterEventsOptions {
+  kind?: string;
+  type?: string;
+  filter?: FilterFunction[];
+  textFilter?: string;
+}
+
+const filterEvents = (
+  messages: EventKind[],
+  { kind, type, filter, textFilter }: FilterEventsOptions,
+): EventKind[] => {
+  // Don't use `fuzzy` because it results in some surprising matches in long event messages.
+  // Instead perform an exact substring match on each word in the text filter.
+  const words = _.uniq(_.toLower(textFilter).match(/\S+/g) ?? []).sort((a, b) => {
+    // Sort the longest words first.
+    return b.length - a.length;
+  });
+
+  const textMatches = (obj: EventKind): boolean => {
+    if (_.isEmpty(words)) {
+      return true;
+    }
+    const name = _.get(obj, 'involvedObject.name', '');
+    const message = _.toLower(obj.message);
+    return words.every((word) => name.indexOf(word) !== -1 || message.indexOf(word) !== -1);
   };
 
-  const toggleSelected = (selection) => {
+  const f = (obj: EventKind): boolean => {
+    if (type && !typeFilter(type, obj)) {
+      return false;
+    }
+    if (kind && !kindFilter(kind, obj)) {
+      return false;
+    }
+    if (filter && !filter.some((flt) => flt(obj.involvedObject, obj))) {
+      return false;
+    }
+    if (!textMatches(obj)) {
+      return false;
+    }
+    return true;
+  };
+
+  return _.filter(messages, f);
+};
+
+const EventStream: FC<EventStreamProps> = ({
+  namespace,
+  fieldSelector,
+  mock = false,
+  resourceEventStream,
+  kind = '',
+  type = 'all',
+  filter,
+  textFilter,
+}) => {
+  const { t } = useTranslation('public');
+  const [active, setActive] = useState(true);
+  const [sortedEvents, setSortedEvents] = useState<EventKind[]>([]);
+  const [error, setError] = useState<string | boolean | null>(null);
+  const [loading, setLoading] = useState(true);
+  const ws = useRef<WSFactory | null>(null);
+
+  const filteredEvents = useMemo(() => {
+    return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
+  }, [sortedEvents, kind, type, filter, textFilter]);
+
+  // Handle websocket setup and teardown when dependent props change
+  useEffect(() => {
+    ws.current?.destroy();
+    setSortedEvents([]);
+    if (!mock) {
+      const webSocketID = `${namespace || 'all'}-sysevents`;
+      const watchURLOptions = {
+        ...(namespace ? { ns: namespace } : {}),
+        ...(fieldSelector
+          ? {
+              queryParams: {
+                fieldSelector: encodeURIComponent(fieldSelector),
+              },
+            }
+          : {}),
+      };
+      const path = watchURL(EventModel, watchURLOptions);
+      const webSocketOptions: WSOptions = {
+        host: 'auto',
+        reconnect: true,
+        path,
+        subprotocols: [],
+        jsonParse: true,
+        bufferFlushInterval: flushInterval,
+        bufferMax: maxMessages,
+      };
+
+      ws.current = new WSFactory(webSocketID, webSocketOptions)
+        .onbulkmessage((messages: Array<{ object: EventKind; type: string }>) => {
+          // Make one update to state per batch of events.
+          setSortedEvents((currentSortedEvents) => {
+            const topEvents = currentSortedEvents.slice(0, maxMessages);
+            const batch = messages.reduce((acc, { object, type: eventType }) => {
+              const uid = object.metadata.uid;
+              switch (eventType) {
+                case 'ADDED':
+                case 'MODIFIED':
+                  if (acc[uid] && acc[uid].count > object.count) {
+                    // We already have a more recent version of this message stored, so skip this one
+                    return acc;
+                  }
+                  return { ...acc, [uid]: object };
+                case 'DELETED':
+                  return _.omit(acc, uid);
+                default:
+                  // eslint-disable-next-line no-console
+                  console.error(`UNHANDLED EVENT: ${eventType}`);
+                  return acc;
+              }
+            }, _.keyBy(topEvents, 'metadata.uid') as Record<string, EventKind>);
+            return sortEvents(batch);
+          });
+        })
+        .onopen(() => {
+          setError(false);
+          setLoading(false);
+        })
+        .onclose((evt?: { wasClean?: boolean; reason?: string }) => {
+          if (evt?.wasClean === false) {
+            setError(evt.reason || t('Connection did not close cleanly.'));
+          }
+        })
+        .onerror(() => {
+          setError(true);
+        });
+    }
+    return () => {
+      ws.current?.destroy();
+    };
+  }, [namespace, fieldSelector, mock, t]);
+
+  // Pause/unpause the websocket when the active state changes
+  useEffect(() => {
+    if (active) {
+      ws.current?.unpause();
+    } else {
+      ws.current?.pause();
+    }
+  }, [active]);
+
+  const toggleStream = () => {
+    setActive((prev) => !prev);
+  };
+
+  const count = filteredEvents.length;
+  const allCount = sortedEvents.length;
+  const noEvents = allCount === 0;
+  const noMatches = allCount > 0 && count === 0;
+  let sysEventStatus: ReactNode;
+  let statusBtnTxt: ReactNode;
+
+  if (noEvents || mock || (noMatches && resourceEventStream)) {
+    sysEventStatus = <NoEvents />;
+  }
+  if (noMatches && !resourceEventStream) {
+    sysEventStatus = <NoMatchingEvents allCount={allCount} />;
+  }
+
+  if (error) {
+    statusBtnTxt = (
+      <span className="co-sysevent-stream__connection-error">
+        {typeof error === 'string'
+          ? t('Error connecting to event stream: {{ error }}', {
+              error,
+            })
+          : t('Error connecting to event stream')}
+      </span>
+    );
+    sysEventStatus = <ErrorLoadingEvents />;
+  } else if (loading) {
+    statusBtnTxt = <span>{t('Loading events...')}</span>;
+    sysEventStatus = <Loading />;
+  } else if (active) {
+    statusBtnTxt = <span>{t('Streaming events...')}</span>;
+  } else {
+    statusBtnTxt = <span>{t('Event stream is paused.')}</span>;
+  }
+
+  const klass = css('co-sysevent-stream__timeline', {
+    'co-sysevent-stream__timeline--empty': !allCount || !count,
+  });
+  const messageCount =
+    count < maxMessages
+      ? t('Showing {{count}} event', { count })
+      : t('Showing most recent {{count}} event', { count });
+
+  return (
+    <PaneBody>
+      <div className="co-sysevent-stream">
+        <div className="co-sysevent-stream__status">
+          <div className="co-sysevent-stream__timeline__btn-text">{statusBtnTxt}</div>
+          <div
+            className="co-sysevent-stream__totals pf-v6-u-text-color-subtle"
+            data-test="event-totals"
+          >
+            {messageCount}
+          </div>
+        </div>
+
+        <div className={klass}>
+          <TogglePlay
+            active={active}
+            onClick={toggleStream}
+            className="co-sysevent-stream__timeline__btn"
+          />
+          <div className="co-sysevent-stream__timeline__end-message">
+            {t('Older events are not stored.')}
+          </div>
+        </div>
+        {count > 0 && (
+          <EventStreamList
+            events={filteredEvents}
+            EventComponent={Inner as ComponentType<EventComponentProps>}
+          />
+        )}
+        {sysEventStatus}
+      </div>
+    </PaneBody>
+  );
+};
+
+export const EventsList: FC<EventsListProps> = (props) => {
+  const { t } = useTranslation('public');
+  const [type, setType] = useState('all');
+  const [textFilter, setTextFilter] = useState('');
+  const { ns } = useParams<{ ns?: string }>();
+  const [selected, setSelected] = useState<Set<string>>(new Set([]));
+  const eventTypes = {
+    all: t('All types'),
+    normal: t('Normal'),
+    warning: t('Warning'),
+  };
+
+  const toggleSelected = (selection: string) => {
     setSelected((prev) => {
       const updateItems = new Set(prev);
       updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
@@ -247,7 +568,7 @@ export const EventsList = (props) => {
     });
   };
 
-  const removeResource = (selection) => {
+  const removeResource = (selection: string) => {
     setSelected((prev) => {
       const updateItems = new Set(prev);
       updateItems.delete(selection);
@@ -265,23 +586,19 @@ export const EventsList = (props) => {
       <PageSection>
         <Toolbar id="toolbar-component-managed-toggle-groups">
           <ToolbarContent>
-            <ResourceListDropdown
-              onChange={toggleSelected}
-              selected={Array.from(selected)}
-              clearSelection={clearSelection}
-            />
+            <ResourceListDropdown onChange={toggleSelected} selected={Array.from(selected)} />
             <ToolbarItem>
               <ConsoleSelect
                 items={eventTypes}
                 onChange={(v) => setType(v)}
                 selectedKey={type}
-                title={t('public~All types')}
+                title={t('All types')}
               />
             </ToolbarItem>
             <ToolbarItem className="pf-v6-u-w-100 pf-v6-u-w-50-on-sm pf-v6-u-w-25-on-xl">
               <TextFilter
                 autoFocus={props.autoFocus}
-                label={t('public~Events by name or message')}
+                label={t('Events by name or message')}
                 onChange={(_event, val) => setTextFilter(val || '')}
               />
             </ToolbarItem>
@@ -290,12 +607,12 @@ export const EventsList = (props) => {
             <ToolbarContent>
               <LabelGroup
                 key="resources-category"
-                categoryName={t('public~Resource')}
+                categoryName={t('Resource')}
                 defaultIsOpen={false}
-                collapsedText={t('public~{{numRemaining}} more', {
+                collapsedText={t('{{numRemaining}} more', {
                   numRemaining: '${remaining}',
                 })}
-                expandedText={t('public~Show less')}
+                expandedText={t('Show less')}
                 isClosable
                 onClick={clearSelection}
               >
@@ -325,279 +642,25 @@ export const EventsList = (props) => {
   );
 };
 
-export const NoEvents = () => {
-  const { t } = useTranslation();
-  return <ConsoleEmptyState>{t('public~No events')}</ConsoleEmptyState>;
-};
-
-export const NoMatchingEvents = ({ allCount }) => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~No matching events')}>
-      {allCount >= maxMessages
-        ? t('public~{{count}}+ event exist, but none match the current filter', {
-            count: maxMessages,
-          })
-        : t('public~{{count}} event exist, but none match the current filter', {
-            count: allCount,
-          })}
-    </ConsoleEmptyState>
-  );
-};
-
-export const ErrorLoadingEvents = () => {
-  const { t } = useTranslation();
-  return (
-    <ConsoleEmptyState title={t('public~Error loading events')}>
-      {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
-    </ConsoleEmptyState>
-  );
-};
-
-export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => {
-  const { t } = useTranslation();
-  const title = t('public~Events');
-  return (
-    <>
-      <DocumentTitle>{title}</DocumentTitle>
-      <EventsList
-        {...rest}
-        autoFocus={!noProjectsAvailable}
-        mock={noProjectsAvailable}
-        title={title}
-      />
-    </>
-  );
-});
-
-const EventStream = ({
-  namespace,
-  fieldSelector,
-  mock,
-  resourceEventStream,
-  kind,
-  type,
-  filter,
-  textFilter,
-}) => {
-  const { t } = useTranslation();
-  const [active, setActive] = useState(true);
-  const [sortedEvents, setSortedEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const ws = useRef(null);
-
-  const filteredEvents = useMemo(() => {
-    return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
-  }, [sortedEvents, kind, type, filter, textFilter]);
-
-  // Handle websocket setup and teardown when dependent props change
-  useEffect(() => {
-    ws.current?.destroy();
-    setSortedEvents([]);
-    if (!mock) {
-      const webSocketID = `${namespace || 'all'}-sysevents`;
-      const watchURLOptions = {
-        ...(namespace ? { ns: namespace } : {}),
-        ...(fieldSelector
-          ? {
-              queryParams: {
-                fieldSelector: encodeURIComponent(fieldSelector),
-              },
-            }
-          : {}),
-      };
-      const path = watchURL(EventModel, watchURLOptions);
-      const webSocketOptions = {
-        host: 'auto',
-        reconnect: true,
-        path,
-        jsonParse: true,
-        bufferFlushInterval: flushInterval,
-        bufferMax: maxMessages,
-      };
-
-      ws.current = new WSFactory(webSocketID, webSocketOptions)
-        .onbulkmessage((messages) => {
-          // Make one update to state per batch of events.
-          setSortedEvents((currentSortedEvents) => {
-            const topEvents = currentSortedEvents.slice(0, maxMessages);
-            const batch = messages.reduce((acc, { object, type: eventType }) => {
-              const uid = object.metadata.uid;
-              switch (eventType) {
-                case 'ADDED':
-                case 'MODIFIED':
-                  if (acc[uid] && acc[uid].count > object.count) {
-                    // We already have a more recent version of this message stored, so skip this one
-                    return acc;
-                  }
-                  return { ...acc, [uid]: object };
-                case 'DELETED':
-                  return _.omit(acc, uid);
-                default:
-                  // eslint-disable-next-line no-console
-                  console.error(`UNHANDLED EVENT: ${eventType}`);
-                  return acc;
-              }
-            }, _.keyBy(topEvents, 'metadata.uid'));
-            return sortEvents(batch);
-          });
-        })
-        .onopen(() => {
-          setError(false);
-          setLoading(false);
-        })
-        .onclose((evt) => {
-          if (evt?.wasClean === false) {
-            setError(evt.reason || t('public~Connection did not close cleanly.'));
-          }
-        })
-        .onerror(() => {
-          setError(true);
-        });
-    }
-    return () => {
-      ws.current?.destroy();
-    };
-  }, [namespace, fieldSelector, mock, t]);
-
-  // Pause/unpause the websocket when the active state changes
-  useEffect(() => {
-    if (active) {
-      ws.current?.unpause();
-    } else {
-      ws.current?.pause();
-    }
-  }, [active]);
-
-  const toggleStream = () => {
-    setActive((prev) => !prev);
-  };
-
-  const count = filteredEvents.length;
-  const allCount = sortedEvents.length;
-  const noEvents = allCount === 0;
-  const noMatches = allCount > 0 && count === 0;
-  let sysEventStatus, statusBtnTxt;
-
-  if (noEvents || mock || (noMatches && resourceEventStream)) {
-    sysEventStatus = <NoEvents />;
-  }
-  if (noMatches && !resourceEventStream) {
-    sysEventStatus = <NoMatchingEvents allCount={allCount} />;
-  }
-
-  if (error) {
-    statusBtnTxt = (
-      <span className="co-sysevent-stream__connection-error">
-        {_.isString(error)
-          ? t('public~Error connecting to event stream: {{ error }}', {
-              error,
-            })
-          : t('public~Error connecting to event stream')}
-      </span>
+export const EventStreamPage = withStartGuide(
+  ({ noProjectsAvailable, ...rest }: { noProjectsAvailable?: boolean } & EventsListProps) => {
+    const { t } = useTranslation('public');
+    const title = t('Events');
+    return (
+      <>
+        <DocumentTitle>{title}</DocumentTitle>
+        <EventsList
+          {...rest}
+          autoFocus={!noProjectsAvailable}
+          mock={noProjectsAvailable}
+          title={title}
+        />
+      </>
     );
-    sysEventStatus = <ErrorLoadingEvents />;
-  } else if (loading) {
-    statusBtnTxt = <span>{t('public~Loading events...')}</span>;
-    sysEventStatus = <Loading />;
-  } else if (active) {
-    statusBtnTxt = <span>{t('public~Streaming events...')}</span>;
-  } else {
-    statusBtnTxt = <span>{t('public~Event stream is paused.')}</span>;
-  }
+  },
+);
 
-  const klass = css('co-sysevent-stream__timeline', {
-    'co-sysevent-stream__timeline--empty': !allCount || !count,
-  });
-  const messageCount =
-    count < maxMessages
-      ? t('public~Showing {{count}} event', { count })
-      : t('public~Showing most recent {{count}} event', { count });
-
-  return (
-    <PaneBody>
-      <div className="co-sysevent-stream">
-        <div className="co-sysevent-stream__status">
-          <div className="co-sysevent-stream__timeline__btn-text">{statusBtnTxt}</div>
-          <div
-            className="co-sysevent-stream__totals pf-v6-u-text-color-subtle"
-            data-test="event-totals"
-          >
-            {messageCount}
-          </div>
-        </div>
-
-        <div className={klass}>
-          <TogglePlay
-            active={active}
-            onClick={toggleStream}
-            className="co-sysevent-stream__timeline__btn"
-          />
-          <div className="co-sysevent-stream__timeline__end-message">
-            {t('public~Older events are not stored.')}
-          </div>
-        </div>
-        {count > 0 && <EventStreamList events={filteredEvents} EventComponent={Inner} />}
-        {sysEventStatus}
-      </div>
-    </PaneBody>
-  );
-};
-
-EventStream.defaultProps = {
-  type: 'all',
-  kind: '',
-  mock: false,
-};
-
-EventStream.propTypes = {
-  type: PropTypes.string,
-  filter: PropTypes.array,
-  kind: PropTypes.string.isRequired,
-  mock: PropTypes.bool,
-  namespace: namespaceProptype,
-  showTitle: PropTypes.bool,
-  textFilter: PropTypes.string,
-};
-
-const filterEvents = (messages, { kind, type, filter, textFilter }) => {
-  // Don't use `fuzzy` because it results in some surprising matches in long event messages.
-  // Instead perform an exact substring match on each word in the text filter.
-  const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
-    // Sort the longest words first.
-    return b.length - a.length;
-  });
-
-  const textMatches = (obj) => {
-    if (_.isEmpty(words)) {
-      return true;
-    }
-    const name = _.get(obj, 'involvedObject.name', '');
-    const message = _.toLower(obj.message);
-    return _.every(words, (word) => name.indexOf(word) !== -1 || message.indexOf(word) !== -1);
-  };
-
-  const f = (obj) => {
-    if (type && !typeFilter(type, obj)) {
-      return false;
-    }
-    if (kind && !kindFilter(kind, obj)) {
-      return false;
-    }
-    if (filter && !filter.some((flt) => flt(obj.involvedObject, obj))) {
-      return false;
-    }
-    if (!textMatches(obj)) {
-      return false;
-    }
-    return true;
-  };
-
-  return _.filter(messages, f);
-};
-
-export const ResourceEventStream_ = ({
+export const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },
@@ -612,14 +675,13 @@ export const ResourceEventStream_ = ({
 
 export { ResourceEventStream_ as ResourceEventStream };
 
-export const ResourcesEventStream = ({ filters, namespace }) => (
-  <EventStream filter={filters} resourceEventStream namespace={namespace} />
-);
+export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
+  filters,
+  namespace,
+}) => <EventStream filter={filters} resourceEventStream namespace={namespace} />;
 
-/**
- * @typedef {import('@console/dynamic-plugin-sdk/src/extensions').ResourceEventStreamProps} ResourceEventStreamProps
- * @augments FC<ResourceEventStreamProps>
- */
-export const WrappedResourceEventStream = ({ resource }) => <ResourceEventStream_ obj={resource} />;
+export const WrappedResourceEventStream: FC<ResourceEventStreamProps> = ({ resource }) => (
+  <ResourceEventStream_ obj={resource} />
+);
 
 export default ResourceEventStream_;

@@ -12,6 +12,9 @@ const createMockEvent = (namespace: string, name: string, uid: string, lastTimes
     name: `${name}-pod`,
     namespace,
   },
+  source: {
+    component: 'test-component',
+  },
   type: 'Normal',
   reason: 'Created',
   message: `Created pod ${name}-pod`,
