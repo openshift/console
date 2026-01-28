@@ -8,10 +8,10 @@ import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import type { FirehoseResource, FirehoseResult } from '../../utils/types';
+import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { EventModel } from '../../../models';
-import { EventKind, K8sKind } from '../../../module/k8s';
+import { EventKind, K8sKind, K8sResourceCommon } from '../../../module/k8s';
 import {
   useResolvedExtensions,
   DashboardsOverviewResourceActivity,
@@ -24,151 +24,123 @@ import { getName } from '@console/shared/src/selectors/common';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 
-const getEventsResource = (projectName: string): FirehoseResource => ({
-  isList: true,
-  kind: EventModel.kind,
-  prop: 'events',
-  namespace: projectName,
-});
+const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
+  projectName,
+  viewEvents,
+}) => {
+  const { t } = useTranslation();
 
-const RecentEvent = withDashboardResources<RecentEventProps>(
-  ({ watchK8sResource, stopWatchK8sResource, resources, projectName, viewEvents }) => {
-    useEffect(() => {
-      if (projectName) {
-        const eventsResource = getEventsResource(projectName);
-        watchK8sResource(eventsResource);
-        return () => {
-          stopWatchK8sResource(eventsResource);
-        };
-      }
-    }, [watchK8sResource, stopWatchK8sResource, projectName]);
-    return (
+  const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
+    projectName
+      ? {
+          isList: true,
+          kind: EventModel.kind,
+          namespace: projectName,
+        }
+      : null,
+  );
+
+  const shouldShowFooter = eventsLoaded && eventsData && eventsData.length > 50;
+
+  return (
+    <>
       <RecentEventsBody
-        events={resources.events as FirehoseResult<EventKind[]>}
+        eventsData={eventsData}
+        eventsLoaded={eventsLoaded}
+        eventsLoadError={eventsLoadError}
         moreLink={viewEvents}
       />
-    );
-  },
-);
+      {shouldShowFooter && (
+        <>
+          <Divider />
+          <CardFooter>
+            <Link to={viewEvents} data-test="events-view-all-link">
+              {t('public~View all events')}
+            </Link>
+          </CardFooter>
+        </>
+      )}
+    </>
+  );
+};
 
 const mapStateToProps = (state: RootState): OngoingActivityReduxProps => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as ImmutableMap<string, K8sKind>,
 });
 
-const OngoingActivity = connect(mapStateToProps)(
-  withDashboardResources(
-    ({
-      watchK8sResource,
-      stopWatchK8sResource,
-      resources,
-      projectName,
-      models,
-    }: DashboardItemProps & OngoingActivityProps) => {
-      const [resourceActivityExtensions] = useResolvedExtensions<
-        DashboardsOverviewResourceActivity
-      >(isDashboardsOverviewResourceActivity);
+const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, models }) => {
+  const { watchResource, stopWatchResource, results: resources } = useDynamicK8sWatchResources();
 
-      const resourceActivities = useMemo(
-        () =>
-          resourceActivityExtensions.filter((e) => {
-            const model = models.get(e.properties.k8sResource.kind);
-            return model && model.namespaced;
-          }),
-        [resourceActivityExtensions, models],
-      );
+  const [resourceActivityExtensions] = useResolvedExtensions<DashboardsOverviewResourceActivity>(
+    isDashboardsOverviewResourceActivity,
+  );
 
-      useEffect(() => {
-        if (projectName) {
-          resourceActivities.forEach((a, index) => {
-            watchK8sResource(
-              uniqueResource({ ...a.properties.k8sResource, namespace: projectName }, index),
-            );
-          });
-          return () => {
-            resourceActivities.forEach((a, index) => {
-              stopWatchK8sResource(uniqueResource(a.properties.k8sResource, index));
-            });
-          };
-        }
-      }, [watchK8sResource, stopWatchK8sResource, projectName, resourceActivities]);
+  const resourceActivities = useMemo(
+    () =>
+      resourceActivityExtensions.filter((e) => {
+        const model = models.get(e.properties.k8sResource.kind);
+        return model && model.namespaced;
+      }),
+    [resourceActivityExtensions, models],
+  );
 
-      const allResourceActivities = useMemo(
-        () =>
-          _.flatten(
-            resourceActivities.map((a, index) => {
-              const k8sResources = _.get(
-                resources,
-                [uniqueResource(a.properties.k8sResource, index).prop, 'data'],
-                [],
-              ) as FirehoseResult['data'];
-              return k8sResources
-                .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
-                .map((r) => ({
-                  resource: r,
-                  timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  component: a.properties.component,
-                }));
-            }),
-          ),
-        [resourceActivities, resources],
-      );
-
-      const resourcesLoaded = useMemo(
-        () =>
-          resourceActivities.every((a, index) =>
-            _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
-          ),
-        [resourceActivities, resources],
-      );
-
-      return (
-        <OngoingActivityBody
-          loaded={projectName && resourcesLoaded && models.size !== 0}
-          resourceActivities={allResourceActivities}
-        />
-      );
-    },
-  ),
-);
-
-const RecentEventFooter = withDashboardResources(
-  ({
-    watchK8sResource,
-    stopWatchK8sResource,
-    resources,
-    projectName,
-    viewEvents,
-  }: DashboardItemProps & { projectName: string; viewEvents: string }) => {
-    const { t } = useTranslation();
-    useEffect(() => {
-      if (projectName) {
-        const eventsResource = getEventsResource(projectName);
-        watchK8sResource(eventsResource);
-        return () => {
-          stopWatchK8sResource(eventsResource);
-        };
-      }
-    }, [watchK8sResource, stopWatchK8sResource, projectName]);
-
-    const events = resources.events as FirehoseResult<EventKind[]>;
-    const shouldShowFooter = events?.loaded && events?.data && events.data.length > 50;
-
-    if (!shouldShowFooter) {
-      return null;
+  useEffect(() => {
+    if (!projectName) {
+      return;
     }
 
-    return (
-      <>
-        <Divider />
-        <CardFooter>
-          <Link to={viewEvents} data-test="events-view-all-link">
-            {t('public~View all events')}
-          </Link>
-        </CardFooter>
-      </>
-    );
-  },
-);
+    resourceActivities.forEach((a, index) => {
+      const uniqueRes = uniqueResource(a.properties.k8sResource, index);
+      const { prop, ...resourceConfig } = uniqueRes;
+      watchResource(prop, { ...resourceConfig, namespace: projectName });
+    });
+
+    return () => {
+      resourceActivities.forEach((a, index) => {
+        const resourceKey = uniqueResource(a.properties.k8sResource, index).prop;
+        stopWatchResource(resourceKey);
+      });
+    };
+  }, [watchResource, stopWatchResource, projectName, resourceActivities]);
+
+  const allResourceActivities = useMemo(
+    () =>
+      _.flatten(
+        resourceActivities.map((a, index) => {
+          const k8sResources = _.get(
+            resources,
+            [uniqueResource(a.properties.k8sResource, index).prop, 'data'],
+            [],
+          ) as K8sResourceCommon[];
+          return k8sResources
+            .filter((r) => (a.properties.isActivity ? a.properties.isActivity(r) : true))
+            .map((r) => ({
+              resource: r,
+              timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
+              component: a.properties.component,
+            }));
+        }),
+      ),
+    [resourceActivities, resources],
+  );
+
+  const resourcesLoaded = useMemo(
+    () =>
+      resourceActivities.every((a, index) =>
+        _.get(resources, [uniqueResource(a.properties.k8sResource, index).prop, 'loaded']),
+      ),
+    [resourceActivities, resources],
+  );
+
+  return (
+    <OngoingActivityBody
+      loaded={projectName && resourcesLoaded && models.size !== 0}
+      resourceActivities={allResourceActivities}
+    />
+  );
+};
+
+const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
 export const ActivityCard: FC = () => {
   const { obj } = useContext(ProjectDashboardContext);
@@ -185,15 +157,9 @@ export const ActivityCard: FC = () => {
           <OngoingActivity projectName={projectName} />
           <RecentEvent projectName={projectName} viewEvents={viewEvents} />
         </ActivityBody>
-        <RecentEventFooter projectName={projectName} viewEvents={viewEvents} />
       </Card>
     </>
   );
-};
-
-type RecentEventProps = DashboardItemProps & {
-  projectName: string;
-  viewEvents: string;
 };
 
 type OngoingActivityReduxProps = {

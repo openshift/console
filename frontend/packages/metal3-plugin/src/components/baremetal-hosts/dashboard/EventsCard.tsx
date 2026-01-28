@@ -1,19 +1,11 @@
 import type { FC } from 'react';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
-import {
-  FirehoseResource,
-  FirehoseResult,
-  ResourceLink,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
+import { ResourceLink, resourcePathFromModel } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
 import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
@@ -26,8 +18,6 @@ import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
-
-const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 
 const matchesInvolvedObject = (
   kind: string,
@@ -56,15 +46,14 @@ const getHostEventsFilter = (
   machine: MachineKind,
 ): ((event: EventKind) => boolean) => _.partial(hostEventsFilter, host, machine);
 
-const EventsCard: FC<EventsCardProps> = ({ watchK8sResource, stopWatchK8sResource, resources }) => {
+const EventsCard: FC = () => {
   const { t } = useTranslation();
   const { obj, machine } = useContext(BareMetalHostDashboardContext);
-  useEffect(() => {
-    watchK8sResource(eventsResource);
-    return () => {
-      stopWatchK8sResource(eventsResource);
-    };
-  }, [watchK8sResource, stopWatchK8sResource]);
+
+  const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>({
+    isList: true,
+    kind: EventModel.kind,
+  });
 
   const filter = getHostEventsFilter(obj, machine);
 
@@ -117,7 +106,9 @@ const EventsCard: FC<EventsCardProps> = ({ watchK8sResource, stopWatchK8sResourc
           )}
         </div>
         <RecentEventsBody
-          events={resources.events as FirehoseResult<EventKind[]>}
+          eventsData={eventsData}
+          eventsLoaded={eventsLoaded}
+          eventsLoadError={eventsLoadError}
           filter={filter}
         />
       </ActivityBody>
@@ -125,8 +116,4 @@ const EventsCard: FC<EventsCardProps> = ({ watchK8sResource, stopWatchK8sResourc
   );
 };
 
-export default withDashboardResources(EventsCard);
-
-type EventsCardProps = DashboardItemProps & {
-  obj: BareMetalHostKind;
-};
+export default EventsCard;
