@@ -13,6 +13,7 @@ import (
 type CatalogdClientInterface interface {
 	FetchAll(catalog, baseUrl, ifModifiedSince string, maxAge time.Duration) (*http.Response, error)
 	FetchMetas(catalogName string, baseURL string, r *http.Request) (*http.Response, error)
+	FetchPackageIcon(catalog, baseURL, packageName string) (*http.Response, error)
 }
 
 // CatalogFetcher is responsible for fetching catalog data.
@@ -88,4 +89,31 @@ func (c *CatalogdClient) buildCatalogdURL(catalog, baseURL, endpoint string) (st
 		return "", fmt.Errorf("baseURL or proxy configuration is required")
 	}
 	return url.JoinPath(baseURL, endpoint)
+}
+
+// FetchPackageIcon fetches package metadata from catalogd to extract icon data.
+// It queries the metas endpoint with schema=olm.package and name=packageName filters.
+func (c *CatalogdClient) FetchPackageIcon(catalog, baseURL, packageName string) (*http.Response, error) {
+	requestURL, err := c.buildCatalogdURL(catalog, baseURL, CatalogdMetasEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add query parameters to filter for the specific package
+	parsedURL, err := url.Parse(requestURL)
+	if err != nil {
+		return nil, err
+	}
+	query := parsedURL.Query()
+	query.Set("schema", "olm.package")
+	query.Set("name", packageName)
+	parsedURL.RawQuery = query.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, parsedURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	klog.V(4).Infof("Fetching package icon: %s %s", req.Method, req.URL.String())
+	return c.httpClient.Do(req)
 }
