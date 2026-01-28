@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { restorePVCModal } from '@console/internal/components/modals';
+import { LazyRestorePVCModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel } from '@console/internal/models';
 import { VolumeSnapshotKind } from '@console/internal/module/k8s';
@@ -32,6 +33,7 @@ export const useVolumeSnapshotActions = (
   filterActions?: VolumeSnapshotActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
@@ -43,14 +45,13 @@ export const useVolumeSnapshotActions = (
         disabled: !resource?.status?.readyToUse,
         tooltip: !resource?.status?.readyToUse ? t('console-app~Volume Snapshot is not Ready') : '',
         cta: () =>
-          restorePVCModal({
-            kind: VolumeSnapshotModel,
+          launchModal(LazyRestorePVCModalOverlay, {
             resource,
           }),
         accessReview: asAccessReview(VolumeSnapshotModel, resource, 'create'),
       }),
     }),
-    [t, resource],
+    [t, resource, launchModal],
   );
 
   const actions = useMemo<Action[]>(() => {

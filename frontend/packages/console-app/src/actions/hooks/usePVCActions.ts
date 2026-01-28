@@ -4,8 +4,11 @@ import { ModifyVACModal } from '@console/app/src/components/modals/modify-vac-mo
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { clonePVCModal, expandPVCModal } from '@console/internal/components/modals';
-import deletePVCModal from '@console/internal/components/modals/delete-pvc-modal';
+import {
+  LazyClonePVCModalOverlay,
+  LazyDeletePVCModalOverlay,
+  LazyExpandPVCModalOverlay,
+} from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
@@ -46,7 +49,7 @@ export const usePVCActions = (
         id: 'expand-pvc',
         label: t('console-app~Expand PVC'),
         cta: () =>
-          expandPVCModal({
+          launchModal(LazyExpandPVCModalOverlay, {
             kind: PersistentVolumeClaimModel,
             resource: obj,
           }),
@@ -67,11 +70,7 @@ export const usePVCActions = (
         label: t('console-app~Clone PVC'),
         disabled: obj?.status?.phase !== 'Bound',
         tooltip: obj?.status?.phase !== 'Bound' ? t('console-app~PVC is not Bound') : '',
-        cta: () =>
-          clonePVCModal({
-            kind: PersistentVolumeClaimModel,
-            resource: obj,
-          }),
+        cta: () => launchModal(LazyClonePVCModalOverlay, { resource: obj }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'create'),
       }),
       [PVCActionCreator.ModifyVAC]: () => ({
@@ -88,10 +87,7 @@ export const usePVCActions = (
       [PVCActionCreator.DeletePVC]: () => ({
         id: 'delete-pvc',
         label: t('public~Delete PersistentVolumeClaim'),
-        cta: () =>
-          deletePVCModal({
-            pvc: obj,
-          }),
+        cta: () => launchModal(LazyDeletePVCModalOverlay, { pvc: obj }),
         accessReview: asAccessReview(PersistentVolumeClaimModel, obj, 'delete'),
       }),
     }),

@@ -6,11 +6,12 @@ import { getName } from '@console/shared/src/selectors/common';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
   ModalComponentProps,
 } from '../factory';
 import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
@@ -37,7 +38,6 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
 
     handlePromise(Promise.all([promise, ...extensionPromises])).then(() => {
       close();
-      // Redirect to resourcce list page if the resouce is deleted.
       navigate(resourceListPathFromModel(PersistentVolumeClaimModel, pvc.metadata.namespace));
     });
   };
@@ -83,4 +83,10 @@ export type DeletePVCModalProps = {
   pvc: PersistentVolumeClaimKind;
 } & ModalComponentProps;
 
-export default createModalLauncher(DeletePVCModal);
+export const DeletePVCModalOverlay: OverlayComponent<DeletePVCModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DeletePVCModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
