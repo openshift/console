@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, FormGroup } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 import { OnSecretChange, SecretStringData, SecretType } from './types';
 import { AUTHS_KEY } from './const';
 import { DroppableFileInput } from './DropableFileInput';
@@ -21,6 +21,16 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
 
   const onFileChange = useCallback(
     (fileData: string) => {
+      if (fileData === '') {
+        setConfigFile('');
+        onChange({
+          stringData: {},
+        });
+        setParseError(false);
+        onFormDisable(true);
+        return;
+      }
+
       try {
         setConfigFile(fileData);
         const newPullSecret = JSON.parse(fileData);
@@ -47,17 +57,15 @@ export const PullSecretUploadForm: FC<PullSecretUploadFormProps> = ({
         inputFileData={configFile}
         id="docker-config"
         label={t('public~Configuration file')}
-        inputFieldHelpText={t('public~Upload a .dockercfg or .docker/config.json file.')}
+        filenamePlaceholder={t('public~Upload a .dockercfg or .docker/config.json file.')}
         textareaFieldHelpText={t(
           'public~File with credentials and other configuration for connecting to a secured image registry.',
         )}
         isRequired={true}
+        errorMessage={
+          parseError ? t('public~Configuration file should be in JSON format.') : undefined
+        }
       />
-      {parseError && (
-        <Alert variant="danger" title={t('public~Invalid configuration file')} isInline>
-          {t('public~Configuration file should be in JSON format.')}
-        </Alert>
-      )}
     </FormGroup>
   );
 };

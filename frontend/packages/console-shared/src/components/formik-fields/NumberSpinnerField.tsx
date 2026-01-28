@@ -10,6 +10,8 @@ import { getFieldId } from './field-utils';
 
 interface NumberSpinnerFieldProps extends FieldProps {
   setOutputAsIntegerFlag?: boolean;
+  label?: React.ReactNode;
+  helpText?: React.ReactNode;
 }
 
 const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({

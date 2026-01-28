@@ -12,7 +12,7 @@ const populateSecretForm = (name: string, key: string, fileName: string) => {
   cy.byLegacyTestID('file-input-textarea').should('exist');
   secrets.enterSecretName(name);
   cy.byTestID('secret-key').type(key);
-  cy.byTestID('file-input').attachFile(fileName);
+  cy.byButtonText('Browse...').attachFile(fileName);
 };
 
 const modifySecretForm = (key: string) => {

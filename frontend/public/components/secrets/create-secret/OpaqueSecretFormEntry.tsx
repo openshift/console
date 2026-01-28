@@ -66,10 +66,9 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
         inputFileData={Base64.decode(entry.value)}
         id={`${key}-value`}
         label={t('public~Value')}
-        inputFieldHelpText={t(
+        filenamePlaceholder={t(
           'public~Drag and drop file with your value here or browse to upload it.',
         )}
-        inputFileIsBinary={entry.isBinary_}
       />
     </FormFieldGroup>
   );
