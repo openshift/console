@@ -1,9 +1,16 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import {
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalComponentProps,
+  ModalWrapper,
+} from '../factory/modal';
 import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 
 import { ResourceLink } from '../utils/resource-link';
 
@@ -39,11 +46,18 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   );
 };
 
-export const managedResourceSaveModal = createModalLauncher(ManagedResourceSaveModal);
+export const ManagedResourceSaveModalOverlay: OverlayComponent<ManagedResourceSaveModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ManagedResourceSaveModal {...props} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 type ManagedResourceSaveModalProps = {
   onSubmit: () => void;
-  close: () => void;
   resource: K8sResourceCommon;
   owner: OwnerReference;
-};
+} & ModalComponentProps;

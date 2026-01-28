@@ -19,6 +19,7 @@ import {
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),
   k8sUpdate: jest.fn(),
+  referenceForModel: jest.fn((model) => model?.kind || 'UnknownModel'),
 }));
 
 const getDefaultLabel = (name: string) => ({

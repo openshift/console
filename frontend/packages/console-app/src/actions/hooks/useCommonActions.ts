@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import {
   annotationsModalLauncher,
-  deleteModal,
+  LazyDeleteModalOverlay,
   labelsModalLauncher,
   podSelectorModal,
   taintsModal,
@@ -43,6 +44,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const launchCountModal = useConfigureCountModal({
     resourceKind: kind,
     resource,
@@ -75,7 +77,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'delete-resource',
         label: t('console-app~Delete {{kind}}', { kind: kind?.kind }),
         cta: () =>
-          deleteModal({
+          launchModal(LazyDeleteModalOverlay, {
             kind,
             resource,
             message,
@@ -169,8 +171,11 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
+    // Excluding stable modal launcher functions (labelsModalLauncher, annotationsModalLauncher, podSelectorModal,
+    // tolerationsModal, taintsModal, launchCountModal) to prevent unnecessary re-renders
+    // TODO: remove once all Modals have been updated to useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath],
+    [kind, resource, t, message, actualEditPath, launchModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

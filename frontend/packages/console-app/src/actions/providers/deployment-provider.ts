@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
+import { useDeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
 import { Action } from '@console/dynamic-plugin-sdk/src';
 import { DeploymentKind, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -14,6 +14,7 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
   const [kindObj, inFlight] = useK8sModel(referenceFor(resource));
   const [hpaActions, relatedHPAs] = useHPAActions(kindObj, resource);
   const [pdbActions] = usePDBActions(kindObj, resource);
+  const deleteResourceAction = useDeleteResourceAction(kindObj, resource);
   const [deploymentActionsObject, deploymentActionsReady] = useDeploymentActions(
     kindObj,
     resource,
@@ -54,7 +55,7 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
           deploymentActionsObject.EditDeployment,
           ...(resource.metadata?.annotations?.['openshift.io/generated-by'] ===
           'OpenShiftWebConsole'
-            ? [DeleteResourceAction(kindObj, resource)]
+            ? [deleteResourceAction]
             : [commonActions.Delete]),
         ];
   }, [
@@ -66,6 +67,7 @@ export const useDeploymentActionsProvider = (resource: DeploymentKind) => {
     commonActions,
     isReady,
     deploymentActionsObject,
+    deleteResourceAction,
   ]);
 
   return [deploymentActions, !inFlight, undefined];

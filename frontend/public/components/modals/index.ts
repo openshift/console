@@ -1,5 +1,7 @@
 // This module utilizes dynamic `import()` to enable lazy-loading for each modal instead of including them in the main bundle.
 
+import { lazy } from 'react';
+
 // Helper to detect if a modal is open. This is used to disable autofocus in elements under a modal.
 // TODO: Improve focus and keybinding handling, see https://issues.redhat.com/browse/ODC-3554
 export const isModalOpen = () => document.body.classList.contains('ReactModal__Body--open');
@@ -9,20 +11,14 @@ export const configureJobParallelismModal = (props) =>
     m.configureJobParallelismModal(props),
   );
 
-/** @deprecated use `useWarningModal` instead */
-export const confirmModal = (props) =>
-  import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
-    m.confirmModal(props),
-  );
-
-/** @deprecated Use useErrorModalLauncher hook instead */
-export const errorModal = (props) =>
-  import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
-
-export const configureNamespacePullSecretModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
+export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(
     './configure-ns-pull-secret-modal' /* webpackChunkName: "configure-ns-pull-secret-modal" */
-  ).then((m) => m.configureNamespacePullSecretModal(props));
+  ).then((m) => ({
+    default: m.ConfigureNamespacePullSecretModalOverlay,
+  })),
+);
 
 export const labelsModalLauncher = (props) =>
   import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
@@ -39,16 +35,31 @@ export const rollbackModal = (props) =>
     m.rollbackModal(props),
   );
 
-export const configureUpdateStrategyModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Update Strategy Modal
+export const LazyConfigureUpdateStrategyModalOverlay = lazy(() =>
   import(
     './configure-update-strategy-modal' /* webpackChunkName: "configure-update-strategy-modal" */
-  ).then((m) => m.configureUpdateStrategyModal(props));
+  ).then((m) => ({
+    default: m.ConfigureUpdateStrategyModalOverlay,
+  })),
+);
 
 export const annotationsModalLauncher = (props) =>
   import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModalLauncher(props));
 
-export const deleteModal = (props) =>
-  import('./delete-modal' /* webpackChunkName: "delete-modal" */).then((m) => m.deleteModal(props));
+// Lazy-loaded OverlayComponent for Delete Modal
+export const LazyDeleteModalOverlay = lazy(() =>
+  import('./delete-modal' /* webpackChunkName: "delete-modal" */).then((m) => ({
+    default: m.DeleteModalOverlay,
+  })),
+);
+
+// Lazy-loaded OverlayComponent for Delete PVC Modal
+export const LazyDeletePVCModalOverlay = lazy(() =>
+  import('./delete-pvc-modal' /* webpackChunkName: "delete-pvc-modal" */).then((m) => ({
+    default: m.DeletePVCModalOverlay,
+  })),
+);
 
 export const clusterChannelModal = (props) =>
   import('./cluster-channel-modal' /* webpackChunkName: "cluster-channel-modal" */).then((m) =>
@@ -73,20 +84,28 @@ export const tolerationsModal = (props) =>
     m.tolerationsModal(props),
   );
 
-export const expandPVCModal = (props) =>
-  import('./expand-pvc-modal' /* webpackChunkName: "expand-pvc-modal" */).then((m) =>
-    m.expandPVCModal(props),
-  );
+// Lazy-loaded OverlayComponent for Expand PVC Modal
+export const LazyExpandPVCModalOverlay = lazy(() =>
+  import('./expand-pvc-modal' /* webpackChunkName: "expand-pvc-modal" */).then((m) => ({
+    default: m.ExpandPVCModalOverlay,
+  })),
+);
 
-export const clonePVCModal = (props) =>
+// Lazy-loaded OverlayComponent for Clone PVC Modal
+export const LazyClonePVCModalOverlay = lazy(() =>
   import(
     '@console/app/src/components/modals/clone/clone-pvc-modal' /* webpackChunkName: "clone-pvc-modal" */
-  ).then((m) => m.default(props));
+  ).then((m) => ({ default: m.ClonePVCModalOverlay })),
+);
 
-export const configureClusterUpstreamModal = (props) =>
+// Lazy-loaded OverlayComponent for Configure Cluster Upstream Modal
+export const LazyConfigureClusterUpstreamModalOverlay = lazy(() =>
   import(
     './configure-cluster-upstream-modal' /* webpackChunkName: "configure-cluster-upstream-modal" */
-  ).then((m) => m.configureClusterUpstreamModal(props));
+  ).then((m) => ({
+    default: m.ConfigureClusterUpstreamModalOverlay,
+  })),
+);
 
 export const createAlertRoutingModal = (props) =>
   import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) =>
@@ -98,17 +117,18 @@ export const createColumnManagementModal = (props) =>
     m.createColumnManagementModal(props),
   );
 
-export const removeUserModal = (props) =>
-  import('./remove-user-modal' /* webpackChunkName: "remove-user-modal" */).then((m) =>
-    m.removeUserModal(props),
-  );
-
-export const restorePVCModal = (props) =>
+// Lazy-loaded OverlayComponent for Restore PVC Modal
+export const LazyRestorePVCModalOverlay = lazy(() =>
   import(
     '@console/app/src/components/modals/restore-pvc/restore-pvc-modal' /* webpackChunkName: "restore-pvc-modal" */
-  ).then((m) => m.default(props));
+  ).then((m) => ({ default: m.RestorePVCModalOverlay })),
+);
 
-export const managedResourceSaveModal = (props) =>
+// Lazy-loaded OverlayComponent for Managed Resource Save Modal
+export const LazyManagedResourceSaveModalOverlay = lazy(() =>
   import(
     './managed-resource-save-modal' /* webpackChunkName: "managed-resource-save-modal" */
-  ).then((m) => m.managedResourceSaveModal(props));
+  ).then((m) => ({
+    default: m.ManagedResourceSaveModalOverlay,
+  })),
+);

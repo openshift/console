@@ -20,7 +20,7 @@ import {
   getNodeMaintenanceLastError,
   getNodeMaintenancePendingPods,
 } from '../../selectors';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 import MaintenancePopoverPodList from './MaintenancePopoverPodList';
 
 type StartingMaintenancePopoverContentProps = {
@@ -31,6 +31,7 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
   const lastError = getNodeMaintenanceLastError(nodeMaintenance);
@@ -78,7 +79,7 @@ const StartingMaintenancePopoverContent: FC<StartingMaintenancePopoverContentPro
         <MaintenancePopoverPodList pods={pendingPods} />
       </ExpandableSection>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
+      <Button variant="link" onClick={() => stopNodeMaintenanceModalLauncher()} isInline>
         {t('metal3-plugin~Stop maintenance')}
       </Button>
     </>

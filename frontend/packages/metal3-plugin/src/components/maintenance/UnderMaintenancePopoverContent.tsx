@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { getNodeMaintenanceReason, getNodeMaintenanceCreationTimestamp } from '../../selectors';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {
   nodeMaintenance: K8sResourceKind;
@@ -20,6 +20,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
 
@@ -43,7 +44,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
+      <Button variant="link" onClick={() => stopNodeMaintenanceModalLauncher()} isInline>
         {t('metal3-plugin~Stop maintenance')}
       </Button>
     </>
