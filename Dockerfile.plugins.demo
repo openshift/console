@@ -3,23 +3,34 @@
 # See dynamic-demo-plugin/README.md for details.
 
 # Stage 0: build the demo plugin
-FROM quay.io/coreos/tectonic-console-builder:v29 AS build
+FROM registry.ci.openshift.org/ocp/builder:rhel-9-base-nodejs-openshift-4.21 AS nodebuilder
 
-RUN mkdir -p /src/console
-COPY . /src/console
+ADD . .
 
-WORKDIR /src/console/frontend
+USER 0
+
+ARG YARN_VERSION=v1.22.22
+
+# bootstrap yarn so we can install and run the other tools.
+RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
+    if [ -f ${CACHED_YARN} ]; then \
+      npm install ${CACHED_YARN}; \
+    else \
+      npm install https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz; \
+    fi
+
+WORKDIR /opt/app-root/src/frontend
 RUN yarn install && yarn generate
 
-WORKDIR /src/console/dynamic-demo-plugin
+WORKDIR /opt/app-root/src/dynamic-demo-plugin
 RUN yarn install && yarn build
 
 # Stage 1: build the target image
 FROM node:22
 
-COPY --from=build /src/console/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
-COPY --from=build /src/console/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules
-COPY --from=build /src/console/dynamic-demo-plugin/http-server.sh /opt/console-plugin-demo/http-server.sh
+COPY --from=nodebuilder /opt/app-root/src/dynamic-demo-plugin/dist /opt/console-plugin-demo/static
+COPY --from=nodebuilder /opt/app-root/src/dynamic-demo-plugin/node_modules /opt/console-plugin-demo/node_modules
+COPY --from=nodebuilder /opt/app-root/src/dynamic-demo-plugin/http-server.sh /opt/console-plugin-demo/http-server.sh
 
 LABEL io.k8s.display-name="OpenShift Console Demo Plugin" \
       io.k8s.description="Sample OpenShift Console dynamic plugin used for testing purposes." \
