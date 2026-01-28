@@ -4,7 +4,14 @@ import { useState, useCallback, useEffect } from 'react';
 import { Alert, Backdrop, Checkbox, Modal, ModalVariant } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import {
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalWrapper,
+  ModalComponentProps,
+} from '../factory/modal';
 import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
 import {
   k8sKill,
@@ -173,15 +180,19 @@ export const DeleteOverlay: FC<DeleteModalProps> = (props) => {
   ) : null;
 };
 
-export const deleteModal = createModalLauncher(DeleteModal);
+export const DeleteModalOverlay: OverlayComponent<DeleteModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DeleteModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 export type DeleteModalProps = {
   kind: K8sModel;
   resource: K8sResourceKind;
-  close?: () => void;
   redirectTo?: LocationDescriptor;
   message?: JSX.Element;
-  cancel?: () => void;
   btnText?: ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;
-};
+} & ModalComponentProps;

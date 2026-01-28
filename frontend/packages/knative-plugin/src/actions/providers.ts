@@ -58,7 +58,7 @@ import {
   editKnativeService,
   moveSinkSource,
   editKnativeServiceResource,
-  deleteKnativeServiceResource,
+  useDeleteKnativeServiceResource,
   useDeleteRevisionAction,
   useSetTrafficDistributionAction,
   useMoveSinkPubsubAction,
@@ -95,6 +95,18 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
   const serviceTypeValue = useContext(KnativeServiceTypeContext);
   const setTrafficDistributionAction = useSetTrafficDistributionAction(kindObj, resource);
   const testServerlessFunctionAction = useTestServerlessFunctionAction(kindObj, resource);
+  const deleteKnativeServiceFromWebAction = useDeleteKnativeServiceResource(
+    kindObj,
+    resource,
+    serviceTypeValue,
+    true,
+  );
+  const deleteKnativeServiceAction = useDeleteKnativeServiceResource(
+    kindObj,
+    resource,
+    serviceTypeValue,
+    false,
+  );
   const [deploymentActions, deploymentActionsReady] = useDeploymentActions(kindObj, resource, [
     DeploymentActionCreator.EditResourceLimits,
   ] as const);
@@ -119,8 +131,8 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
             editKnativeServiceResource(kindObj, resource, serviceTypeValue),
             ...(resource.metadata.annotations?.['openshift.io/generated-by'] ===
             'OpenShiftWebConsole'
-              ? [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, true)]
-              : [deleteKnativeServiceResource(kindObj, resource, serviceTypeValue, false)]),
+              ? [deleteKnativeServiceFromWebAction]
+              : [deleteKnativeServiceAction]),
             ...(resource?.metadata?.labels?.['function.knative.dev'] === 'true'
               ? [testServerlessFunctionAction]
               : []),
@@ -134,6 +146,8 @@ export const useKnativeServiceActionsProvider = (resource: K8sResourceKind) => {
       commonActions,
       serviceTypeValue,
       testServerlessFunctionAction,
+      deleteKnativeServiceFromWebAction,
+      deleteKnativeServiceAction,
     ],
   );
 
