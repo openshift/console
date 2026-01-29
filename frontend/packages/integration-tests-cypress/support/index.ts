@@ -25,7 +25,7 @@ Cypress.on('uncaught:exception', (err) => {
   console.error('Uncaught exception', err);
 
   // ResizeObserver loop errors are non-actionable and can be ignored
-  if (err.message && err.message.includes('ResizeObserver loop')) {
+  if (typeof err.message === 'string' && err.message.includes('ResizeObserver loop')) {
     return false;
   }
 
