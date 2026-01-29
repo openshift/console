@@ -21,6 +21,8 @@ interface QuickSearchContentProps {
   closeModal: () => void;
   detailsRenderer?: DetailsRendererFunction;
   onListChange?: (items: number) => void;
+  navigate: (url: string) => void;
+  removeQueryArgument: (key: string) => void;
 }
 
 const QuickSearchContent: FC<QuickSearchContentProps> = ({
@@ -36,6 +38,8 @@ const QuickSearchContent: FC<QuickSearchContentProps> = ({
   limitItemCount,
   detailsRenderer,
   onListChange,
+  navigate,
+  removeQueryArgument,
 }) => {
   return (
     <Split className="ocs-quick-search-content" tabIndex={-1}>
@@ -55,6 +59,8 @@ const QuickSearchContent: FC<QuickSearchContentProps> = ({
           onSelectListItem={(_event, itemId) => onSelect(itemId)}
           closeModal={closeModal}
           onListChange={onListChange}
+          navigate={navigate}
+          removeQueryArgument={removeQueryArgument}
         />
       </SplitItem>
       <Divider component="div" orientation={{ default: 'vertical' }} tabIndex={-1} />
@@ -63,6 +69,8 @@ const QuickSearchContent: FC<QuickSearchContentProps> = ({
           detailsRenderer={detailsRenderer}
           selectedItem={selectedItem}
           closeModal={closeModal}
+          navigate={navigate}
+          removeQueryArgument={removeQueryArgument}
         />
       </SplitItem>
     </Split>

@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
-import { removeQueryArgument } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   ClusterServiceVersionKind,
@@ -883,6 +883,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   obj: cv,
   autoscalers,
 }) => {
+  const { removeQueryArgument } = useQueryParamsMutator();
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';

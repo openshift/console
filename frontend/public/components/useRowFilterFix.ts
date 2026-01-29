@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
-import { setOrRemoveQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 
 /**
  * Handles a state management hack-fix around the row filters dropdown.
@@ -17,6 +17,8 @@ const useRowFilterFix = (
   filterKeys: { [key: string]: string },
   defaultSelections: string[],
 ): UseMirroredLocalStateReturn<string[]> => {
+  const { setOrRemoveQueryArgument } = useQueryParamsMutator();
+
   const syncRowFilterParams = useCallback(
     (selected) => {
       _.forIn(filters, (value, key) => {
@@ -24,7 +26,7 @@ const useRowFilterFix = (
         setOrRemoveQueryArgument(filterKeys[key], recognized.join(','));
       });
     },
-    [filters, filterKeys],
+    [filters, filterKeys, setOrRemoveQueryArgument],
   );
 
   const selectedRowFilters = _.flatMap(filterKeys, (f) => params.get(f)?.split(',') ?? []);

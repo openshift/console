@@ -11,6 +11,8 @@ import './QuickSearchDetails.scss';
 export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
+  navigate: (url: string) => void;
+  removeQueryArgument: (key: string) => void;
 };
 export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => ReactNode;
 export interface QuickSearchDetailsProps extends QuickSearchDetailsRendererProps {
@@ -21,6 +23,8 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   selectedItem,
   closeModal,
   detailsRenderer,
+  navigate,
+  removeQueryArgument,
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
@@ -46,7 +50,14 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
           className="ocs-quick-search-details__form-button"
           data-test="create-quick-search"
           onClick={(e) => {
-            handleCta(e, props.selectedItem, props.closeModal, fireTelemetryEvent);
+            handleCta(
+              e,
+              props.selectedItem,
+              props.closeModal,
+              fireTelemetryEvent,
+              props.navigate,
+              props.removeQueryArgument,
+            );
           }}
         >
           {props.selectedItem.cta.label}
@@ -61,7 +72,7 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
 
   return (
     <div className="ocs-quick-search-details">
-      {detailsContentRenderer({ selectedItem, closeModal })}
+      {detailsContentRenderer({ selectedItem, closeModal, navigate, removeQueryArgument })}
     </div>
   );
 };

@@ -68,7 +68,7 @@ import { AsyncComponent } from './utils/async';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { HorizontalNav } from './utils/horizontal-nav';
 import { LinkifyExternal } from './utils/link';
-import { removeQueryArgument, setQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -151,6 +151,7 @@ const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) =
 };
 
 const APIResourcesList: FC = () => {
+  const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const location = useLocation();
   const models: ImmutableMap<K8sResourceKindReference, K8sKind> = useConsoleSelector((state) =>
     state.k8s.getIn(['RESOURCES', 'models']),

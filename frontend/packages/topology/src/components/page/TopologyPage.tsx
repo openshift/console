@@ -9,11 +9,7 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-} from '@console/internal/components/utils';
+import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
@@ -64,6 +60,7 @@ export const TopologyPage: FC<TopologyPageProps> = ({
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
+  const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
   const [
     topologyLastView,
@@ -102,20 +99,20 @@ export const TopologyPage: FC<TopologyPageProps> = ({
     if (loaded && namespace in lastOverviewOpen && !getQueryArgument('selectId')) {
       setQueryArgument('selectId', lastOverviewOpen[namespace]);
     }
-  }, [loaded, namespace]);
+  }, [loaded, namespace, getQueryArgument, setQueryArgument]);
 
   useEffect(() => {
     if (!queryParams.get('view') && loaded) {
       setQueryArgument('view', topologyViewState || defaultViewType);
     }
-  }, [defaultViewType, topologyViewState, queryParams, loaded]);
+  }, [defaultViewType, topologyViewState, queryParams, loaded, setQueryArgument]);
 
   const onViewChange = useCallback(
     (newViewType: TopologyViewType) => {
       setQueryArgument('view', newViewType);
       setTopologyLastView(newViewType);
     },
-    [setTopologyLastView],
+    [setTopologyLastView, setQueryArgument],
   );
 
   const handleNamespaceChange = (ns: string) => {
