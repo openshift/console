@@ -1,9 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { JobModel, PodModel } from '@console/internal/models';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ExportViewLogButton from '../ExportViewLogButton';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -44,21 +43,15 @@ describe('ExportViewLogButton', () => {
   });
 
   it('should render a link and correct href path', () => {
-    render(
-      <Provider store={store}>
-        <ExportViewLogButton name="test" namespace="test" />
-      </Provider>,
-    );
+    renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
     const logButton = screen.getByTestId('export-view-log-btn');
     expect(logButton).toHaveAttribute('href', '/k8s/ns/test/pods/test/logs');
   });
 
   it('should call onViewLog callback', async () => {
     const viewLogCallback = jest.fn();
-    render(
-      <Provider store={store}>
-        <ExportViewLogButton name="test" namespace="test" onViewLog={viewLogCallback} />
-      </Provider>,
+    renderWithProviders(
+      <ExportViewLogButton name="test" namespace="test" onViewLog={viewLogCallback} />,
     );
     const logButton = screen.getByTestId('export-view-log-btn');
     await userEvent.click(logButton);
@@ -66,11 +59,7 @@ describe('ExportViewLogButton', () => {
   });
 
   it('should not render a disabled button', () => {
-    render(
-      <Provider store={store}>
-        <ExportViewLogButton name="test" namespace="test" />
-      </Provider>,
-    );
+    renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
     const logButton = screen.getByTestId('export-view-log-btn');
     expect(logButton).not.toHaveAttribute('aria-disabled');
   });
@@ -95,11 +84,7 @@ describe('ExportViewLogButton', () => {
           return [null, true, null];
       }
     });
-    render(
-      <Provider store={store}>
-        <ExportViewLogButton name="test" namespace="test" />
-      </Provider>,
-    );
+    renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
     const logButton = screen.getByTestId('export-view-log-btn');
     expect(logButton).toHaveAttribute('aria-disabled', 'true');
   });
@@ -125,11 +110,7 @@ describe('ExportViewLogButton', () => {
       }
     });
 
-    render(
-      <Provider store={store}>
-        <ExportViewLogButton name="test" namespace="test" />
-      </Provider>,
-    );
+    renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
 
     const logButton = screen.getByTestId('export-view-log-btn');
     await userEvent.hover(logButton);
