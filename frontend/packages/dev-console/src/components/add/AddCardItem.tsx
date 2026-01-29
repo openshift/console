@@ -1,6 +1,7 @@
 import type { FC, SyntheticEvent } from 'react';
 import { isValidElement } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -19,6 +20,7 @@ const AddCardItem: FC<AddCardItemProps> = ({
   },
   namespace,
 }) => {
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const [showDetails] = useShowAddCardItemDetails();
   const toast = useToast();
@@ -58,7 +60,7 @@ const AddCardItem: FC<AddCardItemProps> = ({
           name: label,
         });
         if (href) {
-          navigateTo(e, resolvedHref(href, namespace));
+          navigateTo(e, resolvedHref(href, namespace), navigate);
         } else if (callback) {
           callback({ namespace, toast });
         }

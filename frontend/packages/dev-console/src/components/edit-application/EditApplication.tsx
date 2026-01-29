@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { usePerspectives } from '@console/shared/src';
@@ -34,6 +34,8 @@ const EditApplication: FC<EditApplicationProps> = ({
   appName,
   resources: appResources,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
@@ -91,7 +93,7 @@ const EditApplication: FC<EditApplicationProps> = ({
     return updateResources(values)
       .then(() => {
         actions.setStatus({ submitError: '' });
-        handleRedirect(namespace, perspective, perspectiveExtensions);
+        handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -151,7 +153,7 @@ const EditApplication: FC<EditApplicationProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={validationSchema(t)}
     >
       {renderForm}

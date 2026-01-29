@@ -1,11 +1,9 @@
-import type { FC, ReactNode } from 'react';
-import { render, cleanup } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { cleanup } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import store from '@console/internal/redux';
 import { useUserSettings } from '@console/shared/src';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import BuildConfigFormPage from '../BuildConfigFormPage';
 import { BuildConfig } from '../types';
 
@@ -50,12 +48,6 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useUserSettingsMock = useUserSettings as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
-interface WrapperProps {
-  children?: ReactNode;
-}
-
-const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
-
 beforeEach(() => {
   useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);
   usePreferredCreateEditMethodMock.mockReturnValue([[undefined, true]]);
@@ -72,11 +64,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
     expect(renderResult.queryByText('Edit BuildConfig')).toBeFalsy();
     renderResult.getByTestId('loading-indicator');
@@ -104,11 +92,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
     renderResult.findByText('Edit BuildConfig');
     renderResult.findByText('Configure via:');
@@ -129,11 +113,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     renderResult.findByText('Error Loading');
     renderResult.findByText('Edit BuildConfig');
     renderResult.findByText('Something went wrong');

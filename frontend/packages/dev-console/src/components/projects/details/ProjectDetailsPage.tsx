@@ -1,11 +1,11 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
 import { NamespaceDetails } from '@console/internal/components/namespace';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { history, useAccessReview, Page } from '@console/internal/components/utils';
+import { useAccessReview, Page } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
@@ -22,9 +22,9 @@ interface MonitoringPageProps {
   noProjectsAvailable?: boolean;
 }
 
-const handleNamespaceChange = (newNamespace: string): void => {
+const handleNamespaceChange = (newNamespace: string, navigate: (url: string) => void): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
-    history.push(PROJECT_DETAILS_ALL_NS_PAGE_URI);
+    navigate(PROJECT_DETAILS_ALL_NS_PAGE_URI);
   }
 };
 
@@ -114,13 +114,14 @@ const PageContentsWithStartGuide = withStartGuide<MonitoringPageProps>(PageConte
 
 export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <>
       <DocumentTitle>{t('devconsole~Project Details')}</DocumentTitle>
       <NamespacedPage
         hideApplications
         variant={NamespacedPageVariants.light}
-        onNamespaceChange={handleNamespaceChange}
+        onNamespaceChange={(newNamespace) => handleNamespaceChange(newNamespace, navigate)}
       >
         <PageContentsWithStartGuide {...props} />
       </NamespacedPage>

@@ -1,15 +1,17 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   useActivePerspective,
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -40,6 +42,8 @@ type AddServerlessFunctionProps = {
 };
 
 const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forApplication }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const postFormCallback = useResourceConnectionHandler();
   const [perspective] = useActivePerspective();
@@ -164,6 +168,7 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({ selectId }),
         );
       })
@@ -177,7 +182,7 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

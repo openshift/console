@@ -1,5 +1,6 @@
+import type { SyntheticEvent } from 'react';
+import { NavigateFunction } from 'react-router-dom-v5-compat';
 import { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { AddGroup } from '../components/types';
 
@@ -35,8 +36,8 @@ export const getAddGroups = (
   return populatedActionGroups.filter((group) => group.items.length);
 };
 
-export const navigateTo = (e: React.SyntheticEvent, url: string) => {
-  history.push(url);
+export const navigateTo = (e: SyntheticEvent, url: string, navigate: NavigateFunction) => {
+  navigate(url);
   e.preventDefault();
 };
 
