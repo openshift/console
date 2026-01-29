@@ -35,6 +35,8 @@ interface QuickSearchListProps {
   onSelectListItem: DataListProps['onSelectDataListItem'];
   onListChange?: (items: number) => void;
   closeModal: () => void;
+  navigate: (url: string) => void;
+  removeQueryArgument: (key: string) => void;
 }
 
 const QuickSearchList: FC<QuickSearchListProps> = ({
@@ -46,6 +48,8 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
   closeModal,
   limitItemCount,
   onListChange,
+  navigate,
+  removeQueryArgument,
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
@@ -105,7 +109,7 @@ const QuickSearchList: FC<QuickSearchListProps> = ({
                 'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
               onDoubleClick={(e: SyntheticEvent) => {
-                handleCta(e, item, closeModal, fireTelemetryEvent);
+                handleCta(e, item, closeModal, fireTelemetryEvent, navigate, removeQueryArgument);
               }}
             >
               <DataListItemRow className="ocs-quick-search-list__item-row">

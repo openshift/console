@@ -1,6 +1,6 @@
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useState, useMemo, useCallback } from 'react';
-import { setOrRemoveQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 import { RowSearchFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 /**
@@ -12,6 +12,8 @@ import { RowSearchFilter } from '@console/dynamic-plugin-sdk/src/extensions/cons
  * be deleted once proper React state management has been implemented.
  */
 const useSearchFilters = (searchFilters: RowSearchFilter[], uniqueFilterName: string) => {
+  const { setOrRemoveQueryArgument } = useQueryParamsMutator();
+
   const searchFiltersObject = useMemo(
     () =>
       (searchFilters || []).reduce((acc, filter) => {
@@ -54,7 +56,7 @@ const useSearchFilters = (searchFilters: RowSearchFilter[], uniqueFilterName: st
         0,
       );
     },
-    [setSearchFiltersState, uniqueFilterName],
+    [setSearchFiltersState, uniqueFilterName, setOrRemoveQueryArgument],
   );
 
   const flushSearchFiltersState = useCallback(() => {

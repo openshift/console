@@ -31,7 +31,7 @@ import {
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { setOrRemoveQueryArgument } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
@@ -84,6 +84,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   labelPath,
   rowSearchFilters = [],
 }) => {
+  const { setOrRemoveQueryArgument } = useQueryParamsMutator();
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -293,7 +294,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
       setOrRemoveQueryArgument(nameFilterQueryArgumentKey, value);
       applyFilters(textFilter, { selected: [value] });
     },
-    [applyFilters, nameFilterQueryArgumentKey, textFilter],
+    [applyFilters, nameFilterQueryArgumentKey, textFilter, setOrRemoveQueryArgument],
   );
 
   const debounceApplyNameFilter = useDebounceCallback(applyNameFilter, 250);

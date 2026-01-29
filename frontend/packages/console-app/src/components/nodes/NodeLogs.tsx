@@ -22,11 +22,7 @@ import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-} from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -179,6 +175,8 @@ const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
 };
 
 const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
+  const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
+
   const {
     kind,
     metadata: { labels, name, namespace: ns },

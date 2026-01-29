@@ -1,8 +1,4 @@
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-} from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import {
@@ -21,26 +17,6 @@ export enum NameLabelFilterValues {
   // t('topology~Label')
   Label = 'Label',
 }
-
-export const onSearchChange = (searchQuery: string): void => {
-  if (searchQuery.length > 0) {
-    setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, searchQuery);
-  } else {
-    removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
-  }
-};
-
-export const clearNameFilter = () => {
-  onSearchChange('');
-};
-export const clearLabelFilter = () => {
-  removeQueryArgument(TOPOLOGY_LABELS_FILTER_KEY);
-};
-
-export const clearAll = () => {
-  clearNameFilter();
-  clearLabelFilter();
-};
 
 export const getSupportedTopologyFilters = (state: RootState): string[] => {
   const topology = state?.plugins?.devconsole?.topology;

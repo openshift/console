@@ -20,7 +20,7 @@ import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
 import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
-import { removeQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import type { RootState } from '../redux';
 import { setActiveApplication } from '../actions/ui';
@@ -42,6 +42,7 @@ export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
   onNamespaceChange,
   useProjects,
 }) => {
+  const { removeQueryArgument } = useQueryParamsMutator();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const dispatch = useDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();

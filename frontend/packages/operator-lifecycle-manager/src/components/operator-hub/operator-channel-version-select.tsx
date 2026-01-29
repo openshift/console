@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { setQueryArgument } from '@console/internal/components/utils';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { alphanumericCompare } from '@console/shared';
 import { PackageManifestKind } from '../../types';
 import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
@@ -23,6 +23,7 @@ export const OperatorChannelSelect: FC<OperatorChannelSelectProps> = ({
   setUpdateVersion,
 }) => {
   const { t } = useTranslation();
+  const { setQueryArgument } = useQueryParamsMutator();
   const channels = useMemo(() => packageManifest?.status.channels ?? [], [packageManifest]);
   const [isChannelSelectOpen, setIsChannelSelectOpen] = useState(false);
   const { setDeprecatedChannel } = useDeprecatedOperatorWarnings();
@@ -63,7 +64,7 @@ export const OperatorChannelSelect: FC<OperatorChannelSelectProps> = ({
         'deprecation',
       ),
     );
-  }, [selectedChannel, channels, setDeprecatedChannel]);
+  }, [selectedChannel, channels, setDeprecatedChannel, setQueryArgument]);
 
   return (
     <>
@@ -113,6 +114,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
   showVersionAlert = false,
 }) => {
   const { t } = useTranslation();
+  const { setQueryArgument } = useQueryParamsMutator();
   const { setDeprecatedVersion } = useDeprecatedOperatorWarnings();
   const [isVersionSelectOpen, setIsVersionSelectOpen] = useState(false);
   const [defaultVersionForChannel, setDefaultVersionForChannel] = useState('-');
@@ -163,7 +165,7 @@ export const OperatorVersionSelect: FC<OperatorVersionSelectProps> = ({
         'deprecation',
       ),
     );
-  }, [selectedUpdateVersion, selectedChannelVersions, setDeprecatedVersion]);
+  }, [selectedUpdateVersion, selectedChannelVersions, setDeprecatedVersion, setQueryArgument]);
 
   return (
     <>
