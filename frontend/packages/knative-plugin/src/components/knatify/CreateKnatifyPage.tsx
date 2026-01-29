@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
@@ -12,7 +12,7 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -37,6 +37,8 @@ const CreateKnatifyPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const queryParams = new URLSearchParams(location.search);
   const kind = queryParams.get('kind');
   const appName = queryParams.get('name');
@@ -107,7 +109,7 @@ const CreateKnatifyPage: FC = () => {
       resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
-          handleRedirect(namespace, perspective, perspectiveExtensions);
+          handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
         })
         .catch((err) => {
           helpers.setStatus({ submitError: err.message });
@@ -134,7 +136,7 @@ const CreateKnatifyPage: FC = () => {
           )}
           validationSchema={deployValidationSchema(t)}
           onSubmit={handleSubmit}
-          onReset={history.goBack}
+          onReset={handleCancel}
         >
           {(formikProps) => <KnatifyForm {...formikProps} projects={resources.projects} />}
         </Formik>

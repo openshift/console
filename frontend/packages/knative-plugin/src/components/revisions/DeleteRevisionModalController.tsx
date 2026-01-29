@@ -4,6 +4,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import type { FormikHelpers, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory';
@@ -13,7 +14,7 @@ import {
   ModalTitle,
   ModalWrapper,
 } from '@console/internal/components/factory';
-import { history, resourceListPathFromModel } from '@console/internal/components/utils';
+import { resourceListPathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sKill, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
@@ -38,6 +39,8 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
   close,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const { namespace } = revision.metadata;
 
   const watchResources = useMemo(
@@ -154,7 +157,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
         // If we are currently on the deleted revision's page, redirect to the list page
         const re = new RegExp(`/${revision.metadata.name}(/|$)`);
         if (re.test(window.location.pathname)) {
-          history.push(resourceListPathFromModel(RevisionModel, revision.metadata.namespace));
+          navigate(resourceListPathFromModel(RevisionModel, revision.metadata.namespace));
         }
       })
       .catch((err) => {

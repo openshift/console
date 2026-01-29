@@ -1,11 +1,12 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { history } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, getGroupVersionKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -49,6 +50,8 @@ const EventSink: FC<EventSinkProps> = ({
   sinkKind = '',
   kameletSink,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
@@ -149,7 +152,7 @@ const EventSink: FC<EventSinkProps> = ({
 
     return eventSinkRequest
       .then(() => {
-        handleRedirect(projectName, perspective, perpectiveExtension);
+        handleRedirect(projectName, perspective, perpectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -160,7 +163,7 @@ const EventSink: FC<EventSinkProps> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSinkValidationSchema(t)}

@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
+import type { NavigateFunction } from 'react-router-dom-v5-compat';
 import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
-import { checkAccess, history } from '@console/internal/components/utils';
+import { checkAccess } from '@console/internal/components/utils';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
 import type {
@@ -340,10 +341,31 @@ export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+  if (!perspectiveData || !perspectiveData.properties?.importRedirectURL) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Unable to redirect: perspective data not found or importRedirectURL missing for perspective: ${perspective}`,
+    );
+    return;
+  }
+
+  try {
+    const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
+    if (!redirectURL) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Skipping navigation: importRedirectURL returned empty/undefined for perspective ${perspective}`,
+      );
+      return;
+    }
+    navigate(redirectURL);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to redirect for perspective ${perspective}:`, error);
+  }
 };
 
 export const sanitizeSourceToForm = (
