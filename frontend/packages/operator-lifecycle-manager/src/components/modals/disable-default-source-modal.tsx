@@ -101,4 +101,4 @@ type DisableSourceModalProps = {
   cancel?: () => void;
 };
 
-export default DisableDefaultSourceModalProvider;
+export { DisableDefaultSourceModalProvider };

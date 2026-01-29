@@ -8,7 +8,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import DisableDefaultSourceModalProvider from '../../components/modals/disable-default-source-modal';
+import { DisableDefaultSourceModalProvider } from '../../components/modals/disable-default-source-modal';
 import { OperatorHubKind } from '../../components/operator-hub';
 import { DEFAULT_SOURCE_NAMESPACE } from '../../const';
 import { OperatorHubModel } from '../../models';

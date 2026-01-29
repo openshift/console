@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import i18n from '@console/internal/i18n';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import UpdateStrategyModalProvider from '../../modals/update-strategy-modal';
+import { UpdateStrategyModalProvider } from '../../modals/update-strategy-modal';
 import { Descriptor } from '../types';
 import { getPatchPathFromDescriptor } from '../utils';
 

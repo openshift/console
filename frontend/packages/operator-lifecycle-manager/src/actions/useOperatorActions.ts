@@ -9,7 +9,7 @@ import { DeleteOverlay } from '@console/internal/components/modals/delete-modal'
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import UninstallOperatorModalProvider from '../components/modals/uninstall-operator-modal';
+import { UninstallOperatorModalProvider } from '../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 
 const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any] => {

@@ -68,7 +68,7 @@ import {
   CatalogSourceModel,
 } from '../models';
 import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
-import InstallPlanPreviewModalProvider from './modals/installplan-preview-modal';
+import { InstallPlanPreviewModalProvider } from './modals/installplan-preview-modal';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 

@@ -8,7 +8,7 @@ import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s
 import { asAccessReview } from '@console/internal/components/utils';
 import { referenceFor, k8sKill, k8sGet, k8sPatch } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import UninstallOperatorModalProvider from '../../components/modals/uninstall-operator-modal';
+import { UninstallOperatorModalProvider } from '../../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel } from '../../models';
 import { SubscriptionKind } from '../../types';
 import { SubscriptionActionCreator } from './types';

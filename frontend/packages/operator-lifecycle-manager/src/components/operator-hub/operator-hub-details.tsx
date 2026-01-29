@@ -13,7 +13,7 @@ import {
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { OperatorHubModel } from '../../models';
 import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
-import EditDefaultSourcesModalProvider from '../modals/edit-default-sources-modal';
+import { EditDefaultSourcesModalProvider } from '../modals/edit-default-sources-modal';
 import { OperatorHubKind } from '.';
 
 const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {

@@ -707,4 +707,4 @@ type OperandErrorListProps = {
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
 
-export default UninstallOperatorModalProvider;
+export { UninstallOperatorModalProvider };

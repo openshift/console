@@ -11,7 +11,7 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import TaintsModalProvider from '@console/internal/components/modals/taints-modal';
+import { TaintsModalProvider } from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
