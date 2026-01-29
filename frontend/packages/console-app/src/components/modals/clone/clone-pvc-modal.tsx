@@ -8,6 +8,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   ModalBody,
   ModalComponentProps,
@@ -24,7 +25,6 @@ import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import { history } from '@console/internal/components/utils/router';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
@@ -53,6 +53,7 @@ import './_clone-pvc-modal.scss';
 
 const ClonePVCModal = (props: ClonePVCModalProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { close, cancel, resource } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { name: pvcName, namespace } = resource?.metadata;
@@ -129,7 +130,7 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
     handlePromise(k8sCreate(PersistentVolumeClaimModel, pvcCloneObj))
       .then((cloneResource) => {
         close();
-        history.push(resourceObjPath(cloneResource, referenceFor(cloneResource)));
+        navigate(resourceObjPath(cloneResource, referenceFor(cloneResource)));
       })
       .catch(() => {});
   };
