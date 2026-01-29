@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -10,13 +10,13 @@ import {
   HelmChartRepositoryModel,
   ProjectHelmChartRepositoryModel,
 } from '@console/helm-plugin/src/models';
-import { history } from '@console/internal/components/utils';
 import { kindForReference } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY, useQueryParams } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: FC = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const params = useParams();
   const queryParams = useQueryParams();
@@ -41,9 +41,9 @@ const CreateHelmChartRepositoryPage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      history.push(`/helm/all-namespaces/repositories`);
+      navigate(`/helm/all-namespaces/repositories`);
     } else if (ns !== namespace) {
-      history.push(`/helm/ns/${ns}/repositories`);
+      navigate(`/helm/ns/${ns}/repositories`);
     }
   };
 

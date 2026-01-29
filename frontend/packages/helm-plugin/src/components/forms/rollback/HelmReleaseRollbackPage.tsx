@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { history, getQueryArgument } from '@console/internal/components/utils';
+import { getQueryArgument } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import type { HelmRelease, HelmActionOrigins } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
@@ -18,6 +18,8 @@ type HelmRollbackFormData = {
 };
 
 const HelmReleaseRollbackPage: FC = () => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const { releaseName, ns: namespace } = useParams();
   const actionOrigin = getQueryArgument('actionOrigin') as HelmActionOrigins;
@@ -62,7 +64,7 @@ const HelmReleaseRollbackPage: FC = () => {
     return config
       .fetch('/api/helm/release', payload, null, -1)
       .then(() => {
-        history.push(config.redirectURL);
+        navigate(config.redirectURL);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -72,7 +74,7 @@ const HelmReleaseRollbackPage: FC = () => {
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <DocumentTitle>{config.title}</DocumentTitle>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={history.goBack}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit} onReset={handleCancel}>
         {(props) => (
           <HelmReleaseRollbackForm
             {...props}
