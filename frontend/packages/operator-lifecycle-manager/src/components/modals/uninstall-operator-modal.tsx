@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Alert,
   Backdrop,
@@ -22,7 +22,6 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { Checkbox } from '@console/internal/components/checkbox';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
@@ -651,8 +650,6 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-export const createUninstallOperatorModal = createModalLauncher(UninstallOperatorModal);
-
 const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalProviderProps> = (
   props,
 ) => {
@@ -663,15 +660,17 @@ const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalPro
   );
 };
 
-export const useUninstallOperatorModal = (props: UninstallOperatorModalProps) => {
-  const launcher = useOverlay();
-  return useCallback(
-    () => launcher<UninstallOperatorModalProviderProps>(UninstallOperatorModalProvider, props),
-    [launcher, props],
-  );
+type UninstallOperatorModalProviderProps = {
+  k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
+  k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
+  k8sPatch: (
+    kind: K8sKind,
+    resource: K8sResourceKind,
+    data: { op: string; path: string; value: any }[],
+  ) => Promise<any>;
+  subscription: K8sResourceKind;
+  csv?: K8sResourceKind;
 };
-
-type UninstallOperatorModalProviderProps = UninstallOperatorModalProps & ModalComponentProps;
 
 export type UninstallOperatorModalProps = {
   cancel?: () => void;
@@ -703,3 +702,5 @@ type OperandErrorListProps = {
 };
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
+
+export default UninstallOperatorModalProvider;
