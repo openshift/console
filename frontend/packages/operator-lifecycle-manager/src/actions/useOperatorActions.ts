@@ -9,7 +9,7 @@ import { DeleteOverlay } from '@console/internal/components/modals/delete-modal'
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import { UninstallOperatorOverlay } from '../components/modals/uninstall-operator-modal';
+import UninstallOperatorModalProvider from '../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 
 const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any] => {
@@ -48,13 +48,12 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
         id: 'uninstall-operator',
         label: t('olm~Uninstall Operator'),
         cta: () =>
-          launcher(UninstallOperatorOverlay, {
+          launcher(UninstallOperatorModalProvider, {
             k8sKill,
             k8sGet,
             k8sPatch,
             subscription,
             csv: resource,
-            blocking: true,
           }),
         accessReview: asAccessReview(SubscriptionModel, subscription, K8S_VERB_DELETE),
       },

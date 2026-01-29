@@ -99,7 +99,7 @@ import {
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
 import InstallPlanApprovalModalProvider from './modals/installplan-approval-modal';
 import SubscriptionChannelModalProvider from './modals/subscription-channel-modal';
-import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import UninstallOperatorModalProvider from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
@@ -420,6 +420,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   subscriptions = [],
 }) => {
   const { t } = useTranslation();
+  const launcher = useOverlay();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
     (ch) => ch.catalogSourceRef.name === source,
@@ -427,14 +428,13 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
-  const uninstallOperatorModal = useUninstallOperatorModal({
-    k8sKill,
-    k8sGet,
-    k8sPatch,
-    subscription: obj,
-  });
   if (new URLSearchParams(window.location.search).has('showDelete')) {
-    uninstallOperatorModal();
+    launcher(UninstallOperatorModalProvider, {
+      k8sKill,
+      k8sGet,
+      k8sPatch,
+      subscription: obj,
+    });
     removeQueryArgument('showDelete');
   }
 

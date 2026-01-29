@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { asAccessReview } from '@console/internal/components/utils';
 import { referenceFor, k8sKill, k8sGet, k8sPatch } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { useUninstallOperatorModal } from '../../components/modals/uninstall-operator-modal';
+import UninstallOperatorModalProvider from '../../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel } from '../../models';
 import { SubscriptionKind } from '../../types';
 import { SubscriptionActionCreator } from './types';
@@ -31,12 +32,7 @@ export const useSubscriptionActions = (
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Edit]);
-  const uninstallOperatorModal = useUninstallOperatorModal({
-    k8sKill,
-    k8sGet,
-    k8sPatch,
-    subscription: obj,
-  });
+  const launcher = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const installedCSV = obj.status?.installedCSV;
@@ -46,7 +42,13 @@ export const useSubscriptionActions = (
       [SubscriptionActionCreator.RemoveSubscription]: () => ({
         id: 'remove-subscription',
         label: t('olm~Remove Subscription'),
-        cta: () => uninstallOperatorModal(),
+        cta: () =>
+          launcher(UninstallOperatorModalProvider, {
+            k8sKill,
+            k8sGet,
+            k8sPatch,
+            subscription: obj,
+          }),
         accessReview: asAccessReview(model, obj, 'delete'),
       }),
       [SubscriptionActionCreator.ViewClusterServiceVersion]: () => {
@@ -59,8 +61,7 @@ export const useSubscriptionActions = (
         };
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [installedCSV, model, obj, t],
+    [installedCSV, model, obj, t, launcher],
   );
 
   // filter and initialize requested actions or construct list of all SubscriptionActions
