@@ -110,7 +110,7 @@ const UpdateStrategyModalProvider: OverlayComponent<UpdateStrategyModalProviderP
   );
 };
 
-export default UpdateStrategyModalProvider;
+export { UpdateStrategyModalProvider };
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 

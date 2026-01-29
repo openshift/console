@@ -133,4 +133,4 @@ export type InstallPlanApprovalModalProps = {
   obj: InstallPlanKind | SubscriptionKind;
 };
 
-export default InstallPlanApprovalModalProvider;
+export { InstallPlanApprovalModalProvider };

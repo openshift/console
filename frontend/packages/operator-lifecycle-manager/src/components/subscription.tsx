@@ -87,8 +87,8 @@ import {
   DeprecatedOperatorWarningIcon,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import InstallPlanApprovalModalProvider from './modals/installplan-approval-modal';
-import SubscriptionChannelModalProvider from './modals/subscription-channel-modal';
+import { InstallPlanApprovalModalProvider } from './modals/installplan-approval-modal';
+import { SubscriptionChannelModalProvider } from './modals/subscription-channel-modal';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';

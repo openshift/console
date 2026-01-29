@@ -184,4 +184,4 @@ const TaintsModalProvider: OverlayComponent<TaintsModalProviderProps> = (props) 
   );
 };
 
-export default TaintsModalProvider;
+export { TaintsModalProvider };

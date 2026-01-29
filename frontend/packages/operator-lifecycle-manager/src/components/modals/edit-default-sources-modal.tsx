@@ -133,4 +133,4 @@ type EditDefaultSourcesModalProps = {
   cancel?: () => void;
 };
 
-export default EditDefaultSourcesModalProvider;
+export { EditDefaultSourcesModalProvider };

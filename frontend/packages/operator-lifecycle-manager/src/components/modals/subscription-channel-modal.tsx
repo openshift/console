@@ -129,4 +129,4 @@ export type SubscriptionChannelModalProps = {
   pkg: PackageManifestKind;
 };
 
-export default SubscriptionChannelModalProvider;
+export { SubscriptionChannelModalProvider };

@@ -60,6 +60,6 @@ export type InstallPlanPreviewModalProps = {
   close?: () => void;
 };
 
-export default InstallPlanPreviewModalProvider;
+export { InstallPlanPreviewModalProvider };
 
 InstallPlanPreview.displayName = 'InstallPlanPreview';
