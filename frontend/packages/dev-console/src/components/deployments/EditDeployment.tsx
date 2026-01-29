@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import type { FormikBag } from 'formik';
 import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -26,6 +26,7 @@ export interface EditDeploymentProps {
 
 const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isNew = !name;
 
   const initialValues = useRef({
@@ -91,14 +92,14 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
             }),
           });
         }
-        history.push(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
+        navigate(`/k8s/ns/${namespace}/${model.plural}/${res.metadata.name}`);
       })
       .catch((err) => {
         actions.setStatus({ submitSuccess: '', submitError: err.message });
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
 
   return (
     <Formik

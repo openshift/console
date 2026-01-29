@@ -42,6 +42,7 @@ jest.mock(
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }));
 
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;

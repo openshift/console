@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
 jest.mock('@console/internal/components/factory', () => ({
@@ -35,6 +36,7 @@ jest.mock('@console/internal/module/k8s', () => ({
 }));
 
 jest.mock('@console/internal/models', () => ({
+  ...jest.requireActual('@console/internal/models'),
   ProjectModel: { kind: 'Project' },
   RoleBindingModel: {
     apiGroup: 'rbac.authorization.k8s.io',
@@ -43,6 +45,14 @@ jest.mock('@console/internal/models', () => ({
   UserModel: {
     apiGroup: 'user.openshift.io',
     plural: 'users',
+  },
+  GroupModel: {
+    apiGroup: 'user.openshift.io',
+    plural: 'groups',
+  },
+  VolumeSnapshotContentModel: {
+    apiGroup: 'snapshot.storage.k8s.io',
+    plural: 'volumesnapshotcontents',
   },
 }));
 
@@ -58,16 +68,16 @@ jest.mock('@console/shared/src/components/breadcrumbs/Breadcrumbs', () => ({
   Breadcrumbs: () => 'Breadcrumbs',
 }));
 
-jest.mock('../../../NamespacedPage', () => ({
-  __esModule: true,
-  default: (props) => props.children,
-  NamespacedPageVariants: { light: 'light' },
-}));
-
 jest.mock('../../CreateProjectListPage', () => ({
   __esModule: true,
   default: () => 'CreateProjectListPage',
   CreateAProjectButton: () => 'CreateAProjectButton',
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: { light: 'light' },
 }));
 
 jest.mock('../../../project-access/ProjectAccessPage', () => ({
@@ -97,7 +107,7 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({});
 
-    render(<PageContents />);
+    renderWithProviders(<PageContents />);
 
     expect(screen.getByText(/CreateProjectListPage/)).toBeInTheDocument();
   });
@@ -106,7 +116,7 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<PageContents />);
+    renderWithProviders(<PageContents />);
 
     expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });
@@ -115,7 +125,7 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<ProjectDetailsPage />);
+    renderWithProviders(<ProjectDetailsPage />);
 
     expect(screen.queryByText(/Breadcrumbs/)).not.toBeInTheDocument();
   });
@@ -124,7 +134,7 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(false);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<PageContents />);
+    renderWithProviders(<PageContents />);
 
     expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });

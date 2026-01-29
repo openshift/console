@@ -1,9 +1,9 @@
 import * as GitUrlParse from 'git-url-parse';
 import * as _ from 'lodash';
+import type { NavigateFunction } from 'react-router-dom-v5-compat';
 import type { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { history } from '@console/internal/components/utils';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
   ImageStreamModel,
@@ -998,15 +998,16 @@ export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
   searchParamOverrides?: URLSearchParams,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
 
   if (searchParamOverrides) {
-    history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
+    navigate(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
   } else {
-    history.push(redirectURL);
+    navigate(redirectURL);
   }
 };
 

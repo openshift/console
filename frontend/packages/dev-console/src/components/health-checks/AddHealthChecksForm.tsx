@@ -1,10 +1,12 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import * as yup from 'yup';
 import type { FirehoseResult } from '@console/internal/components/utils';
-import { LoadingBox, StatusBox, history } from '@console/internal/components/utils';
+import { LoadingBox, StatusBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResourcesType } from '../edit-application/edit-application-utils';
@@ -19,6 +21,8 @@ type AddHealthChecksFormProps = {
 };
 
 const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentContainer }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   if (!resource.loaded && !resource.loadError) {
     return <LoadingBox />;
@@ -43,7 +47,7 @@ const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentCo
     return k8sUpdate(modelFor(referenceFor(resource.data)), updatedResource)
       .then(() => {
         actions.setStatus({ error: '' });
-        history.goBack();
+        navigate(-1);
       })
       .catch((err) => {
         actions.setStatus({ errors: err });
@@ -66,7 +70,7 @@ const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentCo
         healthChecks: healthChecksProbesValidationSchema(t),
       })}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
     >
       {(formikProps) => (
         <AddHealthChecks

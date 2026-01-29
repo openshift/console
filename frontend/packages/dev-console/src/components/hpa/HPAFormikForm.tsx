@@ -1,8 +1,9 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import type { FormikHelpers, FormikProps } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type {
   HorizontalPodAutoscalerKind,
@@ -23,6 +24,8 @@ type HPAFormikFormProps = {
 };
 
 const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,
@@ -46,7 +49,7 @@ const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) 
     ) => Promise<HorizontalPodAutoscalerKind> = existingHPA ? k8sUpdate : k8sCreate;
     return method(HorizontalPodAutoscalerModel, hpa)
       .then(() => {
-        history.goBack();
+        navigate(-1);
       })
       .catch((error) => {
         helpers.setStatus({
@@ -59,7 +62,7 @@ const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) 
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={hpaValidationSchema(t)}
     >
       {(props: FormikProps<HPAFormValues>) => (
