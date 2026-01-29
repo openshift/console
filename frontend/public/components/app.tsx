@@ -461,6 +461,11 @@ graphQLReady.onReady(() => {
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
+    // ResizeObserver loop errors are non-actionable and can be ignored
+    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+      return undefined;
+    }
+
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
     window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
