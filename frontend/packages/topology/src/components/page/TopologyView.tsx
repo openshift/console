@@ -29,11 +29,7 @@ import {
   isTopologyRelationshipProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-} from '@console/internal/components/utils';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
@@ -109,6 +105,7 @@ export const ConnectedTopologyView: FC<ComponentProps> = ({
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const { setTopologyFilters: onFiltersChange } = useContext(FilterContext);
+  const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const [filteredModel, setFilteredModel] = useState<Model>();
   const [selectedEntity, setSelectedEntity] = useState<GraphElement>(null);
   const [visualization, setVisualization] = useState<Visualization>();
@@ -173,7 +170,7 @@ export const ConnectedTopologyView: FC<ComponentProps> = ({
         );
       }
     },
-    [namespace],
+    [namespace, removeQueryArgument, setQueryArgument],
   );
 
   const graphData: GraphData = useMemo(

@@ -1,7 +1,9 @@
 import type { ReactNode, FC } from 'react';
 import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import CatalogBadges from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';
@@ -11,10 +13,14 @@ import './QuickSearchDetails.scss';
 export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
+  navigate: (url: string) => void;
+  removeQueryArgument: (key: string) => void;
 };
 export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => ReactNode;
-export interface QuickSearchDetailsProps extends QuickSearchDetailsRendererProps {
-  detailsRenderer: DetailsRendererFunction;
+export interface QuickSearchDetailsProps {
+  selectedItem: CatalogItem;
+  closeModal: () => void;
+  detailsRenderer?: DetailsRendererFunction;
 }
 
 const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
@@ -23,18 +29,18 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   detailsRenderer,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { removeQueryArgument } = useQueryParamsMutator();
   const fireTelemetryEvent = useTelemetry();
 
-  const defaultContentRenderer: DetailsRendererFunction = (
-    props: QuickSearchDetailsProps,
-  ): ReactNode => {
+  const defaultContentRenderer = (): ReactNode => {
     return (
       <>
-        <Title headingLevel="h4">{props.selectedItem.name}</Title>
-        {props.selectedItem.provider && (
+        <Title headingLevel="h4">{selectedItem.name}</Title>
+        {selectedItem.provider && (
           <span className="ocs-quick-search-details__provider">
             {t('console-shared~Provided by {{provider}}', {
-              provider: props.selectedItem.provider,
+              provider: selectedItem.provider,
             })}
           </span>
         )}
@@ -46,22 +52,30 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
           className="ocs-quick-search-details__form-button"
           data-test="create-quick-search"
           onClick={(e) => {
-            handleCta(e, props.selectedItem, props.closeModal, fireTelemetryEvent);
+            handleCta(
+              e,
+              selectedItem,
+              closeModal,
+              fireTelemetryEvent,
+              navigate,
+              removeQueryArgument,
+            );
           }}
         >
-          {props.selectedItem.cta.label}
+          {selectedItem.cta.label}
         </Button>
         <Content className="ocs-quick-search-details__description">
-          {props.selectedItem.description}
+          {selectedItem.description}
         </Content>
       </>
     );
   };
-  const detailsContentRenderer: DetailsRendererFunction = detailsRenderer ?? defaultContentRenderer;
 
   return (
     <div className="ocs-quick-search-details">
-      {detailsContentRenderer({ selectedItem, closeModal })}
+      {detailsRenderer
+        ? detailsRenderer({ selectedItem, closeModal, navigate, removeQueryArgument })
+        : defaultContentRenderer()}
     </div>
   );
 };

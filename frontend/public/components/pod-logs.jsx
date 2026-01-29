@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ContainerSelect } from './utils/container-select';
-import { getQueryArgument, setQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,
@@ -53,14 +53,14 @@ const containerToLogSourceStatus = (container) => {
   return LOG_SOURCE_RUNNING;
 };
 
-export class PodLogs extends Component {
+class PodLogsInner extends Component {
   constructor(props) {
     super(props);
     this._selectContainer = this._selectContainer.bind(this);
     this.state = {
       containers: {},
       currentKey:
-        getQueryArgument('container') ||
+        props.getQueryArgument('container') ||
         props.obj.metadata?.annotations?.['kubectl.kubernetes.io/default-container'] ||
         '',
       initContainers: {},
@@ -82,7 +82,7 @@ export class PodLogs extends Component {
 
   _selectContainer(name) {
     this.setState({ currentKey: name }, () => {
-      setQueryArgument('container', this.state.currentKey);
+      this.props.setQueryArgument('container', this.state.currentKey);
     });
   }
 
@@ -111,3 +111,15 @@ export class PodLogs extends Component {
     );
   }
 }
+
+// Functional wrapper to inject router hooks as props
+export const PodLogs = (props) => {
+  const { getQueryArgument, setQueryArgument } = useQueryParamsMutator();
+  return (
+    <PodLogsInner
+      {...props}
+      getQueryArgument={getQueryArgument}
+      setQueryArgument={setQueryArgument}
+    />
+  );
+};
