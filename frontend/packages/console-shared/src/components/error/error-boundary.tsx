@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode, FC } from 'react';
 import { Component } from 'react';
+import { useLocation } from 'react-router-dom-v5-compat';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils/router';
 
 type ErrorBoundaryProps = {
   FallbackComponent?: ComponentType<ErrorBoundaryFallbackProps>;
@@ -17,9 +17,7 @@ export type ErrorBoundaryState = {
 
 const DefaultFallback: FC = () => <div />;
 
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  unlisten: () => void = () => {};
-
+class ErrorBoundaryInner extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   readonly defaultState: ErrorBoundaryState = {
     hasError: false,
     error: {
@@ -35,17 +33,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props) {
     super(props);
     this.state = this.defaultState;
-  }
-
-  componentDidMount() {
-    this.unlisten = history.listen(() => {
-      // reset state to default when location changes
-      this.setState(this.defaultState);
-    });
-  }
-
-  componentWillUnmount() {
-    this.unlisten();
   }
 
   componentDidCatch(error, errorInfo) {
@@ -74,5 +61,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     );
   }
 }
+
+// Functional wrapper to handle location changes
+const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) => {
+  const location = useLocation();
+
+  // Use location.pathname as key to reset error boundary on navigation
+  // This causes the component to remount when the route changes
+  return (
+    <ErrorBoundaryInner key={location.pathname} FallbackComponent={FallbackComponent}>
+      {children}
+    </ErrorBoundaryInner>
+  );
+};
 
 export default ErrorBoundary;

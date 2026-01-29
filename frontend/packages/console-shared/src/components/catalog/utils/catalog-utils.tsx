@@ -10,7 +10,6 @@ import {
   CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { history } from '@console/internal/components/utils/router';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { CatalogSortOrder, CatalogType, CatalogTypeCounts } from './types';
 
@@ -276,14 +275,21 @@ export const getIconProps = (item: CatalogItem) => {
   return { iconImg: catalogImg, iconClass: null };
 };
 
-export const setURLParams = (params: URLSearchParams) => {
+export const setURLParams = (
+  params: URLSearchParams,
+  navigate: (to: string, options?: { replace?: boolean }) => void,
+) => {
   const url = new URL(window.location.href);
   const searchParams = `?${params.toString()}${url.hash}`;
 
-  history.replace(`${url.pathname}${searchParams}`);
+  navigate(`${url.pathname}${searchParams}`, { replace: true });
 };
 
-export const updateURLParams = (paramName: string, value: string | string[]) => {
+export const updateURLParams = (
+  paramName: string,
+  value: string | string[],
+  navigate: (to: string, options?: { replace?: boolean }) => void,
+) => {
   const params = new URLSearchParams(window.location.search);
 
   if (value) {
@@ -291,7 +297,7 @@ export const updateURLParams = (paramName: string, value: string | string[]) => 
   } else {
     params.delete(paramName);
   }
-  setURLParams(params);
+  setURLParams(params, navigate);
 };
 
 export const getURLWithParams = (paramName: string, value: string | string[]): string => {

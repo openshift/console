@@ -2,13 +2,13 @@ import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { history } from '@console/internal/components/utils/router';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '../../hooks/promise-handler';
 import { InputField } from '../formik-fields';
@@ -73,6 +73,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
 
 const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
   const [handlePromise] = usePromiseHandler();
+  const navigate = useNavigate();
 
   const handleSubmit = (values: FormikValues, actions) => {
     const { onSubmit, close, redirect } = props;
@@ -82,7 +83,7 @@ const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
       handlePromise(onSubmit(values))
         .then(() => {
           close();
-          redirect && history.push(redirect);
+          redirect && navigate(redirect);
         })
         .catch((errorMessage) => {
           actions.setStatus({ submitError: errorMessage });
