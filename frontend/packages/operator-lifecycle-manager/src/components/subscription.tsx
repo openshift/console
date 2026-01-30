@@ -21,7 +21,7 @@ import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useLocation, useParams } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import {
   getGroupVersionKindForModel,
@@ -419,6 +419,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   subscriptions = [],
 }) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const { removeQueryArgument } = useQueryParamsMutator();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
@@ -433,10 +434,13 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
     k8sPatch,
     subscription: obj,
   });
-  if (new URLSearchParams(window.location.search).has('showDelete')) {
-    uninstallOperatorModal();
-    removeQueryArgument('showDelete');
-  }
+
+  useEffect(() => {
+    if (new URLSearchParams(location.search).has('showDelete')) {
+      uninstallOperatorModal();
+      removeQueryArgument('showDelete');
+    }
+  }, [location.search, uninstallOperatorModal, removeQueryArgument]);
 
   const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(obj);
 

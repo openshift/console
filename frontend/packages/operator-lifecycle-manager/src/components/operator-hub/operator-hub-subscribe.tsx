@@ -125,6 +125,7 @@ const InputField: FC<InputFieldProps> = ({
 export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [activeNamespace] = useActiveNamespace();
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
@@ -1179,7 +1180,7 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
               >
                 {t('olm~Install')}
               </Button>
-              <Button variant="secondary" onClick={() => navigate(-1)}>
+              <Button variant="secondary" onClick={handleCancel}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

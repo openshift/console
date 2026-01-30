@@ -12,9 +12,8 @@ import {
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom-v5-compat';
-import { getQueryArgument } from '@console/internal/components/utils';
-import { history } from '@console/internal/components/utils/router';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
+import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
 import {
@@ -405,13 +404,6 @@ export const keywordCompareWithScore = (
 // Flag to indicate this function uses scoring
 keywordCompareWithScore.useScoring = true;
 
-const setURLParams = (params: URLSearchParams): void => {
-  const url = new URL(window.location.href);
-  const searchParams = `?${params.toString()}${url.hash}`;
-
-  history.replace(`${url.pathname}${searchParams}`);
-};
-
 const getRedHatPriority = (item: OperatorHubItem): number => {
   // Check metadata.labels.provider
   const metadataProvider = _.get(item, 'obj.metadata.labels.provider', '');
@@ -572,6 +564,8 @@ const OperatorHubTile: FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { setQueryArgument, removeQueryArgument, getQueryArgument } = useQueryParamsMutator();
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
@@ -748,9 +742,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   }, [filteredItems, searchParams]);
 
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('details-item', item.uid);
-    setURLParams(params);
+    setQueryArgument('details-item', item.uid);
     setDetailsItem(item);
     setShowDetails(true);
 
@@ -760,11 +752,9 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   };
 
   const closeOverlay = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.delete('details-item');
-    params.delete('channel');
-    params.delete('version');
-    setURLParams(params);
+    removeQueryArgument('details-item');
+    removeQueryArgument('channel');
+    removeQueryArgument('version');
     setDetailsItem(null);
     setShowDetails(false);
     // reset version and channel state so that switching between operator cards does not carry over previous selections
@@ -779,9 +769,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
         showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore),
       });
     } else {
-      const params = new URLSearchParams(window.location.search);
-      params.set('details-item', item.uid);
-      setURLParams(params);
+      setQueryArgument('details-item', item.uid);
       setDetailsItem(item);
       setShowDetails(true);
     }
@@ -810,10 +798,15 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const installLink =
     detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL}`;
 
-  const uninstallLink = () =>
-    detailsItem &&
-    detailsItem.subscription &&
-    `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+  const handleUninstallClick = useCallback(() => {
+    const link =
+      detailsItem &&
+      detailsItem.subscription &&
+      `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+    if (link) {
+      navigate(link);
+    }
+  }, [navigate, detailsItem]);
 
   if (_.isEmpty(filteredItems)) {
     return (
@@ -1079,7 +1072,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    onClick={handleUninstallClick}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}

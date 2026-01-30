@@ -77,3 +77,7 @@ export enum BuildConfigActionCreator {
   StartBuild = 'StartBuild',
   StartLastRun = 'StartLastRun',
 }
+
+export enum CronJobActionCreator {
+  StartJob = 'StartJob',
+}

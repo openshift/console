@@ -108,14 +108,13 @@ describe('BuildConfigFormPage', () => {
     });
   });
 
-  it('should render an error when the BuildConfig fetching fails', () => {
+  it('should render an error when the BuildConfig fetching fails', async () => {
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Something went wrong')]);
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
     const renderResult = renderWithProviders(<BuildConfigFormPage />);
-    renderResult.findByText('Error Loading');
-    renderResult.findByText('Edit BuildConfig');
-    renderResult.findByText('Something went wrong');
+    await renderResult.findByText('Error loading Edit BuildConfig');
+    await renderResult.findByText('Something went wrong');
   });
 });
