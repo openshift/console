@@ -1,8 +1,14 @@
 import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
-
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import {
+  ModalTitle,
+  ModalBody,
+  ModalSubmitFooter,
+  ModalWrapper,
+  ModalComponentProps,
+} from '../factory/modal';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
@@ -85,11 +91,15 @@ const ExpandPVCModal = ({ resource, kind, close, cancel }: ExpandPVCModalProps) 
   );
 };
 
-export const expandPVCModal = createModalLauncher(ExpandPVCModal);
-
 export type ExpandPVCModalProps = {
   kind: K8sKind;
   resource: K8sResourceKind;
-  cancel?: () => void;
-  close: () => void;
+} & ModalComponentProps;
+
+export const ExpandPVCModalOverlay: OverlayComponent<ExpandPVCModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ExpandPVCModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
 };
