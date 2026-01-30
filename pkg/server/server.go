@@ -248,22 +248,22 @@ func (s *Server) gitopsProxyEnabled() bool {
 	return s.GitOpsProxyConfig != nil
 }
 
-func (s *Server) HTTPHandler() (http.Handler, error) {
+func (s *Server) HTTPHandler() (http.Handler, []prometheus.Collector, error) {
 	if s.Authenticator == nil {
-		return s.NoAuthConfiguredHandler(), nil
+		return s.NoAuthConfiguredHandler(), nil, nil
 	}
 
 	internalProxiedK8SClient, err := kubernetes.NewForConfig(s.InternalProxiedK8SClientConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to set up internal k8s client: %w", err)
+		return nil, nil, fmt.Errorf("failed to set up internal k8s client: %w", err)
 	}
 	internalProxiedK8SRT, err := rest.TransportFor(s.InternalProxiedK8SClientConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to set up internal k8s roundtripper: %v", err)
+		return nil, nil, fmt.Errorf("failed to set up internal k8s roundtripper: %v", err)
 	}
 	internalProxiedDynamic, err := dynamic.NewForConfig(s.InternalProxiedK8SClientConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to set up a dynamic client: %w", err)
+		return nil, nil, fmt.Errorf("failed to set up a dynamic client: %w", err)
 	}
 
 	mux := http.NewServeMux()
@@ -621,9 +621,14 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	serverconfigMetrics.MonitorPlugins(internalProxiedDynamic)
 	usageMetrics := usage.NewMetrics()
 	usageMetrics.MonitorUsers(internalProxiedK8SClient)
-	prometheus.MustRegister(serverconfigMetrics.GetCollectors()...)
-	prometheus.MustRegister(usageMetrics.GetCollectors()...)
-	prometheus.MustRegister(s.AuthMetrics.GetCollectors()...)
+
+	// Collect all metrics collectors to return them for later cleanup
+	var collectors []prometheus.Collector
+	collectors = append(collectors, serverconfigMetrics.GetCollectors()...)
+	collectors = append(collectors, usageMetrics.GetCollectors()...)
+	collectors = append(collectors, s.AuthMetrics.GetCollectors()...)
+
+	prometheus.MustRegister(collectors...)
 
 	handle("/metrics", bearerTokenReviewHandler(func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
@@ -693,7 +698,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
-	return middleware.WithSecurityHeaders(http.Handler(mux)), nil
+	return middleware.WithSecurityHeaders(http.Handler(mux)), collectors, nil
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
