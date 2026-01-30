@@ -79,7 +79,7 @@
       "consolePluginBackendDetail": "src/components/console-operator/ConsolePluginBackendDetail.tsx",
       "consolePluginProxyDetail": "src/components/console-operator/ConsolePluginProxyDetail.tsx",
       "getConsoleOperatorConfigFlag": "src/hooks/useCanGetConsoleOperatorConfig.ts",
-      "useTechPreviewFlagProvider": "src/hooks/useTechPreviewFlagProvider.ts",
+      "techPreviewFlag": "src/features/tech-preview.ts",
       "usePerspectivesAvailable": "src/components/user-preferences/perspective/usePerspectivesAvailable.ts",
       "defaultProvider": "src/actions/providers/default-provider.ts",
       "OperatorStatus": "src/components/dashboards-page/OperatorStatus.tsx",
