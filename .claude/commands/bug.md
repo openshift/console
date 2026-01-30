@@ -10,6 +10,7 @@ Example: `/bug The quick search modal doesn't close when clicking outside of it`
 - Bug reports should be created in the OCPBUGS JIRA project with the "Management Console" component
 - Bug branches should be created from the main branch (named `main` in OpenShift projects)
 - The codebase uses both frontend (TypeScript/React) and backend (Go) code
+- **SAFETY**: This command should ONLY create new issues and branches - NEVER delete, modify, or overwrite existing JIRA issues or git branches
 - Bug reports should follow Red Hat's issue reporting standards, which include these required sections:
   - **Description of problem**: Clear explanation with technical details
   - **Version-Release number of selected component**: OpenShift version where bug is observed
@@ -79,12 +80,24 @@ After writing the bug report, check if the `jira` CLI command is available:
    ```
 3. If not available, inform the user they'll need to create the issue manually in JIRA
 
+**CRITICAL SAFETY RULES:**
+- ONLY use `jira issue create` to create NEW issues
+- NEVER use commands that modify existing issues (like `jira issue edit`, `jira issue update`, `jira issue delete`)
+- NEVER overwrite or delete existing JIRA issues
+- If an issue already exists, reference it but do not modify it
+
 ### Step 4: Offer to Create a Branch
 
 If the user wants to proceed with a fix:
 1. Offer to create a new git branch from main
 2. Suggest a branch name in the format: `OCPBUGS-<issue-number>-<short-description>`
 3. If the JIRA issue doesn't exist yet, suggest a descriptive branch name and note that it should be renamed after JIRA issue creation
+
+**CRITICAL SAFETY RULES:**
+- ONLY create NEW branches
+- NEVER delete existing branches (like `git branch -D` or `git push --delete`)
+- NEVER force push (like `git push --force` or `git push -f`)
+- If a branch with the suggested name already exists, suggest a different name instead of overwriting
 
 ### Step 5: Propose a Fix
 
@@ -136,13 +149,20 @@ Present the bug report in a clear, formatted markdown block that can be easily c
 
 ## Important Notes
 
+### Safety and Permissions
+- **CRITICAL**: This command should ONLY perform CREATE operations - NEVER delete, modify, or overwrite existing resources
+- **JIRA Safety**: Only use `jira issue create` - NEVER use edit, update, or delete commands on existing issues
+- **Git Safety**: Only create new branches - NEVER delete branches or force push
+- **User Confirmation**: Don't create branches or JIRA issues without explicit user confirmation
+- If any resource already exists (issue, branch, etc.), suggest alternatives instead of modifying or overwriting
+
+### Investigation and Reporting
 - Be thorough in your investigation before writing the bug report
 - Use the Task tool with subagent_type=Explore if you need to explore the codebase extensively
 - Always verify your findings by reading actual code files
 - Include specific file paths and line numbers in your references
 - Consider both frontend and backend implications
 - Follow the Red Hat style guide for all text in the bug report
-- Don't create the branch or JIRA issue without explicit user confirmation
 - **Consider adding a test case when appropriate** - When the bug involves testable logic, suggest a regression test that:
   - Would have caught the bug if it existed before the bug was introduced
   - Includes a comment linking to the JIRA issue (e.g., `// Regression test for OCPBUGS-12345: https://issues.redhat.com/browse/OCPBUGS-12345`)
