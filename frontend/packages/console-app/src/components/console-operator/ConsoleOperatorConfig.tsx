@@ -44,7 +44,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import ConsolePluginModalProvider from '@console/shared/src/components/modals/ConsolePluginModal';
+import { ConsolePluginModalOverlay } from '@console/shared/src/components/modals/ConsolePluginModal';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
@@ -118,7 +118,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
           type="button"
           isInline
           onClick={() =>
-            launchOverlay(ConsolePluginModalProvider, {
+            launchOverlay(ConsolePluginModalOverlay, {
               consoleOperatorConfig,
               pluginName,
               trusted: false,
