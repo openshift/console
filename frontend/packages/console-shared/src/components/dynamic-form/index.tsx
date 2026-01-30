@@ -1,10 +1,11 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import Form, { FormProps } from '@rjsf/core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils/router';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';
@@ -41,6 +42,8 @@ export const DynamicForm: FC<DynamicFormProps> = ({
   ...restProps
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const schemaErrors = getSchemaErrors(schema);
   // IF the top level schema is unsupported, don't render a form at all.
   if (schemaErrors.length) {
@@ -111,7 +114,7 @@ export const DynamicForm: FC<DynamicFormProps> = ({
                   <Button type="submit" variant="primary" data-test="create-dynamic-form">
                     {t('console-shared~Create')}
                   </Button>
-                  <Button onClick={onCancel || history.goBack} variant="secondary">
+                  <Button onClick={onCancel || handleCancel} variant="secondary">
                     {t('console-shared~Cancel')}
                   </Button>
                 </ActionGroup>

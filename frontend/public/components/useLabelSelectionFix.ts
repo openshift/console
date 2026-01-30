@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useMirroredLocalState, { UseMirroredLocalStateReturn } from './useMirroredLocalState';
-import { setOrRemoveQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 
 /**
  * Handles a state management hack-fix around the label filters auto complete field.
@@ -14,11 +14,13 @@ const useLabelSelectorFix = (
   params: URLSearchParams,
   labelFilterQueryArgumentKey: string,
 ): UseMirroredLocalStateReturn<string[]> => {
+  const { setOrRemoveQueryArgument } = useQueryParamsMutator();
+
   const syncSearchParams = useCallback(
     (values: string[]) => {
       setOrRemoveQueryArgument(labelFilterQueryArgumentKey, values.join(','));
     },
-    [labelFilterQueryArgumentKey],
+    [labelFilterQueryArgumentKey, setOrRemoveQueryArgument],
   );
 
   const labelFilters = params.get(labelFilterQueryArgumentKey)?.split(',') ?? [];

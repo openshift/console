@@ -10,7 +10,7 @@ import {
   PageSection,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import {
   useResolvedExtensions,
   UserPreferenceGroup,
@@ -18,7 +18,6 @@ import {
   UserPreferenceItem,
   isUserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils/router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -40,6 +39,7 @@ import './UserPreferencePage.scss';
 const UserPreferencePage: FC = () => {
   // resources and calls to hooks
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const userPreferenceGroupExtensions = useExtensions<UserPreferenceGroup>(isUserPreferenceGroup);
   const sortedUserPreferenceGroups = orderExtensionBasedOnInsertBeforeAndAfter<
@@ -124,7 +124,7 @@ const UserPreferencePage: FC = () => {
     }
     event.preventDefault();
     setActiveTabId(eventKey);
-    history.replace(`${USER_PREFERENCES_BASE_URL}/${eventKey}`);
+    navigate(`${USER_PREFERENCES_BASE_URL}/${eventKey}`, { replace: true });
   };
   const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
   return (

@@ -17,4 +17,4 @@ export const isFileUpload = (e: Extension): e is FileUpload => e.type === 'conso
 
 // Support types
 
-export type FileUploadHandler = (file: File, namespace: string) => void;
+export type FileUploadHandler = (file: File, namespace: string) => string | void;

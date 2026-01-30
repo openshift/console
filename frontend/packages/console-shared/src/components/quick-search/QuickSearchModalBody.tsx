@@ -1,13 +1,9 @@
 import type { ReactNode, FC, FormEvent } from 'react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-  history,
-} from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import { CatalogType } from '../catalog';
 import QuickSearchBar from './QuickSearchBar';
@@ -37,6 +33,8 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
   icon,
   detailsRenderer,
 }) => {
+  const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
+  const navigate = useNavigate();
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>(getQueryArgument('catalogSearch') || '');
@@ -81,7 +79,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
       setSelectedItemId('');
       setSelectedItem(null);
     },
-    [searchCatalog],
+    [searchCatalog, setQueryArgument, removeQueryArgument],
   );
 
   const onCancel = useCallback(() => {
@@ -104,12 +102,12 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
       const { id } = document.activeElement;
       const activeViewAllLink = viewAll?.find((link) => link.catalogType === id);
       if (activeViewAllLink) {
-        history.push(activeViewAllLink.to);
+        navigate(activeViewAllLink.to);
       } else if (selectedItem) {
-        handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
+        handleCta(e, selectedItem, closeModal, fireTelemetryEvent, navigate, removeQueryArgument);
       }
     },
-    [closeModal, fireTelemetryEvent, selectedItem, viewAll],
+    [closeModal, fireTelemetryEvent, selectedItem, viewAll, navigate, removeQueryArgument],
   );
 
   const selectPrevious = useCallback(() => {

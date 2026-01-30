@@ -6,14 +6,13 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils/router';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type { FC, Ref } from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
@@ -70,6 +69,7 @@ const useCanCreateResource = () => {
 
 const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
@@ -117,7 +117,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
           onClick={(ev: any) => {
             ev.preventDefault();
             fireTelemetryEvent('quick-create-import-yaml');
-            history.push(importYAMLURL);
+            navigate(importYAMLURL);
           }}
           tooltipProps={{
             content: t('public~Create resources from their YAML or JSON definitions'),
@@ -136,7 +136,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
               onClick={(ev: any) => {
                 ev.preventDefault();
                 fireTelemetryEvent('quick-create-import-from-git');
-                history.push(getImportFromGitURL(namespace));
+                navigate(getImportFromGitURL(namespace));
               }}
               tooltipProps={{
                 content: t('public~Import code from your Git repository to be built and deployed'),
@@ -153,7 +153,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
               onClick={(ev: any) => {
                 ev.preventDefault();
                 fireTelemetryEvent('quick-create-container-images');
-                history.push(getContainerImageURL(namespace));
+                navigate(getContainerImageURL(namespace));
               }}
               tooltipProps={{
                 content: t(
@@ -180,14 +180,14 @@ export const QuickCreateImportFromGit = ({ namespace, className }) => {
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
   const canCreate = useCanCreateResource();
+  const handleClick = useCallback(() => {
+    navigate(getImportFromGitURL(namespace));
+  }, [navigate, namespace]);
+
   return (
     canCreate &&
     !opeshiftStartGuideEnable && (
-      <button
-        type="button"
-        onClick={() => navigate(getImportFromGitURL(namespace))}
-        className={className}
-      >
+      <button type="button" onClick={handleClick} className={className}>
         {t('public~Import from Git')}
       </button>
     )
@@ -200,14 +200,14 @@ export const QuickCreateContainerImages = ({ namespace, className }) => {
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
 
   const canCreate = useCanCreateResource();
+  const handleClick = useCallback(() => {
+    navigate(getContainerImageURL(namespace));
+  }, [navigate, namespace]);
+
   return (
     canCreate &&
     !opeshiftStartGuideEnable && (
-      <button
-        type="button"
-        onClick={() => navigate(getContainerImageURL(namespace))}
-        className={className}
-      >
+      <button type="button" onClick={handleClick} className={className}>
         {t('public~Container images')}
       </button>
     )

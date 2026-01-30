@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, MemoryRouter } from 'react-router-dom-v5-compat';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
@@ -58,16 +58,16 @@ jest.mock('@console/shared/src/components/breadcrumbs/Breadcrumbs', () => ({
   Breadcrumbs: () => 'Breadcrumbs',
 }));
 
-jest.mock('../../../NamespacedPage', () => ({
-  __esModule: true,
-  default: (props) => props.children,
-  NamespacedPageVariants: { light: 'light' },
-}));
-
 jest.mock('../../CreateProjectListPage', () => ({
   __esModule: true,
   default: () => 'CreateProjectListPage',
   CreateAProjectButton: () => 'CreateAProjectButton',
+}));
+
+jest.mock('../../../NamespacedPage', () => ({
+  __esModule: true,
+  default: (props) => props.children,
+  NamespacedPageVariants: { light: 'light' },
 }));
 
 jest.mock('../../../project-access/ProjectAccessPage', () => ({
@@ -97,7 +97,11 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({});
 
-    render(<PageContents />);
+    render(
+      <MemoryRouter>
+        <PageContents />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText(/CreateProjectListPage/)).toBeInTheDocument();
   });
@@ -106,7 +110,11 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<PageContents />);
+    render(
+      <MemoryRouter>
+        <PageContents />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });
@@ -115,7 +123,11 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(true);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<ProjectDetailsPage />);
+    render(
+      <MemoryRouter>
+        <ProjectDetailsPage />
+      </MemoryRouter>,
+    );
 
     expect(screen.queryByText(/Breadcrumbs/)).not.toBeInTheDocument();
   });
@@ -124,7 +136,11 @@ describe('ProjectDetailsPage', () => {
     (useAccessReview as jest.Mock).mockReturnValue(false);
     (useParams as jest.Mock).mockReturnValue({ ns: 'test-project' });
 
-    render(<PageContents />);
+    render(
+      <MemoryRouter>
+        <PageContents />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByText(/DetailsPage/)).toBeInTheDocument();
   });

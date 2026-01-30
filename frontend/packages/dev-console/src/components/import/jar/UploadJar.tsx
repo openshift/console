@@ -1,9 +1,10 @@
 import type { FunctionComponent } from 'react';
+import { useCallback } from 'react';
 import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { WatchK8sResultsObject, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared/src';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
@@ -32,6 +33,8 @@ const UploadJar: FunctionComponent<UploadJarProps> = ({
   forApplication,
   contextualSource,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const postFormCallback = useResourceConnectionHandler();
   const toastCallback = useUploadJarFormToast();
   const { t } = useTranslation();
@@ -86,6 +89,7 @@ const UploadJar: FunctionComponent<UploadJarProps> = ({
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({
             selectId: filterDeployedResources(resp)[0]?.metadata?.uid,
           }),
@@ -100,7 +104,7 @@ const UploadJar: FunctionComponent<UploadJarProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (
