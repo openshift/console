@@ -10,7 +10,14 @@ Example: `/bug The quick search modal doesn't close when clicking outside of it`
 - Bug reports should be created in the OCPBUGS JIRA project with the "Management Console" component
 - Bug branches should be created from the main branch (named `main` in OpenShift projects)
 - The codebase uses both frontend (TypeScript/React) and backend (Go) code
-- Bug reports should follow Red Hat's issue reporting standards
+- Bug reports should follow Red Hat's issue reporting standards, which include these required sections:
+  - **Description of problem**: Clear explanation with technical details
+  - **Version-Release number of selected component**: OpenShift version where bug is observed
+  - **How reproducible**: Always, Sometimes, Rarely, or Unknown
+  - **Steps to reproduce**: Numbered list of exact steps
+  - **Actual results**: What actually happens
+  - **Expected results**: What should happen
+  - **Additional info**: Technical details, code references, impact, workarounds
 
 ## Instructions
 
