@@ -105,4 +105,4 @@ const DeleteHPAModalProvider: OverlayComponent<DeleteHPAModalProviderProps> = (p
   );
 };
 
-export default DeleteHPAModalProvider;
+export { DeleteHPAModalProvider };
