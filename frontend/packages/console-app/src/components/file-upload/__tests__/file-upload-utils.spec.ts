@@ -102,7 +102,7 @@ describe('file-upload-utils', () => {
 
   it('should return the file upload handler for supported file type', () => {
     const fileEx = getRequiredFileUploadExtension(fileUploadExtensions, 'string-boot.jar');
-    expect(fileEx.properties.handler).toEqual(handler1);
+    expect(fileEx?.properties.handler).toEqual(handler1);
   });
 
   it('should return null if there is no handler for a file type', () => {

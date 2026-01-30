@@ -21,7 +21,7 @@ export const createModal: CreateModal = (getModalElement) => {
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
-      ReactDOM.unmountComponentAtNode(containerElement);
+      containerElement && ReactDOM.unmountComponentAtNode(containerElement);
       resolve();
     };
     Modal.setAppElement(document.getElementById('app-content'));
@@ -73,10 +73,18 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
           <CompatRouter>
             {modalWrapper ? (
               <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
-                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+                <Component
+                  {...(props as React.ComponentProps<typeof Component>)}
+                  cancel={handleCancel}
+                  close={handleClose}
+                />
               </ModalWrapper>
             ) : (
-              <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+              <Component
+                {...(props as React.ComponentProps<typeof Component>)}
+                cancel={handleCancel}
+                close={handleClose}
+              />
             )}
           </CompatRouter>
         </Router>
@@ -154,12 +162,12 @@ export const ModalSubmitFooter: FC<ModalSubmitFooterProps> = ({
   const { t } = useTranslation();
   const onCancelClick = (e) => {
     e.stopPropagation();
-    cancel(e);
+    cancel?.(e);
   };
 
   const onResetClick = (e) => {
     e.stopPropagation();
-    reset(e);
+    reset?.(e);
   };
 
   const cancelButton = (
@@ -270,7 +278,7 @@ export type ModalSubmitFooterProps = {
   message?: string;
   errorMessage?: string;
   inProgress: boolean;
-  cancel: (e: SyntheticEvent<any, Event>) => void;
+  cancel?: (e: SyntheticEvent<any, Event>) => void;
   cancelText?: ReactNode;
   className?: string;
   resetText?: ReactNode;

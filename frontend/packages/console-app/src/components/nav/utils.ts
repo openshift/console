@@ -123,11 +123,11 @@ export const sortExtensionItems = <E extends NavExtension>(
   const sortItems = (preSorted: NavExtension[], itemsToSort: NavExtension[]): NavExtension[] => {
     if (itemsToSort.length < 2) {
       preSorted.push(...itemsToSort);
-      return;
+      return preSorted;
     }
 
     let sortedItem = false;
-    const remainingItems = [];
+    const remainingItems: NavExtension[] = [];
     itemsToSort.forEach((item) => {
       const deps = dependencies(item.properties.id);
       // If not dependant on any items to be sorted, ok to add it in
@@ -144,11 +144,12 @@ export const sortExtensionItems = <E extends NavExtension>(
       // If nothing changed, just add the remaining items
       if (!sortedItem) {
         preSorted.push(...remainingItems);
-        return;
+        return preSorted;
       }
       // Sort the remaining items
       sortItems(preSorted, remainingItems);
     }
+    return preSorted;
   };
 
   const sortedItems = [];
