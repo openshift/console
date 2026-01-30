@@ -4,14 +4,10 @@ import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import * as Yup from 'yup';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import {
-  history,
-  resourcePathFromModel,
-  LoadingBox,
-  LoadError,
-} from '@console/internal/components/utils';
+import { resourcePathFromModel, LoadingBox, LoadError } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
@@ -62,6 +58,7 @@ type AddBareMetalHostProps = {
 
 const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePowerMgmt }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const bmhResource = useMemo<WatchK8sResource>(
     () =>
       name
@@ -173,7 +170,7 @@ const AddBareMetalHost: FC<AddBareMetalHostProps> = ({ namespace, name, enablePo
 
     return promise
       .then(() => {
-        history.push(resourcePathFromModel(BareMetalHostModel, values.name, namespace));
+        navigate(resourcePathFromModel(BareMetalHostModel, values.name, namespace));
       })
       .catch((error) => {
         actions.setStatus({ submitError: error.message });

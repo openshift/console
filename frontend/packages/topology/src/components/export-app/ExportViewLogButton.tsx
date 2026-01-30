@@ -2,7 +2,8 @@ import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { resourcePath, history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { JobModel, PodModel } from '@console/internal/models';
 import type { PodKind, JobKind } from '@console/internal/module/k8s';
@@ -16,6 +17,7 @@ interface ExportViewLogButtonProps {
 }
 
 const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({ name, namespace, onViewLog }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [job, jobLoaded] = useK8sWatchResource<JobKind>({
     kind: JobModel.kind,
@@ -50,7 +52,7 @@ const ExportViewLogButton: FC<ExportViewLogButtonProps> = ({ name, namespace, on
       return;
     }
     e.preventDefault();
-    history.push(path);
+    navigate(path);
     onViewLog?.();
   };
 
