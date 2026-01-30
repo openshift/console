@@ -20,6 +20,7 @@ jest.mock('@console/internal/components/factory/modal', () => ({
   ModalTitle: jest.fn(({ children }) => children),
   ModalBody: jest.fn(({ children }) => children),
   ModalSubmitFooter: jest.fn(() => null),
+  ModalWrapper: jest.fn(({ children }) => children),
 }));
 
 const mockModelFor = modelFor as jest.Mock;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -23,6 +23,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   getGroupVersionKindForModel,
   K8sResourceKind,
@@ -96,9 +97,9 @@ import {
   DeprecatedOperatorWarningIcon,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
-import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
-import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import { InstallPlanApprovalModalProvider } from './modals/installplan-approval-modal';
+import { SubscriptionChannelModalProvider } from './modals/subscription-channel-modal';
+import { UninstallOperatorModalProvider } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
@@ -419,6 +420,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   subscriptions = [],
 }) => {
   const { t } = useTranslation();
+  const launcher = useOverlay();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
     (ch) => ch.catalogSourceRef.name === source,
@@ -426,14 +428,13 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
-  const uninstallOperatorModal = useUninstallOperatorModal({
-    k8sKill,
-    k8sGet,
-    k8sPatch,
-    subscription: obj,
-  });
   if (new URLSearchParams(window.location.search).has('showDelete')) {
-    uninstallOperatorModal();
+    launcher(UninstallOperatorModalProvider, {
+      k8sKill,
+      k8sGet,
+      k8sPatch,
+      subscription: obj,
+    });
     removeQueryArgument('showDelete');
   }
 
@@ -562,6 +563,7 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
   const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
   const prevChannel = useRef(obj?.spec?.channel);
   const [waitingForUpdate, setWaitingForUpdate] = useState(false);
@@ -579,11 +581,24 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
     }
   }, [obj, waitingForUpdate]);
 
-  const k8sUpdateAndWait = (kind: K8sKind, resource: K8sResourceCommon) =>
-    k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true));
-  const channelModal = () =>
-    createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
-  const approvalModal = () => createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });
+  const k8sUpdateAndWait = useCallback(
+    (kind: K8sKind, resource: K8sResourceCommon) =>
+      k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true)),
+    [setWaitingForUpdate],
+  );
+  const channelModal = useCallback(
+    () =>
+      launchOverlay(SubscriptionChannelModalProvider, {
+        subscription: obj,
+        pkg,
+        k8sUpdate: k8sUpdateAndWait,
+      }),
+    [obj, pkg, k8sUpdateAndWait, launchOverlay],
+  );
+  const approvalModal = useCallback(
+    () => launchOverlay(InstallPlanApprovalModalProvider, { obj, k8sUpdate: k8sUpdateAndWait }),
+    [obj, k8sUpdateAndWait, launchOverlay],
+  );
   const installPlanPhase = useMemo(() => {
     if (installPlan) {
       switch (installPlan.status?.phase as InstallPlanPhase) {
