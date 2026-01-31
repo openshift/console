@@ -1,6 +1,6 @@
 import { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
-import type { LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
+import type { LocalPluginManifest, PluginLoaderOptions } from '@openshift/dynamic-plugin-sdk';
 import type { Middleware } from 'redux';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
 import type { RootState } from './redux';
@@ -8,8 +8,11 @@ import { valid as semver } from 'semver';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 
-/** Set by `console-operator` or `./bin/bridge -release-version` */
-const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion);
+/**
+ * Set by `console-operator` or `./bin/bridge -release-version`. If this is
+ * undefined, we will not check this value when loading plugins.
+ */
+const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? undefined;
 
 /**
  * Console local plugins module has its source generated during webpack build,
@@ -22,6 +25,31 @@ const localPlugins =
 
 const localPluginNames = localPlugins.map((p) => p.name);
 
+const validatePluginManifest: PluginLoaderOptions['transformPluginManifest'] = (manifest) => {
+  const isLocalPlugin = localPluginNames.includes(manifest.name);
+
+  // Local plugins can skip remote plugin validation
+  if (isLocalPlugin) {
+    return manifest;
+  }
+
+  // Only allow plugins listed in `dynamicPluginNames` to be loaded
+  if (!dynamicPluginNames.includes(manifest.name)) {
+    throw new Error(`Plugin "${manifest.name}" is not in the list of allowed plugins.`);
+  }
+
+  // Ensure plugin name can be a valid DNS subdomain name for loading
+  const result = new ValidationResult('Console plugin metadata');
+  result.assertions.validDNSSubdomainName(manifest.name, 'metadata.name');
+
+  if (result.hasErrors()) {
+    throw new Error(result.formatErrors());
+  }
+
+  // No issues, return manifest as-is
+  return manifest;
+};
+
 /**
  * Provides access to Console plugins and their extensions.
  *
@@ -32,41 +60,14 @@ const localPluginNames = localPlugins.map((p) => p.name);
 export const pluginStore = new PluginStore({
   loaderOptions: {
     sharedScope: getSharedScope(),
-    // @ts-expect-error incompatible due to console-specific fetch options
+    // @ts-expect-error: Updated type in dynamic-plugin-sdk v7
     fetchImpl: consoleFetch,
     // Allows plugins to target a specific version of OpenShift via semver
-    fixedPluginDependencyResolutions: {
-      // TODO(plugin-sdk): allow a way to bypass this dependency in development, where we don't have this info
-      '@console/pluginAPI':
-        process.env.NODE_ENV === 'production'
-          ? CURRENT_OPENSHIFT_VERSION // this is always provided by console-operator in production
-          : CURRENT_OPENSHIFT_VERSION || '4.1337.67',
+    customDependencyResolutions: {
+      '@console/pluginAPI': CURRENT_OPENSHIFT_VERSION,
     },
     // Additional validation for plugin manifest
-    transformPluginManifest: (manifest) => {
-      const isLocalPlugin = localPluginNames.includes(manifest.name);
-
-      // Local plugins can skip remote plugin validation
-      if (isLocalPlugin) {
-        return manifest;
-      }
-
-      // Only allow plugins listed in `dynamicPluginNames` to be loaded
-      if (!dynamicPluginNames.includes(manifest.name)) {
-        throw new Error(`Plugin "${manifest.name}" is not in the list of allowed plugins.`);
-      }
-
-      // Ensure plugin name can be a valid DNS subdomain name for loading
-      const result = new ValidationResult('Console plugin metadata');
-      result.assertions.validDNSSubdomainName(manifest.name, 'metadata.name');
-
-      if (result.hasErrors()) {
-        throw new Error(result.formatErrors());
-      }
-
-      // No issues, return manifest as-is
-      return manifest;
-    },
+    transformPluginManifest: validatePluginManifest,
   },
 });
 

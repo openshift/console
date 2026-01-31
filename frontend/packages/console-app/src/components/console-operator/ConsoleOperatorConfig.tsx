@@ -19,7 +19,6 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import type { ConsoleSupportedCustomProperties } from '@console/dynamic-plugin-sdk/src/build-types';
 import {
   getGroupVersionKindForModel,
   getReferenceForModel,
@@ -305,8 +304,7 @@ const DevPluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         .map((plugin) => ({
           name: plugin.manifest.name,
           version: plugin.manifest.version,
-          description: (plugin.manifest.customProperties
-            ?.console as ConsoleSupportedCustomProperties)?.description,
+          description: plugin.manifest.customProperties?.console?.description,
           enabled: plugin.enabled,
           status: plugin.status,
           hasCSPViolations: cspViolations[plugin.manifest.name] ?? false,
@@ -348,8 +346,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
         return {
           name: plugin?.metadata?.name,
           version: loadedPluginInfo?.manifest.version,
-          description: (loadedPluginInfo?.manifest.customProperties
-            ?.console as ConsoleSupportedCustomProperties)?.description,
+          description: loadedPluginInfo?.manifest.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
           hasCSPViolations: cspViolations[loadedPluginInfo?.manifest.name] ?? false,

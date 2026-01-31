@@ -1981,7 +1981,7 @@ Component for displaying a red exclamation mark circle icon.
 
 ### Summary 
 
-Modify `TExtension` type by replacing `CodeRef<T>` property values with `T` values.
+Runtime extension interface, with `CodeRef<T>` property values resolved to `T` values.
 
 
 

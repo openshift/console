@@ -11,7 +11,8 @@ import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
-import { LoadedExtension, PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
+import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
@@ -37,7 +38,6 @@ import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/Fe
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   useResolvedExtensions,
-  ResolvedExtension,
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
@@ -95,8 +95,7 @@ const EnhancedProvider: FC<{
 };
 
 const App: FC<{
-  // TODO(CONSOLE-3769): use LoadedAndResolvedExtension from @openshift/dynamic-plugin-sdk
-  contextProviderExtensions: ResolvedExtension<LoadedExtension<ContextProvider>>[];
+  contextProviderExtensions: LoadedAndResolvedExtension<ContextProvider>[];
 }> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();

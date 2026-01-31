@@ -4,7 +4,7 @@ export type {
   Extension,
   ExtensionFlags,
   ExtensionPredicate as ExtensionTypeGuard,
-  ResolvedExtension,
+  LoadedAndResolvedExtension as ResolvedExtension,
   LoadedExtension,
   MapCodeRefsToValues as ResolvedCodeRefProperties,
   PluginEntryModule as RemoteEntryModule,

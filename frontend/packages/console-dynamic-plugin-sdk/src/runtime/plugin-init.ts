@@ -5,7 +5,6 @@ import {
   getSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
-import type { ConsoleSupportedCustomProperties } from '../build-types';
 import type { ErrorWithCause } from '../utils/error/custom-error';
 import { resolveURL } from '../utils/url';
 
@@ -41,8 +40,7 @@ const loadAndEnablePlugin = async (
     );
   } else if (plugin?.status === 'loaded') {
     const disablePlugins = (
-      (plugin.manifest.customProperties?.console as ConsoleSupportedCustomProperties)
-        ?.disableStaticPlugins ?? []
+      plugin.manifest.customProperties?.console?.disableStaticPlugins ?? []
     ).filter((name) => {
       const pluginInfo = pluginStore.getPluginInfo().find((p) => p.manifest.name === name);
 
