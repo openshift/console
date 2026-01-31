@@ -1,5 +1,4 @@
-import { useMemo, useCallback, useEffect } from 'react';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRCData } from '../types';
@@ -17,9 +16,9 @@ export const usePodsWatcher = (
   kind?: string,
   namespace?: string,
 ): { loaded: boolean; loadError: string; podData: PodRCData } => {
-  const [loaded, setLoaded] = useSafetyFirst<boolean>(false);
-  const [loadError, setLoadError] = useSafetyFirst<string>('');
-  const [podData, setPodData] = useSafetyFirst<PodRCData>(undefined);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string>('');
+  const [podData, setPodData] = useState<PodRCData>(undefined);
   const watchKind = kind || resource?.kind;
   const watchNS = namespace || resource?.metadata.namespace;
   const watchedResources = useMemo(

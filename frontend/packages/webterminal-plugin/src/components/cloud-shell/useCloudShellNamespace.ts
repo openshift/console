@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
-import { useSafetyFirst } from '@console/dynamic-plugin-sdk/src/app/components/safety-first';
+import { useEffect, useState } from 'react';
 import { getTerminalInstalledNamespace } from './cloud-shell-utils';
 
 const useCloudShellNamespace = (): [string, string] => {
-  const [terminalNamespace, setTerminalNamespace] = useSafetyFirst<string>(undefined);
-  const [fetchError, setFetchError] = useSafetyFirst<string>(undefined);
+  const [terminalNamespace, setTerminalNamespace] = useState<string>(undefined);
+  const [fetchError, setFetchError] = useState<string>(undefined);
   useEffect(() => {
     const fetchNamespace = async () => {
       try {
