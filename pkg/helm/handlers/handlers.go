@@ -30,8 +30,10 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		renderManifests:         actions.RenderManifests,
 		installChartAsync:       actions.InstallChartAsync,
 		installChart:            actions.InstallChart,
+		installOCIChart:         actions.InstallOCIChart,
 		listReleases:            actions.ListReleases,
 		getRelease:              actions.GetRelease,
+		getOCIChart:             actions.GetOCIChart,
 		getChart:                actions.GetChart,
 		upgradeReleaseAsync:     actions.UpgradeReleaseAsync,
 		upgradeRelease:          actions.UpgradeRelease,
@@ -62,6 +64,7 @@ type helmHandlers struct {
 	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
 	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
+	installOCIChart       func(string, string, string, map[string]interface{}, *action.Configuration) (*release.Release, error)
 	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
@@ -70,6 +73,7 @@ type helmHandlers struct {
 	rollbackRelease       func(string, int, *action.Configuration) (*release.Release, error)
 	getRelease            func(string, *action.Configuration) (*release.Release, error)
 	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
+	getOCIChart           func(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error)
 	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
 }
@@ -411,4 +415,53 @@ func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.Respo
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *helmHandlers) HandleOCIChartGet(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	namespace := params.Get("namespace")
+	if namespace == "" {
+		namespace = "default"
+	}
+	chartUrl := params.Get("url")
+
+	if chartUrl == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "chart URL is required"})
+		return
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	handlerClients, err := NewHandlerClients(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
+		return
+	}
+	resp, err := h.getOCIChart(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	res, _ := json.Marshal(resp)
+	w.Write(res)
+}
+
+func (h *helmHandlers) HandleInstallOCIChart(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	var req HelmRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
+		return
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	resp, err := h.installOCIChart(req.Namespace, req.Name, req.ChartUrl, req.Values, conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
+		return
+	}
+	serverutils.SendResponse(w, http.StatusCreated, resp)
 }

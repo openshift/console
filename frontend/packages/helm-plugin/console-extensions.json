@@ -135,6 +135,17 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm/ns/:ns/oci-chart"],
+      "component": { "$codeRef": "HelmOCIChartInstallPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "helm-chart-repositories",

@@ -17,6 +17,7 @@ import {
   HelmActionConfigType,
   HelmActionOrigins,
   HelmChartEntries,
+  HelmOCIChart,
 } from '../types/helm-types';
 
 export const HelmReleaseStatusLabels = {
@@ -346,3 +347,11 @@ export const isGoingToTopology = (resources: K8sResourceKind[]) =>
   !!resources.find((resource) =>
     WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
   );
+
+export const fetchHelmOCIChart = async (namespace: string): Promise<HelmOCIChart> => {
+  return coFetchJSON(`/api/helm/oci-chart?ns=${namespace}`);
+};
+
+export const createHelmRelease = async (namespace: string, data: HelmOCIChart) => {
+  return coFetchJSON.post('/api/helm/oci-chart', { namespace, ...data });
+};

@@ -30,7 +30,8 @@
       "helmTopologySidebarTabSections": "src/topology/sidebar/release-panel/tab-sections.tsx",
       "helmIcons": "src/utils/icons.tsx",
       "helmDetectionProvider": "src/providers/helm-detection-provider.ts",
-      "useHelmChartRepositoriesBreadcrumbs": "src/providers/useHelmChartRepositoriesBreadcrumbs.ts"
+      "useHelmChartRepositoriesBreadcrumbs": "src/providers/useHelmChartRepositoriesBreadcrumbs.ts",
+      "HelmOCIChartInstallPage": "src/components/forms/oci-chart/HelmOCIChartInstallPage.tsx"
     }
   }
 }
