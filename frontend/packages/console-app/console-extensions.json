@@ -2646,9 +2646,9 @@
     }
   },
   {
-    "type": "console.flag/hookProvider",
+    "type": "console.flag",
     "properties": {
-      "handler": { "$codeRef": "useTechPreviewFlagProvider" }
+      "handler": { "$codeRef": "techPreviewFlag.handler" }
     }
   },
   {
