@@ -12,13 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalFooter,
-  ModalComponentProps,
-} from '../factory/modal';
+import { ModalTitle, ModalBody, ModalFooter, ModalComponentProps } from '../factory/modal';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 
 export const ModalErrorContent = (props: ErrorModalProps) => {
@@ -63,9 +57,6 @@ export const useErrorModalLauncher = (props) => {
   const launcher = useOverlay();
   return useCallback(() => launcher<ErrorModalProps>(ErrorModal, props), [launcher, props]);
 };
-
-/** @deprecated Use useErrorModalLauncher hook instead */
-export const errorModal = createModalLauncher(ModalErrorContent);
 
 export type ErrorModalProps = {
   error: string | React.ReactNode;

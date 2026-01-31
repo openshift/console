@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Page, navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
+import { useSetupGlobalErrorModalLauncher } from '@console/shared';
 import {
   ActionMenu,
   ActionMenuVariant,
@@ -14,6 +15,7 @@ import BuildRunEventsTab from './BuildRunEventsTab';
 import BuildRunLogsTab from './BuildRunLogsTab';
 
 const BuildRunDetailsPage: FC<DetailsPageProps> = (props) => {
+  useSetupGlobalErrorModalLauncher();
   const customActionMenu = (_, buildRun) => {
     const kindReference = referenceFor(buildRun);
     const context = { [kindReference]: buildRun };
