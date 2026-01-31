@@ -96,10 +96,11 @@
   --pf-v5-c-form-control--LineHeight: var(--pf-v5-global--LineHeight--md);
   --pf-v5-c-form-control--Resize: none;
   --pf-v5-c-form-control--OutlineOffset: 0;
-  --pf-c-form-control--BorderTopColor: var(--pf-global--BorderColor--300);
-  --pf-c-form-control--BorderRightColor: var(--pf-global--BorderColor--300);
-  --pf-c-form-control--BorderBottomColor: var(--pf-global--BorderColor--200);
-  --pf-c-form-control--BorderLeftColor: var(--pf-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderTopColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderRightColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--before--BorderBottomColor: transparent;
+  --pf-v5-c-form-control--before--BorderLeftColor: var(--pf-v5-global--BorderColor--300);
+  --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
   --pf-v5-c-form-control--before--BorderTopWidth: var(--pf-v5-global--BorderWidth--sm);
   --pf-v5-c-form-control--before--BorderRightWidth: var(--pf-v5-global--BorderWidth--sm);
   --pf-v5-c-form-control--before--BorderBottomWidth: 0;
@@ -137,11 +138,11 @@
 
   // disabled
   --pf-v5-c-form-control--m-disabled--Color: var(--pf-v5-global--disabled-color--100);
-  --pf-v5-c-form-control--m-disabled--BackgroundColor: var(--pf-v5-global--disabled-color--300);
+  --pf-v5-c-form-control--m-disabled--BackgroundColor: var(--pf-v5-global--disabled-color--200);
   --pf-v5-c-form-control--m-disabled--after--BorderColor: transparent;
 
   // readonly
-  --pf-v5-c-form-control--m-readonly--BackgroundColor: var(--pf-v5-global--disabled-color--300);
+  --pf-v5-c-form-control--m-readonly--BackgroundColor: var(--pf-v5-global--disabled-color--200);
   --pf-v5-c-form-control--m-readonly--hover--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
   --pf-v5-c-form-control--m-readonly--focus--after--BorderBottomWidth: var(--pf-v5-global--BorderWidth--sm);
   --pf-v5-c-form-control--m-readonly--focus--after--BorderBottomColor: var(--pf-v5-global--BorderColor--200);
@@ -231,7 +232,7 @@
     padding-inline-end: var(--pf-v5-c-form-control--PaddingRight);
     color: var(--pf-v5-c-form-control--Color);
     border: var(--pf-global--BorderWidth--sm) solid;
-    border-color: var(--pf-c-form-control--BorderTopColor) var(--pf-c-form-control--BorderRightColor) var(--pf-c-form-control--BorderBottomColor) var(--pf-c-form-control--BorderLeftColor);
+    border-color: var(--pf-v5-c-form-control--before--BorderTopColor) var(--pf-v5-c-form-control--before--BorderRightColor) var(--pf-v5-c-form-control--after--BorderBottomColor) var(--pf-v5-c-form-control--before--BorderBottomColor);
     // stylelint-disable
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -422,14 +423,14 @@
 
 :where(.pf-theme-dark) .pf-v5-c-form-control {
   --pf-c-form-control__select--BackgroundUrl: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath fill='%23e0e0e0' d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'/%3E%3C/svg%3E");
-  --pf-c-form-control--BorderTopColor: transparent;
-  --pf-c-form-control--BorderRightColor: transparent;
-  --pf-c-form-control--BorderBottomColor: var(--pf-global--BorderColor--400);
-  --pf-c-form-control--BorderLeftColor: transparent;
-  --pf-c-form-control--BackgroundColor: var(--pf-global--BackgroundColor--400);
-  --pf-c-form-control--disabled--Color: var(--pf-global--disabled-color--300);
-  --pf-c-form-control--disabled--BackgroundColor: var(--pf-global--disabled-color--200);
-  --pf-c-form-control--readonly--BackgroundColor: var(--pf-global--BackgroundColor--400);
+  --pf-v5-c-form-control--before--BorderTopColor: transparent;
+  --pf-v5-c-form-control--before--BorderRightColor: transparent;
+  --pf-v5-c-form-control--before--BorderLeftColor: transparent;
+  --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-global--BorderColor--400);
+  --pf-v5-c-form-control--BackgroundColor: var(--pf-global--BackgroundColor--400);
+  --pf-v5-c-form-control--disabled--Color: var(--pf-global--disabled-color--300);
+  --pf-v5-c-form-control--disabled--BackgroundColor: var(--pf-global--disabled-color--200);
+  --pf-v5-c-form-control--readonly--BackgroundColor: var(--pf-global--BackgroundColor--400);
   color: var(--pf-global--Color--100);
 }
 :where(.pf-theme-dark) .pf-v5-c-form-control::-webkit-calendar-picker-indicator {
