@@ -18,11 +18,18 @@ import {
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
 import {
+  getGroupVersionKindForResource,
+  K8sModel,
   ListPageBody,
   useAccessReview,
+  useFlag,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
+  K8sGroupVersionKind,
+  K8sResourceCommon,
+  K8sResourceKind,
   NodeCertificateSigningRequestKind,
+  OwnerReference,
   RowProps,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -36,13 +43,25 @@ import { LabelList } from '@console/internal/components/utils/label-list';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { humanizeBinaryBytes, formatCores } from '@console/internal/components/utils/units';
-import { NodeModel, MachineModel } from '@console/internal/models';
+import {
+  NodeModel,
+  MachineModel,
+  MachineConfigPoolModel,
+  MachineSetModel,
+  ControlPlaneMachineSetModel,
+  CertificateSigningRequestModel,
+} from '@console/internal/models';
 import {
   NodeKind,
   referenceForModel,
   CertificateSigningRequestKind,
   referenceFor,
   Selector,
+  MachineKind,
+  MachineConfigPoolKind,
+  LabelSelector,
+  MachineSetKind,
+  ControlPlaneMachineSetKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
@@ -82,6 +101,13 @@ import { NodeStatusWithExtensions } from './NodeStatus';
 import ClientCSRStatus from './status/CSRStatus';
 import { GetNodeStatusExtensions, useNodeStatusExtensions } from './useNodeStatusExtensions';
 
+// TODO: Remove VMI retrieval and VMs count column if/when the plugin is able to add the VMs count column
+const VirtualMachineInstanceGroupVersionKind: K8sGroupVersionKind = {
+  group: 'kubevirt.io',
+  kind: 'VirtualMachineInstance',
+  version: 'v1',
+};
+
 const nodeColumnInfo = Object.freeze({
   name: {
     id: 'name',
@@ -89,8 +115,11 @@ const nodeColumnInfo = Object.freeze({
   status: {
     id: 'status',
   },
-  role: {
-    id: 'role',
+  machineOwner: {
+    id: 'machineOwner',
+  },
+  vms: {
+    id: 'vms',
   },
   pods: {
     id: 'pods',
@@ -100,6 +129,9 @@ const nodeColumnInfo = Object.freeze({
   },
   cpu: {
     id: 'cpu',
+  },
+  role: {
+    id: 'role',
   },
   architecture: {
     id: 'architecture',
@@ -115,6 +147,9 @@ const nodeColumnInfo = Object.freeze({
   },
   machine: {
     id: 'machine',
+  },
+  machineConfigPool: {
+    id: 'machineConfigPool',
   },
   labels: {
     id: 'labels',
@@ -132,7 +167,7 @@ const nodeColumnInfo = Object.freeze({
 
 const kind = 'Node';
 
-const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
+const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
   const { t } = useTranslation();
   const columns = useMemo(() => {
     return [
@@ -154,13 +189,33 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         },
       },
       {
-        title: t('console-app~Roles'),
-        id: nodeColumnInfo.role.id,
-        sort: sortWithCSRResource(nodeRolesSort, ''),
+        title: t('console-app~Machine set'),
+        id: nodeColumnInfo.machineOwner.id,
+        sort: 'machineOwner.name',
         props: {
           modifier: 'nowrap',
         },
       },
+      ...(vmsEnabled
+        ? [
+            {
+              title: t('console-app~Virtual machines'),
+              id: nodeColumnInfo.vms.id,
+              sort: 'virtualMachines',
+              props: {
+                modifier: 'nowrap',
+                info: {
+                  tooltip: t(
+                    'console-app~This count is based on your access permissions and might not include all virtual machines.',
+                  ),
+                  tooltipProps: {
+                    isContentLeftAligned: true,
+                  },
+                },
+              },
+            },
+          ]
+        : []),
       {
         title: t('console-app~Pods'),
         id: nodeColumnInfo.pods.id,
@@ -186,6 +241,15 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         },
       },
       {
+        title: t('console-app~Roles'),
+        id: nodeColumnInfo.role.id,
+        sort: sortWithCSRResource(nodeRolesSort, ''),
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
         title: t('console-app~Architecture'),
         id: nodeColumnInfo.architecture.id,
         sort: sortWithCSRResource(nodeArch, ''),
@@ -201,6 +265,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         props: {
           modifier: 'nowrap',
         },
+        additional: true,
       },
       {
         title: t('console-app~Created'),
@@ -209,6 +274,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         props: {
           modifier: 'nowrap',
         },
+        additional: true,
       },
       {
         title: t('console-app~Instance type'),
@@ -217,11 +283,21 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         props: {
           modifier: 'nowrap',
         },
+        additional: true,
       },
       {
         title: t('console-app~Machine'),
         id: nodeColumnInfo.machine.id,
         sort: sortWithCSRResource(nodeMachine, ''),
+        props: {
+          modifier: 'nowrap',
+        },
+        additional: true,
+      },
+      {
+        title: t('console-app~MachineConfigPool'),
+        id: nodeColumnInfo.machineConfigPool.id,
+        sort: 'machineConfigPool.metadata.name',
         props: {
           modifier: 'nowrap',
         },
@@ -263,7 +339,7 @@ const useNodesColumns = (): TableColumn<NodeRowItem>[] => {
         },
       },
     ];
-  }, [t]);
+  }, [t, vmsEnabled]);
   return columns;
 };
 
@@ -311,6 +387,7 @@ const getNodeDataViewRows = (
     const pods = nodeMetrics?.pods?.[nodeName] ?? DASH;
     const architecture = node ? getNodeArchitecture(node) : '';
     const [machineName, machineNamespace] = node ? getNodeMachineNameAndNamespace(node) : ['', ''];
+    const { machineOwner, machineConfigPool, virtualMachines } = obj;
     const instanceType = node?.metadata.labels?.['beta.kubernetes.io/instance-type'] || '';
     const labels = node ? getLabels(node) : csr ? getLabels(csr) : {};
     const zone = node?.metadata.labels?.['topology.kubernetes.io/zone'] || '';
@@ -386,6 +463,31 @@ const getNodeDataViewRows = (
           ) : (
             DASH
           ),
+      },
+      [nodeColumnInfo.machineOwner.id]: {
+        cell:
+          machineOwner && machineNamespace ? (
+            <ResourceLink
+              groupVersionKind={getGroupVersionKindForResource(machineOwner)}
+              name={machineOwner.name}
+              namespace={machineNamespace}
+            />
+          ) : (
+            DASH
+          ),
+      },
+      [nodeColumnInfo.machineConfigPool.id]: {
+        cell: machineConfigPool ? (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForResource(machineConfigPool)}
+            name={machineConfigPool.metadata.name}
+          />
+        ) : (
+          DASH
+        ),
+      },
+      [nodeColumnInfo.vms.id]: {
+        cell: virtualMachines === undefined ? DASH : String(virtualMachines),
       },
       [nodeColumnInfo.labels.id]: {
         cell: <LabelList kind={kind} labels={labels} />,
@@ -466,6 +568,10 @@ type NodeListProps = {
   data: NodeRowItem[];
   loaded: boolean;
   loadError?: unknown;
+  machineSets?: MachineSetKind[];
+  controlPlaneMachineSets?: ControlPlaneMachineSetKind[];
+  machineConfigPools?: MachineConfigPoolKind[];
+  vmsEnabled: boolean;
   hideNameLabelFilters?: boolean;
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
@@ -476,13 +582,17 @@ const NodeList: FC<NodeListProps> = ({
   data,
   loaded,
   loadError,
+  machineSets = [],
+  controlPlaneMachineSets = [],
+  machineConfigPools = [],
+  vmsEnabled,
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
   selectedColumns,
 }) => {
   const { t } = useTranslation();
-  const columns = useNodesColumns();
+  const columns = useNodesColumns(vmsEnabled);
   const nodeMetrics = useSelector<RootState, NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
@@ -548,8 +658,41 @@ const NodeList: FC<NodeListProps> = ({
     [],
   );
 
+  const machineSetFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      [
+        ...machineSets.map((machineSet) => ({
+          value: machineSet.metadata.name,
+          label: machineSet.metadata.name,
+        })),
+        ...controlPlaneMachineSets.map((machineSet) => ({
+          value: machineSet.metadata.name,
+          label: machineSet.metadata.name,
+        })),
+      ].sort((a, b) => a.label.localeCompare(b.label)),
+    [machineSets, controlPlaneMachineSets],
+  );
+
+  const machineConfigPoolFilterOptions = useMemo<DataViewFilterOption[]>(
+    () =>
+      machineConfigPools
+        .map((machineConfigPool) => ({
+          value: machineConfigPool.metadata.name,
+          label: machineConfigPool.metadata.name,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [machineConfigPools],
+  );
+
   const initialFilters = useMemo<NodeFilters>(
-    () => ({ ...initialFiltersDefault, status: [], roles: [], architecture: [] }),
+    () => ({
+      ...initialFiltersDefault,
+      status: [],
+      roles: [],
+      architecture: [],
+      machineOwners: [],
+      machineConfigPools: [],
+    }),
     [],
   );
 
@@ -577,8 +720,29 @@ const NodeList: FC<NodeListProps> = ({
         placeholder={t('console-app~Filter by architecture')}
         options={nodeArchitectureFilterOptions}
       />,
+      <DataViewCheckboxFilter
+        key="machineOwners"
+        filterId="machineOwners"
+        title={t('console-app~Machine set')}
+        placeholder={t('console-app~Filter by machine set')}
+        options={machineSetFilterOptions}
+      />,
+      <DataViewCheckboxFilter
+        key="machineConfigPools"
+        filterId="machineConfigPools"
+        title={t('console-app~MachineConfigPool')}
+        placeholder={t('console-app~Filter by MachineConfigPool')}
+        options={machineConfigPoolFilterOptions}
+      />,
     ],
-    [t, nodeStatusFilterOptions, nodeRoleFilterOptions, nodeArchitectureFilterOptions],
+    [
+      t,
+      nodeStatusFilterOptions,
+      nodeRoleFilterOptions,
+      nodeArchitectureFilterOptions,
+      machineSetFilterOptions,
+      machineConfigPoolFilterOptions,
+    ],
   );
 
   const matchesAdditionalFilters = useCallback((resource: NodeRowItem, filters: NodeFilters) => {
@@ -610,6 +774,21 @@ const NodeList: FC<NodeListProps> = ({
       }
       const arch = getNodeArchitecture(resource as NodeKind);
       if (!filters.architecture.includes(arch)) {
+        return false;
+      }
+    }
+
+    if (filters.machineOwners.length > 0) {
+      if (!resource.machineOwner || !filters.machineOwners.includes(resource.machineOwner.name)) {
+        return false;
+      }
+    }
+
+    if (filters.machineConfigPools.length > 0) {
+      if (
+        !resource.machineConfigPool ||
+        !filters.machineConfigPools.includes(resource.machineConfigPool.metadata.name)
+      ) {
         return false;
       }
     }
@@ -646,39 +825,43 @@ const NodeList: FC<NodeListProps> = ({
   );
 };
 
-type NodeRowItem = NodeKind | NodeCertificateSigningRequestKind;
+type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
+  machineOwner?: OwnerReference;
+  machineConfigPool?: MachineConfigPoolKind;
+  virtualMachines?: number;
+};
 
 type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
   architecture: string[];
+  machineOwners: string[];
+  machineConfigPools: string[];
 };
 
-const useWatchCSRs = (): [CertificateSigningRequestKind[], boolean, unknown] => {
+const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
+  model: K8sModel,
+): [R, boolean, unknown] => {
   const [isAllowed, checkIsLoading] = useAccessReview({
-    group: 'certificates.k8s.io',
-    resource: 'CertificateSigningRequest',
+    group: model.apiGroup || '',
+    resource: model.plural,
     verb: 'list',
   });
-
-  const [csrs, loaded, error] = useK8sWatchResource<CertificateSigningRequestKind[]>(
+  const [resources, loaded, loadError] = useK8sWatchResource<R>(
     isAllowed
       ? {
-          groupVersionKind: {
-            group: 'certificates.k8s.io',
-            kind: 'CertificateSigningRequest',
-            version: 'v1',
-          },
+          kind: referenceForModel(model),
           isList: true,
         }
       : undefined,
   );
 
-  return [csrs, !checkIsLoading && loaded, error];
+  return [resources || ([] as R), !checkIsLoading && loaded, loadError];
 };
 
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -696,7 +879,64 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     selector,
   });
 
-  const [csrs, csrsLoaded, csrsLoadError] = useWatchCSRs();
+  const [machines, machinesLoaded] = useWatchResourcesIfAllowed<MachineKind[]>(MachineModel);
+
+  const machinesByName = useMemo(
+    () => new Map(machines.map((m) => [`${m.metadata.name}/${m.metadata.namespace}`, m])),
+    [machines],
+  );
+
+  const [machineSets, machineSetsLoaded] = useWatchResourcesIfAllowed<MachineSetKind[]>(
+    MachineSetModel,
+  );
+
+  const [controlPlaneMachineSets, controlPlaneMachineSetsLoaded] = useWatchResourcesIfAllowed<
+    ControlPlaneMachineSetKind[]
+  >(ControlPlaneMachineSetModel);
+
+  const [machineConfigPools, machineConfigPoolsLoaded] = useWatchResourcesIfAllowed<
+    MachineConfigPoolKind[]
+  >(MachineConfigPoolModel);
+
+  const [csrs, csrsLoaded, csrsLoadError] = useWatchResourcesIfAllowed<
+    CertificateSigningRequestKind[]
+  >(CertificateSigningRequestModel);
+
+  const kubevirtFeature = useFlag('KUBEVIRT_DYNAMIC');
+  const isKubevirtPluginActive =
+    Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
+    window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin') &&
+    kubevirtFeature;
+
+  const [vmis, vmisLoaded, vmisLoadError] = useK8sWatchResource<K8sResourceKind[]>(
+    isKubevirtPluginActive
+      ? {
+          isList: true,
+          groupVersionKind: VirtualMachineInstanceGroupVersionKind,
+        }
+      : undefined,
+  );
+
+  const vmsByNode = useMemo(() => {
+    if (!isKubevirtPluginActive || !nodesLoaded || nodesLoadError || !vmisLoaded || vmisLoadError) {
+      return undefined;
+    }
+
+    const map = new Map<string, K8sResourceKind[]>(nodes.map((node) => [node.metadata.name, []]));
+    vmis.forEach((vmi) => {
+      const nodeName = vmi.status?.nodeName;
+      if (!nodeName) {
+        return;
+      }
+      const nodeVMs = map.get(nodeName);
+      if (nodeVMs) {
+        nodeVMs.push(vmi);
+      } else {
+        map.set(nodeName, [vmi]);
+      }
+    });
+    return map;
+  }, [isKubevirtPluginActive, nodes, nodesLoadError, nodesLoaded, vmis, vmisLoadError, vmisLoaded]);
 
   useEffect(() => {
     const updateMetrics = async () => {
@@ -715,16 +955,52 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     }
     return () => {};
   }, [dispatch]);
-  const { t } = useTranslation();
 
   const data = useMemo(() => {
     const csrBundle = getNodeClientCSRs(csrs).filter(
       (csr) => !nodes.some((n) => n.metadata.name === csr.metadata.name),
     );
-    return [...csrBundle, ...nodes];
-  }, [csrs, nodes]);
 
-  const loaded = nodesLoaded && csrsLoaded;
+    return [
+      ...csrBundle,
+      ...nodes.map((node) => {
+        const [machineName, machineNamespace] = node
+          ? getNodeMachineNameAndNamespace(node)
+          : ['', ''];
+
+        const owner = machinesByName.get(`${machineName}/${machineNamespace}`);
+
+        const machineConfigPool = machineConfigPools.find((mcp) => {
+          if (!mcp.spec?.nodeSelector) {
+            return false;
+          }
+          const labelSelector = new LabelSelector(mcp.spec.nodeSelector);
+          return labelSelector.matches(node);
+        });
+
+        const machineOwner = owner?.metadata.ownerReferences?.find(
+          (ref) =>
+            ref.kind === MachineSetModel.kind || ref.kind === ControlPlaneMachineSetModel.kind,
+        );
+
+        return {
+          ...node,
+          machineOwner,
+          machineConfigPool,
+          virtualMachines: vmsByNode?.get(node.metadata.name)?.length,
+        };
+      }),
+    ];
+  }, [csrs, nodes, machinesByName, machineConfigPools, vmsByNode]);
+
+  const loaded =
+    nodesLoaded &&
+    csrsLoaded &&
+    machinesLoaded &&
+    machineSetsLoaded &&
+    controlPlaneMachineSetsLoaded &&
+    machineConfigPoolsLoaded;
+  // Don't fail on machine load errors, instead we hide those columns and filters
   const loadError = nodesLoadError || csrsLoadError;
 
   if (!userSettingsLoaded) {
@@ -739,6 +1015,10 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           data={data}
           loaded={loaded}
           loadError={loadError}
+          machineSets={machineSets}
+          controlPlaneMachineSets={controlPlaneMachineSets}
+          machineConfigPools={machineConfigPools}
+          vmsEnabled={isKubevirtPluginActive}
           selectedColumns={selectedColumns}
         />
       </ListPageBody>
