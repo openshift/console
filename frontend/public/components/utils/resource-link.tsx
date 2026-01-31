@@ -18,7 +18,7 @@ import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref'
 const unknownKinds = new Set();
 
 export const resourcePathFromModel = (model: K8sModel, name?: string, namespace?: string) => {
-  const { plural, namespaced, crd } = model;
+  const { namespaced } = model;
 
   let url = '/k8s/';
 
@@ -30,11 +30,7 @@ export const resourcePathFromModel = (model: K8sModel, name?: string, namespace?
     url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
   }
 
-  if (crd) {
-    url += referenceForModel(model);
-  } else if (plural) {
-    url += plural;
-  }
+  url += referenceForModel(model);
 
   if (name) {
     // Some resources have a name that needs to be encoded. For instance,

@@ -33,6 +33,7 @@ import {
   AlertmanagerModel,
   CronJobModel,
   HorizontalPodAutoscalerModel,
+  ProjectModel,
   VolumeSnapshotModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -133,12 +134,14 @@ const DefaultPage = connectToFlags(
 // REDIRECT ROUTES FOR REACT-ROUTER-V6
 const StatusProjectsRedirect = () => {
   const { ns } = useParams();
-  return <Navigate to={`/k8s/cluster/projects/${ns}`} replace />;
+  return <Navigate to={`/k8s/cluster/${referenceForModel(ProjectModel)}/${ns}`} replace />;
 };
 
 const OverviewProjectsRedirect = () => {
   const { ns } = useParams();
-  return <Navigate to={`/k8s/cluster/projects/${ns}/workloads`} replace />;
+  return (
+    <Navigate to={`/k8s/cluster/${referenceForModel(ProjectModel)}/${ns}/workloads`} replace />
+  );
 };
 
 const AlertManagerRedirect = () => {

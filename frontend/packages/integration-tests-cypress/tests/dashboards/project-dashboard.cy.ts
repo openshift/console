@@ -7,7 +7,7 @@ describe('Project dashboard', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/cluster/projects/${testName}`);
+    cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${testName}`);
   });
 
   describe('Details Card', () => {
@@ -34,7 +34,10 @@ describe('Project dashboard', () => {
 
     it('has View all link', () => {
       cy.byTestID('details-card-view-all').click();
-      cy.url().should('include', `/k8s/cluster/projects/${testName}/details`);
+      cy.url().should(
+        'include',
+        `/k8s/cluster/project.openshift.io~v1~Project/${testName}/details`,
+      );
     });
   });
 
@@ -48,7 +51,7 @@ describe('Project dashboard', () => {
   describe('Inventory Card', () => {
     it('has all items', () => {
       const inventoryItems = [
-        { kind: 'Deployment', path: `/k8s/ns/${testName}/deployments` },
+        { kind: 'Deployment', path: `/k8s/ns/${testName}/apps~v1~Deployment` },
         { kind: 'DeploymentConfig', path: `/k8s/ns/${testName}/deploymentconfigs` },
         { kind: 'StatefulSets', path: `/k8s/ns/${testName}/statefulsets` },
         { kind: 'Pod', path: `/k8s/ns/${testName}/pods` },

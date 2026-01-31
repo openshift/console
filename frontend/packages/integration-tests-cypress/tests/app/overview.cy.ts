@@ -53,7 +53,7 @@ describe('Visiting Overview page', () => {
       });
 
       it(`displays a ${kindModel.id} in the overview list page`, () => {
-        cy.visit(`/k8s/cluster/projects/${testName}/workloads?view=list`);
+        cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${testName}/workloads?view=list`);
         overviewPage.projectOverviewShouldBeVisible();
         overviewPage.itemsShouldBeVisible();
         overviewPage.groupLabelItemContains(kindModel);
@@ -61,7 +61,7 @@ describe('Visiting Overview page', () => {
       });
 
       it(`shows ${kindModel.id} details sidebar when item is clicked`, () => {
-        cy.visit(`/k8s/cluster/projects/${testName}/workloads?view=list`);
+        cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${testName}/workloads?view=list`);
         overviewPage.detailsSidebarShouldExist(false);
         overviewPage.clickProjectOverviewListItem(resourceName);
         overviewPage.detailsSidebarShouldExist(true);
