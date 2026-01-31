@@ -45,15 +45,15 @@ export const useBindingActions = (
   const navigate = useNavigate();
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Delete] as const);
 
-  const { subjectIndex, subjects } = obj;
+  const { subjectIndex, subjects = [] } = obj;
   const subject = subjects?.[subjectIndex];
   const deleteBindingSubject = useWarningModal({
     title: t('public~Delete {{label}} subject?', {
       label: model.kind,
     }),
     children: t('public~Are you sure you want to delete subject {{name}} of type {{kind}}?', {
-      name: subject.name,
-      kind: subject.kind,
+      name: subject?.name,
+      kind: subject?.kind,
     }),
     confirmButtonVariant: ButtonVariant.danger,
     confirmButtonLabel: t('public~Delete'),
@@ -80,19 +80,19 @@ export const useBindingActions = (
       [BindingActionCreator.ImpersonateBindingSubject]: () => ({
         id: 'impersonate-binding',
         label: t('public~Impersonate {{kind}} "{{name}}"', {
-          kind: subject.kind,
-          name: subject.name,
+          kind: subject?.kind,
+          name: subject?.name,
         }),
         cta: () => {
-          startImpersonate(subject.kind, subject.name);
+          startImpersonate(subject?.kind, subject?.name);
           navigate(window.SERVER_FLAGS.basePath);
         },
         // Must use API group authorization.k8s.io, NOT user.openshift.io
         // See https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation
         accessReview: {
           group: 'authorization.k8s.io',
-          resource: subject.kind === 'Group' ? 'groups' : 'users',
-          name: subject.name,
+          resource: subject?.kind === 'Group' ? 'groups' : 'users',
+          name: subject?.name,
           verb: 'impersonate' as K8sVerb,
         },
       }),
@@ -132,7 +132,7 @@ export const useBindingActions = (
       }),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [model, navigate, obj, startImpersonate, subject.kind, subject.name, subjectIndex, t],
+    [model, navigate, obj, startImpersonate, subject?.kind, subject?.name, subjectIndex, t],
   );
 
   // filter and initialize requested actions or construct list of all BindingActions
@@ -141,14 +141,14 @@ export const useBindingActions = (
       return memoizedFilterActions.map((creator) => factory[creator]());
     }
     return [
-      ...(subject.kind === 'User' || subject.kind === 'Group'
+      ...(subject?.kind === 'User' || subject?.kind === 'Group'
         ? [factory.ImpersonateBindingSubject()]
         : []),
       factory.DuplicateBinding(),
       factory.EditBindingSubject(),
       ...(subjects.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
     ];
-  }, [memoizedFilterActions, subject.kind, factory, subjects.length, commonActions.Delete]);
+  }, [memoizedFilterActions, subject?.kind, factory, subjects.length, commonActions.Delete]);
 
   return actions;
 };
