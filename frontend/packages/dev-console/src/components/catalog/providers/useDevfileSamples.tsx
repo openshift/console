@@ -3,12 +3,12 @@ import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { APIError, useActiveNamespace } from '@console/shared';
+import { APIError } from '@console/shared';
 import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfileSamples = (
   devfileSamples: DevfileSample[],
-  activeNamespace: string,
+  namespace: string,
   t: TFunction,
 ): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples.map((sample) => {
@@ -22,7 +22,8 @@ const normalizeDevfileSamples = (
     searchParams.set('devfileName', uid);
     searchParams.set('git.repository', gitRepositoryUrl);
 
-    const href = `/import/ns/${activeNamespace}?${searchParams}`;
+    const namespacePath = namespace ? `/ns/${namespace}` : '';
+    const href = `/import${namespacePath}?${searchParams}`;
     const iconUrl = icon || '';
 
     const item: CatalogItem = {
@@ -46,9 +47,10 @@ const normalizeDevfileSamples = (
   return normalizedDevfileSamples;
 };
 
-const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
+const useDevfileSamples: ExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const [activeNamespace] = useActiveNamespace();
   const [devfileSamples, setDevfileSamples] = useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = useState<APIError>();
 
@@ -68,8 +70,8 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
   }, []);
 
   const normalizedDevfileSamples = useMemo(
-    () => normalizeDevfileSamples(devfileSamples || [], activeNamespace, t),
-    [activeNamespace, devfileSamples, t],
+    () => normalizeDevfileSamples(devfileSamples || [], namespace, t),
+    [namespace, devfileSamples, t],
   );
 
   const loaded = !!devfileSamples;

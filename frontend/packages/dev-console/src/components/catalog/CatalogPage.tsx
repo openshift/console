@@ -1,6 +1,5 @@
-import type { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
@@ -9,18 +8,23 @@ import {
   CatalogServiceProvider,
   CatalogController,
   isCatalogTypeEnabled,
+  ALL_NAMESPACES_KEY,
+  useActiveNamespace,
 } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
 const PageContents: FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
-  const { ns: namespace } = useParams();
+  const [namespace] = useActiveNamespace();
 
-  return namespace ? (
-    <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog" catalogType={catalogType}>
+  return (
+    <CatalogServiceProvider
+      namespace={namespace === ALL_NAMESPACES_KEY ? '' : namespace}
+      catalogId="dev-catalog"
+      catalogType={catalogType}
+    >
       {(service) => (
         <CatalogController
           {...service}
@@ -32,15 +36,6 @@ const PageContents: FC = () => {
         />
       )}
     </CatalogServiceProvider>
-  ) : (
-    <CreateProjectListPage title={t('devconsole~Software Catalog')}>
-      {(openProjectModal) => (
-        <Trans t={t} ns="devconsole">
-          Select a Project to view the software catalog
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
-      )}
-    </CreateProjectListPage>
   );
 };
 

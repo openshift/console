@@ -32,7 +32,8 @@ const normalizeBuilderImages = (
     const description = tag?.annotations?.description ?? '';
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
-    const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
+    const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
+    const href = `/samples${namespacePath}/${name}/${imageStreamNS}`;
     const createLabel = t('devconsole~Create Builder Image Sample');
     const type = 'BuilderImage';
 

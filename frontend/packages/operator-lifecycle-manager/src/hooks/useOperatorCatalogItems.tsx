@@ -4,11 +4,13 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
-  useActiveNamespace,
   CatalogItem,
   CatalogItemBadge,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
+  CatalogExtensionHookOptions,
+  ExtensionHook,
+} from '@console/dynamic-plugin-sdk';
 import { parseList, strConcat } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
 import {
@@ -64,21 +66,24 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     error,
   );
 
-export const useOperatorCatalogItems = () => {
+export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
+  options,
+) => {
   const { t } = useTranslation('olm');
-  const [namespace] = useActiveNamespace();
+  const namespace = options?.namespace || '';
+  const targetNamespace = namespace === ALL_NAMESPACES_KEY ? '' : namespace;
   const [operatorGroups, operatorGroupsLoaded, operatorGroupsLoadError] = useOperatorGroups();
   const [
     operatorHubPackageManifests,
     operatorHubPackageManifestsLoaded,
     operatorHubPackageManifestsLoadError,
-  ] = useOperatorHubPackageManifests(namespace);
+  ] = useOperatorHubPackageManifests(targetNamespace);
   const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useSubscriptions();
   const [
     clusterServiceVersions,
     clusterServiceVersionsLoaded,
     clusterServiceVersionsLoadError,
-  ] = useClusterServiceVersions(namespace);
+  ] = useClusterServiceVersions(targetNamespace);
   // cloudCredentials are optional
   const [cloudCredentials] = useClusterCloudCredentialConfig();
   const [
@@ -147,7 +152,7 @@ export const useOperatorCatalogItems = () => {
         const { kind } = PackageManifestModel;
         const { catalogSource, catalogSourceNamespace } = pkg.status;
         const source = getPackageSource(pkg);
-        const subscription = subscriptionFor(subscriptions)(operatorGroups)(pkg)(namespace);
+        const subscription = subscriptionFor(subscriptions)(operatorGroups)(pkg)(targetNamespace);
         const clusterServiceVersion = clusterServiceVersionFor(clusterServiceVersions)(
           subscription,
         );
@@ -231,18 +236,18 @@ export const useOperatorCatalogItems = () => {
           pkg: pkg.metadata.name,
           catalog: catalogSource,
           catalogNamespace: catalogSourceNamespace,
-          targetNamespace: namespace,
+          ...(targetNamespace && { targetNamespace }),
         };
+
         if (operatorTokenizedAuth) {
           installParams.tokenizedAuth = operatorTokenizedAuth;
         }
-        const installParamsURL = new URLSearchParams(installParams).toString();
 
+        const installParamsURL = new URLSearchParams(installParams).toString();
         const installLink = `/operatorhub/subscribe?${installParamsURL}`;
         const uninstallLink = subscription
           ? `/k8s/ns/${subscription.metadata.namespace}/${SubscriptionModel.plural}/${subscription.metadata.name}?showDelete=true`
           : null;
-
         const cta =
           installed && uninstallLink
             ? {
@@ -455,7 +460,7 @@ export const useOperatorCatalogItems = () => {
     infrastructure,
     loadError,
     loaded,
-    namespace,
+    targetNamespace,
     operatorGroups,
     operatorHubPackageManifests,
     subscriptions,
@@ -464,7 +469,7 @@ export const useOperatorCatalogItems = () => {
     updateVersion,
   ]);
 
-  return [items, loaded];
+  return [items, loaded, loadError];
 };
 
 export default useOperatorCatalogItems;
