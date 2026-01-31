@@ -6,8 +6,6 @@ import {
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { ErrorBoundary } from '@console/shared/src/components/error';
-
-import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import {
   useResolvedExtensions,
@@ -36,63 +34,61 @@ const getFirehoseResource = (model: K8sKind) => ({
   prop: 'resource',
 });
 
-const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
-  memo(
-    ({ model, resolvedMapper, mapperLoader, additionalResources }: ClusterInventoryItemProps) => {
-      const mainResource = useMemo(() => getFirehoseResource(model), [model]);
-      const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
-      const [mapper, setMapper] = useState<StatusGroupMapper>();
-      const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
-        K8sResourceCommon[]
-      >(mainResource);
-      const resources = useK8sWatchResources(otherResources);
-      useEffect(() => {
-        mapperLoader &&
-          mapperLoader()
-            .then((res) => setMapper(() => res))
-            .catch(() => {
-              // eslint-disable-next-line no-console
-              console.error('Mapper does not exist in module');
-            });
-      }, [mapperLoader]);
-
-      const [
-        additionalResourcesData,
-        additionalResourcesLoaded,
-        additionalResourcesLoadError,
-      ] = useMemo(() => {
-        const resourcesData = {};
-        let resourcesLoaded = true;
-        let resourcesLoadError = false;
-
-        if (additionalResources) {
-          resourcesLoaded = Object.keys(additionalResources)
-            .filter((key) => !additionalResources[key].optional)
-            .every((key) => resources[key].loaded);
-          Object.keys(additionalResources).forEach((key) => {
-            resourcesData[key] = resources[key].data;
+const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
+  ({ model, resolvedMapper, mapperLoader, additionalResources }) => {
+    const mainResource = useMemo(() => getFirehoseResource(model), [model]);
+    const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
+    const [mapper, setMapper] = useState<StatusGroupMapper>();
+    const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
+      K8sResourceCommon[]
+    >(mainResource);
+    const resources = useK8sWatchResources(otherResources);
+    useEffect(() => {
+      mapperLoader &&
+        mapperLoader()
+          .then((res) => setMapper(() => res))
+          .catch(() => {
+            // eslint-disable-next-line no-console
+            console.error('Mapper does not exist in module');
           });
-          resourcesLoadError = Object.keys(additionalResources)
-            .filter((key) => !additionalResources[key].optional)
-            .some((key) => !!resources[key].loadError);
-        }
+    }, [mapperLoader]);
 
-        return [resourcesData, resourcesLoaded, resourcesLoadError];
-      }, [additionalResources, resources]);
+    const [
+      additionalResourcesData,
+      additionalResourcesLoaded,
+      additionalResourcesLoadError,
+    ] = useMemo(() => {
+      const resourcesData = {};
+      let resourcesLoaded = true;
+      let resourcesLoadError = false;
 
-      return (
-        <ResourceInventoryItem
-          isLoading={!resourceLoaded || !additionalResourcesLoaded}
-          error={!!resourceLoadError || additionalResourcesLoadError}
-          kind={model}
-          resources={resourceData}
-          mapper={mapper || resolvedMapper}
-          additionalResources={additionalResourcesData}
-          dataTest="resource-inventory-item"
-        />
-      );
-    },
-  ),
+      if (additionalResources) {
+        resourcesLoaded = Object.keys(additionalResources)
+          .filter((key) => !additionalResources[key].optional)
+          .every((key) => resources[key].loaded);
+        Object.keys(additionalResources).forEach((key) => {
+          resourcesData[key] = resources[key].data;
+        });
+        resourcesLoadError = Object.keys(additionalResources)
+          .filter((key) => !additionalResources[key].optional)
+          .some((key) => !!resources[key].loadError);
+      }
+
+      return [resourcesData, resourcesLoaded, resourcesLoadError];
+    }, [additionalResources, resources]);
+
+    return (
+      <ResourceInventoryItem
+        isLoading={!resourceLoaded || !additionalResourcesLoaded}
+        error={!!resourceLoadError || additionalResourcesLoadError}
+        kind={model}
+        resources={resourceData}
+        mapper={mapper || resolvedMapper}
+        additionalResources={additionalResourcesData}
+        dataTest="resource-inventory-item"
+      />
+    );
+  },
 );
 
 export const InventoryCard = () => {
@@ -144,7 +140,7 @@ export const InventoryCard = () => {
   );
 };
 
-type ClusterInventoryItemProps = DashboardItemProps & {
+type ClusterInventoryItemProps = {
   model: K8sKind;
   mapperLoader?: () => Promise<StatusGroupMapper>;
   resolvedMapper?: StatusGroupMapper;
