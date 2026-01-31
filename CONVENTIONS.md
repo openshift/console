@@ -91,6 +91,21 @@ const pluginInfo = useMemo(
 );
 ```
 
+**Avoid deprecated components**
+
+Check for these deprecation signals:
+1. **JSDoc `@deprecated` tags** in component source
+2. **Import paths containing `/deprecated`**
+3. **`DEPRECATED_` file name prefix**
+
+```typescript
+// BAD - Deprecated import path
+import { Modal } from '@patternfly/react-core/deprecated';
+
+// GOOD - Use non-deprecated path
+import { Modal } from '@patternfly/react-core';
+```
+
 AI agents should flag use of `any` type
 - Suggest proper type definitions
 - Check that null/undefined are handled: `string | undefined`
