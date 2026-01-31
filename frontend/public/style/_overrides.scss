@@ -66,6 +66,13 @@ $masthead-logo-max-height: 60px;
   vertical-align: top; // PF defaults to baseline which doesn't align correctly when Operator logos are within the table
 }
 
+// removes extra spacing between file input form groups when hideDefaultPreview is true
+.co-file-input {
+  .pf-v6-c-file-upload__file-details:empty {
+    display: none;
+  }
+}
+
 // custom PatternFly button variant for larger icons in an icon button with no text
 .co-xl-icon-button.pf-v6-c-button {
   --co-button-icon-size: var(--pf-t--global--icon--size--xl);

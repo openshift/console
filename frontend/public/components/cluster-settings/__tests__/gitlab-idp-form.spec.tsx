@@ -75,10 +75,9 @@ describe('Add Identity Provider: GitLab', () => {
     });
   });
 
-  it('should render the CA file label and elements', () => {
-    verifyIDPFileFields({
+  it('should render the CA file label and elements', async () => {
+    await verifyIDPFileFields({
       inputLabel: 'CA file',
-      idPrefix: 'ca-file-input',
     });
   });
 

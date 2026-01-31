@@ -94,8 +94,11 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
     const { metadata } = secret;
     setInProgress(true);
     const data = {
-      ..._.mapValues(stringData, (value) => {
-        return Base64.encode(value);
+      ..._.mapValues(stringData, (value, key) => {
+        // SSH private keys should end with a newline
+        const finalValue =
+          key === 'ssh-privatekey' && value && !value.endsWith('\n') ? `${value}\n` : value;
+        return Base64.encode(finalValue);
       }),
       ...base64StringData,
     };

@@ -17,14 +17,13 @@ export const IDPCAFileInput: FC<IDPCAFileInputProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <div className="form-group">
+    <div className="pf-v6-c-form" style={{ display: 'contents' }}>
       <DroppableFileInput
         onChange={onChange}
         inputFileData={value}
         id={id}
         label={t('public~CA file')}
         isRequired={isRequired}
-        hideContents
       />
     </div>
   );
