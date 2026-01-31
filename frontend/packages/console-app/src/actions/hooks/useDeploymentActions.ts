@@ -16,7 +16,7 @@ import {
   k8sCreate,
   K8sModel,
 } from '@console/internal/module/k8s';
-import { resourceLimitsModal } from '../../components/modals/resource-limits';
+import { LazyResourceLimitsModalOverlay } from '../../components/modals/resource-limits';
 import { DeploymentActionCreator, ActionObject } from './types';
 
 const restartRollout = (model: K8sModel | undefined, obj: K8sResourceKind | undefined) => {
@@ -171,7 +171,7 @@ export const useDeploymentActions = <T extends readonly DeploymentActionCreator[
         id: 'edit-resource-limits',
         label: t('console-app~Edit resource limits'),
         cta: () =>
-          resourceLimitsModal({
+          launchModal(LazyResourceLimitsModalOverlay, {
             model: kind,
             resource,
           }),
