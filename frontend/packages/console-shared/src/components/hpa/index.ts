@@ -1,1 +1,1 @@
-export { default as deleteHPAModal } from './DeleteHPAModal';
+export { DeleteHPAModalProvider } from './DeleteHPAModal';

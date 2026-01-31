@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { useAccessReview, WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   getGroupVersionKindForModel,
   getReferenceForModel,
@@ -43,7 +44,7 @@ import {
 import { RootState } from '@console/internal/redux';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
+import { ConsolePluginModalOverlay } from '@console/shared/src/components/modals/ConsolePluginModal';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
@@ -97,6 +98,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
   enabled,
 }) => {
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
 
   const {
     consoleOperatorConfig,
@@ -116,7 +118,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
           type="button"
           isInline
           onClick={() =>
-            consolePluginModal({
+            launchOverlay(ConsolePluginModalOverlay, {
               consoleOperatorConfig,
               pluginName,
               trusted: false,

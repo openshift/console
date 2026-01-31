@@ -1,6 +1,6 @@
 export const consolePluginModal = (props) =>
   import('./ConsolePluginModal' /* webpackChunkName: "shared-modals" */).then((m) =>
-    m.consolePluginModal(props),
+    m.ConsolePluginModalOverlay(props),
   );
 
 export const deleteResourceModal = (props) =>
