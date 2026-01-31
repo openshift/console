@@ -1,5 +1,5 @@
 import type {
-  CodeRef as SDKCodeRef,
+  CodeRef,
   Extension,
   ReplaceProperties as Update,
   MapCodeRefsToValues,
@@ -8,6 +8,8 @@ import type {
 } from '@openshift/dynamic-plugin-sdk';
 
 export type {
+  EncodedCodeRef,
+  CodeRef,
   ExtensionFlags,
   Extension,
   ExtensionPredicate as ExtensionTypeGuard,
@@ -16,19 +18,6 @@ export type {
   ReplaceProperties as Update,
   LoadedExtension,
 } from '@openshift/dynamic-plugin-sdk';
-
-/**
- * Code reference, encoded as an object literal.
- *
- * The value of the `$codeRef` property should be formatted as `moduleName.exportName`
- * (referring to a named export) or `moduleName` (referring to the `default` export).
- */
-export type EncodedCodeRef = { $codeRef: string };
-
-/**
- * Code reference, represented by a function that returns a promise for the object `T`.
- */
-export type CodeRef<T = unknown> = SDKCodeRef<T>;
 
 /**
  * Extract type `T` from `CodeRef<T>`.

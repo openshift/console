@@ -13,6 +13,8 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.22.0-prerelease.2 - TBD
 
 - **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
+- The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
+  by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 

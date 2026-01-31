@@ -125,10 +125,16 @@ const getConsolePluginAPIs = () => {
         );
       }
 
+      // We want to avoid linking to barrel files when possible, but
+      // if we are re-exporting from a dependency we should not be linking to node_modules
+      const exportDeclaration = declaration.getSourceFile().fileName.includes('node_modules')
+        ? _.head(symbol.declarations).getSourceFile()
+        : declaration.getSourceFile();
+
       const kind = getPluginAPIKind(declaration);
       const jsDocs = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
 
-      const pkgFilePath = relativePath(declaration.getSourceFile().fileName);
+      const pkgFilePath = relativePath(exportDeclaration.fileName);
       const srcFilePath = `frontend/packages/console-dynamic-plugin-sdk/${pkgFilePath}`;
 
       if (jsDocs.length === 0) {

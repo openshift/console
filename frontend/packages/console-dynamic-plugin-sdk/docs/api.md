@@ -1981,7 +1981,7 @@ Component for displaying a red exclamation mark circle icon.
 
 ### Summary 
 
-Update `CodeRef` properties of extension `E` to the referenced object types.<br/><br/>This also coerces `E` type to `LoadedExtension` interface for runtime consumption.
+Modify `TExtension` type by replacing `CodeRef<T>` property values with `T` values.
 
 
 
@@ -1991,7 +1991,7 @@ Update `CodeRef` properties of extension `E` to the referenced object types.<br/
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/types.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/types.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/common-types.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/common-types.ts)
 
 ---
 
