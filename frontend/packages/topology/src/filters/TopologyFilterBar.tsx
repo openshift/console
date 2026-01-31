@@ -16,7 +16,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { PDBAlert } from '@console/app/src/components/pdb/PDBAlert';
 import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
-import { setQueryArgument } from '@console/internal/components/utils';
+import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
@@ -32,12 +32,8 @@ import { TopologyViewType } from '../topology-types';
 import { getResource } from '../utils';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
 import {
-  clearAll,
-  clearLabelFilter,
-  clearNameFilter,
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
-  onSearchChange,
   NameLabelFilterValues,
   TOPOLOGY_LABELS_FILTER_KEY,
   TOPOLOGY_SEARCH_FILTER_KEY,
@@ -72,6 +68,7 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   namespace,
   setIsQuickSearchOpen,
 }) => {
+  const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { t } = useTranslation();
   const { filters, setTopologyFilters: onFiltersChange } = useContext(FilterContext);
   const [labelFilterInput, setLabelFilterInput] = useState('');
@@ -87,7 +84,11 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
   const isExportApplicationEnabled = useFlag(ALLOW_EXPORT_APP);
   const updateNameFilter = (value: string) => {
     const query = value?.trim();
-    onSearchChange(query);
+    if (query.length > 0) {
+      setQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY, query);
+    } else {
+      removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+    }
   };
 
   const updateLabelFilter = (value: string, endOfString: boolean) => {
@@ -103,6 +104,19 @@ const TopologyFilterBar: FC<TopologyFilterBarProps> = ({
     type === NameLabelFilterValues.Label
       ? updateLabelFilter(value, endOfString)
       : updateNameFilter(value);
+  };
+
+  const clearLabelFilter = () => {
+    removeQueryArgument(TOPOLOGY_LABELS_FILTER_KEY);
+  };
+
+  const clearNameFilter = () => {
+    removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+  };
+
+  const clearAll = () => {
+    removeQueryArgument(TOPOLOGY_SEARCH_FILTER_KEY);
+    removeQueryArgument(TOPOLOGY_LABELS_FILTER_KEY);
   };
 
   const removeLabelFilter = (filter: string, value: string) => {

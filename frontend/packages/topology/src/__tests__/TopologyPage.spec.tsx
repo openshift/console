@@ -1,5 +1,6 @@
 import { configure, render, screen } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
+import * as RouterUtils from '@console/internal/components/utils/router';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
@@ -41,6 +42,11 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useParams: jest.fn(),
 }));
 
+jest.mock('@console/internal/components/utils/router', () => ({
+  ...jest.requireActual('@console/internal/components/utils/router'),
+  useQueryParamsMutator: jest.fn(),
+}));
+
 jest.mock('../filters/FilterProvider', () => ({
   ...jest.requireActual('../filters/FilterProvider'),
   FilterProvider: 'FilterProvider',
@@ -66,6 +72,17 @@ describe('TopologyPage view logic', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (Router.useParams as jest.Mock).mockReturnValue({ name: 'default' });
+
+    // Mock useQueryParamsMutator
+    (RouterUtils.useQueryParamsMutator as jest.Mock).mockReturnValue({
+      getQueryArgument: jest.fn(),
+      setQueryArgument: jest.fn(),
+      setQueryArguments: jest.fn(),
+      setAllQueryArguments: jest.fn(),
+      removeQueryArgument: jest.fn(),
+      removeQueryArguments: jest.fn(),
+      setOrRemoveQueryArgument: jest.fn(),
+    });
   });
 
   it('should default to graph view', () => {

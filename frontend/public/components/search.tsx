@@ -38,7 +38,7 @@ import {
 } from '../module/k8s';
 import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
 import { ResourceIcon } from './utils/resource-icon';
-import { setQueryArgument } from './utils/router';
+import { useQueryParamsMutator } from './utils/router';
 import { AsyncComponent } from './utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';
@@ -85,6 +85,7 @@ const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
 };
 
 const SearchPage_: FC<SearchProps> = (props) => {
+  const { setQueryArgument } = useQueryParamsMutator();
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
   const [selectedItems, setSelectedItems] = useState(new Set<string>([]));

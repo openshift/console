@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom-v5-compat';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
@@ -51,6 +51,7 @@ const CatalogController: FC<CatalogControllerProps> = ({
   hideSidebar,
   categories,
 }) => {
+  const { setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
@@ -151,13 +152,16 @@ const CatalogController: FC<CatalogControllerProps> = ({
     [catalogItems, filterGroups],
   );
 
-  const openDetailsPanel = useCallback((item: CatalogItem): void => {
-    setQueryArgument(CatalogQueryParams.SELECTED_ID, item.uid);
-  }, []);
+  const openDetailsPanel = useCallback(
+    (item: CatalogItem): void => {
+      setQueryArgument(CatalogQueryParams.SELECTED_ID, item.uid);
+    },
+    [setQueryArgument],
+  );
 
   const closeDetailsPanel = useCallback((): void => {
     removeQueryArgument(CatalogQueryParams.SELECTED_ID);
-  }, []);
+  }, [removeQueryArgument]);
 
   const renderTile = useCallback(
     (item: CatalogItem) => (

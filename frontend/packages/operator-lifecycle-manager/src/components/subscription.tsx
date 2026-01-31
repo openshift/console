@@ -44,7 +44,7 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
-import { removeQueryArgument } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import {
   k8sGet,
   k8sKill,
@@ -419,6 +419,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   subscriptions = [],
 }) => {
   const { t } = useTranslation();
+  const { removeQueryArgument } = useQueryParamsMutator();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
     (ch) => ch.catalogSourceRef.name === source,
