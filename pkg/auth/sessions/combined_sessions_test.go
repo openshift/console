@@ -52,7 +52,7 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 				},
 				testIDToken,
 			),
-			origRefreshToken: utilptr.To[string]("orig-refresh-token"),
+			origRefreshToken: utilptr.To("orig-refresh-token"),
 			wantRefreshToken: "random-token-string",
 			wantRawToken:     testIDToken,
 		},
@@ -64,7 +64,7 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 				},
 				testIDToken,
 			),
-			origSessionToken: utilptr.To[string]("orig-session-token"),
+			origSessionToken: utilptr.To("orig-session-token"),
 			wantRefreshToken: "random-token-string",
 			wantRawToken:     testIDToken,
 		},
@@ -93,7 +93,7 @@ func TestCombinedSessionStore_AddSession(t *testing.T) {
 				&oauth2.Token{},
 				testIDToken,
 			),
-			origRefreshToken: utilptr.To[string]("random-token-string"),
+			origRefreshToken: utilptr.To("random-token-string"),
 			wantRawToken:     testIDToken,
 		},
 	}
@@ -694,4 +694,136 @@ func indexSessionByRefreshToken(serverStore *SessionStore, refreshToken string, 
 	serverStore.byToken[session.sessionToken] = session
 	serverStore.byRefreshToken[refreshToken] = session
 	return serverStore
+}
+
+func TestCombinedSessionStore_AddSession_CleansUpOldPodCookies(t *testing.T) {
+	testIDToken := createTestIDToken(`{"sub":"user-id-0"}`)
+	testVerifier := newTestVerifier(`{"sub":"user-id-0"}`)
+
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+	cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+
+	token := addIDToken(
+		&oauth2.Token{
+			RefreshToken: "new-refresh-token",
+		},
+		testIDToken,
+	)
+
+	// Simulate request with old session cookies from different pods
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-1", Value: "old-value-1"})
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-2", Value: "old-value-2"})
+	req.AddCookie(&http.Cookie{Name: "other-cookie", Value: "other-value"})
+
+	testWriter := httptest.NewRecorder()
+	_, err := cs.AddSession(testWriter, req, testVerifier, token)
+	require.NoError(t, err)
+
+	// Verify old pod cookies were expired
+	cookies := testWriter.Result().Cookies()
+	expiredCookies := 0
+	newSessionCookie := false
+	for _, c := range cookies {
+		if c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-1" ||
+			c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-2" {
+			require.Equal(t, -1, c.MaxAge, "Old pod cookie %s should be expired", c.Name)
+			expiredCookies++
+		}
+		if c.Name == SessionCookieName() {
+			require.NotEqual(t, -1, c.MaxAge, "New session cookie should not be expired")
+			newSessionCookie = true
+		}
+		if c.Name == "other-cookie" {
+			t.Errorf("Non-session cookie 'other-cookie' should not be modified")
+		}
+	}
+
+	require.Equal(t, 2, expiredCookies, "Both old pod cookies should be expired")
+	require.True(t, newSessionCookie, "New session cookie should be created")
+}
+
+func TestCombinedSessionStore_GetSession_CleansUpOldPodCookies(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+	cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+
+	// Simulate request with old session cookies from different pods
+	// This is the primary cleanup path since GetSession is called on /api/* requests
+	// where session cookies (with Path=/api) are actually sent by the browser
+	req := httptest.NewRequest(http.MethodGet, "/api/some-endpoint", nil)
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-1", Value: "old-value-1"})
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-2", Value: "old-value-2"})
+	req.AddCookie(&http.Cookie{Name: "other-cookie", Value: "other-value"})
+
+	testWriter := httptest.NewRecorder()
+	_, _ = cs.GetSession(testWriter, req)
+
+	// Verify old pod cookies were expired
+	cookies := testWriter.Result().Cookies()
+	expiredCookies := 0
+	for _, c := range cookies {
+		if c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-1" ||
+			c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-2" {
+			require.Equal(t, -1, c.MaxAge, "Old pod cookie %s should be expired", c.Name)
+			expiredCookies++
+		}
+		if c.Name == "other-cookie" {
+			t.Errorf("Non-session cookie 'other-cookie' should not be modified")
+		}
+	}
+
+	require.Equal(t, 2, expiredCookies, "Both old pod cookies should be expired")
+}
+
+func TestCombinedSessionStore_UpdateTokens_CleansUpOldPodCookies(t *testing.T) {
+	currentTime := strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)
+	testIDToken := createTestIDToken(`{"sub":"user-id-0","exp":` + currentTime + `}`)
+	testVerifier := newTestVerifier(`{"sub":"user-id-0","exp":` + currentTime + `}`)
+
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+	cs := NewSessionStore(authnKey, encryptionKey, true, "/")
+
+	token := addIDToken(
+		&oauth2.Token{
+			RefreshToken: "new-refresh-token",
+		},
+		testIDToken,
+	)
+
+	// Simulate request with old session cookies from different pods
+	// This simulates the scenario where a user is load-balanced to a new pod
+	// and their token is being refreshed
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-1", Value: "old-value-1"})
+	req.AddCookie(&http.Cookie{Name: OpenshiftAccessTokenCookieName + "-console-old-pod-2", Value: "old-value-2"})
+	req.AddCookie(&http.Cookie{Name: "other-cookie", Value: "other-value"})
+
+	testWriter := httptest.NewRecorder()
+	_, err := cs.UpdateTokens(testWriter, req, testVerifier, token)
+	require.NoError(t, err)
+
+	// Verify old pod cookies were expired
+	cookies := testWriter.Result().Cookies()
+	expiredCookies := 0
+	newSessionCookie := false
+	for _, c := range cookies {
+		if c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-1" ||
+			c.Name == OpenshiftAccessTokenCookieName+"-console-old-pod-2" {
+			require.Equal(t, -1, c.MaxAge, "Old pod cookie %s should be expired", c.Name)
+			expiredCookies++
+		}
+		if c.Name == SessionCookieName() {
+			require.NotEqual(t, -1, c.MaxAge, "New session cookie should not be expired")
+			newSessionCookie = true
+		}
+		if c.Name == "other-cookie" {
+			t.Errorf("Non-session cookie 'other-cookie' should not be modified")
+		}
+	}
+
+	require.Equal(t, 2, expiredCookies, "Both old pod cookies should be expired")
+	require.True(t, newSessionCookie, "New session cookie should be created")
 }

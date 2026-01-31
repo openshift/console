@@ -43,9 +43,34 @@ func NewSessionStore(authnKey, encryptKey []byte, secureCookies bool, cookiePath
 	}
 }
 
+// expireOldPodCookies expires session cookies from other pods to prevent cookie accumulation
+// when users are load-balanced across multiple pods.
+func (cs *CombinedSessionStore) expireOldPodCookies(w http.ResponseWriter, r *http.Request) {
+	currentCookieName := SessionCookieName()
+	for _, cookie := range r.Cookies() {
+		// Expire any session cookies that are not for the current pod
+		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) && cookie.Name != currentCookieName {
+			// Must match all attributes of the original cookie for browsers to properly delete it
+			http.SetCookie(w, &http.Cookie{
+				Name:     cookie.Name,
+				Value:    "",
+				Path:     cs.clientStore.Options.Path,
+				MaxAge:   -1,
+				Secure:   cs.clientStore.Options.Secure,
+				HttpOnly: cs.clientStore.Options.HttpOnly,
+				SameSite: cs.clientStore.Options.SameSite,
+			})
+		}
+	}
+}
+
 func (cs *CombinedSessionStore) AddSession(w http.ResponseWriter, r *http.Request, tokenVerifier IDTokenVerifier, token *oauth2.Token) (*LoginState, error) {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
+
+	// Clean up old session cookies from previous pods before creating new session
+	// This prevents cookie accumulation when users are load-balanced across multiple pods
+	cs.expireOldPodCookies(w, r)
 
 	ls, err := cs.serverStore.AddSession(tokenVerifier, token)
 	if err != nil {
@@ -86,6 +111,11 @@ func (s *session) save(r *http.Request, w http.ResponseWriter) error {
 func (cs *CombinedSessionStore) GetSession(w http.ResponseWriter, r *http.Request) (*LoginState, error) {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
+
+	// Clean up old session cookies from previous pods
+	// This is done here because GetSession is called on /api/* requests where
+	// session cookies (with Path=/api) are actually sent by the browser
+	cs.expireOldPodCookies(w, r)
 
 	// Get always returns a session, even if empty.
 	clientSession := cs.getCookieSession(r)
@@ -135,6 +165,10 @@ func (cs *CombinedSessionStore) UpdateCookieRefreshToken(w http.ResponseWriter, 
 func (cs *CombinedSessionStore) UpdateTokens(w http.ResponseWriter, r *http.Request, tokenVerifier IDTokenVerifier, tokenResponse *oauth2.Token) (*LoginState, error) {
 	cs.sessionLock.Lock()
 	defer cs.sessionLock.Unlock()
+
+	// Clean up old session cookies from previous pods when refreshing tokens
+	// This handles the case where a user is load-balanced to a different pod
+	cs.expireOldPodCookies(w, r)
 
 	clientSession := cs.getCookieSession(r)
 	var oldRefreshTokenID string
@@ -193,10 +227,16 @@ func (cs *CombinedSessionStore) DeleteSession(w http.ResponseWriter, r *http.Req
 	defer cs.sessionLock.Unlock()
 
 	for _, cookie := range r.Cookies() {
-		cookie := cookie
 		if strings.HasPrefix(cookie.Name, OpenshiftAccessTokenCookieName) {
-			cookie.MaxAge = -1
-			http.SetCookie(w, cookie)
+			http.SetCookie(w, &http.Cookie{
+				Name:     cookie.Name,
+				Value:    "",
+				Path:     cs.clientStore.Options.Path,
+				MaxAge:   -1,
+				Secure:   cs.clientStore.Options.Secure,
+				HttpOnly: cs.clientStore.Options.HttpOnly,
+				SameSite: cs.clientStore.Options.SameSite,
+			})
 		}
 	}
 
