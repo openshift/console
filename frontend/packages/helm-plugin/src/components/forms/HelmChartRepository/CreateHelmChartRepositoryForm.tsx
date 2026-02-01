@@ -46,6 +46,7 @@ const CreateHelmChartRepositoryForm: FC<
     <CreateHelmChartRepositoryFormEditor
       showScopeType={showScopeType}
       existingRepo={existingRepo}
+      namespace={namespace}
     />
   );
 

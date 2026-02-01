@@ -44,4 +44,47 @@ describe('HelmChartRepository create utils', () => {
     defaultResource = getDefaultResource('test-ns', referenceForModel(HelmChartRepositoryModel));
     expect(defaultResource).toEqual(defaultHCR);
   });
+  it('should include basicAuthConfig only for ProjectHelmChartRepository', () => {
+    // Test ProjectHelmChartRepository includes basicAuthConfig
+    const projectFormData = _.cloneDeep(sampleHelmChartRepositoryFormData);
+    projectFormData.scope = 'ProjectHelmChartRepository';
+    const projectRepo = convertToHelmChartRepository(projectFormData, 'test-ns');
+    expect(projectRepo.spec.connectionConfig.basicAuthConfig).toEqual({
+      name: 'test-basicAuthConfig',
+    });
+
+    // Test cluster-scoped HelmChartRepository excludes basicAuthConfig
+    const clusterFormData = _.cloneDeep(sampleHelmChartRepositoryFormData);
+    clusterFormData.scope = 'HelmChartRepository';
+    const clusterRepo = convertToHelmChartRepository(clusterFormData, 'test-ns');
+    expect(clusterRepo.spec.connectionConfig.basicAuthConfig).toBeUndefined();
+
+    // Test existingRepo with ProjectHelmChartRepository kind includes basicAuthConfig
+    const formDataWithoutScope = _.cloneDeep(sampleHelmChartRepositoryFormData);
+    formDataWithoutScope.scope = 'HelmChartRepository';
+    const repoWithExisting = convertToHelmChartRepository(
+      formDataWithoutScope,
+      'test-ns',
+      sampleProjectHelmChartRepository,
+    );
+    expect(repoWithExisting.spec.connectionConfig.basicAuthConfig).toEqual({
+      name: 'test-basicAuthConfig',
+    });
+
+    // Test existingRepo with HelmChartRepository kind excludes basicAuthConfig
+    const clusterExistingRepo = _.cloneDeep(sampleProjectHelmChartRepository);
+    clusterExistingRepo.kind = 'HelmChartRepository';
+    const repoWithClusterExisting = convertToHelmChartRepository(
+      formDataWithoutScope,
+      'test-ns',
+      clusterExistingRepo,
+    );
+    expect(repoWithClusterExisting.spec.connectionConfig.basicAuthConfig).toBeUndefined();
+  });
+  it('should convert form data with basicAuthConfig correctly', () => {
+    const repoWithBasicAuth = _.cloneDeep(sampleProjectHelmChartRepository);
+    repoWithBasicAuth.spec.connectionConfig.basicAuthConfig = { name: 'test-basicAuthConfig' };
+    const form = convertToForm(repoWithBasicAuth);
+    expect(form.basicAuthConfig).toEqual('test-basicAuthConfig');
+  });
 });
