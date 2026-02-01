@@ -18,12 +18,12 @@ export const secrets = {
     cy.byLegacyTestID('file-input-textarea').last().clear().type(value);
   },
   checkSecret: (keyValuesToCheck: object, jsonOutput: boolean = false) => {
-    secrets.clickRevealValues();
     const renderedKeyValues = {};
     cy.byTestID('secret-data')
       .find('[data-test="secret-data-term"]')
       .each(($el, index) => {
         const key = $el.text();
+        secrets.clickRevealValues();
         cy.get('[data-test="copy-to-clipboard"]')
           .eq(index)
           .invoke('text')
