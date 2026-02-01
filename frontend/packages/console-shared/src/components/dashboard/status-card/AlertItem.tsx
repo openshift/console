@@ -8,6 +8,7 @@ import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-typ
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
+import { LinkifyExternal } from '@console/internal/components/utils/link';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
@@ -73,7 +74,9 @@ export const StatusItem: FC<StatusItemProps> = ({
               <Timestamp simple timestamp={timestamp} />
             </div>
           )}
-          <span className="co-status-card__health-item-text co-break-word">{message}</span>
+          <span className="co-status-card__health-item-text co-break-word">
+            <LinkifyExternal>{message}</LinkifyExternal>
+          </span>
           {documentationLink && (
             <ExternalLink className="co-status-card__alert-item-doc-link" href={documentationLink}>
               {t('console-shared~Go to documentation')}
