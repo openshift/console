@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { Split, SplitItem, Divider, Stack, StackItem } from '@patternfly/react-core';
+import { Button, Split, SplitItem, Divider, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
@@ -17,7 +17,7 @@ type CatalogDetailsModalProps = {
 
 const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
   const { t } = useTranslation();
-  const [to, label] = useCtaLink(item?.cta);
+  const [to, label, disabled] = useCtaLink(item?.cta);
 
   if (!item) {
     return null;
@@ -54,15 +54,16 @@ const CatalogDetailsModal: FC<CatalogDetailsModalProps> = ({ item, onClose }) =>
             <SplitItem>
               {to && (
                 <div className="co-catalog-page__overlay-actions">
-                  <Link
+                  <Button
                     data-test="catalog-details-modal-cta"
-                    className="pf-v6-c-button pf-m-primary co-catalog-page__overlay-action"
-                    to={to}
-                    role="button"
+                    className="co-catalog-page__overlay-action"
+                    component={(props) => <Link {...props} to={to} />}
+                    variant="primary"
+                    isDisabled={disabled}
                     onClick={onClose}
                   >
                     {label}
-                  </Link>
+                  </Button>
                 </div>
               )}
             </SplitItem>
