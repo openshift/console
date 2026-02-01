@@ -3,7 +3,7 @@ package actions
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -52,7 +52,7 @@ func TestRollbackRelease(t *testing.T) {
 			// create fake release
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
@@ -97,7 +97,7 @@ func TestRollbackNonExistRelease(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
