@@ -182,6 +182,9 @@ const App: FC<{
     const gettingStartedBannerCapability = window.SERVER_FLAGS.capabilities?.find(
       (capability) => capability.name === 'GettingStartedBanner',
     );
+    const guidedTourCapability = window.SERVER_FLAGS.capabilities?.find(
+      (capability) => capability.name === 'GuidedTour',
+    );
     dispatch(
       setFlag(
         FLAGS.CONSOLE_CAPABILITY_LIGHTSPEEDBUTTON_IS_ENABLED,
@@ -192,6 +195,13 @@ const App: FC<{
       setFlag(
         FLAGS.CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED,
         gettingStartedBannerCapability?.visibility?.state === 'Enabled',
+      ),
+    );
+    dispatch(
+      setFlag(
+        FLAGS.CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED,
+        // Default to enabled if capability is not explicitly set (backwards compatibility)
+        guidedTourCapability?.visibility?.state !== 'Disabled',
       ),
     );
     dispatch(setFlag(FLAGS.LIGHTSPEED_IS_AVAILABLE_TO_INSTALL, errorMessage === ''));

@@ -29,6 +29,7 @@
       "tour": { "$codeRef": "getGuidedTour" }
     },
     "flags": {
+      "required": ["CONSOLE_CAPABILITY_GUIDEDTOUR_IS_ENABLED"],
       "disallowed": ["INTEGRATION_TEST"]
     }
   },

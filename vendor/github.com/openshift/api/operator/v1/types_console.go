@@ -27,7 +27,7 @@ type Console struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	// +required
-	Spec ConsoleSpec `json:"spec,omitempty"`
+	Spec ConsoleSpec `json:"spec"`
 	// +optional
 	Status ConsoleStatus `json:"status,omitempty"`
 }
@@ -107,6 +107,9 @@ const (
 
 	// gettingStartedBanner is the name of the 'Getting started resources' banner in the console UI Overview page.
 	GettingStartedBanner ConsoleCapabilityName = "GettingStartedBanner"
+
+	// guidedTour is the name of the 'Guided Tour' feature in console UI.
+	GuidedTour ConsoleCapabilityName = "GuidedTour"
 )
 
 // CapabilityState defines the state of the capability in the console UI.
@@ -134,8 +137,8 @@ type CapabilityVisibility struct {
 // Capabilities contains set of UI capabilities and their state in the console UI.
 type Capability struct {
 	// name is the unique name of a capability.
-	// Available capabilities are LightspeedButton and GettingStartedBanner.
-	// +kubebuilder:validation:Enum:="LightspeedButton";"GettingStartedBanner"
+	// Available capabilities are LightspeedButton, GettingStartedBanner, and GuidedTour.
+	// +kubebuilder:validation:Enum:="LightspeedButton";"GettingStartedBanner";"GuidedTour"
 	// +required
 	Name ConsoleCapabilityName `json:"name"`
 	// visibility defines the visibility state of the capability.
@@ -203,6 +206,7 @@ type ConfigMapFileReference struct {
 	// +required
 	Key string `json:"key"`
 }
+
 // FileReferenceSource is used by the console to locate the specified file containing a custom logo.
 // +kubebuilder:validation:XValidation:rule="has(self.from) && self.from == 'ConfigMap' ? has(self.configMap) : !has(self.configMap)",message="configMap is required when from is 'ConfigMap', and forbidden otherwise."
 type FileReferenceSource struct {
@@ -280,10 +284,10 @@ type ConsoleCustomization struct {
 
 	// capabilities defines an array of capabilities that can be interacted with in the console UI.
 	// Each capability defines a visual state that can be interacted with the console to render in the UI.
-	// Available capabilities are LightspeedButton and GettingStartedBanner.
+	// Available capabilities are LightspeedButton, GettingStartedBanner, and GuidedTour.
 	// Each of the available capabilities may appear only once in the list.
 	// +kubebuilder:validation:MinItems=1
-	// +kubebuilder:validation:MaxItems=2
+	// +kubebuilder:validation:MaxItems=3
 	// +listType=map
 	// +listMapKey=name
 	// +optional
@@ -479,7 +483,6 @@ type PerspectiveVisibility struct {
 
 // Perspective defines a perspective that cluster admins want to show/hide in the perspective switcher dropdown
 // +kubebuilder:validation:XValidation:rule="has(self.id) && self.id != 'dev'? !has(self.pinnedResources) : true",message="pinnedResources is allowed only for dev and forbidden for other perspectives"
-// +optional
 type Perspective struct {
 	// id defines the id of the perspective.
 	// Example: "dev", "admin".
