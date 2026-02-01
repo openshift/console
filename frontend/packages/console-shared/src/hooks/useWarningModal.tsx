@@ -6,17 +6,22 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.
  */
-const ControlledWarningModal: FC<WarningModalProps> = (props) => {
+const ControlledWarningModal: FC<WarningModalProps & { closeOverlay?: () => void }> = ({
+  closeOverlay,
+  ...props
+}) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const onClose: WarningModalProps['onClose'] = (e) => {
     setIsOpen(false);
     props.onClose?.(e);
+    closeOverlay?.();
   };
 
   const onConfirm: WarningModalProps['onConfirm'] = () => {
     setIsOpen(false);
     props.onConfirm?.();
+    closeOverlay?.();
   };
 
   return <WarningModal {...props} isOpen={isOpen} onClose={onClose} onConfirm={onConfirm} />;

@@ -13,7 +13,7 @@ import {
   isGraph,
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
-import { errorModal } from '@console/internal/components/modals';
+import { launchGlobalErrorModal } from '@console/shared';
 import {
   NodeComponentProps,
   NODE_DRAG_TYPE,
@@ -188,10 +188,9 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
       canDropEventSourceSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
       createSinkConnection(edge.getSource(), dropResult).catch((error) => {
-        errorModal({
+        launchGlobalErrorModal({
           title: i18next.t('knative-plugin~Error moving event source sink'),
           error: error.message,
-          showIcon: true,
         });
       });
     }
@@ -222,10 +221,9 @@ export const eventSourceKafkaLinkDragSourceSpec = (): DragSourceSpec<
     edge.setEndPoint();
     if (monitor.didDrop() && dropResult) {
       createEventSourceKafkaConnection(edge.getSource(), dropResult).catch((error) => {
-        errorModal({
+        launchGlobalErrorModal({
           title: i18next.t('knative-plugin~Error moving event source kafka connector'),
           error: error?.message,
-          showIcon: true,
         });
       });
     }
@@ -260,10 +258,9 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
       canDropPubSubSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
       createSinkPubSubConnection(edge, dropResult).catch((error) => {
-        errorModal({
+        launchGlobalErrorModal({
           title: i18next.t('knative-plugin~Error while sink'),
           error: error.message,
-          showIcon: true,
         });
       });
     }

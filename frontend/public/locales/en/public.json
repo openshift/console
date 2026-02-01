@@ -902,7 +902,6 @@
   "Recreate": "Recreate",
   "Shut down all existing pods before creating new ones": "Shut down all existing pods before creating new ones",
   "Edit update strategy": "Edit update strategy",
-  "Confirm": "Confirm",
   "Delete {{kind}}?": "Delete {{kind}}?",
   "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?": "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?",
   "Are you sure you want to delete <2>{{resourceName}}</2>?": "Are you sure you want to delete <2>{{resourceName}}</2>?",

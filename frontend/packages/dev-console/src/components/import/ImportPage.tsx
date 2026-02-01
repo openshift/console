@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
+import { useSetupGlobalErrorModalLauncher } from '@console/shared';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -35,6 +36,7 @@ const ImportFlows = (t: TFunction): { [name: string]: ImportData } => ({
 });
 
 const ImportPage: FunctionComponent = () => {
+  useSetupGlobalErrorModalLauncher();
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();
