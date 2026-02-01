@@ -25,7 +25,7 @@ const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins 
   const pendingPlugins = notLoadedDynamicPluginInfo.filter((plugin) => plugin.status === 'pending');
   const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
   const loadedPluginsWithCSPViolations = loadedPlugins.filter(
-    (plugin) => cspViolations[plugin.metadata.name] ?? false,
+    (plugin) => cspViolations[plugin.manifest.name] ?? false,
   );
   const enabledPlugins = loadedPlugins.filter((plugin) => plugin.enabled === true);
   const developmentMode = window.SERVER_FLAGS.k8sMode === 'off-cluster';

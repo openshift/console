@@ -1,32 +1,96 @@
-import * as _ from 'lodash';
-import { PluginStore } from '@console/plugin-sdk/src/store';
-import { ActivePlugin } from '@console/plugin-sdk/src/typings/base';
-import { getURLSearchParams } from './components/utils/link';
+import { PluginStore } from '@openshift/dynamic-plugin-sdk';
+import { getSharedScope } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
+import type { LocalPluginManifest, PluginLoaderOptions } from '@openshift/dynamic-plugin-sdk';
+import type { Middleware } from 'redux';
+import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import type { RootState } from './redux';
+import { valid as semver } from 'semver';
+import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 
-const getEnabledDynamicPluginNames = () => {
-  const allPluginNames = window.SERVER_FLAGS.consolePlugins;
-  const disabledPlugins = getURLSearchParams()['disable-plugins'];
+/**
+ * Set by `console-operator` or `./bin/bridge -release-version`. If this is
+ * undefined, we will not check this value when loading plugins.
+ */
+const CURRENT_OPENSHIFT_VERSION = semver(window.SERVER_FLAGS.releaseVersion) ?? undefined;
 
-  if (disabledPlugins === '') {
-    return [];
-  } else if (!disabledPlugins) {
-    return allPluginNames;
-  }
-
-  const disabledPluginNames = _.compact(disabledPlugins.split(','));
-  return allPluginNames.filter((pluginName) => !disabledPluginNames.includes(pluginName));
-};
-
-// Console active plugins module has its source generated during webpack build,
-// so we use dynamic require() instead of the usual static import statement.
-const activePlugins =
+/**
+ * Console local plugins module has its source generated during webpack build,
+ * so we use dynamic require() instead of the usual static import statement.
+ */
+const localPlugins =
   process.env.NODE_ENV !== 'test'
-    ? (require('../get-active-plugins').default as ActivePlugin[])
+    ? (require('../get-local-plugins').default as LocalPluginManifest[])
     : [];
 
-const dynamicPluginNames = getEnabledDynamicPluginNames();
+const localPluginNames = localPlugins.map((p) => p.name);
 
-export const pluginStore = new PluginStore(activePlugins, dynamicPluginNames);
+const validatePluginManifest: PluginLoaderOptions['transformPluginManifest'] = (manifest) => {
+  const isLocalPlugin = localPluginNames.includes(manifest.name);
+
+  // Local plugins can skip remote plugin validation
+  if (isLocalPlugin) {
+    return manifest;
+  }
+
+  // Only allow plugins listed in `dynamicPluginNames` to be loaded
+  if (!dynamicPluginNames.includes(manifest.name)) {
+    throw new Error(`Plugin "${manifest.name}" is not in the list of allowed plugins.`);
+  }
+
+  // Ensure plugin name can be a valid DNS subdomain name for loading
+  const result = new ValidationResult('Console plugin metadata');
+  result.assertions.validDNSSubdomainName(manifest.name, 'metadata.name');
+
+  if (result.hasErrors()) {
+    throw new Error(result.formatErrors());
+  }
+
+  // No issues, return manifest as-is
+  return manifest;
+};
+
+/**
+ * Provides access to Console plugins and their extensions.
+ *
+ * Plugins listed via {@link dynamicPluginNames} are loaded dynamically at runtime.
+ *
+ * In development, this object is exposed as `window.pluginStore` for easier debugging.
+ */
+export const pluginStore = new PluginStore({
+  loaderOptions: {
+    sharedScope: getSharedScope(),
+    // @ts-expect-error: Updated type in dynamic-plugin-sdk v7
+    fetchImpl: consoleFetch,
+    // Allows plugins to target a specific version of OpenShift via semver
+    customDependencyResolutions: {
+      '@console/pluginAPI': CURRENT_OPENSHIFT_VERSION,
+    },
+    // Additional validation for plugin manifest
+    transformPluginManifest: validatePluginManifest,
+  },
+});
+
+localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
+
+/**
+ * Redux middleware to update plugin store feature flags when actions are dispatched.
+ */
+export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {
+  let prevFlags: RootState['FLAGS'] | undefined;
+
+  return (next) => (action) => {
+    const result = next(action);
+    const nextFlags = s.getState().FLAGS;
+
+    if (nextFlags !== prevFlags) {
+      prevFlags = nextFlags;
+      pluginStore.setFeatureFlags(nextFlags.toObject());
+    }
+
+    return result;
+  };
+};
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging
@@ -35,7 +99,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV !== 'test') {
   // eslint-disable-next-line no-console
-  console.info(`Static plugins: [${activePlugins.map((p) => p.name).join(', ')}]`);
+  console.info(`Static plugins: [${localPluginNames.join(', ')}]`);
   // eslint-disable-next-line no-console
   console.info(`Dynamic plugins: [${dynamicPluginNames.join(', ')}]`);
 }

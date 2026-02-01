@@ -45,7 +45,7 @@ export const useNodeStatusExtensions = () => {
       const content: PopoverContent[] = [];
       const statuses: string[] = [];
       nodeStatusExtensions.forEach(
-        ({ properties: { PopoverContent, title, isActive, resources }, uid, pluginID, type }) => {
+        ({ properties: { PopoverContent, title, isActive, resources }, uid, type }) => {
           const pResources: WatchK8sResults<any> = {};
           if (resources) {
             Object.keys(resources).forEach((key) => {
@@ -62,7 +62,7 @@ export const useNodeStatusExtensions = () => {
             }
           } catch (err) {
             // eslint-disable-next-line no-console
-            console.error(`Extension ${pluginID}, ${type} failed:`, err);
+            console.error(`Extension ${uid}, ${type} failed:`, err);
           }
         },
       );

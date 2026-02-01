@@ -9,17 +9,12 @@ const ConsolePluginDescriptionDetail: FC<DetailsItemComponentProps> = ({ obj }) 
 
   const pluginInfoEntries = usePluginInfo();
   const pluginInfo = useMemo(
-    () =>
-      pluginInfoEntries.find((entry) =>
-        entry.status === 'loaded'
-          ? entry.metadata.name === pluginName
-          : entry.pluginName === pluginName,
-      ),
+    () => pluginInfoEntries.find((entry) => entry.manifest.name === pluginName),
     [pluginInfoEntries, pluginName],
   );
 
   return pluginInfo?.status === 'loaded' ? (
-    <>{pluginInfo.metadata.customProperties?.console?.description || DASH}</>
+    <>{pluginInfo.manifest.customProperties?.console?.description || DASH}</>
   ) : (
     <>{DASH}</>
   );

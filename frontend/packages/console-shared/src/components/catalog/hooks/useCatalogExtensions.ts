@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
+import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import { useResolvedExtensions, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
   CatalogItemFilter,
   CatalogItemProvider,
@@ -21,11 +22,11 @@ const useCatalogExtensions = (
   catalogId: string,
   catalogType?: string,
 ): [
-  ResolvedExtension<CatalogItemType>[],
-  ResolvedExtension<CatalogItemProvider>[],
-  ResolvedExtension<CatalogItemFilter>[],
-  ResolvedExtension<CatalogItemMetadataProvider>[],
-  ResolvedExtension<CatalogCategoriesProvider>[],
+  LoadedAndResolvedExtension<CatalogItemType>[],
+  LoadedAndResolvedExtension<CatalogItemProvider>[],
+  LoadedAndResolvedExtension<CatalogItemFilter>[],
+  LoadedAndResolvedExtension<CatalogItemMetadataProvider>[],
+  LoadedAndResolvedExtension<CatalogCategoriesProvider>[],
   boolean,
 ] => {
   const [disabledCatalogs] = useGetAllDisabledSubCatalogs();
@@ -114,7 +115,7 @@ const useCatalogExtensions = (
     ),
   );
 
-  const catalogTypeExtensions = useMemo<ResolvedExtension<CatalogItemType>[]>(
+  const catalogTypeExtensions = useMemo<LoadedAndResolvedExtension<CatalogItemType>[]>(
     () =>
       (catalogType
         ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)

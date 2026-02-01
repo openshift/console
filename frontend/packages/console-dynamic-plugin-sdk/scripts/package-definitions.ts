@@ -93,7 +93,10 @@ const parseSharedModuleDeps = (
   parseDeps(
     pkg,
     sharedPluginModules.filter(
-      (m) => !m.startsWith('@openshift-console/') && !getSharedModuleMetadata(m).allowFallback,
+      (m) =>
+        m !== '@openshift/dynamic-plugin-sdk' && // This is a direct SDK dependency as well as a shared module
+        !m.startsWith('@openshift-console/') &&
+        !getSharedModuleMetadata(m).allowFallback,
     ),
     missingDepCallback,
   );
@@ -120,8 +123,11 @@ export const getCorePackage: GetPackageDefinition = (
     main: 'lib/lib-core.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
+      ...parseDeps(
+        rootPackage,
+        ['@openshift/dynamic-plugin-sdk', 'immutable', 'reselect', 'typesafe-actions'],
+        missingDepCallback,
+      ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
@@ -153,8 +159,7 @@ export const getInternalPackage: GetPackageDefinition = (
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseDeps(rootPackage, ['immutable'], missingDepCallback),
+      ...parseDeps(rootPackage, ['@openshift/dynamic-plugin-sdk', 'immutable'], missingDepCallback),
     },
   },
   filesToCopy: {
@@ -175,10 +180,19 @@ export const getWebpackPackage: GetPackageDefinition = (
     main: 'lib/lib-webpack.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk-webpack'], missingDepCallback),
       ...parseDeps(
         rootPackage,
-        ['ajv', 'chalk', 'comment-json', 'find-up', 'glob', 'read-pkg', 'semver'],
+        [
+          '@openshift/dynamic-plugin-sdk',
+          '@openshift/dynamic-plugin-sdk-webpack',
+          'ajv',
+          'chalk',
+          'comment-json',
+          'find-up',
+          'glob',
+          'read-pkg',
+          'semver',
+        ],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),

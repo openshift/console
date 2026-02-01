@@ -70,12 +70,12 @@ describe('translateExtension', () => {
     ]);
   });
 
-  it('returns the same extension instance', () => {
+  it('returns a cloned extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
     const mockFn = jest.fn((key) => key);
     const t = mockFn;
 
-    expect(translateExtension(testExtension, t)).toBe(testExtension);
+    expect(translateExtension(testExtension, t)).not.toBe(testExtension);
     expect(mockFn).not.toHaveBeenCalled();
   });
 });

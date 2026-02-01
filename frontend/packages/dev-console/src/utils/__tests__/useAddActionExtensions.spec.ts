@@ -19,7 +19,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 1',
       href: '/action1',
     },
-    pluginID: 'plugin1',
     pluginName: 'Plugin 1',
     uid: '1234-1',
   };
@@ -31,7 +30,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 2',
       href: '/action2',
     },
-    pluginID: 'plugin2',
     pluginName: 'Plugin 2',
     uid: '1234-2',
   };
@@ -43,7 +41,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 3',
       href: '/action3',
     },
-    pluginID: 'plugin3',
     pluginName: 'Plugin 3',
     uid: '1234-3',
   };
@@ -56,7 +53,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 4',
       callback: jest.fn(),
     },
-    pluginID: 'plugin3',
     pluginName: 'Plugin 3',
     uid: '1234-3',
   };

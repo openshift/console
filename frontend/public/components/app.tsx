@@ -11,6 +11,8 @@ import { Router } from 'react-router-dom';
 import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
+import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
@@ -36,7 +38,6 @@ import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/Fe
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   useResolvedExtensions,
-  ResolvedExtension,
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
@@ -94,7 +95,7 @@ const EnhancedProvider: FC<{
 };
 
 const App: FC<{
-  contextProviderExtensions: ResolvedExtension<ContextProvider>[];
+  contextProviderExtensions: LoadedAndResolvedExtension<ContextProvider>[];
 }> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -443,8 +444,15 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-const initPlugins = (storeInstance: typeof store) => {
-  return initConsolePlugins(pluginStore, storeInstance);
+/**
+ * loading dynamic plugins from PluginStore has a dependency on coFetch, which
+ * only works after `AppInitSDK` has set the fetch implementation.
+ *
+ * TODO: Find a way to load this earlier in the app lifecycle
+ * TODO: Revert HAC-375 so coFetch isn't sourced via dependency injection (???)
+ */
+const initDynamicPlugins = () => {
+  initConsolePlugins(pluginStore);
 };
 // Load cached API resources from localStorage to speed up page load.
 const initApiDiscovery = (storeInstance) => {
@@ -521,24 +529,26 @@ graphQLReady.onReady(() => {
   render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <AppInitSDK
-              configurations={{
-                appFetch: appInternalFetch,
-                apiDiscovery: initApiDiscovery,
-                initPlugins,
-              }}
-            >
-              <ToastProvider>
-                <PollConsoleUpdates />
-                <AdmissionWebhookWarningNotifications />
-                <AppRouter />
-              </ToastProvider>
-            </AppInitSDK>
-          </HelmetProvider>
-        </ThemeProvider>
+        <PluginStoreProvider store={pluginStore}>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
+              <AppInitSDK
+                configurations={{
+                  appFetch: appInternalFetch,
+                  apiDiscovery: initApiDiscovery,
+                  dynamicPlugins: initDynamicPlugins,
+                }}
+              >
+                <ToastProvider>
+                  <PollConsoleUpdates />
+                  <AdmissionWebhookWarningNotifications />
+                  <AppRouter />
+                </ToastProvider>
+              </AppInitSDK>
+            </HelmetProvider>
+          </ThemeProvider>
+        </PluginStoreProvider>
       </Provider>
     </Suspense>,
     document.getElementById('app'),

@@ -37,7 +37,6 @@ describe('CatalogController', () => {
       description: null,
       catalogExtensions: [
         {
-          pluginID: '@console/helm-plugin',
           pluginName: '@console/helm-plugin',
           properties: {
             catalogDescription: 'Helm Catalog description',

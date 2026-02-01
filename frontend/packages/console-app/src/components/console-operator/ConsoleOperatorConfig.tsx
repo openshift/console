@@ -302,12 +302,12 @@ const DevPluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
       pluginInfo
         .filter((plugin) => plugin.status === 'loaded')
         .map((plugin) => ({
-          name: plugin.metadata.name,
-          version: plugin.metadata.version,
-          description: plugin.metadata?.customProperties?.console?.description,
+          name: plugin.manifest.name,
+          version: plugin.manifest.version,
+          description: plugin.manifest.customProperties?.console?.description,
           enabled: plugin.enabled,
           status: plugin.status,
-          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
+          hasCSPViolations: cspViolations[plugin.manifest.name] ?? false,
         })),
     [pluginInfo, cspViolations],
   );
@@ -333,22 +333,26 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
     return consolePlugins.map((plugin) => {
       const pluginName = plugin?.metadata?.name;
       const enabled = enabledPlugins.includes(pluginName);
+
       const loadedPluginInfo = pluginInfo
         .filter((p) => p.status === 'loaded')
-        .find((i) => i?.metadata?.name === pluginName);
+        .find((i) => i.manifest.name === pluginName);
+
       const notLoadedPluginInfo = pluginInfo
         .filter((p) => p.status !== 'loaded')
-        .find((i) => i?.pluginName === pluginName);
+        .find((i) => i.manifest.name === pluginName);
+
       if (loadedPluginInfo) {
         return {
           name: plugin?.metadata?.name,
-          version: loadedPluginInfo?.metadata?.version,
-          description: loadedPluginInfo?.metadata?.customProperties?.console?.description,
+          version: loadedPluginInfo?.manifest.version,
+          description: loadedPluginInfo?.manifest.customProperties?.console?.description,
           enabled,
           status: loadedPluginInfo?.status,
-          hasCSPViolations: cspViolations[plugin.metadata.name] ?? false,
+          hasCSPViolations: cspViolations[loadedPluginInfo?.manifest.name] ?? false,
         };
       }
+
       return {
         name: plugin?.metadata?.name,
         enabled,

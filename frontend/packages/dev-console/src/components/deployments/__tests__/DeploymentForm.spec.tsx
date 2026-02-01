@@ -1,10 +1,9 @@
 import type { FC } from 'react';
-import { render, fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
+import { fireEvent, screen, cleanup, waitFor } from '@testing-library/react';
 import i18n from 'i18next';
 import * as _ from 'lodash';
 import { setI18n } from 'react-i18next';
-import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockDeploymentConfig, mockEditDeploymentData } from '../__mocks__/deployment-data';
 import MockForm from '../__mocks__/MockForm';
 import ContainerField from '../ContainerField';
@@ -70,17 +69,15 @@ beforeEach(() => {
   };
   setI18n(i18n);
 
-  render(
+  renderWithProviders(
     <MockForm handleSubmit={handleSubmit}>
       {(props) => (
-        <Provider store={store}>
-          <DeploymentForm
-            {...props}
-            heading="Edit DeploymentConfig"
-            resource={mockDeploymentConfig}
-            handleCancel={handleCancel}
-          />
-        </Provider>
+        <DeploymentForm
+          {...props}
+          heading="Edit DeploymentConfig"
+          resource={mockDeploymentConfig}
+          handleCancel={handleCancel}
+        />
       )}
     </MockForm>,
   );

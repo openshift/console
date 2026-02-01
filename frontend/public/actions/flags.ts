@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { ModelFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import { K8sModel } from '@console/internal/module/k8s';
@@ -144,8 +144,8 @@ export const clearSSARFlags = () =>
   });
 
 export const updateModelFlags = (
-  added: LoadedExtension<ModelFeatureFlag>[],
-  removed: LoadedExtension<ModelFeatureFlag>[],
+  added: ResolvedExtension<ModelFeatureFlag>[],
+  removed: ResolvedExtension<ModelFeatureFlag>[],
   models: K8sModel[],
 ) => action(ActionType.UpdateModelFlags, { added, removed, models });
 

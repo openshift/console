@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
@@ -28,7 +28,7 @@ describe('EventSourceSpec', () => {
   };
 
   it('should render form with proper initialvalues if contextSource is not passed', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}
@@ -40,7 +40,7 @@ describe('EventSourceSpec', () => {
 
   it('should render form with proper initialvalues for sink if contextSource is passed', () => {
     const contextSourceData = 'serving.knative.dev~v1~Service/svc-display';
-    const { container } = render(
+    const { container } = renderWithProviders(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}

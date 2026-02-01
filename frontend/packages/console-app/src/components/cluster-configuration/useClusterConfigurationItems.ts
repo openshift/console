@@ -8,7 +8,11 @@ import {
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src';
 import { ResolvedClusterConfigurationItem } from './types';
 
-const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], boolean, Error[]] => {
+const useClusterConfigurationItems = (): [
+  ResolvedClusterConfigurationItem[],
+  boolean,
+  unknown[],
+] => {
   const [resolvedExtensions, resolved, errors] = useResolvedExtensions<ClusterConfigurationItem>(
     isClusterConfigurationItem,
   );

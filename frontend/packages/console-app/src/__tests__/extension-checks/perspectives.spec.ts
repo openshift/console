@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 import { isPerspective } from '@console/dynamic-plugin-sdk';
-import { testedExtensions } from '../plugin-test-utils';
+import { getTestedExtensions } from '../plugin-test-utils';
 
 describe('Perspective', () => {
-  // TODO need to load console-extensions.json for tests to function
-  xit('duplicate ids are not allowed', () => {
+  it('duplicate ids are not allowed', async () => {
+    const testedExtensions = await getTestedExtensions();
     const perspectives = testedExtensions.toArray().filter(isPerspective);
     const dedupedPerspectives = _.uniqWith(
       perspectives,
@@ -15,7 +15,8 @@ describe('Perspective', () => {
     expect(duplicatePerspectives).toEqual([]);
   });
 
-  xit('exactly one default perspective is allowed', () => {
+  xit('exactly one default perspective is allowed', async () => {
+    const testedExtensions = await getTestedExtensions();
     const perspectives = testedExtensions.toArray().filter(isPerspective);
     const defaultPerspectives = perspectives.filter((p) => p.properties.default);
 

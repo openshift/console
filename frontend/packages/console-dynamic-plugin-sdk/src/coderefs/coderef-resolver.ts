@@ -1,34 +1,36 @@
 /* eslint-disable no-console */
 
-import { AnyObject } from '@openshift/dynamic-plugin-sdk';
-import * as _ from 'lodash';
-import type {
-  Extension,
-  RemoteEntryModule,
-  EncodedCodeRef,
-  CodeRef,
-  ResolvedCodeRefProperties,
-  ExtensionProperties,
-  UpdateExtensionProperties,
-} from '../types';
+import {
+  AnyObject,
+  applyCodeRefSymbol,
+  ExtractExtensionProperties,
+  ResolvedExtension,
+} from '@openshift/dynamic-plugin-sdk';
+import { isPlainObject, isEqual, isFunction, isNil, cloneDeep } from 'lodash';
+import type { Extension, EncodedCodeRef, CodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
 import { settleAllPromises } from '../utils/promise';
 
-const codeRefSymbol = Symbol('CodeRef');
+/**
+ * Extract the SDK's internal CodeRef symbol by applying it to a dummy function.
+ *
+ * This ensures we can detect code refs created by the SDK, which uses its own
+ * private Symbol instance.
+ */
+const codeRefSymbol = Object.getOwnPropertySymbols(applyCodeRefSymbol(() => Promise.resolve()))[0];
 
-export const applyCodeRefSymbol = <T = any>(ref: CodeRef<T>) => {
-  ref[codeRefSymbol] = true;
-  return ref;
-};
+if (!codeRefSymbol) {
+  throw new Error('Failed to extract CodeRef symbol from the SDK');
+}
 
 export const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
-  _.isPlainObject(obj) &&
-  _.isEqual(Object.getOwnPropertyNames(obj), ['$codeRef']) &&
+  isPlainObject(obj) &&
+  isEqual(Object.getOwnPropertyNames(obj), ['$codeRef']) &&
   typeof (obj as EncodedCodeRef).$codeRef === 'string';
 
 export const isExecutableCodeRef = (obj): obj is CodeRef =>
-  _.isFunction(obj) &&
-  _.isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
+  isFunction(obj) &&
+  isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
   obj[codeRefSymbol] === true;
 
 const codeRefErrorSymbol = Symbol('error');
@@ -50,80 +52,22 @@ export const parseEncodedCodeRefValue = (value: string): [string, string] | [] =
 };
 
 /**
- * Returns the object referenced by the `EncodedCodeRef`.
- *
- * If an error occurs, calls `errorCallback` and returns `null`.
- *
- * _Does not throw errors by design._
- */
-export const loadReferencedObject = async <TExport = any>(
-  ref: EncodedCodeRef,
-  entryModule: RemoteEntryModule,
-  pluginID: string,
-  errorCallback: VoidFunction,
-): Promise<TExport> => {
-  const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
-  let requestedModule: {};
-
-  if (!moduleName) {
-    console.error(`Malformed code reference '${ref.$codeRef}' of plugin ${pluginID}`);
-    errorCallback();
-    return null;
-  }
-
-  try {
-    const moduleFactory = await entryModule.get(moduleName);
-    requestedModule = moduleFactory();
-  } catch (error) {
-    console.error(`Failed to load module '${moduleName}' of plugin ${pluginID}`, error);
-    errorCallback();
-    return null;
-  }
-
-  if (!requestedModule[exportName]) {
-    console.error(`Missing module export '${moduleName}.${exportName}' of plugin ${pluginID}`);
-    errorCallback();
-    return null;
-  }
-
-  return requestedModule[exportName];
-};
-
-/**
- * Returns new `extensions` array, resolving `EncodedCodeRef` values into `CodeRef` functions.
- *
- * _Does not execute `CodeRef` functions to load the referenced objects._
- */
-export const resolveEncodedCodeRefs = (
-  extensions: Extension[],
-  entryModule: RemoteEntryModule,
-  pluginID: string,
-  errorCallback: VoidFunction,
-): Extension[] =>
-  _.cloneDeep(extensions).map((e) => {
-    deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key, obj) => {
-      const loader = applyCodeRefSymbol(async () =>
-        loadReferencedObject(ref, entryModule, pluginID, errorCallback),
-      );
-      obj[key] = Object.defineProperty(loader, 'name', { value: `${pluginID}-${ref.$codeRef}` });
-    });
-
-    return e;
-  });
-
-/**
  * Returns an extension with its `CodeRef` properties replaced with referenced objects.
+ *
+ * The resulting Promise resolves with a new extension instance; its `properties` object
+ * is cloned in order to preserve the original extension.
  */
 export const resolveExtension = async <
   E extends Extension<string, P>,
-  P extends AnyObject = ExtensionProperties<E>,
-  R = UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
+  P extends AnyObject = ExtractExtensionProperties<E>,
+  R = ResolvedExtension<E>
 >(
   extension: E,
 ): Promise<R> => {
+  const clonedProperties = cloneDeep(extension.properties);
   const valueResolutions: Promise<void>[] = [];
 
-  deepForOwn<CodeRef>(extension.properties, isExecutableCodeRef, (ref, key, obj) => {
+  deepForOwn<CodeRef>(clonedProperties, isExecutableCodeRef, (ref, key, obj) => {
     if (isCodeRefError(ref)) {
       throw getCodeRefError(ref);
     }
@@ -132,7 +76,7 @@ export const resolveExtension = async <
         .then((resolvedValue) => {
           obj[key] = resolvedValue;
 
-          if (_.isNil(resolvedValue)) {
+          if (isNil(resolvedValue)) {
             console.warn(`Code reference property '${key}' resolved to null or undefined`);
           }
         })
@@ -145,5 +89,9 @@ export const resolveExtension = async <
 
   await settleAllPromises(valueResolutions);
 
-  return (extension as unknown) as R;
+  // Return a new extension object with the resolved properties
+  return ({
+    ...extension,
+    properties: clonedProperties,
+  } as unknown) as R;
 };

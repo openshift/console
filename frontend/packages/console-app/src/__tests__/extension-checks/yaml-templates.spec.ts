@@ -6,7 +6,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
 import { referenceForExtensionModel, GroupVersionKind } from '@console/internal/module/k8s';
-import { testedExtensions, getDuplicates } from '../plugin-test-utils';
+import { getTestedExtensions, getDuplicates } from '../plugin-test-utils';
 
 type TemplateEntry = [GroupVersionKind, ImmutableMap<string, string>];
 
@@ -28,7 +28,8 @@ const extensionToKeys = (e: YAMLTemplate) => {
 };
 
 describe('YAMLTemplate', () => {
-  it('only one named template per model is allowed', () => {
+  it('only one named template per model is allowed', async () => {
+    const testedExtensions = await getTestedExtensions();
     const baseTemplateEntries = _.values(baseTemplates.entrySeq().toObject()) as TemplateEntry[];
     const baseTemplateKeys = _.flatMap(baseTemplateEntries.map(entryToKeys));
     const pluginTemplateKeys = _.flatMap(

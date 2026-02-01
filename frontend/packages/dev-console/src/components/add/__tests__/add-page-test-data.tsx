@@ -11,7 +11,6 @@ type AddActionGroupExtension = LoadedExtension<AddActionGroup>;
 // AddAction extensions
 const allServices: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     description: 'Browse the catalog to discover, deploy and connect to services',
@@ -27,7 +26,6 @@ const allServices: AddActionExtension = {
 
 const database: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     description: 'Browse the catalog to discover database services to add to your application',
@@ -43,7 +41,6 @@ const database: AddActionExtension = {
 
 const operatorBacked: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     description: 'Browse the catalog to discover and deploy operator managed services',
@@ -59,7 +56,6 @@ const operatorBacked: AddActionExtension = {
 
 const helmChart: AddActionExtension = {
   flags: { required: ['OPENSHIFT_HELM'], disallowed: [] },
-  pluginID: '@console/helm-plugin',
   pluginName: '@console/helm-plugin',
   properties: {
     description: 'Browse the catalog to discover and install Helm Charts',
@@ -75,7 +71,6 @@ const helmChart: AddActionExtension = {
 
 const fromGit: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     accessReview: [
@@ -98,7 +93,6 @@ const fromGit: AddActionExtension = {
 
 const fromDevfile: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     accessReview: [
@@ -121,7 +115,6 @@ const fromDevfile: AddActionExtension = {
 
 const fromDockerFile: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     accessReview: [
@@ -144,7 +137,6 @@ const fromDockerFile: AddActionExtension = {
 
 const containerImagesAction: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     accessReview: [
@@ -167,7 +159,6 @@ const containerImagesAction: AddActionExtension = {
 
 const eventSource: AddActionExtension = {
   flags: { required: ['KNATIVE_EVENTING'], disallowed: [] },
-  pluginID: '@console/knative-plugin',
   pluginName: '@console/knative-plugin',
   properties: {
     description:
@@ -184,7 +175,6 @@ const eventSource: AddActionExtension = {
 
 const channel: AddActionExtension = {
   flags: { required: ['KNATIVE_EVENTING', 'FLAG_KNATIVE_EVENTING_CHANNEL'], disallowed: [] },
-  pluginID: '@console/knative-plugin',
   pluginName: '@console/knative-plugin',
   properties: {
     description:
@@ -201,7 +191,6 @@ const channel: AddActionExtension = {
 
 const importYaml: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     description: 'Create resources from their YAML or JSON definitions',
@@ -217,7 +206,6 @@ const importYaml: AddActionExtension = {
 
 const uploadJar: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     description: 'Upload a JAR file from your local desktop to OpenShift',
@@ -233,7 +221,6 @@ const uploadJar: AddActionExtension = {
 
 const actionWithoutGroupId: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/add-page-test-data',
   pluginName: '@console/add-page-test-data',
   properties: {
     description: 'This is an action without a groupId',
@@ -248,7 +235,6 @@ const actionWithoutGroupId: AddActionExtension = {
 
 const actionWithUnavailableGroupId: AddActionExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/add-page-test-data',
   pluginName: '@console/add-page-test-data',
   properties: {
     description:
@@ -267,7 +253,6 @@ const actionWithUnavailableGroupId: AddActionExtension = {
 
 const softwareCatalog: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     id: 'developer-catalog',
@@ -280,7 +265,6 @@ const softwareCatalog: AddActionGroupExtension = {
 
 const gitRepository: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     id: 'git-repository',
@@ -294,7 +278,6 @@ const gitRepository: AddActionGroupExtension = {
 
 const containerImagesActionGroup: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     id: 'container-images',
@@ -308,7 +291,6 @@ const containerImagesActionGroup: AddActionGroupExtension = {
 
 const localMachine: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/dev-console',
   pluginName: '@console/dev-console',
   properties: {
     id: 'local-machine',
@@ -322,7 +304,6 @@ const localMachine: AddActionGroupExtension = {
 
 const eventing: AddActionGroupExtension = {
   flags: { required: [], disallowed: [] },
-  pluginID: '@console/knative-plugin',
   pluginName: '@console/knative-plugin',
   properties: {
     id: 'eventing',

@@ -223,7 +223,8 @@ describe('OperandDetailsPage', () => {
   it('configures DetailsPage with Details, YAML, Resources, and Events tabs', () => {
     renderWithProviders(<OperandDetailsPage />);
 
-    expect(mockDetailsPage).toHaveBeenCalledTimes(1);
+    // One call for initial render and another for when pluginStore is initialized
+    expect(mockDetailsPage).toHaveBeenCalledTimes(2);
     const [detailsPageProps] = mockDetailsPage.mock.calls[0];
 
     expect(detailsPageProps.pages).toHaveLength(4);

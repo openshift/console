@@ -5,21 +5,21 @@ import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { EmptyBox } from '@console/internal/components/utils/status-box';
-import { usePluginStore } from '@console/plugin-sdk/src/api/usePluginStore';
+import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const pluginStore = usePluginStore();
+  const pluginInfoEntries = usePluginInfo();
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
-  const pluginManifest = useMemo(() => pluginStore.getDynamicPluginManifest(pluginName), [
-    pluginStore,
-    pluginName,
-  ]);
+  const pluginManifest = useMemo(
+    () => pluginInfoEntries.find((entry) => entry.manifest.name === pluginName)?.manifest,
+    [pluginInfoEntries, pluginName],
+  );
 
-  const manifestJson = useMemo(() => {
+  const manifestJSON = useMemo(() => {
     return pluginManifest ? JSON.stringify(pluginManifest, null, 2) : '';
   }, [pluginManifest]);
 
@@ -27,7 +27,7 @@ export const ConsolePluginManifestPage: FC<PageComponentProps> = ({ obj }) => {
     <PaneBody fullHeight>
       {pluginManifest ? (
         <BasicCodeEditor
-          code={manifestJson}
+          code={manifestJSON}
           isFullHeight
           isLanguageLabelVisible
           language={Language.json}
