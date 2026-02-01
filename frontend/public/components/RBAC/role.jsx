@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useMemo, useCallback, Suspense, Component } from 'react';
+import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { RoleModel, RoleBindingModel } from '../../models';
@@ -486,12 +486,57 @@ const RolesList = (props) => {
 };
 
 export const RolesPage = ({ namespace, mock, showTitle }) => {
+  const { t } = useTranslation();
+  const location = useLocation();
+
+  // Track which filter is selected from URL params
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const filterParam = params.get('rowFilter-role-kind');
+    return filterParam ? filterParam.split(',') : [];
+  });
+
   const createNS = namespace || 'default';
   const accessReview = {
     model: RoleModel,
     namespace: createNS,
   };
-  const { t } = useTranslation();
+
+  // Dynamically determine which resources to fetch
+  const resources = useMemo(() => {
+    const hasCluster = selectedFilters.includes('cluster');
+    const hasNamespaceOrSystem =
+      selectedFilters.includes('namespace') || selectedFilters.includes('system');
+
+    const resourcesList = [];
+
+    // Only fetch Role if namespace/system filter selected OR no filters selected
+    if (hasNamespaceOrSystem || selectedFilters.length === 0) {
+      resourcesList.push({ kind: 'Role', namespaced: true, optional: true });
+    }
+
+    // Only fetch ClusterRole if cluster filter selected OR no filters selected
+    if (hasCluster || selectedFilters.length === 0) {
+      resourcesList.push({ kind: 'ClusterRole', namespaced: false, optional: true });
+    }
+
+    return resourcesList;
+  }, [selectedFilters]);
+
+  // Update state when URL params change
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const filterParam = params.get('rowFilter-role-kind');
+    const newFilters = filterParam ? filterParam.split(',') : [];
+
+    const sortedNew = [...newFilters].sort();
+    const sortedSelected = [...selectedFilters].sort();
+
+    if (!_.isEqual(sortedNew, sortedSelected)) {
+      setSelectedFilters(newFilters);
+    }
+  }, [location.search, selectedFilters]);
+
   return (
     <MultiListPage
       ListComponent={RolesList}
@@ -501,11 +546,8 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       createAccessReview={accessReview}
       createButtonText={t('public~Create Role')}
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
-      flatten={(resources) => _.flatMap(resources, 'data').filter((r) => !!r)}
-      resources={[
-        { kind: 'Role', namespaced: true, optional: mock },
-        { kind: 'ClusterRole', namespaced: false, optional: true },
-      ]}
+      flatten={(resourcesData) => _.flatMap(resourcesData, 'data').filter((r) => !!r)}
+      resources={resources}
       title={t('public~Roles')}
       mock={mock}
       omitFilterToolbar={true}
