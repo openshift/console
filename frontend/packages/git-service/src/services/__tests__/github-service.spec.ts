@@ -265,6 +265,17 @@ describe('Github Service', () => {
     scope.done();
   });
 
+  it('should preserve scheme and port when making API call to specified hostname', async () => {
+    const gitSource: GitSource = { url: 'http://example.com:3000/test/repo' };
+    const gitService = new GithubService(gitSource);
+
+    const scope = nock('http://example.com:3000/api/v3').get('/repos/test/repo').reply(200);
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
+
   it('should detect .tekton folder', () => {
     const gitSource = {
       url: 'https://github.com/Lucifergene/oc-pipe',
