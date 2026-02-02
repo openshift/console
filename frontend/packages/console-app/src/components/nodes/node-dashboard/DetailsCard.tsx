@@ -1,12 +1,31 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
-import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  Divider,
+  DividerVariant,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
+import { getNodeGroups } from '@console/app/src/components/nodes/NodeGroupUtils';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { NodeModel } from '@console/internal/models';
+import { DASH } from '@console/shared/src';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
+import NodeGroupsEditorModal from '../modals/NodeGroupsEditorModal';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
 import { NodeDashboardContext } from './NodeDashboardContext';
@@ -18,6 +37,14 @@ const DetailsCard: FC = () => {
   const instanceType = obj.metadata.labels?.['beta.kubernetes.io/instance-type'];
   const zone = obj.metadata.labels?.['topology.kubernetes.io/zone'];
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
+
+  const [canEdit, isEditLoading] = useAccessReview({
+    group: NodeModel.apiGroup || '',
+    resource: NodeModel.plural,
+    verb: 'patch',
+  });
+
   return (
     <Card data-test-id="details-card">
       <CardHeader
@@ -61,6 +88,30 @@ const DetailsCard: FC = () => {
           <OverviewDetailItem isLoading={!obj} title={t('console-app~Uptime')}>
             <NodeUptime obj={obj} />
           </OverviewDetailItem>
+          <Divider component={DividerVariant.div} className="pf-v6-u-w-75" />
+          <DescriptionListGroup>
+            <dt className="pf-v6-c-description-list__term" data-test="detail-item-title">
+              <span className="pf-v6-c-description-list__text pf-v6-u-w-100">
+                <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+                  <FlexItem>{t('console-app~Groups')}</FlexItem>
+                  {!isEditLoading && canEdit ? (
+                    <FlexItem>
+                      <Button
+                        variant={ButtonVariant.link}
+                        isInline
+                        onClick={() => launchOverlay(NodeGroupsEditorModal, { node: obj })}
+                      >
+                        {t('console-app~Edit')}
+                      </Button>
+                    </FlexItem>
+                  ) : null}
+                </Flex>
+              </span>
+            </dt>
+            <DescriptionListDescription data-test="detail-item-value">
+              {getNodeGroups(obj).sort().join(', ') || DASH}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         </DescriptionList>
       </CardBody>
     </Card>
