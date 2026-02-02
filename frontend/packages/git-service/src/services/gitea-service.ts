@@ -62,9 +62,13 @@ export class GiteaService extends BaseService {
   };
 
   getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, resource, full_name: fullName } = GitUrlParse(this.gitsource.url);
+    const { name, owner, protocols, port, resource, full_name: fullName } = GitUrlParse(
+      this.gitsource.url,
+    );
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
-    const host = `https://${resource}`;
+    const host = _.isEmpty(port)
+      ? `${protocols[0]}://${resource}`
+      : `${protocols[0]}://${resource}:${port}`;
     return {
       repoName: name,
       owner,
