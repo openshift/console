@@ -62,6 +62,38 @@ describe('UserPreferenceCheckboxField', () => {
     });
 
     expect(mockSetValue).toHaveBeenCalledWith('trueValue');
+
+    // When user preference is explicitly undefined (not just falsy), defaultValue should be set
+    setupMocks(undefined, mockSetValue, true);
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...props} defaultValue="trueValue" />);
+    });
+
+    expect(mockSetValue).toHaveBeenCalledWith('trueValue');
+  });
+
+  it('should NOT override falsy user preference values with defaultValue (bug fix)', async () => {
+    const mockSetValue = jest.fn();
+
+    // Test with boolean false as the current value
+    const booleanProps = {
+      ...props,
+      trueValue: true,
+      falseValue: false,
+    };
+
+    // Current user preference is `false` (falsy), but it's a valid preference
+    // The old code using `!currentUserPreferenceValue` would incorrectly treat this as "not set"
+    // and override it with the defaultValue
+    mockUserPreference.mockReturnValue([false, mockSetValue, true]);
+
+    await act(async () => {
+      renderWithProviders(<UserPreferenceCheckboxField {...booleanProps} defaultValue />);
+    });
+
+    // The bug fix ensures that `false` is NOT replaced with the defaultValue
+    expect(mockSetValue).not.toHaveBeenCalled();
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 
   it('should render with isChecked true if user preference has loaded and is equal to trueValue', async () => {

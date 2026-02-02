@@ -36,7 +36,7 @@ const ConfigureUnschedulableModal: FC<ConfigureUnschedulableModalProps> = ({
       <ModalBody>
         <p>
           {t(
-            "console-app~Unschedulable nodes won't accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.",
+            "console-app~Unschedulable nodes won't accept new pods. By blocking new pod assignments, you can isolate a node to perform maintenance or decommission it without disrupting new traffic.",
           )}
         </p>
       </ModalBody>

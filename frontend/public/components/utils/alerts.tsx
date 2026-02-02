@@ -1,7 +1,15 @@
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import * as _ from 'lodash';
-import { Alert, AlertVariant, Button, List, ListItem } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertVariant,
+  Button,
+  Flex,
+  FlexItem,
+  List,
+  ListItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
@@ -25,12 +33,21 @@ export const ExpandableAlert: FC<CustomAlertProps> = ({ alerts, variant }) => {
       variant={variant}
       className="co-alert"
       title={
-        <>
-          {t('public~There is {{count}} {{variant}} alert.', { count: alertCount, variant })}
-          <Button type="button" onClick={() => setExpanded(!expanded)} variant="link">
-            {expanded ? t('public~Hide details') : t('public~Show details')}
-          </Button>
-        </>
+        <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+          <FlexItem>
+            {t('public~There is {{count}} {{variant}} alert', { count: alertCount, variant })}
+          </FlexItem>
+          <FlexItem>
+            <Button
+              type="button"
+              onClick={() => setExpanded(!expanded)}
+              variant="link"
+              className="pf-v6-u-py-0"
+            >
+              {expanded ? t('public~Hide details') : t('public~Show details')}
+            </Button>
+          </FlexItem>
+        </Flex>
       }
     >
       {expanded && alertContent}
