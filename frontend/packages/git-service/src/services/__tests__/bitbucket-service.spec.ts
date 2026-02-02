@@ -294,4 +294,19 @@ describe('Bitbucket Service', () => {
       nockDone();
     });
   });
+
+  it('should preserve scheme and port for Bitbucket Server API calls', async () => {
+    const gitSource: GitSource = {
+      url: 'http://bb.example.com:7990/projects/PROJ/repos/repo/browse',
+    };
+    const gitService = new BitbucketService(gitSource);
+
+    const scope = nock('http://bb.example.com:7990')
+      .get('/rest/api/1.0/projects/PROJ/repos/repo')
+      .reply(200, { slug: 'repo' });
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
 });
