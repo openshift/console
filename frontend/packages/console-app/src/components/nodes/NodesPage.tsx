@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, Suspense } from 'react';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import * as _ from 'lodash';
@@ -17,6 +18,8 @@ import type {
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import GroupsEditorModal from '@console/app/src/components/nodes/modals/GroupsEditorModal';
+import { getNodeGroups } from '@console/app/src/components/nodes/NodeGroupUtils';
 import {
   filterVirtualMachineInstancesByNode,
   useIsKubevirtPluginActive,
@@ -27,6 +30,7 @@ import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
+  useOverlay,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import type {
   K8sResourceCommon,
@@ -110,6 +114,9 @@ const nodeColumnInfo = Object.freeze({
   status: {
     id: 'status',
   },
+  groups: {
+    id: 'groups',
+  },
   machineOwner: {
     id: 'machineOwner',
   },
@@ -179,6 +186,13 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Status'),
         id: nodeColumnInfo.status.id,
         sort: sortWithCSRResource(nodeReadiness, 'False'),
+        props: {
+          modifier: 'nowrap',
+        },
+      },
+      {
+        title: t('console-app~Groups'),
+        id: nodeColumnInfo.groups.id,
         props: {
           modifier: 'nowrap',
         },
@@ -352,6 +366,10 @@ const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores 
   );
 };
 
+const GroupsCell: FC<{ node: NodeKind }> = ({ node }) => (
+  <>{getNodeGroups(node).sort().join(', ') || DASH}</>
+);
+
 const getNodeDataViewRows = (
   rowData: RowProps<NodeRowItem, GetNodeStatusExtensions>[],
   tableColumns: ConsoleDataViewColumn<NodeRowItem>[],
@@ -414,6 +432,9 @@ const getNodeDataViewRows = (
             title="Discovered"
           />
         ),
+      },
+      [nodeColumnInfo.groups.id]: {
+        cell: node ? <GroupsCell node={node} /> : DASH,
       },
       [nodeColumnInfo.role.id]: {
         cell: node ? <NodeRoles node={node} /> : DASH,
@@ -857,6 +878,7 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
 
   const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -864,6 +886,12 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     undefined,
     true,
   );
+
+  const [canEdit, isEditLoading] = useAccessReview({
+    group: NodeModel.apiGroup || '',
+    resource: NodeModel.plural,
+    verb: 'patch',
+  });
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -986,7 +1014,16 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
 
   return (
     <>
-      <ListPageHeader title={t('public~Nodes')} />
+      <ListPageHeader title={t('public~Nodes')}>
+        {!isEditLoading && canEdit ? (
+          <Button
+            variant={ButtonVariant.secondary}
+            onClick={() => launchOverlay(GroupsEditorModal, {})}
+          >
+            {t('console-app~Edit groups')}
+          </Button>
+        ) : null}
+      </ListPageHeader>
       <ListPageBody>
         <NodeList
           data={data}
