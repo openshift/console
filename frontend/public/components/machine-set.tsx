@@ -98,6 +98,7 @@ const useMachineCountModal = ({ resource }: ConfigureCountModalProps) => {
     resourceKind: MachineSetModel,
     resource,
     titleKey: 'public~Edit Machine count',
+    // t('public~{{resourceKind}} maintain the proper number of healthy machines.')
     messageKey: 'public~{{resourceKind}} maintain the proper number of healthy machines.',
     messageVariables: { resourceKind: MachineSetModel.labelPlural },
     path: '/spec/replicas',

@@ -47,8 +47,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     resourceKind: kind,
     resource,
     defaultValue: 0,
+    // t('public~Edit Pod count')
     titleKey: 'public~Edit Pod count',
     labelKey: kind?.labelPluralKey,
+    // t('public~{{resourceKinds}} maintain the desired number of healthy pods.')
     messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
     messageVariables: { resourceKinds: kind?.labelPlural },
     path: '/spec/replicas',

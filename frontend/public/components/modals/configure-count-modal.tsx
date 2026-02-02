@@ -144,6 +144,7 @@ export const configureJobParallelismModal = (props) => {
     {
       defaultValue: 1,
       titleKey: 'public~Edit parallelism',
+      // t('public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.')
       messageKey:
         'public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
       messageVariables: { resourceKinds: props.resourceKind.labelPlural },
