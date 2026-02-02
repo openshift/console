@@ -42,7 +42,16 @@ export class BitbucketService extends BaseService {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
     if (this.metadata.host !== 'bitbucket.org') {
-      this.baseURL = `https://${this.metadata.host}/rest/api/1.0`;
+      let protocol = 'https';
+      try {
+        const url = new URL(this.gitsource.url);
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+          protocol = url.protocol.replace(':', '');
+        }
+      } catch (e) {
+        // fall through to git-url-parse based handling
+      }
+      this.baseURL = `${protocol}://${this.metadata.host}/rest/api/1.0`;
       this.isServer = true;
     }
   }
