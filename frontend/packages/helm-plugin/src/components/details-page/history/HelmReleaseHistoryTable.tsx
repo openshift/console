@@ -9,6 +9,7 @@ import {
   useDataViewPagination,
 } from '@patternfly/react-data-view';
 import { InnerScrollContainer, SortByDirection } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom-v5-compat';
 import { LoadingBox } from '@console/internal/components/utils';
 import { HelmRelease } from '../../../types/helm-types';
@@ -38,6 +39,7 @@ const HelmReleaseHistoryTable: React.FC<HelmReleaseHistoryTableProps> = ({
   customGetColumnIndexById,
   customSortFunctions,
 }) => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Initialize pagination
@@ -145,6 +147,7 @@ const HelmReleaseHistoryTable: React.FC<HelmReleaseHistoryTableProps> = ({
                 page={pagination.page}
                 onSetPage={pagination.onSetPage}
                 onPerPageSelect={pagination.onPerPageSelect}
+                titles={{ ofWord: t('helm-plugin~of') }}
                 isCompact
               />
             }

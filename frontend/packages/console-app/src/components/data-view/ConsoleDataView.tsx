@@ -219,7 +219,13 @@ export const ConsoleDataView = <
               </ResponsiveActions>
             )
           }
-          pagination={<Pagination itemCount={filteredData.length} {...pagination} />}
+          pagination={
+            <Pagination
+              itemCount={filteredData.length}
+              titles={{ ofWord: t('public~of') }}
+              {...pagination}
+            />
+          }
         />
         <InnerScrollContainer>
           <DataViewTable
