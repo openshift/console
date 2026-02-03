@@ -32,7 +32,7 @@ export const useSubscriptionActions = (
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Edit]);
-  const launcher = useOverlay();
+  const launchModal = useOverlay();
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const installedCSV = obj.status?.installedCSV;
@@ -43,7 +43,7 @@ export const useSubscriptionActions = (
         id: 'remove-subscription',
         label: t('olm~Remove Subscription'),
         cta: () =>
-          launcher(UninstallOperatorModalOverlay, {
+          launchModal(UninstallOperatorModalOverlay, {
             k8sKill,
             k8sGet,
             k8sPatch,
@@ -61,7 +61,7 @@ export const useSubscriptionActions = (
         };
       },
     }),
-    [installedCSV, model, obj, t, launcher],
+    [installedCSV, model, obj, t, launchModal],
   );
 
   // filter and initialize requested actions or construct list of all SubscriptionActions

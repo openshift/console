@@ -161,9 +161,12 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (tolerationsModal, taintsModal)
-    // to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
+    // Excluding legacy modal launcher functions (labelsModalLauncher, annotationsModalLauncher,
+    // podSelectorModal, tolerationsModal, launchCountModal) from dependencies because:
+    // 1. These are created by createModalLauncher() and are referentially stable
+    // 2. They don't change between renders, so excluding them prevents unnecessary re-renders
+    // 3. Once these modals are migrated to useOverlay, they'll use launchModal instead
+    // TODO: Remove this eslint-disable once all modals have been migrated to useOverlay pattern
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [kind, resource, t, message, actualEditPath, launchModal]
   );
