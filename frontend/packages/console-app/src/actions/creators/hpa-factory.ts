@@ -29,7 +29,7 @@ type DeploymentActionExtraResources = {
 };
 
 export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
   const namespace = resource?.metadata?.namespace;
 
   const watchedResources = useMemo(
@@ -111,7 +111,7 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
         },
       },
     ];
-    // missing launchModal dependency, that causes max depth exceeded error
+    // Missing launchModal dependency causes max depth exceeded error
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kindObj, relatedHPAs, resource, supportsHPA]);
 
