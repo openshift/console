@@ -72,7 +72,7 @@ const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
   );
 };
 
-const DisableDefaultSourceModalProvider: OverlayComponent<DisableDefaultSourceModalProviderProps> = (
+const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -88,7 +88,7 @@ const DisableDefaultSourceModalProvider: OverlayComponent<DisableDefaultSourceMo
   );
 };
 
-type DisableDefaultSourceModalProviderProps = {
+type DisableDefaultSourceModalOverlayProps = {
   kind: K8sKind;
   operatorHub: OperatorHubKind;
   sourceName: string;
@@ -102,4 +102,4 @@ type DisableSourceModalProps = {
   cancel?: () => void;
 };
 
-export { DisableDefaultSourceModalProvider };
+export { DisableDefaultSourceModalOverlay };

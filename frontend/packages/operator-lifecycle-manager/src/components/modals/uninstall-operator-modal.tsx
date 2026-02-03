@@ -650,7 +650,7 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalProviderProps> = (
+const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -660,7 +660,7 @@ const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalPro
   );
 };
 
-type UninstallOperatorModalProviderProps = {
+type UninstallOperatorModalOverlayProps = {
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
   k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
   k8sPatch: (
@@ -703,4 +703,4 @@ type OperandErrorListProps = {
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
 
-export { UninstallOperatorModalProvider };
+export { UninstallOperatorModalOverlay };

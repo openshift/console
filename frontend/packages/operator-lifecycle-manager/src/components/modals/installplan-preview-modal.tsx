@@ -39,7 +39,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
   );
 };
 
-const InstallPlanPreviewModalProvider: OverlayComponent<InstallPlanPreviewModalProviderProps> = (
+const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -49,7 +49,7 @@ const InstallPlanPreviewModalProvider: OverlayComponent<InstallPlanPreviewModalP
   );
 };
 
-type InstallPlanPreviewModalProviderProps = {
+type InstallPlanPreviewModalOverlayProps = {
   stepResource: StepResource;
   // closeOverlay is added automatically by OverlayComponent wrapper
 };
@@ -60,6 +60,6 @@ export type InstallPlanPreviewModalProps = {
   close?: () => void;
 };
 
-export { InstallPlanPreviewModalProvider };
+export { InstallPlanPreviewModalOverlay };
 
 InstallPlanPreview.displayName = 'InstallPlanPreview';

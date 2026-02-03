@@ -109,7 +109,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   );
 };
 
-const EditDefaultSourcesModalProvider: OverlayComponent<EditDefaultSourcesModalProviderProps> = (
+const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -123,7 +123,7 @@ const EditDefaultSourcesModalProvider: OverlayComponent<EditDefaultSourcesModalP
   );
 };
 
-type EditDefaultSourcesModalProviderProps = {
+type EditDefaultSourcesModalOverlayProps = {
   operatorHub: OperatorHubKind;
 };
 
@@ -133,4 +133,4 @@ type EditDefaultSourcesModalProps = {
   cancel?: () => void;
 };
 
-export { EditDefaultSourcesModalProvider };
+export { EditDefaultSourcesModalOverlay };

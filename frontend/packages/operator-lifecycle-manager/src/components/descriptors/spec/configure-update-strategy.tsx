@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import i18n from '@console/internal/i18n';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { UpdateStrategyModalProvider } from '../../modals/update-strategy-modal';
+import { UpdateStrategyModalOverlay } from '../../modals/update-strategy-modal';
 import type { Descriptor } from '../types';
 import { getPatchPathFromDescriptor } from '../utils';
 
@@ -15,7 +15,7 @@ export const useConfigureUpdateStrategyModal = ({
   const launchModal = useOverlay();
 
   return useCallback(() => {
-    return launchModal(UpdateStrategyModalProvider, {
+    return launchModal(UpdateStrategyModalOverlay, {
       resourceKind: kindObj,
       resource,
       defaultValue: specValue,

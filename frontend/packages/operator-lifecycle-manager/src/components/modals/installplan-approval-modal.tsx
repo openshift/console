@@ -105,7 +105,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   );
 };
 
-const InstallPlanApprovalModalProvider: OverlayComponent<InstallPlanApprovalModalProviderProps> = (
+const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -120,7 +120,7 @@ const InstallPlanApprovalModalProvider: OverlayComponent<InstallPlanApprovalModa
   );
 };
 
-type InstallPlanApprovalModalProviderProps = {
+type InstallPlanApprovalModalOverlayProps = {
   obj: InstallPlanKind | SubscriptionKind;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   // closeOverlay is added automatically by OverlayComponent wrapper
@@ -133,4 +133,4 @@ export type InstallPlanApprovalModalProps = {
   obj: InstallPlanKind | SubscriptionKind;
 };
 
-export { InstallPlanApprovalModalProvider };
+export { InstallPlanApprovalModalOverlay };

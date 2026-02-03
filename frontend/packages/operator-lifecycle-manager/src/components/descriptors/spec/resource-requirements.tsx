@@ -135,7 +135,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
   );
 };
 
-const ResourceRequirementsModalProvider: OverlayComponent<ResourceRequirementsModalProviderProps> = (
+const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -172,7 +172,7 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
       type: _.capitalize(type),
     });
 
-    launchModal(ResourceRequirementsModalProvider, {
+    launchModal(ResourceRequirementsModalOverlay, {
       title,
       description,
       obj,
@@ -201,7 +201,7 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
   );
 };
 
-type ResourceRequirementsModalProviderProps = {
+type ResourceRequirementsModalOverlayProps = {
   title: string;
   description: string;
   obj: K8sResourceKind;

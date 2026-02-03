@@ -98,7 +98,7 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   );
 };
 
-const SubscriptionChannelModalProvider: OverlayComponent<SubscriptionChannelModalProviderProps> = (
+const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalOverlayProps> = (
   props,
 ) => {
   return (
@@ -114,7 +114,7 @@ const SubscriptionChannelModalProvider: OverlayComponent<SubscriptionChannelModa
   );
 };
 
-type SubscriptionChannelModalProviderProps = {
+type SubscriptionChannelModalOverlayProps = {
   subscription: SubscriptionKind;
   pkg: PackageManifestKind;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
@@ -129,4 +129,4 @@ export type SubscriptionChannelModalProps = {
   pkg: PackageManifestKind;
 };
 
-export { SubscriptionChannelModalProvider };
+export { SubscriptionChannelModalOverlay };

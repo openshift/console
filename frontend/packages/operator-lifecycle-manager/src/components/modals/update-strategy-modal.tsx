@@ -86,7 +86,7 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 };
 
-type UpdateStrategyModalProviderProps = {
+type UpdateStrategyModalOverlayProps = {
   defaultValue: any;
   path: string;
   resource: K8sResourceKind;
@@ -94,7 +94,7 @@ type UpdateStrategyModalProviderProps = {
   title: string;
 };
 
-const UpdateStrategyModalProvider: OverlayComponent<UpdateStrategyModalProviderProps> = (props) => {
+const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalOverlayProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <UpdateStrategyModal
@@ -110,7 +110,7 @@ const UpdateStrategyModalProvider: OverlayComponent<UpdateStrategyModalProviderP
   );
 };
 
-export { UpdateStrategyModalProvider };
+export { UpdateStrategyModalOverlay };
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 
