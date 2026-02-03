@@ -111,9 +111,7 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
         },
       },
     ];
-    // Missing launchModal dependency causes max depth exceeded error
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kindObj, relatedHPAs, resource, supportsHPA]);
+  }, [kindObj, launchModal, relatedHPAs, resource, supportsHPA]);
 
   const result = useMemo<[Action[], HorizontalPodAutoscalerKind[]]>(() => {
     return [actions, relatedHPAs];
