@@ -157,7 +157,7 @@ const ResourceRequirementsModalProvider: OverlayComponent<ResourceRequirementsMo
 export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProps> = (props) => {
   const { obj, type, path } = props;
   const { t } = useTranslation();
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
   const [model] = useK8sModel(referenceFor(obj));
   const none = t('public~None');
   const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
@@ -172,7 +172,7 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
       type: _.capitalize(type),
     });
 
-    launchOverlay(ResourceRequirementsModalProvider, {
+    launchModal(ResourceRequirementsModalProvider, {
       title,
       description,
       obj,

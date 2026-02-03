@@ -12,17 +12,17 @@ export const useConfigureUpdateStrategyModal = ({
   specDescriptor,
   specValue,
 }: ConfigureUpdateStrategyModalProps) => {
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
 
   return useCallback(() => {
-    return launchOverlay(UpdateStrategyModalProvider, {
+    return launchModal(UpdateStrategyModalProvider, {
       resourceKind: kindObj,
       resource,
       defaultValue: specValue,
       title: i18n.t('olm~Edit {{item}}', { item: specDescriptor.displayName }),
       path: `/spec/${getPatchPathFromDescriptor(specDescriptor)}`,
     });
-  }, [launchOverlay, kindObj, resource, specValue, specDescriptor]);
+  }, [launchModal, kindObj, resource, specValue, specDescriptor]);
 };
 
 type ConfigureUpdateStrategyModalProps = {

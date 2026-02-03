@@ -557,7 +557,7 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   subscriptions,
 }) => {
   const { t } = useTranslation();
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
   const prevInstallPlanApproval = useRef(obj?.spec?.installPlanApproval);
   const prevChannel = useRef(obj?.spec?.channel);
   const [waitingForUpdate, setWaitingForUpdate] = useState(false);
@@ -582,16 +582,16 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   );
   const channelModal = useCallback(
     () =>
-      launchOverlay(SubscriptionChannelModalProvider, {
+      launchModal(SubscriptionChannelModalProvider, {
         subscription: obj,
         pkg,
         k8sUpdate: k8sUpdateAndWait,
       }),
-    [obj, pkg, k8sUpdateAndWait, launchOverlay],
+    [obj, pkg, k8sUpdateAndWait, launchModal],
   );
   const approvalModal = useCallback(
-    () => launchOverlay(InstallPlanApprovalModalProvider, { obj, k8sUpdate: k8sUpdateAndWait }),
-    [obj, k8sUpdateAndWait, launchOverlay],
+    () => launchModal(InstallPlanApprovalModalProvider, { obj, k8sUpdate: k8sUpdateAndWait }),
+    [obj, k8sUpdateAndWait, launchModal],
   );
   const installPlanPhase = useMemo(() => {
     if (installPlan) {

@@ -20,7 +20,7 @@ import type { OperatorHubKind } from '.';
 
 const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
 
   const canEditDefaultSources = useAccessReview({
     group: OperatorHubModel.apiGroup,
@@ -46,7 +46,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
               obj={operatorHub}
               path="status.sources"
               canEdit={canEditDefaultSources}
-              onEdit={() => launchOverlay(EditDefaultSourcesModalProvider, { operatorHub })}
+              onEdit={() => launchModal(EditDefaultSourcesModalProvider, { operatorHub })}
               editAsGroup
               hideEmpty
             >

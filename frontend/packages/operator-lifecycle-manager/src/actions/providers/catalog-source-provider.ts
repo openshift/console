@@ -17,14 +17,14 @@ import useOperatorHubConfig from '../../utils/useOperatorHubConfig';
 
 const useDisableSourceAction = (operatorHub: OperatorHubKind, sourceName: string): Action[] => {
   const { t } = useTranslation();
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
   const factory = useMemo(
     () => ({
       disableSource: () => ({
         id: 'disable-source',
         label: t('olm~Disable'),
         cta: () =>
-          launchOverlay(DisableDefaultSourceModalProvider, {
+          launchModal(DisableDefaultSourceModalProvider, {
             kind: OperatorHubModel,
             operatorHub,
             sourceName,
@@ -32,7 +32,7 @@ const useDisableSourceAction = (operatorHub: OperatorHubKind, sourceName: string
         accessReview: asAccessReview(OperatorHubModel, operatorHub, 'patch'),
       }),
     }),
-    [t, operatorHub, sourceName, launchOverlay],
+    [t, operatorHub, sourceName, launchModal],
   );
   const action = useMemo(() => [factory.disableSource()], [factory]);
   return action;
