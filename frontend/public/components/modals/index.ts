@@ -85,7 +85,7 @@ export const clusterUpdateModal = (props) =>
 
 export const taintsModal = (props) =>
   import('./taints-modal' /* webpackChunkName: "taints-modal" */).then((m) =>
-    m.TaintsModalProvider(props),
+    m.TaintsModalOverlay(props),
   );
 
 export const tolerationsModal = (props) =>

@@ -94,7 +94,7 @@ describe('ResourceRequirementsModal', () => {
 
 describe('ResourceRequirementsModalLink', () => {
   let obj: K8sResourceKind;
-  let launchOverlayMock: jest.Mock;
+  let launchModalMock: jest.Mock;
 
   beforeEach(() => {
     obj = {
@@ -108,9 +108,9 @@ describe('ResourceRequirementsModalLink', () => {
       },
     };
 
-    launchOverlayMock = jest.fn();
+    launchModalMock = jest.fn();
     useK8sModelMock.mockReturnValue([testModel, false]);
-    useOverlayMock.mockReturnValue(launchOverlayMock);
+    useOverlayMock.mockReturnValue(launchModalMock);
 
     jest.clearAllMocks();
   });
@@ -162,10 +162,10 @@ describe('ResourceRequirementsModalLink', () => {
     fireEvent.click(screen.getByRole('button'));
 
     await waitFor(() => {
-      expect(launchOverlayMock).toHaveBeenCalled();
+      expect(launchModalMock).toHaveBeenCalled();
     });
 
-    const [, modalProps] = launchOverlayMock.mock.calls[0];
+    const [, modalProps] = launchModalMock.mock.calls[0];
     expect(modalProps.title).toEqual(`${obj.kind} Resource Limits`);
     expect(modalProps.description).toEqual(
       'Define the resource limits for this TestResource instance.',

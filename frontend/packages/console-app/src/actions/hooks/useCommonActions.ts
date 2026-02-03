@@ -10,7 +10,7 @@ import {
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import { TaintsModalProvider } from '@console/internal/components/modals/taints-modal';
+import { TaintsModalOverlay } from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -143,7 +143,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          launchModal(TaintsModalProvider, {
+          launchModal(TaintsModalOverlay, {
             resourceKind: kind,
             resource,
           }),

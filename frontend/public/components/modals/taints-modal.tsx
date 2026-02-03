@@ -166,12 +166,12 @@ export type TaintsModalProps = {
   close: () => void;
 } & ModalComponentProps;
 
-type TaintsModalProviderProps = {
+type TaintsModalOverlayProps = {
   resourceKind: K8sKind;
   resource: K8sResourceKind;
 };
 
-const TaintsModalProvider: OverlayComponent<TaintsModalProviderProps> = (props) => {
+const TaintsModalOverlay: OverlayComponent<TaintsModalOverlayProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <TaintsModal
@@ -184,4 +184,4 @@ const TaintsModalProvider: OverlayComponent<TaintsModalProviderProps> = (props) 
   );
 };
 
-export { TaintsModalProvider };
+export { TaintsModalOverlay };
