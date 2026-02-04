@@ -163,7 +163,6 @@ const TaintsModal = (props: TaintsModalProps) => {
 export type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: K8sResourceKind;
-  close: () => void;
 } & ModalComponentProps;
 
 type TaintsModalOverlayProps = {

@@ -162,7 +162,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       }),
     }),
     // Excluding legacy modal launcher functions (labelsModalLauncher, annotationsModalLauncher,
-    // podSelectorModal, tolerationsModal, launchCountModal) from dependencies because:
+    // podSelectorModal, tolerationsModal) from dependencies because:
     // 1. These are created by createModalLauncher() and are referentially stable
     // 2. They don't change between renders, so excluding them prevents unnecessary re-renders
     // 3. Once these modals are migrated to useOverlay, they'll use launchModal instead
