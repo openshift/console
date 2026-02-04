@@ -6,6 +6,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import {
   ModalTitle,
   ModalBody,
+  ModalComponentProps,
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
@@ -15,7 +16,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import type { OperatorHubKind } from '../operator-hub';
 
-const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
+const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
   kind,
   operatorHub,
   sourceName,
@@ -72,34 +73,24 @@ const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
   );
 };
 
-const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalOverlayProps> = (
+export type DisableDefaultSourceModalProps = {
+  kind: K8sKind;
+  operatorHub: OperatorHubKind;
+  sourceName: string;
+} & ModalComponentProps;
+
+const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalProps> = (
   props,
 ) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <DisableDefaultSourceModal
-        kind={props.kind}
-        operatorHub={props.operatorHub}
-        sourceName={props.sourceName}
+        {...props}
         close={props.closeOverlay}
         cancel={props.closeOverlay}
       />
     </ModalWrapper>
   );
-};
-
-type DisableDefaultSourceModalOverlayProps = {
-  kind: K8sKind;
-  operatorHub: OperatorHubKind;
-  sourceName: string;
-};
-
-type DisableSourceModalProps = {
-  kind: K8sKind;
-  operatorHub: OperatorHubKind;
-  sourceName: string;
-  close?: () => void;
-  cancel?: () => void;
 };
 
 export { DisableDefaultSourceModalOverlay };

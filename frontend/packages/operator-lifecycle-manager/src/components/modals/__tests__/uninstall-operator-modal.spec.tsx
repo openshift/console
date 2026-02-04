@@ -46,8 +46,6 @@ describe(UninstallOperatorModal.name, () => {
         status: { installedCSV: 'testapp.v1.0.0' },
       },
       k8sKill: jest.fn().mockResolvedValue({}),
-      k8sGet: jest.fn().mockResolvedValue({}),
-      k8sPatch: jest.fn().mockResolvedValue({}),
       close: jest.fn(),
       cancel: jest.fn(),
     };

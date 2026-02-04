@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ModalBody,
+  ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
   ModalWrapper,
@@ -86,26 +87,18 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 };
 
-type UpdateStrategyModalOverlayProps = {
+export type UpdateStrategyModalProps = {
   defaultValue: any;
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;
   title: string;
-};
+} & ModalComponentProps;
 
-const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalOverlayProps> = (props) => {
+const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <UpdateStrategyModal
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-        defaultValue={props.defaultValue}
-        path={props.path}
-        resource={props.resource}
-        resourceKind={props.resourceKind}
-        title={props.title}
-      />
+      <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
@@ -113,13 +106,3 @@ const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalOverlayPro
 export { UpdateStrategyModalOverlay };
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
-
-export type UpdateStrategyModalProps = {
-  defaultValue: any;
-  path: string;
-  resource: K8sResourceKind;
-  resourceKind: K8sKind;
-  title: string;
-  cancel?: () => void;
-  close?: () => void;
-};

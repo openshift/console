@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
   ModalWrapper,
+  ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -109,28 +110,16 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   );
 };
 
-const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalOverlayProps> = (
-  props,
-) => {
+const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <EditDefaultSourcesModal
-        operatorHub={props.operatorHub}
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-      />
+      <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
 
-type EditDefaultSourcesModalOverlayProps = {
-  operatorHub: OperatorHubKind;
-};
-
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;
-  close?: () => void;
-  cancel?: () => void;
-};
+} & ModalComponentProps;
 
 export { EditDefaultSourcesModalOverlay };

@@ -6,6 +6,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import {
   ModalTitle,
   ModalBody,
+  ModalComponentProps,
   ModalFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
@@ -39,25 +40,16 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
   );
 };
 
-const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalOverlayProps> = (
-  props,
-) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <InstallPlanPreview stepResource={props.stepResource} cancel={props.closeOverlay} />
-    </ModalWrapper>
-  );
-};
-
-type InstallPlanPreviewModalOverlayProps = {
-  stepResource: StepResource;
-  // closeOverlay is added automatically by OverlayComponent wrapper
-};
-
 export type InstallPlanPreviewModalProps = {
   stepResource: StepResource;
-  cancel?: () => void;
-  close?: () => void;
+} & ModalComponentProps;
+
+const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
 };
 
 export { InstallPlanPreviewModalOverlay };

@@ -6,6 +6,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import {
   ModalTitle,
   ModalBody,
+  ModalComponentProps,
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
@@ -98,35 +99,20 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   );
 };
 
-const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalOverlayProps> = (
+export type SubscriptionChannelModalProps = {
+  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
+  subscription: SubscriptionKind;
+  pkg: PackageManifestKind;
+} & ModalComponentProps;
+
+const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalProps> = (
   props,
 ) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <SubscriptionChannelModal
-        subscription={props.subscription}
-        pkg={props.pkg}
-        k8sUpdate={props.k8sUpdate}
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-      />
+      <SubscriptionChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
-};
-
-type SubscriptionChannelModalOverlayProps = {
-  subscription: SubscriptionKind;
-  pkg: PackageManifestKind;
-  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
-  // closeOverlay is added automatically by OverlayComponent wrapper
-};
-
-export type SubscriptionChannelModalProps = {
-  cancel?: () => void;
-  close?: () => void;
-  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
-  subscription: SubscriptionKind;
-  pkg: PackageManifestKind;
 };
 
 export { SubscriptionChannelModalOverlay };

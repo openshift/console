@@ -26,6 +26,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
   ModalWrapper,
+  ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import {
   LinkifyExternal,
@@ -650,42 +651,20 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalOverlayProps> = (
-  props,
-) => {
+const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <UninstallOperatorModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+      <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
 
-type UninstallOperatorModalOverlayProps = {
-  k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
-  k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
-  k8sPatch: (
-    kind: K8sKind,
-    resource: K8sResourceKind,
-    data: { op: string; path: string; value: any }[],
-  ) => Promise<any>;
-  subscription: K8sResourceKind;
-  csv?: K8sResourceKind;
-};
-
 export type UninstallOperatorModalProps = {
-  cancel?: () => void;
-  close?: () => void;
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
-  k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
-  k8sPatch: (
-    kind: K8sKind,
-    resource: K8sResourceKind,
-    data: { op: string; path: string; value: any }[],
-  ) => Promise<any>;
   subscription: K8sResourceKind;
   csv?: K8sResourceKind;
   blocking?: boolean;
-};
+} & ModalComponentProps;
 
 type OperandsTableProps = {
   operands: K8sResourceCommon[];

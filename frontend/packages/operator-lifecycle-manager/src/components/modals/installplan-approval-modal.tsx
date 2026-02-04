@@ -7,6 +7,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import {
   ModalTitle,
   ModalBody,
+  ModalComponentProps,
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
@@ -105,32 +106,19 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   );
 };
 
-const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalOverlayProps> = (
+export type InstallPlanApprovalModalProps = {
+  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
+  obj: InstallPlanKind | SubscriptionKind;
+} & ModalComponentProps;
+
+const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalProps> = (
   props,
 ) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <InstallPlanApprovalModal
-        obj={props.obj}
-        k8sUpdate={props.k8sUpdate}
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-      />
+      <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
-};
-
-type InstallPlanApprovalModalOverlayProps = {
-  obj: InstallPlanKind | SubscriptionKind;
-  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
-  // closeOverlay is added automatically by OverlayComponent wrapper
-};
-
-export type InstallPlanApprovalModalProps = {
-  cancel?: () => void;
-  close?: () => void;
-  k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
-  obj: InstallPlanKind | SubscriptionKind;
 };
 
 export { InstallPlanApprovalModalOverlay };

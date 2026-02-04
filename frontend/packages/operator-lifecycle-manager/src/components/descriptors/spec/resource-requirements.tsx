@@ -158,11 +158,15 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
   const { obj, type, path } = props;
   const { t } = useTranslation();
   const launchModal = useOverlay();
-  const [model] = useK8sModel(referenceFor(obj));
+  const [model, inFlight] = useK8sModel(referenceFor(obj));
   const none = t('public~None');
   const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
 
   const onClick = () => {
+    if (!model) {
+      return;
+    }
+
     const description = t('olm~Define the resource {{type}} for this {{kind}} instance.', {
       type,
       kind: obj.kind,
@@ -190,6 +194,7 @@ export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProp
       isInline
       data-test-id="configure-modal-btn"
       onClick={onClick}
+      isDisabled={inFlight || !model}
       variant="link"
     >
       {t('olm~CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
