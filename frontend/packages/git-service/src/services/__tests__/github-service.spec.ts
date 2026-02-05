@@ -340,7 +340,7 @@ describe('Github Service', () => {
     it('should use HTTPS protocol for standard GitHub URL', () => {
       const gitSource: GitSource = { url: 'https://github.com/owner/repo' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('https://github.com');
     });
@@ -348,7 +348,7 @@ describe('Github Service', () => {
     it('should preserve HTTP protocol', () => {
       const gitSource: GitSource = { url: 'http://github.example.com/owner/repo' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('http://github.example.com');
     });
@@ -356,7 +356,7 @@ describe('Github Service', () => {
     it('should preserve custom port with HTTPS', () => {
       const gitSource: GitSource = { url: 'https://github.example.com:8443/owner/repo' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('https://github.example.com:8443');
     });
@@ -364,7 +364,7 @@ describe('Github Service', () => {
     it('should preserve custom port with HTTP', () => {
       const gitSource: GitSource = { url: 'http://github.example.com:8080/owner/repo' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('http://github.example.com:8080');
     });
@@ -372,7 +372,7 @@ describe('Github Service', () => {
     it('should default to HTTPS for SSH URLs and preserve port', () => {
       const gitSource: GitSource = { url: 'git@github.example.com:2222/owner/repo.git' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('https://github.example.com:2222');
     });
@@ -380,7 +380,7 @@ describe('Github Service', () => {
     it('should default to HTTPS for git:// protocol URLs', () => {
       const gitSource: GitSource = { url: 'git://github.example.com/owner/repo.git' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('https://github.example.com');
     });
@@ -388,7 +388,7 @@ describe('Github Service', () => {
     it('should preserve non-standard port regardless of original protocol', () => {
       const gitSource: GitSource = { url: 'ssh://git@github.example.com:9999/owner/repo.git' };
       const gitService = new GithubService(gitSource);
-      const { metadata } = gitService;
+      const metadata = gitService.getRepoMetadata();
 
       expect(metadata.host).toBe('https://github.example.com:9999');
     });
