@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
@@ -12,16 +13,36 @@ import {
   useActiveNamespace,
 } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
 const PageContents: FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
+  const [activePerspective] = useActivePerspective();
   const [namespace] = useActiveNamespace();
+  const isAllNamespaces = namespace === ALL_NAMESPACES_KEY;
+  const isDevPerspective = activePerspective === 'dev';
 
-  return (
+  // Maintain existing behavior of the +Add page in the dev perspective.
+  const showCreateProjectListPage = isDevPerspective && isAllNamespaces;
+
+  if (!namespace) {
+    return null;
+  }
+
+  return showCreateProjectListPage ? (
+    <CreateProjectListPage title={t('devconsole~Software Catalog')}>
+      {(openProjectModal) => (
+        <Trans t={t} ns="devconsole">
+          Select a Project to view the software catalog
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
+        </Trans>
+      )}
+    </CreateProjectListPage>
+  ) : (
     <CatalogServiceProvider
-      namespace={namespace === ALL_NAMESPACES_KEY ? '' : namespace}
+      namespace={isAllNamespaces ? '' : namespace}
       catalogId="dev-catalog"
       catalogType={catalogType}
     >
