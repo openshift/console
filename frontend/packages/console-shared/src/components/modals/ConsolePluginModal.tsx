@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalSubmitFooter,
   ModalWrapper,
+  ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -72,14 +73,9 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   );
 };
 
-type ConsolePluginModalOverlayProps = {
-  consoleOperatorConfig: K8sResourceKind;
-  csvPluginsCount?: number;
-  pluginName: string;
-  trusted: boolean;
-};
-
-const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalOverlayProps> = (props) => {
+export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalOverlayProps> = (
+  props,
+) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <ConsolePluginModal
@@ -94,13 +90,16 @@ const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalOverlayProps
   );
 };
 
-export { ConsolePluginModalOverlay };
+type ConsolePluginModalOverlayProps = {
+  consoleOperatorConfig: K8sResourceKind;
+  csvPluginsCount?: number;
+  pluginName: string;
+  trusted: boolean;
+};
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
   csvPluginsCount?: number;
   pluginName: string;
   trusted: boolean;
-  cancel?: () => void;
-  close?: () => void;
-};
+} & ModalComponentProps;
