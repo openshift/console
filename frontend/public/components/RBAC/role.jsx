@@ -97,7 +97,7 @@ class Details extends Component {
     let rules = ruleObj.rules;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
-      const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
+      const searchKeys = ['nonResourceURLs', 'resources', 'verbs', 'resourceNames'];
       rules = rules.filter((rule) =>
         searchKeys.some((k) => _.some(rule[k], (v) => fuzzyCaseInsensitive(ruleFilter, v))),
       );

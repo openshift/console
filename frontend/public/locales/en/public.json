@@ -1245,6 +1245,7 @@
   "Create Role": "Create Role",
   "API groups": "API groups",
   "Resources": "Resources",
+  "Resource Names": "Resource Names",
   "Delete rule": "Delete rule",
   "Are you sure you want to delete rule #{{ruleNumber}}?": "Are you sure you want to delete rule #{{ruleNumber}}?",
   "ReplicaSet details": "ReplicaSet details",

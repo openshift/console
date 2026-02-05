@@ -21,9 +21,10 @@ export const RulesList = ({ rules, name, namespace }) => {
     <Table gridBreakPoint="">
       <Thead>
         <Tr>
-          <Th>{t('public~Actions')}</Th>
+          <Th>{t('public~Verbs')}</Th>
           <Th visibility={['hidden', 'visibleOnSm']}>{t('public~API groups')}</Th>
           <Th>{t('public~Resources')}</Th>
+          <Th>{t('public~Resource Names')}</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -127,6 +128,20 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
   },
 );
 
+const ResourceNames = ({ resourceNames }) => {
+  if (!resourceNames || resourceNames.length === 0) {
+    return null;
+  }
+
+  const names = resourceNames.sort().map((name) => (
+    <div className="rbac-rule-row" key={name}>
+      {name}
+    </div>
+  ));
+
+  return <div>{names}</div>;
+};
+
 // This page is temporarily disabled until we update the safe resources list.
 // const EditRule = (name, namespace, i) => ({
 //   label: 'Edit Rule',
@@ -164,7 +179,16 @@ const RuleKebab = ({ name, namespace, i }) => {
   return <Kebab options={options} />;
 };
 
-const Rule = ({ resources, nonResourceURLs, verbs, apiGroups, name, namespace, i }) => (
+const Rule = ({
+  resources,
+  nonResourceURLs,
+  verbs,
+  apiGroups,
+  resourceNames,
+  name,
+  namespace,
+  i,
+}) => (
   <>
     <Td>
       <Actions verbs={verbs} />
@@ -174,6 +198,9 @@ const Rule = ({ resources, nonResourceURLs, verbs, apiGroups, name, namespace, i
     </Td>
     <Td>
       <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
+    </Td>
+    <Td>
+      <ResourceNames resourceNames={resourceNames} />
     </Td>
     <Td className="pf-v6-c-table__action">
       <RuleKebab name={name} namespace={namespace} i={i} />
