@@ -61,7 +61,7 @@ export class GithubService extends BaseService {
     }
   };
 
-  protected getRepoMetadata = (): RepoMetadata => {
+  getRepoMetadata = (): RepoMetadata => {
     const { name, owner, protocols, port, resource } = GitUrlParse(this.gitsource.url);
     const rawProtocol = protocols?.[0];
     const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
