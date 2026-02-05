@@ -153,6 +153,7 @@ export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
       <Td visibility={['hidden', 'visibleOnMd']}>
         <Status status={cstate.label} />
       </Td>
+      <Td visibility={['hidden', 'visibleOnMd']}>{cstatus?.ready ? 'true' : 'false'}</Td>
       <Td visibility={['hidden', 'visibleOnXl']}>
         <ContainerLastState containerLastState={cstatus?.lastState} />
       </Td>
@@ -180,6 +181,7 @@ export const PodContainerTable: FC<PodContainerTableProps> = ({ heading, contain
             <Th width={20}>{t('public~Name')}</Th>
             <Th>{t('public~Image')}</Th>
             <Th visibility={['hidden', 'visibleOnMd']}>{t('public~State')}</Th>
+            <Th visibility={['hidden', 'visibleOnMd']}>{t('public~Ready')}</Th>
             <Th visibility={['hidden', 'visibleOnXl']}>{t('public~Last State')}</Th>
             <Th visibility={['hidden', 'visibleOnLg']}>{t('public~Restarts')}</Th>
             <Th width={10} visibility={['hidden', 'visibleOnLg']}>
