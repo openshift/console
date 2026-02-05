@@ -30,7 +30,6 @@ import {
   useAccessReviewAllowed,
   useAccessReview,
 } from '@console/dynamic-plugin-sdk';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Conditions, ConditionTypes } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -67,7 +66,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { ConsolePluginModalOverlay } from '@console/shared/src/components/modals/ConsolePluginModal';
+import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
@@ -229,7 +228,6 @@ const ManagedNamespaces: FC<ManagedNamespacesProps> = ({ obj }) => {
 };
 
 const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
-  const launchModal = useOverlay();
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -264,7 +262,7 @@ const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
                   type="button"
                   isInline
                   onClick={() =>
-                    launchModal(ConsolePluginModalOverlay, {
+                    consolePluginModal({
                       consoleOperatorConfig,
                       pluginName,
                       trusted,
