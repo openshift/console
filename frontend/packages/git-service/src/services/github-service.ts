@@ -66,8 +66,9 @@ export class GithubService extends BaseService {
     const rawProtocol = protocols?.[0];
     const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
     const protocol = isHttpProtocol ? rawProtocol : 'https';
-    const host =
-      isHttpProtocol && port ? `${protocol}://${resource}:${port}` : `${protocol}://${resource}`;
+
+    const host = port ? `${protocol}://${resource}:${port}` : `${protocol}://${resource}`;
+
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     return {
       repoName: name,
