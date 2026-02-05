@@ -330,4 +330,70 @@ describe('Gitlab Service', () => {
     expect(status).toEqual(RepoStatus.Reachable);
     scope.done();
   });
+
+  describe('getRepoMetadata - Protocol and Port Handling', () => {
+    it('should use HTTPS protocol for standard GitLab URL', () => {
+      const gitSource: GitSource = { url: 'https://gitlab.com/owner/repo' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://gitlab.com');
+    });
+
+    it('should preserve HTTP protocol', () => {
+      const gitSource: GitSource = { url: 'http://gitlab.example.com/owner/repo' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://gitlab.example.com');
+    });
+
+    it('should preserve custom port with HTTPS', () => {
+      const gitSource: GitSource = { url: 'https://gitlab.example.com:8443/owner/repo' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://gitlab.example.com:8443');
+    });
+
+    it('should preserve custom port with HTTP', () => {
+      const gitSource: GitSource = { url: 'http://gitlab.example.com:8080/owner/repo' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://gitlab.example.com:8080');
+    });
+
+    it('should default to HTTPS for SSH URLs and preserve port', () => {
+      const gitSource: GitSource = { url: 'git@gitlab.example.com:2222/owner/repo.git' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://gitlab.example.com:2222');
+    });
+
+    it('should default to HTTPS for git:// protocol URLs', () => {
+      const gitSource: GitSource = { url: 'git://gitlab.example.com/owner/repo.git' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://gitlab.example.com');
+    });
+
+    it('should preserve non-standard port regardless of original protocol', () => {
+      const gitSource: GitSource = { url: 'ssh://git@gitlab.example.com:9999/owner/repo.git' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://gitlab.example.com:9999');
+    });
+
+    it('should handle subdomains with custom port', () => {
+      const gitSource: GitSource = { url: 'https://version.helsinki.fi:3000/owner/repo' };
+      const gitService = new GitlabService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://version.helsinki.fi:3000');
+    });
+  });
 });
