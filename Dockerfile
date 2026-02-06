@@ -1,3 +1,6 @@
+# URGENT! ART metadata configuration has a different number of FROMs
+# than this Dockerfile. ART will be unable to build your component or
+# reconcile this Dockerfile until that disparity is addressed.
 FROM quay.io/coreos/tectonic-console-builder:v24 AS build
 
 RUN mkdir -p /go/src/github.com/openshift/console/
