@@ -151,8 +151,8 @@ export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, load
         label: t('public~Ready'),
       },
       {
-        value: 'Not Ready',
-        label: t('public~Not Ready'),
+        value: 'Not ready',
+        label: t('public~Not ready'),
       },
       {
         value: 'Failed',

@@ -1403,7 +1403,7 @@
   "Read only (ROX)": "読み取り専用 (ROX)",
   "Read write once pod (RWOP)": "Read write once pod (RWOP)",
   "Block": "ブロック",
-  "Not Ready": "準備未完了",
+  "Not ready": "準備未完了",
   "TemplateInstances": "TemplateInstances",
   "TemplateInstance details": "TemplateInstance の詳細",
   "Parameters": "パラメーター",

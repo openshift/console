@@ -1416,7 +1416,6 @@
   "Read only (ROX)": "Read only (ROX)",
   "Read write once pod (RWOP)": "Read write once pod (RWOP)",
   "Block": "Block",
-  "Not Ready": "Not Ready",
   "TemplateInstances": "TemplateInstances",
   "TemplateInstance details": "TemplateInstance details",
   "Parameters": "Parameters",

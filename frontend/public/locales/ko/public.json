@@ -1403,7 +1403,7 @@
   "Read only (ROX)": "읽기 전용(ROX)",
   "Read write once pod (RWOP)": "pod 1회 읽기 쓰기 (RWOP)",
   "Block": "블록",
-  "Not Ready": "준비 안됨",
+  "Not ready": "준비 안됨",
   "TemplateInstances": "템플릿 인스턴스",
   "TemplateInstance details": "템플릿 인스턴스 세부정보",
   "Parameters": "매개 변수",

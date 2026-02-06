@@ -1403,7 +1403,7 @@
   "Read only (ROX)": "只读（ROX）",
   "Read write once pod (RWOP)": "读写一次 pod (RWOP)",
   "Block": "块",
-  "Not Ready": "未就绪",
+  "Not ready": "未就绪",
   "TemplateInstances": "模板实例",
   "TemplateInstance details": "模块实例详情",
   "Parameters": "参数",
