@@ -133,7 +133,7 @@ const ResourceNames = ({ resourceNames }) => {
     return null;
   }
 
-  const names = resourceNames.sort().map((name) => (
+  const names = resourceNames.toSorted().map((name) => (
     <div className="rbac-rule-row" key={name}>
       {name}
     </div>
