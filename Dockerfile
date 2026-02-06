@@ -17,15 +17,20 @@ ADD . .
 
 USER 0
 
-ARG YARN_VERSION=v1.22.22
+ARG COREPACK_VERSION=0.34.6
 
-# bootstrap yarn so we can install and run the other tools.
-RUN CACHED_YARN=./artifacts/yarn-${YARN_VERSION}.tar.gz; \
-    if [ -f ${CACHED_YARN} ]; then \
-      npm install ${CACHED_YARN}; \
+# bootstrap corepack so we can install and run the other tools.
+RUN CACHED_COREPACK=./artifacts/corepack-${COREPACK_VERSION}.tar.gz; \
+    if [ -f ${CACHED_COREPACK} ]; then \
+      npm install --global ${CACHED_COREPACK}; \
     else \
-      npm install https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz; \
+      npm install --global https://github.com/nodejs/corepack/releases/download/v${COREPACK_VERSION}/corepack.tgz; \
     fi
+
+RUN npx corepack enable
+
+# assume our package manager is safe to download
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # The REMOTE_SOURCES value is set by the build system to indicate the location of the cachito-backed artifacts cache.
 # As cachito might not be available in all environments, we need to make sure the value is set before trying to use it and
@@ -39,7 +44,7 @@ COPY $REMOTE_SOURCES $REMOTE_SOURCES_DIR
 # use dependencies provided by Cachito
 RUN test -d ${REMOTE_SOURCES}/cachito-gomod-with-deps || exit 0; \
     cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/registry-ca.pem . \
- && cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/frontend/{.npmrc,.yarnrc,yarn.lock} frontend/
+ && cp -f $REMOTE_SOURCES_DIR/cachito-gomod-with-deps/app/frontend/{.npmrc,.yarnrc.yml,yarn.lock} frontend/
 
 # prevent download of cypress binary as part of module installs
 ENV CYPRESS_INSTALL_BINARY=0
