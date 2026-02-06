@@ -7,26 +7,27 @@
   "private": true,
   "workspaces": [
     "packages/*",
+    "packages/*/integration-tests",
     "public",
     "integration-tests"
   ],
   "scripts": {
-    "postinstall": "./scripts/check-patternfly-modules.sh && yarn prepare-husky && yarn generate",
+    "postinstall": "yarn ts-node ./scripts/check-patternfly-modules.ts && yarn prepare-husky",
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
-    "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
+    "eslint": "node ./node_modules/.bin/eslint --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-cypress-console": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests-cypress && ../../../node_modules/.bin/cypress open --env openshift=true",
-    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
@@ -61,7 +62,7 @@
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
-    "generate": "yarn generate-graphql && yarn build-plugin-sdk && yarn build-console-plugin-shared",
+    "generate": "yarn generate-graphql & yarn build-plugin-sdk && yarn build-console-plugin-shared",
     "generate-graphql": "graphql-codegen --config graphql-codegen.yml",
     "generate-plugin-sdk-docs": "yarn --cwd packages/console-dynamic-plugin-sdk generate-doc",
     "build-plugin-sdk": "yarn --cwd packages/console-dynamic-plugin-sdk build",
@@ -255,6 +256,7 @@
     "@types/semver": "^6.0.0",
     "@types/showdown": "1.9.4",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
+    "@yarnpkg/parsers": "^3.0.2",
     "axe-core": "^4.10.2",
     "babel-loader": "^8.2.1",
     "browser-env": "3.x",
@@ -335,5 +337,11 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
-  }
+  },
+  "dependenciesMeta": {
+    "cypress": {
+      "built": true
+    }
+  },
+  "packageManager": "yarn@4.12.0"
 }
