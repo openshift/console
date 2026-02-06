@@ -58,7 +58,7 @@ export const QuickStartEmptyState = () => {
                   variant="link"
                   component={LinkTo(`/k8s/cluster/${getReferenceForModel(QuickStartModel)}/~new`)}
                 >
-                  {t('Create {{kind}}', { kind: QuickStartModel.kind })}
+                  {t('Create {{label}}', { label: t(QuickStartModel.labelKey) })}
                 </Button>
                 <ExternalLinkButton
                   variant="link"
