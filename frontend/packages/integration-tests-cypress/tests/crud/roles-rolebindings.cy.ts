@@ -118,7 +118,7 @@ describe('Roles and RoleBindings', () => {
     cy.deleteProjectWithCLI(testName);
   });
 
-  it('displays Resource Names column in Role rules table', () => {
+  it('displays Resource names column in Role rules table', () => {
     nav.sidenav.clickNavLink(['User Management', 'Roles']);
     listPage.dvRows.shouldBeLoaded();
     projectDropdown.selectProject(testName);
@@ -126,13 +126,13 @@ describe('Roles and RoleBindings', () => {
     listPage.dvRows.clickRowByName(roleName);
     detailsPage.isLoaded();
 
-    cy.contains('th', 'Resource Names').should('exist');
+    cy.contains('th', 'Resource names').should('exist');
 
     cy.contains('th', 'Verbs').should('exist');
     cy.contains('th', 'Actions').should('not.exist');
   });
 
-  it('displays Resource Names column in ClusterRole rules table', () => {
+  it('displays Resource names column in ClusterRole rules table', () => {
     nav.sidenav.clickNavLink(['User Management', 'Roles']);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.by('cluster');
@@ -140,7 +140,7 @@ describe('Roles and RoleBindings', () => {
     listPage.dvRows.clickRowByName(clusterRoleName);
     detailsPage.isLoaded();
 
-    cy.contains('th', 'Resource Names').should('exist');
+    cy.contains('th', 'Resource names').should('exist');
     cy.contains('th', 'Verbs').should('exist');
     cy.contains('th', 'Actions').should('not.exist');
   });

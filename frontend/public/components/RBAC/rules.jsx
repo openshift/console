@@ -24,7 +24,7 @@ export const RulesList = ({ rules, name, namespace }) => {
           <Th>{t('public~Verbs')}</Th>
           <Th visibility={['hidden', 'visibleOnSm']}>{t('public~API groups')}</Th>
           <Th>{t('public~Resources')}</Th>
-          <Th>{t('public~Resource Names')}</Th>
+          <Th>{t('public~Resource names')}</Th>
         </Tr>
       </Thead>
       <Tbody>
