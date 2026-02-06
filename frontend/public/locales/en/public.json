@@ -1194,6 +1194,7 @@
   "Waiting {{reason}}": "Waiting {{reason}}",
   "Running <1></1>": "Running <1></1>",
   "Terminated <1></1><2></2><3></3>": "Terminated <1></1><2></2><3></3>",
+  "Not ready": "Not ready",
   "Exit code": "Exit code",
   "View in query browser": "View in query browser",
   "Restart policy": "Restart policy",

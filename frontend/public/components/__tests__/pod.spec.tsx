@@ -176,9 +176,9 @@ describe('ContainerRow', () => {
     expect(screen.getByText(/Completed/)).toBeVisible();
   });
 
-  it('verifies container ready status displays as false', async () => {
+  it('verifies container ready status displays as Not ready', async () => {
     await renderContainerRow();
 
-    expect(screen.getByText('false')).toBeVisible();
+    expect(screen.getByText('Not ready')).toBeVisible();
   });
 });
