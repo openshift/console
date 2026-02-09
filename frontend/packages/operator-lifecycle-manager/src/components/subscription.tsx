@@ -409,7 +409,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   subscriptions = [],
 }) => {
   const { t } = useTranslation();
-  const { removeQueryArgument } = useQueryParamsMutator();
+  const { getQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { source, sourceNamespace } = obj?.spec ?? {};
   const catalogHealth = obj?.status?.catalogHealth?.find(
     (ch) => ch.catalogSourceRef.name === source,
@@ -423,10 +423,13 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
     k8sPatch,
     subscription: obj,
   });
-  if (new URLSearchParams(window.location.search).has('showDelete')) {
-    uninstallOperatorModal();
-    removeQueryArgument('showDelete');
-  }
+
+  useEffect(() => {
+    if (getQueryArgument('showDelete')) {
+      uninstallOperatorModal();
+      removeQueryArgument('showDelete');
+    }
+  }, [getQueryArgument, uninstallOperatorModal, removeQueryArgument]);
 
   const { deprecatedPackage, deprecatedChannel, deprecatedVersion } = findDeprecatedOperator(obj);
 

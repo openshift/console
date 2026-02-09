@@ -40,8 +40,8 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => ({
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
+  useParams: jest.fn(() => ({})),
+  useLocation: jest.fn(() => ({ pathname: '/', search: '', hash: '', state: null })),
 }));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
