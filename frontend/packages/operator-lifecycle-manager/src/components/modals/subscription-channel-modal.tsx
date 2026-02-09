@@ -105,7 +105,7 @@ export type SubscriptionChannelModalProps = {
   pkg: PackageManifestKind;
 } & ModalComponentProps;
 
-const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalProps> = (
+export const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalProps> = (
   props,
 ) => {
   return (
@@ -114,5 +114,3 @@ const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModal
     </ModalWrapper>
   );
 };
-
-export { SubscriptionChannelModalOverlay };

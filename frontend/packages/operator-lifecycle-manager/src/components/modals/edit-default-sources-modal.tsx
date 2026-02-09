@@ -110,7 +110,9 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   );
 };
 
-const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (props) => {
+export const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (
+  props,
+) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
@@ -121,5 +123,3 @@ const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalPr
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;
 } & ModalComponentProps;
-
-export { EditDefaultSourcesModalOverlay };

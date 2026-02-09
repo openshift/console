@@ -15,7 +15,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { OperatorHubModel } from '../../models';
 import type { CatalogSourceListPageProps } from '../catalog-source';
 import { CatalogSourceListPage } from '../catalog-source';
-import { EditDefaultSourcesModalOverlay } from '../modals/edit-default-sources-modal';
+import { LazyEditDefaultSourcesModalOverlay } from '../modals';
 import type { OperatorHubKind } from '.';
 
 const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
@@ -46,7 +46,7 @@ const OperatorHubDetails: FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) =
               obj={operatorHub}
               path="status.sources"
               canEdit={canEditDefaultSources}
-              onEdit={() => launchModal(EditDefaultSourcesModalOverlay, { operatorHub })}
+              onEdit={() => launchModal(LazyEditDefaultSourcesModalOverlay, { operatorHub })}
               editAsGroup
               hideEmpty
             >

@@ -111,7 +111,7 @@ export type InstallPlanApprovalModalProps = {
   obj: InstallPlanKind | SubscriptionKind;
 } & ModalComponentProps;
 
-const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalProps> = (
+export const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalProps> = (
   props,
 ) => {
   return (
@@ -120,5 +120,3 @@ const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModal
     </ModalWrapper>
   );
 };
-
-export { InstallPlanApprovalModalOverlay };

@@ -79,7 +79,7 @@ export type DisableDefaultSourceModalProps = {
   sourceName: string;
 } & ModalComponentProps;
 
-const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalProps> = (
+export const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalProps> = (
   props,
 ) => {
   return (
@@ -92,5 +92,3 @@ const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceMod
     </ModalWrapper>
   );
 };
-
-export { DisableDefaultSourceModalOverlay };

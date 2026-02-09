@@ -63,7 +63,7 @@ import {
 } from '../models';
 import type { InstallPlanKind, Step } from '../types';
 import { InstallPlanApproval } from '../types';
-import { InstallPlanPreviewModalOverlay } from './modals/installplan-preview-modal';
+import { LazyInstallPlanPreviewModalOverlay } from './modals';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 
@@ -415,7 +415,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
 
   const previewModal = useCallback(
     (stepResource: Step['resource']) =>
-      launchModal(InstallPlanPreviewModalOverlay, { stepResource }),
+      launchModal(LazyInstallPlanPreviewModalOverlay, { stepResource }),
     [launchModal],
   );
 

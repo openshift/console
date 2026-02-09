@@ -6,9 +6,9 @@ import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { asAccessReview } from '@console/internal/components/utils';
-import { referenceFor, k8sKill } from '@console/internal/module/k8s';
+import { referenceFor, k8sKill, k8sGet, k8sPatch } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { UninstallOperatorModalOverlay } from '../../components/modals/uninstall-operator-modal';
+import { LazyUninstallOperatorModalOverlay } from '../../components/modals';
 import { ClusterServiceVersionModel } from '../../models';
 import type { SubscriptionKind } from '../../types';
 import { SubscriptionActionCreator } from './types';
@@ -43,8 +43,10 @@ export const useSubscriptionActions = (
         id: 'remove-subscription',
         label: t('olm~Remove Subscription'),
         cta: () =>
-          launchModal(UninstallOperatorModalOverlay, {
+          launchModal(LazyUninstallOperatorModalOverlay, {
             k8sKill,
+            k8sGet,
+            k8sPatch,
             subscription: obj,
           }),
         accessReview: asAccessReview(model, obj, 'delete'),

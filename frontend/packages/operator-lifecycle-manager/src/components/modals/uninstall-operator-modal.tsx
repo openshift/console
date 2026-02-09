@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Alert,
-  Backdrop,
-  Modal,
-  ModalVariant,
-  Progress,
-  ProgressSize,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -63,6 +55,8 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   close,
   csv,
   k8sKill,
+  k8sGet: _k8sGet, // eslint-disable-line @typescript-eslint/no-unused-vars
+  k8sPatch: _k8sPatch, // eslint-disable-line @typescript-eslint/no-unused-vars
   subscription,
 }) => {
   const { t } = useTranslation();
@@ -428,18 +422,6 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   );
 };
 
-export const UninstallOperatorOverlay: FC<UninstallOperatorModalProps> = (props) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const closeOverlay = () => setIsOpen(false);
-  return isOpen ? (
-    <Backdrop>
-      <Modal variant={ModalVariant.small} isOpen>
-        <UninstallOperatorModal cancel={closeOverlay} close={closeOverlay} {...props} />;
-      </Modal>
-    </Backdrop>
-  ) : null;
-};
-
 const OperandDeleteProgress: FC<{
   total: number;
   remaining: number;
@@ -651,7 +633,9 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => {
+export const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (
+  props,
+) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
@@ -661,6 +645,12 @@ const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProp
 
 export type UninstallOperatorModalProps = {
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
+  k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
+  k8sPatch: (
+    kind: K8sKind,
+    resource: K8sResourceKind,
+    data: { op: string; path: string; value: any }[],
+  ) => Promise<any>;
   subscription: K8sResourceKind;
   csv?: K8sResourceKind;
   blocking?: boolean;
@@ -681,5 +671,3 @@ type OperandErrorListProps = {
 };
 
 UninstallOperatorModal.displayName = 'UninstallOperatorModal';
-
-export { UninstallOperatorModalOverlay };

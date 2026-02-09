@@ -87,8 +87,10 @@ import {
   DeprecatedOperatorWarningIcon,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import { InstallPlanApprovalModalOverlay } from './modals/installplan-approval-modal';
-import { SubscriptionChannelModalOverlay } from './modals/subscription-channel-modal';
+import {
+  LazyInstallPlanApprovalModalOverlay,
+  LazySubscriptionChannelModalOverlay,
+} from './modals';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
@@ -582,7 +584,7 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   );
   const channelModal = useCallback(
     () =>
-      launchModal(SubscriptionChannelModalOverlay, {
+      launchModal(LazySubscriptionChannelModalOverlay, {
         subscription: obj,
         pkg,
         k8sUpdate: k8sUpdateAndWait,
@@ -590,7 +592,7 @@ export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
     [obj, pkg, k8sUpdateAndWait, launchModal],
   );
   const approvalModal = useCallback(
-    () => launchModal(InstallPlanApprovalModalOverlay, { obj, k8sUpdate: k8sUpdateAndWait }),
+    () => launchModal(LazyInstallPlanApprovalModalOverlay, { obj, k8sUpdate: k8sUpdateAndWait }),
     [obj, k8sUpdateAndWait, launchModal],
   );
   const installPlanPhase = useMemo(() => {

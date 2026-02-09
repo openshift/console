@@ -44,14 +44,14 @@ export type InstallPlanPreviewModalProps = {
   stepResource: StepResource;
 } & ModalComponentProps;
 
-const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalProps> = (props) => {
+export const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalProps> = (
+  props,
+) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
     </ModalWrapper>
   );
 };
-
-export { InstallPlanPreviewModalOverlay };
 
 InstallPlanPreview.displayName = 'InstallPlanPreview';

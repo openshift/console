@@ -95,14 +95,12 @@ export type UpdateStrategyModalProps = {
   title: string;
 } & ModalComponentProps;
 
-const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
+export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
-
-export { UpdateStrategyModalOverlay };
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
