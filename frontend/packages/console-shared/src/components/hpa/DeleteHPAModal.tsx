@@ -17,11 +17,6 @@ import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sKill } from '@console/internal/module/k8s';
 
-type DeleteHPAModalProps = ModalComponentProps & {
-  hpa: HorizontalPodAutoscalerKind;
-  workload: K8sResourceCommon;
-};
-
 const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload }) => {
   const [submitError, setSubmitError] = useState<string>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -87,7 +82,7 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
   );
 };
 
-export const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalOverlayProps> = (props) => {
+export const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <DeleteHPAModal
@@ -100,7 +95,7 @@ export const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalOverlayProps>
   );
 };
 
-type DeleteHPAModalOverlayProps = {
+type DeleteHPAModalProps = ModalComponentProps & {
   hpa: HorizontalPodAutoscalerKind;
   workload: K8sResourceCommon;
 };

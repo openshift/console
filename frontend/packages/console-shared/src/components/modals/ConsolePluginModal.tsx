@@ -73,9 +73,7 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   );
 };
 
-export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalOverlayProps> = (
-  props,
-) => {
+export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <ConsolePluginModal
@@ -88,13 +86,6 @@ export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalOverl
       />
     </ModalWrapper>
   );
-};
-
-type ConsolePluginModalOverlayProps = {
-  consoleOperatorConfig: K8sResourceKind;
-  csvPluginsCount?: number;
-  pluginName: string;
-  trusted: boolean;
 };
 
 export type ConsolePluginModalProps = {
