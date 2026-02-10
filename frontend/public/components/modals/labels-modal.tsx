@@ -2,6 +2,17 @@ import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -9,17 +20,11 @@ import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/co
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { K8sResourceKind } from '../../module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '../factory/modal';
+import { ModalComponentProps } from '../factory/modal';
 import { ResourceIcon } from '../utils/resource-icon';
 import { SelectorInput } from '../utils/selector-input';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
@@ -88,31 +93,38 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>
-        {descriptionKey
-          ? t('public~Edit {{description}}', {
-              description: t(descriptionKey),
-            })
-          : t('public~Edit labels')}
-      </ModalTitle>
+    <>
+      <ModalHeader
+        title={
+          descriptionKey
+            ? t('public~Edit {{description}}', {
+                description: t(descriptionKey),
+              })
+            : t('public~Edit labels')
+        }
+        data-test-id="modal-title"
+      />
       <ModalBody>
-        <Grid hasGutter>
-          <GridItem>
-            {messageKey
-              ? t(messageKey, messageVariables)
-              : t(
-                  'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
-                )}
-          </GridItem>
-          <GridItem>
-            <label htmlFor="tags-input">
-              {descriptionKey
-                ? t('{{description}} for', { description: t(descriptionKey) })
-                : t('public~Labels for')}{' '}
-              <ResourceIcon groupVersionKind={getGroupVersionKindForModel(kind)} />{' '}
-              {resource?.metadata?.name}
-            </label>
+        <Content component={ContentVariants.p}>
+          {messageKey
+            ? t(messageKey, messageVariables)
+            : t(
+                'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+              )}
+        </Content>
+        <Form id="labels-form" onSubmit={submit}>
+          <FormGroup
+            label={
+              <>
+                {descriptionKey
+                  ? t('{{description}} for', { description: t(descriptionKey) })
+                  : t('public~Labels for')}{' '}
+                <ResourceIcon groupVersionKind={getGroupVersionKindForModel(kind)} />{' '}
+                {resource?.metadata?.name}
+              </>
+            }
+            fieldId="tags-input"
+          >
             <SelectorInput
               onChange={(l) => setLabels(l)}
               onValidationChange={setIsInputValid}
@@ -120,34 +132,51 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
               labelClassName={labelClassName || `co-m-${kind.id}`}
               autoFocus
             />
-          </GridItem>
-        </Grid>
+          </FormGroup>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
+      <ModalFooterWithAlerts
         errorMessage={errorMessage}
         message={
           stale
             ? t('public~Labels have been updated. Click Cancel and reapply your changes.')
             : undefined
         }
-        inProgress={false}
-        submitText={t('public~Save')}
-        submitDisabled={stale || !isInputValid}
-        cancel={cancel}
-      />
-    </form>
+      >
+        <Button
+          type="submit"
+          variant="primary"
+          isDisabled={stale || !isInputValid}
+          data-test="confirm-action"
+          form="labels-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const LabelsModal: FC<LabelsModalProps> = (props) => (
+const LabelsModal: FC<LabelsModalProps> = (props) => (
   <BaseLabelsModal path={LABELS_PATH} {...props} />
 );
 
-export const LabelsModalOverlay: OverlayComponent<LabelsModalProps> = (props) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
-    <LabelsModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-  </ModalWrapper>
-);
+export const LabelsModalOverlay: OverlayComponent<LabelsModalProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <LabelsModal {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
+};
 
 type BaseLabelsModalProps = {
   descriptionKey?: string;
