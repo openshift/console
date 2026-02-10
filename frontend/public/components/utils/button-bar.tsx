@@ -29,7 +29,7 @@ export const ErrorMessage = ({ message }) => {
     </Alert>
   );
 };
-const InfoMessage = ({ message }) => (
+export const InfoMessage = ({ message }) => (
   <Alert
     isInline
     className="co-alert"
