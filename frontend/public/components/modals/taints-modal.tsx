@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
-import { K8sKind, K8sResourceKind, k8sPatch, Taint } from '../../module/k8s';
+import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
 import {
   ModalBody,
   ModalComponentProps,
@@ -162,7 +162,7 @@ const TaintsModal = (props: TaintsModalProps) => {
 
 export type TaintsModalProps = {
   resourceKind: K8sKind;
-  resource: K8sResourceKind;
+  resource: NodeKind;
 } & ModalComponentProps;
 
 const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => {

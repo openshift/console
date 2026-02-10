@@ -87,14 +87,6 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 };
 
-export type UpdateStrategyModalProps = {
-  defaultValue: any;
-  path: string;
-  resource: K8sResourceKind;
-  resourceKind: K8sKind;
-  title: string;
-} & ModalComponentProps;
-
 export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
@@ -104,3 +96,11 @@ export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalPro
 };
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
+
+export type UpdateStrategyModalProps = {
+  defaultValue: any;
+  path: string;
+  resource: K8sResourceKind;
+  resourceKind: K8sKind;
+  title: string;
+} & ModalComponentProps;

@@ -13,7 +13,7 @@ import { useConfigureCountModal } from '@console/internal/components/modals/conf
 import { TaintsModalOverlay } from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sModel, K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import type { ActionObject } from './types';
 import { CommonActionCreator } from './types';
@@ -145,7 +145,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         cta: () =>
           launchModal(TaintsModalOverlay, {
             resourceKind: kind,
-            resource,
+            resource: resource as NodeKind,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
