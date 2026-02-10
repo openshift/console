@@ -119,7 +119,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
         </Button>,
         <Button
           type="button"
-          variant="secondary"
+          variant="link"
           disabled={inProgress}
           onClick={closeModal}
           data-test-id="modal-cancel-action"
