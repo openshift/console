@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import {
   Grid,
   GridItem,
+  Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
@@ -10,7 +11,6 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import Modal from '@console/shared/src/components/modal/Modal';
 import type { PopoverPlacement } from '@console/shared/src/components/popover/const';
 import Popover from '@console/shared/src/components/popover/Popover';
 import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
@@ -108,7 +108,6 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
       id="guided-tour-modal"
       data-test="guided-tour-modal"
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
-      isFullScreen
     >
       <ModalBody>
         <Grid hasGutter>
