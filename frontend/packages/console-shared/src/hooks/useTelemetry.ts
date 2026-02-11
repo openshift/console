@@ -39,10 +39,7 @@ export const getClusterProperties = () => {
   const clusterProperties: ClusterProperties = {};
   clusterProperties.clusterId = window.SERVER_FLAGS.telemetry?.CLUSTER_ID;
   clusterProperties.clusterType = window.SERVER_FLAGS.telemetry?.CLUSTER_TYPE;
-  if (
-    window.SERVER_FLAGS.telemetry?.CLUSTER_TYPE === 'OSD' &&
-    window.SERVER_FLAGS.telemetry?.DEVSANDBOX === 'true'
-  ) {
+  if (window.SERVER_FLAGS.telemetry?.DEVSANDBOX === 'true') {
     clusterProperties.clusterType = 'DEVSANDBOX';
   }
   // Prefer to report the OCP version (releaseVersion) if available.
