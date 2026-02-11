@@ -1,20 +1,20 @@
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { Content, TextInput, ContentVariants } from '@patternfly/react-core';
 import * as semver from 'semver';
 
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { isManaged } from '../utils/documentation';
 import {
-  createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
+  ModalWrapper,
 } from '../factory/modal';
 import {
   ClusterVersionKind,
@@ -109,9 +109,14 @@ const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   );
 };
 
-export const clusterChannelModal = createModalLauncher(ClusterChannelModal);
+export const ClusterChannelModalOverlay: OverlayComponent<ClusterChannelModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ClusterChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 type ClusterChannelModalProps = {
   cv: ClusterVersionKind;
-  t: TFunction;
 } & ModalComponentProps;

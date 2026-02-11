@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
+import { useEffect } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
@@ -37,7 +38,11 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterChannelModal, clusterMoreUpdatesModal, clusterUpdateModal } from '../modals';
+import {
+  LazyClusterChannelModalOverlay,
+  LazyClusterMoreUpdatesModalOverlay,
+  LazyClusterUpdateModalOverlay,
+} from '../modals';
 import { GlobalConfigPage } from './global-config';
 import {
   ClusterAutoscalerModel,
@@ -167,6 +172,7 @@ const calculatePercentage = (numerator: number, denominator: number): number =>
 
 export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
@@ -175,7 +181,7 @@ export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
       type="button"
       isInline
       data-test-id="current-channel-update-link"
-      onClick={() => clusterChannelModal({ cv })}
+      onClick={() => launchModal(LazyClusterChannelModalOverlay, { cv: cv as ClusterVersionKind })}
       variant="link"
     >
       {label}
@@ -224,6 +230,7 @@ export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
 };
 
 export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
+  const launchModal = useOverlay();
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
@@ -246,7 +253,7 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
       <Button
         variant="primary"
         type="button"
-        onClick={() => clusterUpdateModal({ cv })}
+        onClick={() => launchModal(LazyClusterUpdateModalOverlay, { cv })}
         data-test-id="cv-update-button"
       >
         {t('public~Select a version')}
@@ -586,6 +593,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
   const newestVersionIsBlocked =
     clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged();
   const { t } = useTranslation();
+  const launchModal = useOverlay();
 
   return (
     <div className="co-cluster-settings__updates-graph" data-test="cv-updates-graph">
@@ -606,7 +614,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
               <Button
                 variant="secondary"
                 className="co-channel-more-versions"
-                onClick={() => clusterMoreUpdatesModal({ cv })}
+                onClick={() => launchModal(LazyClusterMoreUpdatesModalOverlay, { cv })}
                 data-test="cv-more-updates-button"
               >
                 {t('public~+ More')}
@@ -899,15 +907,17 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const desiredVersion = getDesiredClusterVersion(cv);
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
   const workerMachineConfigPool = getMCPByName(machineConfigPools, NodeTypes.worker);
-  if (new URLSearchParams(window.location.search).has('showVersions')) {
-    clusterUpdateModal({ cv })
-      .then(() => removeQueryArgument('showVersions'))
-      .catch(_.noop);
-  } else if (new URLSearchParams(window.location.search).has('showChannels')) {
-    clusterChannelModal({ cv })
-      .then(() => removeQueryArgument('showChannels'))
-      .catch(_.noop);
-  }
+  const launchModal = useOverlay();
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('showVersions')) {
+      launchModal(LazyClusterUpdateModalOverlay, { cv });
+      removeQueryArgument('showVersions');
+    } else if (new URLSearchParams(window.location.search).has('showChannels')) {
+      launchModal(LazyClusterChannelModalOverlay, { cv });
+      removeQueryArgument('showChannels');
+    }
+  }, [launchModal, cv]);
 
   return (
     <>

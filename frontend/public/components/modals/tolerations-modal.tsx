@@ -11,8 +11,9 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
-  createModalLauncher,
+  ModalWrapper,
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
@@ -238,7 +239,13 @@ const TolerationsModal = (props: TolerationsModalProps) => {
   );
 };
 
-export const tolerationsModal = createModalLauncher(TolerationsModal);
+export const TolerationsModalOverlay: OverlayComponent<TolerationsModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay} className={props.modalClassName}>
+      <TolerationsModal {...props} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 type TolerationModalItem = {
   // isNew is used internally in the dialog to track existing vs new
@@ -251,4 +258,5 @@ export type TolerationsModalProps = {
   resource: any;
   existingReadOnly?: boolean;
   close?: () => void;
+  modalClassName?: string;
 } & ModalComponentProps;
