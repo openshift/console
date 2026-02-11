@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { Alert } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
-import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
 import { getFiringAlerts } from '@console/shared';
@@ -28,7 +28,11 @@ import './MonitoringOverview.scss';
 type MonitoringOverviewProps = {
   resource: K8sResourceKind;
   pods?: PodKind[];
-  resourceEvents?: FirehoseResult<EventKind[]>;
+  resourceEvents?: {
+    data: EventKind[];
+    loaded: boolean;
+    loadError?: Error;
+  };
   monitoringAlerts: Alert[];
 };
 

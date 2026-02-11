@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s';
+import { EventKind, PodKind } from '@console/internal/module/k8s';
 import { OverviewItem, usePodsWatcher } from '@console/shared';
 import MonitoringOverview from './MonitoringOverview';
 
@@ -18,40 +18,66 @@ const MonitoringTab: FC<MonitoringTabProps> = ({ item }) => {
   } = item.obj;
   const { podData, loadError, loaded } = usePodsWatcher(item.obj, item.obj.kind, namespace);
 
-  const resources = useMemo(() => {
-    const res = [
-      {
+  const watchResources = useMemo(() => {
+    const res: Record<
+      string,
+      { isList: boolean; kind: string; namespace: string; fieldSelector: string }
+    > = {
+      resourceEvents: {
         isList: true,
         kind: 'Event',
         namespace,
-        prop: 'resourceEvents',
         fieldSelector: `involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`,
       },
-    ];
+    };
 
     if (loaded && !loadError && podData?.pods) {
       podData.pods.forEach((pod) => {
         const fieldSelector = `involvedObject.uid=${pod.metadata.uid},involvedObject.name=${pod.metadata.name},involvedObject.kind=${PodModel.kind}`;
-        res.push({
+        res[pod.metadata.uid] = {
           isList: true,
           kind: 'Event',
           namespace: pod.metadata.namespace,
-          prop: pod.metadata.uid,
           fieldSelector,
-        });
+        };
       });
     }
     return res;
   }, [kind, uid, name, namespace, loaded, loadError, podData]);
 
+  const resources = useK8sWatchResources<Record<string, EventKind[]>>(watchResources);
+
+  // Transform resources to the expected format for MonitoringOverview
+  const resourceEvents = resources.resourceEvents
+    ? {
+        data: resources.resourceEvents.data || [],
+        loaded: resources.resourceEvents.loaded,
+        loadError: resources.resourceEvents.loadError,
+      }
+    : undefined;
+
+  // Build the props object with pod events
+  const podEventProps: Record<string, { data: EventKind[]; loaded: boolean }> = {};
+  if (podData?.pods) {
+    podData.pods.forEach((pod) => {
+      const podEvents = resources[pod.metadata.uid];
+      if (podEvents) {
+        podEventProps[pod.metadata.uid] = {
+          data: podEvents.data || [],
+          loaded: podEvents.loaded,
+        };
+      }
+    });
+  }
+
   return (
-    <Firehose resources={resources}>
-      <MonitoringOverview
-        resource={item.obj}
-        pods={(podData?.pods as PodKind[]) || []}
-        monitoringAlerts={monitoringAlerts}
-      />
-    </Firehose>
+    <MonitoringOverview
+      resource={item.obj}
+      pods={(podData?.pods as PodKind[]) || []}
+      monitoringAlerts={monitoringAlerts}
+      resourceEvents={resourceEvents}
+      {...podEventProps}
+    />
   );
 };
 

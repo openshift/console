@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { Formik, FormikHelpers, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -12,12 +12,8 @@ import {
   ModalTitle,
   ModalWrapper,
 } from '@console/internal/components/factory';
-import {
-  Firehose,
-  FirehoseResult,
-  history,
-  resourceListPathFromModel,
-} from '@console/internal/components/utils';
+import { history, resourceListPathFromModel } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   k8sKill,
   k8sPatch,
@@ -26,34 +22,64 @@ import {
 } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
-import { RevisionModel, ServiceModel } from '../../models';
+import { ConfigurationModel, RevisionModel, ServiceModel } from '../../models';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
 import { Traffic } from '../../types';
-import {
-  knativeServingResourcesTrafficSplitting,
-  getRevisionItems,
-  trafficDataForPatch,
-} from '../../utils/traffic-splitting-utils';
+import { getRevisionItems, trafficDataForPatch } from '../../utils/traffic-splitting-utils';
 import { TrafficSplittingType } from '../traffic-splitting/TrafficSplitting';
 import DeleteRevisionModal from './DeleteRevisionModal';
 
-type ControllerProps = {
-  loaded?: boolean;
-  revision?: K8sResourceKind;
-  resources?: {
-    configurations: FirehoseResult;
-    revisions: FirehoseResult;
-    services: FirehoseResult;
-  };
+type DeleteRevisionModalControllerProps = {
+  revision: K8sResourceKind;
   cancel?: () => void;
   close?: () => void;
 };
 
-const Controller: FC<ControllerProps> = ({ loaded, resources, revision, cancel, close }) => {
+const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
+  revision,
+  cancel,
+  close,
+}) => {
   const { t } = useTranslation();
+  const { namespace } = revision.metadata;
+
+  const watchResources = useMemo(
+    () => ({
+      revisions: {
+        isList: true,
+        kind: referenceForModel(RevisionModel),
+        namespace,
+        optional: true,
+      },
+      configurations: {
+        isList: true,
+        kind: referenceForModel(ConfigurationModel),
+        namespace,
+        optional: true,
+      },
+      services: {
+        isList: true,
+        kind: referenceForModel(ServiceModel),
+        namespace,
+      },
+    }),
+    [namespace],
+  );
+
+  const resources = useK8sWatchResources<{
+    revisions: K8sResourceKind[];
+    configurations: K8sResourceKind[];
+    services: K8sResourceKind[];
+  }>(watchResources);
+
+  const loaded =
+    Object.keys(resources).length > 0 &&
+    Object.keys(resources).every((key) => resources[key].loaded);
+
   if (!loaded) {
     return null;
   }
+
   const service = resources.services.data.find((s: K8sResourceKind) => {
     return revision.metadata.labels[KNATIVE_SERVING_LABEL] === s.metadata.name;
   });
@@ -124,7 +150,7 @@ const Controller: FC<ControllerProps> = ({ loaded, resources, revision, cancel, 
     });
   }
 
-  const deleteRevision = (action: FormikHelpers<FormikValues>) => {
+  const deleteRevisionAction = (action: FormikHelpers<FormikValues>) => {
     return k8sKill(RevisionModel, revision)
       .then(() => {
         close();
@@ -143,12 +169,12 @@ const Controller: FC<ControllerProps> = ({ loaded, resources, revision, cancel, 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const ksvcPatch = trafficDataForPatch(values.trafficSplitting, service);
     if (!deleteTraffic || deleteTraffic.percent === 0) {
-      return deleteRevision(action);
+      return deleteRevisionAction(action);
     }
 
     return k8sPatch(ServiceModel, service, ksvcPatch)
       .then(() => {
-        deleteRevision(action);
+        deleteRevisionAction(action);
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
@@ -173,29 +199,6 @@ const Controller: FC<ControllerProps> = ({ loaded, resources, revision, cancel, 
         />
       )}
     </Formik>
-  );
-};
-
-type DeleteRevisionModalControllerProps = {
-  revision: K8sResourceKind;
-};
-
-const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = (props) => {
-  const {
-    metadata: { namespace },
-  } = props.revision;
-  const resources = knativeServingResourcesTrafficSplitting(namespace);
-  resources.push({
-    isList: true,
-    kind: referenceForModel(ServiceModel),
-    namespace,
-    prop: 'services',
-  });
-
-  return (
-    <Firehose resources={resources}>
-      <Controller {...props} />
-    </Firehose>
   );
 };
 

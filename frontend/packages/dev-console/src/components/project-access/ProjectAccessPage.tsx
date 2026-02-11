@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useProjectAccessRoles } from './hooks';
 import ProjectAccess from './ProjectAccess';
@@ -13,22 +14,30 @@ const ProjectAccessPage: FC = (props) => {
   const namespace = params.ns;
   const roles = useProjectAccessRoles();
   const showFullForm = location.pathname.includes('project-access');
+
+  const [roleBindingsData, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>({
+    namespace,
+    kind: 'RoleBinding',
+    isList: true,
+    optional: true,
+  });
+
+  const roleBindings = {
+    data: roleBindingsData || [],
+    loaded,
+    loadError,
+  };
+
   return (
     <>
       <DocumentTitle>{t('devconsole~Project access')}</DocumentTitle>
-      <Firehose
-        resources={[
-          {
-            namespace,
-            kind: 'RoleBinding',
-            prop: 'roleBindings',
-            isList: true,
-            optional: true,
-          },
-        ]}
-      >
-        <ProjectAccess fullFormView={showFullForm} namespace={namespace} roles={roles} {...props} />
-      </Firehose>
+      <ProjectAccess
+        fullFormView={showFullForm}
+        namespace={namespace}
+        roles={roles}
+        roleBindings={roleBindings}
+        {...props}
+      />
     </>
   );
 };

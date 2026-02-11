@@ -13,7 +13,13 @@ import { PipelineData } from '../pipeline-section/import-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: FirehoseList | WatchK8sResultsObject<K8sResourceKind[]>;
+  projects?:
+    | {
+        data: K8sResourceKind[];
+        loaded: boolean;
+        loadError?: any;
+      }
+    | WatchK8sResultsObject<K8sResourceKind[]>;
 }
 export type ImageStreamPayload = boolean | K8sResourceKind;
 
@@ -38,29 +44,32 @@ export interface ImageStreamContextProps {
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: {
-    data: [];
+    data: K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
   };
 }
 
 export interface GitImportFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: [];
+  imageStreams?: {
+    data: K8sResourceKind | K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
+  };
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
   };
 }
 export interface DevfileImportFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: {
-    data: [];
+    data: K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
   };
-}
-
-export interface FirehoseList {
-  data?: K8sResourceKind[];
-  [key: string]: any;
 }
 
 export interface DeployImageFormData {

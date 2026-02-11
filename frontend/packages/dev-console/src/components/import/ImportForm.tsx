@@ -8,7 +8,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
 import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { RouteModel } from '@console/internal/models';
-import { RouteKind } from '@console/internal/module/k8s';
+import { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared';
@@ -38,7 +38,6 @@ import {
 } from './import-submit-utils';
 import {
   GitImportFormData,
-  FirehoseList,
   ImportData,
   Resources,
   BaseFormData,
@@ -55,10 +54,15 @@ export interface ImportFormProps {
   namespace: string;
   importData: ImportData;
   contextualSource?: string;
-  imageStreams?: FirehoseList;
-  projects?: {
+  imageStreams?: {
+    data: K8sResourceKind | K8sResourceKind[];
     loaded: boolean;
-    data: [];
+    loadError?: any;
+  };
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
   };
 }
 
@@ -153,7 +157,11 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
 
   const initialVals = useUpdateKnScalingDefaultValues(initialValues);
   const builderImages: NormalizedBuilderImages =
-    imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
+    imageStreams &&
+    imageStreams.loaded &&
+    normalizeBuilderImages(
+      Array.isArray(imageStreams.data) ? imageStreams.data : [imageStreams.data],
+    );
 
   const handleSubmit = (values: GitImportFormData, actions) => {
     const imageStream = builderImages && builderImages[values.image.selected]?.obj;

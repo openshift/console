@@ -1,25 +1,26 @@
 import type { FC } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
-import { FirehoseResource, Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import AddHealthChecksForm from './AddHealthChecksForm';
 
 const HealthChecksPage: FC = () => {
   const { ns, kind, name, containerName } = useParams();
-  const resource: FirehoseResource[] = [
-    {
-      kind,
-      namespace: ns,
-      isList: false,
-      name,
-      prop: 'resource',
-    },
-  ];
 
-  return (
-    <Firehose resources={resource}>
-      <AddHealthChecksForm currentContainer={containerName} />
-    </Firehose>
-  );
+  const [resourceData, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
+    kind,
+    namespace: ns,
+    isList: false,
+    name,
+  });
+
+  const resource = {
+    data: resourceData,
+    loaded,
+    loadError,
+  };
+
+  return <AddHealthChecksForm resource={resource} currentContainer={containerName} />;
 };
 
 export default HealthChecksPage;

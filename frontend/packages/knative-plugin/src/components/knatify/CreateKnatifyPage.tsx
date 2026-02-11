@@ -139,7 +139,7 @@ const CreateKnatifyPage: FunctionComponent = () => {
           {(formikProps) => (
             <KnatifyForm
               {...formikProps}
-              projects={(resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>) ?? {}}
+              projects={resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>}
             />
           )}
         </Formik>

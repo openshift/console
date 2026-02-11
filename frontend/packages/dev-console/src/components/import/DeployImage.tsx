@@ -15,12 +15,16 @@ import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 import { filterDeployedResources } from './import-submit-utils';
-import { DeployImageFormData, FirehoseList, Resources } from './import-types';
+import { DeployImageFormData, Resources } from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface DeployImageProps {
   namespace: string;
-  projects?: FirehoseList;
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
+  };
   contextualSource?: string;
 }
 

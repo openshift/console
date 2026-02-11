@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
+import { LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -30,7 +30,7 @@ const ImportSamplePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
 
-  const imageStreamResource: FirehoseResource = useMemo(
+  const imageStreamResource = useMemo(
     () => ({
       kind: ImageStreamModel.kind,
       prop: 'imageStreams',

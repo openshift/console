@@ -3,20 +3,11 @@ import { useCallback } from 'react';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { ServiceKind } from '../../types';
 import TestFunction from './TestFunction';
-
-type ControllerProps = {
-  loaded?: boolean;
-  obj: ServiceKind;
-};
-
-const Controller: FC<ControllerProps> = (props) => {
-  const { loaded, obj } = props;
-  return loaded ? <TestFunction {...props} service={obj} /> : null;
-};
 
 type TestFunctionControllerProps = {
   obj: ServiceKind;
@@ -25,21 +16,14 @@ type TestFunctionControllerProps = {
 const TestFunctionController: FC<TestFunctionControllerProps> = (props) => {
   const { obj } = props;
 
-  const serverlessResources = [
-    {
-      kind: ServiceModel.kind,
-      isList: false,
-      prop: `obj`,
-      namespace: obj.metadata.namespace,
-      name: obj.metadata.name,
-    },
-  ];
+  const [service, loaded] = useK8sWatchResource<ServiceKind>({
+    kind: referenceForModel(ServiceModel),
+    isList: false,
+    namespace: obj.metadata.namespace,
+    name: obj.metadata.name,
+  });
 
-  return (
-    <Firehose resources={serverlessResources}>
-      <Controller {...props} />
-    </Firehose>
-  );
+  return loaded ? <TestFunction {...props} service={service} /> : null;
 };
 
 type Props = TestFunctionControllerProps & ModalComponentProps;

@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import MonitoringTab from '../MonitoringTab';
 
-jest.mock('@console/internal/components/utils', () => ({
-  Firehose: (props) => props.children,
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(() => ({
+    resourceEvents: { data: [], loaded: true, loadError: null },
+  })),
 }));
 
 jest.mock('@console/internal/models', () => ({

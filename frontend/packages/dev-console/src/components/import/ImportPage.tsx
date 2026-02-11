@@ -1,9 +1,11 @@
 import type { FunctionComponent } from 'react';
+import { useMemo } from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -44,40 +46,47 @@ const ImportPage: FunctionComponent = () => {
   const preselectedNamespace = searchParams.get('preselected-ns');
   const importType = searchParams.get('importType');
 
-  let importData: ImportData;
-  let resources: FirehoseResource[];
-  if (imageStreamName && imageStreamNamespace) {
-    importData = ImportFlows(t).s2i;
-    resources = [
-      {
-        kind: ImageStreamModel.kind,
-        prop: 'imageStreams',
-        isList: false,
-        name: imageStreamName,
-        namespace: imageStreamNamespace,
-      },
-      {
+  const isS2i = !!(imageStreamName && imageStreamNamespace);
+  const importData: ImportData = isS2i ? ImportFlows(t).s2i : ImportFlows(t).git;
+
+  const watchResources = useMemo(
+    () => ({
+      imageStreams: isS2i
+        ? {
+            kind: ImageStreamModel.kind,
+            isList: false,
+            name: imageStreamName,
+            namespace: imageStreamNamespace,
+          }
+        : {
+            kind: ImageStreamModel.kind,
+            isList: true,
+            namespace: 'openshift',
+          },
+      projects: {
         kind: ProjectModel.kind,
-        prop: 'projects',
         isList: true,
       },
-    ];
-  } else {
-    importData = ImportFlows(t).git;
-    resources = [
-      {
-        kind: ImageStreamModel.kind,
-        prop: 'imageStreams',
-        isList: true,
-        namespace: 'openshift',
-      },
-      {
-        kind: ProjectModel.kind,
-        prop: 'projects',
-        isList: true,
-      },
-    ];
-  }
+    }),
+    [isS2i, imageStreamName, imageStreamNamespace],
+  );
+
+  const resources = useK8sWatchResources<{
+    imageStreams: K8sResourceKind | K8sResourceKind[];
+    projects: K8sResourceKind[];
+  }>(watchResources);
+
+  const imageStreams = {
+    data: resources.imageStreams.data,
+    loaded: resources.imageStreams.loaded,
+    loadError: resources.imageStreams.loadError,
+  };
+
+  const projects = {
+    data: resources.projects.data,
+    loaded: resources.projects.loaded,
+    loadError: resources.projects.loadError,
+  };
 
   return (
     <QueryFocusApplication>
@@ -88,14 +97,14 @@ const ImportPage: FunctionComponent = () => {
             title={importData.title}
             badge={importType === ImportTypes.devfile ? <DevPreviewBadge /> : null}
           />
-          <Firehose resources={resources}>
-            <ImportForm
-              forApplication={application}
-              contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-              namespace={namespace || preselectedNamespace}
-              importData={importData}
-            />
-          </Firehose>
+          <ImportForm
+            forApplication={application}
+            contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+            namespace={namespace || preselectedNamespace}
+            importData={importData}
+            imageStreams={imageStreams}
+            projects={projects}
+          />
         </NamespacedPage>
       )}
     </QueryFocusApplication>
