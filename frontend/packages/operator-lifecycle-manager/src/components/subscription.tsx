@@ -772,7 +772,11 @@ export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (
         },
       ]}
       customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
-        <LazyActionMenu context={{ [referenceFor(kindObj)]: obj }} />
+        <LazyActionMenu
+          context={{
+            [referenceFor(obj)]: obj,
+          }}
+        />
       )}
     />
   );
