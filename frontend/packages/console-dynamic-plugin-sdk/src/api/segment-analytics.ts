@@ -1,10 +1,12 @@
 import { GetSegmentAnalytics } from '../extensions/console-types';
 
 // Segment API key. Must be present for telemetry to be enabled.
+// When running in DevSandbox mode, prefer the DevSandbox-specific key.
 const TELEMETRY_API_KEY =
+  (window.SERVER_FLAGS.telemetry?.DEVSANDBOX === 'true' &&
+    window.SERVER_FLAGS.telemetry?.DEVSANDBOX_SEGMENT_API_KEY) ||
   window.SERVER_FLAGS.telemetry?.SEGMENT_API_KEY ||
   window.SERVER_FLAGS.telemetry?.SEGMENT_PUBLIC_API_KEY ||
-  window.SERVER_FLAGS.telemetry?.DEVSANDBOX_SEGMENT_API_KEY ||
   '';
 
 // Segment "apiHost" parameter, should be like "api.segment.io/v1"
