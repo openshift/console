@@ -7,8 +7,8 @@ import {
   LazyAnnotationsModalOverlay,
   LazyDeleteModalOverlay,
   LazyLabelsModalOverlay,
+  LazyTolerationsModalOverlay,
   taintsModal,
-  tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
@@ -130,7 +130,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-toleration',
         label: t('console-app~Edit tolerations'),
         cta: () =>
-          tolerationsModal({
+          launchModal(LazyTolerationsModalOverlay, {
             resourceKind: kind,
             resource,
             modalClassName: 'modal-lg',
@@ -159,7 +159,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (tolerationsModal, taintsModal)
+    // Excluding stable modal launcher functions (taintsModal, launchCountModal)
     // to prevent unnecessary re-renders
     // TODO: remove once all Modals have been updated to useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps

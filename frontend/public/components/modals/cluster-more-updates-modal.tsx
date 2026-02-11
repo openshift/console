@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import {
   ClusterVersionKind,
@@ -17,7 +18,7 @@ import {
   ModalComponentProps,
   ModalFooter,
   ModalTitle,
-  createModalLauncher,
+  ModalWrapper,
 } from '../factory/modal';
 import {
   ClusterNotUpgradeableAlert,
@@ -89,7 +90,15 @@ export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ canc
   );
 };
 
-export const clusterMoreUpdatesModal = createModalLauncher(ClusterMoreUpdatesModal);
+export const ClusterMoreUpdatesModalOverlay: OverlayComponent<ClusterMoreUpdatesModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 export type ClusterMoreUpdatesModalProps = {
   cv: ClusterVersionKind;
