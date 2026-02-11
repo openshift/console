@@ -10,5 +10,5 @@ type HelmActionObj = {
 export type HelmActionsScope = {
   release: HelmRelease | HelmActionObj;
   actionOrigin?: string;
-  redirect?: boolean;
+  redirect?: string;
 };
