@@ -108,7 +108,7 @@ describe('getClusterProperties', () => {
   it('returns DEVSANDBOX when DEVSANDBOX is "true" regardless of CLUSTER_TYPE', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
-      telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'true' },
+      telemetry: { CLUSTER_TYPE: 'ROSA', DEVSANDBOX: 'true' },
     };
     expect(getClusterProperties().clusterType).toBe('DEVSANDBOX');
   });
@@ -124,9 +124,9 @@ describe('getClusterProperties', () => {
   it('returns the configured clusterType when DEVSANDBOX is not exactly "true"', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
-      telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'false' },
+      telemetry: { CLUSTER_TYPE: 'ROSA', DEVSANDBOX: 'false' },
     };
-    expect(getClusterProperties().clusterType).toBe('OSD');
+    expect(getClusterProperties().clusterType).toBe('ROSA');
   });
 });
 
@@ -212,7 +212,7 @@ describe('useTelemetry', () => {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
-        CLUSTER_TYPE: 'OSD',
+        CLUSTER_TYPE: 'ROSA',
         DEVSANDBOX: 'true',
         STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
       },
