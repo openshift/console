@@ -141,12 +141,7 @@ const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsMod
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <ResourceRequirementsModal
-        title={props.title}
-        description={props.description}
-        obj={props.obj}
-        model={props.model}
-        type={props.type}
-        path={props.path}
+        {...props}
         close={props.closeOverlay}
         cancel={props.closeOverlay}
       />

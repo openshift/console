@@ -60,3 +60,12 @@ export const LazyUpdateStrategyModalOverlay = lazy(() =>
     default: m.UpdateStrategyModalOverlay,
   })),
 );
+
+// Lazy-loaded OverlayComponent for Community Operator Warning Modal
+export const LazyCommunityOperatorWarningModalOverlay = lazy(() =>
+  import(
+    '../operator-hub/operator-hub-community-provider-modal' /* webpackChunkName: "community-operator-warning-modal" */
+  ).then((m) => ({
+    default: m.CommunityOperatorWarningModalOverlay,
+  })),
+);
