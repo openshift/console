@@ -178,7 +178,6 @@ func SetFlagsFromConfig(fs *flag.FlagSet, config *Config) (err error) {
 		return err
 	}
 
-	addContentSecurityPolicyEnabled(fs, &config.ContentSecurityPolicyEnabled)
 	addContentSecurityPolicy(fs, config.ContentSecurityPolicy)
 	addTelemetry(fs, config.Telemetry)
 
@@ -479,12 +478,6 @@ func addTelemetry(fs *flag.FlagSet, telemetry MultiKeyValue) {
 
 func addI18nNamespaces(fs *flag.FlagSet, i18nNamespaces []string) {
 	fs.Set("i18n-namespaces", strings.Join(i18nNamespaces, ","))
-}
-
-func addContentSecurityPolicyEnabled(fs *flag.FlagSet, enabled *bool) {
-	if enabled != nil && *enabled {
-		fs.Set("content-security-policy-enabled", "true")
-	}
 }
 
 func SetIfUnset(flagVal *string, val string) {
