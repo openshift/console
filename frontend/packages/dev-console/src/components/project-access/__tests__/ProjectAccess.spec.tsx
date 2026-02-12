@@ -94,7 +94,7 @@ describe('Project Access', () => {
       roleBindings: {
         data: [],
         loaded: false,
-        loadError: {},
+        loadError: undefined,
       },
       roles: {
         data: defaultAccessRoles,
@@ -111,7 +111,7 @@ describe('Project Access', () => {
   });
 
   it('should show the StatusBox when there is error loading the role bindings', () => {
-    projectAccessProps.roleBindings.loadError = { error: 'user has no access to role bindigs' };
+    projectAccessProps.roleBindings.loadError = new Error('user has no access to role bindigs');
     render(<ProjectAccess {...projectAccessProps} />);
 
     expect(screen.getByText(/StatusBox/)).toBeInTheDocument();
