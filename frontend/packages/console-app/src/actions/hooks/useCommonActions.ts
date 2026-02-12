@@ -168,7 +168,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     // 3. Once these modals are migrated to useOverlay, they'll use launchModal instead
     // TODO: Remove this eslint-disable once all modals have been migrated to useOverlay pattern
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal]
+    [kind, resource, t, message, actualEditPath, launchModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

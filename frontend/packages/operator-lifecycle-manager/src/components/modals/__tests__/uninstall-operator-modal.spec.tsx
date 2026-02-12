@@ -30,8 +30,17 @@ jest.mock('react-i18next', () => ({
   Trans: () => null,
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom-v5-compat', () => ({
+  ...jest.requireActual('react-router-dom-v5-compat'),
+  useNavigate: () => mockNavigate,
+}));
+
+const mockK8sKill = jest.fn();
+
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sGetResource: jest.fn(),
+  k8sKill: (...args) => mockK8sKill(...args),
 }));
 
 describe(UninstallOperatorModal.name, () => {
@@ -39,15 +48,13 @@ describe(UninstallOperatorModal.name, () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockK8sKill.mockResolvedValue({});
 
     uninstallOperatorModalProps = {
       subscription: {
         ..._.cloneDeep(testSubscription),
         status: { installedCSV: 'testapp.v1.0.0' },
       },
-      k8sKill: jest.fn().mockResolvedValue({}),
-      k8sGet: jest.fn().mockResolvedValue({}),
-      k8sPatch: jest.fn().mockResolvedValue({}),
       close: jest.fn(),
       cancel: jest.fn(),
     };
@@ -70,12 +77,13 @@ describe(UninstallOperatorModal.name, () => {
     fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(2);
+      expect(mockK8sKill).toHaveBeenCalledTimes(2);
     });
 
-    expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledWith(
+    expect(mockK8sKill).toHaveBeenCalledWith(
       SubscriptionModel,
       uninstallOperatorModalProps.subscription,
+      {},
       {},
       expect.objectContaining({
         kind: 'DeleteOptions',
@@ -91,10 +99,10 @@ describe(UninstallOperatorModal.name, () => {
     fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(2);
+      expect(mockK8sKill).toHaveBeenCalledTimes(2);
     });
 
-    expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledWith(
+    expect(mockK8sKill).toHaveBeenCalledWith(
       ClusterServiceVersionModel,
       expect.objectContaining({
         metadata: expect.objectContaining({
@@ -102,6 +110,7 @@ describe(UninstallOperatorModal.name, () => {
           namespace: testSubscription.metadata.namespace,
         }),
       }),
+      {},
       {},
       expect.objectContaining({
         kind: 'DeleteOptions',
@@ -119,7 +128,7 @@ describe(UninstallOperatorModal.name, () => {
     fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(1);
+      expect(mockK8sKill).toHaveBeenCalledTimes(1);
     });
   });
 
