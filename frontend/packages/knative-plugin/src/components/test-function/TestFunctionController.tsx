@@ -16,14 +16,22 @@ type TestFunctionControllerProps = {
 const TestFunctionController: FC<TestFunctionControllerProps> = (props) => {
   const { obj } = props;
 
-  const [service, loaded] = useK8sWatchResource<ServiceKind>({
+  const [service, loaded, loadError] = useK8sWatchResource<ServiceKind>({
     kind: referenceForModel(ServiceModel),
     isList: false,
     namespace: obj.metadata.namespace,
     name: obj.metadata.name,
   });
 
-  return loaded ? <TestFunction {...props} service={service} /> : null;
+  if (!loaded) {
+    return null;
+  }
+
+  if (loadError || !service) {
+    return null;
+  }
+
+  return <TestFunction {...props} service={service} />;
 };
 
 type Props = TestFunctionControllerProps & ModalComponentProps;
