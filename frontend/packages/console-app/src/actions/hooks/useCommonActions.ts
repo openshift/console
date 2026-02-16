@@ -159,9 +159,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (taintsModal, launchCountModal)
-    // to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
+    // Excluding legacy modal launcher functions from dependencies.
+    // These use createModalLauncher() which creates referentially stable functions.
+    // As each modal migrates to useOverlay, it will use launchModal (which IS in deps).
+    // TODO(CONSOLE-5012): Remove this disable when all modals in this file use useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [kind, resource, t, message, actualEditPath, launchModal],
   );
