@@ -575,8 +575,6 @@
   "{{count}} event exist, but none match the current filter_other": "{{count}} event exist, but none match the current filters",
   "Error loading events": "Error loading events",
   "An error occurred during event retrieval. Attempting to reconnect...": "An error occurred during event retrieval. Attempting to reconnect...",
-  "Connection did not close cleanly.": "Connection did not close cleanly.",
-  "Error connecting to event stream: {{ error }}": "Error connecting to event stream: {{ error }}",
   "Error connecting to event stream": "Error connecting to event stream",
   "Loading events...": "Loading events...",
   "Streaming events...": "Streaming events...",
