@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { QueryBrowser } from '@console/shared/src/components/query-browser';
+import { QueryBrowser } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ResourceUtilizationQuery,
   useResourceMetricsQueries,
