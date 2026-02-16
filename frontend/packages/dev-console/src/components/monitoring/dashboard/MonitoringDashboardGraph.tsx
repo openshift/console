@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
+import { QueryBrowser } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { Humanize } from '@console/internal/components/utils';
-import { QueryBrowser } from '@console/shared/src/components/query-browser';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import './MonitoringDashboardGraph.scss';
 
