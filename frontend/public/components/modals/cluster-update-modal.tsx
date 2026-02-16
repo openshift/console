@@ -347,6 +347,6 @@ export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps
   );
 };
 
-export type ClusterUpdateModalProps = {
+type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;
 } & ModalComponentProps;
