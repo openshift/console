@@ -1,8 +1,10 @@
 import type { ReactElement, FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import type { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
+import { ResourceIcon, StatusBox } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { GroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   modelFor,
@@ -27,11 +29,9 @@ import type { OperatorGroupData } from './types';
 
 type OperatorResourcesProps = {
   namespace: string;
-  resources?: {
-    [kind: string]: { data: K8sResourceKind[] };
+  resources: {
+    [kind: string]: { data: K8sResourceKind[]; loaded: boolean; loadError?: unknown };
   };
-  loaded?: boolean;
-  loadError?: string;
   flatten: (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   linkForResource?: (obj: K8sResourceKind) => ReactElement;
 };
@@ -39,12 +39,12 @@ type OperatorResourcesProps = {
 const OperatorResources: FC<OperatorResourcesProps> = ({
   namespace,
   resources,
-  loaded,
-  loadError,
   flatten,
   linkForResource,
 }) => {
   const { t } = useTranslation();
+  const loaded = Object.values(resources).every((r) => r.loaded);
+  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
   const manifestResources = flatten(resources);
   return (
     <StatusBox
@@ -79,45 +79,51 @@ const OperatorResourcesGetter: FC<OperatorResourcesGetterProps> = ({
   const linkForResource = (obj: K8sResourceKind) => {
     return linkForCsvResource(obj, providedAPI, csv.metadata.name);
   };
-  const defaultResources = [
-    'Deployment',
-    'Service',
-    'ReplicaSet',
-    'Pod',
-    'Secret',
-    'ConfigMap',
-    'Job',
-  ];
-  const resourcesToGet =
-    providedAPI?.resources ??
-    (defaultResources.map((kind) => ({
-      kind,
-    })) as CRDDescription['resources']);
 
-  const firehoseResources = resourcesToGet.reduce((acc, descriptor) => {
-    const { name, kind, version } = descriptor;
-    const group = name ? name.substring(name.indexOf('.') + 1) : '';
-    const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
-    const model = modelFor(reference);
-    acc.push({
-      prop: kind,
-      kind: model && !model.crd ? kind : reference,
-      namespaced: model ? model.namespaced : true,
-      namespace,
-      isList: true,
-      optional: true,
-    });
-    return acc;
-  }, []);
+  const resourcesToGet = useMemo(() => {
+    const defaultResources = [
+      'Deployment',
+      'Service',
+      'ReplicaSet',
+      'Pod',
+      'Secret',
+      'ConfigMap',
+      'Job',
+    ];
+    return (
+      providedAPI?.resources ??
+      (defaultResources.map((kind) => ({
+        kind,
+      })) as CRDDescription['resources'])
+    );
+  }, [providedAPI]);
+
+  const watchedResources = useMemo(() => {
+    return resourcesToGet.reduce((acc, descriptor) => {
+      const { name, kind, version } = descriptor;
+      const group = name ? name.substring(name.indexOf('.') + 1) : '';
+      const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
+      const model = modelFor(reference);
+      acc[kind] = {
+        kind: model && !model.crd ? kind : reference,
+        namespaced: model ? model.namespaced : true,
+        namespace,
+        isList: true,
+        optional: true,
+      };
+      return acc;
+    }, {});
+  }, [namespace, resourcesToGet]);
+
+  const resources = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>(watchedResources);
 
   return (
-    <Firehose resources={firehoseResources}>
-      <OperatorResources
-        namespace={namespace}
-        flatten={flatten}
-        linkForResource={linkForResource}
-      />
-    </Firehose>
+    <OperatorResources
+      namespace={namespace}
+      resources={resources}
+      flatten={flatten}
+      linkForResource={linkForResource}
+    />
   );
 };
 

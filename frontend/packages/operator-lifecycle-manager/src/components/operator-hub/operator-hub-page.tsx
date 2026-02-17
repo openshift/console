@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom-v5-compat';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
-import { Firehose, skeletonCatalog, StatusBox } from '@console/internal/components/utils';
+import { skeletonCatalog, StatusBox } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type {
   CloudCredentialKind,
   InfrastructureKind,
@@ -247,12 +248,69 @@ export const OperatorHubList: FC<OperatorHubListProps> = ({
   );
 };
 
-export const OperatorHubPage = withFallback((props) => {
+export const OperatorHubPage = withFallback(() => {
   const params = useParams();
   const isSoftwareCatalogEnabled = useIsSoftwareCatalogEnabled();
   const isOperatorBackedServiceEnabled = isCatalogTypeEnabled(
     OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID,
   );
+
+  const resources = useK8sWatchResources<{
+    operatorGroups: OperatorGroupKind[];
+    marketplacePackageManifests: PackageManifestKind[];
+    packageManifests: PackageManifestKind[];
+    subscriptions: SubscriptionKind[];
+    clusterServiceVersions: ClusterServiceVersionKind[];
+    cloudCredentials: CloudCredentialKind;
+    infrastructure: InfrastructureKind;
+    authentication: AuthenticationKind;
+  }>({
+    operatorGroups: {
+      isList: true,
+      kind: referenceForModel(OperatorGroupModel),
+    },
+    marketplacePackageManifests: {
+      isList: true,
+      kind: referenceForModel(PackageManifestModel),
+      namespace: params.ns,
+      selector: { matchLabels: { 'openshift-marketplace': 'true' } },
+    },
+    packageManifests: {
+      isList: true,
+      kind: referenceForModel(PackageManifestModel),
+      namespace: params.ns,
+      selector: fromRequirements([
+        { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
+        { key: 'csc-owner-name', operator: 'DoesNotExist' },
+      ]),
+    },
+    subscriptions: {
+      isList: true,
+      kind: referenceForModel(SubscriptionModel),
+    },
+    clusterServiceVersions: {
+      kind: referenceForModel(ClusterServiceVersionModel),
+      namespaced: true,
+      isList: true,
+      namespace: params.ns,
+    },
+    cloudCredentials: {
+      kind: referenceForModel(CloudCredentialModel),
+      name: 'cluster',
+    },
+    infrastructure: {
+      kind: referenceForModel(InfrastructureModel),
+      name: 'cluster',
+    },
+    authentication: {
+      kind: referenceForModel(AuthenticationModel),
+      name: 'cluster',
+    },
+  });
+
+  const loaded = Object.values(resources).every((r) => r.loaded);
+  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
+
   return (
     <>
       <DocumentTitle>OperatorHub</DocumentTitle>
@@ -278,62 +336,12 @@ export const OperatorHubPage = withFallback((props) => {
             )
           }
         />
-        <Firehose
-          resources={[
-            {
-              isList: true,
-              kind: referenceForModel(OperatorGroupModel),
-              prop: 'operatorGroups',
-            },
-            {
-              isList: true,
-              kind: referenceForModel(PackageManifestModel),
-              namespace: params.ns,
-              selector: { 'openshift-marketplace': 'true' },
-              prop: 'marketplacePackageManifests',
-            },
-            {
-              isList: true,
-              kind: referenceForModel(PackageManifestModel),
-              namespace: params.ns,
-              selector: fromRequirements([
-                { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
-                { key: 'csc-owner-name', operator: 'DoesNotExist' },
-              ]),
-              prop: 'packageManifests',
-            },
-            {
-              isList: true,
-              kind: referenceForModel(SubscriptionModel),
-              prop: 'subscriptions',
-            },
-            {
-              kind: referenceForModel(ClusterServiceVersionModel),
-              namespaced: true,
-              isList: true,
-              namespace: params.ns,
-              prop: 'clusterServiceVersions',
-            },
-            {
-              kind: referenceForModel(CloudCredentialModel),
-              prop: 'cloudCredentials',
-              name: 'cluster',
-            },
-            {
-              kind: referenceForModel(InfrastructureModel),
-              prop: 'infrastructure',
-              name: 'cluster',
-            },
-            {
-              kind: referenceForModel(AuthenticationModel),
-              prop: 'authentication',
-              name: 'cluster',
-            },
-          ]}
-        >
-          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-          <OperatorHubList {...(props as any)} namespace={params.ns} />
-        </Firehose>
+        <OperatorHubList
+          {...resources}
+          loaded={loaded}
+          loadError={loadError}
+          namespace={params.ns}
+        />
       </PageBody>
     </>
   );

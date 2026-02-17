@@ -12,6 +12,7 @@
   "No Image vulnerabilities found": "No Image vulnerabilities found",
   "Image Manifest Vulnerabilities": "Image Manifest Vulnerabilities",
   "Search by image name...": "Search by image name...",
+  "Unable to load vulnerability data": "Unable to load vulnerability data",
   "Container": "Container",
   "Image": "Image",
   "Security scan": "Security scan",

@@ -1,11 +1,10 @@
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { PodConnectLoader } from '@console/internal/components/pod';
-import { Firehose } from '@console/internal/components/utils/firehose';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
-import type { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/types';
 import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
 import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
@@ -16,7 +15,9 @@ type NodeTerminalErrorProps = {
 };
 
 type NodeTerminalInnerProps = {
-  obj?: FirehoseResult<PodKind>;
+  pod?: PodKind;
+  loaded: boolean;
+  loadError?: unknown;
 };
 
 type NodeTerminalProps = {
@@ -125,7 +126,7 @@ const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
   );
 };
 
-const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ obj }) => {
+const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="console-app">
@@ -134,31 +135,60 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ obj }) => {
       </p>
     </Trans>
   );
-  switch (obj?.data?.status?.phase) {
+
+  if (loadError) {
+    return (
+      <NodeTerminalError
+        error={loadError instanceof Error ? loadError.message : String(loadError)}
+      />
+    );
+  }
+
+  if (!loaded || !pod) {
+    return <LoadingBox />;
+  }
+
+  switch (pod?.status?.phase) {
     case 'Failed':
       return (
         <NodeTerminalError
           error={
             <>
               {t('console-app~The debug pod failed. ')}
-              {obj?.data?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
-                obj?.data?.status?.message}
+              {pod?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
+                pod?.status?.message}
             </>
           }
         />
       );
     case 'Running':
-      return <PodConnectLoader obj={obj.data} message={message} attach />;
+      return <PodConnectLoader obj={pod} message={message} attach />;
     default:
       return <LoadingBox />;
   }
 };
 
 const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
-  const [resources, setResources] = useState<FirehoseResource[]>([]);
+  const [podName, setPodName] = useState<string>('');
+  const [podNamespace, setPodNamespace] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
   const nodeName = node.metadata.name;
   const isWindows = node.status?.nodeInfo?.operatingSystem === 'windows';
+
+  const watchResource = useMemo(
+    () =>
+      podName && podNamespace
+        ? {
+            isList: false,
+            kind: 'Pod',
+            name: podName,
+            namespace: podNamespace,
+          }
+        : null,
+    [podName, podNamespace],
+  );
+
+  const [pod, loaded, loadError] = useK8sWatchResource<PodKind>(watchResource);
 
   useEffect(() => {
     let namespace;
@@ -197,15 +227,8 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         const debugPod = await k8sCreate(PodModel, podToCreate);
         if (debugPod) {
-          setResources([
-            {
-              isList: false,
-              kind: 'Pod',
-              name,
-              namespace: namespace.metadata.name,
-              prop: 'obj',
-            },
-          ]);
+          setPodName(name);
+          setPodNamespace(namespace.metadata.name);
         }
       } catch (e) {
         setErrorMessage(e.message);
@@ -225,9 +248,7 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
   return errorMessage ? (
     <NodeTerminalError error={errorMessage} />
   ) : (
-    <Firehose resources={resources}>
-      <NodeTerminalInner />
-    </Firehose>
+    <NodeTerminalInner pod={pod} loaded={loaded} loadError={loadError} />
   );
 };
 

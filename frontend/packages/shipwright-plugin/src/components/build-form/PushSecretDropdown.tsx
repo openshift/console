@@ -1,8 +1,9 @@
 import type { ReactNode, FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { Firehose } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
+import type { SecretKind } from '@console/internal/module/k8s';
 import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
 import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
@@ -25,26 +26,32 @@ const PushSecretDropdown: FC<PushSecretDropdownProps> = (props) => {
       item.type === 'kubernetes.io/dockercfg' || item.type === 'kubernetes.io/dockerconfigjson'
     );
   };
+  const [secrets, loaded, loadError] = useK8sWatchResource<SecretKind[]>({
+    isList: true,
+    kind: SecretModel.kind,
+    namespace: props.namespace,
+    optional: true,
+  });
+
   const resources = [
     {
-      isList: true,
+      data: secrets,
+      loaded,
+      loadError,
       kind: SecretModel.kind,
-      namespace: props.namespace,
-      prop: SecretModel.id,
-      optional: true,
     },
   ];
+
   return (
-    <Firehose resources={resources}>
-      <ResourceDropdown
-        {...props}
-        dataSelector={['metadata', 'name']}
-        placeholder={t('shipwright-plugin~Select a Secret')}
-        autocompleteFilter={autocompleteFilter}
-        resourceFilter={filterData}
-        showBadge
-      />
-    </Firehose>
+    <ResourceDropdown
+      {...props}
+      resources={resources}
+      dataSelector={['metadata', 'name']}
+      placeholder={t('shipwright-plugin~Select a Secret')}
+      autocompleteFilter={autocompleteFilter}
+      resourceFilter={filterData}
+      showBadge
+    />
   );
 };
 
