@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { createSelectorCreator, lruMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -90,10 +90,12 @@ export const useTableData = ({
 
   const tableSelectorCreator = useMemo(
     () =>
-      createSelectorCreator(
-        defaultMemoize as any,
-        (oldSortState, newSortState) => oldSortState === newSortState,
-      ),
+      createSelectorCreator({
+        memoize: lruMemoize,
+        memoizeOptions: {
+          equalityCheck: (oldSortState, newSortState) => oldSortState === newSortState,
+        },
+      }),
     [],
   );
 
