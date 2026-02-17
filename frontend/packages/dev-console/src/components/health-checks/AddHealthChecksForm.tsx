@@ -18,7 +18,7 @@ type AddHealthChecksFormProps = {
 
 const AddHealthChecksForm: FC<AddHealthChecksFormProps> = ({ resource, currentContainer }) => {
   const { t } = useTranslation();
-  if (!resource.loaded && _.isEmpty(resource.loadError)) {
+  if (!resource.loaded && !resource.loadError) {
     return <LoadingBox />;
   }
 

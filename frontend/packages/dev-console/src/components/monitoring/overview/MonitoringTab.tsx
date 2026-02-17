@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { PodModel } from '@console/internal/models';
 import { EventKind, PodKind } from '@console/internal/module/k8s';
 import { OverviewItem, usePodsWatcher } from '@console/shared';
 import MonitoringOverview from './MonitoringOverview';
@@ -21,7 +20,7 @@ const MonitoringTab: FC<MonitoringTabProps> = ({ item }) => {
   const watchResources = useMemo(() => {
     const res: Record<
       string,
-      { isList: boolean; kind: string; namespace: string; fieldSelector: string }
+      { isList: boolean; kind: string; namespace: string; fieldSelector?: string }
     > = {
       resourceEvents: {
         isList: true,
@@ -31,16 +30,12 @@ const MonitoringTab: FC<MonitoringTabProps> = ({ item }) => {
       },
     };
 
-    if (loaded && !loadError && podData?.pods) {
-      podData.pods.forEach((pod) => {
-        const fieldSelector = `involvedObject.uid=${pod.metadata.uid},involvedObject.name=${pod.metadata.name},involvedObject.kind=${PodModel.kind}`;
-        res[pod.metadata.uid] = {
-          isList: true,
-          kind: 'Event',
-          namespace: pod.metadata.namespace,
-          fieldSelector,
-        };
-      });
+    if (loaded && !loadError && podData?.pods && podData.pods.length > 0) {
+      res.podEvents = {
+        isList: true,
+        kind: 'Event',
+        namespace,
+      };
     }
     return res;
   }, [kind, uid, name, namespace, loaded, loadError, podData]);
@@ -56,17 +51,18 @@ const MonitoringTab: FC<MonitoringTabProps> = ({ item }) => {
       }
     : undefined;
 
-  // Build the props object with pod events
+  // Filter pod events from the single watch and build props object
   const podEventProps: Record<string, { data: EventKind[]; loaded: boolean }> = {};
-  if (podData?.pods) {
+  if (podData?.pods && resources.podEvents) {
+    const podEventData = resources.podEvents.data || [];
     podData.pods.forEach((pod) => {
-      const podEvents = resources[pod.metadata.uid];
-      if (podEvents) {
-        podEventProps[pod.metadata.uid] = {
-          data: podEvents.data || [],
-          loaded: podEvents.loaded,
-        };
-      }
+      const filteredEvents = podEventData.filter(
+        (event) => event.involvedObject?.uid === pod.metadata.uid,
+      );
+      podEventProps[pod.metadata.uid] = {
+        data: filteredEvents,
+        loaded: resources.podEvents.loaded,
+      };
     });
   }
 

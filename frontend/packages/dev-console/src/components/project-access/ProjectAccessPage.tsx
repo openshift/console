@@ -2,9 +2,9 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useProjectAccessRoles } from './hooks';
+import { RoleBinding } from './project-access-form-utils-types';
 import ProjectAccess from './ProjectAccess';
 
 const ProjectAccessPage: FC = (props) => {
@@ -15,7 +15,7 @@ const ProjectAccessPage: FC = (props) => {
   const roles = useProjectAccessRoles();
   const showFullForm = location.pathname.includes('project-access');
 
-  const [roleBindingsData, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>({
+  const [roleBindingsData, loaded, loadError] = useK8sWatchResource<RoleBinding[]>({
     namespace,
     kind: 'RoleBinding',
     isList: true,

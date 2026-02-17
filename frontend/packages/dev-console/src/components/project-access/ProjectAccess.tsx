@@ -12,7 +12,6 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -31,7 +30,7 @@ import ProjectAccessForm from './ProjectAccessForm';
 
 export interface ProjectAccessProps {
   namespace: string;
-  roleBindings?: { data: K8sResourceKind[]; loaded: boolean; loadError?: Error };
+  roleBindings?: { data: RoleBinding[]; loaded: boolean; loadError?: Error };
   roles: { data: Roles; loaded: boolean };
   fullFormView?: boolean;
 }
@@ -43,12 +42,12 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   fullFormView,
 }) => {
   const { t } = useTranslation();
-  if ((!roleBindings.loaded && !roleBindings.loadError) || !roles.loaded) {
+  if ((!roleBindings?.loaded && !roleBindings?.loadError) || !roles.loaded) {
     return <LoadingBox />;
   }
 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
-    roleBindings.data as RoleBinding[],
+    roleBindings.data,
     Object.keys(roles.data),
     namespace,
   );
@@ -143,7 +142,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
           </>
         }
       />
-      {roleBindings.loadError ? (
+      {roleBindings?.loadError ? (
         <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
       ) : (
         <Formik

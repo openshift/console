@@ -33,7 +33,6 @@ const ImportSamplePage: FC = () => {
   const imageStreamResource = useMemo(
     () => ({
       kind: ImageStreamModel.kind,
-      prop: 'imageStreams',
       isList: false,
       name: imageStreamName,
       namespace: imageStreamNamespace,

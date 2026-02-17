@@ -174,7 +174,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
 
     return k8sPatch(ServiceModel, service, ksvcPatch)
       .then(() => {
-        deleteRevisionAction(action);
+        return deleteRevisionAction(action);
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
