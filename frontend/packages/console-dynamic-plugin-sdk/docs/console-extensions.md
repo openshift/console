@@ -580,7 +580,7 @@ This extension can be used to provide a handler for the file drop action on spec
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `fileExtensions` | `string[]` | no | Supported file extensions. |
-| `handler` | `CodeRef<FileUploadHandler>` | no | Function which handles the file drop action. |
+| `handler` | `CodeRef<FileUploadHandler>` | no | Function which handles the file drop action.<br/>Can optionally return a path to navigate to after processing the file.<br/>If a path is returned, the Console will navigate to that location using React Router. |
 
 ---
 
