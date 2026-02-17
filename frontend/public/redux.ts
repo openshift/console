@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import { featureFlagMiddleware } from '@console/internal/plugins';
 import * as _ from 'lodash';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import {
   ResolvedExtension,
   ReduxReducer,

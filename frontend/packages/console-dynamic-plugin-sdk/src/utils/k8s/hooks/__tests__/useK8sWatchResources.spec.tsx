@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { receivedResources } from '@console/internal/actions/k8s';
 import { SDKReducers } from '../../../../app';
 import type { WatchK8sResources } from '../../../../extensions/console-types';
