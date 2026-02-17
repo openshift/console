@@ -1,23 +1,20 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
-import { Action, K8sKind } from '@console/dynamic-plugin-sdk';
+import type { TFunction } from 'i18next';
+import type { Action, K8sKind } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { LazyDeleteResourceModalOverlay } from '@console/shared';
 import { ProjectHelmChartRepositoryModel } from '../models';
 import type { HelmActionsScope } from './types';
 
-export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Action => {
+export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Action | null => {
   const launchModal = useOverlay();
 
   return useMemo(() => {
     if (!scope?.release) {
-      return {
-        id: 'delete-helm',
-        label: t('helm-plugin~Delete Helm Release'),
-        cta: () => {},
-      };
+      return null;
     }
 
     const {

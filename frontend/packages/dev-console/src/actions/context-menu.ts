@@ -5,7 +5,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import type { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { LazyDeleteResourceModalOverlay } from '@console/shared';
 import { ApplicationModel } from '@console/topology/src/models';
 import { cleanUpWorkload } from '@console/topology/src/utils';
@@ -13,7 +13,7 @@ import { cleanUpWorkload } from '@console/topology/src/utils';
 export const useDeleteApplicationAction = (
   application: TopologyApplicationObject,
   resourceModel: K8sModel,
-): Action => {
+): Action | null => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
 

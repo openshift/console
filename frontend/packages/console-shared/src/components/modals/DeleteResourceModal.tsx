@@ -11,8 +11,8 @@ import {
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '../../hooks/promise-handler';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
@@ -99,16 +99,7 @@ const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
 export const DeleteResourceModalOverlay: OverlayComponent<DeleteResourceModalProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <DeleteResourceModal
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
-        resourceName={props.resourceName}
-        resourceType={props.resourceType}
-        actionLabel={props.actionLabel}
-        actionLabelKey={props.actionLabelKey}
-        redirect={props.redirect}
-        onSubmit={props.onSubmit}
-      />
+      <DeleteResourceModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
