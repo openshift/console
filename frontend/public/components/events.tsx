@@ -377,9 +377,10 @@ const EventStream: FC<EventStreamProps> = ({
   const { t } = useTranslation('public');
   const [active, setActive] = useState(true);
 
-  // Use the standard Kubernetes watch hook with list-then-watch logic
+  const [pausedSnapshot, setPausedSnapshot] = useState<EventKind[] | null>(null);
+
   const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
-    !mock
+    !mock && active
       ? {
           isList: true,
           kind: EventModel.kind,
@@ -389,21 +390,29 @@ const EventStream: FC<EventStreamProps> = ({
       : null,
   );
 
-  // Sort events and limit to maxMessages
-  // Note: We keep the events visible even when paused (active=false)
   const sortedEvents = useMemo(() => {
-    if (!eventsData) {
+    // If paused, use snapshot, else use live data
+    const dataSource = pausedSnapshot ?? eventsData;
+    if (!dataSource) {
       return [];
     }
-    return sortEvents(eventsData).slice(0, maxMessages);
-  }, [eventsData]);
+    return sortEvents(dataSource).slice(0, maxMessages);
+  }, [pausedSnapshot, eventsData]);
 
   const filteredEvents = useMemo(() => {
     return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
   }, [sortedEvents, kind, type, filter, textFilter]);
 
   const toggleStream = () => {
-    setActive((prev) => !prev);
+    setActive((prev) => {
+      const newActive = !prev;
+      if (!newActive) {
+        setPausedSnapshot(eventsData ?? []);
+      } else {
+        setPausedSnapshot(null);
+      }
+      return newActive;
+    });
   };
 
   const count = filteredEvents.length;
@@ -423,7 +432,11 @@ const EventStream: FC<EventStreamProps> = ({
   if (eventsLoadError) {
     statusBtnTxt = (
       <span className="co-sysevent-stream__connection-error">
-        {t('Error connecting to event stream')}
+        {typeof eventsLoadError === 'string'
+          ? t('Error connecting to event stream: {{ error }}', {
+              error: eventsLoadError,
+            })
+          : t('Error connecting to event stream')}
       </span>
     );
     sysEventStatus = <ErrorLoadingEvents />;
