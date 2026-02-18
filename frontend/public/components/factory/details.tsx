@@ -9,10 +9,6 @@ import withFallback from '@console/shared/src/components/error/fallbacks/withFal
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import {
-  ResourceTabPage,
-  isResourceTabPage,
-} from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   isDetailPageBreadCrumbs,
@@ -33,8 +29,6 @@ import {
 } from '../utils/headings';
 import { FirehoseResource } from '../utils/types';
 import { K8sKind } from '../../module/k8s/types';
-import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { referenceForExtensionModel } from '../../module/k8s/k8s';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
@@ -69,38 +63,10 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const params = useParams();
   const location = useLocation();
 
-  const [resourcePageExtensions] = useResolvedExtensions<ResourceTabPage>(isResourceTabPage);
-
-  const pluginPages = useMemo(
-    () => [
-      /** @deprecated -- if there is a bug here, encourage `console.tab/horizontalNav` usage instead */
-      ...resourcePageExtensions
-        .filter((p) => {
-          if (p.properties.model.version) {
-            return (
-              referenceForExtensionModel(p.properties.model) ===
-              (kindObj ? referenceForModel(kindObj) : props.kind)
-            );
-          }
-          return (
-            p.properties.model.group === kindObj.apiGroup &&
-            p.properties.model.kind === kindObj.kind
-          );
-        })
-        .map(({ properties: { href, name, component: Component } }) => ({
-          href,
-          name,
-          component: (cProps) => <Component {...cProps} />,
-        })),
-    ],
-    [resourcePageExtensions, kindObj, props.kind],
-  );
   const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
   const onBreadcrumbsResolved = useCallback((breadcrumbs) => {
     setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
-  let allPages = [...pages, ...pluginPages];
-  allPages = allPages.length ? allPages : null;
   const objResource: FirehoseResource = {
     kind: props.kind,
     name: props.name,
@@ -151,7 +117,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         />
         <HorizontalNav
           obj={props.obj}
-          pages={allPages}
+          pages={pages}
           pagesFor={props.pagesFor}
           className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
           label={props.label || (props.kind as any).label}
