@@ -313,7 +313,7 @@ export const ErrorLoadingEvents: FC = () => {
   const { t } = useTranslation('public');
   return (
     <ConsoleEmptyState title={t('Error loading events')}>
-      {t('An error occurred during event retrieval. Attempting to reconnect...')}
+      {t('An error occurred while retrieving events. Attempting to reconnect...')}
     </ConsoleEmptyState>
   );
 };
