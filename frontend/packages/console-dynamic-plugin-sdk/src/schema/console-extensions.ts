@@ -6,7 +6,6 @@ import type {
   ClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
   CustomOverviewDetailItem,
-  OverviewDetailItem,
 } from '../extensions/cluster-overview';
 import type { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import type { ContextProvider } from '../extensions/context-providers';
@@ -133,7 +132,6 @@ export type SupportedExtension =
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
-  | OverviewDetailItem
   | CustomOverviewDetailItem
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem
