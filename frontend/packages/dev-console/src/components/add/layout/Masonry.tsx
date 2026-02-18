@@ -1,5 +1,5 @@
 import type { ReactElement, FC } from 'react';
-import { useState, Children, useRef, useEffect } from 'react';
+import { useState, Children, useRef, useEffect, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import './MasonryLayout.scss';
 
@@ -8,12 +8,36 @@ type MasonryProps = {
   children: ReactElement[];
 };
 
+interface MeasuredItemProps {
+  item: ReactElement;
+  itemKey: string;
+  onMeasure: (key: string, height: number) => void;
+}
+
+// Stable component definition - prevents unmount/remount cycles
+const MeasuredItem: FC<MeasuredItemProps> = ({ item, itemKey, onMeasure }) => {
+  const measureRef = useRef<HTMLDivElement>(null);
+  const lastHeightRef = useRef<number>(0);
+
+  useEffect(() => {
+    const newHeight = measureRef.current?.getBoundingClientRect().height;
+    if (newHeight && lastHeightRef.current !== newHeight) {
+      lastHeightRef.current = newHeight;
+      onMeasure(itemKey, newHeight);
+    }
+  }, [itemKey, onMeasure]);
+
+  return <div ref={measureRef}>{item}</div>;
+};
+
 export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
   const [heights, setHeights] = useState<Record<string, number>>({});
   const columns = columnCount || 1;
-  const setHeight = (key: string, height: number) => {
+
+  // Memoize setHeight to prevent useEffect re-runs in MeasuredItem
+  const setHeight = useCallback((key: string, height: number) => {
     setHeights((old) => ({ ...old, [key]: height }));
-  };
+  }, []);
   const groupedColumns = Array.from({ length: columns }, () => ({
     height: 0,
     items: [] as ReactElement[],
@@ -22,22 +46,16 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
   let added = false;
   let allRendered = true;
   Children.forEach(children, (item: ReactElement, itemIndex) => {
-    const MeasuredItem = () => {
-      const measureRef = useRef<HTMLDivElement>(null);
-      useEffect(() => {
-        const newHeight = measureRef.current.getBoundingClientRect().height;
-        if (heights[item.key as string] !== newHeight) {
-          setHeight(item.key as string, newHeight);
-        }
-      }, []);
-      return <div ref={measureRef}>{item}</div>;
-    };
+    // Use consistent key for both React reconciliation and height tracking
+    const effectiveKey = (item.key ?? itemIndex).toString();
 
-    const measuredItem = <MeasuredItem key={item.key ?? itemIndex} />;
+    const measuredItem = (
+      <MeasuredItem key={effectiveKey} item={item} itemKey={effectiveKey} onMeasure={setHeight} />
+    );
 
     // Fill first row directly
     if (itemIndex < columns) {
-      groupedColumns[itemIndex].height += heights[item.key as string] || 0;
+      groupedColumns[itemIndex].height += heights[effectiveKey] || 0;
       groupedColumns[itemIndex].items.push(measuredItem);
       return;
     }
@@ -49,8 +67,8 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
     );
 
     // Add column which height is already known
-    if (item.key && heights[item.key]) {
-      column.height += heights[item.key];
+    if (heights[effectiveKey]) {
+      column.height += heights[effectiveKey];
       column.items.push(measuredItem);
       return;
     }
