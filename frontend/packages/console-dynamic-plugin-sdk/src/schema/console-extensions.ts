@@ -49,7 +49,6 @@ import type {
   RoutePage,
   ResourceDetailsPage,
   ResourceListPage,
-  ResourceTabPage,
 } from '../extensions/pages';
 import type { Perspective } from '../extensions/perspectives';
 import type {
@@ -105,7 +104,6 @@ export type SupportedExtension =
   | SupportedTopologyDetailsExtensions
   | RoutePage
   | ResourceListPage
-  | ResourceTabPage
   | ResourceDetailsPage
   | DashboardsTab
   | DashboardsCard

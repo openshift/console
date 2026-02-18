@@ -269,4 +269,3 @@ table in [Console dynamic plugins README](./README.md).
 [#16019]: https://github.com/openshift/console/pull/16019
 [#16057]: https://github.com/openshift/console/pull/16057
 [#15959]: https://github.com/openshift/console/pull/15959
-[#16061]: https://github.com/openshift/console/pull/16061
