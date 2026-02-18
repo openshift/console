@@ -78,7 +78,6 @@
 76.  [dev-console.add/action](#dev-consoleaddaction)
 77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
 78.  [dev-console.import/environment](#dev-consoleimportenvironment)
-79. [DEPRECATED] [console.dashboards/overview/detail/item](#consoledashboardsoverviewdetailitem)
 
 ---
 
@@ -1385,18 +1384,4 @@ This extension can be used to specify extra build environment variable fields un
 | `imageStreamName` | `string` | no | Name of the image stream to provide custom environment variables for |
 | `imageStreamTags` | `string[]` | no | List of supported image stream tags |
 | `environments` | `ImageEnvironment[]` | no | List of environment variables |
-
----
-
-## `console.dashboards/overview/detail/item`
-
-### Summary [DEPRECATED]
-
-@deprecated use CustomOverviewDetailItem type instead
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<ComponentType>` | no | The value, based on the DetailItem component |
 
