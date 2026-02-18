@@ -79,7 +79,6 @@
 77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
 78.  [dev-console.import/environment](#dev-consoleimportenvironment)
 79. [DEPRECATED] [console.dashboards/overview/detail/item](#consoledashboardsoverviewdetailitem)
-80. [DEPRECATED] [console.page/resource/tab](#consolepageresourcetab)
 
 ---
 
@@ -1400,22 +1399,4 @@ This extension can be used to specify extra build environment variable fields un
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<ComponentType>` | no | The value, based on the DetailItem component |
-
----
-
-## `console.page/resource/tab`
-
-### Summary [DEPRECATED]
-
-@deprecated - Use `console.tab/horizontalNav` instead<br/>Adds new resource tab page to Console router.
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `model` | `ExtensionK8sGroupKindModel` | no | The model for which this resource page links to. |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `name` | `string` | no | The name of the tab. |
-| `href` | `string` | yes | The optional href for the tab link. If not provided, the first `path` is used. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
 
