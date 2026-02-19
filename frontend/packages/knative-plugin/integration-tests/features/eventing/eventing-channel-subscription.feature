@@ -20,7 +20,7 @@ Feature: Knative Eventing Channel and Subscription
              Then user will see connection between Channel "channel-test" and Subscriber "nodejs-ex-git"
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Multiple Subscriber in Add Subscriptin modal: KE-04-TC02
             Given user has created knative service "nodejs-ex-git"
               And user has created channel "channel-test1"

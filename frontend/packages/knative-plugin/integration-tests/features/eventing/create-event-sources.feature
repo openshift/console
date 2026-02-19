@@ -15,7 +15,7 @@ Feature: Create event sources
               And user will see A-Z, Z-A sort by dropdown
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Event source details for ApiServerSource event source type: KE-02-TC02
              When user selects event source type "Api Server Source"
               And user selects Create Event Source
@@ -25,7 +25,7 @@ Feature: Create event sources
               And Create button is disabled
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Event source details for ContainerSource event source type: KE-02-TC03
              When user selects event source type "Container Source"
               And user selects Create Event Source
@@ -36,7 +36,7 @@ Feature: Create event sources
               And Create button is disabled
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Event source details for PingSource event source type: KE-02-TC04
              When user selects event source type "PingSource"
               And user selects Create Event Source
@@ -45,7 +45,7 @@ Feature: Create event sources
               And Create button is disabled
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Event source details for SinkBinding event source type: KE-02-TC05
              When user selects event source type "SinkBinding"
               And user selects Create Event Source
