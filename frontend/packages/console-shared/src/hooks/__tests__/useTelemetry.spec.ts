@@ -12,6 +12,7 @@ import {
 import {
   getClusterProperties,
   updateClusterPropertiesFromTests,
+  clearTelemetryEventsForTests,
   useTelemetry,
 } from '../useTelemetry';
 
@@ -135,6 +136,7 @@ describe('useTelemetry', () => {
 
   beforeEach(() => {
     listener.mockReset();
+    clearTelemetryEventsForTests();
     const extensions: ResolvedExtension<TelemetryListener>[] = [
       {
         type: 'console.telemetry/listener',
