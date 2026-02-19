@@ -1,5 +1,5 @@
 @add-flow @dev-console @ODC-6452
-Feature: Install the Helm Release
+Feature: Helm Chart Repositories
               As a user, I want to install project helm repository
 
 
@@ -42,7 +42,7 @@ Feature: Install the Helm Release
              Then user can see "helm-test1" for resource "helm-test1" and type "projecthelmchartrepository" under Chart Repositories in Helm Charts catalog page
 
         # Marking this scenario as @broken-test, because scenario is failing due to change of UI in catalog page
-        @regression  @ODC-6685 @broken-test
+        @regression @ODC-6685 @broken-test
         Scenario: Add namespaced helm chart repository with a display name: A-12-TC05
             Given user is at Create Helm Chart Repository page
              When user enters Chart repository name as "helm-test1"

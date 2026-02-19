@@ -57,7 +57,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
               And user can see Routes available in the Resources tab of sidebar for knative workload "hello-openshift-sev"
 
 
-        @smoke @broken-test
+        @smoke
         Scenario: Edit knative workload created from deployment: KN-04-TC05
             Given user has created a deployment workload "nodejs-ex-git1"
               And user has created knative workload "nodejs-ex-git1-sev" from deployment "nodejs-ex-git1"
@@ -73,7 +73,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
              Then user is able to see value of "autoscaling.knative.dev/target-utilization-percentage" as "4"
 
 
-        @regression @broken-test
+        @regression
         Scenario: Create serverless workload (ksvc) for existing Deployment having HPA associated with it from context menu: KN-04-TC06
             Given user has created a deployment workload "nodejs-ex-git2" with CPU resource limit "100" and Memory resource limit "100"
     #Bug: Can't change the values by typing in max and min pod fields - https://issues.redhat.com/browse/OCPBUGS-2306

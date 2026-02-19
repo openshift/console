@@ -122,8 +122,8 @@ Feature: Install the Helm Release
               And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm1"
 
         Examples:
-                  | crd_yaml                           | cr_yaml                                         |
-                  | test-data/namespaced-helm-crd.yaml | test-data/namespaced-helm-chart-repository.yaml |
+                  | cr_yaml                                         |
+                  | test-data/namespaced-helm-chart-repository.yaml |
 
 
         @regression @manual @ODC-5713

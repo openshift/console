@@ -1,5 +1,5 @@
 @shipwright
-Feature: Shipwright builds table view
+Feature: Create Shipwright build form
               As a user, I want to create a Shipwright build using Create Shipwright build form
 
         Background:
