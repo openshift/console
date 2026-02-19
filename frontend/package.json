@@ -183,7 +183,7 @@
     "file-saver": "1.3.x",
     "formik": "^2.1.5",
     "fuzzysearch": "1.0.x",
-    "gherkin-lint": "^4.1.3",
+    "gherkin-lint": "^4.2.4",
     "git-url-parse": "^11.4.0",
     "graphql": "^14.0.0",
     "history": "^4.9.0",
