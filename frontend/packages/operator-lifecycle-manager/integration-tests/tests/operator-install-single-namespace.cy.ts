@@ -1,6 +1,6 @@
+import { checkErrors, testName } from '@console/cypress-integration-tests/support';
 import { projectDropdown } from '@console/cypress-integration-tests/views/common';
-import { checkErrors, testName } from '../../../integration-tests-cypress/support';
-import { nav } from '../../../integration-tests-cypress/views/nav';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import type { TestOperandProps } from '../views/operator.view';
 import { GlobalInstalledNamespace, operator } from '../views/operator.view';
 

@@ -1,7 +1,7 @@
-import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
-import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
-import { modal } from '../../../integration-tests-cypress/views/modal';
-import { nav } from '../../../integration-tests-cypress/views/nav';
+import { checkErrors, create, testName } from '@console/cypress-integration-tests/support';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import { testCatalogSource } from '../mocks';
 
 const managedCatalogSource = {

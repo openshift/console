@@ -1,5 +1,5 @@
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '../../../../../integration-tests/views/details-page';
 import {
   addOptions,
   catalogCards,
