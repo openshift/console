@@ -31,7 +31,7 @@ function copyArtifacts {
 
 function generateReport {
   yarn run cypress-postreport
-  if test -f ./packages/integration-tests-cypress/cypress-a11y-report.json; then
+  if test -f ./packages/integration-tests/cypress-a11y-report.json; then
     yarn cypress-a11y-report
   fi
 }

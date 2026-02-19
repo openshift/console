@@ -1570,9 +1570,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@console/cypress-integration-tests@workspace:packages/integration-tests-cypress":
+"@console/cypress-integration-tests@workspace:packages/integration-tests":
   version: 0.0.0-use.local
-  resolution: "@console/cypress-integration-tests@workspace:packages/integration-tests-cypress"
+  resolution: "@console/cypress-integration-tests@workspace:packages/integration-tests"
   languageName: unknown
   linkType: soft
 
@@ -1655,6 +1655,12 @@ __metadata:
     "@console/shared": "npm:0.0.0-fixed"
     asn1js: "npm:^2.0.26"
     pkijs: "npm:^2.1.90"
+  languageName: unknown
+  linkType: soft
+
+"@console/operator-lifecycle-manager-integration-tests@workspace:packages/operator-lifecycle-manager/integration-tests":
+  version: 0.0.0-use.local
+  resolution: "@console/operator-lifecycle-manager-integration-tests@workspace:packages/operator-lifecycle-manager/integration-tests"
   languageName: unknown
   linkType: soft
 

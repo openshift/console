@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
+import { checkErrors, create, testName } from '@console/cypress-integration-tests/support';
 import { testCR, testCRD, testCSV } from '../mocks';
 
 describe('Using OLM descriptor components', () => {

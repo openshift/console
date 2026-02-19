@@ -1,7 +1,7 @@
 import { operators } from '@console/dev-console/integration-tests/support/constants/global';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
 import { app, projectNameSpace } from '@console/dev-console/integration-tests/support/pages/app';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '../../../../../integration-tests/views/details-page';
 import { pageTitle } from '../../constants';
 import { operatorsPage } from '../operators-page';
 
