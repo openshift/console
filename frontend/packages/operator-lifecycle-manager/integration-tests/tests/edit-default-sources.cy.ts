@@ -1,6 +1,6 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
-import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
-import { modal } from '../../../integration-tests-cypress/views/modal';
+import { checkErrors } from '@console/cypress-integration-tests/support';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 describe('Create namespace from install operators', () => {
   before(() => {

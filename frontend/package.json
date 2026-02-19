@@ -24,10 +24,10 @@
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test-cypress-console": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
-    "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests-cypress && ../../../node_modules/.bin/cypress open --env openshift=true",
-    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
+    "test-cypress-console": "cd packages/integration-tests && yarn run test-cypress",
+    "test-cypress-console-headless": "cd packages/integration-tests && yarn run test-cypress-headless",
+    "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress",
+    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
@@ -52,7 +52,7 @@
     "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
-    "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests-cypress/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
+    "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
@@ -107,13 +107,11 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests",
-      "<rootDir>/.*/integration-tests-cypress"
+      "<rootDir>/.*/integration-tests"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests",
-      "<rootDir>/.*/integration-tests-cypress"
+      "<rootDir>/.*/integration-tests"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testEnvironmentOptions": {

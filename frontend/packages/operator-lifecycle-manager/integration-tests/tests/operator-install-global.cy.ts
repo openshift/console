@@ -1,5 +1,5 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
-import type { TestOperandProps } from '../views/operator.view';
+import { checkErrors } from '@console/cypress-integration-tests/support';
+import type { TestOperandProps, TestOperandProps } from '../views/operator.view';
 import { operator, GlobalInstalledNamespace } from '../views/operator.view';
 
 const testOperator = {
