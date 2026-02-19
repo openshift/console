@@ -9,7 +9,7 @@ Feature: Traffic Status details for pods
               And user has created workload "nodejs-ex-git" with resource type "deployment"
               And user navigates to administrator perspective
               And user navigates to pods tab
- 
+
         @regression
         Scenario: Checking traffic status for pods in a project: P-01-TC01
              When user selects Receiving Traffic column to show in table

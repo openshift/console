@@ -3,7 +3,7 @@
 Feature: Getting Started tour of developer perspective
               As a user I want to take tour of developer perspective
 
-        @regression @manual
+        @regression
         Scenario: Quick tour when user logs in for the first time: GS-02-TC01
             Given user is on login page for the first time
              When user enters the credential
