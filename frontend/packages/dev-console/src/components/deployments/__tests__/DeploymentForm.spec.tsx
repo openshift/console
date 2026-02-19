@@ -35,8 +35,8 @@ jest.mock('../ContainerField', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(() => [undefined, jest.fn(), true]),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(() => [undefined, jest.fn(), true]),
 }));
 
 jest.mock(

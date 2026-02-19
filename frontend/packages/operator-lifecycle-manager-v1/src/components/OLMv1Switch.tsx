@@ -5,7 +5,7 @@ import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/ico
 import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 
 /**
@@ -15,7 +15,7 @@ import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 export const OLMv1Switch: FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
-  const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(
+  const [olmv1Enabled, setOlmv1Enabled] = useUserPreference<boolean>(
     OLMV1_ENABLED_USER_SETTING_KEY,
     techPreviewEnabled ?? false,
     true,

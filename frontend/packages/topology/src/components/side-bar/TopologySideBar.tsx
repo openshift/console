@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { DrawerPanelContent } from '@patternfly/react-core';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY } from '../../const';
 import './TopologySideBarTabSection.scss';
 
@@ -15,7 +15,7 @@ type TopologySideBarProps = {
 const DEFAULT_SIDE_BAR_SIZE = 500;
 
 const TopologySideBar: FC<TopologySideBarProps> = ({ children, onClose }) => {
-  const [sideBarSize, setSideBarSize, sideBarSizeLoaded] = useUserSettings(
+  const [sideBarSize, setSideBarSize, sideBarSizeLoaded] = useUserPreference(
     TOPOLOGY_SIDE_BAR_WIDTH_STORAGE_KEY,
     DEFAULT_SIDE_BAR_SIZE,
   );

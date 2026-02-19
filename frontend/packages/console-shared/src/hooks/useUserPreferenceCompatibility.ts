@@ -1,15 +1,16 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useEffect } from 'react';
 import { deserializeData } from '../utils/user-settings';
-import { useUserSettings } from './useUserSettings';
+import { useUserPreference } from './useUserPreference';
 
-export const useUserSettingsCompatibility = <T>(
+/** @deprecated Use {@link useUserPreference} hook. */
+export const useUserPreferenceCompatibility = <T>(
   key: string,
   storageKey: string,
   defaultValue?: T,
-  sync: boolean = false,
+  sync = false,
 ): [T, Dispatch<SetStateAction<T>>, boolean] => {
-  const [settings, setSettings, loaded] = useUserSettings<T>(
+  const [preference, setPreference, loaded] = useUserPreference<T>(
     key,
     localStorage.getItem(storageKey) !== null
       ? deserializeData(localStorage.getItem(storageKey))
@@ -27,5 +28,5 @@ export const useUserSettingsCompatibility = <T>(
     [loaded],
   );
 
-  return [settings, setSettings, loaded];
+  return [preference, setPreference, loaded];
 };

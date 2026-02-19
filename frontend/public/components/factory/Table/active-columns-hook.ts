@@ -5,7 +5,7 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const useActiveColumns = <D = any>({
@@ -17,7 +17,7 @@ export const useActiveColumns = <D = any>({
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
 }): [TableColumn<D>[], boolean] => {
-  const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
+  const [tableColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,

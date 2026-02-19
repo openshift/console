@@ -265,7 +265,7 @@ export const UtilizationCard = () => {
     isList: true,
     kind: referenceForModel(MachineConfigPoolModel),
   });
-  // TODO: add `useUserSettings` to get default selected
+  // TODO: add `useUserPreference` to get default selected
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   const [dynamicItemExtensions] = useResolvedExtensions<ClusterOverviewUtilizationItem>(
@@ -275,7 +275,7 @@ export const UtilizationCard = () => {
     ClusterOverviewMultilineUtilizationItem
   >(isClusterOverviewMultilineUtilizationItem);
 
-  // TODO: add `useUserSettingsCompatibility` to store selectedNodes
+  // TODO: add `useUserPreferenceCompatibility` to store selectedNodes
   const onNodeSelect = (event: MouseEvent, selection: string) => {
     const selectionUpdated = selection === 'control plane' ? 'master' : selection;
     if (selectedNodes.includes(selectionUpdated)) {

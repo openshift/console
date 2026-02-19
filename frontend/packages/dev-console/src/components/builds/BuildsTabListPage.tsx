@@ -6,7 +6,7 @@ import { withStartGuide } from '@console/internal/components/start-guide';
 import type { Page } from '@console/internal/components/utils';
 import { AsyncComponent } from '@console/internal/components/utils';
 import type { MenuActions } from '@console/shared';
-import { useFlag, MultiTabListPage, getBadgeFromType, useUserSettings } from '@console/shared';
+import { useFlag, MultiTabListPage, getBadgeFromType, useUserPreference } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
 import { LAST_BUILD_PAGE_TAB_STORAGE_KEY } from '../../const';
@@ -25,7 +25,7 @@ const BuildsTabListPage: FC = () => {
   const title = t('devconsole~Builds');
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
-  const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserSettings<string>(
+  const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserPreference<string>(
     LAST_BUILD_PAGE_TAB_STORAGE_KEY,
     'shipwright-builds',
   );

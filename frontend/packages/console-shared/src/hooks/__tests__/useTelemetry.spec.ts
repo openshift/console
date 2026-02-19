@@ -4,7 +4,7 @@ import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
   USER_TELEMETRY_ANALYTICS,
-  useUserSettings,
+  useUserPreference,
 } from '@console/shared';
 import {
   getClusterProperties,
@@ -17,8 +17,8 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/useUser', () => ({
@@ -49,7 +49,7 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: () => [mockUserResource, true],
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+const mockUserPreference = useUserPreference as jest.Mock;
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 
@@ -142,7 +142,7 @@ describe('useTelemetry', () => {
         },
       },
     ];
-    mockUserSettings.mockReturnValue(['', jest.fn(), true]);
+    mockUserPreference.mockReturnValue(['', jest.fn(), true]);
     useResolvedExtensionsMock.mockReturnValue([extensions]);
   });
 
@@ -253,7 +253,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
-    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
+    mockUserPreference.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
     updateClusterPropertiesFromTests();
     const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
@@ -271,7 +271,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
-    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
+    mockUserPreference.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
     updateClusterPropertiesFromTests();
     const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
@@ -289,7 +289,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
       },
     };
-    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
+    mockUserPreference.mockReturnValue([USER_TELEMETRY_ANALYTICS.ALLOW, jest.fn(), true]);
     updateClusterPropertiesFromTests();
     const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
@@ -307,7 +307,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTOUT,
       },
     };
-    mockUserSettings.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
+    mockUserPreference.mockReturnValue([USER_TELEMETRY_ANALYTICS.DENY, jest.fn(), true]);
     updateClusterPropertiesFromTests();
     const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;
@@ -325,7 +325,7 @@ describe('useTelemetry', () => {
         STATE: CLUSTER_TELEMETRY_ANALYTICS.OPTIN,
       },
     };
-    mockUserSettings.mockReturnValue(['', jest.fn(), true]);
+    mockUserPreference.mockReturnValue(['', jest.fn(), true]);
     updateClusterPropertiesFromTests();
     const { result } = renderHook(() => useTelemetry());
     const fireTelemetryEvent = result.current;

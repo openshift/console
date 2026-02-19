@@ -10,7 +10,7 @@ import CreateProjectListPage, {
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { useQueryParamsMutator } from '@console/internal/components/utils';
-import { useQueryParams, useUserSettingsCompatibility } from '@console/shared';
+import { useQueryParams, useUserPreferenceCompatibility } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
   LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
@@ -66,7 +66,7 @@ export const TopologyPage: FC<TopologyPageProps> = ({
     topologyLastView,
     setTopologyLastView,
     isTopologyLastViewLoaded,
-  ] = useUserSettingsCompatibility<TopologyViewType>(
+  ] = useUserPreferenceCompatibility<TopologyViewType>(
     TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
     activeViewStorageKey,
     defaultViewType,

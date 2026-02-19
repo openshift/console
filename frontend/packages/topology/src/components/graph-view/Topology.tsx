@@ -31,8 +31,8 @@ import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/e
 import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
-import type { WithUserSettingsCompatibilityProps } from '@console/shared';
-import { useQueryParams, withUserSettingsCompatibility } from '@console/shared';
+import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
+import { useQueryParams, withUserPreferenceCompatibility } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
@@ -129,7 +129,7 @@ interface TopologyProps {
 }
 
 const Topology: FC<
-  TopologyProps & StateProps & DispatchProps & WithUserSettingsCompatibilityProps<object>
+  TopologyProps & StateProps & DispatchProps & WithUserPreferenceCompatibilityProps<object>
 > = ({
   model,
   application,
@@ -383,8 +383,8 @@ export default withFallback(
     TopologyStateToProps,
     TopologyDispatchToProps,
   )(
-    withUserSettingsCompatibility<
-      TopologyProps & WithUserSettingsCompatibilityProps<object>,
+    withUserPreferenceCompatibility<
+      TopologyProps & WithUserPreferenceCompatibilityProps<object>,
       object
     >(
       TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,

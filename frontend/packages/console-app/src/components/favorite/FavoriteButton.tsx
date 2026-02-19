@@ -14,7 +14,7 @@ import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import Modal from '@console/shared/src/components/modal/Modal';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import type { FavoritesType } from '../../types';
 
@@ -32,7 +32,7 @@ export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
+  const [favorites, setFavorites, loaded] = useUserPreferenceCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
     undefined,

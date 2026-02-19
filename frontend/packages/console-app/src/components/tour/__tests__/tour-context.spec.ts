@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { TourActions } from '../const';
 import { tourReducer, useTourValuesForContext, useTourStateForPerspective } from '../tour-context';
 import type { TourDataType } from '../type';
@@ -15,8 +15,8 @@ jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
   useResolvedExtensions: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
-  useUserSettingsCompatibility: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
+  useUserPreferenceCompatibility: jest.fn(),
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
@@ -25,7 +25,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
 
 const useSelectorMock = useSelector as jest.Mock;
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
-const useUserSettingsCompatibilityMock = useUserSettingsCompatibility as jest.Mock;
+const useUserPreferenceCompatibilityMock = useUserPreferenceCompatibility as jest.Mock;
 
 describe('guided-tour-context', () => {
   beforeEach(() => {
@@ -98,8 +98,8 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false })
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
-      // Mock useUserSettingsCompatibility to return { completed: false } for the tour state
-      useUserSettingsCompatibilityMock.mockReturnValue([
+      // Mock useUserPreferenceCompatibility to return { completed: false } for the tour state
+      useUserPreferenceCompatibilityMock.mockReturnValue([
         { dev: { completed: false } },
         () => null,
         true,
@@ -123,7 +123,7 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false })
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue([[]]);
-      useUserSettingsCompatibilityMock.mockReturnValue([
+      useUserPreferenceCompatibilityMock.mockReturnValue([
         { dev: { completed: false } },
         () => null,
         true,
@@ -140,8 +140,8 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false })
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
-      // Mock useUserSettingsCompatibility with loaded: false
-      useUserSettingsCompatibilityMock.mockReturnValue([
+      // Mock useUserPreferenceCompatibility with loaded: false
+      useUserPreferenceCompatibilityMock.mockReturnValue([
         { dev: { completed: false } },
         () => null,
         false,
@@ -156,7 +156,7 @@ describe('guided-tour-context', () => {
 
   describe('useTourStatePerspective', () => {
     it('should return data based on the perspective passed as prop', () => {
-      useUserSettingsCompatibilityMock.mockReturnValue([
+      useUserPreferenceCompatibilityMock.mockReturnValue([
         { dev: { a: true }, admin: { a: false } },
         () => null,
         true,

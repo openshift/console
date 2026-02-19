@@ -19,9 +19,9 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import {
-  WithUserSettingsCompatibilityProps,
-  withUserSettingsCompatibility,
-} from '@console/shared/src/hoc/withUserSettingsCompatibility';
+  WithUserPreferenceCompatibilityProps,
+  withUserPreferenceCompatibility,
+} from '@console/shared/src/hoc/withUserPreferenceCompatibility';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { ModalComponentProps } from '../factory';
 import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory';
@@ -73,7 +73,7 @@ const NamespaceColumnHelpText: FC = () => {
 };
 
 export const ColumnManagementModal: FC<
-  ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
+  ColumnManagementModalProps & WithUserPreferenceCompatibilityProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
   const { t } = useTranslation();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
@@ -197,8 +197,8 @@ export const ColumnManagementModal: FC<
   );
 };
 
-const ColumnManagementModalWithSettings = withUserSettingsCompatibility<
-  ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>,
+const ColumnManagementModalWithSettings = withUserPreferenceCompatibility<
+  ColumnManagementModalProps & WithUserPreferenceCompatibilityProps<object>,
   object
 >(
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,

@@ -1,8 +1,8 @@
 import type { SetStateAction, Dispatch } from 'react';
-import { useUserSettings } from '@console/shared';
+import { useUserPreference } from '@console/shared';
 
 export const useShowAddCardItemDetails = (): [boolean, Dispatch<SetStateAction<boolean>>] => {
-  const [showDetails, setShowDetails, showDetailsLoaded] = useUserSettings(
+  const [showDetails, setShowDetails, showDetailsLoaded] = useUserPreference(
     'devconsole.addPage.showDetails',
     true,
     true,

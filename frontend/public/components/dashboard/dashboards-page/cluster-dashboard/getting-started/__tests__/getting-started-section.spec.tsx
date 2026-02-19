@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserSettings } from '@console/shared';
+import { useUserPreference } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedShowState,
@@ -36,24 +36,24 @@ jest.mock('@console/shared/src/components/getting-started', () => ({
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+const mockUserPreference = useUserPreference as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
   beforeEach(() => {
-    mockUserSettings.mockReset();
+    mockUserPreference.mockReset();
     useFlagMock.mockReset();
     useGettingStartedShowStateMock.mockReset();
   });
 
   it('should render with three child cards when all conditions are met', async () => {
     useFlagMock.mockReturnValue(true);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
+    mockUserPreference.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
     renderWithProviders(
@@ -70,7 +70,7 @@ describe('GettingStartedSection', () => {
 
   it('should render nothing when useFlag(FLAGS.OPENSHIFT) returns false', async () => {
     useFlagMock.mockReturnValue(false);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
+    mockUserPreference.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
     renderWithProviders(
@@ -88,7 +88,7 @@ describe('GettingStartedSection', () => {
 
   it('should render nothing if user settings hide them', async () => {
     useFlagMock.mockReturnValue(true);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
+    mockUserPreference.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
     renderWithProviders(
@@ -106,7 +106,7 @@ describe('GettingStartedSection', () => {
 
   it('should render nothing if showStateLoaded is false', async () => {
     useFlagMock.mockReturnValue(true);
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
+    mockUserPreference.mockReturnValue([true, jest.fn()]);
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.SHOW,
       jest.fn(),

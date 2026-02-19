@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserSettings } from '@console/shared';
+import { useUserPreference } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedShowState,
@@ -26,7 +26,7 @@ jest.mock('@console/shared/src/hooks/flag', () => ({
 
 jest.mock('@console/shared/src', () => ({
   ...jest.requireActual('@console/shared/src'),
-  useUserSettings: jest.fn(() => [true, jest.fn()]),
+  useUserPreference: jest.fn(() => [true, jest.fn()]),
 }));
 
 jest.mock('@console/shared/src/components/getting-started', () => ({
@@ -35,18 +35,18 @@ jest.mock('@console/shared/src/components/getting-started', () => ({
   QuickStartGettingStartedCard: () => 'Quick start tutorials',
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+const mockUserPreference = useUserPreference as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
 const useGettingStartedShowStateMock = useGettingStartedShowState as jest.Mock;
 
 describe('GettingStartedSection', () => {
   beforeEach(() => {
-    mockUserSettings.mockReset();
+    mockUserPreference.mockReset();
     useFlagMock.mockReset();
     useGettingStartedShowStateMock.mockReset();
 
     // Default mock setup for most tests
-    mockUserSettings.mockReturnValue([true, jest.fn()]);
+    mockUserPreference.mockReturnValue([true, jest.fn()]);
     useFlagMock.mockReturnValue(true);
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
   });

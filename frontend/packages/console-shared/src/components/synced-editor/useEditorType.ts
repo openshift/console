@@ -3,7 +3,7 @@ import {
   PREFERRED_CREATE_EDIT_METHOD_USER_SETTING_VALUE_LATEST,
   usePreferredCreateEditMethod,
 } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
-import { useUserSettings } from '../../hooks/useUserSettings';
+import { useUserPreference } from '../../hooks/useUserPreference';
 import type { EditorType } from './editor-toggle';
 
 export const useEditorType = (
@@ -15,7 +15,7 @@ export const useEditorType = (
     lastViewedEditorType,
     setLastViewedEditorType,
     lastViewedEditorTypeLoaded,
-  ] = useUserSettings<EditorType>(lastViewUserSettingKey);
+  ] = useUserPreference<EditorType>(lastViewUserSettingKey);
   const [preferredEditorType, preferredEditorTypeLoaded] = usePreferredCreateEditMethod();
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     checkEditorTypeEnabled ? checkEditorTypeEnabled(type) : true;

@@ -21,9 +21,9 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview2: () => [false, false],
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
+jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => {
   return {
-    useUserSettingsCompatibility: () => ['', () => {}],
+    useUserPreferenceCompatibility: () => ['', () => {}],
   };
 });
 

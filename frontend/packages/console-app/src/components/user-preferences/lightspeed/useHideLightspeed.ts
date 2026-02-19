@@ -1,10 +1,10 @@
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 // duplicated in openshift/lightspeed-operator, so be mindful of changing
 const PREFERRED_LIGHTSPEED_USER_SETTING_KEY: string = 'console.hideLightspeedButton';
 
 export const useHideLightspeed = (): [boolean, boolean] => {
-  const [hideLightspeed, , hideLightspeedLoaded] = useUserSettings<boolean>(
+  const [hideLightspeed, , hideLightspeedLoaded] = useUserPreference<boolean>(
     PREFERRED_LIGHTSPEED_USER_SETTING_KEY,
     false,
     true,

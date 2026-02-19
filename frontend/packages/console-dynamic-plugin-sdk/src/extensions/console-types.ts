@@ -795,7 +795,7 @@ export type UseValuesForNamespaceContext = () => {
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
 
-export type UseUserSettings = <T>(
+export type UseUserPreference = <T>(
   key: string,
   defaultValue?: T,
   sync?: boolean,

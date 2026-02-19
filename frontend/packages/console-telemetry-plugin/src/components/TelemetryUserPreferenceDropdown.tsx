@@ -16,7 +16,7 @@ import {
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
   useTelemetry,
-  useUserSettings,
+  useUserPreference,
 } from '@console/shared';
 
 type TelemetryAnalyticsSelectOptions = {
@@ -99,7 +99,7 @@ const TelemetryUserPreferenceDropdown: FC = () => {
   const [
     currentUserPreferenceTelemetryValue,
     setCurrentUserPreferenceTelemetryValue,
-  ] = useUserSettings<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
+  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
 
   const onChange = (selectedOption: TelemetryAnalyticsSelectOptions) => {
     fireTelemetryEvent('Telemetry user preference changes', {

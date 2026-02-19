@@ -8,7 +8,7 @@ import { LabelSelector } from '@console/internal/module/k8s';
 import type { NotificationAlerts } from '@console/internal/reducers/observe';
 import type { RootState } from '@console/internal/redux';
 import { SYSTEM_ALERT_RULE_LABEL } from '../constants/monitoring';
-import { useUserSettings } from './useUserSettings';
+import { useUserPreference } from './useUserPreference';
 
 /** Get notification alerts from redux and filter by current user notification settings OR the
   provided override labels. Alerts that match on override labels will not be fitlered even if
@@ -20,7 +20,7 @@ import { useUserSettings } from './useUserSettings';
 export const useNotificationAlerts = (
   overrideMatchLabels?: ObjectMetadata['labels'],
 ): [NotificationAlerts['data'], NotificationAlerts['loaded'], NotificationAlerts['loadError']] => {
-  const [hideUserWorkloadNotifications] = useUserSettings(
+  const [hideUserWorkloadNotifications] = useUserPreference(
     HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
     true,
     true,
@@ -65,7 +65,7 @@ export const useNamespacedNotificationAlerts = (
 
   const { alerts, loaded, loadError } = useNamespacedNotificationAlertsPoller(namespace);
 
-  const [hideUserWorkloadNotifications] = useUserSettings(
+  const [hideUserWorkloadNotifications] = useUserPreference(
     HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
     true,
     true,
