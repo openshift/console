@@ -1,4 +1,4 @@
-@topology @ODC7596
+@topology @ODC-7596
 Feature: Update user in topology page if PodDisruptionBudget is violated in a namespace
               If any PodDisruptionBudget is violated, a warning alert will be displayed for the user in Topology page.
 

@@ -11,7 +11,7 @@ Feature: Create Application from git form
         # @smoke
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
         # TODO: Use Cypress HTTP mocking to solve the github rate limiting issue. See - https://docs.cypress.io/guides/guides/network-requests
-        @regression @manual @odc-6266
+        @regression @manual @ODC-6266
         Scenario Outline: Add new git workload with new application for resource type "<resource_type>": A-06-TC01
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
@@ -29,7 +29,7 @@ Feature: Create Application from git form
                   | import-git-1 | DeploymentConfig |
 
 
-        @regression @odc-6266
+        @regression @ODC-6266
         Scenario: Add new git workload to the existing application: A-06-TC02
             Given user has created workload "exist-git" with resource type "Deployment"
               And user is at Add page
@@ -65,7 +65,7 @@ Feature: Create Application from git form
               And public url is not created for node "name-no-route" in the workload sidebar
 
 
-        @regression @odc-6266
+        @regression @ODC-6266
         Scenario: Create a git workload with advanced option "Routing": A-06-TC05
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/dancer-ex.git"
@@ -243,7 +243,7 @@ Feature: Create Application from git form
               And see environment variable "NPM_RUN" with value "build2" in Environment tab of details page
 
 
-        @regression @odc-6303 @broken-test
+        @regression @ODC-6303 @broken-test
         Scenario: Checking Secure Route option in import form: A-06-TC17
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/sclorg/nodejs-ex.git"
@@ -254,14 +254,14 @@ Feature: Create Application from git form
               And user is able to see Redirect value is selected in "Insecure traffic"
 
 
-        @regression @ocp-43404
+        @regression @OCPBUGS-14067
         Scenario: Disable devfile import strategy for git type - other: A-06-TC18
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://mysupersecretgit.example.com/org/repo"
              Then devfile import strategy is disabled
 
 
-        @regression @ocp-43404
+        @regression @OCPBUGS-14067
         Scenario: When devfile path is not detected: A-06-TC19
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://github.com/nodeshift-starters/devfile-sample"
@@ -270,7 +270,7 @@ Feature: Create Application from git form
              Then user see message "Devfile not detected"
 
 
-        @regression @odc-7613
+        @regression @ODC-7613
         Scenario: Create a git workload when Git Type is not auto-detected: A-06-TC20
             Given user is at Import from Git form
              When user enters Git Repo URL as "https://open-bitbucket.nrao.edu/projects/PIPE/repos/pipeline/browse"

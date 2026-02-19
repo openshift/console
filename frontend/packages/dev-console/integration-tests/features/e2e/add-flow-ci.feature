@@ -67,7 +67,7 @@ Feature: Create the different workloads from Add page
                   | image_stream | runtime_icon | name           |
                   | golang       | fedora       | hello-internal |
 
-        @regression @odc-7803
+        @regression @ODC-7803
         Scenario Outline: Deploy image with custom icon
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
