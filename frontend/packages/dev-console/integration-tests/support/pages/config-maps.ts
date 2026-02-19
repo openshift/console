@@ -1,4 +1,4 @@
-import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '../../../../integration-tests/views/details-page';
 import { devNavigationMenu } from '../constants';
 import { pagePO } from '../pageObjects';
 import { configMapPO } from '../pageObjects/config-map-po';

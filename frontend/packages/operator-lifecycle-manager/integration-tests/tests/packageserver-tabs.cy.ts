@@ -1,6 +1,6 @@
-import { checkErrors } from '../../../integration-tests-cypress/support';
-import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
-import * as yamlEditor from '../../../integration-tests-cypress/views/yaml-editor';
+import { checkErrors } from '@console/cypress-integration-tests/support';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 
 describe('packageserver PackageManifest tabs rendering', () => {
   const csvNamespace = 'openshift-operator-lifecycle-manager';
