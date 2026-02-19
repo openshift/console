@@ -2,8 +2,7 @@ import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
-import { Firehose } from '@console/internal/components/utils/firehose';
-import type { FirehoseResource } from '@console/internal/components/utils/types';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
 import type { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
@@ -13,7 +12,7 @@ import { getFieldId } from './field-utils';
 
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];
-  resources: FirehoseResource[];
+  resources: FirehoseResult[];
   showBadge?: boolean;
   onLoad?: (items: ResourceDropdownItems) => void;
   onChange?: (key: string, name?: string | object, resource?: K8sResourceKind) => void;
@@ -52,22 +51,21 @@ const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
 
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required} data-test={dataTest}>
-      <Firehose resources={resources}>
-        <ResourceDropdown
-          {...props}
-          id={fieldId}
-          dataSelector={dataSelector}
-          selectedKey={field.value}
-          isFullWidth={fullWidth}
-          onLoad={onLoad}
-          resourceFilter={resourceFilter}
-          onChange={(value: string, name: string | object, resource: K8sResourceKind) => {
-            props.onChange && props.onChange(value, name, resource);
-            setFieldValue(props.name, value);
-            setFieldTouched(props.name, true);
-          }}
-        />
-      </Firehose>
+      <ResourceDropdown
+        {...props}
+        id={fieldId}
+        dataSelector={dataSelector}
+        selectedKey={field.value}
+        isFullWidth={fullWidth}
+        onLoad={onLoad}
+        resourceFilter={resourceFilter}
+        resources={resources}
+        onChange={(value: string, name: string | object, resource: K8sResourceKind) => {
+          props.onChange && props.onChange(value, name, resource);
+          setFieldValue(props.name, value);
+          setFieldTouched(props.name, true);
+        }}
+      />
 
       <FormHelperText>
         <HelperText>

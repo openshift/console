@@ -9,13 +9,13 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
 import { ResourceDropdownField } from '@console/shared';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
   resourceName: string;
-  resourceDropdown: FirehoseResource[];
+  resourceDropdown: FirehoseResult[];
   labelTitle: string;
   cancel?: () => void;
 }

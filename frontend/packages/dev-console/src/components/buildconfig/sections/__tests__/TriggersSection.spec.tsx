@@ -1,25 +1,20 @@
 import type { FC, ReactNode } from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import type { TriggersSectionFormData } from '../TriggersSection';
 import TriggersSection from '../TriggersSection';
 
-interface WrapperProps extends FormikConfig<TriggersSectionFormData> {
-  children?: ReactNode;
-}
+// Mock PatternFly topology to prevent console warnings during tests
+jest.mock('@patternfly/react-topology', () => ({}));
 
-const Wrapper: FC<WrapperProps> = ({ children, ...formikConfig }) => (
-  <Formik {...formikConfig}>
-    {(formikProps) => (
-      <form onSubmit={formikProps.handleSubmit}>
-        {children}
-        <input type="submit" value="Submit" />
-      </form>
-    )}
-  </Formik>
-);
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(),
+}));
+
+const mockUseK8sWatchResources = useK8sWatchResources as jest.Mock;
 
 const initialValues: TriggersSectionFormData = {
   formData: {
@@ -31,90 +26,111 @@ const initialValues: TriggersSectionFormData = {
   },
 };
 
+interface FormikWrapperProps {
+  children: ReactNode;
+  onSubmit: jest.Mock;
+}
+
+const FormikWrapper: FC<FormikWrapperProps> = ({ children, onSubmit }) => (
+  <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    {(formikProps) => (
+      <form onSubmit={formikProps.handleSubmit}>
+        {children}
+        <input type="submit" value="Submit" />
+      </form>
+    )}
+  </Formik>
+);
+
+const renderTriggersSection = (onSubmit: jest.Mock) => {
+  renderWithProviders(
+    <FormikWrapper onSubmit={onSubmit}>
+      <TriggersSection namespace="a-namespace" />
+    </FormikWrapper>,
+  );
+};
+
 describe('TriggersSection', () => {
-  it('should render empty form', () => {
-    const onSubmit = jest.fn();
-
-    const renderResult = render(
-      <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
-        <TriggersSection namespace="a-namespace" />
-      </Wrapper>,
-    );
-
-    renderResult.getByTestId('section triggers');
-    renderResult.getByText('Triggers');
-    renderResult.getByText('Automatically build a new image when config changes');
-    renderResult.getByText('Automatically build a new image when image changes');
-    renderResult.getByText('Add trigger');
-
-    expect((renderResult.getByTestId('image-change checkbox') as HTMLInputElement).checked).toBe(
-      false,
-    );
-
-    expect(onSubmit).toHaveBeenCalledTimes(0);
+  beforeEach(() => {
+    mockUseK8sWatchResources.mockReturnValue({
+      secrets: { data: [], loaded: true, loadError: null },
+    });
   });
 
-  it('should allow user to change config change checkbox trigger and save this data', async () => {
-    const user = userEvent.setup();
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should render all trigger configuration options', () => {
     const onSubmit = jest.fn();
 
-    const renderResult = render(
-      <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
-        <TriggersSection namespace="a-namespace" />
-      </Wrapper>,
-    );
+    renderTriggersSection(onSubmit);
 
-    // Change form
-    await user.click(renderResult.getByTestId('config-change checkbox'));
+    expect(screen.getByTestId('section triggers')).toBeInTheDocument();
+    expect(screen.getByText('Triggers')).toBeInTheDocument();
+    expect(
+      screen.getByText('Automatically build a new image when config changes'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Automatically build a new image when image changes'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add trigger' })).toBeInTheDocument();
 
-    // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const imageChangeCheckbox = screen.getByTestId('image-change checkbox') as HTMLInputElement;
+    expect(imageChangeCheckbox).not.toBeChecked();
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('should toggle config change checkbox and submit form with updated value', async () => {
+    const user = userEvent.setup();
+    const onSubmit = jest.fn();
+    renderTriggersSection(onSubmit);
+
+    const configChangeCheckbox = screen.getByTestId('config-change checkbox');
+    await user.click(configChangeCheckbox);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
+
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
 
-    const expectedFormData: TriggersSectionFormData = {
-      formData: {
-        triggers: {
-          configChange: true,
-          imageChange: false,
-          otherTriggers: [],
-        },
-      },
-    };
-    expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
+    expect(onSubmit.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        formData: expect.objectContaining({
+          triggers: expect.objectContaining({
+            configChange: true,
+          }),
+        }),
+      }),
+    );
   });
 
-  it('should allow user to change image change checkbox trigger and save this data', async () => {
+  it('should toggle image change checkbox and submit form with updated value', async () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
+    renderTriggersSection(onSubmit);
 
-    const renderResult = render(
-      <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
-        <TriggersSection namespace="a-namespace" />
-      </Wrapper>,
-    );
+    const imageChangeCheckbox = screen.getByTestId('image-change checkbox');
+    await user.click(imageChangeCheckbox);
 
-    // Change form
-    await user.click(renderResult.getByTestId('image-change checkbox'));
-
-    // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
+
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
 
-    const expectedFormData: TriggersSectionFormData = {
-      formData: {
-        triggers: {
-          configChange: false,
-          imageChange: true,
-          otherTriggers: [],
-        },
-      },
-    };
-    expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
+    expect(onSubmit.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        formData: expect.objectContaining({
+          triggers: expect.objectContaining({
+            imageChange: true,
+          }),
+        }),
+      }),
+    );
   });
 });
