@@ -103,7 +103,6 @@ Feature: Perform actions on knative service and revision
               And user will see the channel "channel" created
 
 
-        @smoke
         Scenario: Create Broker using Form view: KE-05-TC01
             Given user is at eventing page
              When user clicks on Create dropdown button
@@ -115,7 +114,6 @@ Feature: Perform actions on knative service and revision
               And user will see the "default-broker" broker created
 
 
-        @smoke
         Scenario: Add Subscription to channel: KE-05-TC01
             # Given user has created knative service "knative-ci-2" in admin
             #   And user has created channel "channel"

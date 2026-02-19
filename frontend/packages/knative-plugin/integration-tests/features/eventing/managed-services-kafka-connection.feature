@@ -10,7 +10,7 @@ Feature: Support for Managed Services
               And user has created or selected namespace "aut-managed-services"
 
 
-        @regression @manual
+        @regression
         Scenario: Create the Managed Services from Add page: KM-02-TC01
             Given user is at Add page
              When user clicks Managed Services card
@@ -29,7 +29,7 @@ Feature: Support for Managed Services
               And user is able to see Kafka Connection in topology page
 
 
-        @regression @manual
+        @regression
         Scenario: Create the Managed Services from Software Catalog: KM-02-TC02
             Given user is at Add page
              When user clicks Software Catalog card
@@ -81,7 +81,7 @@ Feature: Support for Managed Services
              Then user will see the other available kafka instance in Select Kafka Instance page
 
 
-        @regression @manual
+        @regression
         Scenario: Empty state of Select Kafka instances page: KM-02-TC06
             Given user has added all kafka instances
               And user is at Add page
