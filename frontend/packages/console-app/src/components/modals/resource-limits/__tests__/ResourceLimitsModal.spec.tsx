@@ -20,6 +20,7 @@ describe('ResourceLimitsModal Form', () => {
     jest.clearAllMocks();
     formProps = {
       ...formikFormProps,
+      isSubmitting: false,
       cancel: jest.fn(),
       resource: {
         apiVersion: 'apps/v1',
