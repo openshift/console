@@ -41,7 +41,7 @@ When('user clicks on Export Application option', () => {
 });
 
 When('user clicks on Ok button on Export Application modal to start the export', () => {
-  cy.get('.modal-body').contains('Do you want to export your application?');
+  cy.get('.pf-v6-c-modal-box__body').contains('Do you want to export your application?');
   cy.byTestID('close-btn').should('be.visible').click();
 });
 
