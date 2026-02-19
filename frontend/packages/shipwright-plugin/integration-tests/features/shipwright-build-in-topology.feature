@@ -1,4 +1,4 @@
-@shipwright @odc-5387
+@shipwright @ODC-5387
 Feature: Shipwright build in topolgy
               As a user, I want check my Shipwright Build in topology.
 

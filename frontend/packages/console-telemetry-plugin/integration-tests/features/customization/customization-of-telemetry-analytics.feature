@@ -1,4 +1,4 @@
-@customize-telemetry @odc-7498
+@customize-telemetry @ODC-7498
 Feature: Customization of telemetry analytics
                 As admin you can customize user telemetry analytics.
 
@@ -53,6 +53,3 @@ Feature: Customization of telemetry analytics
               And user selects "Disabled" option in dropdown menu
               And user is at cluster YAML of "operator.openshift.io/v1" console
              Then user should see "telemetry.console.openshift.io/STATE: DISABLED" got added in "metadata.annotations"
-
-
-
