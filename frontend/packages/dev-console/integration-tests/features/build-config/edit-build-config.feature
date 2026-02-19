@@ -85,7 +85,6 @@ Feature: Form based edit for Build Configs
         Examples:
                   | name | value |
                   | path | /home |
-                  
 
         @regression @manual
         Scenario Outline: Edit a build which uses strategy Source and Binary as source: EBC-01-TC07
