@@ -1,8 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useFormikContext, useField } from 'formik';
 import { FLAGS } from '@console/shared';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { CREATE_NAMESPACE_KEY } from '../cloud-shell-setup-utils';
 import { InternalNamespaceSection } from '../NamespaceSection';
+
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(() => ({
+    projects: { data: [], loaded: true, loadError: null },
+  })),
+}));
 
 jest.mock('formik', () => {
   const context = {
@@ -58,13 +65,13 @@ describe('NamespaceSection', () => {
 
   it('should display InputField when creating namespace', () => {
     (useField as jest.Mock).mockImplementationOnce(() => [{ value: CREATE_NAMESPACE_KEY }, {}]);
-    render(<InternalNamespaceSection flags={canCreateFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={canCreateFlags} />);
 
     expect(screen.getByText('InputField newNamespace')).toBeVisible();
   });
 
   it('should switch to create namespace mode when there are no projects', () => {
-    render(<InternalNamespaceSection flags={canCreateFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={canCreateFlags} />);
 
     // Trigger onLoad with empty project list
     mockCallbacks.onLoad?.({});
@@ -78,7 +85,7 @@ describe('NamespaceSection', () => {
   it('should switch from active namespace to no namespace when no projects and user cannot create a project', () => {
     (useField as jest.Mock).mockReturnValueOnce([{ value: 'test-namespace' }, {}]);
 
-    render(<InternalNamespaceSection flags={noFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={noFlags} />);
 
     // Trigger onLoad with empty project list
     mockCallbacks.onLoad?.({});
@@ -87,7 +94,7 @@ describe('NamespaceSection', () => {
   });
 
   it('should update namespace value when dropdown changes', () => {
-    render(<InternalNamespaceSection flags={canCreateFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={canCreateFlags} />);
 
     // Trigger onChange
     mockCallbacks.onChange?.('test');
@@ -96,14 +103,14 @@ describe('NamespaceSection', () => {
   });
 
   it('should include create project action when user can create a project', () => {
-    render(<InternalNamespaceSection flags={canCreateFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={canCreateFlags} />);
 
     expect(mockCallbacks.actionItems).toBeDefined();
     expect(mockCallbacks.actionItems?.[0]?.actionKey).toBe(CREATE_NAMESPACE_KEY);
   });
 
   it('should omit create project action when user cannot create a project', () => {
-    render(<InternalNamespaceSection flags={noFlags} />);
+    renderWithProviders(<InternalNamespaceSection flags={noFlags} />);
 
     expect(mockCallbacks.actionItems).toBeUndefined();
   });
