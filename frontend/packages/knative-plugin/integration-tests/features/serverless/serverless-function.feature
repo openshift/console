@@ -41,7 +41,7 @@ Feature: Creation and Visualisation of serverless fuctions
              Then user will see type as "Functions" mentioned in the Details tab of Service details page of "nodetest"
               And user will see Labels as boson.dev/function=true and boson.dev/runtime=node in Details tab
 
-        @regression @odc-7167
+        @regression @ODC-7167
         Scenario Outline: Create Serverless Function from Import From Git Form on Add page with Builder Images: SF-01-TC05
             Given user is at Add page
               And user is at Import from Git form
@@ -56,7 +56,7 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                             | workload_name        |
                   | https://github.com/Lucifergene/serverless-func-repo | serverless-func-repo |
 
-        @regression @odc-7167
+        @regression @ODC-7167
         Scenario Outline: Create serverless function using Create Serverless function form with Builder Images: SF-01-TC06
             Given user is at Add page
              When user clicks on Create Serverless function card
@@ -76,7 +76,7 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                           | workload_name       |
                   | https://github.com/vikram-raj/hello-func-node-env | hello-func-node-env |
 
-        @regression @odc-6360
+        @regression @ODC-6360
         Scenario Outline: Create Serverless Function from the Import from Git Form on Add page with Pipeline: SF-01-TC07
             Given user has installed OpenShift Pipelines Operator
            # Below manual creation of the Piepline and ClusterTasks can be removed when Serverless new version 1.28 is released
@@ -98,7 +98,7 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                       | workload_name                        |
                   | https://github.com/vikram-raj/hello-func-node | import-form-hello-func-node-pipeline |
 
-        @regression @odc-6360
+        @regression @ODC-6360
         Scenario Outline: Create serverless function using Create Serverless function form with Pipeline: SF-01-TC08
             Given user is at Add page
              When user clicks on Create Serverless function card
@@ -119,7 +119,7 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                       | workload_name                                            |
                   | https://github.com/vikram-raj/hello-func-node | create-serverless-function-form-hello-func-node-pipeline |
 
-        @regression @odc-6360
+        @regression @ODC-6360
         Scenario Outline: Pipeline section should not present in Create Serverless function form if Pipeline is not available: SF-01-TC09
               And user is at Add page
              When user clicks on Create Serverless function card
@@ -132,7 +132,7 @@ Feature: Creation and Visualisation of serverless fuctions
                   | https://github.com/vikram-raj/hello-func-quarkus | hello-func-quarkus |
 
 
-        @regression @odc-7275
+        @regression @ODC-7275
         Scenario Outline: Test Serverless Functions: SF-01-TC10
             Given user is at Add page
              When user clicks on Create Serverless function card
@@ -157,4 +157,3 @@ Feature: Creation and Visualisation of serverless fuctions
                   | git_url                                                                 | workload_name                  | invoke_format |
                   | https://github.com/openshift-dev-console/kn-func-typescript-http        | kn-func-typescript-http        | HTTP          |
                   | https://github.com/openshift-dev-console/kn-func-typescript-cloudevents | kn-func-typescript-cloudevents | CloudEvent    |
-

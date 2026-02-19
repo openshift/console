@@ -1,4 +1,4 @@
-@customize @dev-console @odc-5012
+@customize @dev-console @ODC-5012
 Feature: Customization of pre-pinned resources
               Allows cluster admins to define pre-pinned resources for new users and users who have not customized their navigation items.
 

@@ -1,4 +1,4 @@
-@add-flow @dev-console @odc-6303
+@add-flow @dev-console @ODC-6303
 Feature: Provide quick search in Add page
               As a user, I should be able to have a quick way to search for items to add to my application/project in the Add page
 
@@ -57,7 +57,7 @@ Feature: Provide quick search in Add page
              Then user is taken to the Topology page with "devfile-sample-git" workload created
 
 
-        @regression @odc-6467
+        @regression @ODC-6467
         Scenario: Bindable resource in Quick Add: A-11-TC07
             Given user has installed Service Binding operator
               And user has installed Crunchy Postgres for Kubernetes operator

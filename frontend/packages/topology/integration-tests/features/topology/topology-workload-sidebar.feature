@@ -53,7 +53,7 @@ Feature: Sidebar in topology
              Then user is able to see pod Scaling to "1Pod" for workload "nodejs-ex-git-1"
 
 
-        @regression @odc-6361 @manual
+        @regression @ODC-6361 @manual
         Scenario: Resize the workload sidebar: T-14-TC05
             Given user has created workload "nodejs-ex-git-1" with resource type "deployment"
               And user is at Topology chart view
@@ -61,7 +61,7 @@ Feature: Sidebar in topology
              Then user is able to resize the sidebar
 
 
-        @regression @odc-6361
+        @regression @ODC-6361
         Scenario: Change the route url with annotation: T-14-TC06
             Given user has created a deployment workload "nodejs-ex-2"
               And user is at Topology chart view
@@ -73,7 +73,7 @@ Feature: Sidebar in topology
              Then user can see the new route href in route decorator be "https://openshift.com"
 
 
-        @regression @odc-6361
+        @regression @ODC-6361
         Scenario: Removing route through annotations: T-14-TC07
             Given user has created a deployment workload "nodejs-ex-3"
               And user is at Topology chart view

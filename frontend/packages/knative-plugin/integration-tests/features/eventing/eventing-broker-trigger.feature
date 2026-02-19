@@ -7,7 +7,7 @@ Feature: Knative Eventing Broker and Trigger
             Given user has created or selected namespace "aut-broker-trigger"
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Multiple Subscriber in Add triger modal: KE-04-TC01
             Given user has created knative service "nodejs-ex-git"
               And user created Broker "broker-test1"

@@ -8,7 +8,7 @@ Feature: side bar details
               And user has created or selected namespace "aut-knative-side-pane-details"
 
 
-        @precondition
+        @pre-condition
         Scenario Outline: Create knative workload from Container Images on Add page: KN-05-TC04
             Given user is at Add page
               And user is at Deploy Image page

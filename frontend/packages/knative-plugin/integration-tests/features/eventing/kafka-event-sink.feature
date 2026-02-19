@@ -8,7 +8,7 @@ Feature: Kafka Event Sink
               And user has created or selected namespace "kafka-sink-aut-1"
 
 
-        @regression @odc-6741
+        @regression @ODC-6741
         Scenario: Create kafka sink by creating BootStrapServer and Topics: KS-01-TC01
             Given user is at Add page
               And user selects Event Sink card
@@ -21,9 +21,9 @@ Feature: Kafka Event Sink
               And user enters name as "kafka-sink-test3"
               And user clicks on Create button for kafkasink form
              Then user will see "kafka-sink-test3" created in topology
-        
-        
-        @regression @odc-6741
+
+
+        @regression @ODC-6741
         Scenario: Add kafka sink as Trigger to Broker: KS-01-TC02
             Given user has created Broker "broker-test1" in topology
               And user has created KafkaSink "kafka-sink-test3" in topology
@@ -38,7 +38,7 @@ Feature: Kafka Event Sink
              Then user will see connection between Broker and Subscriber
 
 
-        @regression @odc-6741
+        @regression @ODC-6741
         Scenario: Add kafka sink as Subscription to channel: KS-01-TC03
             Given user has created Channel "channel-test1" in topology
               And user has created KafkaSink "kafka-sink-test3" in topology
@@ -52,7 +52,7 @@ Feature: Kafka Event Sink
              Then user will see connection between Channel "channel-test1" and Subscriber "kafka-sink-test3"
 
 
-        @regression @odc-6741
+        @regression @ODC-6741
         Scenario: Sink Event Source with existing kafka sink: KE-01-TC04
             Given user has created knative service "nodejs-ex-git"
               And user has created Sink Binding event source "sink-binding" with knative resource "nodejs-ex-git"
@@ -65,7 +65,7 @@ Feature: Kafka Event Sink
              Then user will see that event source "sink-binding" is sinked with kafka sink "kafka-sink-test3"
 
 
-        @regression @odc-6741
+        @regression @ODC-6741
         Scenario: Delete kafka sink: KS-01-TC05
             Given user is at Topology page
               And user is at Topology Graph view
@@ -73,4 +73,3 @@ Feature: Kafka Event Sink
              When user selects "Delete KafkaSink" context menu option of kafka sink "kafka-sink-test3"
               And user clicks Delete button on Delete modal
              Then user will not see "kafka-sink-test3" in topology
-     

@@ -12,7 +12,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the Channel card on the Add page
 
 
-        @regression @odc-6359
+        @regression @ODC-6359
         Scenario: Yaml in Channel: KE-06-TC02
              When user navigates to Add page
               And user clicks on the Channel card
@@ -170,4 +170,3 @@ Feature: Knative Eventing Channel Support
               And user clicks on the "Delete Channel"
               And user clicks on the Delete button on the modal
              Then user will not see channel "channel-test"
-
