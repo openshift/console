@@ -48,4 +48,15 @@ module.exports = defineConfig({
     injectDocumentDomain: true,
     userAgent: 'ConsoleIntegrationTestEnvironment',
   },
+  /**
+   * @see https://docs.cypress.io/app/references/experiments#Strip-Minimum-CSP-Directives
+   */
+  experimentalCspAllowList: [
+    'script-src-elem',
+    'script-src',
+    'default-src',
+    'form-action',
+    'child-src',
+    'frame-src',
+  ],
 });
