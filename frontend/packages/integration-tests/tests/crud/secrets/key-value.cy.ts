@@ -157,4 +157,62 @@ data:
     secrets.detailsPageIsLoaded(tlsSecretName);
     secrets.checkKeyValueExist('keyfortest', 'valuefortest');
   });
+
+  it('Validate editing text field does not corrupt binary data (OCPBUGS-70273)', () => {
+    const mixedSecretName = `key-value-mixed-secret-${testName}`;
+    const textKey = 'textfield';
+    const textValue = 'original-password';
+    const updatedTextValue = 'updated-password';
+    const binaryKey = 'binaryfield';
+
+    // Create a secret with both text and binary data using CLI
+    cy.exec(
+      `oc create secret generic ${mixedSecretName} -n ${testName} --from-literal=${textKey}=${textValue} --from-file=${binaryKey}=${Cypress.config(
+        'fileServerFolder',
+      )}/fixtures/${binaryFilename}`,
+    );
+
+    // Capture the original binary data
+    cy.exec(
+      `oc get secret -n ${testName} ${mixedSecretName} --template '{{.data.${binaryKey}}}'`,
+    ).then((originalBinary) => {
+      // Edit the secret via the console
+      cy.visit(`/k8s/ns/${testName}/secrets/${mixedSecretName}`);
+      detailsPage.isLoaded();
+      detailsPage.clickPageActionFromDropdown('Edit Secret');
+
+      // Modify only the text field
+      cy.byTestID('secret-key')
+        .should('have.length', 2)
+        .each(($el) => {
+          if ($el.val() === textKey) {
+            // Find the corresponding value textarea and update it
+            cy.byLegacyTestID('file-input-textarea').first().clear().type(updatedTextValue);
+          }
+        });
+
+      // Verify binary field shows the binary alert (indicates it's still treated as binary)
+      cy.byTestID('file-input-binary-alert').should('exist');
+
+      secrets.save();
+      cy.byTestID('loading-indicator').should('not.exist');
+      detailsPage.isLoaded();
+
+      // Verify the text field was updated
+      secrets.clickRevealValues();
+      cy.byTestID('copy-to-clipboard').should('contain.text', updatedTextValue);
+
+      // Verify the binary data was NOT corrupted
+      cy.exec(
+        `oc get secret -n ${testName} ${mixedSecretName} --template '{{.data.${binaryKey}}}'`,
+      ).then((updatedBinary) => {
+        expect(updatedBinary.stdout).to.equal(originalBinary.stdout);
+      });
+
+      // Cleanup
+      cy.exec(`oc delete secret -n ${testName} ${mixedSecretName}`, {
+        failOnNonZeroExit: false,
+      });
+    });
+  });
 });

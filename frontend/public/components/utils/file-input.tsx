@@ -25,6 +25,8 @@ const MAX_UPLOAD_SIZE = 4000000;
 export interface DroppableFileInputProps {
   /** The content of the input file, either as a UTF-8 string or a base64-encoded string if the file is binary */
   inputFileData: string;
+  /** Whether inputFileData is base64-encoded (true) or UTF-8 text (false) */
+  isBase64Input?: boolean;
   /** Callback function invoked when the file content changes */
   onChange: (inputFileData: string, inputFileIsBinary: boolean) => void;
   /** Label for the file input field */
@@ -43,6 +45,7 @@ export interface DroppableFileInputProps {
 
 export const DroppableFileInput: FC<DroppableFileInputProps> = ({
   inputFileData,
+  isBase64Input = false,
   onChange,
   label,
   id,
@@ -54,7 +57,10 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
   const [filename, setFilename] = useState<string>('');
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>('');
   const [inputFileIsBinary, setInputFileIsBinary] = useState<boolean>(
-    isBinary(filename, Buffer.from(inputFileData)),
+    isBinary(
+      filename,
+      isBase64Input ? Buffer.from(inputFileData, 'base64') : Buffer.from(inputFileData),
+    ),
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
