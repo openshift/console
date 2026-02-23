@@ -218,9 +218,11 @@ export const getInfrastructureFeatures: AnnotationParser<
     onError,
   });
   const azureTokenAuthIsSupported =
-    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] !== 'false';
+    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] === 'true';
   const awsTokenAuthIsSupported =
-    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
+    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] === 'true';
+  const gcpTokenAuthIsSupported =
+    clusterIsGCPWIF && annotations[OLMAnnotation.TokenAuthGCP] === 'true';
   return [...parsedInfrastructureFeatures, ...Object.keys(annotations ?? {})].reduce(
     (supportedFeatures, key) => {
       const feature = infrastructureFeatureMap[key];
@@ -245,7 +247,7 @@ export const getInfrastructureFeatures: AnnotationParser<
         return tokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
       const resolveTokenAuthGCPFeature = () => {
-        return clusterIsGCPWIF ? includeFeature() : excludeFeature();
+        return gcpTokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
 
       switch (feature) {

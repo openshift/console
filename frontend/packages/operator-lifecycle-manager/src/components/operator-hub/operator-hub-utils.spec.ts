@@ -481,6 +481,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["tokenAuth"]',
+        [OLMAnnotation.TokenAuthAWS]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -493,6 +494,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["TokenAuth"]',
+        [OLMAnnotation.TokenAuthAWS]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -505,6 +507,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["tokenAuth"]',
+        [OLMAnnotation.TokenAuthAzure]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -517,6 +520,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["TokenAuth"]',
+        [OLMAnnotation.TokenAuthAzure]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -541,6 +545,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["tokenAuthGCP"]',
+        [OLMAnnotation.TokenAuthGCP]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -553,6 +558,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["TokenAuthGCP"]',
+        [OLMAnnotation.TokenAuthGCP]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -569,6 +575,96 @@ describe('getInfrastructureFeatures', () => {
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
     expect(result).toEqual([]);
+  });
+  it(`excludes token auth GCP feature when annotation is explicitly set to false`, () => {
+    const clusterIsAWSSTS = false;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = true;
+    const result = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.TokenAuthGCP]: 'false',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+  });
+  it(`excludes legacy token auth GCP feature when annotation is explicitly set to false on GCP WIF cluster`, () => {
+    const clusterIsAWSSTS = false;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = true;
+    const result = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.InfrastructureFeatures]: '["TokenAuthGCP"]',
+        [OLMAnnotation.TokenAuthGCP]: 'false',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+  });
+  it(`excludes token auth AWS feature when annotation is not present on AWS STS cluster`, () => {
+    const clusterIsAWSSTS = true;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = false;
+    const result = getInfrastructureFeatures(
+      {}, // No TokenAuthAWS annotation
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+    expect(result).not.toContain(InfrastructureFeature.TokenAuth);
+  });
+  it(`excludes token auth Azure feature when annotation is not present on Azure WIF cluster`, () => {
+    const clusterIsAWSSTS = false;
+    const clusterIsAzureWIF = true;
+    const clusterIsGCPWIF = false;
+    const result = getInfrastructureFeatures(
+      {}, // No TokenAuthAzure annotation
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+    expect(result).not.toContain(InfrastructureFeature.TokenAuth);
+  });
+  it(`excludes token auth GCP feature when annotation is not present on GCP WIF cluster`, () => {
+    const clusterIsAWSSTS = false;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = true;
+    const result = getInfrastructureFeatures(
+      {}, // No TokenAuthGCP annotation
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+    expect(result).not.toContain(InfrastructureFeature.TokenAuthGCP);
+  });
+  it(`requires explicit true annotation for all token auth providers (opt-in behavior)`, () => {
+    const clusterIsAWSSTS = true;
+    const clusterIsAzureWIF = true;
+    const clusterIsGCPWIF = true;
+    // Test with annotations missing
+    const resultMissing = getInfrastructureFeatures(
+      {},
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(resultMissing).toEqual([]);
+    // Test with annotations set to 'false'
+    const resultFalse = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.TokenAuthAWS]: 'false',
+        [OLMAnnotation.TokenAuthAzure]: 'false',
+        [OLMAnnotation.TokenAuthGCP]: 'false',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(resultFalse).toEqual([]);
+    // Test with annotations set to 'true' - only this should include features
+    const resultTrue = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.TokenAuthAWS]: 'true',
+        [OLMAnnotation.TokenAuthAzure]: 'true',
+        [OLMAnnotation.TokenAuthGCP]: 'true',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(resultTrue).toContain(InfrastructureFeature.TokenAuth);
+    expect(resultTrue).toContain(InfrastructureFeature.TokenAuthGCP);
   });
   it(`includes features defined by latest annotation format`, () => {
     const clusterIsAWSSTS = true;
