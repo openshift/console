@@ -68,6 +68,15 @@ export const newPluginCSPViolationEvent = (
   pluginName: pluginName || '',
 });
 
+/**
+ * Adds a {@link SecurityPolicyViolationEvent} to {@link window.windowError}
+ * so that Cypress tests will fail
+ */
+const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
+  const message = `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}, sourceFile=${event.sourceFile}`;
+  window.windowError = `${window.windowError ?? ''};${message}`;
+};
+
 export const useCSPViolationDetector = () => {
   const { t } = useTranslation();
   const toastContext = useToast();
@@ -84,9 +93,11 @@ export const useCSPViolationDetector = () => {
   );
 
   const reportViolation = useCallback(
-    (event) => {
+    (event: SecurityPolicyViolationEvent) => {
       // eslint-disable-next-line no-console
       console.warn('Content Security Policy violation detected', event);
+
+      reportCSPViolationToCypress(event);
 
       // Attempt to infer Console plugin name from SecurityPolicyViolation event
       const pluginName =
