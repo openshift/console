@@ -68,7 +68,7 @@ declare interface Window {
     }[];
   };
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
-  /** (OCPBUGS-46415) Do not override this string! To add new errors please append to windowError if it exists */
+  /** (OCPBUGS-46415) Do not override this string! To add new errors, append to `windowError` if it exists */
   windowError?: string;
   /** i18next instance, only available in development builds for debugging */
   i18n?: {};

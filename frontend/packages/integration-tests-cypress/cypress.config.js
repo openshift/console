@@ -1,8 +1,8 @@
 const { defineConfig } = require('cypress');
+const commonConfig = require('./cypress-common-config');
 
 module.exports = defineConfig({
-  viewportWidth: 1920,
-  viewportHeight: 1080,
+  ...commonConfig,
   screenshotsFolder: '../../gui_test_screenshots/cypress/screenshots',
   videosFolder: '../../gui_test_screenshots/cypress/videos',
   video: true,
@@ -30,15 +30,4 @@ module.exports = defineConfig({
     injectDocumentDomain: true,
     userAgent: 'ConsoleIntegrationTestEnvironment',
   },
-  /**
-   * @see https://docs.cypress.io/app/references/experiments#Strip-Minimum-CSP-Directives
-   */
-  experimentalCspAllowList: [
-    'script-src-elem',
-    'script-src',
-    'default-src',
-    'form-action',
-    'child-src',
-    'frame-src',
-  ],
 });
