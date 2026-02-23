@@ -12,6 +12,7 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useLocalStorageCache } from '@console/shared/src/hooks/useLocalStorageCache';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { addTestError } from '@console/shared/src/utils/test-errors';
 
 const CSP_VIOLATION_EXPIRATION = ONE_DAY;
 const LOCAL_STORAGE_CSP_VIOLATIONS_KEY = 'console/csp_violations';
@@ -30,12 +31,6 @@ const sameHostname = (a: string, b: string): boolean => {
   return urlA.hostname === urlB.hostname;
 };
 
-// CSP violation records are considered equal if the following properties match:
-// - pluginName
-// - effectiveDirective
-// - sourceFile
-// - documentURI
-// - blockedURI hostname
 const pluginCSPViolationsAreEqual = (
   a: PluginCSPViolationEvent,
   b: PluginCSPViolationEvent,
@@ -69,12 +64,12 @@ export const newPluginCSPViolationEvent = (
 });
 
 /**
- * Adds a {@link SecurityPolicyViolationEvent} to {@link window.windowError}
- * so that Cypress tests will fail
+ * Report CSP violation event for Cypress test purposes.
  */
 const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
-  const message = `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}, sourceFile=${event.sourceFile}`;
-  window.windowError = `${window.windowError ?? ''};${message}`;
+  addTestError(
+    `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}`,
+  );
 };
 
 export const useCSPViolationDetector = () => {
