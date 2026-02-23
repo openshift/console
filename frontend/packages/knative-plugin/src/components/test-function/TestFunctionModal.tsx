@@ -85,7 +85,6 @@ const TestFunctionModal: FC<Props> = (props) => {
       header={header}
       className="kn-test-sf-modal"
       onClose={close}
-      position="top"
       footer={footer}
       data-test="test-serverless-function"
     >

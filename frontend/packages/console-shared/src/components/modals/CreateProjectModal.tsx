@@ -1,6 +1,17 @@
 import { useState, useCallback } from 'react';
-import { Button, Alert, ContentVariants, Content } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Button,
+  ContentVariants,
+  Content,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  TextArea,
+  TextInput,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -20,6 +31,7 @@ import { resourceObjPath } from '@console/internal/components/utils/resource-lin
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { FLAGS } from '@console/shared/src/constants/common';
 import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
@@ -101,35 +113,15 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   return (
     <Modal
       variant={ModalVariant.small}
-      title={t('console-shared~Create Project')}
       isOpen
       onClose={closeModal}
-      actions={[
-        <Button
-          type="submit"
-          variant="primary"
-          isDisabled={inProgress}
-          isLoading={inProgress}
-          onClick={submit}
-          data-test="confirm-action"
-          key="confirm-action"
-          id="confirm-action"
-        >
-          {t('console-shared~Create')}
-        </Button>,
-        <Button
-          type="button"
-          variant="link"
-          disabled={inProgress}
-          onClick={closeModal}
-          data-test-id="modal-cancel-action"
-          key="cancel-action"
-        >
-          {t('console-shared~Cancel')}
-        </Button>,
-      ]}
+      aria-labelledby="create-project-modal-title"
     >
-      <form onSubmit={submit} name="form" className="modal-content">
+      <ModalHeader
+        title={t('console-shared~Create Project')}
+        labelId="create-project-modal-title"
+      />
+      <ModalBody>
         <Content component={ContentVariants.p}>
           {t(
             'console-shared~An OpenShift project is an alternative representation of a Kubernetes namespace.',
@@ -142,75 +134,78 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
             </ExternalLink>
           </Content>
         )}
-        <div className="form-group">
-          <label htmlFor="input-name" className="co-required">
-            {t('console-shared~Name')}
-          </label>{' '}
-          <FieldLevelHelp>
-            <Content component={ContentVariants.p}>
-              {t(
-                "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
-              )}
-            </Content>
-            <Content component={ContentVariants.p}>
-              {t(
-                "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
-              )}
-            </Content>
-          </FieldLevelHelp>
-          <div className="modal-body__field">
-            <span className="pf-v6-c-form-control">
-              <input
-                id="input-name"
-                data-test="input-name"
-                name="name"
-                type="text"
-                onChange={(e) => setName(e.target.value)}
-                value={name || ''}
-                required
-              />
-            </span>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="input-display-name">{t('console-shared~Display name')}</label>
-          <div className="modal-body__field">
-            <span className="pf-v6-c-form-control">
-              <input
-                id="input-display-name"
-                name="displayName"
-                type="text"
-                onChange={(e) => setDisplayName(e.target.value)}
-                value={displayName || ''}
-              />
-            </span>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="input-description">{t('console-shared~Description')}</label>
-          <div className="modal-body__field">
-            <span className="pf-v6-c-form-control pf-m-resize-vertical">
-              <textarea
-                id="input-description"
-                name="description"
-                onChange={(e) => setDescription(e.target.value)}
-                value={description || ''}
-              />
-            </span>
-          </div>
-        </div>
-        {errorMessage && (
-          <Alert
-            isInline
-            className="co-alert co-alert--scrollable"
-            variant="danger"
-            title={t('console-shared~An error occurred')}
-            data-test="alert-error"
+        <Form onSubmit={submit} id="create-project-form">
+          <FormGroup
+            label={t('console-shared~Name')}
+            isRequired
+            fieldId="input-name"
+            labelHelp={
+              <FieldLevelHelp>
+                <Content component={ContentVariants.p}>
+                  {t(
+                    "console-shared~A Project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+                  )}
+                </Content>
+                <Content component={ContentVariants.p}>
+                  {t(
+                    "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+                  )}
+                </Content>
+              </FieldLevelHelp>
+            }
           >
-            <div className="co-pre-line">{errorMessage}</div>
-          </Alert>
-        )}
-      </form>
+            <TextInput
+              id="input-name"
+              data-test="input-name"
+              name="name"
+              type="text"
+              onChange={(_event, value) => setName(value)}
+              value={name}
+              isRequired
+            />
+          </FormGroup>
+          <FormGroup label={t('console-shared~Display name')} fieldId="input-display-name">
+            <TextInput
+              id="input-display-name"
+              name="displayName"
+              type="text"
+              onChange={(_event, value) => setDisplayName(value)}
+              value={displayName}
+            />
+          </FormGroup>
+          <FormGroup label={t('console-shared~Description')} fieldId="input-description">
+            <TextArea
+              id="input-description"
+              name="description"
+              onChange={(_event, value) => setDescription(value)}
+              value={description}
+              resizeOrientation="vertical"
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isDisabled={inProgress}
+          isLoading={inProgress}
+          form="create-project-form"
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('console-shared~Create')}
+        </Button>
+        <Button
+          type="button"
+          variant="link"
+          isDisabled={inProgress}
+          onClick={closeModal}
+          data-test-id="modal-cancel-action"
+        >
+          {t('console-shared~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };
