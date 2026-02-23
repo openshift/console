@@ -1,9 +1,4 @@
-const crypto = require('crypto');
 const { defineConfig } = require('cypress');
-// A workaround fix for the breaking change in Node.js v18 due to the change in hashing algorithm.
-// This code change override the default webpack v4 default hashing algorithm -"md4".
-// This change can be remove when console UI update webpack to version 5 in the future.
-const hash = crypto.createHash;
 
 module.exports = defineConfig({
   defaultCommandTimeout: 40000,
@@ -35,9 +30,6 @@ module.exports = defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      Object.assign(crypto, {
-        createHash: () => hash('sha256'),
-      });
       // eslint-disable-next-line global-require
       return require('./../../dev-console/integration-tests/plugins/index.js')(on, config);
     },
