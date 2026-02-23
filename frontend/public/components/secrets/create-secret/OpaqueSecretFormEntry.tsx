@@ -62,13 +62,13 @@ export const OpaqueSecretFormEntry: FCC<OpaqueSecretFormEntryProps> = ({
       </FormGroup>
       <DroppableFileInput
         onChange={handleValueChange}
-        inputFileData={Base64.decode(entry.value)}
+        inputFileData={entry.isBinary_ ? entry.value : Base64.decode(entry.value)}
+        isBase64Input={entry.isBinary_}
         id={`${key}-value`}
         label={t('public~Value')}
-        inputFieldHelpText={t(
+        textareaFieldHelpText={t(
           'public~Drag and drop file with your value here or browse to upload it.',
         )}
-        inputFileIsBinary={entry.isBinary_}
       />
     </FormFieldGroup>
   );
