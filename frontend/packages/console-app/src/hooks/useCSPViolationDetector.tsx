@@ -74,7 +74,7 @@ export const newPluginCSPViolationEvent = (
  */
 const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
   const message = `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}, sourceFile=${event.sourceFile}`;
-  window.windowError = `${window.windowError ?? ''};${message}`;
+  window.windowError += `;${message}`;
 };
 
 export const useCSPViolationDetector = () => {

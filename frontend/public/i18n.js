@@ -104,7 +104,7 @@ export const init = () => {
       saveMissing: true,
       missingKeyHandler: function (lng, ns, key) {
         const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}".`;
-        window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
+        window.windowError += `;${formattedMessage}`;
         // eslint-disable-next-line no-console
         console.error(formattedMessage);
       },

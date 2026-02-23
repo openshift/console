@@ -108,7 +108,7 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
           // eslint-disable-next-line no-console
           console.error(..._.compact([errorMessage, errorCause]));
-          window.windowError = `${window.windowError ?? ''};${errorMessage}: ${String(errorCause)}`;
+          window.windowError += `;${errorMessage}: ${String(errorCause)}`;
         });
       });
 
