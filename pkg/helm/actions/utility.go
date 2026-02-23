@@ -129,7 +129,10 @@ func getChartInfoFromChartUrl(
 			}
 		}
 	}
-	return nil, fmt.Errorf("could not find a repository for the chart url %q in namespace %q", chartUrl, namespace)
+	klog.Infof("Could not find a repository for the chart url %q in namespace %q, proceeding without repository authentication", chartUrl, namespace)
+	return &ChartInfo{
+		Version: chartVersionFromURL(chartUrl),
+	}, nil
 }
 
 // getRepositoryConnectionConfig returns the connection configuration for the
