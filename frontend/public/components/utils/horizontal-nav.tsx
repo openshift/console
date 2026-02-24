@@ -1,5 +1,5 @@
 import type { ComponentType, FC, ReactNode } from 'react';
-import { PureComponent, useContext, memo, useMemo, Suspense } from 'react';
+import { PureComponent, useContext, memo, useMemo, Suspense, lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
 import * as _ from 'lodash';
 /* eslint-disable import/named */
@@ -35,6 +35,19 @@ import {
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+
+const LazyDynamicTab: FC<{ component: CodeRef<React.ComponentType> }> = ({ component }) => {
+  const LazyComponent = useMemo(
+    () =>
+      lazy(async () => {
+        const Component = await component();
+        return { default: Component };
+      }),
+    [component],
+  );
+  return <LazyComponent />;
+};
 
 export const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -301,9 +314,7 @@ export const HorizontalNav = memo((props: HorizontalNavProps) => {
       )
       .map((tab) => ({
         ...tab.properties.page,
-        component: (pageProps: PageComponentProps) => (
-          <AsyncComponent {...pageProps} loader={tab.properties.component} />
-        ),
+        component: () => <LazyDynamicTab component={tab.properties.component} />,
       }));
 
     const resolvedNavTab = navTabExtensions
@@ -311,9 +322,7 @@ export const HorizontalNav = memo((props: HorizontalNavProps) => {
       .map((tab) => ({
         name: tab.properties.name,
         href: tab.properties.href,
-        component: (pageProps: PageComponentProps) => (
-          <AsyncComponent {...pageProps} loader={tab.properties.component} />
-        ),
+        component: () => <LazyDynamicTab component={tab.properties.component} />,
       }));
 
     return [...resolvedResourceNavTab, ...resolvedNavTab].sort((a, b) =>
