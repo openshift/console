@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalVariant } from '@patternfly/react-core';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
-import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
-const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeModal }) => (
-  <Modal isOpen onClose={closeModal} variant={ModalVariant.medium}>
+const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeOverlay }) => (
+  <Modal isOpen onClose={closeOverlay} variant={ModalVariant.medium}>
     <ModalHeader title={title} />
     <ModalBody>
       <CopyToClipboard key={snippet} value={snippet} />
@@ -14,14 +14,14 @@ const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeModal }) =
 );
 
 export const useCopyCodeModal: UseCopyCodeModal = (title, snippet) => {
-  const launcher = useModal();
-  return useCallback(() => (snippet ? launcher(CopyCodeModal, { title, snippet }) : null), [
-    launcher,
+  const launchModal = useOverlay();
+  return useCallback(() => (snippet ? launchModal(CopyCodeModal, { title, snippet }) : null), [
+    launchModal,
     snippet,
     title,
   ]);
 };
 
 type CopyCodeModalProps = { title: string; snippet: string };
-type CopyCodeModalComponent = ModalComponent<CopyCodeModalProps>;
+type CopyCodeModalComponent = OverlayComponent<CopyCodeModalProps>;
 type UseCopyCodeModal = (title: string, snippet: string) => () => void;

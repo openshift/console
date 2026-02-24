@@ -2,22 +2,18 @@ import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button, Form, Modal, ModalBody, ModalHeader } from '@patternfly/react-core';
 
 import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalComponentProps,
-  ModalWrapper,
-} from '../factory/modal';
+import { ModalComponentProps } from '../factory/modal';
 import { NameValueEditorPair } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -72,28 +68,46 @@ export const TagsModal = (props: TagsModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} className="modal-content">
-      <ModalTitle>{t(props.titleKey)}</ModalTitle>
+    <>
       <ModalBody>
-        <NameValueEditorComponent
-          nameValuePairs={tags}
-          submit={submit}
-          updateParentData={({ nameValuePairs }) => setTags(nameValuePairs)}
-        />
+        <Form onSubmit={submit} id="tags-modal-form">
+          <NameValueEditorComponent
+            nameValuePairs={tags}
+            submit={submit}
+            updateParentData={({ nameValuePairs }) => setTags(nameValuePairs)}
+          />
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        submitText={t('public~Save')}
-        submitDisabled={stale}
-        cancel={props.cancel}
+      <ModalFooterWithAlerts
         errorMessage={errorMessage || localErrorMessage}
         message={
           stale
             ? t('public~Annotations have been updated. Click Cancel and reapply your changes.')
             : undefined
         }
-        inProgress={inProgress}
-      />
-    </form>
+      >
+        <Button
+          type="submit"
+          variant="primary"
+          isDisabled={stale || inProgress}
+          isLoading={inProgress}
+          form="tags-modal-form"
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button
+          type="button"
+          variant="link"
+          isDisabled={inProgress}
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+        >
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -107,11 +121,15 @@ export const AnnotationsModal: FC<AnnotationsModalProps> = (props) => (
   />
 );
 
-export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
-    <AnnotationsModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-  </ModalWrapper>
-);
+export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <Modal variant="small" isOpen onClose={props.closeOverlay}>
+      <ModalHeader title={t('public~Edit annotations')} />
+      <AnnotationsModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </Modal>
+  );
+};
 
 TagsModal.displayName = 'TagsModal';
 

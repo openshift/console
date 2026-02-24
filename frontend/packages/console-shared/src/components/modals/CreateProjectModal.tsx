@@ -20,6 +20,7 @@ import type {
   CreateProjectModalProps,
 } from '@console/dynamic-plugin-sdk/src';
 import { isCreateProjectModal, useResolvedExtensions } from '@console/dynamic-plugin-sdk/src';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { setFlag } from '@console/internal/actions/flags';
 import {
   documentationURLs,
@@ -33,10 +34,9 @@ import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { FLAGS } from '@console/shared/src/constants/common';
-import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
-const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
-  closeModal,
+const DefaultCreateProjectModal: OverlayComponent<CreateProjectModalProps> = ({
+  closeOverlay,
   onSubmit,
 }) => {
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
     event.preventDefault();
     handlePromise(createProject())
       .then((obj) => {
-        closeModal();
+        closeOverlay();
         if (onSubmit) {
           onSubmit(obj);
         } else {
@@ -111,7 +111,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   const projectsURL = getDocumentationURL(documentationURLs.workingWithProjects);
 
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={closeModal}>
+    <Modal variant={ModalVariant.small} isOpen onClose={closeOverlay}>
       <ModalHeader title={t('console-shared~Create Project')} />
       <ModalBody>
         <Content component={ContentVariants.p}>
@@ -192,7 +192,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
           type="button"
           variant="link"
           isDisabled={inProgress}
-          onClick={closeModal}
+          onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
           {t('console-shared~Cancel')}
@@ -202,7 +202,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   );
 };
 
-export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = (props) => {
+export const CreateProjectModal: OverlayComponent<CreateProjectModalProps> = (props) => {
   // Get create project modal extensions
   const [createProjectModalExtensions, resolved] = useResolvedExtensions<
     CreateProjectModalExtension
@@ -217,5 +217,10 @@ export const CreateProjectModal: ModalComponent<CreateProjectModalProps> = (prop
   }
 
   // If extension modal component exists, render it, else render default
-  return Component ? <Component {...props} /> : <DefaultCreateProjectModal {...props} />;
+  // Pass closeModal as an alias for closeOverlay for backward compatibility with extensions
+  return Component ? (
+    <Component {...props} closeModal={props.closeOverlay} />
+  ) : (
+    <DefaultCreateProjectModal {...props} />
+  );
 };

@@ -20,7 +20,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import type { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
-import type { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { SelectorInput } from '@console/internal/components/utils/selector-input';
@@ -39,8 +39,8 @@ const defaultDeny = {
   },
 };
 
-export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
-  closeModal,
+export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = ({
+  closeOverlay,
   onSubmit,
 }) => {
   const { t } = useTranslation();
@@ -99,7 +99,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
     event.preventDefault();
     handlePromise(create())
       .then((obj) => {
-        closeModal();
+        closeOverlay();
         if (onSubmit) {
           onSubmit(obj);
         } else {
@@ -154,7 +154,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
   );
 
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={closeModal}>
+    <Modal variant={ModalVariant.small} isOpen onClose={closeOverlay}>
       <ModalHeader title={t('console-shared~Create Namespace')} />
       <ModalBody>
         <Form onSubmit={submit} id="create-namespace-form">
@@ -228,7 +228,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
           type="button"
           variant="link"
           isDisabled={inProgress}
-          onClick={closeModal}
+          onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
           {t('console-shared~Cancel')}
