@@ -98,7 +98,7 @@ export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
         label: i18next.t('console-app~Remove HorizontalPodAutoscaler'),
         insertBefore: 'delete-pdb',
         cta: () => {
-          launchOverlay(LazyDeleteHPAModalOverlay, {
+          launchModal(LazyDeleteHPAModalOverlay, {
             workload: resource,
             hpa: relatedHPAs[0],
           });
