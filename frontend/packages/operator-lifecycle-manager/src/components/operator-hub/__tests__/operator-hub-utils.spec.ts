@@ -481,6 +481,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["tokenAuth"]',
+        [OLMAnnotation.TokenAuthAWS]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -493,6 +494,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["TokenAuth"]',
+        [OLMAnnotation.TokenAuthAWS]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -505,6 +507,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["tokenAuth"]',
+        [OLMAnnotation.TokenAuthAzure]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -517,6 +520,7 @@ describe('getInfrastructureFeatures', () => {
     const result = getInfrastructureFeatures(
       {
         [OLMAnnotation.InfrastructureFeatures]: '["TokenAuth"]',
+        [OLMAnnotation.TokenAuthAzure]: 'true',
       },
       { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
     );
@@ -614,6 +618,30 @@ describe('getInfrastructureFeatures', () => {
       [OLMAnnotation.Disconnected]: 'false',
     });
     expect(result).toEqual([InfrastructureFeature.FIPSMode]);
+  });
+  it(`excludes TokenAuth when token-auth-aws is explicitly false on AWS STS cluster`, () => {
+    const clusterIsAWSSTS = true;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = false;
+    const result = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.TokenAuthAWS]: 'false',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([]);
+  });
+  it(`excludes TokenAuth when token-auth-aws annotation is missing on AWS STS cluster`, () => {
+    const clusterIsAWSSTS = true;
+    const clusterIsAzureWIF = false;
+    const clusterIsGCPWIF = false;
+    const result = getInfrastructureFeatures(
+      {
+        [OLMAnnotation.Disconnected]: 'true',
+      },
+      { clusterIsAWSSTS, clusterIsAzureWIF, clusterIsGCPWIF },
+    );
+    expect(result).toEqual([InfrastructureFeature.Disconnected]);
   });
   it(`returns empty array when ${OLMAnnotation.InfrastructureFeatures} is empty`, () => {
     const result = getInfrastructureFeatures({
