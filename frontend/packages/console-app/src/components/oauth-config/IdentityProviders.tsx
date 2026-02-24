@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import type { RemoveIdentityProvider } from '@console/internal/components/modals/remove-idp-modal';
@@ -13,13 +13,13 @@ import type { IdentityProvider, OAuthKind } from '@console/internal/module/k8s';
 
 export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProviders, obj }) => {
   const { t } = useTranslation();
-  const launcher = useModal();
+  const launchModal = useOverlay();
   const groupVersionKind = getGroupVersionKindForResource(obj);
   const [model] = useK8sModel(groupVersionKind);
-  const launchModal = useCallback(
+  const openRemoveModal = useCallback(
     (index, name, type) => {
       if (obj && model) {
-        launcher<RemoveIdentityProvider>(RemoveIdentityProviderModal, {
+        launchModal<RemoveIdentityProvider>(RemoveIdentityProviderModal, {
           obj,
           model,
           index,
@@ -28,7 +28,7 @@ export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProvider
         });
       }
     },
-    [launcher, model, obj],
+    [launchModal, model, obj],
   );
 
   return _.isEmpty(identityProviders) ? (
@@ -60,7 +60,7 @@ export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProvider
                   options={[
                     {
                       label: t('console-app~Remove identity provider'),
-                      callback: () => launchModal(index, idp.name, idp.type),
+                      callback: () => openRemoveModal(index, idp.name, idp.type),
                     },
                   ]}
                 />
