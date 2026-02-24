@@ -405,40 +405,48 @@ func TestInstallChartAsync(t *testing.T) {
 
 func TestInstallChartFromURL(t *testing.T) {
 	tests := []struct {
+		testName      string
 		releaseName   string
 		chartPath     string
 		chartName     string
 		chartVersion  string
 		plainHTTP     bool
 		skipTLSVerify bool
+		expectError   bool
 	}{
 		{
+			testName:      "valid HTTP chart URL",
 			releaseName:   "valid-chart-path",
 			chartPath:     "http://localhost:9181/charts/influxdb-3.0.2.tgz",
 			chartName:     "influxdb",
 			chartVersion:  "3.0.2",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   false,
 		},
 		{
+			testName:      "valid OCI chart URL",
 			releaseName:   "valid-chart-path",
 			chartPath:     "oci://localhost:5000/helm-charts/mychart:0.1.0",
 			chartName:     "mychart",
 			chartVersion:  "0.1.0",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   false,
 		},
 		{
+			testName:      "invalid chart URL rejected synchronously",
 			releaseName:   "invalid-chart-path",
 			chartPath:     "http://localhost:9181/charts/influxdb/filename",
 			chartName:     "influxdb",
 			chartVersion:  "3.0.1",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   true,
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.releaseName, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
@@ -454,17 +462,18 @@ func TestInstallChartFromURL(t *testing.T) {
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
 
-			var rel *v1.Secret
+			if tt.expectError {
+				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+				require.Error(t, err)
+				require.Nil(t, rel)
+				return
+			}
+
+			// For valid URLs: create the release secret in a background goroutine
+			// to simulate what Helm's cmd.Run would do, unblocking getSecret's Watch.
+			secretName := fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName)
 			go func() {
-				rel, err = InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
-				if tt.releaseName == "valid-chart-path" {
-					require.NoError(t, err)
-					require.Equal(t, fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), rel.ObjectMeta.Name)
-				} else if tt.releaseName == "invalid-chart-path" {
-					require.Error(t, err)
-				}
-			}()
-			if tt.releaseName == "valid-chart-path" {
+				time.Sleep(2 * time.Second)
 				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
 				r := release.Release{
 					Name:      tt.releaseName,
@@ -482,9 +491,44 @@ func TestInstallChartFromURL(t *testing.T) {
 						},
 					},
 				}
-				time.Sleep(10 * time.Second)
-				err = secretsDriver.Create(fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName), &r)
-				require.NoError(t, err)
+				secretsDriver.Create(secretName, &r)
+			}()
+
+			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+			require.NoError(t, err)
+			require.NotNil(t, rel)
+			require.Equal(t, secretName, rel.ObjectMeta.Name)
+		})
+	}
+}
+
+func TestIsValidChartURL(t *testing.T) {
+	tests := []struct {
+		name  string
+		url   string
+		valid bool
+	}{
+		// Valid URLs
+		{"valid OCI registry", "oci://ghcr.io/charts/mychart:1.0.0", true},
+		{"valid OCI with port", "oci://registry.example.com:5000/charts/mychart", true},
+		{"valid HTTPS tgz", "https://example.com/charts/mychart-1.0.0.tgz", true},
+		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz", true},
+		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz", true},
+
+		// OCI: too permissive
+		{"block bare OCI hostname", "oci://anything/chart", false},
+		{"block OCI no host", "oci:///chart", false},
+
+		// Invalid schemes/formats
+		{"block empty string", "", false},
+		{"block ftp scheme", "ftp://example.com/chart.tgz", false},
+		{"block http without tgz", "http://example.com/charts/mychart", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isValidChartURL(tt.url)
+			if got != tt.valid {
+				t.Errorf("isValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
 			}
 		})
 	}

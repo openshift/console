@@ -21,6 +21,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
   dirty,
   values,
   setFieldValue,
+  setFieldError,
 }) => {
   const { t } = useTranslation();
 
@@ -32,8 +33,8 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     let url: URL;
     try {
       url = new URL(values.chartURL);
-    } catch (error) {
-      console.error(`Invalid chart URL: ${values.chartURL}`, error); // eslint-disable-line no-console
+    } catch {
+      setFieldError('chartURL', t('helm-plugin~Invalid chart URL format'));
       return;
     }
     const scheme = url.protocol;
@@ -62,7 +63,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     if (chartVersion) {
       setFieldValue('chartVersion', chartVersion);
     }
-  }, [values.chartURL, setFieldValue]);
+  }, [values.chartURL, setFieldValue, setFieldError, t]);
 
   return (
     <FlexForm

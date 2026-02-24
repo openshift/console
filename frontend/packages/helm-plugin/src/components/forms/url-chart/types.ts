@@ -10,7 +10,7 @@ export interface HelmURLChartFormData {
 
 export interface HelmURLInstallFormData extends HelmURLChartFormData {
   yamlData: string;
-  formData: any;
+  formData: Record<string, unknown>;
   formSchema: JSONSchema7;
   editorType: EditorType;
   chartReadme: string;

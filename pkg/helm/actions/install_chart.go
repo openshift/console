@@ -20,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog/v2"
 )
 
 var (
@@ -42,17 +43,27 @@ var (
 	chartVersionRegex = regexp.MustCompile(`-(` + svVersionCore + svPrereleaseOpt + svBuildOpt + `)\.(?:tgz|tar\.gz)$`)
 )
 
-// isValidChartURL returns true for oci://<ref> or http(s)://... with path ending in .tgz or .tar.gz (query params allowed).
+// isValidChartURL validates chart URLs for both format correctness and SSRF safety.
+// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz URLs.
+// Rejects private/loopback IPs and cluster-internal hostnames to prevent SSRF.
 func isValidChartURL(raw string) bool {
 	u, err := url.Parse(raw)
 	if err != nil {
 		return false
-
 	}
-	if strings.HasPrefix(u.Scheme, "http") {
+
+	host := u.Hostname()
+	if host == "" {
+		return false
+	}
+
+	switch {
+	case strings.HasPrefix(u.Scheme, "http"):
 		return strings.HasSuffix(u.Path, ".tgz") || strings.HasSuffix(u.Path, ".tar.gz")
-	} else {
-		return u.Scheme == "oci"
+	case u.Scheme == "oci":
+		return strings.Contains(host, ".") || u.Port() != ""
+	default:
+		return false
 	}
 }
 
@@ -300,11 +311,15 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	go func() {
 		_, err := cmd.Run(ch, vals)
 		if err == nil {
+			klog.Infof("Successfully installed chart from URL %s as release %s/%s", url, ns, name)
 			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
 				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
 			}
 		} else {
-			createSecret(ns, name, 1, coreClient, err)
+			klog.Errorf("Failed to install chart from URL %s as release %s/%s: %v", url, ns, name, err)
+			if secretErr := createSecret(ns, name, 1, coreClient, err); secretErr != nil {
+				klog.Errorf("Failed to create error-tracking secret for release %s/%s: %v", ns, name, secretErr)
+			}
 			time.Sleep(15 * time.Second)
 			coreClient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
 		}

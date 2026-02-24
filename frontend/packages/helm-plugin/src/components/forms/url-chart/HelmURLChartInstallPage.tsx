@@ -51,7 +51,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
   const [isLoadingChart, setIsLoadingChart] = useState<boolean>(false);
 
   const [initialYamlData, setInitialYamlData] = useState<string>('');
-  const [initialFormData, setInitialFormData] = useState<object>();
+  const [initialFormData, setInitialFormData] = useState<Record<string, unknown>>();
   const [initialFormSchema, setInitialFormSchema] = useState<JSONSchema7>();
 
   // Store chart details from step 1
@@ -79,7 +79,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
 
       setInitialYamlData(valuesYAML);
-      setInitialFormData(valuesJSON);
+      setInitialFormData(valuesJSON as Record<string, unknown>);
       setInitialFormSchema(valuesSchema);
       setChartHasValues(!!valuesYAML);
       setChartData(chart);
