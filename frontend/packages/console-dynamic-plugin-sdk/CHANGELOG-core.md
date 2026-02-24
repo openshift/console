@@ -12,6 +12,7 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.2 - TBD
 
+- **Breaking**: Changed `AlertAction` extension to use `LaunchOverlay` instead of `LaunchModal`. The `action` callback parameter is now typed as `LaunchOverlay`, which does not support the optional `id` parameter that `LaunchModal` had. Plugins implementing `console.alert-action` extensions must update their action callbacks accordingly. ([CONSOLE-4447])
 - **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
 - **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])

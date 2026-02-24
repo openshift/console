@@ -2,12 +2,11 @@ import { useMemo } from 'react';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { Action, K8sModel } from '@console/dynamic-plugin-sdk';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { deleteResourceModal } from '@console/shared';
+import { useDeleteModal } from '@console/shared/src/hooks/useDeleteModal';
 import { ApplicationModel } from '@console/topology/src/models';
 import { cleanUpWorkload } from '@console/topology/src/utils';
 
@@ -44,20 +43,17 @@ export const useDeleteResourceAction = (
   obj: K8sResourceKind,
 ): Action => {
   const { t } = useTranslation();
-  const launchModal = useOverlay();
+  const launchDeleteModal = useDeleteModal(obj, undefined, undefined, undefined, () =>
+    cleanUpWorkload(obj),
+  );
 
   return useMemo(
     () => ({
       id: `delete-resource`,
       label: t('devconsole~Delete {{kind}}', { kind: kind?.kind }),
-      cta: () =>
-        launchModal(LazyDeleteModalOverlay, {
-          kind,
-          resource: obj,
-          deleteAllResources: () => cleanUpWorkload(obj),
-        }),
+      cta: launchDeleteModal,
       accessReview: asAccessReview(kind as K8sModel, obj, 'delete'),
     }),
-    [t, kind, obj, launchModal],
+    [t, kind, obj, launchDeleteModal],
   );
 };
