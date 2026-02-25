@@ -13,7 +13,6 @@ export {
 } from './consts';
 
 // Components
-export { errorStatus, Status } from './status';
 export const Area = (props) => (
   <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Area)} {...props} />
 );
