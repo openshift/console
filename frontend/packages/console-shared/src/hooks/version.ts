@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterVersionModel } from '@console/internal/models';
-import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
-import { getFlagsObject } from '@console/internal/reducers/features';
-import { RootState } from '@console/internal/redux';
+import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
+import type { ClusterVersionKind } from '@console/internal/module/k8s/types';
 import { FLAGS } from '../constants';
-
-const getClusterVersionFlag = (state: RootState) => getFlagsObject(state)?.[FLAGS.CLUSTER_VERSION];
+import { useFlag } from './flag';
 
 export const useClusterVersion = (): ClusterVersionKind => {
-  const isClusterVersion = useSelector(getClusterVersionFlag);
+  const isClusterVersion = useFlag(FLAGS.CLUSTER_VERSION);
   const resource = isClusterVersion
     ? { kind: referenceForModel(ClusterVersionModel), name: 'version', isList: false }
     : null;

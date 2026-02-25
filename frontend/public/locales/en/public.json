@@ -378,6 +378,7 @@
   "{{readyReplicas}} of {{count}} machine_one": "{{readyReplicas}} of {{count}} machine",
   "{{readyReplicas}} of {{count}} machine_other": "{{readyReplicas}} of {{count}} machines",
   "Create {{objLabel}}": "Create {{objLabel}}",
+  "Edit {{objLabel}}": "Edit {{objLabel}}",
   "Terminating": "Terminating",
   "CrashLoopBackOff": "CrashLoopBackOff",
   "CronJob details": "CronJob details",
