@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
+import { Modal } from '@patternfly/react-core';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory';
-import { ModalWrapper } from '@console/internal/components/factory';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import SinkSource from './SinkSource';
 
@@ -17,13 +17,11 @@ const SinkSourceController: FC<SinkSourceControllerProps> = ({ source, ...props 
 
 type Props = SinkSourceControllerProps & ModalComponentProps;
 
-const SinkSourceModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <SinkSourceController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
-};
+const SinkSourceModalProvider: OverlayComponent<Props> = (props) => (
+  <Modal isOpen onClose={props.closeOverlay} variant="small">
+    <SinkSourceController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
+  </Modal>
+);
 
 export const useSinkSourceModalLauncher = (props: Props) => {
   const launcher = useOverlay();

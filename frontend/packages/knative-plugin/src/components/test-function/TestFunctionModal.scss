@@ -13,12 +13,6 @@
   padding-bottom: var(--pf-t--global--spacer--md);
 }
 
-.kn-test-sf-modal {
-  &__body {
-    padding-bottom: var(--pf-t--global--font--size--3xl);
-  }
-}
-
 .kn-test-sf-modal__editor {
   @media screen and (max-width: 768px) {
     margin-top: var(--pf-t--global--font--size--4xl);
@@ -27,14 +21,8 @@
   }
 }
 
-.kn-test-sf-modal-request {
-  &__advanced-settings {
-    margin-top: var(--pf-t--global--spacer--md);
-    margin-bottom: var(--pf-t--global--spacer--md);
-  }
-  &__custom-headers {
-    margin-top: var(--pf-t--global--spacer--xl);
-  }
+.kn-test-sf-modal-request__custom-headers {
+  margin-top: var(--pf-t--global--spacer--xl);
 }
 
 .kn-test-sf-modal-response {
@@ -53,7 +41,8 @@
 
 .header-section {
   color: var(--pf-t--global--text--color--regular);
-  border: var(--pf-t--global--border--width--divider--default) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--divider--default) solid
+    var(--pf-t--global--border--color--default);
   padding: var(--pf-t--global--spacer--md);
 }
 

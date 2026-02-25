@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from '@patternfly/react-core';
 import type { FormikHelpers, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -8,17 +8,10 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory';
-import {
-  ModalBody,
-  ModalFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '@console/internal/components/factory';
 import { resourceListPathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sKill, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
-import { RedExclamationCircleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { ConfigurationModel, RevisionModel, ServiceModel } from '../../models';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
@@ -90,11 +83,15 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
 
   if (revisions.length === 0) {
     return (
-      <form className="modal-content" onSubmit={close}>
-        <ModalTitle>
-          <RedExclamationCircleIcon className="co-icon-space-r" />
-          {t('knative-plugin~Unable to delete {{revlabel}}', { revlabel: RevisionModel.label })}
-        </ModalTitle>
+      <>
+        <ModalHeader
+          title={t('knative-plugin~Unable to delete {{revlabel}}', {
+            revlabel: RevisionModel.label,
+          })}
+          titleIconVariant="danger"
+          labelId="unable-delete-revision-modal-title"
+          data-test-id="modal-title"
+        />
         <ModalBody>
           <p>
             {t('knative-plugin~You cannot delete the last {{revlabel}} for the {{serviceLabel}}.', {
@@ -103,19 +100,17 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
             })}
           </p>
         </ModalBody>
-        <ModalFooter inProgress={false}>
-          <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
-            <Button
-              type="button"
-              variant="secondary"
-              data-test-id="modal-cancel-action"
-              onClick={close}
-            >
-              {t('knative-plugin~OK')}
-            </Button>
-          </ActionGroup>
+        <ModalFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            data-test-id="modal-cancel-action"
+            onClick={close}
+          >
+            {t('knative-plugin~OK')}
+          </Button>
         </ModalFooter>
-      </form>
+      </>
     );
   }
 
@@ -206,13 +201,13 @@ type Props = DeleteRevisionModalControllerProps & ModalComponentProps;
 
 const DeleteRevisionModalProvider: OverlayComponent<Props> = (props) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal isOpen onClose={props.closeOverlay} variant="small">
       <DeleteRevisionModalController
         cancel={props.closeOverlay}
         close={props.closeOverlay}
         {...props}
       />
-    </ModalWrapper>
+    </Modal>
   );
 };
 

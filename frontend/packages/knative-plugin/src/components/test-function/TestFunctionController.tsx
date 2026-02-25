@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
+import { Modal } from '@patternfly/react-core';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory';
-import { ModalWrapper } from '@console/internal/components/factory';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
@@ -39,9 +39,9 @@ type Props = TestFunctionControllerProps & ModalComponentProps;
 
 const TestFunctionModalProvider: OverlayComponent<Props> = (props) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal isOpen onClose={props.closeOverlay} variant="small">
       <TestFunctionController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </ModalWrapper>
+    </Modal>
   );
 };
 
