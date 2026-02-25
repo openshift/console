@@ -1,10 +1,16 @@
 import { render } from '@testing-library/react';
 import SinkPubsubModal from '../SinkPubsubModal';
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ModalTitle: jest.fn(() => null),
-  ModalBody: jest.fn(() => null),
-  ModalSubmitFooter: jest.fn(() => null),
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  ModalHeader: jest.fn(() => null),
+  ModalBody: jest.fn(({ children }) => <div>{children}</div>),
+  Button: jest.fn(() => null),
+  Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
+}));
+
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 jest.mock('@console/shared', () => ({

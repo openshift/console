@@ -78,7 +78,7 @@ export const deleteApplication = {
 };
 
 export const deleteRevision = {
-  verifyMessage: (message: string) => cy.get('form p').should('contain.text', message),
+  verifyMessage: (message: string) => cy.get('[role="dialog"] p').should('contain.text', message),
   clickOK: () => cy.byLegacyTestID('modal-cancel-action').click(),
 };
 
