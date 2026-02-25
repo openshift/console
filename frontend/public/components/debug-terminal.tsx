@@ -237,5 +237,5 @@ type DebugTerminalProps = {
 };
 
 type DebugTerminalPageProps = {
-  obj: PodKind;
+  obj?: PodKind;
 };

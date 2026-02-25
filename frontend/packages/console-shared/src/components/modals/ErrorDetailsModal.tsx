@@ -8,7 +8,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
+import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
 import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
 import { ClusterVersionKind } from '@console/internal/module/k8s/types';
@@ -56,7 +56,11 @@ export const ErrorDetailsModal: React.FC<ErrorDetailsModalProps> = ({ buttonProp
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} {...buttonProps}>
+      <Button
+        onClick={() => setOpen(true)}
+        data-test="error-details-modal-show-details"
+        {...buttonProps}
+      >
         {t('Show details')}
       </Button>
       <Modal variant={ModalVariant.large} isOpen={isOpen} onClose={() => setOpen(false)}>
