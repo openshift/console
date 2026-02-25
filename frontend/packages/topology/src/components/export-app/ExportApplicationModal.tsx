@@ -1,15 +1,16 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { lazy, useState, useEffect } from 'react';
 import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
+  ModalWrapper,
   ModalTitle,
   ModalBody,
   ModalFooter,
-  createModalLauncher,
 } from '@console/internal/components/factory/modal';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -239,30 +240,19 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   );
 };
 
-export const exportApplicationModal = createModalLauncher<ExportApplicationModalProps>(
-  ExportApplicationModal,
+export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (
+  props,
+) => (
+  <ModalWrapper blocking onClose={props.closeOverlay}>
+    <ExportApplicationModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </ModalWrapper>
 );
 
-export const handleExportApplication = async (
-  name: string,
-  namespace: string,
-  toast: ToastContextType,
-) => {
-  try {
-    const exportRes = await getExportResource(name, namespace);
-    exportApplicationModal({
-      name,
-      namespace,
-      exportResource: exportRes,
-      toast,
-    });
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.warn('Error while getting export resource:', err);
-    exportApplicationModal({
-      name,
-      namespace,
-      toast,
-    });
-  }
-};
+// Lazy-loaded OverlayComponent for Export Application Modal
+export const LazyExportApplicationModalOverlay = lazy(() =>
+  import('./ExportApplicationModal' /* webpackChunkName: "export-application-modal" */).then(
+    (m) => ({
+      default: m.ExportApplicationModalOverlay,
+    }),
+  ),
+);

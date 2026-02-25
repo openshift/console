@@ -2,6 +2,7 @@ import { isValidElement, memo } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useToast } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { resolvedHref } from '../../utils/add-page-utils';
@@ -24,6 +25,7 @@ const AddCardItem = memo<AddCardItemProps>(
     const fireTelemetryEvent = useTelemetry();
     const [showDetails] = useShowAddCardItemDetails();
     const toast = useToast();
+    const launchModal = useOverlay();
 
     const actionIcon = (): JSX.Element => {
       if (typeof icon === 'string') {
@@ -70,7 +72,7 @@ const AddCardItem = memo<AddCardItemProps>(
           if (href) {
             navigate(resolvedHref(href, namespace));
           } else if (callback) {
-            callback({ namespace, toast });
+            callback({ namespace, toast, launchModal });
           }
         }}
         className="odc-add-card-item"
