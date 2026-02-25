@@ -8,7 +8,7 @@ import { useFlag, useIsMobile, useToast } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
 import { ExportModel } from '../../models';
 import { getExportResource } from '../../utils/export-app-utils';
-import { LazyExportApplicationModalOverlay } from './ExportApplicationModal';
+import { ExportApplicationModalOverlay } from './ExportApplicationModal';
 
 type ExportApplicationProps = {
   namespace: string;
@@ -34,14 +34,14 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
   const handleClick = useCallback(async () => {
     try {
       const exportRes = await getExportResource(name, namespace);
-      launchModal(LazyExportApplicationModalOverlay, {
+      launchModal(ExportApplicationModalOverlay, {
         name,
         namespace,
         exportResource: exportRes,
         toast,
       });
     } catch {
-      launchModal(LazyExportApplicationModalOverlay, { name, namespace, toast });
+      launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
     }
   }, [launchModal, name, namespace, toast]);
 

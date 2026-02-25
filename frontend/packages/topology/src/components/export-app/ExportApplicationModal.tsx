@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { lazy, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
@@ -246,13 +246,4 @@ export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationMo
   <ModalWrapper blocking onClose={props.closeOverlay}>
     <ExportApplicationModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
   </ModalWrapper>
-);
-
-// Lazy-loaded OverlayComponent for Export Application Modal
-export const LazyExportApplicationModalOverlay = lazy(() =>
-  import('./ExportApplicationModal' /* webpackChunkName: "export-application-modal" */).then(
-    (m) => ({
-      default: m.ExportApplicationModalOverlay,
-    }),
-  ),
 );
