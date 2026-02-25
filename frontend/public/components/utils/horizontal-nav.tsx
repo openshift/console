@@ -193,7 +193,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
   const tabs = (
     <div>
       <Tabs activeKey={defaultPage ? '' : lastElement} component="nav" usePageInsets>
-        {pages.map(({ name, nameKey, href }) => {
+        {pages.map(({ name, nameKey, href, badge }) => {
           const to = `${baseURL.replace(/\/$/, '')}/${encodeURIComponent(href)}`;
 
           return (
@@ -206,7 +206,12 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
                 navigate(to);
               }}
               data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
-              title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
+              title={
+                <TabTitleText>
+                  {nameKey ? t(nameKey) : name}
+                  {badge && <> {badge}</>}
+                </TabTitleText>
+              }
               aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
             />
           );

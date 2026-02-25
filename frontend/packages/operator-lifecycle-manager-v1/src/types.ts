@@ -1,3 +1,37 @@
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
+
+export type ClusterExtensionKind = K8sResourceCommon & {
+  spec?: {
+    namespace?: string;
+    source?: {
+      catalog?: {
+        packageName?: string;
+        version?: string;
+        channels?: string[];
+        selector?: {
+          matchLabels?: Record<string, string>;
+        };
+      };
+    };
+    serviceAccount?: {
+      name?: string;
+    };
+  };
+  status?: {
+    conditions?: {
+      type: string;
+      status: string;
+      reason?: string;
+      message?: string;
+      lastTransitionTime?: string;
+    }[];
+    installedBundle?: {
+      name?: string;
+      version?: string;
+    };
+  };
+};
+
 export type OLMCatalogItem = {
   id: string;
   capabilities: string;
