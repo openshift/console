@@ -353,6 +353,7 @@
   "resolutions": {
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
+    "@types/lodash": "4.14.106",
     "@types/jest": "21.x",
     "dompurify": "3.2.7",
     "hosted-git-info": "^3.0.8",
