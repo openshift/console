@@ -15,5 +15,8 @@ export const useFormikValidationFix = (value: any) => {
     } else {
       validateForm();
     }
-  }, [memoizedValue, validateForm]);
+    // validateForm is a stable function from Formik context and doesn't need to be in deps.
+    // Including it can cause infinite re-render loops when field arrays change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memoizedValue]);
 };
