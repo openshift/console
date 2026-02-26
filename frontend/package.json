@@ -317,6 +317,7 @@
     "node": ">=22.x"
   },
   "resolutions": {
+    "@types/lodash": "4.14.106",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "hosted-git-info": "^3.0.8",
