@@ -26,11 +26,10 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ALL_NAMESPACES_KEY,
   NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
 } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { alphanumericCompare } from '@console/shared/src/utils';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
@@ -230,11 +229,8 @@ const NamespaceMenu: FC<{
   // Bookmarking / favorites (note in <= 4.8 this feature was known as bookmarking)
   const favoritesUserPreferenceKey = `${NAMESPACE_USERSETTINGS_PREFIX}.bookmarks`;
   const systemNamespacesSettingsKey = `${NAMESPACE_USERSETTINGS_PREFIX}.systemNamespace`;
-  const favoriteStorageKey = `${NAMESPACE_LOCAL_STORAGE_KEY}-bookmarks`;
-  const systemNamespaceKey = `${NAMESPACE_LOCAL_STORAGE_KEY}-systemNamespace`;
-  const [favorites, setFavorites] = useUserPreferenceCompatibility(
+  const [favorites, setFavorites] = useUserPreference(
     favoritesUserPreferenceKey,
-    favoriteStorageKey,
     undefined,
     true,
   );
@@ -281,9 +277,8 @@ const NamespaceMenu: FC<{
     [setFavorites],
   );
 
-  const [systemNamespaces, setSystemNamespaces] = useUserPreferenceCompatibility(
+  const [systemNamespaces, setSystemNamespaces] = useUserPreference(
     systemNamespacesSettingsKey,
-    systemNamespaceKey,
     false,
     true,
   );

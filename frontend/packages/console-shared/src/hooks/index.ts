@@ -18,7 +18,6 @@ export * from './csv-watch-hook';
 export * from './useTabbedTableBreadcrumb';
 export * from './flag';
 export * from './useUserPreference';
-export * from './useUserPreferenceCompatibility';
 export * from './hpa-hooks';
 export * from './usePinnedResources';
 export * from './perspective-utils';

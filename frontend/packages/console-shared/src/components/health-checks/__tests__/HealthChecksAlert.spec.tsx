@@ -4,8 +4,8 @@ import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { sampleDeployments } from '../../../utils/__tests__/test-resource-data';
 import HealthChecksAlert from '../HealthChecksAlert';
 
-jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
-  useUserPreferenceCompatibility: () => [[], jest.fn(), true],
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => [[], jest.fn(), true],
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({

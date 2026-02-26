@@ -8,13 +8,14 @@ export type WithUserPreferenceProps<T> = {
 
 /** @deprecated Use {@link useUserPreference} hook. */
 export const withUserPreference = <Props extends WithUserPreferenceProps<T>, T = string>(
-  configStorageKey: string,
+  key: string,
   defaultValue?: T,
+  sync = false,
 ) => (
   WrappedComponent: ComponentType<Props>,
 ): FC<Omit<Props, keyof WithUserPreferenceProps<T>>> => {
   const Component = (props: Props) => {
-    const [state, setState, loaded] = useUserPreference(configStorageKey, defaultValue);
+    const [state, setState, loaded] = useUserPreference(key, defaultValue, sync);
     return loaded ? (
       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
     ) : null;

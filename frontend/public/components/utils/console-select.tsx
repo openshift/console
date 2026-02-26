@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   Divider,
   SelectGroup,
@@ -61,8 +61,6 @@ export type ConsoleSelectProps = {
   selectedKey?: string;
   /** Where to place spacers in the dropdown */
   spacerBefore?: Set<string>;
-  /** Key for storing bookmarks in user settings */
-  storageKey?: string;
   /** Style for the dropdown */
   style?: CSSProperties;
   /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
@@ -130,7 +128,6 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   menuClassName,
   onChange,
   spacerBefore = new Set(),
-  storageKey,
   style,
   title,
   alwaysShowTitle = false,
@@ -150,13 +147,11 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   const bookmarkUserPreferenceKey = userSettingsPrefix
     ? `${userSettingsPrefix}.bookmarks`
     : undefined;
-  const bookmarkStorageKey = storageKey ? `${storageKey}-bookmarks` : undefined;
 
-  const enableBookmarks = !!bookmarkUserPreferenceKey || !!bookmarkStorageKey;
+  const enableBookmarks = !!bookmarkUserPreferenceKey;
 
-  const [bookmarks, setBookmarks] = useUserPreferenceCompatibility(
+  const [bookmarks, setBookmarks] = useUserPreference(
     bookmarkUserPreferenceKey,
-    bookmarkStorageKey,
     {},
     true,
   );

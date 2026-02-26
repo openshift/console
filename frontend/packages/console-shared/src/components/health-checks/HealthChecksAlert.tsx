@@ -13,12 +13,11 @@ import {
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
-import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
-import { useUserPreferenceCompatibility } from '../../hooks/useUserPreferenceCompatibility';
+import { USERSETTINGS_PREFIX } from '../../constants';
+import { useUserPreference } from '../../hooks/useUserPreference';
 
 import './HealthChecksAlert.scss';
 
-const HIDE_HEALTH_CHECK_ALERT_FOR = `${STORAGE_PREFIX}/hide-health-check-alert-for`;
 const HEALTH_CHECK_CONFIGMAP_KEY = `${USERSETTINGS_PREFIX}.healthChecks`;
 
 type HealthChecksAlertProps = {
@@ -42,9 +41,8 @@ const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     hideHealthCheckAlertFor,
     setHideHealthCheckAlertFor,
     loaded,
-  ] = useUserPreferenceCompatibility<string[]>(
+  ] = useUserPreference<string[]>(
     HEALTH_CHECK_CONFIGMAP_KEY,
-    HIDE_HEALTH_CHECK_ALERT_FOR,
     [],
   );
   const { t } = useTranslation();
