@@ -2,10 +2,9 @@ import { useMemo } from 'react';
 import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const useActiveColumns = <D = any>({
@@ -17,9 +16,8 @@ export const useActiveColumns = <D = any>({
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
 }): [TableColumn<D>[], boolean] => {
-  const [tableColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
+  const [tableColumns, , userSettingsLoaded] = useUserPreference(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
   );

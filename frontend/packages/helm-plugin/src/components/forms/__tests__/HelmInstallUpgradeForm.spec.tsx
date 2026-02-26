@@ -51,12 +51,8 @@ const mockUseEditorType = useEditorType as jest.Mock;
 const mockUseField = useField as jest.Mock;
 
 // For internal used Dropdowns
-jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
-  useUserPreferenceCompatibility: () => ['', () => {}],
-}));
-
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
-  useUserPreference: jest.fn(),
+  useUserPreference: () => ['', () => {}],
 }));
 
 jest.mock(

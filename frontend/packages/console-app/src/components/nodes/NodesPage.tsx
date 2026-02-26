@@ -65,12 +65,9 @@ import { referenceForModel, referenceFor, LabelSelector } from '@console/interna
 import type { RootState } from '@console/internal/redux';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import {
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-} from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_CONFIGMAP_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
   getNodeArchitecture,
@@ -863,9 +860,8 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
+  const [selectedColumns, , userSettingsLoaded] = useUserPreference<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
   );

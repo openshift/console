@@ -7,14 +7,14 @@ import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import type { UserInfo } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
-import { useFlag, withUserPreferenceCompatibility } from '@console/shared';
+import type { WithUserPreferenceProps } from '@console/shared';
+import { useFlag, withUserPreference } from '@console/shared';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
 import { initTerminal, startWorkspace, CLOUD_SHELL_PHASE } from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
-import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
+import { CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from './TerminalLoadingBox';
@@ -37,7 +37,7 @@ export type CloudShellTerminalProps = {
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
 const CloudShellTerminal: FC<
-  CloudShellTerminalInternalProps & WithUserPreferenceCompatibilityProps<string>
+  CloudShellTerminalInternalProps & WithUserPreferenceProps<string>
 > = ({
   user,
   onCancel,
@@ -256,11 +256,7 @@ const stateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
-  withUserPreferenceCompatibility<
-    CloudShellTerminalProps & WithUserPreferenceCompatibilityProps<string>,
-    string
-  >(
+  withUserPreference<CloudShellTerminalProps & WithUserPreferenceProps<string>, string>(
     CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,
-    CLOUD_SHELL_NAMESPACE,
   )(CloudShellTerminal),
 );

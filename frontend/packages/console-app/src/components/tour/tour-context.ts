@@ -10,8 +10,8 @@ import { INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour } from '@console/dynam
 import { getFlagsObject } from '@console/internal/reducers/features';
 import type { RootState } from '@console/internal/redux';
 import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
-import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { TourActions } from './const';
 import type { TourDataType, Step } from './type';
 import { filterTourBasedonPermissionAndFlag } from './utils';
 
@@ -87,9 +87,10 @@ const TOUR_CONFIGMAP_KEY = `console.guidedTour`;
 export const useTourStateForPerspective = (
   perspective: string,
 ): [TourLocalStorageType, (completed: boolean) => void, boolean] => {
-  const [tourLocalState, setTourLocalState, loaded] = useUserPreferenceCompatibility<
-    TourLocalStorageData
-  >(TOUR_CONFIGMAP_KEY, TOUR_LOCAL_STORAGE_KEY, { [perspective]: { completed: false } });
+  const [tourLocalState, setTourLocalState, loaded] = useUserPreference<TourLocalStorageData>(
+    TOUR_CONFIGMAP_KEY,
+    { [perspective]: { completed: false } },
+  );
   useEffect(() => {
     if (loaded && !tourLocalState.hasOwnProperty(perspective)) {
       setTourLocalState((state) => ({ ...state, [perspective]: { completed: false } }));

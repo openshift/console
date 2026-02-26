@@ -31,10 +31,10 @@ import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/e
 import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
-import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
-import { useQueryParams, withUserPreferenceCompatibility } from '@console/shared';
+import type { WithUserPreferenceProps } from '@console/shared';
+import { useQueryParams, withUserPreference } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
-import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
+import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import type { ShowGroupingHintEventListener } from '../../topology-types';
@@ -129,7 +129,7 @@ interface TopologyProps {
 }
 
 const Topology: FC<
-  TopologyProps & StateProps & DispatchProps & WithUserPreferenceCompatibilityProps<object>
+  TopologyProps & StateProps & DispatchProps & WithUserPreferenceProps<object>
 > = ({
   model,
   application,
@@ -383,12 +383,8 @@ export default withFallback(
     TopologyStateToProps,
     TopologyDispatchToProps,
   )(
-    withUserPreferenceCompatibility<
-      TopologyProps & WithUserPreferenceCompatibilityProps<object>,
-      object
-    >(
+    withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
       TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
-      TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
       {},
     )(memo(Topology)),
   ),
