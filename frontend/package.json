@@ -322,6 +322,7 @@
     "node": ">=18.x"
   },
   "resolutions": {
+    "@types/lodash": "4.14.106",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "5.3.x",
     "@types/jest": "21.x",
