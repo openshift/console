@@ -3,11 +3,11 @@ import { useState, useCallback } from 'react';
 import { Grid, GridItem, Radio } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ModalTitle,
   ModalBody,
-  ModalComponentProps,
   ModalSubmitFooter,
   ModalWrapper,
 } from '@console/internal/components/factory/modal';

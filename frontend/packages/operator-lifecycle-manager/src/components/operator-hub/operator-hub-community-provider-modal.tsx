@@ -3,13 +3,13 @@ import { useState, useCallback } from 'react';
 import { Checkbox, Content, ContentVariants, Icon, Split, SplitItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
   ModalWrapper,
-  ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

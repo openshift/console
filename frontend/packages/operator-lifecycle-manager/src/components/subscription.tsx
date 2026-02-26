@@ -40,14 +40,7 @@ import {
 } from '@console/internal/components/utils';
 import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import type { K8sKind, K8sModel, K8sResourceCommon } from '@console/internal/module/k8s';
-import {
-  k8sGet,
-  k8sKill,
-  k8sPatch,
-  k8sUpdate,
-  referenceFor,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import { k8sUpdate, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
@@ -87,10 +80,7 @@ import {
   DeprecatedOperatorWarningIcon,
   findDeprecatedOperator,
 } from './deprecated-operator-warnings/deprecated-operator-warnings';
-import {
-  LazyInstallPlanApprovalModalOverlay,
-  LazySubscriptionChannelModalOverlay,
-} from './modals';
+import { LazyInstallPlanApprovalModalOverlay, LazySubscriptionChannelModalOverlay } from './modals';
 import { useUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
@@ -420,12 +410,7 @@ export const SubscriptionDetails: FC<SubscriptionDetailsProps> = ({
   const installedCSV = installedCSVForSubscription(clusterServiceVersions, obj);
   const installPlan = installPlanForSubscription(installPlans, obj);
   const pkg = packageForSubscription(packageManifests, obj);
-  const uninstallOperatorModal = useUninstallOperatorModal({
-    k8sKill,
-    k8sGet,
-    k8sPatch,
-    subscription: obj,
-  });
+  const uninstallOperatorModal = useUninstallOperatorModal(obj);
 
   useEffect(() => {
     if (getQueryArgument('showDelete')) {

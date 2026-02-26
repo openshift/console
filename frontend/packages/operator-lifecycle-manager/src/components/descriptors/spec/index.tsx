@@ -29,7 +29,8 @@ import { SpecCapability } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { useConfigureSizeModal } from './configure-size';
 import { useConfigureUpdateStrategyModal } from './configure-update-strategy';
-import { EndpointList, EndpointListProps } from './endpoint';
+import type { EndpointListProps } from './endpoint';
+import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
 import './index.scss';

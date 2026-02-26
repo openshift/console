@@ -29,7 +29,13 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
-import { k8sKill, modelFor, referenceFor, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
+import {
+  k8sKill,
+  modelFor,
+  referenceFor,
+  k8sPatch,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
