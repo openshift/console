@@ -59,7 +59,9 @@ declare interface Window {
       // One of the following should be always available on prod env.
       SEGMENT_API_KEY: string;
       SEGMENT_PUBLIC_API_KEY: string;
+      // DevSandbox-specific configuration
       DEVSANDBOX_SEGMENT_API_KEY: string;
+      DEVSANDBOX: 'true' | 'false';
       // Optional override for analytics.min.js script URL
       SEGMENT_JS_URL: string;
       // Additional telemetry options passed to Console frontend
