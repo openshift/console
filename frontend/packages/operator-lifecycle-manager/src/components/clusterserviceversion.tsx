@@ -1358,9 +1358,9 @@ type ClusterServiceVersionStatusProps = {
 };
 
 export type ClusterServiceVersionsPageProps = {
-  kind: string;
   namespace: string;
-  resourceDescriptions: CRDDescription[];
+  kind?: string;
+  resourceDescriptions?: CRDDescription[];
   showTitle?: boolean;
 };
 

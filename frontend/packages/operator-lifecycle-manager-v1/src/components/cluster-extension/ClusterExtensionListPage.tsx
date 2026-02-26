@@ -1,8 +1,7 @@
 import type { FC } from 'react';
-import { useMemo, Suspense } from 'react';
+import { useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
 import {
   actionsCellProps,
   cellIsStickyProps,
@@ -10,12 +9,11 @@ import {
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
 import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, Status } from '@console/shared';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -47,7 +45,7 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
 
     const rowCells = {
       [tableColumnInfo[0].id]: {
-        cell: <ResourceLink kind={resourceKind} name={name} namespace={undefined} />,
+        cell: <ResourceLink kind={resourceKind} name={name} />,
         props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
@@ -93,12 +91,10 @@ const getDataViewRows: GetDataViewRows<ClusterExtensionKind> = (data, columns) =
   });
 };
 
-const useClusterExtensionColumns = (
-  showNamespace: boolean,
-): TableColumn<ClusterExtensionKind>[] => {
+const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
   const { t } = useTranslation();
-  const columns = useMemo(() => {
-    const baseColumns: TableColumn<ClusterExtensionKind>[] = [
+  const columns = useMemo<TableColumn<ClusterExtensionKind>[]>(
+    () => [
       {
         title: t('olm-v1~Name'),
         id: tableColumnInfo[0].id,
@@ -126,20 +122,14 @@ const useClusterExtensionColumns = (
         title: t('olm-v1~Channels'),
         id: tableColumnInfo[3].id,
       },
-    ];
-
-    if (showNamespace) {
-      baseColumns.push({
+      {
         title: t('olm-v1~Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'spec.namespace',
         props: {
           modifier: 'nowrap',
         },
-      });
-    }
-
-    baseColumns.push(
+      },
       {
         title: t('olm-v1~Package'),
         id: tableColumnInfo[5].id,
@@ -154,10 +144,9 @@ const useClusterExtensionColumns = (
           ...cellIsStickyProps,
         },
       },
-    );
-
-    return baseColumns;
-  }, [t, showNamespace]);
+    ],
+    [t],
+  );
 
   return columns;
 };
@@ -166,41 +155,28 @@ interface ClusterExtensionListPageProps {
   namespace?: string;
 }
 
-const ClusterExtensionListPage: FC<ClusterExtensionListPageProps> = ({ namespace }) => {
+const ClusterExtensionListPage: FC<ClusterExtensionListPageProps> = () => {
   const { t } = useTranslation();
-  const { ns } = useParams<{ ns?: string }>();
-  const activeNamespace = namespace || ns;
-  const showNamespace = activeNamespace === ALL_NAMESPACES_KEY || !activeNamespace;
-
   const [clusterExtensions, loaded, loadError] = useK8sWatchResource<ClusterExtensionKind[]>({
     kind: referenceForModel(ClusterExtensionModel),
     isList: true,
     namespaced: false,
   });
 
-  // Filter by spec.namespace when in a specific namespace context
-  const filteredData = useMemo(() => {
-    if (!activeNamespace || activeNamespace === ALL_NAMESPACES_KEY) {
-      return clusterExtensions;
-    }
-    return clusterExtensions.filter((ce) => ce.spec?.namespace === activeNamespace);
-  }, [clusterExtensions, activeNamespace]);
-
-  const columns = useClusterExtensionColumns(showNamespace);
+  const columns = useClusterExtensionColumns();
 
   return (
     <PaneBody>
-      <Suspense fallback={<LoadingBox />}>
-        <ConsoleDataView<ClusterExtensionKind>
-          label={t('olm-v1~ClusterExtensions')}
-          data={filteredData}
-          loaded={loaded}
-          loadError={loadError}
-          columns={columns}
-          getDataViewRows={getDataViewRows}
-          hideColumnManagement
-        />
-      </Suspense>
+      <ConsoleDataView<ClusterExtensionKind>
+        label={t('olm-v1~ClusterExtensions')}
+        data={clusterExtensions ?? []}
+        loaded={loaded}
+        loadError={loadError}
+        columns={columns}
+        getDataViewRows={getDataViewRows}
+        hideColumnManagement
+        showNamespaceOverride
+      />
     </PaneBody>
   );
 };

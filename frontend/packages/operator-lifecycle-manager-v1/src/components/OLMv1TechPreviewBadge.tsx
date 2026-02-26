@@ -27,7 +27,7 @@ export const OLMv1TechPreviewBadge: FC = () => {
       </Label>{' '}
       <Popover aria-label={t('olm-v1~OLMv1 information')} bodyContent={popoverContent}>
         <Button
-          icon={<OutlinedQuestionCircleIcon />}
+          icon={<OutlinedQuestionCircleIcon aria-hidden="true" />}
           aria-label={t('olm-v1~OLMv1 information')}
           variant="link"
           isInline

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
+import { Flex } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
@@ -13,35 +14,43 @@ const InstalledSoftwarePage: FC = () => {
   const { t } = useTranslation();
   const { ns } = useParams<{ ns?: string }>();
 
-  const pages: Page[] = useMemo(
-    () => [
-      {
-        href: '',
-        name: t('olm-v1~Cluster extensions (OLMv1)'),
-        badge: <OLMv1TechPreviewBadge />,
-        component: () => <ClusterExtensionListPage namespace={ns} />,
-      },
-      {
-        href: 'olmv0-operators',
-        // t('olm-v1~Operators (OLMv0)')
-        nameKey: 'olm-v1~Operators (OLMv0)',
-        component: () => (
-          <AsyncComponent
-            loader={() =>
-              import(
-                '@console/operator-lifecycle-manager/src/components/clusterserviceversion'
-              ).then((m) => m.ClusterServiceVersionsPage)
-            }
-            namespace={ns}
-            kind=""
-            resourceDescriptions={[]}
-            showTitle={false}
-          />
-        ),
-      },
-    ],
+  const clusterExtensionsPage = useMemo<Page>(
+    () => ({
+      href: '',
+      name: t('olm-v1~Cluster extensions (OLMv1)'),
+      badge: [
+        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+          <OLMv1TechPreviewBadge />
+        </Flex>,
+      ],
+      component: () => <ClusterExtensionListPage namespace={ns} />,
+    }),
     [ns, t],
   );
+
+  const clusterServiceVersionsPage = useMemo<Page>(
+    () => ({
+      href: 'olmv0-operators',
+      name: t('olm-v1~Operators (OLMv0)'),
+      component: () => (
+        <AsyncComponent
+          loader={() =>
+            import('@console/operator-lifecycle-manager/src/components/clusterserviceversion').then(
+              (m) => m.ClusterServiceVersionsPage,
+            )
+          }
+          namespace={ns}
+          showTitle={false}
+        />
+      ),
+    }),
+    [ns, t],
+  );
+
+  const pages = useMemo<Page[]>(() => [clusterExtensionsPage, clusterServiceVersionsPage], [
+    clusterExtensionsPage,
+    clusterServiceVersionsPage,
+  ]);
 
   return (
     <>

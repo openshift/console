@@ -110,6 +110,9 @@
         "kind": "ClusterExtension"
       },
       "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
     }
   },
   {
@@ -124,7 +127,7 @@
       "startsWith": ["installed-software"]
     },
     "flags": {
-      "required": ["OLMV1_ENABLED"]
+      "required": ["TECH_PREVIEW", "OLMV1_ENABLED", "CLUSTER_EXTENSION_API"]
     }
   },
   {
@@ -135,7 +138,7 @@
       "component": { "$codeRef": "installedSoftwarePage.default" }
     },
     "flags": {
-      "required": ["OLMV1_ENABLED"]
+      "required": ["CLUSTER_EXTENSION_API"]
     }
   }
 ]
