@@ -3,7 +3,10 @@ import { useState, useEffect } from 'react';
 import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
-import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type {
+  LaunchOverlay,
+  OverlayComponent,
+} from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
@@ -247,3 +250,22 @@ export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationMo
     <ExportApplicationModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
   </ModalWrapper>
 );
+
+export const handleExportApplication = async (
+  name: string,
+  namespace: string,
+  toast: ToastContextType,
+  launchModal: LaunchOverlay,
+) => {
+  try {
+    const exportRes = await getExportResource(name, namespace);
+    launchModal(ExportApplicationModalOverlay, {
+      name,
+      namespace,
+      exportResource: exportRes,
+      toast,
+    });
+  } catch {
+    launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
+  }
+};

@@ -7,8 +7,7 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { useFlag, useIsMobile, useToast } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
 import { ExportModel } from '../../models';
-import { getExportResource } from '../../utils/export-app-utils';
-import { ExportApplicationModalOverlay } from './ExportApplicationModal';
+import { handleExportApplication } from './ExportApplicationModal';
 
 type ExportApplicationProps = {
   namespace: string;
@@ -32,17 +31,7 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
   const name = EXPORT_CR_NAME;
 
   const handleClick = useCallback(async () => {
-    try {
-      const exportRes = await getExportResource(name, namespace);
-      launchModal(ExportApplicationModalOverlay, {
-        name,
-        namespace,
-        exportResource: exportRes,
-        toast,
-      });
-    } catch {
-      launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
-    }
+    await handleExportApplication(name, namespace, toast, launchModal);
   }, [launchModal, name, namespace, toast]);
 
   return showExportAppBtn ? (
