@@ -16,7 +16,7 @@
     "generate-doc": "yarn ts-node scripts/generate-doc.ts",
     "generate-pkg-assets": "yarn ts-node scripts/generate-pkg-assets.ts",
     "validate": "yarn ts-node scripts/validate-extensions.ts",
-    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
+    "ts-node": "../../node_modules/.bin/ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
     "@microsoft/tsdoc": "0.14.2",
