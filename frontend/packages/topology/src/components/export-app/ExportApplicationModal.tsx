@@ -265,7 +265,9 @@ export const handleExportApplication = async (
       exportResource: exportRes,
       toast,
     });
-  } catch {
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('Error while getting export resource:', err);
     launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
   }
 };
