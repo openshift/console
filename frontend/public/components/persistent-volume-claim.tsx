@@ -339,6 +339,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             title={t('public~VolumeAttributesClass modification failed')}
             className="co-alert co-alert--margin-bottom-sm"
             actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
+            data-test-id="vac-error-alert"
           >
             {t(
               'public~VolumeAttributesClass modification failed. Your volume settings could not be updated. Please try again.',

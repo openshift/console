@@ -68,5 +68,6 @@ module.exports = (on, config) => {
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
   config.env.OAUTH_BASE_ADDRESS = process.env.OAUTH_BASE_ADDRESS;
   config.env.OPENSHIFT_CI = process.env.OPENSHIFT_CI;
+  config.env.BRIDGE_AWS = process.env.BRIDGE_AWS;
   return config;
 };

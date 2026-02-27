@@ -82,7 +82,7 @@ const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, c
         >
           {t('console-app~Save')}
         </Button>
-        <Button variant="link" onClick={cancel}>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('console-app~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
