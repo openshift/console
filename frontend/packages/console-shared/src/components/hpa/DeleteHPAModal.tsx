@@ -87,12 +87,12 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
   );
 };
 
-type DeleteHPAModalProviderProps = {
+type DeleteHPAModalOverlayProps = {
   hpa: HorizontalPodAutoscalerKind;
   workload: K8sResourceCommon;
 };
 
-const DeleteHPAModalProvider: OverlayComponent<DeleteHPAModalProviderProps> = (props) => {
+const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalOverlayProps> = (props) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <DeleteHPAModal
@@ -105,4 +105,4 @@ const DeleteHPAModalProvider: OverlayComponent<DeleteHPAModalProviderProps> = (p
   );
 };
 
-export default DeleteHPAModalProvider;
+export { DeleteHPAModalOverlay };

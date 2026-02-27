@@ -229,7 +229,7 @@ const ManagedNamespaces: FC<ManagedNamespacesProps> = ({ obj }) => {
 };
 
 const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
-  const launchOverlay = useOverlay();
+  const launchModal = useOverlay();
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -264,7 +264,7 @@ const ConsolePlugins: FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
                   type="button"
                   isInline
                   onClick={() =>
-                    launchOverlay(LazyConsolePluginModalOverlay, {
+                    launchModal(LazyConsolePluginModalOverlay, {
                       consoleOperatorConfig,
                       pluginName,
                       trusted,
