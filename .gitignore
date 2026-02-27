@@ -2,6 +2,16 @@
 .idea
 .vscode
 .protractor-fail-fast
+
+# Yarn v4 (Berry)
+.yarn/*
+install-state.gz
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+!.vscode/settings.json
 .DS_Store
 !/vendor/**
 cypress-a11y-report.json
