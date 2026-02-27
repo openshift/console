@@ -260,8 +260,8 @@ const config: Configuration = {
           enforce: true,
         },
         'vendor-patternfly-5': {
-          // modules with @patternfly/ that don't also have @patternfly-4/ in the string
-          test: /^(?!.*@patternfly-4\/).*@patternfly\/.*/,
+          // modules with @patternfly/ that don't also have @patternfly-4/ in the string, plus d3-* modules
+          test: /^(?!.*@patternfly-4\/)(.*@patternfly\/.*|.*[\\/]node_modules[\\/]d3-.*)/,
         },
         'vendor-patternfly-4-shared': {
           test: /@patternfly-4\//,
