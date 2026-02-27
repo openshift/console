@@ -4,27 +4,18 @@ import type { FormikProps, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '../../hooks/promise-handler';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
-
-type DeleteResourceModalProps = {
-  resourceName: string;
-  resourceType: string;
-  actionLabel?: string; // Used to send translated strings as action label.
-  actionLabelKey?: string; // Used to send translation key for action label.
-  redirect?: string;
-  onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
-  cancel?: () => void;
-  close?: () => void;
-};
 
 const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
   handleSubmit,
@@ -84,7 +75,9 @@ const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
       handlePromise(onSubmit(values))
         .then(() => {
           close();
-          redirect && navigate(redirect);
+          if (redirect) {
+            navigate(redirect);
+          }
         })
         .catch((errorMessage) => {
           actions.setStatus({ submitError: errorMessage });
@@ -103,6 +96,28 @@ const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
   );
 };
 
-export const deleteResourceModal = createModalLauncher((props: DeleteResourceModalProps) => (
-  <DeleteResourceModal {...props} />
-));
+export const DeleteResourceModalOverlay: OverlayComponent<DeleteResourceModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DeleteResourceModal
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+        resourceName={props.resourceName}
+        resourceType={props.resourceType}
+        actionLabel={props.actionLabel}
+        actionLabelKey={props.actionLabelKey}
+        redirect={props.redirect}
+        onSubmit={props.onSubmit}
+      />
+    </ModalWrapper>
+  );
+};
+
+type DeleteResourceModalProps = ModalComponentProps & {
+  resourceName: string;
+  resourceType: string;
+  actionLabel?: string; // Used to send translated strings as action label.
+  actionLabelKey?: string; // Used to send translation key for action label.
+  redirect?: string;
+  onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
+};
