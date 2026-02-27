@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory';
-import { ModalTitle, ModalBody, ModalWrapper } from '@console/internal/components/factory';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 type HelmReadmeModalProps = {
@@ -13,24 +13,30 @@ type HelmReadmeModalProps = {
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: FC<Props> = ({ readme, theme, close }) => {
+const HelmReadmeModal: FC<Props> = ({ readme, theme }) => {
   const { t } = useTranslation();
   return (
-    <div className="modal-content">
-      <ModalTitle close={close}>{t('helm-plugin~README')}</ModalTitle>
+    <>
+      <ModalHeader title={t('helm-plugin~README')} />
       <ModalBody>
         <SyncMarkdownView content={readme} theme={theme} />
       </ModalBody>
-    </div>
+    </>
   );
 };
 
 const HelmReadmeModalProvider: OverlayComponent<Props> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay} className="modal-lg">
-      <HelmReadmeModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.large} isOpen onClose={handleClose}>
+      <HelmReadmeModal {...props} />
+    </Modal>
+  ) : null;
 };
 
 export const useHelmReadmeModalLauncher = (props: Props) => {

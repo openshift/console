@@ -1,18 +1,21 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
-import { Title } from '@patternfly/react-core';
+import { useCallback, useState } from 'react';
+import {
+  Button,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  Title,
+} from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { UNASSIGNED_KEY } from '../../const';
 import { updateResourceApplication } from '../../utils/application-utils';
@@ -41,27 +44,36 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
   const { t } = useTranslation();
   const dirty = values?.application?.selectedKey !== initialApplication;
   return (
-    <form onSubmit={handleSubmit} className="modal-content">
-      <ModalTitle>{t('topology~Edit application grouping')}</ModalTitle>
+    <>
+      <ModalHeader title={t('topology~Edit application grouping')} />
       <ModalBody>
-        <Title headingLevel="h2" size="md" className="co-m-form-row">
-          <Trans ns="topology">
-            Select an Application group to add the component{' '}
-            <strong>{{ resourceName: resource.metadata.name }}</strong> to
-          </Trans>
-        </Title>
-        <div className="pf-v6-c-form">
+        <Form id="edit-application-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
+          <Title headingLevel="h2" size="md">
+            <Trans ns="topology">
+              Select an Application group to add the component{' '}
+              <strong>{{ resourceName: resource.metadata.name }}</strong> to
+            </Trans>
+          </Title>
           <ApplicationSelector namespace={resource.metadata.namespace} />
-        </div>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        submitText={t('topology~Save')}
-        submitDisabled={!dirty || isSubmitting}
-        cancel={cancel}
-        inProgress={isSubmitting}
-        errorMessage={status && status.submitError}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={status && status.submitError}>
+        <Button
+          variant="primary"
+          type="submit"
+          form="edit-application-form"
+          isLoading={isSubmitting}
+          isDisabled={!dirty || isSubmitting}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('topology~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('topology~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -104,11 +116,17 @@ const EditApplicationModal: FC<EditApplicationModalProps> = (props) => {
 };
 
 const EditApplicationModalProvider: OverlayComponent<EditApplicationModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <EditApplicationModal cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <EditApplicationModal cancel={handleClose} close={handleClose} {...props} />
+    </Modal>
+  ) : null;
 };
 
 export const useEditApplicationModalLauncher = (props) => {
