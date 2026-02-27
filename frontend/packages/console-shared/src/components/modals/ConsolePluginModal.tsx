@@ -79,7 +79,9 @@ type ConsolePluginModalProviderProps = {
   trusted: boolean;
 };
 
-const ConsolePluginModalProvider: OverlayComponent<ConsolePluginModalProviderProps> = (props) => {
+export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalProviderProps> = (
+  props,
+) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
       <ConsolePluginModal
@@ -94,7 +96,7 @@ const ConsolePluginModalProvider: OverlayComponent<ConsolePluginModalProviderPro
   );
 };
 
-export default ConsolePluginModalProvider;
+export default ConsolePluginModalOverlay;
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
