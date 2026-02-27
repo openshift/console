@@ -7,11 +7,12 @@
   "private": true,
   "workspaces": [
     "packages/*",
+    "packages/*/integration-tests",
     "public",
     "integration-tests"
   ],
   "scripts": {
-    "postinstall": "yarn prepare-husky && yarn generate",
+    "postinstall": "yarn prepare-husky",
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
@@ -24,9 +25,9 @@
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-cypress-console": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests-cypress && ../../../node_modules/.bin/cypress open --env openshift=true",
-    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
@@ -57,7 +58,7 @@
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
-    "generate": "yarn generate-graphql && yarn build-plugin-sdk && yarn build-console-plugin-shared",
+    "generate": "yarn generate-graphql & yarn build-plugin-sdk && yarn build-console-plugin-shared",
     "generate-graphql": "graphql-codegen --config graphql-codegen.yml",
     "generate-plugin-sdk-docs": "yarn --cwd packages/console-dynamic-plugin-sdk generate-doc",
     "build-plugin-sdk": "yarn --cwd packages/console-dynamic-plugin-sdk build",
@@ -138,7 +139,6 @@
     "@patternfly-4/patternfly": "npm:@patternfly/patternfly@4.224.5",
     "@patternfly-4/quickstarts": "npm:@patternfly/quickstarts@2.4.2",
     "@patternfly-4/react-catalog-view-extension": "npm:@patternfly/react-catalog-view-extension@4.96.1",
-    "@patternfly-4/react-console": "npm:@patternfly/react-console@4.13.4",
     "@patternfly-4/react-core": "npm:@patternfly/react-core@4.278.0",
     "@patternfly-4/react-icons": "npm:@patternfly/react-icons@4.93.7",
     "@patternfly-4/react-styles": "npm:@patternfly/react-styles@4.92.8",
@@ -363,5 +363,11 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
-  }
+  },
+  "dependenciesMeta": {
+    "cypress": {
+      "built": true
+    }
+  },
+  "packageManager": "yarn@4.12.0"
 }
