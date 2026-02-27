@@ -21,7 +21,6 @@ export const topologyPO = {
     zoomIn: '#zoom-in',
     zoomOut: '#zoom-out',
     saveModal: '[data-test="confirm-action"]',
-    modalContent: '[class="modal-content"]',
     fitToScreen: '#fit-to-screen',
     emptyGraph: '[data-test-id="topology"]',
     nodeLabel: 'g[class$="topology__node__label"]',
@@ -156,7 +155,6 @@ export const topologyPO = {
   },
   highlightNode: '.is-filtered',
   createSecret: {
-    secretForm: '.co-create-secret-form.modal-content',
     createSecretButton: '[data-test="images-section"]  button',
     secretDropDown: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
     secretDropDownItem: '[data-test="console-select-item"]',
