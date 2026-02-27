@@ -162,7 +162,7 @@ const humanize = (units.humanize = (
 ) => {
   const type = getType(typeName);
 
-  if (!isFinite(value)) {
+  if (!isFinite(value) || value < 0) {
     value = 0;
   }
 

@@ -7,7 +7,10 @@
   "scripts": {
     "clean": "rm -rf dist generated schema",
     "build": "yarn clean && yarn validate && yarn compile && yarn generate",
-    "compile": "for ext in '' '-internal' '-webpack' ; do ../../node_modules/.bin/tsc -p tsconfig${ext}.json || exit $? ; done",
+    "compile": "yarn compile-core && yarn compile-internal && yarn compile-webpack",
+    "compile-core": "../../node_modules/.bin/tsc -p tsconfig.json",
+    "compile-internal": "../../node_modules/.bin/tsc -p tsconfig-internal.json",
+    "compile-webpack": "../../node_modules/.bin/tsc -p tsconfig-webpack.json",
     "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
     "generate-schema": "yarn ts-node scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node scripts/generate-doc.ts",
