@@ -1,21 +1,24 @@
+import { useState } from 'react';
 import type { FC } from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  TextInputTypes,
+} from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '../../hooks/promise-handler';
 import { InputField } from '../formik-fields';
-import { YellowExclamationTriangleIcon } from '../status';
+import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({
   handleSubmit,
@@ -32,34 +35,48 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
   const { t } = useTranslation();
   const isValid = values.resourceName === resourceName;
   const submitLabel = actionLabel || t(actionLabelKey);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="modal-content">
-      <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {submitLabel} {resourceType}?
-      </ModalTitle>
+    <>
+      <ModalHeader title={<>{resourceType}?</>} titleIconVariant="warning" />
       <ModalBody>
-        <p>
-          {t(
-            `console-shared~This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVCs, Secrets, and ConfigMaps will be deleted.`,
-          )}
-        </p>
-        <p>
-          <Trans ns="console-shared">
-            Confirm deletion by typing <strong className="co-break-word">{{ resourceName }}</strong>{' '}
-            below:
-          </Trans>
-        </p>
-        <InputField type={TextInputTypes.text} name="resourceName" />
+        <Form id="delete-resource-modal-form">
+          <p>
+            {t(
+              `console-shared~This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVCs, Secrets, and ConfigMaps will be deleted.`,
+            )}
+          </p>
+          <p>
+            <Trans ns="console-shared">
+              Confirm deletion by typing{' '}
+              <strong className="co-break-word">{{ resourceName }}</strong> below:
+            </Trans>
+          </p>
+          <InputField type={TextInputTypes.text} name="resourceName" />
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        submitText={submitLabel}
-        submitDisabled={(status && !!status.submitError) || !isValid || isSubmitting}
-        cancel={cancel}
-        inProgress={isSubmitting}
-        submitDanger
-        errorMessage={status && status.submitError}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={status && status.submitError}>
+        <Button
+          type="submit"
+          variant="danger"
+          onClick={onSubmit}
+          form="delete-resource-modal-form"
+          isLoading={isSubmitting}
+          isDisabled={(status && !!status.submitError) || !isValid || isSubmitting}
+          data-test="confirm-action"
+        >
+          {submitLabel}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('console-shared~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -97,11 +114,17 @@ const DeleteResourceModal: FC<DeleteResourceModalProps> = (props) => {
 };
 
 export const DeleteResourceModalOverlay: OverlayComponent<DeleteResourceModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
       <DeleteResourceModal
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
+        close={handleClose}
+        cancel={handleClose}
         resourceName={props.resourceName}
         resourceType={props.resourceType}
         actionLabel={props.actionLabel}
@@ -109,8 +132,8 @@ export const DeleteResourceModalOverlay: OverlayComponent<DeleteResourceModalPro
         redirect={props.redirect}
         onSubmit={props.onSubmit}
       />
-    </ModalWrapper>
-  );
+    </Modal>
+  ) : null;
 };
 
 type DeleteResourceModalProps = ModalComponentProps & {
