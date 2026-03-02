@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import * as Modal from 'react-modal';
@@ -351,7 +351,8 @@ const AppWithExtensions: FC = () => {
   return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox blame="Init" />, document.getElementById('app'));
+const renderRoot = createRoot(document.getElementById('app')!);
+renderRoot.render(<LoadingBox blame="Init" />);
 
 const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -526,7 +527,7 @@ graphQLReady.onReady(() => {
     }
   }
 
-  render(
+  renderRoot.render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <PluginStoreProvider store={pluginStore}>
@@ -543,6 +544,5 @@ graphQLReady.onReady(() => {
         </PluginStoreProvider>
       </Provider>
     </Suspense>,
-    document.getElementById('app'),
   );
 });
