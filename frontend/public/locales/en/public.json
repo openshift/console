@@ -1279,6 +1279,8 @@
   "Cluster-wide {{resource}}": "Cluster-wide {{resource}}",
   "Namespace {{resource}}": "Namespace {{resource}}",
   "Create ResourceQuota": "Create ResourceQuota",
+  "Manage project capacity by limiting the number of objects and total compute resources available.": "Manage project capacity by limiting the number of objects and total compute resources available.",
+  " Use standard quotas for general container workloads. If you are running OpenShift Virtualization, it is recommended to use <3>Application-Aware Quota</3> to handle VM infrastructure overhead and live migrations without service interruption.": " Use standard quotas for general container workloads. If you are running OpenShift Virtualization, it is recommended to use <3>Application-Aware Quota</3> to handle VM infrastructure overhead and live migrations without service interruption.",
   "Select all filters": "Select all filters",
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}} of {{itemCount}}",
   "Item_one": "Item",
