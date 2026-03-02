@@ -1,6 +1,6 @@
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
-import { useParams } from 'react-router';
+import { useParams, Link } from 'react-router';
 import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import {
   OutlinedCircleIcon,
@@ -9,13 +9,14 @@ import {
   ResourcesFullIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import { DetailsPage, MultiListPage } from './factory';
@@ -56,6 +57,7 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -719,6 +721,9 @@ export const flatten = (resources) => _.flatMap(resources, (resource) => _.compa
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
   ({ namespace, flags, mock, showTitle }) => {
     const { t } = useTranslation();
+    const isKubevirtPluginActive = useIsKubevirtPluginActive();
+    const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
+
     const resources = [{ kind: 'ResourceQuota', namespaced: true }];
     let rowFilters = null;
 
@@ -780,6 +785,31 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         namespace={namespace}
         flatten={flatten}
         title={t(ResourceQuotaModel.labelPluralKey)}
+        helpText={
+          <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
+            {t(
+              'public~Manage project capacity by limiting the number of objects and total compute resources available.',
+            )}
+            {isKubevirtPluginActive && (
+              <Trans t={t} ns="public">
+                {' '}
+                Use standard quotas for general container workloads. If you are running OpenShift
+                Virtualization, it is recommended to use{' '}
+                <Link
+                  to={
+                    quotasFeature
+                      ? '/k8s/all-namespaces/quotas'
+                      : '/k8s/all-namespaces/virtualization-overview/settings/cluster'
+                  }
+                >
+                  Application-Aware Quota
+                </Link>{' '}
+                to handle VM infrastructure overhead and live migrations without service
+                interruption.
+              </Trans>
+            )}
+          </div>
+        }
         rowFilters={rowFilters}
         mock={mock}
         showTitle={showTitle}

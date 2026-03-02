@@ -41,6 +41,7 @@ import {
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 
 const { kind } = StorageClassModel;
 
@@ -68,15 +69,10 @@ const isDefaultVirtClass = (storageClass: K8sResourceKind) => {
   return annotations[defaultVirtClassAnnotation] === 'true';
 };
 
-// TODO remove this code, the plugin should use an appropriate extension
-const isKubevirtPluginActive =
-  Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
-  window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin');
-
-const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<StorageClassResourceKind> = (t) => (
-  data,
-  columns,
-) => {
+const getDataViewRowsCreator: (
+  t: TFunction,
+  isKubevirtPluginActive: boolean,
+) => GetDataViewRows<StorageClassResourceKind> = (t, isKubevirtPluginActive) => (data, columns) => {
   return data.map(({ obj }) => {
     const name = obj.metadata?.name || '';
     const context = { [referenceFor(obj)]: obj };
@@ -168,7 +164,11 @@ const useStorageClassColumns = (): {
 export const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = useStorageClassColumns();
-  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
+  const isKubevirtPluginActive = useIsKubevirtPluginActive();
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, isKubevirtPluginActive), [
+    t,
+    isKubevirtPluginActive,
+  ]);
 
   return (
     <Suspense fallback={<LoadingBox />}>
