@@ -14,7 +14,7 @@ import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
 import { initTerminal, startWorkspace, CLOUD_SHELL_PHASE } from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
-import { CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
+import { CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from './TerminalLoadingBox';
@@ -255,6 +255,6 @@ const stateToProps = (state: RootState): StateProps => ({
 
 export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
   withUserPreference<CloudShellTerminalProps & WithUserPreferenceProps<string>, string>(
-    CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,
+    CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY,
   )(CloudShellTerminal),
 );

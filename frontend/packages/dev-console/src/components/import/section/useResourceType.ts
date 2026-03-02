@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import { useUserPreference, useFlag } from '@console/shared';
 import {
-  LAST_RESOURCE_TYPE_STORAGE_KEY,
+  LAST_RESOURCE_TYPE_USER_PREFERENCE_KEY,
   PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY,
 } from '../../../const';
 import { Resources } from '../import-types';
@@ -21,7 +21,7 @@ export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] =>
   ] = useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY, defaultResourceType);
 
   const [resourceType, setResourceType, resourceTypeLoaded] = useUserPreference<string>(
-    LAST_RESOURCE_TYPE_STORAGE_KEY,
+    LAST_RESOURCE_TYPE_USER_PREFERENCE_KEY,
     defaultResourceType,
   );
 

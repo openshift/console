@@ -34,7 +34,7 @@ import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/
 import type { WithUserPreferenceProps } from '@console/shared';
 import { useQueryParams, withUserPreference } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
-import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY } from '../../const';
+import { TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import type { ShowGroupingHintEventListener } from '../../topology-types';
@@ -384,7 +384,7 @@ export default withFallback(
     TopologyDispatchToProps,
   )(
     withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
-      TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
+      TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY,
       {},
     )(memo(Topology)),
   ),
