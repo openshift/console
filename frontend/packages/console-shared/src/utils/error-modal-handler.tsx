@@ -9,16 +9,50 @@ import { useSyncWarningModalLauncher } from './warning-modal-handler';
 let moduleErrorModalLauncher: ((props: ErrorModalProps) => void) | null = null;
 
 /**
+ * Hook to launch error modals from React components.
+ * Must be used within an OverlayProvider.
+ *
+ * @example
+ * ```tsx
+ * const MyComponent = () => {
+ *   const launchErrorModal = useErrorModal();
+ *
+ *   const handleError = (error: Error) => {
+ *     launchErrorModal({
+ *       title: 'Operation Failed',
+ *       error: error.message,
+ *     });
+ *   };
+ *
+ *   // ...
+ * };
+ * ```
+ */
+export const useErrorModal = (
+  props?: Partial<ErrorModalProps>,
+): ((overrides?: ErrorModalProps) => void) => {
+  const launcher = useOverlay();
+  return useCallback(
+    (overrides?: ErrorModalProps) => {
+      const mergedProps: ErrorModalProps = {
+        error: '',
+        ...(props || {}),
+        ...(overrides || {}),
+      };
+      launcher<ErrorModalProps>(ErrorModal, mergedProps);
+    },
+    [launcher, props],
+  );
+};
+
+/**
  * Hook that syncs the error modal launcher to module-level for non-React contexts.
  * Use SyncModalLaunchers component instead of calling this directly.
  */
 export const useSyncErrorModalLauncher = () => {
-  const launcher = useOverlay();
+  const errorModalLauncher = useErrorModal();
 
   useEffect(() => {
-    const errorModalLauncher = (props: ErrorModalProps) => {
-      launcher<ErrorModalProps>(ErrorModal, props);
-    };
     moduleErrorModalLauncher = errorModalLauncher;
 
     return () => {
@@ -27,7 +61,7 @@ export const useSyncErrorModalLauncher = () => {
         moduleErrorModalLauncher = null;
       }
     };
-  }, [launcher]);
+  }, [errorModalLauncher]);
 };
 
 /**
@@ -48,37 +82,6 @@ export const SyncModalLaunchers = () => {
   useSyncErrorModalLauncher();
   useSyncWarningModalLauncher();
   return null;
-};
-
-/**
- * Hook to launch error modals from React components.
- * Must be used within an OverlayProvider.
- *
- * @example
- * ```tsx
- * const MyComponent = () => {
- *   const launchErrorModal = useErrorModalLauncher();
- *
- *   const handleError = (error: Error) => {
- *     launchErrorModal({
- *       title: 'Operation Failed',
- *       error: error.message,
- *     });
- *   };
- *
- *   // ...
- * };
- * ```
- */
-export const useErrorModalLauncher = (): ((props: ErrorModalProps) => void) => {
-  const launcher = useOverlay();
-
-  return useCallback(
-    (props: ErrorModalProps) => {
-      launcher<ErrorModalProps>(ErrorModal, props);
-    },
-    [launcher],
-  );
 };
 
 /**

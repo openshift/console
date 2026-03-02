@@ -1,9 +1,5 @@
 import { render } from '@testing-library/react';
-import {
-  SyncModalLaunchers,
-  useErrorModalLauncher,
-  launchErrorModal,
-} from '../error-modal-handler';
+import { SyncModalLaunchers, launchErrorModal } from '../error-modal-handler';
 
 // Mock useOverlay
 const mockLauncher = jest.fn();
@@ -39,26 +35,6 @@ describe('error-modal-handler', () => {
       expect(() => {
         launchErrorModal({ error: 'Test error' });
       }).toThrow('Error modal launcher not initialized');
-    });
-  });
-
-  describe('useErrorModalLauncher', () => {
-    it('should return a function that launches error modals', () => {
-      let capturedLauncher: any;
-
-      const TestComponent = () => {
-        capturedLauncher = useErrorModalLauncher();
-        return null;
-      };
-
-      render(<TestComponent />);
-
-      capturedLauncher({ error: 'Test error', title: 'Test Title' });
-
-      expect(mockLauncher).toHaveBeenCalledWith(expect.anything(), {
-        error: 'Test error',
-        title: 'Test Title',
-      });
     });
   });
 

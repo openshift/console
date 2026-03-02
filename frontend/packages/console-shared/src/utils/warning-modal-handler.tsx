@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ControlledWarningModalProps } from '../hooks/useWarningModal';
-import { ControlledWarningModal } from '../hooks/useWarningModal';
+import { useWarningModal } from '../hooks/useWarningModal';
 
 // Module-level reference for non-React contexts
 // This is populated by useSyncWarningModalLauncher and should not be set directly
@@ -13,12 +12,9 @@ let moduleWarningModalLauncher: ((props: ControlledWarningModalProps) => void) |
  * Use SyncModalLaunchers component from error-modal-handler instead of calling this directly.
  */
 export const useSyncWarningModalLauncher = () => {
-  const launcher = useOverlay();
+  const warningModalLauncher = useWarningModal();
 
   useEffect(() => {
-    const warningModalLauncher = (props: ControlledWarningModalProps) => {
-      launcher<ControlledWarningModalProps>(ControlledWarningModal, props);
-    };
     moduleWarningModalLauncher = warningModalLauncher;
 
     return () => {
@@ -27,7 +23,7 @@ export const useSyncWarningModalLauncher = () => {
         moduleWarningModalLauncher = null;
       }
     };
-  }, [launcher]);
+  }, [warningModalLauncher]);
 };
 
 /**
