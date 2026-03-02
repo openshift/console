@@ -53,9 +53,21 @@ export const ErrorModal: OverlayComponent<ErrorModalProps> = (props) => {
   );
 };
 
-export const useErrorModalLauncher = (props) => {
+export const useErrorModalLauncher = (
+  props?: Partial<ErrorModalProps>,
+): ((overrides?: ErrorModalProps) => void) => {
   const launcher = useOverlay();
-  return useCallback(() => launcher<ErrorModalProps>(ErrorModal, props), [launcher, props]);
+  return useCallback(
+    (overrides?: ErrorModalProps) => {
+      const mergedProps: ErrorModalProps = {
+        error: '',
+        ...(props || {}),
+        ...(overrides || {}),
+      };
+      launcher<ErrorModalProps>(ErrorModal, mergedProps);
+    },
+    [launcher, props],
+  );
 };
 
 export type ErrorModalProps = {

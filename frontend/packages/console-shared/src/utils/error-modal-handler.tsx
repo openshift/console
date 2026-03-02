@@ -1,7 +1,6 @@
-import { useCallback, useEffect } from 'react';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { useEffect } from 'react';
 import type { ErrorModalProps } from '@console/internal/components/modals/error-modal';
-import { ErrorModal } from '@console/internal/components/modals/error-modal';
+import { useErrorModalLauncher } from '@console/internal/components/modals/error-modal';
 import { useSyncWarningModalLauncher } from './warning-modal-handler';
 
 // Module-level reference for non-React contexts
@@ -9,48 +8,11 @@ import { useSyncWarningModalLauncher } from './warning-modal-handler';
 let moduleErrorModalLauncher: ((props: ErrorModalProps) => void) | null = null;
 
 /**
- * Hook to launch error modals from React components.
- * Must be used within an OverlayProvider.
- *
- * @example
- * ```tsx
- * const MyComponent = () => {
- *   const launchErrorModal = useErrorModal();
- *
- *   const handleError = (error: Error) => {
- *     launchErrorModal({
- *       title: 'Operation Failed',
- *       error: error.message,
- *     });
- *   };
- *
- *   // ...
- * };
- * ```
- */
-export const useErrorModal = (
-  props?: Partial<ErrorModalProps>,
-): ((overrides?: ErrorModalProps) => void) => {
-  const launcher = useOverlay();
-  return useCallback(
-    (overrides?: ErrorModalProps) => {
-      const mergedProps: ErrorModalProps = {
-        error: '',
-        ...(props || {}),
-        ...(overrides || {}),
-      };
-      launcher<ErrorModalProps>(ErrorModal, mergedProps);
-    },
-    [launcher, props],
-  );
-};
-
-/**
  * Hook that syncs the error modal launcher to module-level for non-React contexts.
  * Use SyncModalLaunchers component instead of calling this directly.
  */
 export const useSyncErrorModalLauncher = () => {
-  const errorModalLauncher = useErrorModal();
+  const errorModalLauncher = useErrorModalLauncher();
 
   useEffect(() => {
     moduleErrorModalLauncher = errorModalLauncher;

@@ -10,8 +10,6 @@ export const mockLaunchErrorModal = jest.fn();
 
 export const useSyncErrorModalLauncher = jest.fn();
 
-export const useErrorModal = jest.fn(() => mockLaunchErrorModal);
-
 // Simplified component that doesn't sync warning modals
 // Tests needing both error and warning modals should not use this mock
 export const SyncModalLaunchers = () => null;
