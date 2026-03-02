@@ -20,7 +20,7 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
   nodeMaintenance,
 }) => {
   const { t } = useTranslation();
-  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
 
@@ -44,7 +44,11 @@ const UnderMaintenancePopoverContent: FC<UnderMaintenancePopoverContentProps> = 
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModalLauncher()} isInline>
+      <Button
+        variant="link"
+        onClick={() => stopNodeMaintenanceModalLauncher(nodeMaintenance)}
+        isInline
+      >
         {t('metal3-plugin~Stop maintenance')}
       </Button>
     </>

@@ -24,10 +24,11 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     namespaced: false,
   });
 
-  const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
-  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
 
   const actions = useMemo(() => {
+    const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
+
     let action: Action = {
       id: 'start-node-maintenance',
       label: t('metal3-plugin~Start Maintenance'),
@@ -39,12 +40,15 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
       action = {
         id: 'stop-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: () => stopNodeMaintenanceModalLauncher(),
+        cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         insertBefore: 'edit-labels',
       };
     }
     return [action];
-  }, [t, nodeMaintenance, startNodeMaintenanceModal, stopNodeMaintenanceModalLauncher]);
+    // missing startNodeMaintenanceModal and stopNodeMaintenanceModalLauncher dependencies,
+    // that causes max depth exceeded error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maintenances, resource.metadata.name, t]);
 
   return [actions, loading, loadError];
 };
