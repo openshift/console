@@ -15,7 +15,7 @@ import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   USERSETTINGS_PREFIX,
-  useUserSettings,
+  useUserPreference,
   TOAST_TIMEOUT_DEFAULT,
   TOAST_TIMEOUT_LONG,
 } from '@console/shared/src';
@@ -43,7 +43,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   const { cancel, name, namespace, exportResource, toast } = props;
   const [startTime, setStartTime] = useState<string>(null);
   const [errMessage, setErrMessage] = useState<string>('');
-  const [exportAppToast, setExportAppToast] = useUserSettings<ExportAppUserSettings>(
+  const [exportAppToast, setExportAppToast] = useUserPreference<ExportAppUserSettings>(
     `${USERSETTINGS_PREFIX}.exportApp`,
     {},
     true,

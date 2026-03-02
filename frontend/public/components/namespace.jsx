@@ -33,7 +33,7 @@ import {
 } from '@console/shared/src/constants/common';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
@@ -347,7 +347,7 @@ export const NamespacesList = (props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const columns = useNamespacesColumns();
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
+  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
@@ -657,7 +657,7 @@ const getProjectDataViewRows = (
 
 const ProjectLink = ({ project }) => {
   const dispatch = useDispatch();
-  const [, setLastNamespace] = useUserSettingsCompatibility(
+  const [, setLastNamespace] = useUserPreferenceCompatibility(
     LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
     LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   );
@@ -721,7 +721,7 @@ export const ProjectList = (props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
+  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,

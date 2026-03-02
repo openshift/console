@@ -1,34 +1,35 @@
 import type { ComponentType, FC } from 'react';
-import { useUserSettingsCompatibility } from '../hooks';
+import { useUserPreferenceCompatibility } from '../hooks';
 
-export type WithUserSettingsCompatibilityProps<T> = {
+export type WithUserPreferenceCompatibilityProps<T> = {
   userSettingState: T;
   setUserSettingState: (v: T) => void;
 };
 
-export const withUserSettingsCompatibility = <
-  Props extends WithUserSettingsCompatibilityProps<T>,
+/** @deprecated Use {@link useUserPreferenceCompatibility} hook. */
+export const withUserPreferenceCompatibility = <
+  Props extends WithUserPreferenceCompatibilityProps<T>,
   T = string
 >(
   configStorageKey: string,
   localStoragekey: string,
-  defaultvalue?: T,
+  defaultValue?: T,
   sync: boolean = false,
 ) => (
   WrappedComponent: ComponentType<Props>,
-): FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => {
+): FC<Omit<Props, keyof WithUserPreferenceCompatibilityProps<T>>> => {
   const Component = (props: Props) => {
-    const [state, setState, loaded] = useUserSettingsCompatibility(
+    const [state, setState, loaded] = useUserPreferenceCompatibility(
       configStorageKey,
       localStoragekey,
-      defaultvalue,
+      defaultValue,
       sync,
     );
     return loaded ? (
       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
     ) : null;
   };
-  Component.displayName = `withUserSettingsCompatibility(${
+  Component.displayName = `withUserPreferenceCompatibility(${
     WrappedComponent.displayName || WrappedComponent.name
   })`;
   return Component;

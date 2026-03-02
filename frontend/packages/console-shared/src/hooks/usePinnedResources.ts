@@ -7,7 +7,7 @@ import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
 import type { Perspective } from './perspective-utils';
 import { usePerspectives } from './perspective-utils';
 import { useTelemetry } from './useTelemetry';
-import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from './useUserPreferenceCompatibility';
 
 type PinnedResourcesType = {
   [perspective: string]: string[];
@@ -57,7 +57,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
       ),
     [perspectiveExtensions, getPins],
   );
-  const [pinnedResources, setPinnedResources, loaded] = useUserSettingsCompatibility<
+  const [pinnedResources, setPinnedResources, loaded] = useUserPreferenceCompatibility<
     PinnedResourcesType
   >(PINNED_RESOURCES_CONFIG_MAP_KEY, PINNED_RESOURCES_LOCAL_STORAGE_KEY, null, true);
 

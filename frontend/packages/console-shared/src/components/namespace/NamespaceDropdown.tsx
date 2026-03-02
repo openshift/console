@@ -30,7 +30,7 @@ import {
   FLAGS,
 } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { alphanumericCompare } from '@console/shared/src/utils';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
@@ -228,12 +228,12 @@ const NamespaceMenu: FC<{
   const [filterText, setFilterText] = useState('');
 
   // Bookmarking / favorites (note in <= 4.8 this feature was known as bookmarking)
-  const favoritesUserSettingsKey = `${NAMESPACE_USERSETTINGS_PREFIX}.bookmarks`;
+  const favoritesUserPreferenceKey = `${NAMESPACE_USERSETTINGS_PREFIX}.bookmarks`;
   const systemNamespacesSettingsKey = `${NAMESPACE_USERSETTINGS_PREFIX}.systemNamespace`;
   const favoriteStorageKey = `${NAMESPACE_LOCAL_STORAGE_KEY}-bookmarks`;
   const systemNamespaceKey = `${NAMESPACE_LOCAL_STORAGE_KEY}-systemNamespace`;
-  const [favorites, setFavorites] = useUserSettingsCompatibility(
-    favoritesUserSettingsKey,
+  const [favorites, setFavorites] = useUserPreferenceCompatibility(
+    favoritesUserPreferenceKey,
     favoriteStorageKey,
     undefined,
     true,
@@ -281,7 +281,7 @@ const NamespaceMenu: FC<{
     [setFavorites],
   );
 
-  const [systemNamespaces, setSystemNamespaces] = useUserSettingsCompatibility(
+  const [systemNamespaces, setSystemNamespaces] = useUserPreferenceCompatibility(
     systemNamespacesSettingsKey,
     systemNamespaceKey,
     false,

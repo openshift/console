@@ -1,7 +1,7 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useEffect } from 'react';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
-import { useUserSettings, useFlag } from '@console/shared';
+import { useUserPreference, useFlag } from '@console/shared';
 import {
   LAST_RESOURCE_TYPE_STORAGE_KEY,
   PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY,
@@ -18,9 +18,9 @@ export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] =>
     preferredResourceType,
     setPreferredResourceType,
     preferredResourceTypeLoaded,
-  ] = useUserSettings<string>(PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY, defaultResourceType);
+  ] = useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY, defaultResourceType);
 
-  const [resourceType, setResourceType, resourceTypeLoaded] = useUserSettings<string>(
+  const [resourceType, setResourceType, resourceTypeLoaded] = useUserPreference<string>(
     LAST_RESOURCE_TYPE_STORAGE_KEY,
     defaultResourceType,
   );

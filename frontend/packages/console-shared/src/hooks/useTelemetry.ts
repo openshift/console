@@ -12,7 +12,7 @@ import {
   USER_TELEMETRY_ANALYTICS,
 } from '../constants';
 import { useUser } from './useUser';
-import { useUserSettings } from './useUserSettings';
+import { useUserPreference } from './useUserPreference';
 
 export interface ClusterProperties {
   clusterId?: string;
@@ -73,7 +73,7 @@ export const useTelemetry = () => {
   // TODO use usePluginInfo() hook to tell whether all dynamic plugins have been processed
   // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
 
-  const [currentUserPreferenceTelemetryValue] = useUserSettings<USER_TELEMETRY_ANALYTICS>(
+  const [currentUserPreferenceTelemetryValue] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
     PREFERRED_TELEMETRY_USER_SETTING_KEY,
     null,
     true,

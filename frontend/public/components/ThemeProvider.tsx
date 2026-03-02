@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect } from 'react';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
@@ -49,7 +49,7 @@ interface ThemeProviderProps {
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const htmlTagElement = document.documentElement;
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
-  const [theme, , themeLoaded] = useUserSettings(
+  const [theme, , themeLoaded] = useUserPreference(
     THEME_USER_SETTING_KEY,
     THEME_SYSTEM_DEFAULT,
     true,

@@ -2,14 +2,14 @@ import type { SetStateAction, Dispatch } from 'react';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { deserializeData, seralizeData } from '../utils/user-settings';
 
-export const useUserSettingsLocalStorage = <T>(
+export const useUserPreferenceLocalStorage = <T>(
+  key: string,
   storageKey: string,
-  userSettingsKey: string,
   defaultValue: T,
   sync = false,
   session = false, // use sessionStorage if set to `true`
 ): [T, Dispatch<SetStateAction<T>>] => {
-  // Mount status for safty state updates
+  // Mount status for safety state updates
   const mounted = useRef(true);
   useEffect(() => {
     return () => {
@@ -18,7 +18,7 @@ export const useUserSettingsLocalStorage = <T>(
   }, []);
 
   const storage = session ? sessionStorage : localStorage;
-  const keyRef = useRef(userSettingsKey);
+  const keyRef = useRef(key);
   const defaultValueRef = useRef(defaultValue);
   const [data, setData] = useState(() => {
     const valueInStorage =

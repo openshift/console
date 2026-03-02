@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FLAGS, useUserSettings } from '@console/shared';
+import { FLAGS, useUserPreference } from '@console/shared';
 import {
   QuickStartGettingStartedCard,
   GettingStartedExpandableGrid,
@@ -21,7 +21,7 @@ export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userSett
 
   const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);
 
-  const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
+  const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserPreference<boolean>(
     `${userSettingKey}.expanded`,
     true,
   );

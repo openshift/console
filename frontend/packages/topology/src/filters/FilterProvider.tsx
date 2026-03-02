@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useEffect, useCallback, createContext } from 'react';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { useUserPreferenceCompatibility } from '@console/shared';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
 import type { DisplayFilters } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from './const';
@@ -38,7 +38,7 @@ const useFilterContextValues = (): [
   boolean,
   SetTopologyFilters,
 ] => {
-  const [appliedFilters, setAppliedFilters, appliedFiltersLoaded] = useUserSettingsCompatibility(
+  const [appliedFilters, setAppliedFilters, appliedFiltersLoaded] = useUserPreferenceCompatibility(
     TOPOLOGY_DISPLAY_FILTERS_USER_SETTINGS_KEY,
     TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
     getAppliedFilters(DEFAULT_TOPOLOGY_FILTERS),

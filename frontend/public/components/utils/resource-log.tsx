@@ -52,7 +52,7 @@ import {
   LOG_WRAP_LINES_USERSETTINGS_KEY,
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import { Loading } from '@console/shared/src/components/loading/Loading';
 import { FetchProgressModal } from '@console/shared/src/components/modals/FetchProgressModal';
@@ -499,7 +499,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const theme = useContext(ThemeContext);
-  const [showFullLog, setShowFullLog] = useUserSettings<boolean>(
+  const [showFullLog, setShowFullLog] = useUserPreference<boolean>(
     SHOW_FULL_LOG_USERSETTINGS_KEY,
     false,
     true,
@@ -536,7 +536,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
   const imp = useSelector((state: RootState) => getImpersonate(state));
   const subprotocols = useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [imp]);
-  const [wrapLines, setWrapLines] = useUserSettings<boolean>(
+  const [wrapLines, setWrapLines] = useUserPreference<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
     true,

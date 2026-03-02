@@ -5,7 +5,7 @@ import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
-  useUserSettings,
+  useUserPreference,
 } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 export const TelemetryNotifier = () => {
@@ -14,7 +14,7 @@ export const TelemetryNotifier = () => {
   const [
     currentUserPreferenceTelemetryValue,
     setCurrentUserPreferenceTelemetryValue,
-  ] = useUserSettings<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
+  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
 
   const userResponse = (value: USER_TELEMETRY_ANALYTICS) => {
     setCurrentUserPreferenceTelemetryValue(value);

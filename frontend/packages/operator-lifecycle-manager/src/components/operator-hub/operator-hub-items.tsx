@@ -22,7 +22,7 @@ import {
   Modal,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
-  useUserSettingsCompatibility,
+  useUserPreferenceCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
@@ -575,7 +575,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
+  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreferenceCompatibility<
     boolean
   >(userSettingsKey, storeKey, false);
   const [updateChannel, setUpdateChannel] = useState('');

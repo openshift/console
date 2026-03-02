@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import type { SetStateAction } from 'react';
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import type { UseUserSettings } from '@console/dynamic-plugin-sdk';
+import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
@@ -15,9 +15,10 @@ import {
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../utils/user-settings';
-import { useUserSettingsLocalStorage } from './useUserSettingsLocalStorage';
+import { useUserPreferenceLocalStorage } from './useUserPreferenceLocalStorage';
 
 const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
+
 if (alwaysUseFallbackLocalStorage) {
   // eslint-disable-next-line no-console
   console.info('user-settings will be stored in localstorage instead of configmap.');
@@ -34,7 +35,11 @@ const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => vo
   return [counterRef.current !== initialValue, increment, decrement];
 };
 
-export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = false) => {
+export const useUserPreference: UseUserPreference = <T>(
+  key: string,
+  defaultValue?: T,
+  sync = false,
+) => {
   // Mount status for safety state updates
   const mounted = useRef(true);
   useEffect(() => {
@@ -99,11 +104,11 @@ export const useUserSettings: UseUserSettings = <T>(key, defaultValue, sync = fa
   );
 
   const isLocalStorage = fallbackLocalStorage || impersonate;
-  const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
+  const [lsData, setLsDataCallback] = useUserPreferenceLocalStorage(
+    keyRef.current,
     alwaysUseFallbackLocalStorage && !impersonate
       ? 'console-user-settings'
       : `console-user-settings-${userUid}`,
-    keyRef.current,
     defaultValueRef.current,
     isLocalStorage && sync,
     impersonate,
