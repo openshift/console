@@ -25,7 +25,7 @@ type WrapperProps = {
 };
 
 // Create a Redux store with reducer and initial state.
-const rootReducer = combineReducers<RootState>(baseReducers);
+const rootReducer = combineReducers(baseReducers);
 const setupStore = (initialState?: Partial<RootState>) => {
   const store = createStore(rootReducer, initialState);
   // Set the store in storeHandler so that modules like rbac.tsx can access it

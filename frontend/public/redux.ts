@@ -36,9 +36,10 @@ export const baseReducers = Object.freeze({
   ...SDKReducers,
 });
 
+// TODO: Refactor to redux toolkit configureStore
 const store = createStore(
-  combineReducers<RootState>(baseReducers),
-  {},
+  combineReducers(baseReducers),
+  {} as RootState,
   composeEnhancers(applyMiddleware(thunk, featureFlagMiddleware)),
 );
 
@@ -56,7 +57,7 @@ export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxR
     ? baseReducers
     : { plugins: combineReducers(pluginReducers), ...baseReducers };
 
-  store.replaceReducer(combineReducers<RootState>(nextReducers));
+  store.replaceReducer(combineReducers(nextReducers));
 };
 
 if (process.env.NODE_ENV !== 'production') {
