@@ -7,7 +7,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 /**
  * ControlledWarningModal is a wrapper around WarningModal that manages its open state.
  */
-export const ControlledWarningModal: OverlayComponent<WarningModalProps> = ({
+const ControlledWarningModal: OverlayComponent<WarningModalProps> = ({
   closeOverlay,
   ...props
 }) => {
