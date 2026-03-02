@@ -526,6 +526,7 @@
   "Kubelet version": "Kubelet version",
   "Kube-Proxy version": "Kube-Proxy version",
   "Configuration": "Configuration",
+  "Workload": "Workload",
   "Machine set": "Machine set",
   "This count is based on your access permissions and might not include all virtual machines.": "This count is based on your access permissions and might not include all virtual machines.",
   "{{formattedCores}} cores / {{totalCores}} cores": "{{formattedCores}} cores / {{totalCores}} cores",

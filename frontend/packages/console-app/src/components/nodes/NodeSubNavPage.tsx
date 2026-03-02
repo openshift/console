@@ -11,6 +11,7 @@ import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 
 export const CONFIG_PAGE_ID = 'configuration';
+export const WORKLOADS_PAGE_ID = 'workloads';
 
 export type SubPageType = {
   component: ComponentType<PageComponentProps<K8sResourceCommon>>;

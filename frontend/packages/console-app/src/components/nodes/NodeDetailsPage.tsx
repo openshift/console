@@ -21,6 +21,7 @@ import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
+import { NodeWorkload } from './NodeWorkload';
 
 const NodePodsPage: FC<PageComponentProps<NodeKind>> = ({ obj }) => (
   <PodsPage
@@ -55,10 +56,15 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
               nameKey: 'console-app~Configuration',
               component: NodeConfiguration,
             },
+            {
+              href: 'workload',
+              // t('console-app~Workload')
+              nameKey: 'console-app~Workload',
+              component: NodeWorkload,
+            },
+            navFactory.editYaml(),
           ]
-        : []),
-      navFactory.editYaml(),
-      navFactory.pods(NodePodsPage),
+        : [navFactory.editYaml(), navFactory.pods(NodePodsPage)]),
       navFactory.logs(NodeLogs),
       navFactory.events(ResourceEventStream),
       ...(!isWindowsNode(node) ? [navFactory.terminal(NodeTerminal)] : []),

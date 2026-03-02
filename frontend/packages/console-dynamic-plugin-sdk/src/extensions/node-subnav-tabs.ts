@@ -19,6 +19,8 @@ export type NodeSubNavTab = Extension<
      *     Operating system: 50
      *     Machine: 40
      *     High availability: 30
+     *   workloads:
+     *     Pods: 30
      */
     page: {
       tabId: string;
