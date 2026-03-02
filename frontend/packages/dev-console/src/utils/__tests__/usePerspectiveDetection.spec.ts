@@ -7,9 +7,11 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
+
 describe('usePerspectiveDetection', () => {
   it('should return loading as true if CAN_GET_NS flag is pending', () => {
-    (useSelector as jest.Mock).mockImplementation(() => ({
+    useSelectorMock.mockImplementation(() => ({
       CAN_GET_NS: undefined,
     }));
 
@@ -21,7 +23,7 @@ describe('usePerspectiveDetection', () => {
   });
 
   it('should return loading as false if CAN_GET_NS flag is loaded', () => {
-    (useSelector as jest.Mock).mockImplementation(() => ({
+    useSelectorMock.mockImplementation(() => ({
       CAN_GET_NS: false,
     }));
 

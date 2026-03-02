@@ -11,10 +11,12 @@ import {
 import { useUserPreference } from '../useUserPreference';
 
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const createConfigMapMock = createConfigMap as jest.Mock;
-const updateConfigMapMock = updateConfigMap as jest.Mock;
-const useSelectorMock = useSelector as jest.Mock;
-const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
+const createConfigMapMock = createConfigMap as jest.MockedFunction<typeof createConfigMap>;
+const updateConfigMapMock = updateConfigMap as jest.MockedFunction<typeof updateConfigMap>;
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
+const useFavoritesOptionsMock = useFavoritesOptions as jest.MockedFunction<
+  typeof useFavoritesOptions
+>;
 
 jest.mock('@console/internal/components/useFavoritesOptions', () => ({
   useFavoritesOptions: jest.fn(),

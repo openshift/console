@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useSelector, useDispatch } from 'react-redux';
+import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useUser } from '../useUser';
 
@@ -19,6 +20,11 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
+const baseUserResource: K8sResourceKind = {
+  apiVersion: 'user.openshift.io/v1',
+  kind: 'User',
+};
+
 const mockSetUserResource = jest.fn((userResource) => ({
   type: 'setUserResource',
   payload: { userResource },
@@ -31,26 +37,30 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   setUserResource: (userResource: unknown) => mockSetUserResource(userResource),
 }));
 
-const mockDispatch = jest.fn();
-const mockUseSelector = useSelector as jest.Mock;
-const mockUseK8sGet = useK8sGet as jest.Mock;
-const mockUseDispatch = useDispatch as jest.Mock;
+const dispatchMock = jest.fn();
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
+const useDispatchMock = useDispatch as jest.MockedFunction<typeof useDispatch>;
+const useK8sGetMock = useK8sGet as jest.MockedFunction<typeof useK8sGet>;
 
 describe('useUser', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseDispatch.mockReturnValue(mockDispatch);
+    useDispatchMock.mockReturnValue(dispatchMock);
   });
 
   it('should return user data with displayName from fullName when available', () => {
     const mockUser = { username: 'testuser@example.com', uid: '123' };
-    const mockUserResource = { fullName: 'Test User', identities: ['testuser'] };
+    const mockUserResource = {
+      ...baseUserResource,
+      fullName: 'Test User',
+      identities: ['testuser'],
+    };
 
-    mockUseSelector
+    useSelectorMock
       .mockReturnValueOnce(mockUser) // for getUser
       .mockReturnValueOnce(mockUserResource); // for getUserResource
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    useK8sGetMock.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -63,11 +73,11 @@ describe('useUser', () => {
 
   it('should fallback to username when fullName is not available', () => {
     const mockUser = { username: 'testuser@example.com', uid: '123' };
-    const mockUserResource = { identities: ['testuser'] }; // No fullName
+    const mockUserResource = { ...baseUserResource, identities: ['testuser'] }; // No fullName
 
-    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
+    useSelectorMock.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    useK8sGetMock.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -77,15 +87,15 @@ describe('useUser', () => {
 
   it('should dispatch setUserResource when user resource is loaded', () => {
     const mockUser = { username: 'testuser@example.com' };
-    const mockUserResource = { fullName: 'Test User' };
+    const mockUserResource = { ...baseUserResource, fullName: 'Test User' };
 
-    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(null); // No userResource in Redux yet
+    useSelectorMock.mockReturnValueOnce(mockUser).mockReturnValueOnce(null); // No userResource in Redux yet
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    useK8sGetMock.mockReturnValue([mockUserResource, true, null]);
 
     renderHook(() => useUser());
 
-    expect(mockDispatch).toHaveBeenCalledWith({
+    expect(dispatchMock).toHaveBeenCalledWith({
       type: 'setUserResource',
       payload: { userResource: mockUserResource },
     });
@@ -93,11 +103,11 @@ describe('useUser', () => {
 
   it('should handle edge cases with empty strings and fallback to "Unknown user"', () => {
     const mockUser = { username: '' }; // Empty username
-    const mockUserResource = { fullName: '   ' }; // Whitespace-only fullName
+    const mockUserResource = { ...baseUserResource, fullName: '   ' }; // Whitespace-only fullName
 
-    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
+    useSelectorMock.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    useK8sGetMock.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -106,11 +116,11 @@ describe('useUser', () => {
 
   it('should trim whitespace from fullName and username', () => {
     const mockUser = { username: '  testuser@example.com  ' };
-    const mockUserResource = { fullName: '  Test User  ' };
+    const mockUserResource = { ...baseUserResource, fullName: '  Test User  ' };
 
-    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
+    useSelectorMock.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    useK8sGetMock.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
+import type { Location } from 'react-router-dom-v5-compat';
 import { useLocation } from 'react-router-dom-v5-compat';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
@@ -41,19 +42,22 @@ jest.mock('../../user-preferences/namespace/usePreferredNamespace', () => ({
   usePreferredNamespace: jest.fn(),
 }));
 
-const useDispatchMock = useDispatch as jest.Mock;
-const useFlagMock = useFlag as jest.Mock;
-const useLocationMock = useLocation as jest.Mock;
-const useLastNamespaceMock = useLastNamespace as jest.Mock;
-const usePreferredNamespaceMock = usePreferredNamespace as jest.Mock;
-const k8sGetMock = k8sGet as jest.Mock;
-const useStateMock = useState as jest.Mock;
+const useDispatchMock = useDispatch as jest.MockedFunction<typeof useDispatch>;
+const useFlagMock = useFlag as jest.MockedFunction<typeof useFlag>;
+const useLocationMock = useLocation as jest.MockedFunction<typeof useLocation>;
+const useLastNamespaceMock = useLastNamespace as jest.MockedFunction<typeof useLastNamespace>;
+const usePreferredNamespaceMock = usePreferredNamespace as jest.MockedFunction<
+  typeof usePreferredNamespace
+>;
+const k8sGetMock = k8sGet as jest.MockedFunction<typeof k8sGet>;
+const useStateMock = useState as jest.MockedFunction<typeof useState>;
 
 const activeNamespace = 'active-ns';
 const urlNamespace: string = 'url-ns';
-const getLocationData = (valid = true) => ({
-  pathname: valid ? `home/ns/${urlNamespace}` : 'home/invalid',
-});
+const getLocationData = (valid = true) =>
+  ({
+    pathname: valid ? `home/ns/${urlNamespace}` : 'home/invalid',
+  } as Location);
 const lastNamespace: string = 'last-ns';
 const preferredNamespace: string = 'preferred-ns';
 

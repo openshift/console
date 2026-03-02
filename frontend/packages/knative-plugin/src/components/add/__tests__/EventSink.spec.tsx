@@ -7,7 +7,7 @@ import {
 } from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
 
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
 
 jest.mock('react-redux', () => {
   const originalModule = jest.requireActual('react-redux');
