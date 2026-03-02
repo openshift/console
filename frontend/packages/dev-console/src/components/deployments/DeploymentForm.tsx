@@ -48,7 +48,8 @@ const EditDeploymentForm: FC<
 
   const isStale = !isNew && resource.metadata.resourceVersion !== formData.resourceVersion;
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.editDeploymentForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
+    'devconsole.editDeploymentForm.editor.lastView';
 
   const formEditor = <DeploymentFormEditor resourceType={resourceType} resourceObj={resource} />;
 
@@ -100,7 +101,7 @@ const EditDeploymentForm: FC<
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

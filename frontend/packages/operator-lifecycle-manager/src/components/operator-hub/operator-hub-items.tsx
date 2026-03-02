@@ -22,7 +22,7 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
+  COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
   useUserPreference,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
@@ -573,7 +573,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreference<boolean>(
-    userSettingsKey,
+    ignoreWarningPreferenceKey,
     false,
   );
   const [updateChannel, setUpdateChannel] = useState('');

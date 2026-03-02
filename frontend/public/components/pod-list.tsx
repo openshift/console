@@ -20,7 +20,7 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
-import { COLUMN_MANAGEMENT_CONFIGMAP_KEY } from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
@@ -569,8 +569,8 @@ export const PodsPage: FC<PodPageProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [selectedColumns, , userSettingsLoaded] = useUserPreference<TableColumnsType>(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -609,7 +609,8 @@ export const PodsPage: FC<PodPageProps> = ({
     groupVersionKind: resourceKind,
     namespace: namespace || 'default',
   };
-  if (!userSettingsLoaded) {
+
+  if (!columnPreferenceLoaded) {
     return null;
   }
 

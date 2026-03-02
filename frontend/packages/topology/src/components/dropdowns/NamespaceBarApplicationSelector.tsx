@@ -10,7 +10,7 @@ import {
   ALL_NAMESPACES_KEY,
   ALL_APPLICATIONS_KEY,
   UNASSIGNED_APPLICATIONS_KEY,
-  APPLICATION_USERSETTINGS_PREFIX,
+  APPLICATION_USER_PREFERENCE_PREFIX,
 } from '@console/shared';
 import ApplicationDropdown from './ApplicationDropdown';
 
@@ -73,7 +73,7 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
       }}
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
-      userSettingsPrefix={APPLICATION_USERSETTINGS_PREFIX}
+      userPreferencePrefix={APPLICATION_USER_PREFERENCE_PREFIX}
       disabled={disabled}
     />
   );

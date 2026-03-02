@@ -33,7 +33,7 @@ type SyncedEditorFieldProps = {
   name: string;
   formContext: EditorContext<SanitizeToForm>;
   yamlContext: EditorContext<SanitizeToYAML>;
-  lastViewUserSettingKey: string;
+  lastViewUserPreferenceKey: string;
   prune?: (data: any) => any;
   noMargin?: boolean;
 };
@@ -44,7 +44,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   yamlContext,
   prune,
   noMargin = false,
-  lastViewUserSettingKey,
+  lastViewUserPreferenceKey,
 }) => {
   const { t } = useTranslation();
   const [field] = useField(name);
@@ -62,7 +62,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     !(type === EditorType.Form ? formContext?.isDisabled : yamlContext?.isDisabled);
 
   const [editorType, setEditorType, resourceLoaded] = useEditorType(
-    lastViewUserSettingKey,
+    lastViewUserPreferenceKey,
     field.value as EditorType,
     isEditorTypeEnabled,
   );

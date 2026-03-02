@@ -12,7 +12,7 @@ type PinnedResourcesType = {
   [perspective: string]: string[];
 };
 
-const PINNED_RESOURCES_CONFIG_MAP_KEY = 'console.pinnedResources';
+const PINNED_RESOURCES_USER_PREFERENCE_KEY = 'console.pinnedResources';
 
 export const usePinnedResources = (): [string[], (pinnedResources: string[]) => void, boolean] => {
   const fireTelemetryEvent = useTelemetry();
@@ -57,7 +57,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
     [perspectiveExtensions, getPins],
   );
   const [pinnedResources, setPinnedResources, loaded] = useUserPreference<PinnedResourcesType>(
-    PINNED_RESOURCES_CONFIG_MAP_KEY,
+    PINNED_RESOURCES_USER_PREFERENCE_KEY,
     null,
     true,
   );

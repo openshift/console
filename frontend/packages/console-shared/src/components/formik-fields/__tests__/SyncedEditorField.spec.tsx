@@ -51,7 +51,7 @@ describe('SyncedEditorField', () => {
       editor: 'YAML Editor',
       isDisabled: false,
     },
-    lastViewUserSettingKey: 'test.lastView',
+    lastViewUserPreferenceKey: 'test.lastView',
   };
 
   beforeEach(() => {

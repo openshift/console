@@ -25,7 +25,7 @@ import { ProjectModel, NamespaceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ALL_NAMESPACES_KEY,
-  NAMESPACE_USERSETTINGS_PREFIX,
+  NAMESPACE_USER_PREFERENCE_PREFIX,
   FLAGS,
 } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -227,13 +227,9 @@ const NamespaceMenu: FC<{
   const [filterText, setFilterText] = useState('');
 
   // Bookmarking / favorites (note in <= 4.8 this feature was known as bookmarking)
-  const favoritesUserPreferenceKey = `${NAMESPACE_USERSETTINGS_PREFIX}.bookmarks`;
-  const systemNamespacesSettingsKey = `${NAMESPACE_USERSETTINGS_PREFIX}.systemNamespace`;
-  const [favorites, setFavorites] = useUserPreference(
-    favoritesUserPreferenceKey,
-    undefined,
-    true,
-  );
+  const favoritesUserPreferenceKey = `${NAMESPACE_USER_PREFERENCE_PREFIX}.bookmarks`;
+  const systemNamespacesSettingsKey = `${NAMESPACE_USER_PREFERENCE_PREFIX}.systemNamespace`;
+  const [favorites, setFavorites] = useUserPreference(favoritesUserPreferenceKey, undefined, true);
 
   const canList: boolean = useFlag(FLAGS.CAN_LIST_NS);
   const canCreate: boolean = useFlag(isProjects ? FLAGS.CAN_CREATE_PROJECT : FLAGS.CAN_CREATE_NS);

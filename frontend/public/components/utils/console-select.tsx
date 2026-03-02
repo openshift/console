@@ -68,7 +68,7 @@ export type ConsoleSelectProps = {
   /** Prefix for the title in the dropdown toggle */
   titlePrefix?: string;
   /** User settings id prefix for bookmarks */
-  userSettingsPrefix?: string;
+  userPreferencePrefix?: string;
   /** By default, the title prop is shown as the placeholder for when no item is selected. This prop forces the title to always be shown */
   alwaysShowTitle?: boolean;
   /** Whether to render the dropdown inline */
@@ -132,7 +132,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   title,
   alwaysShowTitle = false,
   titlePrefix,
-  userSettingsPrefix,
+  userPreferencePrefix,
   renderInline = false,
   ...props
 }) => {
@@ -144,17 +144,13 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
-  const bookmarkUserPreferenceKey = userSettingsPrefix
-    ? `${userSettingsPrefix}.bookmarks`
+  const bookmarkUserPreferenceKey = userPreferencePrefix
+    ? `${userPreferencePrefix}.bookmarks`
     : undefined;
 
   const enableBookmarks = !!bookmarkUserPreferenceKey;
 
-  const [bookmarks, setBookmarks] = useUserPreference(
-    bookmarkUserPreferenceKey,
-    {},
-    true,
-  );
+  const [bookmarks, setBookmarks] = useUserPreference(bookmarkUserPreferenceKey, {}, true);
 
   const onBookmark = useCallback(
     (key: string, isBookmarked: boolean) => {

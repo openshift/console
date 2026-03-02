@@ -99,11 +99,7 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference to return { completed: false } for the tour state
-      useUserPreferenceMock.mockReturnValue([
-        { dev: { completed: false } },
-        () => null,
-        true,
-      ]);
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
       const { result } = renderHook(() => useTourValuesForContext());
       const { tourState, tour, totalSteps } = result.current;
       expect(tourState).toEqual({
@@ -123,11 +119,7 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false })
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue([[]]);
-      useUserPreferenceMock.mockReturnValue([
-        { dev: { completed: false } },
-        () => null,
-        true,
-      ]);
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
       const { result } = renderHook(() => useTourValuesForContext());
       const { tourState, tour, totalSteps } = result.current;
       expect(tourState).toEqual(undefined);
@@ -141,11 +133,7 @@ describe('guided-tour-context', () => {
         .mockReturnValueOnce({ A: true, B: false });
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference with loaded: false
-      useUserPreferenceMock.mockReturnValue([
-        { dev: { completed: false } },
-        () => null,
-        false,
-      ]);
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, false]);
       const { result } = renderHook(() => useTourValuesForContext());
       const { tourState, tour, totalSteps } = result.current;
       expect(tourState).toEqual(undefined);

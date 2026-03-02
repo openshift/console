@@ -27,7 +27,7 @@ import type { NodeKind } from '@console/internal/module/k8s';
 import { modelFor, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
+import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
@@ -206,7 +206,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const [trimmedContent, setTrimmedContent] = useState('');
   const [lineCount, setLineCount] = useState(0);
   const [isWrapLines, setWrapLines] = useUserPreference<boolean>(
-    LOG_WRAP_LINES_USERSETTINGS_KEY,
+    LOG_WRAP_LINES_USER_PREFERENCE_KEY,
     false,
     true,
   );

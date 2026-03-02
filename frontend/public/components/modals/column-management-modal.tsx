@@ -14,7 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
-import { COLUMN_MANAGEMENT_CONFIGMAP_KEY } from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import {
   WithUserPreferenceProps,
   withUserPreference,
@@ -198,7 +198,7 @@ const ColumnManagementModalWithSettings = withUserPreference<
   ColumnManagementModalProps & WithUserPreferenceProps<object>,
   object
 >(
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   undefined,
   true,
 )(ColumnManagementModal);

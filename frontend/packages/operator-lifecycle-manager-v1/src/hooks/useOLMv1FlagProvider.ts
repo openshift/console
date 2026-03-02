@@ -2,7 +2,7 @@ import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { FLAG_OLMV1_ENABLED, OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
+import { FLAG_OLMV1_ENABLED, OLMV1_ENABLED_USER_PREFERENCE_KEY } from '../const';
 
 /**
  * Hook provider that sets the OLMV1_ENABLED feature flag based on user preferences.
@@ -11,7 +11,7 @@ import { FLAG_OLMV1_ENABLED, OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 const useOLMv1FlagProvider = (setFeatureFlag: SetFeatureFlag): void => {
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled] = useUserPreference<boolean>(
-    OLMV1_ENABLED_USER_SETTING_KEY,
+    OLMV1_ENABLED_USER_PREFERENCE_KEY,
     techPreviewEnabled ?? false,
     true,
   );

@@ -1,4 +1,4 @@
-import { LAST_NAMESPACE_NAME_USER_SETTINGS_KEY } from '@console/shared/src/constants';
+import { LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const useLastNamespace = (): [
@@ -7,7 +7,7 @@ export const useLastNamespace = (): [
   boolean,
 ] => {
   const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserPreference<string>(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+    LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
   );
 
   // This toString is workaround because the useUserPreference hook returns a number or boolean

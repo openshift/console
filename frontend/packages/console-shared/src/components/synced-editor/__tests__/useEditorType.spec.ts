@@ -30,7 +30,7 @@ const mockUseState = useState as jest.Mock;
 const actualUseState = jest.requireActual('react').useState;
 
 describe('useEditorType', () => {
-  const lastViewUserSettingKey = 'key';
+  const lastViewUserPreferenceKey = 'key';
   const defaultValue = EditorType.Form;
 
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe('useEditorType', () => {
   it('should return editor type corresponding to preferred editor type if it is defined and enabled', () => {
     mockUserPreference.mockReturnValue([EditorType.Form, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(EditorType.YAML);
     expect(loaded).toBe(true);
@@ -56,7 +56,7 @@ describe('useEditorType', () => {
       PREFERRED_CREATE_EDIT_METHOD_USER_SETTING_VALUE_LATEST,
       true,
     ]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(EditorType.YAML);
     expect(loaded).toBe(true);
@@ -67,7 +67,7 @@ describe('useEditorType', () => {
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.Form, true]);
     const { result } = renderHook(() =>
       useEditorType(
-        lastViewUserSettingKey,
+        lastViewUserPreferenceKey,
         defaultValue,
         (type: string) => !(type === EditorType.Form),
       ),
@@ -80,7 +80,7 @@ describe('useEditorType', () => {
   it('should return editor type corresponding to last viewed editor type if it is defined and enabled and preferred editor type is not defined', () => {
     mockUserPreference.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([undefined, true]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(EditorType.YAML);
     expect(loaded).toBe(true);
@@ -89,7 +89,7 @@ describe('useEditorType', () => {
   it('should return editor type corresponding to default value if both preferred and last viewed editor type are not defined or disabled', () => {
     mockUserPreference.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([undefined, true]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(defaultValue);
     expect(loaded).toBe(true);
@@ -98,7 +98,7 @@ describe('useEditorType', () => {
   it('should return false for loaded and null for editor type if preferred editor type has not loaded', () => {
     mockUserPreference.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([undefined, false]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
     expect(loaded).toBe(false);
@@ -107,7 +107,7 @@ describe('useEditorType', () => {
   it('should return false for loaded and null for editor type if last viewed editor type has not loaded', () => {
     mockUserPreference.mockReturnValue([undefined, jest.fn(), false]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
     expect(loaded).toBe(false);
@@ -117,7 +117,7 @@ describe('useEditorType', () => {
     mockUserPreference.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
     mockUseState.mockReturnValue([null, jest.fn()]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, defaultValue));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
     expect(loaded).toBe(false);
@@ -127,7 +127,7 @@ describe('useEditorType', () => {
     mockUserPreference.mockReturnValue([undefined, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
     mockUseState.mockReturnValue([null, jest.fn()]);
-    const { result } = renderHook(() => useEditorType(lastViewUserSettingKey, null));
+    const { result } = renderHook(() => useEditorType(lastViewUserPreferenceKey, null));
     const [editorType, , loaded] = result.current;
     expect(editorType).toEqual(null);
     expect(loaded).toBe(true);

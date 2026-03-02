@@ -19,7 +19,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { FAVORITES_CONFIG_MAP_KEY } from '../../consts';
+import { FAVORITES_USER_PREFERENCE_KEY } from '../../consts';
 import type { FavoritesType } from '../../types';
 
 const MAX_FAVORITE_COUNT = 10;
@@ -37,7 +37,7 @@ export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [favorites, setFavorites, loaded] = useUserPreference<FavoritesType>(
-    FAVORITES_CONFIG_MAP_KEY,
+    FAVORITES_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
