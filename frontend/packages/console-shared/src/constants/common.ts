@@ -35,25 +35,16 @@ export const USERSETTINGS_PREFIX = 'console';
 
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.namespace`;
-export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
 export const APPLICATION_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.applications`;
-export const APPLICATION_LOCAL_STORAGE_KEY = 'dropdown-storage-applications';
 export const LAST_NAMESPACE_NAME_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastNamespace`;
 export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-namespace-name`;
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
-export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
 export const COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.communityProvidersWarning`;
-export const PINNED_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/pinned-resources`;
-export const COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/table-columns`;
 export const LOG_WRAP_LINES_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.log.wrapLines`;
 export const OVERRIDE_YAML_EDITOR_THEME_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.overrideYAMLEditorTheme`;
-export const OVERRIDE_YAML_EDITOR_THEME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/overrideYAMLEditorTheme`;
 export const CUSTOM_YAML_EDITOR_FONT_SIZE_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.customYAMLEditorFontSize`;
-export const CUSTOM_YAML_EDITOR_FONT_SIZE_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/customYAMLEditorFontSize`;
 export const SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorTooltips`;
-export const SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/showYAMLEditorTooltips`;
 export const SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorStickyScroll`;
-export const SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/showYAMLEditorStickyScroll`;
 export const SHOW_FULL_LOG_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.show.full.log`;
 // Bootstrap user for OpenShift 4.0 clusters (kube:admin)
 export const KUBE_ADMIN_USERNAMES = ['kube:admin'];
