@@ -113,14 +113,14 @@ describe('TopologyPage view logic', () => {
   it('should use preferred user setting if valid and all settings loaded', () => {
     (useUserPreference as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['graph', true]);
-    renderWithProviders(<TopologyPage activeViewStorageKey="fake-key" />);
+    renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should use last-viewed if preferred view is "latest"', () => {
     (useUserPreference as jest.Mock).mockReturnValue(['graph', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['latest', true]);
-    renderWithProviders(<TopologyPage activeViewStorageKey="fake-key" />);
+    renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
@@ -128,7 +128,7 @@ describe('TopologyPage view logic', () => {
     (useUserPreference as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
     (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
-    renderWithProviders(<TopologyPage activeViewStorageKey="fake-key" />);
+    renderWithProviders(<TopologyPage />);
     expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 

@@ -9,7 +9,7 @@ import type { MenuActions } from '@console/shared';
 import { useFlag, MultiTabListPage, getBadgeFromType, useUserPreference } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useResourceListPages } from '@console/shared/src/hooks/useResourceListPages';
-import { LAST_BUILD_PAGE_TAB_STORAGE_KEY } from '../../const';
+import { LAST_BUILD_PAGE_TAB_USER_PREFERENCE_KEY } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -26,7 +26,7 @@ const BuildsTabListPage: FC = () => {
   const menuActions: MenuActions = {};
   const pages: Page[] = [];
   const [preferredTab, setPreferredTab, preferredTabLoaded] = useUserPreference<string>(
-    LAST_BUILD_PAGE_TAB_STORAGE_KEY,
+    LAST_BUILD_PAGE_TAB_USER_PREFERENCE_KEY,
     'shipwright-builds',
   );
 

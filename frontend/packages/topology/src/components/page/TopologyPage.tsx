@@ -14,8 +14,7 @@ import { useQueryParams, useUserPreference } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
 import {
   LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
-  LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
-  TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
+  TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY,
 } from '../../const';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
@@ -26,7 +25,6 @@ import TopologyDataRenderer from './TopologyDataRenderer';
 import TopologyPageToolbar from './TopologyPageToolbar';
 
 interface TopologyPageProps {
-  activeViewStorageKey?: string;
   hideProjects?: boolean;
   defaultViewType?: TopologyViewType;
 }
@@ -56,7 +54,6 @@ const PageContents: FC<PageContentsProps> = ({ viewType }) => {
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 export const TopologyPage: FC<TopologyPageProps> = ({
-  activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
@@ -64,7 +61,7 @@ export const TopologyPage: FC<TopologyPageProps> = ({
   const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
   const [topologyLastView, setTopologyLastView, isTopologyLastViewLoaded] = useUserPreference<
     TopologyViewType
-  >(TOPOLOGY_VIEW_CONFIG_STORAGE_KEY, defaultViewType);
+  >(TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY, defaultViewType);
   const params = useParams();
 
   const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
