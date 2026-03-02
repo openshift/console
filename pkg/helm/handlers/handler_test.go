@@ -1078,7 +1078,7 @@ func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
 			requestBody:      `{"name":"test-release","namespace":"default","chart_url":"http://ghcr.io/test/chart","noRepo":true}`,
 			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
 			error:            errors.New("Chart path is invalid"),
-			httpStatusCode:   http.StatusBadGateway,
+			httpStatusCode:   http.StatusBadRequest,
 		},
 		{
 			name:             "Successful chart install from URL returns secret info",
