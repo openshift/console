@@ -21,6 +21,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
     createdAt,
     description,
     displayName,
+    hasIcon,
     image,
     infrastructureFeatures,
     keywords,
@@ -99,9 +100,11 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
       descriptions: [{ value: <SyncMarkdownView content={markdownDescription || description} /> }],
     },
     displayName,
-    // Remove icon until we have an endpoint to lazy load cached icons.
-    // TODO Add icon back once https://issues.redhat.com/browse/CONSOLE-4728 is completed.
-    // icon: { url: '/api/olm/catalog-icons/<catalog-name>/<package-name> },
+    ...(hasIcon && {
+      icon: {
+        url: `/api/olm/catalog-icons/${encodeURIComponent(catalog)}/${encodeURIComponent(name)}`,
+      },
+    }),
     name: displayName || name,
     supportUrl: support,
     provider,

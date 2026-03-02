@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import * as _ from 'lodash';
 import type { CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { isCatalogItemType } from '@console/dynamic-plugin-sdk';
@@ -282,10 +283,16 @@ export const sortCatalogItems = (
   }
 };
 
-export const getIconProps = (item: CatalogItem) => {
+interface IconProps {
+  iconImg?: string | null;
+  iconClass?: string | null;
+  icon?: ReactNode;
+}
+
+export const getIconProps = (item: CatalogItem): IconProps => {
   const { icon } = item;
   if (!icon) {
-    return {};
+    return { iconImg: catalogImg, iconClass: null };
   }
   if (icon.url) {
     return { iconImg: icon.url, iconClass: null };

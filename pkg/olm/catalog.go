@@ -12,6 +12,14 @@ import (
 	"k8s.io/klog/v2"
 )
 
+// CachedIcon represents a cached operator icon.
+type CachedIcon struct {
+	Data         []byte
+	MediaType    string
+	LastModified string
+	ETag         string
+}
+
 // ConsoleCatalogItem represents a single item in the catalog.
 type ConsoleCatalogItem struct {
 	ID                     string   `json:"id"`
@@ -21,6 +29,7 @@ type ConsoleCatalogItem struct {
 	CreatedAt              string   `json:"createdAt,omitempty"`
 	Description            string   `json:"description,omitempty"`
 	DisplayName            string   `json:"displayName,omitempty"`
+	HasIcon                bool     `json:"hasIcon"`
 	Image                  string   `json:"image,omitempty"`
 	InfrastructureFeatures []string `json:"infrastructureFeatures,omitempty"`
 	Keywords               []string `json:"keywords,omitempty"`
@@ -78,6 +87,7 @@ func CreateCatalogItem(catalogName string, pkg *declcfg.Package, bundle *declcfg
 	withCreatedAt(item, csvMetadata)
 	withDescription(item, csvMetadata, pkg)
 	withDisplayName(item, csvMetadata, pkg)
+	withHasIcon(item, pkg)
 	withImage(item, bundle)
 	withInfrastructureFeatures(item, csvMetadata)
 	withKeywords(item, csvMetadata)
@@ -213,6 +223,10 @@ func withDisplayName(item *ConsoleCatalogItem, csvMetadata *property.CSVMetadata
 	if csvMetadata.DisplayName != "" {
 		item.DisplayName = csvMetadata.DisplayName
 	}
+}
+
+func withHasIcon(item *ConsoleCatalogItem, pkg *declcfg.Package) {
+	item.HasIcon = pkg.Icon != nil && len(pkg.Icon.Data) > 0
 }
 
 func withImage(item *ConsoleCatalogItem, bundle *declcfg.Bundle) {
