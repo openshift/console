@@ -11,7 +11,7 @@ import {
   useMemo,
 } from 'react';
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import { Provider } from 'react-redux';
@@ -352,7 +352,8 @@ const AppWithExtensions: FC = () => {
   return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox blame="Init" />, document.getElementById('app'));
+const root = createRoot(document.getElementById('app')!);
+root.render(<LoadingBox blame="Init" />);
 
 const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -525,7 +526,7 @@ graphQLReady.onReady(() => {
     }
   }
 
-  render(
+  root.render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <PluginStoreProvider store={pluginStore}>
@@ -542,6 +543,5 @@ graphQLReady.onReady(() => {
         </PluginStoreProvider>
       </Provider>
     </Suspense>,
-    document.getElementById('app'),
   );
 });
