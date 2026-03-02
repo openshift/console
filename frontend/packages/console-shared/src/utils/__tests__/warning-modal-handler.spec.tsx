@@ -1,9 +1,5 @@
 import { render } from '@testing-library/react';
-import {
-  useSyncWarningModalLauncher,
-  useWarningModalLauncher,
-  launchWarningModal,
-} from '../warning-modal-handler';
+import { useSyncWarningModalLauncher, launchWarningModal } from '../warning-modal-handler';
 
 // Mock useOverlay
 const mockLauncher = jest.fn();
@@ -69,34 +65,6 @@ describe('warning-modal-handler', () => {
           jest.fn(),
         );
       }).toThrow('Warning modal launcher not initialized');
-    });
-  });
-
-  describe('useWarningModalLauncher', () => {
-    it('should return a function that launches warning modals', () => {
-      let capturedLauncher: any;
-
-      const TestComponent = () => {
-        capturedLauncher = useWarningModalLauncher();
-        return null;
-      };
-
-      render(<TestComponent />);
-
-      const onConfirm = jest.fn();
-      capturedLauncher({
-        title: 'Test Warning',
-        children: 'Test message',
-        confirmButtonLabel: 'OK',
-        onConfirm,
-      });
-
-      expect(mockLauncher).toHaveBeenCalledWith(expect.anything(), {
-        title: 'Test Warning',
-        children: 'Test message',
-        confirmButtonLabel: 'OK',
-        onConfirm,
-      });
     });
   });
 

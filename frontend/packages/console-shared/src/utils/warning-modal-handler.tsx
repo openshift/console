@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ControlledWarningModalProps } from '../hooks/useWarningModal';
 import { ControlledWarningModal } from '../hooks/useWarningModal';
@@ -28,40 +28,6 @@ export const useSyncWarningModalLauncher = () => {
       }
     };
   }, [launcher]);
-};
-
-/**
- * Hook to launch warning modals from React components.
- * Must be used within an OverlayProvider.
- * Use `useWarningModal` instead for better React integration.
- *
- * @example
- * ```tsx
- * const MyComponent = () => {
- *   const launchWarningModal = useWarningModalLauncher();
- *
- *   const handleWarning = () => {
- *     launchWarningModal({
- *       title: 'Are you sure?',
- *       children: 'This action cannot be undone.',
- *       confirmButtonLabel: 'Continue',
- *       onConfirm: () => console.log('Confirmed'),
- *     });
- *   };
- *
- *   // ...
- * };
- * ```
- */
-export const useWarningModalLauncher = (): ((props: ControlledWarningModalProps) => void) => {
-  const launcher = useOverlay();
-
-  return useCallback(
-    (props: ControlledWarningModalProps) => {
-      launcher<ControlledWarningModalProps>(ControlledWarningModal, props);
-    },
-    [launcher],
-  );
 };
 
 /**

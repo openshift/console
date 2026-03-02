@@ -10,6 +10,4 @@ export const mockLaunchWarningModal = jest.fn((props, onConfirm) => {
 
 export const useSyncWarningModalLauncher = jest.fn();
 
-export const useWarningModalLauncher = jest.fn(() => mockLaunchWarningModal);
-
 export const launchWarningModal = mockLaunchWarningModal;

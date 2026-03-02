@@ -131,7 +131,7 @@ export const useRemoveNodeMaintenanceAction = (
       removeNodeMaintenance: () => ({
         id: 'remove-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: nodeMaintenance ? () => stopNodeMaintenanceModalLauncher(nodeMaintenance) : undefined,
+        cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         accessReview: host && asAccessReview(maintenanceModel, host, 'delete'),
       }),
     }),
