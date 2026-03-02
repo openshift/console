@@ -13,6 +13,7 @@ import { featureReducer, featureReducerName } from './reducers/features';
 import ObserveReducers, { ObserveState } from './reducers/observe';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
+import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -40,6 +41,9 @@ const store = createStore(
   {},
   composeEnhancers(applyMiddleware(thunk, featureFlagMiddleware)),
 );
+
+// Provides redux store object to SDK components that can't import from here
+storeHandler.setStore(store);
 
 export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
   const pluginReducers: ReducersMapObject = {};

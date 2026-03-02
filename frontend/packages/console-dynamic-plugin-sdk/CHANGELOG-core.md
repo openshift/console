@@ -13,6 +13,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.22.0-prerelease.2 - TBD
 
 - **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
+- **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
   by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
@@ -252,4 +253,5 @@ table in [Console dynamic plugins README](./README.md).
 [#15893]: https://github.com/openshift/console/pull/15893
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
+[#16019]: https://github.com/openshift/console/pull/16019
 [#16057]: https://github.com/openshift/console/pull/16057

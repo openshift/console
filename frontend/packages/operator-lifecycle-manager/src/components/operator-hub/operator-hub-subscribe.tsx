@@ -129,6 +129,7 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
   const [azureTenantId, setAzureTenantId] = useState('');
   const [azureClientId, setAzureClientId] = useState('');
   const [azureSubscriptionId, setAzureSubscriptionId] = useState('');
+  const [azureResourceGroup, setAzureResourceGroup] = useState('');
   const [gcpProjectNumber, setGcpProjectNumber] = useState('');
   const [gcpPoolId, setGcpPoolId] = useState('');
   const [gcpProviderId, setGcpProviderId] = useState('');
@@ -506,6 +507,10 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
               name: 'SUBSCRIPTIONID',
               value: azureSubscriptionId,
             },
+            {
+              name: 'RESOURCEGROUP',
+              value: azureResourceGroup,
+            },
           ],
         };
         break;
@@ -584,7 +589,9 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
     (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
     (tokenizedAuth === 'Azure' &&
-      [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v))) ||
+      [azureClientId, azureTenantId, azureSubscriptionId, azureResourceGroup].some((v) =>
+        _.isEmpty(v),
+      )) ||
     (tokenizedAuth === 'GCP' &&
       [gcpProjectNumber, gcpPoolId, gcpProviderId, gcpServiceAcctEmail].some((v) => _.isEmpty(v)));
 
@@ -941,6 +948,16 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
                     ariaLabel={t('olm~Azure Subscription ID')}
                     value={azureSubscriptionId}
                     setValue={setAzureSubscriptionId}
+                  />
+                  <InputField
+                    label={t('olm~Azure Resource Group')}
+                    helpText={t(
+                      'olm~The Azure Resource Group required for the operator to access cloud resources.',
+                    )}
+                    placeholder={t('olm~Azure Resource Group')}
+                    ariaLabel={t('olm~Azure Resource Group')}
+                    value={azureResourceGroup}
+                    setValue={setAzureResourceGroup}
                   />
                 </div>
               )}

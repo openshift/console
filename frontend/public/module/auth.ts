@@ -15,18 +15,18 @@ export const LOGIN_ERROR_PATH = loginErrorURL
   ? new URL(loginErrorURL, window.location.href).pathname
   : '';
 
-const isLoginErrorPath = (path) => path && path === LOGIN_ERROR_PATH;
+const isLoginErrorPath = (path: string) => path && path === LOGIN_ERROR_PATH;
 
-const loginState = (key) => localStorage.getItem(key);
+const loginState = (key: string) => localStorage.getItem(key);
 
-const loginStateItem = (key) => loginState(key);
+const loginStateItem = (key: string) => loginState(key);
 
 const userID = 'userID';
 const name = 'name';
 const email = 'email';
 const clearLocalStorageKeys = [userID, name, email];
 
-const setNext = (next) => {
+const setNext = (next: string) => {
   if (!next) {
     return;
   }
@@ -40,7 +40,7 @@ const setNext = (next) => {
   }
 };
 
-const clearLocalStorage = (keys) => {
+const clearLocalStorage = (keys: string[]) => {
   keys.forEach((key) => {
     try {
       localStorage.removeItem(key);
@@ -123,7 +123,7 @@ export const authSvc = {
     // Ensure that we don't redirect to the current URL in a loop
     // when using local bridge in development mode without authorization.
     if (![window.location.href, window.location.pathname].includes(loginURL)) {
-      window.location = loginURL;
+      window.location.assign(loginURL);
     }
   },
 };

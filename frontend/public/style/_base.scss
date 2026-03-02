@@ -6,7 +6,7 @@
 //
 // @at-root .foo#{&}
 
-:where(:not([class*='pf-v5-c-'], [class*='pf-v6-c-'])) {
+:where(:not([class*='pf-v6-c-'])) {
   @at-root fieldset#{&} {
     border: 0;
   }

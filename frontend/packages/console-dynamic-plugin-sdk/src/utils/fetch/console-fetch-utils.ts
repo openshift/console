@@ -1,5 +1,6 @@
 import { getImpersonate } from '../../app/core/reducers';
 import storeHandler from '../../app/storeHandler';
+import { HttpError, RetryError } from '../error/http-error';
 
 type ConsoleRequestHeaders = {
   'Impersonate-Group'?: string | string[];
@@ -85,4 +86,137 @@ export const normalizeConsoleHeaders = (
   });
 
   return normalized;
+};
+
+/**
+ * A utility function to apply console-specific headers to the provided fetch options.
+ * @returns Modified `options` object with additional request headers.
+ */
+export const applyConsoleHeaders = (url: string, options: RequestInit): RequestInit => {
+  const consoleHeaders = getConsoleRequestHeaders();
+
+  if (!options.headers) {
+    options.headers = {};
+  }
+
+  // Apply console headers, handling array values for multiple headers
+  Object.entries(consoleHeaders || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      // For multiple Impersonate-Group headers, we need special handling
+      // because fetch() API combines them into a single comma-separated header
+      // which doesn't work for Kubernetes impersonation
+      if (key === 'Impersonate-Group') {
+        // Send as a special header that the backend will split
+        options.headers['X-Console-Impersonate-Groups'] = value.join(',');
+      } else {
+        // For other array headers, store as array
+        options.headers[key] = value;
+      }
+    } else if (value) {
+      options.headers[key] = value;
+    }
+  });
+
+  // X-CSRFToken is used only for non-GET requests targeting bridge
+  if (options.method === 'GET' || url.indexOf('://') >= 0) {
+    delete options.headers['X-CSRFToken'];
+  }
+
+  return options;
+};
+
+// TODO: url can be url or path, but shouldLogout only handles paths
+export const shouldLogout = (url: string): boolean => {
+  const k8sRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/`);
+  // 401 from k8s. show logout screen
+  if (k8sRegex.test(url)) {
+    // Don't let 401s from proxied services log out users
+    const proxyRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/proxy/`);
+    if (proxyRegex.test(url)) {
+      return false;
+    }
+    const serviceRegex = new RegExp(
+      `^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`,
+    );
+    if (serviceRegex.test(url)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+};
+
+export const validateStatus = async (
+  response: Response,
+  url: string,
+  method: string,
+  retry: boolean,
+) => {
+  if (response.ok || response.status === 304) {
+    return response;
+  }
+
+  if (retry && response.status === 429) {
+    throw new RetryError();
+  }
+
+  if (response.status === 401 && shouldLogout(url)) {
+    const next = window.location.pathname + window.location.search + window.location.hash;
+    // We can't use regular import from outside this package, so a dynamic import is required
+    // This also breaks a nasty cycle - authSvc.logout calls coFetch (which calls validateStatus)
+    import('@console/internal/module/auth')
+      .then((m) => m.authSvc)
+      .then((authSvc) => {
+        authSvc.logout(next);
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Error during logout after 401 response', e);
+      });
+  }
+
+  const contentType = response.headers.get('content-type');
+  if (!contentType || contentType.indexOf('json') === -1) {
+    throw new HttpError(response.statusText, response.status, response);
+  }
+
+  if (response.status === 403) {
+    return response.json().then((json) => {
+      throw new HttpError(
+        json.message || 'Access denied due to cluster policy.',
+        response.status,
+        response,
+        json,
+      );
+    });
+  }
+
+  return response.json().then((json) => {
+    // retry 409 conflict errors due to ClustResourceQuota / ResourceQuota
+    // https://bugzilla.redhat.com/show_bug.cgi?id=1920699
+    if (
+      retry &&
+      method === 'POST' &&
+      response.status === 409 &&
+      ['resourcequotas', 'clusterresourcequotas'].includes(json.details?.kind)
+    ) {
+      throw new RetryError();
+    }
+    const cause = json.details?.causes?.[0];
+    let reason;
+    if (cause) {
+      reason = `Error "${cause.message}" for field "${cause.field}".`;
+    }
+    if (!reason) {
+      reason = json.message;
+    }
+    if (!reason) {
+      reason = json.error;
+    }
+    if (!reason) {
+      reason = response.statusText;
+    }
+
+    throw new HttpError(reason, response.status, response, json);
+  });
 };

@@ -13,7 +13,6 @@ import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
-import { appInternalFetch } from '../co-fetch';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
 import AppContents from './app-contents';
@@ -41,13 +40,11 @@ import {
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
-  AppInitSDK,
   getUser,
   useActivePerspective,
   ReduxReducer,
   ContextProvider,
 } from '@console/dynamic-plugin-sdk';
-import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
@@ -455,16 +452,6 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-/**
- * loading dynamic plugins from PluginStore has a dependency on coFetch, which
- * only works after `AppInitSDK` has set the fetch implementation.
- *
- * TODO: Find a way to load this earlier in the app lifecycle
- * TODO: Revert HAC-375 so coFetch isn't sourced via dependency injection (???)
- */
-const initDynamicPlugins = () => {
-  initConsolePlugins(pluginStore);
-};
 // Load cached API resources from localStorage to speed up page load.
 const initApiDiscovery = (storeInstance) => {
   getCachedResources()
@@ -482,6 +469,8 @@ const initApiDiscovery = (storeInstance) => {
 graphQLReady.onReady(() => {
   const { productName } = getBrandingDetails();
   store.dispatch<any>(detectFeatures());
+
+  initApiDiscovery(store);
 
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
@@ -544,19 +533,11 @@ graphQLReady.onReady(() => {
           <ThemeProvider>
             <HelmetProvider>
               <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-              <AppInitSDK
-                configurations={{
-                  appFetch: appInternalFetch,
-                  apiDiscovery: initApiDiscovery,
-                  dynamicPlugins: initDynamicPlugins,
-                }}
-              >
-                <ToastProvider>
-                  <PollConsoleUpdates />
-                  <AdmissionWebhookWarningNotifications />
-                  <AppRouter />
-                </ToastProvider>
-              </AppInitSDK>
+              <ToastProvider>
+                <PollConsoleUpdates />
+                <AdmissionWebhookWarningNotifications />
+                <AppRouter />
+              </ToastProvider>
             </HelmetProvider>
           </ThemeProvider>
         </PluginStoreProvider>

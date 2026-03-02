@@ -81,12 +81,7 @@ const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObj
 
 const config: Configuration = {
   entry: {
-    main: [
-      './public/components/app.tsx',
-      '/node_modules/@patternfly-5/patternfly/patternfly.scss',
-      '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
-      '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
-    ],
+    main: ['./public/components/app.tsx'],
   },
   cache: {
     type: 'filesystem',

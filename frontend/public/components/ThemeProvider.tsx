@@ -6,7 +6,6 @@ export const THEME_USER_SETTING_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
-const THEME_DARK_CLASS_LEGACY = 'pf-v5-theme-dark'; // legacy class name needed to support PF5
 export const THEME_DARK = 'dark';
 export const THEME_LIGHT = 'light';
 export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -32,12 +31,10 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PR
     theme,
     () => {
       htmlTagElement.classList.add(THEME_DARK_CLASS);
-      htmlTagElement.classList.add(THEME_DARK_CLASS_LEGACY);
       return THEME_DARK;
     },
     () => {
       htmlTagElement.classList.remove(THEME_DARK_CLASS);
-      htmlTagElement.classList.remove(THEME_DARK_CLASS_LEGACY);
       return THEME_LIGHT;
     },
   ) as PROCESSED_THEME;
@@ -63,11 +60,9 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     (e) => {
       if (e.matches) {
         htmlTagElement?.classList.add(THEME_DARK_CLASS);
-        htmlTagElement?.classList.add(THEME_DARK_CLASS_LEGACY);
         setProcessedTheme(THEME_DARK);
       } else {
         htmlTagElement?.classList.remove(THEME_DARK_CLASS);
-        htmlTagElement?.classList.remove(THEME_DARK_CLASS_LEGACY);
         setProcessedTheme(THEME_LIGHT);
       }
     },

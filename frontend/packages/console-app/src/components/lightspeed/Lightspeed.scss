@@ -20,7 +20,8 @@
 
 .lightspeed__popover {
   border-radius: 12px;
-  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  border: var(--pf-t--global--border--width--regular) solid
+    var(--pf-t--global--border--color--default);
   background-color: var(--pf-t--global--background--color--primary--default);
   bottom: var(--popover-bottom);
   overflow: auto;
@@ -72,17 +73,15 @@
 }
 
 .lightspeed__popover-button {
-  background-image: url('logo.svg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: calc(var(--popover-button-size) + 3px);
+  background-image: url('logo.svg') !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: calc(var(--popover-button-size) + 3px) !important;
   border-radius: var(--popover-border-radius) !important;
   bottom: var(--popover-margin);
-  box-shadow: var(--pf-t--global--box-shadow--lg);
   height: var(--popover-button-size);
   padding: 0;
   position: absolute !important;
-  right: var(--popover-margin);
   width: var(--popover-button-size);
 
   &::after {
@@ -90,7 +89,7 @@
   }
 
   .pf-v6-theme-dark & {
-    background-image: url('logo-dark.svg');
+    background-image: url('logo-dark.svg') !important;
     background-color: var(--pf-t--global--background--color--primary--default) !important;
   }
 }

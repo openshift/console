@@ -3394,13 +3394,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly-5/patternfly@npm:@patternfly/patternfly@5.4.2":
-  version: 5.4.2
-  resolution: "@patternfly/patternfly@npm:5.4.2"
-  checksum: 10c0/cf104eee8c04b0f0199d249a2cb5adb6a7a809ac45c320f85493672526c624e400e18416e884f1b2ef0779e846994fb50c89907a0e65661e81a5b591899da478
-  languageName: node
-  linkType: hard
-
 "@patternfly/patternfly@npm:~6.4.0":
   version: 6.4.0
   resolution: "@patternfly/patternfly@npm:6.4.0"
@@ -17810,7 +17803,6 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
-    "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2"
     "@patternfly/patternfly": "npm:~6.4.0"
     "@patternfly/quickstarts": "npm:~6.4.0"
     "@patternfly/react-catalog-view-extension": "npm:~6.3.0"

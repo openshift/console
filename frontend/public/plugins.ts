@@ -9,6 +9,7 @@ import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/consol
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { REMOTE_ENTRY_CALLBACK } from '@console/dynamic-plugin-sdk/src/constants';
 import { noop } from 'lodash';
+import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 
 /**
  * Set by `console-operator` or `./bin/bridge -release-version`. If this is
@@ -114,6 +115,8 @@ export const pluginStore = new PluginStore({
 });
 
 localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
+
+initConsolePlugins(pluginStore);
 
 /** Redux middleware that updates PluginStore FeatureFlags when redux actions are dispatched. */
 export const featureFlagMiddleware: Middleware<{}, RootState> = (s) => {

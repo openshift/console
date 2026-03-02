@@ -10,7 +10,7 @@ import type { DeployImageFormData } from '@console/dev-console/src/components/im
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, history } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -27,9 +27,10 @@ import {
 } from '../../utils/knatify-utils';
 import KnatifyForm from './KnatifyForm';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-type watchResource = {
-  [key: string]: K8sResourceKind[] | K8sResourceKind;
+type WatchedResources = {
+  projects: K8sResourceKind[];
+  imageStream: K8sResourceKind[];
+  workloadResource?: K8sResourceKind;
 };
 
 const CreateKnatifyPage: FunctionComponent = () => {
@@ -72,7 +73,7 @@ const CreateKnatifyPage: FunctionComponent = () => {
     [namespace, kind, appName],
   );
 
-  const resources: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>(
+  const resources: WatchK8sResults<WatchedResources> = useK8sWatchResources<WatchedResources>(
     watchedResources,
   );
 
@@ -127,20 +128,15 @@ const CreateKnatifyPage: FunctionComponent = () => {
       {isResourceLoaded ? (
         <Formik
           initialValues={getInitialValuesKnatify(
-            getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind, hpa),
+            getKnatifyWorkloadData(resources.workloadResource?.data, hpa),
             namespace,
-            resources?.imageStream?.data as K8sResourceKind[],
+            resources.imageStream.data,
           )}
           validationSchema={deployValidationSchema(t)}
           onSubmit={handleSubmit}
           onReset={history.goBack}
         >
-          {(formikProps) => (
-            <KnatifyForm
-              {...formikProps}
-              projects={resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>}
-            />
-          )}
+          {(formikProps) => <KnatifyForm {...formikProps} projects={resources.projects} />}
         </Formik>
       ) : (
         <LoadingBox />

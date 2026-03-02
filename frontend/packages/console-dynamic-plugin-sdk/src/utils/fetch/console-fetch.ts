@@ -1,35 +1,71 @@
 import * as _ from 'lodash';
-import { getUtilsConfig } from '../../app/configSetup';
 import { setAdmissionWebhookWarning } from '../../app/core/actions';
 import storeHandler from '../../app/storeHandler';
 import type {
-  ConsoleFetchText,
   ConsoleFetchJSON,
+  ConsoleFetchText,
   ConsoleFetch,
 } from '../../extensions/console-types';
-import { TimeoutError } from '../error/http-error';
-import { getConsoleRequestHeaders, normalizeConsoleHeaders } from './console-fetch-utils';
+import { RetryError, TimeoutError } from '../error/http-error';
+import {
+  applyConsoleHeaders,
+  getConsoleRequestHeaders,
+  normalizeConsoleHeaders,
+  validateStatus,
+} from './console-fetch-utils';
+
+const defaultRequestOptions: RequestInit = {
+  headers: {},
+  credentials: 'same-origin',
+};
 
 /**
  * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
  * It also validates the response status code and throws an appropriate error or logs out the user if required.
- * @param url The URL to fetch
- * @param options The options to pass to fetch
- * @param timeout The timeout in milliseconds
+ * @param url - The URL to fetch
+ * @param options - The options to pass to fetch
+ * @param timeout - The timeout in milliseconds
  * @returns A promise that resolves to the response.
  */
 export const consoleFetch: ConsoleFetch = async (url, options = {}, timeout = 60000) => {
-  const fetchPromise = getUtilsConfig().appFetch(url, options);
+  const op1 = applyConsoleHeaders(url, options);
+  const allOptions = _.defaultsDeep({}, defaultRequestOptions, op1);
+
+  const fetchPromise = async () => {
+    let res: Response;
+    let attempt = 0;
+    let retry = true;
+
+    while (retry) {
+      retry = false;
+      attempt++;
+      try {
+        // eslint-disable-next-line no-await-in-loop, no-loop-func
+        res = await fetch(url, allOptions).then((resp) =>
+          validateStatus(resp, url, allOptions.method, attempt < 3),
+        );
+      } catch (e) {
+        if (e instanceof RetryError) {
+          retry = true;
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(`consoleFetch failed for url ${url}`, e);
+          throw e;
+        }
+      }
+    }
+    return res;
+  };
 
   if (timeout <= 0) {
-    return fetchPromise;
+    return fetchPromise();
   }
 
-  const timeoutPromise = new Promise<Response>((resolve, reject) => {
+  const timeoutPromise = new Promise<Response>((_resolve, reject) => {
     setTimeout(() => reject(new TimeoutError(url, timeout)), timeout);
   });
 
-  return Promise.race([fetchPromise, timeoutPromise]);
+  return Promise.race([fetchPromise(), timeoutPromise]);
 };
 
 const parseData = async (response) => {

@@ -11,7 +11,7 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "lib": ["es2021", "dom"],
-    "typeRoots": ["node_modules/@types", "@types", "../../node_modules/@types"],
-    "types": ["node", "sdk"]
+    "typeRoots": ["../../node_modules/@types", "../../@types"],
+    "types": ["node", "console"]
   }
 }
