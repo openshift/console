@@ -31,21 +31,21 @@ export const UNASSIGNED_APPLICATIONS_KEY = '#UNASSIGNED_APP#';
 // Prefix our localStorage items to avoid conflicts if another app ever runs on the same domain.
 export const STORAGE_PREFIX = 'bridge';
 
-export const USERSETTINGS_PREFIX = 'console';
+export const USER_PREFERENCE_PREFIX = 'console';
 
 // This localStorage key predates the storage prefix.
-export const NAMESPACE_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.namespace`;
-export const APPLICATION_USERSETTINGS_PREFIX = `${USERSETTINGS_PREFIX}.applications`;
-export const LAST_NAMESPACE_NAME_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastNamespace`;
+export const NAMESPACE_USER_PREFERENCE_PREFIX = `${USER_PREFERENCE_PREFIX}.namespace`;
+export const APPLICATION_USER_PREFERENCE_PREFIX = `${USER_PREFERENCE_PREFIX}.applications`;
+export const LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.lastNamespace`;
 export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-namespace-name`;
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
-export const COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.communityProvidersWarning`;
-export const LOG_WRAP_LINES_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.log.wrapLines`;
-export const OVERRIDE_YAML_EDITOR_THEME_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.overrideYAMLEditorTheme`;
-export const CUSTOM_YAML_EDITOR_FONT_SIZE_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.customYAMLEditorFontSize`;
-export const SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorTooltips`;
-export const SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY = `${USERSETTINGS_PREFIX}.showYAMLEditorStickyScroll`;
-export const SHOW_FULL_LOG_USERSETTINGS_KEY = `${USERSETTINGS_PREFIX}.show.full.log`;
+export const COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.communityProvidersWarning`;
+export const LOG_WRAP_LINES_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.log.wrapLines`;
+export const OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.overrideYAMLEditorTheme`;
+export const CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.customYAMLEditorFontSize`;
+export const SHOW_YAML_EDITOR_TOOLTIPS_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.showYAMLEditorTooltips`;
+export const SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.showYAMLEditorStickyScroll`;
+export const SHOW_FULL_LOG_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.show.full.log`;
 // Bootstrap user for OpenShift 4.0 clusters (kube:admin)
 export const KUBE_ADMIN_USERNAMES = ['kube:admin'];
 
@@ -94,7 +94,7 @@ export enum FLAGS {
 }
 
 export const CONFIG_STORAGE_CONSOLE = 'console';
-export const COLUMN_MANAGEMENT_CONFIGMAP_KEY = `${CONFIG_STORAGE_CONSOLE}.tableColumns`;
+export const COLUMN_MANAGEMENT_USER_PREFERENCE_KEY = `${CONFIG_STORAGE_CONSOLE}.tableColumns`;
 export const ACM_LINK_ID = 'acm-console-link';
 
 export const SYSTEM_NAMESPACES_PREFIX = ['kube-', 'openshift-', 'kubernetes-'];
@@ -121,7 +121,7 @@ export enum CLUSTER_TELEMETRY_ANALYTICS {
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
 
-export const GETTING_STARTED_USER_SETTINGS_KEY_CLUSTER_DASHBOARD =
+export const GETTING_STARTED_USER_PREFERENCE_KEY_CLUSTER_DASHBOARD =
   'console.clusterDashboard.gettingStarted.expanded';
-export const PREFERRED_TELEMETRY_USER_SETTING_KEY = 'telemetry.analytics';
+export const PREFERRED_TELEMETRY_USER_PREFERENCE_KEY = 'telemetry.analytics';
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';

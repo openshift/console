@@ -53,7 +53,7 @@ describe('GettingStartedSection', () => {
 
   it('should render with three child cards when all conditions are met', () => {
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     // Check that all three cards are present by looking for their mocked components
@@ -67,7 +67,7 @@ describe('GettingStartedSection', () => {
     useFlagMock.mockReturnValue(false);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([
@@ -81,7 +81,7 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([
@@ -99,7 +99,7 @@ describe('GettingStartedSection', () => {
     ]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([

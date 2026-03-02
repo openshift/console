@@ -49,8 +49,8 @@ import {
 import { css } from '@patternfly/react-styles';
 import {
   FLAGS,
-  LOG_WRAP_LINES_USERSETTINGS_KEY,
-  SHOW_FULL_LOG_USERSETTINGS_KEY,
+  LOG_WRAP_LINES_USER_PREFERENCE_KEY,
+  SHOW_FULL_LOG_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ThemeContext } from '@console/internal/components/ThemeProvider';
@@ -500,7 +500,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const { t } = useTranslation('public');
   const theme = useContext(ThemeContext);
   const [showFullLog, setShowFullLog] = useUserPreference<boolean>(
-    SHOW_FULL_LOG_USERSETTINGS_KEY,
+    SHOW_FULL_LOG_USER_PREFERENCE_KEY,
     false,
     true,
   );
@@ -537,7 +537,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const imp = useSelector((state: RootState) => getImpersonate(state));
   const subprotocols = useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [imp]);
   const [wrapLines, setWrapLines] = useUserPreference<boolean>(
-    LOG_WRAP_LINES_USERSETTINGS_KEY,
+    LOG_WRAP_LINES_USER_PREFERENCE_KEY,
     false,
     true,
   );

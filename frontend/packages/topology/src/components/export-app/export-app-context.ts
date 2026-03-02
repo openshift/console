@@ -6,7 +6,7 @@ import type { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extension
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { USERSETTINGS_PREFIX, useToast, useUserPreference } from '@console/shared/src';
+import { USER_PREFERENCE_PREFIX, useToast, useUserPreference } from '@console/shared/src';
 import { ExportModel } from '../../models';
 import type { ExportAppUserSettings } from './types';
 
@@ -20,7 +20,7 @@ export const useExportAppFormToast = () => {
   const [currentToasts, setCurrentToasts] = useState<{ [key: string]: { toastId: string } }>({});
   const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserPreference<
     ExportAppUserSettings
-  >(`${USERSETTINGS_PREFIX}.exportApp`, {}, true);
+  >(`${USER_PREFERENCE_PREFIX}.exportApp`, {}, true);
 
   const exportAppWatchResources = useMemo<Record<string, WatchK8sResource>>(() => {
     if (!exportAppToastLoaded || _.isEmpty(exportAppToast)) return {};

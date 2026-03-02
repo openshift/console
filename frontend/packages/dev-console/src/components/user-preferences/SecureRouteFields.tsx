@@ -20,7 +20,7 @@ import {
   PassthroughInsecureTrafficType,
 } from '../import/import-types';
 import {
-  PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+  PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY,
   usePreferredRoutingOptions,
 } from './usePreferredRoutingOptions';
 
@@ -82,7 +82,7 @@ const SecureRouteFields: FC = () => {
         insecureTraffic,
       });
       fireTelemetryEvent('User Preference Changed', {
-        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY,
       });
     },
     [fireTelemetryEvent, insecureTraffic, setPreferredRoutingOptions, tlsTermination],
@@ -109,7 +109,7 @@ const SecureRouteFields: FC = () => {
       });
       setIsTLSTerminationOpen(false);
       fireTelemetryEvent('User Preference Changed', {
-        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY,
       });
     },
     [fireTelemetryEvent, insecureTraffic, secure, setPreferredRoutingOptions],
@@ -124,7 +124,7 @@ const SecureRouteFields: FC = () => {
       });
       setIsInsecureTrafficOpen(false);
       fireTelemetryEvent('User Preference Changed', {
-        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY,
+        property: PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY,
       });
     },
     [fireTelemetryEvent, secure, setPreferredRoutingOptions, tlsTermination],

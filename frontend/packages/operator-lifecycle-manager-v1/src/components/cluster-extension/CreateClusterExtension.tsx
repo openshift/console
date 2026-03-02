@@ -57,7 +57,7 @@ const CreateClusterExtension: FC = () => {
     return data;
   }, [packageName, version, catalog]);
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
     'console.createClusterExtensionForm.editor.lastView';
 
   return (
@@ -74,7 +74,7 @@ const CreateClusterExtension: FC = () => {
         initialData={initialData}
         initialType={EditorType.Form}
         YAMLEditor={ClusterExtensionYAMLEditor}
-        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+        lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
       />
     </>
   );

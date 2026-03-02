@@ -28,7 +28,7 @@ import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useC
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import {
-  PREFERRED_NAMESPACE_USER_SETTING_KEY,
+  PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
   usePreferredNamespace,
 } from './usePreferredNamespace';
 import './NamespaceDropdown.scss';
@@ -91,7 +91,7 @@ const NamespaceDropdown: FC = () => {
       onSubmit: (newProject) => {
         setPreferredNamespace(newProject?.metadata?.name || '');
         fireTelemetryEvent('User Preference Changed', {
-          property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+          property: PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
           value: newProject?.metadata?.name || '',
         });
       },
@@ -134,7 +134,7 @@ const NamespaceDropdown: FC = () => {
     selectedValue !== preferredNamespace && setPreferredNamespace(selectedValue);
     setDropdownOpen(false);
     fireTelemetryEvent('User Preference Changed', {
-      property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+      property: PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
       value: selectedValue,
     });
   };

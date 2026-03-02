@@ -18,7 +18,7 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 import { LauncherCard } from './launcher-card';
 import { ResourceQuotaCard } from './resource-quota-card';
 import { GettingStartedSection as DevGettingStartedSection } from './getting-started/GettingStartedSection';
-import { PROJECT_OVERVIEW_USER_SETTINGS_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
+import { PROJECT_OVERVIEW_USER_PREFERENCE_KEY } from '../dashboards-page/cluster-dashboard/getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }, { Card: ResourceQuotaCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -77,10 +77,10 @@ export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
       <ProjectDashboardContext.Provider value={context}>
         <Dashboard>
           <DevGettingStartedSection
-            userSettingKey={
+            userPreferenceKey={
               perspective === 'dev'
                 ? 'devconsole.projectOverview.gettingStarted'
-                : PROJECT_OVERVIEW_USER_SETTINGS_KEY
+                : PROJECT_OVERVIEW_USER_PREFERENCE_KEY
             }
           />
           <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />

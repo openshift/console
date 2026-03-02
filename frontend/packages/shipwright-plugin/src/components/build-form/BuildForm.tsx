@@ -27,7 +27,7 @@ type BuildFormProp = {
   handleCancel: () => void;
 } & FormikProps<BuildFormikValues>;
 
-const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'shipwright.buildForm.editor.lastView';
+const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'shipwright.buildForm.editor.lastView';
 
 const BuildForm: FC<BuildFormProp> = ({
   handleSubmit,
@@ -85,7 +85,7 @@ const BuildForm: FC<BuildFormProp> = ({
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

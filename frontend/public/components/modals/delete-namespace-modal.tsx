@@ -7,7 +7,7 @@ import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s'
 import { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -42,9 +42,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
    *  */
   const dispatch = useDispatch();
   const activeNamespace = useSelector((state: RootState) => getActiveNamespace(state));
-  const [, setLastNamespace] = useUserPreference<string>(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  );
+  const [, setLastNamespace] = useUserPreference<string>(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
 
   const onSubmit = (event) => {
     event.preventDefault();

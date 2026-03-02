@@ -36,9 +36,7 @@ export type CloudShellTerminalProps = {
 
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
-const CloudShellTerminal: FC<
-  CloudShellTerminalInternalProps & WithUserPreferenceProps<string>
-> = ({
+const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenceProps<string>> = ({
   user,
   onCancel,
   userSettingState: namespace,

@@ -82,13 +82,13 @@ type TourLocalStorageData = {
   [key: string]: TourLocalStorageType;
 };
 
-const TOUR_CONFIGMAP_KEY = `console.guidedTour`;
+const TOUR_USER_PREFERENCE_KEY = `console.guidedTour`;
 
 export const useTourStateForPerspective = (
   perspective: string,
 ): [TourLocalStorageType, (completed: boolean) => void, boolean] => {
   const [tourLocalState, setTourLocalState, loaded] = useUserPreference<TourLocalStorageData>(
-    TOUR_CONFIGMAP_KEY,
+    TOUR_USER_PREFERENCE_KEY,
     { [perspective]: { completed: false } },
   );
   useEffect(() => {
