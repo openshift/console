@@ -52,7 +52,7 @@ const mockUseField = useField as jest.Mock;
 
 // For internal used Dropdowns
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
-  useUserPreference: () => ['', () => {}],
+  useUserPreference: () => ['', () => {}, true],
 }));
 
 jest.mock(
