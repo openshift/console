@@ -19,7 +19,7 @@ const useOperatorCatalogCategories = (): CatalogCategory[] => {
     return packageManifests.reduce<CatalogCategory[]>((acc, packageManifest) => {
       const currentCSVDescription = getCurrentCSVDescription(packageManifest);
       const categories =
-        currentCSVDescription.annotations[OLMAnnotation.Categories]?.split(',') || [];
+        currentCSVDescription?.annotations?.[OLMAnnotation.Categories]?.split(',') || [];
       const catalogCategories = categories.map((c) => {
         const label = c.trim();
         const id = label.toLowerCase();
