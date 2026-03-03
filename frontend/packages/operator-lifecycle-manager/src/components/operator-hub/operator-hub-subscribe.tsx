@@ -109,6 +109,7 @@ const InputField: FC<InputFieldProps> = ({
             onChange={(_event, val) => {
               setValue(val);
             }}
+            required
           />
         </div>
       </fieldset>
