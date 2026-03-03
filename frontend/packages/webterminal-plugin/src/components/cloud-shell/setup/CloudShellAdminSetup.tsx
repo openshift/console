@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useState } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
@@ -25,7 +25,7 @@ type Props = {
   operatorNamespace: string;
 };
 
-const CloudShellAdminSetup: FunctionComponent<Props> = ({
+const CloudShellAdminSetup: FC<Props> = ({
   onSubmit,
   onCancel,
   workspaceModel,

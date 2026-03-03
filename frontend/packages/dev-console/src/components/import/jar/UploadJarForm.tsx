@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
@@ -23,7 +23,7 @@ export type UploadJarFormProps = {
   builderImage?: BuilderImage;
 };
 
-const UploadJarForm: FunctionComponent<FormikProps<FormikValues> & UploadJarFormProps> = ({
+const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
   values,
   errors,
   handleSubmit,

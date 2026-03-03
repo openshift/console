@@ -58,7 +58,7 @@ interface ConfigModalItemProps {
   slot?: ReactNode;
 }
 
-const ConfigModalItem: React.FunctionComponent<ConfigModalItemProps> = ({
+const ConfigModalItem: React.FC<ConfigModalItemProps> = ({
   icon = <CogIcon />,
   description,
   title,
@@ -97,7 +97,7 @@ interface ConfigModalSwitchProps extends Omit<ConfigModalItemProps, 'slot'> {
   };
 }
 
-const ConfigModalSwitch: React.FunctionComponent<ConfigModalSwitchProps> = ({
+const ConfigModalSwitch: React.FC<ConfigModalSwitchProps> = ({
   icon = <CogIcon />,
   description,
   title,

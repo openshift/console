@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
@@ -37,7 +37,7 @@ import HelmChartMetaDescription from './HelmChartMetaDescription';
 import type { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
 
-const HelmInstallUpgradePage: FunctionComponent = () => {
+const HelmInstallUpgradePage: FC = () => {
   const location = useLocation();
   const params = useParams();
   const searchParams = new URLSearchParams(location.search);

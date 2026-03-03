@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ type Props = StateProps & {
   operatorNamespace: string;
 };
 
-const CloudShellDeveloperSetup: FunctionComponent<Props> = ({
+const CloudShellDeveloperSetup: FC<Props> = ({
   activeNamespace,
   workspaceModel,
   operatorNamespace,
