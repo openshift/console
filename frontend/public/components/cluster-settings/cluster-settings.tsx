@@ -917,7 +917,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
       launchModal(LazyClusterChannelModalOverlay, { cv });
       removeQueryArgument('showChannels');
     }
-  }, [launchModal, cv]);
+  }, [launchModal, cv, removeQueryArgument]);
 
   return (
     <>
