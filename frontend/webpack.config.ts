@@ -318,6 +318,7 @@ const config: Configuration = {
     }),
     extractCSS,
     ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(REACT_REFRESH || OPENSHIFT_CI ? [] : [new webpack.ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
