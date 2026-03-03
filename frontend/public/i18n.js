@@ -5,6 +5,7 @@ import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo/es';
 import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
+import { addTestError } from '@console/shared/src/utils/test-errors';
 
 import { dateTimeFormatter, fromNow } from './components/utils/datetime';
 
@@ -104,7 +105,7 @@ export const init = () => {
       saveMissing: true,
       missingKeyHandler: function (lng, ns, key) {
         const formattedMessage = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}".`;
-        window.windowError += `;${formattedMessage}`;
+        addTestError(formattedMessage);
         // eslint-disable-next-line no-console
         console.error(formattedMessage);
       },

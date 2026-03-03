@@ -56,6 +56,7 @@ import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { addTestError } from '@console/shared/src/utils/test-errors';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
@@ -484,14 +485,14 @@ graphQLReady.onReady(() => {
 
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    window.windowError += `;${formattedMessage}`;
+    addTestError(formattedMessage);
     // eslint-disable-next-line no-console
     console.error(formattedMessage, error || message);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
     const { reason } = promiseRejectionEvent;
     const formattedMessage = `unhandled promise rejection: ${reason}`;
-    window.windowError += `;${formattedMessage}`;
+    addTestError(formattedMessage);
     // eslint-disable-next-line no-console
     console.error(formattedMessage, reason);
   };

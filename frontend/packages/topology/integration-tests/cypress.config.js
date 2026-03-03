@@ -1,9 +1,9 @@
 const { defineConfig } = require('cypress');
+const commonConfig = require('@console/cypress-integration-tests/cypress-common-config');
 
 module.exports = defineConfig({
+  ...commonConfig,
   defaultCommandTimeout: 40000,
-  viewportWidth: 1920,
-  viewportHeight: 1080,
   watchForFileChanges: true,
   chromeWebSecurity: true,
   waitForAnimation: true,
@@ -45,15 +45,4 @@ module.exports = defineConfig({
     injectDocumentDomain: true,
     userAgent: 'ConsoleIntegrationTestEnvironment',
   },
-  /**
-   * @see https://docs.cypress.io/app/references/experiments#Strip-Minimum-CSP-Directives
-   */
-  experimentalCspAllowList: [
-    'script-src-elem',
-    'script-src',
-    'default-src',
-    'form-action',
-    'child-src',
-    'frame-src',
-  ],
 });
