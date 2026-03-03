@@ -16,7 +16,7 @@ const ClusterUpdateActivityText: FC<ClusterUpdateActivityProps> = ({ resource })
   );
 };
 
-const ClusterUpdateActivity: FC<ClusterUpdateActivityProps> = memo(
+const ClusterUpdateActivity = memo<ClusterUpdateActivityProps>(
   ({ resource }) => <ClusterUpdateActivityText resource={resource} />,
   (prevProps, newProps) => getVersion(prevProps.resource) === getVersion(newProps.resource),
 );

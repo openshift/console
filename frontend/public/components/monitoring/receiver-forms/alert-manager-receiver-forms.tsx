@@ -525,7 +525,7 @@ const ReceiverBaseForm: FC<ReceiverBaseFormProps> = ({
   );
 };
 
-const ReceiverWrapper: FC<ReceiverFormsWrapperProps> = memo(({ obj, ...props }) => {
+const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
   const { alertManagerBaseURL } = window.SERVER_FLAGS;
   const [alertmanagerGlobals, setAlertmanagerGlobals] = useState();
   const [loaded, setLoaded] = useState(false);

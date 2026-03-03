@@ -161,11 +161,11 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   );
 };
 
-export const ConfigureUpdateStrategyModal = ({
+export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
   deployment,
   cancel,
   close,
-}: ConfigureUpdateStrategyModalProps) => {
+}) => {
   const [strategyType, setStrategyType] = useState(_.get(deployment.spec, 'strategy.type'));
   const [maxUnavailable, setMaxUnavailable] = useState(
     _.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),

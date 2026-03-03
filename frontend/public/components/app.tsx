@@ -376,7 +376,7 @@ const AppRouter: FC = () => {
   );
 };
 
-const CaptureTelemetry = memo(function CaptureTelemetry() {
+const CaptureTelemetry = memo(() => {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
   const [debounceTime, setDebounceTime] = useState(5000);

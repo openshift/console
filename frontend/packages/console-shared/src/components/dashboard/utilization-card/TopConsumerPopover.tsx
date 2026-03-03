@@ -21,7 +21,7 @@ import Status from '../status-card/StatusPopup';
 
 import './top-consumer-popover.scss';
 
-const ConsumerPopover: FC<ConsumerPopoverProps> = memo(
+const ConsumerPopover = memo<ConsumerPopoverProps>(
   ({
     current,
     title,
@@ -115,7 +115,7 @@ export const LimitsBody: FC<LimitsBodyProps> = ({
   );
 };
 
-export const PopoverBody: FC<PopoverBodyProps> = memo(
+export const PopoverBody = memo<PopoverBodyProps>(
   ({ humanize, consumers, namespace, isOpen, description, children }) => {
     const { t } = useTranslation();
     const [currentConsumer, setCurrentConsumer] = useState(consumers[0]);

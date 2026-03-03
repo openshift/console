@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { FC, FormEvent } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {
@@ -13,7 +13,7 @@ import { K8sModel, OAuthKind } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
-const RemoveIdentityProviderModalComponent = ({
+const RemoveIdentityProviderModalComponent: FC<RemoveIdentityProviderModalProps> = ({
   obj,
   model,
   index,
@@ -21,7 +21,7 @@ const RemoveIdentityProviderModalComponent = ({
   type,
   cancel,
   close,
-}: RemoveIdentityProviderModalProps) => {
+}) => {
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 

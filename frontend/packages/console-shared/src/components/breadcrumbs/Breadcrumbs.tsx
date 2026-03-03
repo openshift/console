@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 
@@ -15,7 +16,7 @@ export type BreadcrumbsProps = {
 /**
  * A helper around the PatternFly Breadcrumb component.
  */
-export const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
+export const Breadcrumbs: FC<BreadcrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb data-test="page-heading-breadcrumbs">
     {breadcrumbs.map((crumb, i, { length }) => {
       return (

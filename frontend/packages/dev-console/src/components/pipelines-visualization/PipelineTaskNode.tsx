@@ -210,4 +210,4 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default memo(observer(PipelineTaskNode));
+export default memo<PipelineTaskNodeProps>(observer(PipelineTaskNode));

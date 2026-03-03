@@ -1,7 +1,7 @@
-import type { ReactEventHandler } from 'react';
+import type { FC, ReactEventHandler } from 'react';
 import { Checkbox as PFCheckbox } from '@patternfly/react-core';
 
-export const Checkbox = ({ name, label, checked, onChange }: CheckboxProps) => (
+export const Checkbox: FC<CheckboxProps> = ({ name, label, checked, onChange }) => (
   <div className="form-group">
     <PFCheckbox
       data-test={`${label}__checkbox`}

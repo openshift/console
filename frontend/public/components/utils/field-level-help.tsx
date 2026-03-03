@@ -1,10 +1,10 @@
-import type { FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { memo, Children } from 'react';
 import { Button, Popover, PopoverProps } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 
-export const FieldLevelHelp: FC<FieldLevelHelpProps> = memo(
+export const FieldLevelHelp = memo<FieldLevelHelpProps>(
   ({ children, popoverHasAutoWidth, testId }) => {
     const { t } = useTranslation();
     if (Children.count(children) === 0) {

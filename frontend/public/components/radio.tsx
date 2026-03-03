@@ -1,7 +1,7 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { FC, InputHTMLAttributes, ReactNode } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 
-export const RadioGroup = ({ currentValue, items, label, onChange }: RadioGroupProps) => {
+export const RadioGroup: FC<RadioGroupProps> = ({ currentValue, items, label, onChange }) => {
   const radios = items.map(({ label: radioLabel, value, disabled, name, description }) => {
     const checked = value === currentValue;
     return (

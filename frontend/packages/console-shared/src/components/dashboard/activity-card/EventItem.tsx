@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { memo } from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle, Icon } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -17,7 +16,7 @@ const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.isExpanded === nextProps.isExpanded &&
   prevProps.onToggle === nextProps.onToggle;
 
-const EventItem: FC<EventItemProps> = memo(({ event, isExpanded, onToggle }) => {
+const EventItem = memo<EventItemProps>(({ event, isExpanded, onToggle }) => {
   const { t } = useTranslation();
   const { involvedObject, message, metadata } = event;
   const lastTime = getLastTime(event);

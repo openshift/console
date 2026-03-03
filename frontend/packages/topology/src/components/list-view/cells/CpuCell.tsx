@@ -11,7 +11,7 @@ import MetricsTooltip from './MetricsTooltip';
 
 import './MetricsCell.scss';
 
-const CpuCellComponent: FC<CpuCellComponentProps> = memo(({ cpuByPod, totalCores }) => {
+const CpuCellComponent = memo<CpuCellComponentProps>(({ cpuByPod, totalCores }) => {
   const { t } = useTranslation();
   return (
     <div className="odc-topology-list-view__metrics-cell__detail--cpu">
