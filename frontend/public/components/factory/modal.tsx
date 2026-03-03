@@ -1,6 +1,6 @@
 import { css } from '@patternfly/react-styles';
 import * as Modal from 'react-modal';
-import type { SyntheticEvent, FC, ReactNode } from 'react';
+import type { SyntheticEvent, FC, ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
@@ -27,6 +27,16 @@ export const ModalWrapper: FC<ModalWrapperProps> = ({ blocking, className, child
     </Modal>
   );
 };
+
+/**
+ * @deprecated Use the useOverlay/OverlayComponent pattern instead.
+ * This is a temporary no-op stub kept only for backward compatibility while
+ * consumer migration PRs are in flight. It will be removed once all consumers
+ * have been migrated. See CONSOLE-5068.
+ */
+export const createModalLauncher: CreateModalLauncher = () => () => ({
+  result: Promise.resolve({}),
+});
 
 /** @deprecated Use PF modals instead */
 export const ModalTitle: FC<ModalTitleProps> = ({
@@ -213,3 +223,15 @@ export type ModalSubmitFooterProps = {
   buttonAlignment?: 'left' | 'right';
   ariaLabel?: string;
 };
+
+/** @deprecated Will be removed in CONSOLE-5068 */
+export type CreateModalLauncherProps = {
+  blocking?: boolean;
+  modalClassName?: string;
+};
+
+/** @deprecated Will be removed in CONSOLE-5068 */
+export type CreateModalLauncher = <P extends ModalComponentProps>(
+  C: ComponentType<P>,
+  modalWrapper?: boolean,
+) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };
