@@ -265,6 +265,17 @@ describe('Github Service', () => {
     scope.done();
   });
 
+  it('should preserve scheme and port when making API call to specified hostname', async () => {
+    const gitSource: GitSource = { url: 'http://example.com:3000/test/repo' };
+    const gitService = new GithubService(gitSource);
+
+    const scope = nock('http://example.com:3000/api/v3').get('/repos/test/repo').reply(200);
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
+
   it('should detect .tekton folder', () => {
     const gitSource = {
       url: 'https://github.com/Lucifergene/oc-pipe',
@@ -322,6 +333,64 @@ describe('Github Service', () => {
       expect(isFuncYamlPresent).toBe(false);
       context.assertScopesFinished();
       nockDone();
+    });
+  });
+
+  describe('getRepoMetadata - Protocol and Port Handling', () => {
+    it('should use HTTPS protocol for standard GitHub URL', () => {
+      const gitSource: GitSource = { url: 'https://github.com/owner/repo' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://github.com');
+    });
+
+    it('should preserve HTTP protocol', () => {
+      const gitSource: GitSource = { url: 'http://github.example.com/owner/repo' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://github.example.com');
+    });
+
+    it('should preserve custom port with HTTPS', () => {
+      const gitSource: GitSource = { url: 'https://github.example.com:8443/owner/repo' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://github.example.com:8443');
+    });
+
+    it('should preserve custom port with HTTP', () => {
+      const gitSource: GitSource = { url: 'http://github.example.com:8080/owner/repo' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://github.example.com:8080');
+    });
+
+    it('should default to HTTPS for SSH URLs and preserve port', () => {
+      const gitSource: GitSource = { url: 'git@github.example.com:2222/owner/repo.git' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://github.example.com:2222');
+    });
+
+    it('should default to HTTPS for git:// protocol URLs', () => {
+      const gitSource: GitSource = { url: 'git://github.example.com/owner/repo.git' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://github.example.com');
+    });
+
+    it('should preserve non-standard port regardless of original protocol', () => {
+      const gitSource: GitSource = { url: 'ssh://git@github.example.com:9999/owner/repo.git' };
+      const gitService = new GithubService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://github.example.com:9999');
     });
   });
 });

@@ -1,5 +1,5 @@
+import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
-import * as ParseBitbucketUrl from 'parse-bitbucket-url';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DevConsoleEndpointResponse } from '@console/shared/src';
 import {
@@ -41,8 +41,8 @@ export class BitbucketService extends BaseService {
   constructor(gitsource: GitSource) {
     super(gitsource);
     this.metadata = this.getRepoMetadata();
-    if (this.metadata.host !== 'bitbucket.org') {
-      this.baseURL = `https://${this.metadata.host}/rest/api/1.0`;
+    if (!this.metadata.host.includes('bitbucket.org')) {
+      this.baseURL = `${this.metadata.host}/rest/api/1.0`;
       this.isServer = true;
     }
   }
@@ -88,8 +88,14 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, host } = ParseBitbucketUrl(this.gitsource.url);
+    const { name, owner, resource, protocols, port } = GitUrlParse(this.gitsource.url);
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
+    const rawProtocol = protocols?.[0];
+    const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
+    const protocol = isHttpProtocol ? rawProtocol : 'https';
+
+    const host = port ? `${protocol}://${resource}:${port}` : `${protocol}://${resource}`;
+
     return {
       repoName: name,
       owner,
