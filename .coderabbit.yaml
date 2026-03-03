@@ -76,7 +76,6 @@ knowledge_base:
     filePatterns:
       # Repository documentation
       - "AGENTS.md"
-      - "ARCHITECTURE.md"
       - "TESTING.md"
       - "STYLEGUIDE.md"
       - "CONTRIBUTING.md"

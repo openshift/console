@@ -59,7 +59,7 @@ Update the specified package to its reasonably latest stable version or to the v
 ## Guidelines
 
 **Code Standards**:
-- For coding patterns and project structure: Read `ARCHITECTURE.md`, `STYLEGUIDE.md`, and `AGENTS.md`
+- For coding patterns and project structure: Read `STYLEGUIDE.md`, `AGENTS.md`, and other relevant documentation
 - Follow existing code patterns found in the codebase
 
 **Package Update Rules**:
