@@ -67,6 +67,10 @@ jest.mock('@console/internal/components/start-guide', () => ({
   withStartGuide: () => 'withStartGuide',
 }));
 
+const useUserPreferenceMock = useUserPreference as jest.Mock;
+const usePreferredTopologyViewMock = usePreferredTopologyView as jest.Mock;
+const useQueryParamsMock = useQueryParams as jest.Mock;
+
 configure({ testIdAttribute: 'data-test-id' });
 
 describe('TopologyPage view logic', () => {
@@ -87,71 +91,71 @@ describe('TopologyPage view logic', () => {
   });
 
   it('should default to graph view', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    useUserPreferenceMock.mockReturnValue(['', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue(['', true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=graph'));
     renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should allow setting default to list view', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['', () => {}]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    useUserPreferenceMock.mockReturnValue(['', () => {}]);
+    usePreferredTopologyViewMock.mockReturnValue(['', true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=list'));
     renderWithProviders(<TopologyPage defaultViewType={TopologyViewType.list} />);
     expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
   it('should prefer view from URL over user settings', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['list', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['list', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    useUserPreferenceMock.mockReturnValue(['list', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue(['list', true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=graph'));
     renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should use preferred user setting if valid and all settings loaded', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['list', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['graph', true]);
+    useUserPreferenceMock.mockReturnValue(['list', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue(['graph', true]);
     renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should use last-viewed if preferred view is "latest"', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['graph', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['latest', true]);
+    useUserPreferenceMock.mockReturnValue(['graph', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue(['latest', true]);
     renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should use last-viewed if preferred view is undefined', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['list', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    useUserPreferenceMock.mockReturnValue(['list', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue([undefined, true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=list'));
     renderWithProviders(<TopologyPage />);
     expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
   it('should use defaultViewType if both preferred and last-viewed are undefined', () => {
-    (useUserPreference as jest.Mock).mockReturnValue([undefined, () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue([undefined, true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    useUserPreferenceMock.mockReturnValue([undefined, () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue([undefined, true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=list'));
     renderWithProviders(<TopologyPage defaultViewType={TopologyViewType.list} />);
     expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });
 
   it('should support URL view=graph', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['', () => {}, true]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=graph'));
+    useUserPreferenceMock.mockReturnValue(['', () => {}, true]);
+    usePreferredTopologyViewMock.mockReturnValue(['', true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=graph'));
     renderWithProviders(<TopologyPage />);
     expect(screen.queryByTestId('topology-list-page')).not.toBeInTheDocument();
   });
 
   it('should support URL view=list', () => {
-    (useUserPreference as jest.Mock).mockReturnValue(['', () => {}]);
-    (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
-    (useQueryParams as jest.Mock).mockReturnValue(new URLSearchParams('view=list'));
+    useUserPreferenceMock.mockReturnValue(['', () => {}]);
+    usePreferredTopologyViewMock.mockReturnValue(['', true]);
+    useQueryParamsMock.mockReturnValue(new URLSearchParams('view=list'));
     renderWithProviders(<TopologyPage />);
     expect(screen.getByTestId('topology-list-page')).toBeInTheDocument();
   });

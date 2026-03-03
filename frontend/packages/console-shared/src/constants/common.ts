@@ -93,8 +93,7 @@ export enum FLAGS {
   VAC_PLATFORM_SUPPORT = 'VAC_PLATFORM_SUPPORT',
 }
 
-export const CONFIG_STORAGE_CONSOLE = 'console';
-export const COLUMN_MANAGEMENT_USER_PREFERENCE_KEY = `${CONFIG_STORAGE_CONSOLE}.tableColumns`;
+export const COLUMN_MANAGEMENT_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.tableColumns`;
 export const ACM_LINK_ID = 'acm-console-link';
 
 export const SYSTEM_NAMESPACES_PREFIX = ['kube-', 'openshift-', 'kubernetes-'];

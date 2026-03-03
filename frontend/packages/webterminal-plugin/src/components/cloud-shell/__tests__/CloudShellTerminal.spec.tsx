@@ -23,7 +23,7 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => {
   return {
-    useUserPreference: () => ['', () => {}],
+    useUserPreference: () => ['', () => {}, true],
   };
 });
 
