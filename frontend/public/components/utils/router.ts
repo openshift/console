@@ -1,34 +1,51 @@
 import * as _ from 'lodash';
 import { useCallback, useRef } from 'react';
-import { createBrowserHistory, createMemoryHistory, History } from 'history';
+import { createBrowserHistory, createMemoryHistory, History } from '@remix-run/router';
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 
-let createHistory;
+type MonkeyPatchHistory = History & {
+  /**
+   * Equivalent to history.go(-1)
+   *
+   * @deprecated use {@link useNavigate} instead
+   */
+  goBack: () => void;
+  __replace__: History['replace'];
+  __push__: History['push'];
+};
 
-try {
-  if (process.env.NODE_ENV === 'test') {
-    // Running in node. Can't use browser history
-    createHistory = createMemoryHistory;
-  } else {
-    createHistory = createBrowserHistory;
-  }
-} catch (unused) {
-  createHistory = createBrowserHistory;
-}
-
-export const history: History = createHistory({ basename: window.SERVER_FLAGS.basePath });
+/**
+ * TODO: Using custom pre-instantiated history object with React Router 6+ is highly discouraged.
+ * We should remove all usages of this history object and replace the current HistoryRouter impl.
+ * (marked in React Router docs as unstable) with standard BrowserRouter impl.
+ *
+ * @see https://github.com/remix-run/react-router/pull/7586
+ * @see https://github.com/remix-run/react-router/issues/9630#issuecomment-1341643731
+ *
+ * @deprecated - use {@link useNavigate}, {@link useLocation}, {@link useSearchParams}, etc.
+ */
+// @ts-expect-error - custom properties are added in the monkey patch below
+export const history: MonkeyPatchHistory =
+  process.env.NODE_ENV !== 'test'
+    ? createBrowserHistory({ v5Compat: true })
+    : createMemoryHistory({ v5Compat: true });
 
 const removeBasePath = (url = '/') =>
   _.startsWith(url, window.SERVER_FLAGS.basePath)
     ? url.slice(window.SERVER_FLAGS.basePath.length - 1)
     : url;
 
-// Monkey patch history to slice off the base path
-(history as any).__replace__ = history.replace;
-history.replace = (url: string) => (history as any).__replace__(removeBasePath(url));
+// Monkey patch history to add polyfill for history.goBack
+history.goBack = () => {
+  history.go(-1);
+};
 
-(history as any).__push__ = history.push;
-history.push = (url: string) => (history as any).__push__(removeBasePath(url));
+// Monkey patch history to slice off the base path
+history.__replace__ = history.replace;
+history.replace = (url: string, state?: any) => history.__replace__(removeBasePath(url), state);
+
+history.__push__ = history.push;
+history.push = (url: string, state?: any) => history.__push__(removeBasePath(url), state);
 
 /**
  * Hook providing query parameter mutation functions compatible with React Router v6/v7.
