@@ -9,10 +9,8 @@ import { Breadcrumbs } from '@console/shared/src/components/breadcrumbs/Breadcru
 
 import './PageHeading.scss';
 
-interface PageHeadingLinkProps extends Omit<PageHeaderLinkProps, 'label'> {
+interface PageHeadingLinkProps extends PageHeaderLinkProps {
   'data-test'?: string;
-  /** Title for the link */
-  label: ReactNode | string;
 }
 
 export type PageHeadingProps = {
