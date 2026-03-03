@@ -33,7 +33,7 @@ export const AddUsersModal = (props: AddUsersModalProps) => {
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>{t('public~Add Users')}</ModalTitle>
       <ModalBody>
-        <p>{t('public~Add new Users to Group {{name}}.', props.group.metadata)}</p>
+        <p>{t('public~Add new Users to Group {{name}}.', { name: props.group.metadata.name })}</p>
         <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
       </ModalBody>
       <ModalSubmitFooter
