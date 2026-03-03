@@ -64,7 +64,7 @@ describe('RouteRow', () => {
   it('should handle case when status is not present', () => {
     const noStatusRouteData = {
       ...routeData,
-      obj: _.omit(routeData.obj, 'status'),
+      obj: _.omit(routeData.obj, 'status') as RouteKind,
     };
     const { container } = render(<RouteRow {...noStatusRouteData} />);
     const tableDatas = container.querySelectorAll('tabledata');
