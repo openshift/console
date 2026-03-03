@@ -4,14 +4,11 @@ import type { SyntheticEvent, FC, ReactNode, ReactElement, ComponentType } from 
 import { useCallback } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
 import CloseButton from '@console/shared/src/components/close-button';
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
-import { history } from '../utils/router';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { pluginStore } from '@console/internal/plugins';
 
@@ -74,17 +71,13 @@ export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper
     return (
       <Provider store={store}>
         <PluginStoreProvider store={pluginStore}>
-          <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-            <CompatRouter>
-              {modalWrapper ? (
-                <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
-                  <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-                </ModalWrapper>
-              ) : (
-                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-              )}
-            </CompatRouter>
-          </Router>
+          {modalWrapper ? (
+            <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
+              <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+            </ModalWrapper>
+          ) : (
+            <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
+          )}
         </PluginStoreProvider>
       </Provider>
     );

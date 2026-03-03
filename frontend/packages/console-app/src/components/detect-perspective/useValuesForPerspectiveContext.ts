@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import type { PerspectiveType } from '@console/dynamic-plugin-sdk';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router';
+import type { PerspectiveType, UseActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   usePerspectiveExtension,
   usePerspectives,
@@ -10,9 +10,11 @@ import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from './useLastPerspective';
 
+type SetActivePerspective = ReturnType<UseActivePerspective>[1];
+
 export const useValuesForPerspectiveContext = (): [
   PerspectiveType,
-  (newPerspective: string, next?: string) => void,
+  SetActivePerspective,
   boolean,
 ] => {
   const navigate = useNavigate();
@@ -32,13 +34,16 @@ export const useValuesForPerspectiveContext = (): [
   const isValidPerspective =
     loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
 
-  const setPerspective = (newPerspective: string, next?: string) => {
-    setLastPerspective(newPerspective);
-    setActivePerspective(newPerspective);
-    // Navigate to next or root and let the default page determine where to go to next
-    navigate(next || '/');
-    fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
-  };
+  const setPerspective = useCallback<SetActivePerspective>(
+    (newPerspective, next) => {
+      setLastPerspective(newPerspective);
+      setActivePerspective(newPerspective);
+      // Navigate to next or root and let the default page determine where to go to next
+      navigate(next || '/');
+      fireTelemetryEvent('Perspective Changed', { perspective: newPerspective });
+    },
+    [setLastPerspective, setActivePerspective, navigate, fireTelemetryEvent],
+  );
 
   return [isValidPerspective ? perspective : '', setPerspective, loaded];
 };

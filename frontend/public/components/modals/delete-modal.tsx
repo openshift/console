@@ -3,7 +3,8 @@ import type { ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Alert, Checkbox } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, To } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
+import type { To } from 'react-router';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ModalTitle,
