@@ -84,7 +84,8 @@
       "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
       "^dnd-core$": "dnd-core/dist/cjs",
       "^react-dnd$": "react-dnd/dist/cjs",
-      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs"
+      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs",
+      "^react-router-dom-v5-compat$": "react-router-dom"
     },
     "testEnvironment": "jsdom",
     "transform": {
@@ -218,7 +219,6 @@
     "react-redux": "8.1.3",
     "react-router": "6.29.x",
     "react-router-dom": "6.29.x",
-    "react-router-dom-v5-compat": "^6.11.2",
     "react-svg": "^16.2.0",
     "react-tagsinput": "3.20.x",
     "react-virtualized": "9.x",

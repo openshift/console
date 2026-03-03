@@ -76,7 +76,14 @@ const parseDeps = (
   missingDepCallback: MissingDependencyCallback,
 ) => {
   const srcDeps = { ...pkg.devDependencies, ...pkg.dependencies };
-  depNames.filter((name) => !srcDeps[name]).forEach(missingDepCallback);
+
+  // Explicitly unset react-router-dom-v5-compat. Even though it's a shared module,
+  // we are only keeping it for OpenShift 4.14 to 4.21 backwards compatibility.
+  // Plugins targeting 4.21 will not have this peer dependency.
+  depNames
+    .filter((name) => name !== 'react-router-dom-v5-compat')
+    .filter((name) => !srcDeps[name])
+    .forEach(missingDepCallback);
   return _.pick(srcDeps, depNames);
 };
 
