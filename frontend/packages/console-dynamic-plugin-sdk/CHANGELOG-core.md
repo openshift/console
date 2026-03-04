@@ -15,9 +15,9 @@ table in [Console dynamic plugins README](./README.md).
 - **Breaking**: Removed support for `console.page/resource/tab` and `console.dashboards/overview/detail/item`
   extensions. Use `console.tab/horizontalNav` and `console.dashboards/custom/overview/detail/item` extensions
   instead ([CONSOLE-5093], [#16043])
-- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
+- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook, use `pluginName` instead ([CONSOLE-3769], [#15904])
 - **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
-- **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
+- **Deprecated**: `useUserSettings` hook is renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
   by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
 
