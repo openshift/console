@@ -69,8 +69,8 @@ export const PageHeading = ({
         breadcrumbs={breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} />}
         title={title}
         actionMenu={
-          <ActionList className="co-actions" data-test-id="details-actions">
-            {showFavoriteButton || primaryAction ? (
+          showFavoriteButton || primaryAction ? (
+            <ActionList className="co-actions" data-test-id="details-actions">
               <ActionListGroup>
                 {showFavoriteButton && (
                   <ActionListItem>
@@ -79,8 +79,8 @@ export const PageHeading = ({
                 )}
                 {primaryAction}
               </ActionListGroup>
-            ) : null}
-          </ActionList>
+            </ActionList>
+          ) : null
         }
         icon={icon}
         label={badge}
