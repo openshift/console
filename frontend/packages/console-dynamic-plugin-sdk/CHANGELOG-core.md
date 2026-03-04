@@ -10,6 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.21.0 - 2026-03-09
+
+> Initial release for OCP Console 4.21.
+
+- Renamed the "Administrator" perspective to "Core platform" ([OCPBUGS-62126], [#15786])
+
 ## 4.21.0-prerelease.1 - 2025-12-04
 
 - **Deprecated**: `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
@@ -175,6 +181,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
+[OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -218,3 +225,4 @@ table in [Console dynamic plugins README](./README.md).
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735
+[#15786]: https://github.com/openshift/console/pull/15786
