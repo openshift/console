@@ -85,8 +85,8 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
             );
           }
           return (
-            p.properties.model.group === kindObj.apiGroup &&
-            p.properties.model.kind === kindObj.kind
+            p.properties.model.group === kindObj?.apiGroup &&
+            p.properties.model.kind === kindObj?.kind
           );
         })
         .map(({ properties: { href, name, component: Component } }) => ({

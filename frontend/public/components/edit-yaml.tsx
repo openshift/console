@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { action } from 'typesafe-actions';
@@ -158,17 +158,21 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const navigate = useNavigate();
   const hasYAMLSampleFlag = useFlag(FLAGS.CONSOLE_YAML_SAMPLE);
 
-  const watchResources = {
-    yamlSamplesList: hasYAMLSampleFlag
-      ? {
-          kind: referenceForModel(ConsoleYAMLSampleModel),
-          isList: true,
-        }
-      : null,
-  };
+  const watchResources = useMemo(
+    () =>
+      hasYAMLSampleFlag
+        ? {
+            yamlSamplesList: {
+              kind: referenceForModel(ConsoleYAMLSampleModel),
+              isList: true,
+            },
+          }
+        : {},
+    [hasYAMLSampleFlag],
+  );
 
   const resources = useK8sWatchResources<{
-    yamlSamplesList: K8sResourceCommon[];
+    yamlSamplesList?: K8sResourceCommon[];
   }>(watchResources);
 
   const yamlSamplesList = resources.yamlSamplesList;
