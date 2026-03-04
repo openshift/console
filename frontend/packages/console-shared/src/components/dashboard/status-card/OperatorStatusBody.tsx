@@ -3,9 +3,13 @@ import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
-import type { GetOperatorsWithStatuses, OperatorRowProps } from '@console/dynamic-plugin-sdk';
+import type {
+  GetOperatorsWithStatuses,
+  OperatorRowProps,
+  WatchK8sResults,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk';
 import type { LazyLoader } from '@console/internal/components/utils/async';
-import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';
 import { getMostImportantStatuses } from './state-utils';
 import { HealthState } from './states';
 import StatusItem, { StatusPopupSection } from './StatusPopup';
@@ -75,7 +79,7 @@ export const OperatorsSection: FC<OperatorsSectionProps> = ({
 };
 
 type OperatorsSectionProps = {
-  resources: FirehoseResourcesResult;
+  resources: WatchK8sResults<{ [key: string]: K8sResourceCommon | K8sResourceCommon[] }>;
   getOperatorsWithStatuses: GetOperatorsWithStatuses;
   title: string;
   linkTo: string;

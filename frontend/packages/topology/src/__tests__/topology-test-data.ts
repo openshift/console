@@ -1,5 +1,5 @@
 import type { Model } from '@patternfly/react-topology';
-import type { FirehoseResult } from '@console/internal/components/utils';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { EventKind } from '@console/internal/module/k8s';
 import { CamelKameletBindingModel, KafkaSinkModel } from '@console/knative-plugin';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
@@ -203,7 +203,7 @@ export const sampleHelmResourcesMap = {
   },
 };
 
-export const sampleEventsResource: FirehoseResult<EventKind[]> = {
+export const sampleEventsResource: WatchK8sResultsObject<EventKind[]> = {
   loaded: true,
   loadError: '',
   data: [

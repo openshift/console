@@ -11,11 +11,6 @@ jest.mock('react-router-dom-v5-compat', () => ({
   useNavigate: jest.fn(),
 }));
 
-// Mock Firehose
-jest.mock('../utils/firehose', () => ({
-  Firehose: ({ children }) => children,
-}));
-
 describe('StorageClassForm', () => {
   let onClose: jest.Mock;
 

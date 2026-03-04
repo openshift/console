@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynamic-plugin-sdk';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
@@ -116,7 +116,7 @@ export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeIt
   return ksservices && ksservices.length > 0 ? { ksservices } : undefined;
 };
 
-export const knativeServingResourcesRevision = (namespace: string): FirehoseResource[] => {
+export const knativeServingResourcesRevision = (namespace: string): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -129,7 +129,9 @@ export const knativeServingResourcesRevision = (namespace: string): FirehoseReso
   return knativeResource;
 };
 
-export const knativeServingResourcesConfigurations = (namespace: string): FirehoseResource[] => {
+export const knativeServingResourcesConfigurations = (
+  namespace: string,
+): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -142,7 +144,7 @@ export const knativeServingResourcesConfigurations = (namespace: string): Fireho
   return knativeResource;
 };
 
-export const knativeServingResourcesRoutes = (namespace: string): FirehoseResource[] => {
+export const knativeServingResourcesRoutes = (namespace: string): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -155,7 +157,7 @@ export const knativeServingResourcesRoutes = (namespace: string): FirehoseResour
   return knativeResource;
 };
 
-export const k8sServices = (namespace: string, limit?: number): FirehoseResource[] => {
+export const k8sServices = (namespace: string, limit?: number): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -172,7 +174,7 @@ export const k8sServices = (namespace: string, limit?: number): FirehoseResource
 export const knativeServingResourcesServices = (
   namespace: string,
   limit?: number,
-): FirehoseResource[] => {
+): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -186,7 +188,10 @@ export const knativeServingResourcesServices = (
   return knativeResource;
 };
 
-export const knativeKafkaSinks = (namespace: string, limit?: number): FirehoseResource[] => {
+export const knativeKafkaSinks = (
+  namespace: string,
+  limit?: number,
+): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -200,7 +205,9 @@ export const knativeKafkaSinks = (namespace: string, limit?: number): FirehoseRe
   return knativeResource;
 };
 
-export const knativeEventingResourcesSubscription = (namespace: string): FirehoseResource[] => {
+export const knativeEventingResourcesSubscription = (
+  namespace: string,
+): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -216,7 +223,7 @@ export const knativeEventingResourcesSubscription = (namespace: string): Firehos
 export const knativeEventingResourcesBroker = (
   namespace: string,
   limit?: number,
-): FirehoseResource[] => {
+): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -426,7 +433,7 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
   };
 };
 
-export const getSinkableResources = (namespace: string): FirehoseResource[] => {
+export const getSinkableResources = (namespace: string): WatchK8sResourceWithProp[] => {
   return namespace
     ? [
         ...k8sServices(namespace),

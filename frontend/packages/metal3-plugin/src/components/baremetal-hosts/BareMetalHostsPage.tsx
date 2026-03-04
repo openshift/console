@@ -2,10 +2,16 @@ import type { FC } from 'react';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
-import type { MachineKind, MachineSetKind, NodeKind } from '@console/internal/module/k8s';
+import type {
+  K8sResourceCommon,
+  MachineKind,
+  MachineSetKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, createLookup, getNodeMachineName } from '@console/shared';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
@@ -19,19 +25,17 @@ import BareMetalHostsTable from './BareMetalHostsTable';
 import { hostStatusFilter } from './table-filters';
 
 type Resources = {
-  hosts: FirehoseResult<BareMetalHostKind[]>;
-  machines: FirehoseResult<MachineKind[]>;
-  machineSets: FirehoseResult<MachineSetKind[]>;
-  nodes: FirehoseResult<NodeKind[]>;
-  nodeMaintenances: FirehoseResult;
+  hosts: WatchK8sResultsObject<BareMetalHostKind[]>;
+  machines: WatchK8sResultsObject<MachineKind[]>;
+  machineSets: WatchK8sResultsObject<MachineSetKind[]>;
+  nodes: WatchK8sResultsObject<NodeKind[]>;
+  nodeMaintenances: WatchK8sResultsObject<K8sResourceCommon[]>;
 };
 
 const flattenResources = (resources: Resources) => {
   // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
   // when resources are loaded
-  const loaded = _.every(resources, (resource) =>
-    resource.optional ? resource.loaded || !_.isEmpty(resource.loadError) : resource.loaded,
-  );
+  const loaded = _.every(resources, (resource) => resource.loaded);
 
   if (loaded) {
     const { hosts, machines, machineSets, nodes, nodeMaintenances } = resources;
@@ -100,7 +104,7 @@ const BareMetalHostsPage: FC<BareMetalHostsPageProps> = (props) => {
   const { t } = useTranslation();
   const [model] = useMaintenanceCapability();
   const { namespace } = props;
-  const resources: FirehoseResource[] = [
+  const resources: WatchK8sResourceWithProp[] = [
     {
       kind: referenceForModel(BareMetalHostModel),
       namespaced: true,

@@ -8,12 +8,6 @@ import store from '@console/internal/redux';
 import type { SecretsSectionFormData } from '../SecretsSection';
 import SecretsSection from '../SecretsSection';
 
-// Skip Firehose fetching and render just the children
-jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...jest.requireActual('@console/internal/components/utils/firehose'),
-  Firehose: ({ children }) => children,
-}));
-
 interface WrapperProps extends FormikConfig<SecretsSectionFormData> {
   children?: ReactNode;
 }

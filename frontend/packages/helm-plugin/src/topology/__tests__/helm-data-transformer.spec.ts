@@ -40,11 +40,11 @@ export function getTransformedTopologyData(mockData: TopologyDataResources) {
     app: 'nodejs',
     'app.kubernetes.io/part-of': 'app-1',
   };
-  const fireHoseDcs = {
+  const modifiedDcs = {
     ...sampleDeploymentConfigs,
     data: [dc, sampleHelmChartDeploymentConfig],
   };
-  const data = { ...mockData, deploymentConfigs: fireHoseDcs };
+  const data = { ...mockData, deploymentConfigs: modifiedDcs };
 
   const workloadResources = getWorkloadResources(data, TEST_KINDS_MAP, WORKLOAD_TYPES);
   const model = getHelmGraphModelFromMap(sampleHelmResourcesMap, data);

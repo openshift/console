@@ -24,7 +24,6 @@ import {
   getPVCStatusGroups,
   getVSStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import type { FirehoseResource } from '../../utils/types';
 import { useAccessReview } from '../../utils/rbac';
 import {
   K8sKind,
@@ -38,6 +37,7 @@ import {
   DashboardsProjectOverviewInventoryItem,
   isDashboardsProjectOverviewInventoryItem,
   K8sResourceCommon,
+  WatchK8sResource,
   WatchK8sResources,
   ProjectOverviewInventoryItem,
   isProjectOverviewInventoryItem,
@@ -45,7 +45,10 @@ import {
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 
-const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
+const createWatchResource = (
+  model: K8sKind,
+  projectName: string,
+): WatchK8sResource & { prop: string } => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
   isList: true,
   prop: 'resource',
@@ -66,7 +69,7 @@ const ProjectInventoryItem: React.FC<ProjectInventoryItemProps> = ({
       return;
     }
 
-    const resource = createFirehoseResource(model, projectName);
+    const resource = createWatchResource(model, projectName);
     const { prop, ...resourceConfig } = resource;
     watchResource(prop, resourceConfig);
     if (additionalResources) {
@@ -90,9 +93,9 @@ const ProjectInventoryItem: React.FC<ProjectInventoryItemProps> = ({
 
   const additionalResourcesData = additionalResources
     ? additionalResources.reduce((acc, r) => {
-        acc[r.prop] = _.get(resources[r.prop], 'data');
+        acc[r.prop] = _.get(resources[r.prop], 'data', []) as K8sResourceCommon[];
         return acc;
-      }, {})
+      }, {} as { [key: string]: K8sResourceCommon[] })
     : {};
   const additionalResourcesLoaded = additionalResources
     ? additionalResources
@@ -202,7 +205,7 @@ type ProjectInventoryItemProps = {
   projectName: string;
   model: K8sKind;
   mapper?: StatusGroupMapper;
-  additionalResources?: FirehoseResource[];
+  additionalResources?: (WatchK8sResource & { prop: string })[];
   additionalDynamicResources?: WatchK8sResources<{
     [key: string]: K8sResourceCommon[];
   }>;

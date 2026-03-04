@@ -24,7 +24,11 @@ import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
-import { FirehoseResource, FirehoseResourcesResult, FirehoseResultObject } from '../utils/types';
+import type {
+  WatchK8sResults,
+  ResourcesObject,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+
 import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
@@ -59,8 +63,6 @@ type ListPageWrapperProps<L = any, C = any> = {
   hideLabelFilter?: boolean;
   columnLayout?: ColumnLayout;
   name?: string;
-  /** @deprecated - use watchedResources instead */
-  resources?: FirehoseResourcesResult;
   /** Resources fetched via useK8sWatchResources */
   watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   loaded?: boolean;
@@ -91,7 +93,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     hideLabelFilter,
     columnLayout,
     name,
-    resources,
     watchedResources,
     nameFilter,
     omitFilterToolbar,
@@ -105,10 +106,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
-  // TODO: Remove the resources prop and the fallback ?? resources after all components are migrated from Firehose to hooks.
-  // Use watchedResources (from useK8sWatchResources) if available, fallback to resources (from Firehose)
-  const resourceData = watchedResources ?? resources;
-  const data = flatten ? flatten(resourceData) : [];
+  const data = flatten ? flatten(watchedResources) : [];
   const Filter = (
     <FilterToolbar
       rowFilters={rowFilters}
@@ -150,7 +148,7 @@ export type FireManProps = {
   createProps?: CreateProps;
   fieldSelector?: string;
   filterLabel?: string;
-  resources: FirehoseResource[];
+  reduxIDs?: string[];
   badge?: ReactNode;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
@@ -161,7 +159,7 @@ export type FireManProps = {
 
 export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
   const {
-    resources,
+    reduxIDs = [],
     textFilter,
     canCreate,
     createAccessReview,
@@ -174,34 +172,14 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
   } = props;
   const navigate = useNavigate();
 
-  const [reduxIDs, setReduxIDs] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = useState();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     params.forEach((v, k) => applyFilter(k, v));
-
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-    setReduxIDs(reduxId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-
-    if (_.isEqual(reduxId, reduxIDs)) {
-      return;
-    }
-
-    // reapply filters to the new list...
-    setReduxIDs(reduxId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources]);
 
   const updateURL = (filterName: string, options: any) => {
     if (filterName !== textFilter) {
@@ -297,7 +275,6 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
       </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
-          resources,
           expand,
           reduxIDs,
           applyFilter,
@@ -309,9 +286,9 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
 FireMan.displayName = 'FireMan';
 
 export type Flatten<
-  F extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
+  F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
   R = any
-> = (resources: FirehoseResourcesResult<F>) => R;
+> = (resources: WatchK8sResults<F>) => R;
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
@@ -478,7 +455,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   hideTextFilter?: boolean;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
-  resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
+  resources: (WatchK8sResource & { prop?: string })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
@@ -518,30 +495,19 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
 
   const { t } = useTranslation();
 
-  // Build resources configuration for FireMan (needs prop for redux IDs)
-  const k8sResources = useMemo(
-    () =>
-      _.map(props.resources, (r) => ({
-        ...r,
-        isList: r.isList !== undefined ? r.isList : true,
-        namespace: r.namespaced ? namespace : r.namespace,
-        prop: r.prop || r.kind,
-      })),
-    [props.resources, namespace],
-  );
-
   // Build watch resources configuration for useK8sWatchResources
   const watchResources = useMemo(() => {
     if (mock) {
       return {};
     }
-    return k8sResources.reduce((acc, r) => {
+    return props.resources.reduce((acc, r) => {
       const key = r.prop || r.kind;
+      const resourceNamespace = r.namespaced ? namespace : r.namespace;
       acc[key] = {
         kind: r.kind,
         name: r.name,
-        namespace: r.namespace,
-        isList: r.isList,
+        namespace: resourceNamespace,
+        isList: r.isList !== undefined ? r.isList : true,
         selector: r.selector,
         fieldSelector: r.fieldSelector,
         limit: r.limit,
@@ -550,7 +516,20 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       };
       return acc;
     }, {} as Record<string, WatchK8sResource>);
-  }, [k8sResources, mock]);
+  }, [props.resources, namespace, mock]);
+
+  // Build redux IDs for filter management
+  const reduxIDs = useMemo(
+    () =>
+      props.resources.map((r) => {
+        const resourceNamespace = r.namespaced ? namespace : r.namespace;
+        return makeReduxID(
+          kindObj(r.kind),
+          makeQuery(resourceNamespace, r.selector, r.fieldSelector, r.name),
+        );
+      }),
+    [props.resources, namespace],
+  );
 
   const watchedResources = useK8sWatchResources<
     Record<string, K8sResourceCommon | K8sResourceCommon[]>
@@ -577,14 +556,14 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
       helpAlert={helpAlert}
-      resources={mock ? [] : k8sResources}
+      reduxIDs={mock ? [] : reduxIDs}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
     >
       <ListPageWrapper
         flatten={flatten}
-        kinds={_.map(k8sResources, 'kind')}
+        kinds={_.map(props.resources, 'kind')}
         label={label}
         ListComponent={ListComponent}
         textFilter={textFilter}
@@ -602,6 +581,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
         omitFilterToolbar={omitFilterToolbar}
         watchedResources={mock ? {} : watchedResources}
         loaded={loaded}
+        reduxIDs={reduxIDs}
       />
     </FireMan>
   );

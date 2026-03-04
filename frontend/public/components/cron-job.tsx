@@ -412,6 +412,9 @@ export const CronJobsPage: FC<CronJobsPageProps> = (props) => (
 
 export const CronJobsDetailsPage: FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
+    if (!kindObj || !obj) {
+      return null;
+    }
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
     return (

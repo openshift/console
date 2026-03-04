@@ -10,7 +10,7 @@ import {
   getMostRecentBuilderTag,
   getBuilderTagsSortedByVersion,
 } from '@console/internal/components/image-stream';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import { ProjectModel, ImageStreamModel } from '@console/internal/models';
 import type {
   ContainerPort,
@@ -190,7 +190,7 @@ export const getImageStreamTags = (imageStream: K8sResourceKind) => {
   }, {});
 };
 
-export const getProjectResource = (): FirehoseResource[] => {
+export const getProjectResource = (): WatchK8sResourceWithProp[] => {
   return [
     {
       isList: true,
@@ -200,7 +200,7 @@ export const getProjectResource = (): FirehoseResource[] => {
   ];
 };
 
-export const getImageStreamResource = (namespace: string): FirehoseResource[] => {
+export const getImageStreamResource = (namespace: string): WatchK8sResourceWithProp[] => {
   const resource = [];
   if (namespace) {
     resource.push({

@@ -28,7 +28,7 @@ const mergeItems = (
     (item) => replacements.find((r) => r.properties.model === item.properties.model) || item,
   );
 
-const getFirehoseResource = (model: K8sKind) => ({
+const getWatchResource = (model: K8sKind) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
   prop: 'resource',
@@ -36,7 +36,7 @@ const getFirehoseResource = (model: K8sKind) => ({
 
 const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
   ({ model, resolvedMapper, mapperLoader, additionalResources }) => {
-    const mainResource = useMemo(() => getFirehoseResource(model), [model]);
+    const mainResource = useMemo(() => getWatchResource(model), [model]);
     const otherResources = useMemo(() => additionalResources || {}, [additionalResources]);
     const [mapper, setMapper] = useState<StatusGroupMapper>();
     const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
