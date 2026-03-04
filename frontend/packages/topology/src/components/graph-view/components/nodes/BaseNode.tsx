@@ -43,6 +43,8 @@ const BaseNode: FC<BaseNodeProps> = ({
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
   const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
+  // Keep hover active when context menu is open to prevent re-renders
+  const isHovering = hover || contextMenuOpen;
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
@@ -57,11 +59,11 @@ const BaseNode: FC<BaseNodeProps> = ({
     namespace: resourceObj.metadata.namespace,
   });
   const [filtered] = useSearchFilter(element.getLabel(), resourceObj?.metadata?.labels);
-  const showLabel = useShowLabel(hover || contextMenuOpen);
+  const showLabel = useShowLabel(isHovering);
   const kindData = kind && getKindStringAndAbbreviation(kind);
 
   const detailsLevel = element.getController().getGraph().getDetailsLevel();
-  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
+  const showDetails = isHovering || detailsLevel !== ScaleDetailsLevel.low;
   const badgeClassName = kindData
     ? css('odc-resource-icon', {
         [`odc-resource-icon-${kindData.kindStr.toLowerCase()}`]: !kindData.kindColor,
@@ -73,7 +75,7 @@ const BaseNode: FC<BaseNodeProps> = ({
     }
   }, [createConnectorDrag]);
   return (
-    <Layer id={hover || contextMenuOpen ? TOP_LAYER : DEFAULT_LAYER}>
+    <Layer id={isHovering ? TOP_LAYER : DEFAULT_LAYER}>
       <g ref={nodeHoverRefs} data-test-id={element.getLabel()}>
         <DefaultNode
           className={css('odc-base-node', className, alertVariant && StatusModifier[alertVariant], {
@@ -82,7 +84,8 @@ const BaseNode: FC<BaseNodeProps> = ({
           truncateLength={RESOURCE_NAME_TRUNCATE_LENGTH}
           element={element}
           showLabel={showLabel}
-          scaleNode={(hover || contextMenuOpen) && detailsLevel !== ScaleDetailsLevel.high}
+          hover={contextMenuOpen ? true : undefined}
+          scaleNode={isHovering && detailsLevel !== ScaleDetailsLevel.high}
           onShowCreateConnector={
             editAccess && detailsLevel !== ScaleDetailsLevel.low && onShowCreateConnector
           }
@@ -92,6 +95,7 @@ const BaseNode: FC<BaseNodeProps> = ({
           badgeColor={kindData?.kindColor}
           badgeClassName={badgeClassName}
           showStatusBackground={!showDetails}
+          raiseLabelOnHover={false}
           {...rest}
         >
           <g data-test-id="base-node-handler">

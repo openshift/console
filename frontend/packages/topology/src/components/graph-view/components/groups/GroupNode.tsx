@@ -50,6 +50,7 @@ type GroupNodeProps = {
   dropTarget?: boolean;
   dragging?: boolean;
   dragRegroupable?: boolean;
+  hover?: boolean;
 } & Partial<WithSelectionProps & WithDndDropProps & WithContextMenuProps & WithDragNodeProps>;
 
 const GroupNode: FC<GroupNodeProps> = ({
