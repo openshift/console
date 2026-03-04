@@ -3,27 +3,30 @@ import { useMemo } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
 import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { ResourceDropdownProps } from '../dropdown/ResourceDropdown';
 import { ResourceDropdown } from '../dropdown/ResourceDropdown';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-export interface ResourceDropdownFieldProps extends DropdownFieldProps {
-  dataSelector: ResourceDropdownProps['dataSelector'];
-  resources: FirehoseResult[];
-  showBadge?: ResourceDropdownProps['showBadge'];
-  onLoad?: ResourceDropdownProps['onLoad'];
-  onChange?: ResourceDropdownProps['onChange'];
-  resourceFilter?: ResourceDropdownProps['resourceFilter'];
-  autoSelect?: ResourceDropdownProps['autoSelect'];
-  placeholder?: string;
-  actionItems?: ResourceDropdownProps['actionItems'];
-  appendItems?: ResourceDropdownProps['appendItems'];
-  customResourceKey?: ResourceDropdownProps['customResourceKey'];
+export interface ResourceDropdownFieldProps
+  extends Omit<DropdownFieldProps, 'onChange'>,
+    Pick<
+      ResourceDropdownProps,
+      | 'dataSelector'
+      | 'resources'
+      | 'showBadge'
+      | 'onLoad'
+      | 'onChange'
+      | 'resourceFilter'
+      | 'autoSelect'
+      | 'placeholder'
+      | 'actionItems'
+      | 'appendItems'
+      | 'customResourceKey'
+      | 'menuClassName'
+    > {
   dataTest?: string;
-  menuClassName?: ResourceDropdownProps['menuClassName'];
 }
 
 const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({

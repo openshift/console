@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   knativeServiceObj,
@@ -163,7 +163,7 @@ describe('Get knative resources', () => {
   describe('knative Serving Resources', () => {
     const SAMPLE_NAMESPACE = 'mynamespace';
     it('expect knativeServingResource to return service with proper namespace', () => {
-      const serviceServingResource: FirehoseResource[] = knativeServingResourcesServices(
+      const serviceServingResource: WatchK8sResourceWithProp[] = knativeServingResourcesServices(
         SAMPLE_NAMESPACE,
       );
       expect(serviceServingResource).toHaveLength(1);
@@ -172,7 +172,7 @@ describe('Get knative resources', () => {
     });
 
     it('expect knativeServingResourcesRevision to return revision with proper namespace', () => {
-      const revisionServingResource: FirehoseResource[] = knativeServingResourcesRevision(
+      const revisionServingResource: WatchK8sResourceWithProp[] = knativeServingResourcesRevision(
         SAMPLE_NAMESPACE,
       );
       expect(revisionServingResource).toHaveLength(1);
@@ -181,7 +181,7 @@ describe('Get knative resources', () => {
     });
 
     it('expect knativeServingResourcesConfigurations to return configurations with proper namespace', () => {
-      const configServingResource: FirehoseResource[] = knativeServingResourcesConfigurations(
+      const configServingResource: WatchK8sResourceWithProp[] = knativeServingResourcesConfigurations(
         SAMPLE_NAMESPACE,
       );
       expect(configServingResource).toHaveLength(1);
@@ -190,7 +190,7 @@ describe('Get knative resources', () => {
     });
 
     it('expect knativeServingResourcesRoutes to return routes with proper namespace', () => {
-      const routeServingResource: FirehoseResource[] = knativeServingResourcesRoutes(
+      const routeServingResource: WatchK8sResourceWithProp[] = knativeServingResourcesRoutes(
         SAMPLE_NAMESPACE,
       );
       expect(routeServingResource).toHaveLength(1);

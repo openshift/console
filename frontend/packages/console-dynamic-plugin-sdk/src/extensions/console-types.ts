@@ -226,6 +226,22 @@ export type WatchK8sResourcesGeneric = {
   };
 };
 
+/**
+ * WatchK8sResource with a `prop` field that serves as a key to identify
+ * this resource in multi-resource watch results. Used by dashboard extensions
+ * and legacy components that watch multiple K8s resources simultaneously.
+ */
+export type WatchK8sResourceWithProp = WatchK8sResource & {
+  prop: string;
+};
+
+export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
+
+/**
+ * @deprecated Use WatchK8sResource with useK8sWatchResource hook instead.
+ * FirehoseResource will be removed in a future release.
+ * @see WatchK8sResource
+ */
 export type FirehoseResource = {
   kind: K8sResourceKindReference;
   name?: string;
@@ -239,6 +255,10 @@ export type FirehoseResource = {
   fieldSelector?: string;
 };
 
+/**
+ * @deprecated Use WatchK8sResultsObject instead. FirehoseResult will be removed in a future release.
+ * @see WatchK8sResultsObject
+ */
 export type FirehoseResult<
   R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon[]
 > = {
@@ -249,11 +269,13 @@ export type FirehoseResult<
   kind?: string;
 };
 
+/**
+ * @deprecated Use WatchK8sResults instead. FirehoseResourcesResult will be removed in a future release.
+ * @see WatchK8sResults
+ */
 export type FirehoseResourcesResult = {
   [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
 };
-
-export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
 
 export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
   initResource: WatchK8sResource | null,

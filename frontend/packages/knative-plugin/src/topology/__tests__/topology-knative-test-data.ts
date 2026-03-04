@@ -1,4 +1,4 @@
-import type { FirehoseResult } from '@console/internal/components/utils';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { DeploymentKind, PodKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sResourceConditionStatus, referenceForModel } from '@console/internal/module/k8s';
 import type { TopologyDataResources } from '@console/topology/src/topology-types';
@@ -41,7 +41,7 @@ import { URI_KIND } from '../const';
 import type { KnativeServiceOverviewItem, KnativeTopologyDataObject } from '../topology-types';
 import { NodeType } from '../topology-types';
 
-export const sampleDeploymentsCamelConnector: FirehoseResult<DeploymentKind[]> = {
+export const sampleDeploymentsCamelConnector: WatchK8sResultsObject<DeploymentKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -190,7 +190,7 @@ export const sampleDeploymentsCamelConnector: FirehoseResult<DeploymentKind[]> =
   ],
 };
 
-export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
+export const sampleKnativeDeployments: WatchK8sResultsObject<DeploymentKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -332,7 +332,7 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
   ],
 };
 
-export const sampleKnativeReplicaSets: FirehoseResult = {
+export const sampleKnativeReplicaSets: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -386,43 +386,43 @@ export const sampleKnativeReplicaSets: FirehoseResult = {
   ],
 };
 
-export const sampleKnativePods: FirehoseResult<PodKind[]> = {
+export const sampleKnativePods: WatchK8sResultsObject<PodKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-export const sampleKnativeReplicationControllers: FirehoseResult = {
+export const sampleKnativeReplicationControllers: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-export const sampleKnativeDeploymentConfigs: FirehoseResult = {
+export const sampleKnativeDeploymentConfigs: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-export const sampleRoutes: FirehoseResult = {
+export const sampleRoutes: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-const sampleKnativeBuildConfigs: FirehoseResult = {
+const sampleKnativeBuildConfigs: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-const sampleKnativeBuilds: FirehoseResult = {
+const sampleKnativeBuilds: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
 };
 
-export const sampleKnativeBuildConfigs2: FirehoseResult = {
+export const sampleKnativeBuildConfigs2: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -521,7 +521,7 @@ export const sampleKnativeBuildConfigs2: FirehoseResult = {
   ],
 };
 
-export const sampleKnativeConfigurations: FirehoseResult = {
+export const sampleKnativeConfigurations: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -619,7 +619,7 @@ export const revisionObj: RevisionKind = {
     ],
   },
 };
-export const sampleKnativeRevisions: FirehoseResult = {
+export const sampleKnativeRevisions: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [revisionObj],
@@ -662,7 +662,7 @@ export const knativeRouteObj: RouteKind = {
   },
 };
 
-export const sampleKnativeRoutes: FirehoseResult = {
+export const sampleKnativeRoutes: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [knativeRouteObj],
@@ -715,7 +715,7 @@ export const serverlessFunctionObj = {
   metadata: { ...knativeServiceObj.metadata, labels: { [SERVERLESS_FUNCTION_LABEL]: 'true' } },
 };
 
-export const sampleKnativeServices: FirehoseResult = {
+export const sampleKnativeServices: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [knativeServiceObj],
@@ -725,7 +725,7 @@ export const getEventSourceResponse = (
   apiGroup: string,
   apiVersion: string,
   kind: string,
-): FirehoseResult => {
+): WatchK8sResultsObject<K8sResourceKind[]> => {
   return {
     loaded: true,
     loadError: '',
@@ -785,7 +785,7 @@ export const kafkaConnectionData = {
   ],
 };
 
-export const sampleEventSourceSinkbinding: FirehoseResult = {
+export const sampleEventSourceSinkbinding: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -821,7 +821,7 @@ export const sampleEventSourceSinkbinding: FirehoseResult = {
   ],
 };
 
-export const sampleSourceKameletBinding: FirehoseResult = {
+export const sampleSourceKameletBinding: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -868,7 +868,7 @@ export const sampleSourceKameletBinding: FirehoseResult = {
   ],
 };
 
-export const sampleSourceKafkaSink: FirehoseResult = {
+export const sampleSourceKafkaSink: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -906,7 +906,7 @@ export const sampleSourceKafkaSink: FirehoseResult = {
   ],
 };
 
-export const sampleDomainMapping: FirehoseResult = {
+export const sampleDomainMapping: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -928,7 +928,7 @@ export const sampleDomainMapping: FirehoseResult = {
   ],
 };
 
-export const sampleServices: FirehoseResult = {
+export const sampleServices: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1007,7 +1007,7 @@ export const sampleServices: FirehoseResult = {
   ],
 };
 
-export const sampleClusterServiceVersions: FirehoseResult = {
+export const sampleClusterServiceVersions: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],
@@ -1046,7 +1046,7 @@ export const knativeTopologyDataModel = {
   },
 };
 
-export const sampleEventSourceDeployments: FirehoseResult<DeploymentKind[]> = {
+export const sampleEventSourceDeployments: WatchK8sResultsObject<DeploymentKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1170,7 +1170,7 @@ export const EventIMCObj: EventChannelKind = {
   },
 };
 
-export const sampleKnativeChannels: FirehoseResult = {
+export const sampleKnativeChannels: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [EventIMCObj],
@@ -1223,19 +1223,19 @@ export const EventTriggerObj: EventTriggerKind = {
   },
 };
 
-const sampleBrokers: FirehoseResult = {
+const sampleBrokers: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [EventBrokerObj],
 };
 
-const sampleTriggers: FirehoseResult = {
+const sampleTriggers: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [EventTriggerObj],
 };
 
-const sampleKamelets: FirehoseResult = {
+const sampleKamelets: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [],

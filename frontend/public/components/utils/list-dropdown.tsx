@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {
-  FirehoseResource,
   K8sResourceCommon,
   K8sModel,
   K8sResourceKind,
@@ -26,7 +25,7 @@ const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
 };
 
-interface ListDropdownResource extends Partial<FirehoseResource> {
+interface ListDropdownResource extends Partial<WatchK8sResource & { prop?: string }> {
   data?: K8sResourceCommon[];
 }
 
@@ -207,7 +206,7 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
       return {};
     }
     return props.resources.reduce((acc, resource) => {
-      // Use prop as key if provided, otherwise fallback to kind (matches original Firehose behavior)
+      // Use prop as key if provided, otherwise fallback to kind
       const key = resource.prop || resource.kind;
       acc[key] = {
         kind: resource.kind,
@@ -228,11 +227,9 @@ export const ListDropdown: FC<ListDropdownProps> = (props) => {
   );
 
   const loaded = useMemo(() => {
-    const resourceValues = Object.values(watchedResources);
-    if (resourceValues.length === 0) {
-      return true;
-    }
-    return resourceValues.every((r) => r.loaded || r.loadError);
+    return Object.values(watchedResources)
+      .filter((r) => !r.loadError)
+      .every((r) => r.loaded);
   }, [watchedResources]);
 
   const loadError = useMemo(() => {
@@ -265,11 +262,6 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
   const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = useState(props.selectedKey);
   const [model, canCreate] = useProjectOrNamespaceModel();
-
-  // Sync internal state with prop changes
-  useEffect(() => {
-    setSelectedKey(props.selectedKey);
-  }, [props.selectedKey]);
 
   const actionItems =
     model && canCreate

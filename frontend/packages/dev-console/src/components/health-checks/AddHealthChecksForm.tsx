@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import * as yup from 'yup';
-import type { FirehoseResult } from '@console/internal/components/utils';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -16,7 +16,7 @@ import { healthChecksProbesValidationSchema } from './health-checks-probe-valida
 import { updateHealthChecksProbe } from './health-checks-utils';
 
 type AddHealthChecksFormProps = {
-  resource?: FirehoseResult<K8sResourceKind>;
+  resource: WatchK8sResultsObject<K8sResourceKind>;
   currentContainer: string;
 };
 

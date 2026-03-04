@@ -1,10 +1,14 @@
 import { useState, useCallback, useMemo } from 'react';
 import * as _ from 'lodash';
-import type { WatchK8sResource, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import type {
+  WatchK8sResource,
+  K8sResourceCommon,
+  WatchK8sResultsObject,
+} from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 
 type UseDynamicK8sWatchResourcesResult = {
-  results: WatchK8sResults<Record<string, WatchK8sResource>>;
+  results: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   watchResource: (key: string, resource: WatchK8sResource) => void;
   stopWatchResource: (key: string) => void;
 };

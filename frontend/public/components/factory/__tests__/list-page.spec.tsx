@@ -84,12 +84,12 @@ describe('TextFilter component', () => {
 
 describe('FireMan component', () => {
   it('does not render title when not provided', () => {
-    renderWithProviders(<FireMan resources={[{ kind: 'Pod', prop: 'obj' }]} />);
+    renderWithProviders(<FireMan resources={[]} />);
     expect(screen.queryByText('My pods')).not.toBeInTheDocument();
   });
 
   it('renders title when provided', () => {
-    renderWithProviders(<FireMan resources={[{ kind: 'Node', prop: 'obj' }]} title="My pods" />);
+    renderWithProviders(<FireMan resources={[]} title="My pods" />);
     expect(screen.getByText('My pods')).toBeVisible();
   });
 
@@ -98,7 +98,7 @@ describe('FireMan component', () => {
 
     renderWithProviders(
       <FireMan
-        resources={[{ kind: 'Pod', prop: 'obj' }]}
+        resources={[]}
         canCreate
         createProps={createProps}
         createButtonText="Create Pod"

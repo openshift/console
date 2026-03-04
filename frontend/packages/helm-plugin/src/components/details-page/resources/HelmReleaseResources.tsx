@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
+import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResource } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor, modelFor, referenceForModel } from '@console/internal/module/k8s';
 import type { HelmRelease } from '../../../types/helm-types';
@@ -18,7 +18,7 @@ const HelmReleaseResources: FC<HelmReleaseResourcesProps> = ({ customData }) => 
   const params = useParams();
   const namespace = params.ns;
   const helmManifestResources = loadHelmManifestResources(customData);
-  const firehoseResources: FirehoseResource[] = helmManifestResources.map(
+  const watchResources: WatchK8sResourceWithProp[] = helmManifestResources.map(
     (resource: K8sResourceKind) => {
       const resourceKind = referenceFor(resource);
       const model = modelFor(resourceKind);
@@ -34,7 +34,7 @@ const HelmReleaseResources: FC<HelmReleaseResourcesProps> = ({ customData }) => 
   );
   return (
     <MultiListPage
-      resources={firehoseResources}
+      resources={watchResources}
       flatten={flattenReleaseResources}
       label={t('helm-plugin~Resources')}
       ListComponent={HelmReleaseResourcesList}

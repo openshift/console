@@ -387,7 +387,7 @@ Adds an activity to the Activity Card of Overview Dashboard where the triggering
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
-| `k8sResource` | `CodeRef<FirehoseResource & { isList: true; }>` | no | The utilization item to be replaced. |
+| `k8sResource` | `CodeRef<WatchK8sResource & { prop: string; } & { isList: true; }>` | no | The utilization item to be replaced. |
 | `component` | `CodeRef<React.ComponentType<K8sActivityProps<T>>>` | no | The action component. |
 | `isActivity` | `CodeRef<(resource: T) => boolean>` | yes | Function which determines if the given resource represents the action. If not defined, every resource represents activity. |
 | `getTimestamp` | `CodeRef<(resource: T) => Date>` | yes | Timestamp for the given action, which will be used for ordering. |
@@ -405,7 +405,7 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `title` | `string` | no | Title of operators section in the popup. |
-| `resources` | `CodeRef<FirehoseResource[]>` | no | Kubernetes resources which will be fetched and passed to `healthHandler`. |
+| `resources` | `CodeRef<WatchK8sResourceWithProp[]>` | no | Kubernetes resources which will be fetched and passed to `healthHandler`. |
 | `getOperatorsWithStatuses` | `CodeRef<GetOperatorsWithStatuses<T>>` | yes | Resolves status for the operators. |
 | `operatorRowLoader` | `CodeRef<React.ComponentType<OperatorRowProps<T>>>` | yes | Loader for popup row component. |
 | `viewAllLink` | `string` | yes | Links to all resources page. If not provided then a list page of the first resource from resources prop is used. |
@@ -425,7 +425,7 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | `title` | `string` | no | The display name of the subsystem. |
 | `queries` | `string[]` | no | The Prometheus queries |
 | `healthHandler` | `CodeRef<PrometheusHealthHandler>` | no | Resolve the subsystem's health. |
-| `additionalResource` | `CodeRef<FirehoseResource>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
+| `additionalResource` | `CodeRef<WatchK8sResourceWithProp>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
 | `popupComponent` | `CodeRef<React.ComponentType<PrometheusHealthPopupProps>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |
 | `popupClassname` | `string` | yes | Optional classname for the popup top-level component. |
@@ -466,8 +466,8 @@ Adds a health subsystem to the status card of Overview dashboard where the sourc
 | `url` | `string` | no | The URL to fetch data from. It will be prefixed with base k8s URL. |
 | `healthHandler` | `CodeRef<URLHealthHandler<T>>` | no | Resolve the subsystem's health. |
 | `fetch` | `CodeRef<Fetch>` | yes | Custom function to fetch data from the URL.<br/>If none is specified, default one (`coFetchJson`) will be used.<br/>Response is then parsed by `healthHandler`. |
-| `additionalResource` | `CodeRef<FirehoseResource>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
-| `popupComponent` | `CodeRef<React.ComponentType<{ healthResult?: T; healthResultError?: any; k8sResult?: FirehoseResult<R>; }>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
+| `additionalResource` | `CodeRef<WatchK8sResourceWithProp>` | yes | Additional resource which will be fetched and passed to `healthHandler`. |
+| `popupComponent` | `CodeRef<React.ComponentType<{ healthResult?: T; healthResultError?: any; k8sResult?: WatchK8sResultsObject<R>; }>>` | yes | Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. |
 | `popupTitle` | `string` | yes | The title of the popover. |
 
 ---

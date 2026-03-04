@@ -24,7 +24,11 @@ import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
-import { FirehoseResource, FirehoseResourcesResult, FirehoseResultObject } from '../utils/types';
+import type {
+  ResourcesObject,
+  WatchK8sResourceWithProp,
+  WatchK8sResults,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
@@ -59,9 +63,6 @@ type ListPageWrapperProps<L = any, C = any> = {
   hideLabelFilter?: boolean;
   columnLayout?: ColumnLayout;
   name?: string;
-  /** @deprecated - use watchedResources instead */
-  resources?: FirehoseResourcesResult;
-  /** Resources fetched via useK8sWatchResources */
   watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
   loaded?: boolean;
   loadError?: unknown;
@@ -91,7 +92,6 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     hideLabelFilter,
     columnLayout,
     name,
-    resources,
     watchedResources,
     nameFilter,
     omitFilterToolbar,
@@ -105,10 +105,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
-  // TODO: Remove the resources prop and the fallback ?? resources after all components are migrated from Firehose to hooks.
-  // Use watchedResources (from useK8sWatchResources) if available, fallback to resources (from Firehose)
-  const resourceData = watchedResources ?? resources;
-  const data = flatten ? flatten(resourceData) : [];
+  const data = flatten ? flatten(watchedResources) : [];
   const Filter = (
     <FilterToolbar
       rowFilters={rowFilters}
@@ -150,7 +147,7 @@ export type FireManProps = {
   createProps?: CreateProps;
   fieldSelector?: string;
   filterLabel?: string;
-  resources: FirehoseResource[];
+  resources: WatchK8sResourceWithProp[];
   badge?: ReactNode;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
@@ -322,9 +319,9 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
 FireMan.displayName = 'FireMan';
 
 export type Flatten<
-  F extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
+  F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
   R = any
-> = (resources: FirehoseResourcesResult<F>) => R;
+> = (resources: WatchK8sResults<F>) => R;
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
@@ -490,7 +487,9 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   hideTextFilter?: boolean;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
-  resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
+  resources: (Omit<WatchK8sResourceWithProp, 'prop'> & {
+    prop?: WatchK8sResourceWithProp['prop'];
+  })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
@@ -551,6 +550,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       const key = r.prop || r.kind;
       acc[key] = {
         kind: r.kind,
+        groupVersionKind: r.groupVersionKind,
         name: r.name,
         namespace: r.namespace,
         isList: r.isList,
@@ -559,6 +559,7 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
         limit: r.limit,
         namespaced: r.namespaced,
         optional: r.optional,
+        partialMetadata: r.partialMetadata,
       };
       return acc;
     }, {} as Record<string, WatchK8sResource>);

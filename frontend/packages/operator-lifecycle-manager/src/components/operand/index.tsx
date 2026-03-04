@@ -361,7 +361,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const dispatch = useConsoleDispatch();
   const [apiRefreshed, setAPIRefreshed] = useState(false);
 
-  // Map APIs provided by this CSV to Firehose resources. Exclude APIs that do not have a model.
+  // Map APIs provided by this CSV to watch resources. Exclude APIs that do not have a model.
   const providedAPIs = providedAPIsForCSV(obj);
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
