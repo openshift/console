@@ -22,6 +22,10 @@ table in [Console dynamic plugins README](./README.md).
 - **Breaking**: Minimum compatible version of `typescript` increased to `^5.9.3` ([CONSOLE-3769], [#15945])
 - `webpack` is now a required peer dependency ([CONSOLE-5050], [#15934])
 
+## 4.21.0 - 2026-03-09
+
+> Initial release for OCP Console 4.21.
+
 ## 4.21.0-prerelease.1 - 2025-12-04
 
 - Remove usage of direct `webpack` imports in favor of `compiler.webpack` ([OCPBUGS-66345], [#15802])
