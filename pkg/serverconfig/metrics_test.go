@@ -177,9 +177,7 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			console_plugins_info{name="demo",state="enabled"} 1
 			`,
 			expectedMetricsAfterUpdate: `
-			console_plugins_info{name="acm",state="enabled"} 0
 			console_plugins_info{name="acm",state="notfound"} 1
-			console_plugins_info{name="demo",state="enabled"} 0
 			console_plugins_info{name="demo",state="notfound"} 1
 			`,
 		},
@@ -239,7 +237,6 @@ func TestPluginMetricsRunningTwice(t *testing.T) {
 			console_plugins_info{name="acm",state="enabled"} 1
 			console_plugins_info{name="demo",state="disabled"} 1
 			console_plugins_info{name="unknown",state="disabled"} 1
-			console_plugins_info{name="unknown",state="enabled"} 0
 			console_plugins_info{name="unknown",state="notfound"} 1
 			`,
 		},
