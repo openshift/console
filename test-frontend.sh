@@ -6,7 +6,18 @@ set -euo pipefail
 OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
-cd frontend
+pushd dynamic-demo-plugin
+
+# Check for outdated yarn.lock file
+if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
+  echo "Outdated yarn.lock file, commit changes to fix!"
+  git --no-pager diff
+  exit 1
+fi
+
+popd
+
+pushd frontend
 
 # Check for outdated yarn.lock file
 if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
