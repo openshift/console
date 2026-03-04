@@ -114,7 +114,13 @@ if (!SAMPLE_SESSION) {
   console.debug('Analytics session is not being sampled, telemetry events will be ignored');
 }
 
-const analyticsEnabled = !TELEMETRY_DISABLED && SAMPLE_SESSION;
+if (!window.SERVER_FLAGS.releaseVersion) {
+  // eslint-disable-next-line no-console
+  console.debug('No release version set, telemetry events will be ignored');
+}
+
+const analyticsEnabled =
+  !TELEMETRY_DISABLED && SAMPLE_SESSION && !!window.SERVER_FLAGS.releaseVersion;
 
 // Initialize Segment Analytics as soon as possible, outside of React useEffect.
 // This ensures that analytics.load method is invoked before any other methods.
