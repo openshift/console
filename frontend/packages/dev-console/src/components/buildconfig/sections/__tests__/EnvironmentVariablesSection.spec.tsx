@@ -119,6 +119,7 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should update formik data', async () => {
+    const user = userEvent.setup();
     const initialValues: EnvironmentVariablesSectionFormData = {
       formData: {
         environmentVariables: [],
@@ -132,8 +133,8 @@ describe('EnvironmentVariablesSection', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Add value'));
-    await userEvent.click(renderResult.getByText('Add value'));
+    await user.click(renderResult.getByText('Add value'));
+    await user.click(renderResult.getByText('Add value'));
 
     expect(renderResult.queryAllByPlaceholderText('Name')).toHaveLength(3);
     expect(renderResult.queryAllByPlaceholderText('Value')).toHaveLength(3);
@@ -141,16 +142,16 @@ describe('EnvironmentVariablesSection', () => {
     const [name1, name2, name3] = renderResult.queryAllByPlaceholderText('Name');
     const [value1, value2, value3] = renderResult.queryAllByPlaceholderText('Value');
 
-    await userEvent.type(name1, 'env key 1');
-    await userEvent.type(value1, 'env value 1');
-    await userEvent.type(name2, 'env key 2');
-    await userEvent.type(value2, 'env value 2');
-    await userEvent.type(name3, 'env key 3');
-    await userEvent.type(value3, 'env value 3');
+    await user.type(name1, 'env key 1');
+    await user.type(value1, 'env value 1');
+    await user.type(name2, 'env key 2');
+    await user.type(value2, 'env value 2');
+    await user.type(name3, 'env key 3');
+    await user.type(value3, 'env value 3');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -165,5 +166,5 @@ describe('EnvironmentVariablesSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 });

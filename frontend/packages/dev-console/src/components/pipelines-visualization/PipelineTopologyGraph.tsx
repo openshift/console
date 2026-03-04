@@ -34,4 +34,4 @@ const PipelineTopologyGraph: FC<PipelineTopologyGraphProps> = ({
   );
 };
 
-export default memo(PipelineTopologyGraph);
+export default memo<PipelineTopologyGraphProps>(PipelineTopologyGraph);

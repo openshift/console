@@ -87,12 +87,16 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   const { t } = useTranslation();
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, hoverRef] = useHover(200, 200, [hoverChange]);
-  const [innerHover, innerHoverRef] = useHover();
+  const [innerHover, innerHoverRef] = useHover(0, 200);
+  const [labelHover, labelHoverRef] = useHover();
+  // Keep label visible when hovering over node, label itself, or when context menu is open
+  const isHovering = hover || innerHover || labelHover || contextMenuOpen;
   const dragProps = useMemo(() => ({ element }), [element]);
   const [{ dragging: labelDragging, regrouping: labelRegrouping }, dragLabelRef] = useDragNode(
     dragSpec,
     dragProps,
   );
+  const dragLabelRefs = useCombineRefs(dragLabelRef, labelHoverRef);
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
   const { data } = element.getData();
@@ -108,7 +112,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
   useAnchor(RectAnchor);
 
   const [filtered] = useSearchFilter(element.getLabel(), getResource(element)?.metadata?.labels);
-  const showLabel = useShowLabel(hover);
+  const showLabel = useShowLabel(hover || innerHover);
   const { x, y, width, height } = element.getBounds();
 
   useLayoutEffect(() => {
@@ -179,11 +183,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
               })}
             >
               <rect
-                key={
-                  hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
-                    ? 'rect-hover'
-                    : 'rect'
-                }
+                key={isHovering || dragging || labelDragging || dropTarget ? 'rect-hover' : 'rect'}
                 ref={dndDropRef}
                 className="odc-knative-service__bg"
                 x={x}
@@ -193,7 +193,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
                 rx="5"
                 ry="5"
                 filter={createSvgIdUrl(
-                  hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
+                  isHovering || dragging || labelDragging || dropTarget
                     ? NODE_SHADOW_FILTER_ID_HOVER
                     : NODE_SHADOW_FILTER_ID,
                 )}
@@ -206,7 +206,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
             </g>
           </Layer>
           {decorators}
-          {showLabel && (data.kind || element.getLabel()) && (
+          {(showLabel || labelHover || contextMenuOpen) && (data.kind || element.getLabel()) && (
             <NodeLabel
               className="pf-topology__group__label odc-knative-service__label odc-base-node__label"
               onContextMenu={onContextMenu}
@@ -219,7 +219,7 @@ const KnativeServiceGroup: FC<KnativeServiceGroupProps> = ({
               badge={badge}
               badgeColor={badgeColor}
               badgeClassName={badgeClassName}
-              dragRef={dragLabelRef}
+              dragRef={dragLabelRefs}
             >
               {element.getLabel()}
             </NodeLabel>

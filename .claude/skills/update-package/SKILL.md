@@ -59,7 +59,7 @@ Update the specified package to its reasonably latest stable version or to the v
 ## Guidelines
 
 **Code Standards**:
-- For coding patterns and project structure: Read `ARCHITECTURE.md`, `STYLEGUIDE.md`, and `AGENTS.md`
+- For coding patterns and project structure: Read `STYLEGUIDE.md`, `AGENTS.md`, and other relevant documentation
 - Follow existing code patterns found in the codebase
 
 **Package Update Rules**:
@@ -92,7 +92,7 @@ Update the specified package to its reasonably latest stable version or to the v
 
 ## Example: Interactive Flow
 ```text
-User: /console-assist update @patternfly/react-core
+User: /update-package @patternfly/react-core
 Assistant: Current version: 6.2.2, Latest: 6.3.0
 
 Before I proceed, do you have:

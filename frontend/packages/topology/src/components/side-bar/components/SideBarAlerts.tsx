@@ -10,7 +10,7 @@ import type {
 import { isDetailsResourceAlert, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { USERSETTINGS_PREFIX } from '@console/shared';
 import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
-import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { useUserPreferenceLocalStorage } from '@console/shared/src/hooks/useUserPreferenceLocalStorage';
 import { deserializeData } from '@console/shared/src/utils/user-settings';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
@@ -21,9 +21,9 @@ const ResolveResourceAlerts: FC<{
   element: GraphElement;
 }> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
   const [cfData, cfLoaded, cfLoadError] = useGetUserSettingConfigMap();
-  const [showAlert, setShowAlert] = useUserSettingsLocalStorage(
-    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
+  const [showAlert, setShowAlert] = useUserPreferenceLocalStorage(
     `${element.getId()}`,
+    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
     deserializeData(
       cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
     ) || true,

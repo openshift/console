@@ -102,7 +102,7 @@ const GraphEmptyState: FC<GraphEmptyStateProps> = ({ children, title }) => (
   </div>
 );
 
-const SpanControls: FC<SpanControlsProps> = memo(
+const SpanControls = memo<SpanControlsProps>(
   ({ defaultSpanText, onChange, span, hasReducedResolution }) => {
     const [isValid, setIsValid] = useState(true);
     const [text, setText] = useState(formatPrometheusDuration(span));
@@ -348,7 +348,7 @@ const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - spa
 
 const ONE_MINUTE = 60 * 1000;
 
-const Graph: FC<GraphProps> = memo(
+const Graph = memo<GraphProps>(
   ({
     allSeries,
     disabledSeries,

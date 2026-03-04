@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -46,7 +46,7 @@ type PipelineTaskNodeProps = {
 } & WithContextMenuProps &
   WithSelectionProps;
 
-const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
+const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
   element,
   onContextMenu,
   contextMenuOpen,
@@ -210,4 +210,4 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default memo(observer(PipelineTaskNode));
+export default memo<PipelineTaskNodeProps>(observer(PipelineTaskNode));

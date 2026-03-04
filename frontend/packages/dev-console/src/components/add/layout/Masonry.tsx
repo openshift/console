@@ -3,56 +3,60 @@ import { useState, Children, useRef, useEffect, memo, useCallback } from 'react'
 import { css } from '@patternfly/react-styles';
 import './MasonryLayout.scss';
 
-type MasonryProps = {
+interface MasonryProps {
   columnCount: number;
   children: ReactElement[];
-};
+}
 
-// Define MeasuredItem OUTSIDE the render function to prevent recreating it on every render
-const MeasuredItem: FC<{
+interface MeasuredItemProps {
   item: ReactElement;
   itemKey: string;
   onHeightMeasured: (key: string, height: number) => void;
   currentHeight?: number;
-}> = memo(({ item, itemKey, onHeightMeasured, currentHeight }) => {
-  const measureRef = useRef<HTMLDivElement>(null);
+}
 
-  useEffect(() => {
-    if (!measureRef.current) return undefined;
+// Define MeasuredItem OUTSIDE the render function to prevent recreating it on every render
+const MeasuredItem = memo<MeasuredItemProps>(
+  ({ item, itemKey, onHeightMeasured, currentHeight }) => {
+    const measureRef = useRef<HTMLDivElement>(null);
 
-    let rafId: number;
+    useEffect(() => {
+      if (!measureRef.current) return undefined;
 
-    // Use ResizeObserver to detect DOM height changes from internal toggles
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
+      let rafId: number;
 
-      // Use requestAnimationFrame to batch updates and avoid ResizeObserver loop errors
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+      // Use ResizeObserver to detect DOM height changes from internal toggles
+      const resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (!entry) return;
 
-      rafId = requestAnimationFrame(() => {
-        const newHeight = entry.contentRect.height;
-        // Only update if height changed by more than 1px to avoid sub-pixel rendering loops
-        if (!currentHeight || Math.abs(currentHeight - newHeight) > 1) {
-          onHeightMeasured(itemKey, newHeight);
+        // Use requestAnimationFrame to batch updates and avoid ResizeObserver loop errors
+        if (rafId) {
+          cancelAnimationFrame(rafId);
         }
+
+        rafId = requestAnimationFrame(() => {
+          const newHeight = entry.contentRect.height;
+          // Only update if height changed by more than 1px to avoid sub-pixel rendering loops
+          if (!currentHeight || Math.abs(currentHeight - newHeight) > 1) {
+            onHeightMeasured(itemKey, newHeight);
+          }
+        });
       });
-    });
 
-    resizeObserver.observe(measureRef.current);
+      resizeObserver.observe(measureRef.current);
 
-    return () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      resizeObserver.disconnect();
-    };
-  }, [itemKey, onHeightMeasured, currentHeight]);
+      return () => {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+        }
+        resizeObserver.disconnect();
+      };
+    }, [itemKey, onHeightMeasured, currentHeight]);
 
-  return <div ref={measureRef}>{item}</div>;
-});
+    return <div ref={measureRef}>{item}</div>;
+  },
+);
 
 export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
   const [heights, setHeights] = useState<Record<string, number>>({});

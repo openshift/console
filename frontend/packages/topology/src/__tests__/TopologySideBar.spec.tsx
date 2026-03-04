@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(() => [500, jest.fn(), true]),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(() => [500, jest.fn(), true]),
 }));
 
 jest.mock('@patternfly/react-core', () => ({

@@ -144,6 +144,7 @@ describe('ImagesSection', () => {
   });
 
   it('should provide three options for build from image (no none option until strategy is Docker)', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -157,7 +158,7 @@ describe('ImagesSection', () => {
     renderResult.getByText('None');
 
     // Open first dropdown
-    await userEvent.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('Please select'));
 
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
@@ -173,6 +174,7 @@ describe('ImagesSection', () => {
   });
 
   it('should provide four options for build from image (when build strategy is Docker)', async () => {
+    const user = userEvent.setup();
     const initialValues = _.cloneDeep(emptyInitialValues);
     initialValues.formData.images.strategyType = BuildStrategyType.Docker;
     const onSubmit = jest.fn();
@@ -187,7 +189,7 @@ describe('ImagesSection', () => {
     expect(renderResult.queryAllByText('None')).toHaveLength(2);
 
     // Open first dropdown
-    await userEvent.click(renderResult.getAllByText('None')[0]);
+    await user.click(renderResult.getAllByText('None')[0]);
 
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
@@ -204,6 +206,7 @@ describe('ImagesSection', () => {
   });
 
   it('should provide three options (incl. none) for push to image', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -217,7 +220,7 @@ describe('ImagesSection', () => {
     renderResult.getByText('None');
 
     // Open second dropdown
-    await userEvent.click(renderResult.getByText('None'));
+    await user.click(renderResult.getByText('None'));
 
     // Assert options
     const menuList = document.querySelector('[data-test="console-select-menu-list"]');
@@ -233,6 +236,7 @@ describe('ImagesSection', () => {
   });
 
   it('should show a subform when user selects image stream tag', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -241,8 +245,8 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('Image Stream Tag'));
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('Image Stream Tag'));
 
     renderResult.getByText('Project');
     renderResult.getByText('Image Stream');
@@ -252,6 +256,7 @@ describe('ImagesSection', () => {
   });
 
   it('should show a subform when user selects image stream image', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -260,8 +265,8 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('Image Stream Image'));
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('Image Stream Image'));
 
     expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
 
@@ -269,6 +274,7 @@ describe('ImagesSection', () => {
   });
 
   it('should show a subform when user selects dockerfile', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -277,16 +283,16 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('External container image'));
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('External container image'));
 
     expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  // Disabling as this test is flaking.  @vikram-raj to investigate.
-  xit('should submit right form data when user fills out an image stream tag', async () => {
+  it('should submit right form data when user fills out an image stream tag', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -295,20 +301,20 @@ describe('ImagesSection', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('Image Stream Tag'));
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('Image Stream Tag'));
 
     // Fill form
-    await userEvent.click(renderResult.getByText('Select Project'));
-    await userEvent.click(renderResult.getByText('project-a'));
-    await userEvent.click(renderResult.getByText('Select Image Stream'));
-    await userEvent.click(renderResult.getByText('imagestream-a'));
-    await userEvent.click(renderResult.getByText('Select tag'));
-    await userEvent.click(renderResult.getByText('latest'));
+    await user.click(renderResult.getByText('Select Project'));
+    await user.click(renderResult.getByText('project-a'));
+    await user.click(renderResult.getByText('Select Image Stream'));
+    await user.click(renderResult.getByText('imagestream-a'));
+    await user.click(renderResult.getByText('Select tag'));
+    await user.click(renderResult.getByText('latest'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -357,9 +363,10 @@ describe('ImagesSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 
   it('should submit right form data when user fills out an image stream image', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -369,13 +376,13 @@ describe('ImagesSection', () => {
     );
 
     // Fill form
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('Image Stream Image'));
-    await userEvent.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('Image Stream Image'));
+    await user.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -399,9 +406,10 @@ describe('ImagesSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 
   it('should submit right form data when user fills out an dockerfile', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -411,13 +419,13 @@ describe('ImagesSection', () => {
     );
 
     // Fill form
-    await userEvent.click(renderResult.getByText('Please select'));
-    await userEvent.click(renderResult.getByText('External container image'));
-    await userEvent.type(renderResult.getByRole('textbox'), 'centos');
+    await user.click(renderResult.getByText('Please select'));
+    await user.click(renderResult.getByText('External container image'));
+    await user.type(renderResult.getByRole('textbox'), 'centos');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -441,5 +449,5 @@ describe('ImagesSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 });

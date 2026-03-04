@@ -1,5 +1,5 @@
 import type { PerspectiveType } from '@console/dynamic-plugin-sdk';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import {
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_USER_SETTINGS_KEY,
@@ -10,7 +10,7 @@ export const useLastPerspective = (): [
   React.Dispatch<React.SetStateAction<string>>,
   boolean,
 ] =>
-  useUserSettingsCompatibility<PerspectiveType>(
+  useUserPreferenceCompatibility<PerspectiveType>(
     LAST_PERSPECTIVE_USER_SETTINGS_KEY,
     LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
     '',

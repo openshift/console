@@ -1,11 +1,11 @@
-import type { FunctionComponent, ReactElement, FC } from 'react';
+import type { FC, ReactElement } from 'react';
 import { isValidElement, createElement } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Tabs, Tab as PfTab, TabTitleText } from '@patternfly/react-core';
 
 export type Tab = {
   name: string;
-  component: FunctionComponent<{}> | ReactElement;
+  component: FC | ReactElement;
 };
 
 type SimpleTabNavProps = {
@@ -46,7 +46,7 @@ export const SimpleTabNav: FC<SimpleTabNavProps> = ({
         {tabs.map((tab) => {
           const content =
             !isValidElement(tab.component) && !Array.isArray(tab.component)
-              ? createElement(tab.component as FunctionComponent, tabProps)
+              ? createElement(tab.component as FC, tabProps)
               : tab.component;
 
           return (

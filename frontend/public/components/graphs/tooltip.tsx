@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 // Mostly just a copy-paste from patternfly.
-import type { FunctionComponent, CSSProperties } from 'react';
+import type { FC, CSSProperties } from 'react';
 
 import { cloneElement } from 'react';
 import { defaults } from 'lodash';
@@ -26,7 +26,7 @@ import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/js/victo
 
 import { DataPoint } from '.';
 
-export const ChartLegendTooltipContent: FunctionComponent<
+export const ChartLegendTooltipContent: FC<
   ChartLegendTooltipContentProps & {
     stack?: boolean;
     mainDataName?: string;
@@ -183,7 +183,7 @@ export const ChartLegendTooltipContent: FunctionComponent<
 };
 ChartLegendTooltipContent.displayName = 'ChartLegendTooltipContent';
 
-export const ChartLegendTooltipLabel: FunctionComponent<ChartLegendTooltipLabelProps> = ({
+export const ChartLegendTooltipLabel: FC<ChartLegendTooltipLabelProps> = ({
   index = 0,
   legendData,
   style,
@@ -194,7 +194,7 @@ export const ChartLegendTooltipLabel: FunctionComponent<ChartLegendTooltipLabelP
 
   // destructure last
   ...rest
-}: ChartLegendTooltipLabelProps) => {
+}) => {
   const getStyle = (styles: any) => {
     const applyDefaultStyle = (customStyle: CSSProperties) =>
       defaults(
@@ -223,7 +223,7 @@ export const ChartLegendTooltipLabel: FunctionComponent<ChartLegendTooltipLabelP
 };
 ChartLegendTooltipLabel.displayName = 'ChartLegendTooltipLabel';
 
-export const ChartLegendTooltip: FunctionComponent<
+export const ChartLegendTooltip: FC<
   Omit<ChartLegendTooltipProps, 'title'> & {
     stack?: boolean;
     formatDate: (data: DataPoint<Date>[]) => string;

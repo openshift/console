@@ -22,7 +22,7 @@ import {
 import { ErrorPage404 } from './error';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
-export const CreateYAMLInner = ({
+export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   params,
   kindsInFlight,
   kindObj,
@@ -31,7 +31,7 @@ export const CreateYAMLInner = ({
   resourceObjPath,
   isCreate = true,
   template,
-}: CreateYAMLProps) => {
+}) => {
   const { t } = useTranslation();
   const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(

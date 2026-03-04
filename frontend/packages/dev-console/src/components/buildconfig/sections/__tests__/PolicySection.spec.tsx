@@ -53,6 +53,7 @@ describe('PolicySectionFormData', () => {
   });
 
   it('should submit the right value when switching to parallel', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -61,12 +62,12 @@ describe('PolicySectionFormData', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Serial'));
-    await userEvent.click(renderResult.getByText('Parallel'));
+    await user.click(renderResult.getByText('Serial'));
+    await user.click(renderResult.getByText('Parallel'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -82,6 +83,7 @@ describe('PolicySectionFormData', () => {
   });
 
   it('should submit the right value when switching to serial latest only', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -90,12 +92,12 @@ describe('PolicySectionFormData', () => {
       </Wrapper>,
     );
 
-    await userEvent.click(renderResult.getByText('Serial'));
-    await userEvent.click(renderResult.getByText('Serial latest only'));
+    await user.click(renderResult.getByText('Serial'));
+    await user.click(renderResult.getByText('Serial latest only'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });

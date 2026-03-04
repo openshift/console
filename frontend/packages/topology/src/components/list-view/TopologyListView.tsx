@@ -30,15 +30,15 @@ interface TopologyGraphViewProps {
   unassignedItems: Node[];
 }
 
-const TopologyListViewComponent: FC<TopologyGraphViewProps> = memo(
-  function TopologyListViewComponent({
+const TopologyListViewComponent = memo<TopologyGraphViewProps>(
+  ({
     visualizationReady,
     visualization,
     onSelect,
     applicationGroups,
     unassignedItems,
     selectedId,
-  }) {
+  }) => {
     if (!visualizationReady) {
       return null;
     }

@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const PREFERRED_PERSPECTIVE_USER_SETTING_KEY = 'console.preferredPerspective';
 
@@ -8,6 +8,6 @@ export const usePreferredPerspective = (): [string, Dispatch<SetStateAction<stri
     preferredPerspective,
     setPreferredPerspective,
     preferredPerspectiveLoaded,
-  ] = useUserSettings<string>(PREFERRED_PERSPECTIVE_USER_SETTING_KEY);
+  ] = useUserPreference<string>(PREFERRED_PERSPECTIVE_USER_SETTING_KEY);
   return [preferredPerspective, setPreferredPerspective, preferredPerspectiveLoaded];
 };

@@ -103,4 +103,4 @@ const TopologyQuickSearch: FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpe
   );
 };
 
-export default memo(TopologyQuickSearch);
+export default memo<QuickSearchProps>(TopologyQuickSearch);

@@ -14,7 +14,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
-import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '../../hooks/useUserPreferenceCompatibility';
 
 import './HealthChecksAlert.scss';
 
@@ -42,7 +42,7 @@ const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     hideHealthCheckAlertFor,
     setHideHealthCheckAlertFor,
     loaded,
-  ] = useUserSettingsCompatibility<string[]>(
+  ] = useUserPreferenceCompatibility<string[]>(
     HEALTH_CHECK_CONFIGMAP_KEY,
     HIDE_HEALTH_CHECK_ALERT_FOR,
     [],

@@ -67,7 +67,7 @@ const getTop3Groups = (
   return groupIDs.sort((a, b) => groupStatuses.indexOf(a) - groupStatuses.indexOf(b)).slice(0, 3);
 };
 
-export const InventoryItem: FC<InventoryItemProps> = memo(
+export const InventoryItem = memo<InventoryItemProps>(
   ({
     isLoading,
     title,

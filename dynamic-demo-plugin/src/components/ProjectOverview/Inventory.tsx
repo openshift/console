@@ -7,6 +7,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { FC } from 'react';
 
 const getCronJobsLink = (namespace: string) => `/k8s/ns/${namespace}/cronjobs`;
 
@@ -14,7 +15,7 @@ type ProjectInventoryItemProps = {
   projectName: string;
 };
 
-const ProjectInventoryItem = ({ projectName }: ProjectInventoryItemProps) => {
+const ProjectInventoryItem: FC<ProjectInventoryItemProps> = ({ projectName }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
   const [cronjobs, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: {

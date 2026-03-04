@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
@@ -13,7 +13,7 @@ type HelmReadmeModalProps = {
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: FunctionComponent<Props> = ({ readme, theme, close }) => {
+const HelmReadmeModal: FC<Props> = ({ readme, theme, close }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">

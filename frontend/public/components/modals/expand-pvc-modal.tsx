@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
@@ -17,7 +17,7 @@ import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 // Modal for expanding persistent volume claims
-const ExpandPVCModal = ({ resource, kind, close, cancel }: ExpandPVCModalProps) => {
+const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
   const baseValue = convertToBaseValue(getRequestedPVCSize(resource));
   const defaultSize = validate.split(humanizeBinaryBytesWithoutB(baseValue).string);
   const [requestSizeValue, setRequestSizeValue] = useState(defaultSize[0] || '');

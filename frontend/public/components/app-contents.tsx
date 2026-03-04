@@ -12,7 +12,7 @@ import {
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   getPerspectiveVisitedKey,
   usePerspectives,
@@ -90,7 +90,7 @@ type DefaultPageProps = {
 const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
-  const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
+  const [visited, setVisited, visitedLoaded] = useUserPreference<boolean>(
     getPerspectiveVisitedKey(activePerspective),
     false,
   );

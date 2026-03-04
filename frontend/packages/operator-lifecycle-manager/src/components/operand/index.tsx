@@ -737,7 +737,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 
 type OperandDetailsPageRouteParams = RouteParams<'appName' | 'ns' | 'name' | 'plural'>;
 
-const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
+const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sModel }) => {
   const { t } = useTranslation();
   const params = useParams();
   const { appName, ns, name, plural } = params;

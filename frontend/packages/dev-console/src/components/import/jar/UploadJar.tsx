@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
@@ -28,7 +28,7 @@ type UploadJarProps = {
   contextualSource?: string;
 };
 
-const UploadJar: FunctionComponent<UploadJarProps> = ({
+const UploadJar: FC<UploadJarProps> = ({
   namespace,
   projects,
   builderImage,

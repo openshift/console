@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
@@ -26,11 +26,10 @@ import {
   isGroupVersionKind,
   kindForReference,
   referenceFor,
-  watchURL,
 } from '../module/k8s';
 import { withStartGuide } from './start-guide';
-import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -49,14 +48,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { EventKind } from '../module/k8s/types';
 import type { EventInvolvedObject } from '../module/k8s/event';
 import type { CellMeasurerCache } from 'react-virtualized';
-import type { WSOptions } from '@console/dynamic-plugin-sdk/src/utils/k8s/ws-factory';
 import type {
   K8sResourceCommon,
   ResourceEventStreamProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const maxMessages = 500;
-const flushInterval = 500;
 
 // Extended EventKind type to include reportingComponent field present in v1 events
 interface ExtendedEventKind extends EventKind {
@@ -316,7 +313,7 @@ export const ErrorLoadingEvents: FC = () => {
   const { t } = useTranslation('public');
   return (
     <ConsoleEmptyState title={t('Error loading events')}>
-      {t('An error occurred during event retrieval. Attempting to reconnect...')}
+      {t('An error occurred while retrieving events. Attempting to reconnect...')}
     </ConsoleEmptyState>
   );
 };
@@ -379,97 +376,43 @@ const EventStream: FC<EventStreamProps> = ({
 }) => {
   const { t } = useTranslation('public');
   const [active, setActive] = useState(true);
-  const [sortedEvents, setSortedEvents] = useState<EventKind[]>([]);
-  const [error, setError] = useState<string | boolean | null>(null);
-  const [loading, setLoading] = useState(true);
-  const ws = useRef<WSFactory | null>(null);
+
+  const [pausedSnapshot, setPausedSnapshot] = useState<EventKind[] | null>(null);
+
+  const [eventsData, eventsLoaded, eventsLoadError] = useK8sWatchResource<EventKind[]>(
+    !mock && active
+      ? {
+          isList: true,
+          kind: EventModel.kind,
+          namespace,
+          fieldSelector,
+        }
+      : null,
+  );
+
+  const sortedEvents = useMemo(() => {
+    // If paused, use snapshot, else use live data
+    const dataSource = pausedSnapshot ?? eventsData;
+    if (!dataSource) {
+      return [];
+    }
+    return sortEvents(dataSource).slice(0, maxMessages);
+  }, [pausedSnapshot, eventsData]);
 
   const filteredEvents = useMemo(() => {
     return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(0, maxMessages);
   }, [sortedEvents, kind, type, filter, textFilter]);
 
-  // Handle websocket setup and teardown when dependent props change
-  useEffect(() => {
-    ws.current?.destroy();
-    setSortedEvents([]);
-    if (!mock) {
-      const webSocketID = `${namespace || 'all'}-sysevents`;
-      const watchURLOptions = {
-        ...(namespace ? { ns: namespace } : {}),
-        ...(fieldSelector
-          ? {
-              queryParams: {
-                fieldSelector: encodeURIComponent(fieldSelector),
-              },
-            }
-          : {}),
-      };
-      const path = watchURL(EventModel, watchURLOptions);
-      const webSocketOptions: WSOptions = {
-        host: 'auto',
-        reconnect: true,
-        path,
-        subprotocols: [],
-        jsonParse: true,
-        bufferFlushInterval: flushInterval,
-        bufferMax: maxMessages,
-      };
-
-      ws.current = new WSFactory(webSocketID, webSocketOptions)
-        .onbulkmessage((messages: Array<{ object: EventKind; type: string }>) => {
-          // Make one update to state per batch of events.
-          setSortedEvents((currentSortedEvents) => {
-            const topEvents = currentSortedEvents.slice(0, maxMessages);
-            const batch = messages.reduce((acc, { object, type: eventType }) => {
-              const uid = object.metadata.uid;
-              switch (eventType) {
-                case 'ADDED':
-                case 'MODIFIED':
-                  if (acc[uid] && acc[uid].count > object.count) {
-                    // We already have a more recent version of this message stored, so skip this one
-                    return acc;
-                  }
-                  return { ...acc, [uid]: object };
-                case 'DELETED':
-                  return _.omit(acc, uid);
-                default:
-                  // eslint-disable-next-line no-console
-                  console.error(`UNHANDLED EVENT: ${eventType}`);
-                  return acc;
-              }
-            }, _.keyBy(topEvents, 'metadata.uid') as Record<string, EventKind>);
-            return sortEvents(batch);
-          });
-        })
-        .onopen(() => {
-          setError(false);
-          setLoading(false);
-        })
-        .onclose((evt?: { wasClean?: boolean; reason?: string }) => {
-          if (evt?.wasClean === false) {
-            setError(evt.reason || t('Connection did not close cleanly.'));
-          }
-        })
-        .onerror(() => {
-          setError(true);
-        });
-    }
-    return () => {
-      ws.current?.destroy();
-    };
-  }, [namespace, fieldSelector, mock, t]);
-
-  // Pause/unpause the websocket when the active state changes
-  useEffect(() => {
-    if (active) {
-      ws.current?.unpause();
-    } else {
-      ws.current?.pause();
-    }
-  }, [active]);
-
   const toggleStream = () => {
-    setActive((prev) => !prev);
+    setActive((prev) => {
+      const newActive = !prev;
+      if (!newActive) {
+        setPausedSnapshot(eventsData ?? []);
+      } else {
+        setPausedSnapshot(null);
+      }
+      return newActive;
+    });
   };
 
   const count = filteredEvents.length;
@@ -486,18 +429,18 @@ const EventStream: FC<EventStreamProps> = ({
     sysEventStatus = <NoMatchingEvents allCount={allCount} />;
   }
 
-  if (error) {
+  if (eventsLoadError) {
     statusBtnTxt = (
       <span className="co-sysevent-stream__connection-error">
-        {typeof error === 'string'
+        {typeof eventsLoadError === 'string'
           ? t('Error connecting to event stream: {{ error }}', {
-              error,
+              error: eventsLoadError,
             })
           : t('Error connecting to event stream')}
       </span>
     );
     sysEventStatus = <ErrorLoadingEvents />;
-  } else if (loading) {
+  } else if (!eventsLoaded) {
     statusBtnTxt = <span>{t('Loading events...')}</span>;
     sysEventStatus = <Loading />;
   } else if (active) {

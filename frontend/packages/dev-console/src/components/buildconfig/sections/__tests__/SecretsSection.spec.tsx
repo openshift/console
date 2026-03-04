@@ -54,6 +54,7 @@ describe('SecretsSection', () => {
   });
 
   it('should render a secrets and mount point table after selecting add secret', async () => {
+    const user = userEvent.setup();
     const initialValues: SecretsSectionFormData = {
       formData: {
         secrets: [],
@@ -71,7 +72,7 @@ describe('SecretsSection', () => {
     expect(renderResult.queryByText('Secret')).toBeFalsy();
     expect(renderResult.queryByText('Mount point')).toBeFalsy();
 
-    await userEvent.click(renderResult.getByText('Add secret'));
+    await user.click(renderResult.getByText('Add secret'));
 
     // Now expecting that there is a table to select a secret
     renderResult.getByText('Secret');

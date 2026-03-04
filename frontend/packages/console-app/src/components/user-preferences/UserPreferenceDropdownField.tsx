@@ -5,7 +5,7 @@ import { MenuToggle, Skeleton, Select, SelectList, SelectOption } from '@pattern
 import { useTranslation } from 'react-i18next';
 import type { UserPreferenceDropdownField as DropdownFieldType } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { UserPreferenceFieldProps } from './types';
 
 import './UserPreferenceField.scss';
@@ -26,7 +26,7 @@ const UserPreferenceDropdownField: FC<UserPreferenceDropdownFieldProps> = ({
     currentUserPreferenceValue,
     setCurrentUserPreferenceValue,
     currentUserPreferenceValueLoaded,
-  ] = useUserSettings<string>(userSettingsKey);
+  ] = useUserPreference<string>(userSettingsKey);
   const [isOpen, setIsOpen] = useState(false);
   const selectOptions: JSX.Element[] = useMemo(
     () =>

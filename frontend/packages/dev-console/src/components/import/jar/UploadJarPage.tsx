@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
@@ -19,7 +19,7 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
-const UploadJarPage: FunctionComponent = () => {
+const UploadJarPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

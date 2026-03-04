@@ -39,9 +39,9 @@
 
 - New code MUST be written in TypeScript, not JavaScript.
 - Prefer functional programming patterns and immutable data structures
-- Use React functional components with hooks instead of class components.
+- Use React functional components with hooks instead of class components
 - Run the linter and follow all rules defined in .eslintrc
-- Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
+- Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
 
 ### Frontend Patterns

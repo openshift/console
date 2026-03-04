@@ -25,7 +25,7 @@ type MastheadProps = {
   onNavToggle: () => void;
 };
 
-export const Masthead = memo(({ isMastheadStacked, isNavOpen, onNavToggle }: MastheadProps) => {
+export const Masthead = memo<MastheadProps>(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
 

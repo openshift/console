@@ -7,8 +7,8 @@ import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import type { UserInfo } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import type { WithUserSettingsCompatibilityProps } from '@console/shared';
-import { useFlag, withUserSettingsCompatibility } from '@console/shared';
+import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
+import { useFlag, withUserPreferenceCompatibility } from '@console/shared';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
@@ -37,7 +37,7 @@ export type CloudShellTerminalProps = {
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
 const CloudShellTerminal: FC<
-  CloudShellTerminalInternalProps & WithUserSettingsCompatibilityProps<string>
+  CloudShellTerminalInternalProps & WithUserPreferenceCompatibilityProps<string>
 > = ({
   user,
   onCancel,
@@ -256,8 +256,8 @@ const stateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
-  withUserSettingsCompatibility<
-    CloudShellTerminalProps & WithUserSettingsCompatibilityProps<string>,
+  withUserPreferenceCompatibility<
+    CloudShellTerminalProps & WithUserPreferenceCompatibilityProps<string>,
     string
   >(
     CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,

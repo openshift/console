@@ -49,12 +49,13 @@ describe('ExportViewLogButton', () => {
   });
 
   it('should call onViewLog callback', async () => {
+    const user = userEvent.setup();
     const viewLogCallback = jest.fn();
     renderWithProviders(
       <ExportViewLogButton name="test" namespace="test" onViewLog={viewLogCallback} />,
     );
     const logButton = screen.getByTestId('export-view-log-btn');
-    await userEvent.click(logButton);
+    await user.click(logButton);
     expect(viewLogCallback).toHaveBeenCalled();
   });
 
@@ -90,6 +91,7 @@ describe('ExportViewLogButton', () => {
   });
 
   it('should render correct tooltip', async () => {
+    const user = userEvent.setup();
     mockK8sWatchResource.mockImplementation((res) => {
       if (!res) return [null, true, null];
       switch (res?.kind) {
@@ -113,7 +115,7 @@ describe('ExportViewLogButton', () => {
     renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
 
     const logButton = screen.getByTestId('export-view-log-btn');
-    await userEvent.hover(logButton);
+    await user.hover(logButton);
 
     const tooltip = await screen.findByText('Logs not available yet');
     expect(tooltip).toBeInTheDocument();

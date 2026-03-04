@@ -65,6 +65,7 @@ describe('HooksSection', () => {
   });
 
   it('should render more fields when checkbox is clicked', async () => {
+    const user = userEvent.setup();
     const initialValues: HooksSectionFormData = {
       formData: {
         hooks: {
@@ -90,7 +91,7 @@ describe('HooksSection', () => {
     const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkbox.checked).toBeFalsy();
 
-    await userEvent.click(checkbox);
+    await user.click(checkbox);
 
     await waitFor(() => {
       expect(checkbox.checked).toBeTruthy();
@@ -146,6 +147,7 @@ describe('HooksSection', () => {
   });
 
   it('should not render commands when hook type is changed to script', async () => {
+    const user = userEvent.setup();
     const initialValues: HooksSectionFormData = {
       formData: {
         hooks: {
@@ -169,8 +171,8 @@ describe('HooksSection', () => {
     expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(2);
     expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
 
-    await userEvent.click(renderResult.getByTestId('type'));
-    await userEvent.click(renderResult.getByText('Shell script'));
+    await user.click(renderResult.getByTestId('type'));
+    await user.click(renderResult.getByText('Shell script'));
 
     await waitFor(() => {
       expect(renderResult.baseElement.querySelector('textarea')).toBeTruthy();
@@ -180,6 +182,7 @@ describe('HooksSection', () => {
   });
 
   it('should not render commands when hook type is changed to argsOnly', async () => {
+    const user = userEvent.setup();
     const initialValues: HooksSectionFormData = {
       formData: {
         hooks: {
@@ -203,8 +206,8 @@ describe('HooksSection', () => {
     expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(2);
     expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
 
-    await userEvent.click(renderResult.getByTestId('type'));
-    await userEvent.click(renderResult.getByText('Arguments to default image entry point'));
+    await user.click(renderResult.getByTestId('type'));
+    await user.click(renderResult.getByText('Arguments to default image entry point'));
 
     await waitFor(() => {
       expect(renderResult.baseElement.querySelector('textarea')).toBeFalsy();
@@ -214,6 +217,7 @@ describe('HooksSection', () => {
   });
 
   it('should update formik data', async () => {
+    const user = userEvent.setup();
     const initialValues: HooksSectionFormData = {
       formData: {
         hooks: {
@@ -234,7 +238,7 @@ describe('HooksSection', () => {
     );
 
     const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
-    await userEvent.click(checkbox);
+    await user.click(checkbox);
 
     // Wait for subform
     await waitFor(() => {
@@ -248,16 +252,16 @@ describe('HooksSection', () => {
 
     // Fill out subform
     const [command1] = renderResult.getAllByPlaceholderText('Command');
-    await userEvent.type(command1, 'echo');
-    await userEvent.click(renderResult.getByText('Add argument'));
-    await userEvent.click(renderResult.getByText('Add argument'));
+    await user.type(command1, 'echo');
+    await user.click(renderResult.getByText('Add argument'));
+    await user.click(renderResult.getByText('Add argument'));
     const [argument1, argument2] = renderResult.getAllByPlaceholderText('Argument');
-    await userEvent.type(argument1, 'hello');
-    await userEvent.type(argument2, 'world');
+    await user.type(argument1, 'hello');
+    await user.type(argument2, 'world');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -274,5 +278,5 @@ describe('HooksSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 });

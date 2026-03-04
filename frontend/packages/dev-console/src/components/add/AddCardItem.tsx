@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { isValidElement, memo } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -9,12 +8,12 @@ import { resolvedHref } from '../../utils/add-page-utils';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 import './AddCardItem.scss';
 
-type AddCardItemProps = {
+interface AddCardItemProps {
   action: ResolvedExtension<AddAction>;
   namespace: string;
-};
+}
 
-const AddCardItem: FC<AddCardItemProps> = memo(
+const AddCardItem = memo<AddCardItemProps>(
   ({
     action: {
       properties: { id, label, icon, href, callback, description },

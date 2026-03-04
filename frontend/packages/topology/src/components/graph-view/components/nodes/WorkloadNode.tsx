@@ -155,6 +155,8 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
   const [hover, hoverRef] = useHover();
+  // Keep hover active when context menu is open to prevent re-renders
+  const isHovering = hover || contextMenuOpen;
   const size = Math.min(width, height);
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
@@ -166,7 +168,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const controller = useVisualizationController();
   const detailsLevel = controller.getGraph().getDetailsLevel();
   const iconImageUrl = getImageForIconClass(workloadData.builderImage) ?? workloadData.builderImage;
-  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
+  const showDetails = isHovering || detailsLevel !== ScaleDetailsLevel.low;
   const nodeDecorators = showDetails
     ? getNodeDecorators(element, decorators, cx, cy, radius, decoratorRadius)
     : null;

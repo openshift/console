@@ -235,7 +235,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
 };
 NavBar.displayName = 'NavBar';
 
-export const HorizontalNav = memo((props: HorizontalNavProps) => {
+export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const params = useParams();
 
   const renderContent = (routes: JSX.Element[]) => {

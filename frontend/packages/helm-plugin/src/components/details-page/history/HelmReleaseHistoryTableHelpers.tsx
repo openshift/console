@@ -1,4 +1,4 @@
-import type { MouseEvent } from 'react';
+import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
 import type { DataViewTd, DataViewTh } from '@patternfly/react-data-view';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
@@ -15,7 +15,7 @@ type HelmReleaseHistoryKebabProps = {
   obj: HelmRelease;
 };
 
-const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
+const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="helm-plugin">

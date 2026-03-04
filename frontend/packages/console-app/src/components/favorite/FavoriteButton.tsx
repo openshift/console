@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import type { ButtonProps } from '@patternfly/react-core';
 import {
@@ -14,7 +15,7 @@ import { ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import Modal from '@console/shared/src/components/modal/Modal';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
 import type { FavoritesType } from '../../types';
 
@@ -25,14 +26,14 @@ type FavoriteButtonProps = {
   defaultName?: string;
 };
 
-export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
+export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
   const [isStarred, setIsStarred] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
+  const [favorites, setFavorites, loaded] = useUserPreferenceCompatibility<FavoritesType>(
     FAVORITES_CONFIG_MAP_KEY,
     FAVORITES_LOCAL_STORAGE_KEY,
     undefined,

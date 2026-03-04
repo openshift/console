@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -12,7 +13,7 @@ type HelmReleaseHistoryKebabProps = {
   obj: HelmRelease;
 };
 
-const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
+const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="helm-plugin">

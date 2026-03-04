@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import type {
   DescriptionListTermHelpTextProps,
   DescriptionListTermHelpTextButtonProps,
@@ -34,14 +35,14 @@ type DescriptionListTermHelpProps = {
  * A wrapper around PatternFly's `DescriptionListTermHelpText` component to
  * display a `DescriptionListTerm` with a popover for the description.
  */
-export const DescriptionListTermHelp = ({
+export const DescriptionListTermHelp: FC<DescriptionListTermHelpProps> = ({
   text,
   textHelp,
   customHeaderContent,
   helpTextProps,
   helpTextButtonProps,
   popoverProps,
-}: DescriptionListTermHelpProps) => (
+}) => (
   <DescriptionListTermHelpText {...helpTextProps}>
     <Popover headerContent={customHeaderContent ?? text} bodyContent={textHelp} {...popoverProps}>
       <DescriptionListTermHelpTextButton {...helpTextButtonProps}>

@@ -347,6 +347,8 @@
   "The Azure Tenant ID required for the operator to access the cloud API.": "The Azure Tenant ID required for the operator to access the cloud API.",
   "Azure Subscription ID": "Azure Subscription ID",
   "The Azure Subscription ID required for the operator to access the cloud API.": "The Azure Subscription ID required for the operator to access the cloud API.",
+  "Azure Resource Group": "Azure Resource Group",
+  "The Azure Resource Group required for the operator to access cloud resources.": "The Azure Resource Group required for the operator to access cloud resources.",
   "GCP Project Number": "GCP Project Number",
   "The GCP Project Number required for the operator to access the cloud API.": "The GCP Project Number required for the operator to access the cloud API.",
   "GCP Pool ID": "GCP Pool ID",

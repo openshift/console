@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import {
   Divider,
   SelectGroup,
@@ -147,15 +147,15 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
-  const bookmarkUserSettingsKey = userSettingsPrefix
+  const bookmarkUserPreferenceKey = userSettingsPrefix
     ? `${userSettingsPrefix}.bookmarks`
     : undefined;
   const bookmarkStorageKey = storageKey ? `${storageKey}-bookmarks` : undefined;
 
-  const enableBookmarks = !!bookmarkUserSettingsKey || !!bookmarkStorageKey;
+  const enableBookmarks = !!bookmarkUserPreferenceKey || !!bookmarkStorageKey;
 
-  const [bookmarks, setBookmarks] = useUserSettingsCompatibility(
-    bookmarkUserSettingsKey,
+  const [bookmarks, setBookmarks] = useUserPreferenceCompatibility(
+    bookmarkUserPreferenceKey,
     bookmarkStorageKey,
     {},
     true,

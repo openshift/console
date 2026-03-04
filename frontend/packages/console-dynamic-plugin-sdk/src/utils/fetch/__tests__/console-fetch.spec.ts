@@ -1,9 +1,8 @@
-import { RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch';
-import { setUtilsConfig } from '@console/dynamic-plugin-sdk/src/app/configSetup';
-import { shouldLogout, validateStatus, appInternalFetch } from '../co-fetch';
+import { RetryError } from '../../error/http-error';
+import { consoleFetch } from '../console-fetch';
+import { shouldLogout, validateStatus } from '../console-fetch-utils';
 
-describe('coFetch', () => {
+describe('consoleFetch', () => {
   const json = async () => ({
     details: {
       kind: 'clusterresourcequotas',
@@ -80,7 +79,6 @@ describe('coFetch', () => {
     window.fetch = jest.fn(() =>
       Promise.resolve({ status: 404, headers: emptyHeaders } as Response),
     );
-    setUtilsConfig({ appFetch: appInternalFetch });
     try {
       await consoleFetch('');
     } catch {

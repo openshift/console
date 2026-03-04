@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useContext, useCallback, useEffect } from 'react';
 import type { DropEvent } from '@patternfly/react-core';
 import { FileUpload, TextInputTypes } from '@patternfly/react-core';
@@ -12,7 +12,7 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';
 
-const JarSection: FunctionComponent = () => {
+const JarSection: FC = () => {
   const { t } = useTranslation();
   const {
     values: {

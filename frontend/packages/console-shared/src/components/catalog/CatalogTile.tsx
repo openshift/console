@@ -63,4 +63,4 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
   );
 };
 
-export default memo(CatalogTile);
+export default memo<CatalogTileProps>(CatalogTile);

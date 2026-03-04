@@ -70,7 +70,7 @@ import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
   getNodeArchitecture,
@@ -863,7 +863,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
+  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,

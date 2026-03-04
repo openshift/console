@@ -283,7 +283,7 @@ ul {
   list-style: disc;
 }
 // And here we explicitly remove it from PF components, except for the List and Content components.
-:where([class^='pf-']:not(.pf-v6-c-list, .pf-v5-c-list, .pf-c-list, .pf-v6-c-content--ol, .pf-v6-c-content--ul)) {
+:where([class^='pf-']:not(.pf-v6-c-list, .pf-v6-c-content--ol, .pf-v6-c-content--ul)) {
   @at-root :is(ul, ol)#{&} {
     list-style: none !important;
   }

@@ -134,6 +134,7 @@ describe('SourceSection', () => {
   });
 
   it('should render git input field when user selects git', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
     const renderResult = render(
@@ -143,8 +144,8 @@ describe('SourceSection', () => {
     );
 
     // Select git
-    await userEvent.click(renderResult.getByText('Please select your source type'));
-    await userEvent.click(renderResult.getByText('Git'));
+    await user.click(renderResult.getByText('Please select your source type'));
+    await user.click(renderResult.getByText('Git'));
 
     // Assert subforms
     await waitFor(() => {
@@ -157,6 +158,7 @@ describe('SourceSection', () => {
   });
 
   it('should render dockerfile input field when user selects dockerfile ', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -167,10 +169,10 @@ describe('SourceSection', () => {
 
     // Select Dockerfile
     expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(0);
-    await userEvent.click(renderResult.getByText('Please select your source type'));
+    await user.click(renderResult.getByText('Please select your source type'));
 
     expect(renderResult.queryAllByText('Dockerfile')).toHaveLength(1);
-    await userEvent.click(renderResult.getByText('Dockerfile'));
+    await user.click(renderResult.getByText('Dockerfile'));
 
     // Assert subforms
     await waitFor(() => {
@@ -183,6 +185,7 @@ describe('SourceSection', () => {
   });
 
   it('should update form data correct after entering a git url and branch (ref)', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyUseAccessReview.mockReturnValue([true]);
     const renderResult = render(
@@ -192,19 +195,18 @@ describe('SourceSection', () => {
     );
 
     // Fill out subform
-    await userEvent.click(renderResult.getByText('Please select your source type'));
-    await userEvent.click(renderResult.getByText('Git'));
-    await userEvent.click(renderResult.getByText('Show advanced Git options'));
+    await user.click(renderResult.getByText('Please select your source type'));
+    await user.click(renderResult.getByText('Git'));
+    await user.click(renderResult.getByText('Show advanced Git options'));
 
-    await userEvent.type(
+    await user.type(
       getPatternFlyInputForLabel('Git Repo URL'),
       'https://github.com/openshift/console',
     );
-    // TODO doesn't work at the moment?! userEvent.type(getPatternFlyInputForLabel('Git reference'), 'master');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -235,9 +237,10 @@ describe('SourceSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 
   it('should update form data correct after selecting and entering a dockerfile', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
     spyEvaluateFunc.mockReturnValue({
       isBuilderS2I: false,
@@ -250,13 +253,13 @@ describe('SourceSection', () => {
     );
 
     // Fill out subform
-    await userEvent.click(renderResult.getByText('Please select your source type'));
-    await userEvent.click(renderResult.getByText('Dockerfile'));
-    await userEvent.type(renderResult.getByRole('textbox'), 'FROM: centos\nRUN echo hello world');
+    await user.click(renderResult.getByText('Please select your source type'));
+    await user.click(renderResult.getByText('Dockerfile'));
+    await user.type(renderResult.getByRole('textbox'), 'FROM: centos\nRUN echo hello world');
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -287,5 +290,5 @@ describe('SourceSection', () => {
       },
     };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 });

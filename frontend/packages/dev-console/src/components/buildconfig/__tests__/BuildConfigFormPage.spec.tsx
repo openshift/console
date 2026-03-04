@@ -2,7 +2,7 @@ import { cleanup } from '@testing-library/react';
 import * as Router from 'react-router-dom-v5-compat';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useUserSettings } from '@console/shared/src';
+import { useUserPreference } from '@console/shared/src';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import BuildConfigFormPage from '../BuildConfigFormPage';
 import type { BuildConfig } from '../types';
@@ -16,8 +16,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 // For internal used Dropdowns
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
-  useUserSettingsCompatibility: () => ['', () => {}],
+jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
+  useUserPreferenceCompatibility: () => ['', () => {}],
 }));
 
 jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
@@ -28,8 +28,8 @@ jest.mock('../sections/EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
 jest.mock(
@@ -45,11 +45,11 @@ jest.mock('react-router-dom-v5-compat', () => ({
 }));
 
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const useUserSettingsMock = useUserSettings as jest.Mock;
+const useUserPreferenceMock = useUserPreference as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
 beforeEach(() => {
-  useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);
+  useUserPreferenceMock.mockReturnValue([undefined, jest.fn(), true]);
   usePreferredCreateEditMethodMock.mockReturnValue([[undefined, true]]);
 });
 

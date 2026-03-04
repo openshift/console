@@ -134,6 +134,7 @@ describe(KindFilterDropdown.displayName, () => {
   });
 
   it('should call onChange when a kind is selected', async () => {
+    const user = userEvent.setup();
     render(
       <KindFilterDropdown
         filters={dropdownFilter}
@@ -144,7 +145,7 @@ describe(KindFilterDropdown.displayName, () => {
     );
 
     const checkbox = screen.getByRole('checkbox', { name: /kind-a/i });
-    await userEvent.click(checkbox);
+    await user.click(checkbox);
 
     expect(onChange).toHaveBeenCalled();
   });

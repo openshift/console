@@ -176,4 +176,4 @@ const PodStatus: FC<PodStatusProps> = ({
   return chartDonut;
 };
 
-export default memo((props: PodStatusProps) => <PodStatus {...props} />);
+export default memo<PodStatusProps>((props) => <PodStatus {...props} />);

@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
@@ -23,7 +23,7 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind | PipelineKind[];
 };
 
-const EditApplicationPage: FunctionComponent = () => {
+const EditApplicationPage: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

@@ -55,6 +55,7 @@ describe('TriggersSection', () => {
   });
 
   it('should allow user to change config change checkbox trigger and save this data', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -64,11 +65,11 @@ describe('TriggersSection', () => {
     );
 
     // Change form
-    await userEvent.click(renderResult.getByTestId('config-change checkbox'));
+    await user.click(renderResult.getByTestId('config-change checkbox'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -86,6 +87,7 @@ describe('TriggersSection', () => {
   });
 
   it('should allow user to change image change checkbox trigger and save this data', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -95,11 +97,11 @@ describe('TriggersSection', () => {
     );
 
     // Change form
-    await userEvent.click(renderResult.getByTestId('image-change checkbox'));
+    await user.click(renderResult.getByTestId('image-change checkbox'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
