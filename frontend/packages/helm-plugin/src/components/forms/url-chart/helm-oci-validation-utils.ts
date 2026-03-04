@@ -11,17 +11,15 @@ export function getHelmChartURLValidationSchema(t: TFunction) {
       .test(
         'is-valid-chart-url',
         t(
-          'helm-plugin~Must be a valid OCI URL (e.g., oci://registry.example.com/chart) or a valid HTTP/HTTPS tarball URL (e.g., https://example.com/chart-1.0.0.tgz)',
+          'helm-plugin~Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.',
         ),
-        (value) => {
-          if (!value) return false;
-          // OCI: require a registry hostname containing a dot or port
-          if (/^oci:\/\/[a-zA-Z0-9][\w.-]*(?:\.\w+|:\d+)/.test(value)) return true;
-          // HTTP(S): must end in .tgz or .tar.gz
-          if (/^https?:\/\/[a-zA-Z0-9][\w.-]*(?:\.\w+|:\d+)\/.+\.(?:tar\.gz|tgz)$/.test(value))
-            return true;
-          return false;
-        },
+        (() => {
+          const label = /[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source;
+          const host = `${label}(?:\\.${label})*.?`;
+          const ociRe = new RegExp(`^oci://${host}`, 'i');
+          const httpRe = new RegExp(`^https?://${host}/.+\\.(?:tar\\.gz|tgz)$`, 'i');
+          return (value: string) => value && (ociRe.test(value) || httpRe.test(value));
+        })(),
       ),
     chartVersion: yup.string().required(t('helm-plugin~Required')),
   });

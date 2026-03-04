@@ -72,7 +72,7 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
     helmChartInstallation: {
       label:
         projectHelmChartCreateAccess || helmChartCreateAccess
-          ? t('helm-plugin~Helm Chart URL')
+          ? t('helm-plugin~Helm chart URL')
           : undefined,
       onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
     },

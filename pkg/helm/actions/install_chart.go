@@ -57,11 +57,16 @@ func isValidChartURL(raw string) bool {
 		return false
 	}
 
+	validHost := strings.Contains(host, ".") || u.Port() != "" || host == "localhost"
+	if !validHost {
+		return false
+	}
+
 	switch {
 	case strings.HasPrefix(u.Scheme, "http"):
 		return strings.HasSuffix(u.Path, ".tgz") || strings.HasSuffix(u.Path, ".tar.gz")
 	case u.Scheme == "oci":
-		return strings.Contains(host, ".") || u.Port() != ""
+		return true
 	default:
 		return false
 	}

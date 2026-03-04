@@ -515,9 +515,15 @@ func TestIsValidChartURL(t *testing.T) {
 		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz", true},
 		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz", true},
 
-		// OCI: too permissive
+		// localhost exception
+		{"allow OCI localhost", "oci://localhost/charts/mychart", true},
+		{"allow OCI localhost with port", "oci://localhost:5000/charts/mychart", true},
+		{"allow HTTP localhost tgz", "http://localhost/chart.tgz", true},
+
+		// Single-label hostnames (SSRF risk)
 		{"block bare OCI hostname", "oci://anything/chart", false},
 		{"block OCI no host", "oci:///chart", false},
+		{"block bare HTTP hostname", "http://metadata/chart.tgz", false},
 
 		// Invalid schemes/formats
 		{"block empty string", "", false},

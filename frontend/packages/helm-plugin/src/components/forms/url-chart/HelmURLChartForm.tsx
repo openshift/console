@@ -34,7 +34,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     try {
       url = new URL(values.chartURL);
     } catch {
-      setFieldError('chartURL', t('helm-plugin~Invalid chart URL format'));
+      setFieldError('chartURL', t('helm-plugin~Invalid chart URL format.'));
       return;
     }
     const scheme = url.protocol;
@@ -74,9 +74,9 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     >
       <FormBody flexLayout>
         <FormHeader
-          title={t('helm-plugin~Install Helm Chart from URL')}
+          title={t('helm-plugin~Install Helm chart from URL.')}
           helpText={t(
-            'helm-plugin~Enter the chart URL (OCI or HTTP/HTTPS tarball) and version to install a Helm chart.',
+            'helm-plugin~To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
           )}
           marginBottom="lg"
         />
@@ -88,7 +88,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 name="chartURL"
                 label={t('helm-plugin~Chart URL')}
                 helpText={t(
-                  'helm-plugin~The OCI URL or HTTP/HTTPS tarball URL for the Helm chart (e.g., oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz).',
+                  'helm-plugin~The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.',
                 )}
                 placeholder="oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz"
                 required
@@ -100,7 +100,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 type={TextInputTypes.text}
                 name="releaseName"
                 label={t('helm-plugin~Release name')}
-                helpText={t('helm-plugin~A unique name for the Helm Release.')}
+                helpText={t('helm-plugin~Unique name for Helm release.')}
                 required
                 data-test="oci-release-name"
               />
@@ -110,7 +110,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 type={TextInputTypes.text}
                 name="chartVersion"
                 label={t('helm-plugin~Chart version')}
-                helpText={t('helm-plugin~The version of the chart to install.')}
+                helpText={t('helm-plugin~The version of chart to install.')}
                 placeholder="1.0.0"
                 required
                 data-test="oci-chart-version"

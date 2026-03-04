@@ -161,7 +161,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       try {
         helmRelease = await fetchHelmRelease(namespace, releaseName);
       } catch (err) {
-        console.error('Could not fetch the helm release', err); // eslint-disable-line no-console
+        console.error('Could not fetch Helm release.', err); // eslint-disable-line no-console
       }
 
       const resources = helmRelease ? loadHelmManifestResources(helmRelease) : [];
@@ -207,7 +207,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const chartMetaDescription = chartData ? <HelmChartMetaDescription chart={chartData} /> : null;
 
-  const pageTitle = t('helm-plugin~Install Helm Chart from Helm Registry');
+  const pageTitle = t('helm-plugin~Install Helm chart from Helm registry.');
 
   return (
     <NamespacedPage

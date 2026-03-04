@@ -67,7 +67,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   const yamlEditor = chartHasValues && (
     <CodeEditorField
       name="yamlData"
-      label={t('helm-plugin~Helm Release')}
+      label={t('helm-plugin~Helm release')}
       schema={formSchema}
       showSamples={false}
       onSave={handleSubmit}
@@ -94,7 +94,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
       {chartHasValues && (
         <>
           {t(
-            'helm-plugin~The Helm Release can be created by completing the form. Default values may be provided by the Helm chart authors.',
+            'helm-plugin~Complete the form to create a Helm release. The Helm chart authors might have provided some default values.',
           )}{' '}
           &nbsp;
         </>
@@ -107,7 +107,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
     <FlexForm onSubmit={handleSubmit}>
       <FormBody flexLayout>
         <FormHeader
-          title={t('helm-plugin~Configure Helm Release')}
+          title={t('helm-plugin~Configure Helm release')}
           helpText={formHelpText}
           marginBottom="lg"
         />
