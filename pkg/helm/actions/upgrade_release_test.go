@@ -2,7 +2,8 @@ package actions
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -103,7 +104,7 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -132,9 +133,9 @@ func TestUpgradeReleaseWithoutDependencies(t *testing.T) {
 			store.Create(&r)
 
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					tlsSecretKey:     key,
@@ -210,7 +211,7 @@ func TestUpgradeReleaseWithDependencies(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -278,7 +279,7 @@ func TestUpgradeNonExistRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -340,7 +341,7 @@ func TestUpgradeReleaseWithCustomValues(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -452,7 +453,7 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -481,9 +482,9 @@ func TestUpgradeReleaseWithoutDependenciesAsync(t *testing.T) {
 			store.Create(&r)
 
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					tlsSecretKey:     key,
@@ -571,7 +572,7 @@ func TestUpgradeReleaseWithDependenciesAsync(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -663,7 +664,7 @@ func TestUpgradeReleaseWithCustomValuesAsync(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}

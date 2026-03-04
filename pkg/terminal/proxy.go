@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -238,13 +237,13 @@ func (p *Proxy) HandleTerminalInstalledNamespace(w http.ResponseWriter, r *http.
 }
 
 func (p *Proxy) handleExecInit(host *url.URL, token string, r *http.Request, w http.ResponseWriter) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read body of request: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	wkspReq, err := http.NewRequest(http.MethodPost, host.String(), ioutil.NopCloser(bytes.NewReader(body)))
+	wkspReq, err := http.NewRequest(http.MethodPost, host.String(), io.NopCloser(bytes.NewReader(body)))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
