@@ -1,4 +1,4 @@
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode, ComponentProps, FC } from 'react';
 import { useState } from 'react';
 import * as _ from 'lodash';
 import Linkify from 'react-linkify';
@@ -68,15 +68,14 @@ export const getURLSearchParams = () => {
   return all;
 };
 
-// Opens link with copy-to-clipboard
-
-export const ExternalLinkWithCopy = ({
+/** Opens link with copy to clipboard button */
+export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
   href,
   text,
   className,
   displayBlock,
   ...props
-}: ExternalLinkWithCopyProps) => {
+}) => {
   const [copied, setCopied] = useState(false);
   const { t } = useTranslation();
 

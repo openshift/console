@@ -17,7 +17,7 @@ interface CheckUpdatesApiResult {
   contentSecurityPolicy?: string;
 }
 
-export const PollConsoleUpdates = memo(function PollConsoleUpdates() {
+export const PollConsoleUpdates = memo(() => {
   const toastContext = useToast();
   const { t } = useTranslation();
 

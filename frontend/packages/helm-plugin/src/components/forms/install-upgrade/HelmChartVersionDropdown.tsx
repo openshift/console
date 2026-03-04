@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
@@ -41,7 +41,7 @@ export type HelmChartVersionDropdownProps = {
   providerName?: string;
 };
 
-const HelmChartVersionDropdown: FunctionComponent<HelmChartVersionDropdownProps> = ({
+const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   chartVersion,
   chartName,
   helmAction,

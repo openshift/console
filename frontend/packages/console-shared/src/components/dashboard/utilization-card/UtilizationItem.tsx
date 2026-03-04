@@ -1,4 +1,4 @@
-import type { FC, ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import { memo, useEffect } from 'react';
 import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
@@ -22,7 +22,7 @@ const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 
 const getMaxDate = (data: DataPoint[][]) =>
   new Date(Math.max(...(data?.map?.(lastTimeInSeries) ?? [])) ?? 0);
 
-export const MultilineUtilizationItem: FC<MultilineUtilizationItemProps> = memo(
+export const MultilineUtilizationItem = memo<MultilineUtilizationItemProps>(
   ({
     title,
     data,
@@ -150,7 +150,7 @@ export const trimSecondsXMutator = (x) => {
   return d;
 };
 
-export const UtilizationItem: FC<UtilizationItemProps> = memo(
+export const UtilizationItem = memo<UtilizationItemProps>(
   ({
     title,
     utilization,

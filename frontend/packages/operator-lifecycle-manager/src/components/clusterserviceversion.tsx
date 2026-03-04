@@ -883,7 +883,7 @@ export const CRDCard: FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
   );
 };
 
-export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
+export const CRDCardRow: FC<CRDCardRowProps> = ({ csv, providedAPIs }) => {
   const { t } = useTranslation();
   return (
     <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXl' }}>

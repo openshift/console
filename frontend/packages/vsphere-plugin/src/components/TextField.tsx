@@ -1,4 +1,4 @@
-import type { ReactNode, Ref } from 'react';
+import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import type { TextInputProps } from '@patternfly/react-core';
 import {
@@ -16,11 +16,8 @@ interface TextFieldProps extends TextInputProps {
   helperText?: ReactNode;
 }
 
-const TextField = forwardRef(
-  (
-    { helperText, onChange: onParentChange, ...props }: TextFieldProps,
-    ref: Ref<HTMLInputElement>,
-  ) => {
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+  ({ helperText, onChange: onParentChange, ...props }, ref) => {
     const [field, meta, { setValue }] = useField({
       name: props.name,
     });

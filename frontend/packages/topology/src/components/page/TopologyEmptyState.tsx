@@ -55,4 +55,4 @@ const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen 
   );
 };
 
-export default memo(TopologyEmptyState);
+export default memo<TopologyEmptyStateProps>(TopologyEmptyState);

@@ -182,4 +182,4 @@ const CustomTaskNode: FC<CustomTaskNodeProps> = ({ element, disableTooltip }) =>
   return taskComponent;
 };
 
-export default memo(observer(CustomTaskNode));
+export default memo<CustomTaskNodeProps>(observer(CustomTaskNode));

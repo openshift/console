@@ -70,7 +70,7 @@ interface AlertRoutingProps {
   config: AlertmanagerConfig;
 }
 
-const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
+const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   const { t } = useTranslation();
   const launchModal = useOverlay();
@@ -514,7 +514,7 @@ interface ReceiversProps {
   config: AlertmanagerConfig;
 }
 
-const Receivers = ({ secret, config }: ReceiversProps) => {
+const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
   const receivers = _.get(config, 'receivers', []);
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
@@ -578,7 +578,7 @@ const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: se
   );
 };
 
-const AlertmanagerConfigWrapper: FC<AlertmanagerConfigWrapperProps> = memo(({ obj, ...props }) => {
+const AlertmanagerConfigWrapper = memo<AlertmanagerConfigWrapperProps>(({ obj, ...props }) => {
   const { t } = useTranslation();
   return (
     <>

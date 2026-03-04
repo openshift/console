@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useMemo } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
@@ -33,7 +33,7 @@ type WatchedResources = {
   workloadResource?: K8sResourceKind;
 };
 
-const CreateKnatifyPage: FunctionComponent = () => {
+const CreateKnatifyPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import type { PageHeaderLinkProps } from '@patternfly/react-component-groups';
 import { PageHeader } from '@patternfly/react-component-groups';
 import { ActionList, ActionListGroup, ActionListItem } from '@patternfly/react-core';
@@ -46,7 +46,7 @@ export type PageHeadingProps = {
 /**
  * A standard page heading component that is used in the console.
  */
-export const PageHeading = ({
+export const PageHeading: FC<PageHeadingProps> = ({
   'data-test': dataTest = 'page-heading',
   badge,
   breadcrumbs,
@@ -58,7 +58,7 @@ export const PageHeading = ({
   title,
   primaryAction,
   linkProps,
-}: PageHeadingProps) => {
+}) => {
   const [perspective] = useActivePerspective();
   const isAdminPerspective = perspective === 'admin';
   const showFavoriteButton = isAdminPerspective && !hideFavoriteButton;

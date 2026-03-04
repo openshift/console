@@ -173,7 +173,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
 
 const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
-export const ActivityCard: FC<{}> = memo(() => {
+export const ActivityCard = memo(() => {
   const { t } = useTranslation();
 
   return (

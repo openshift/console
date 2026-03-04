@@ -105,7 +105,7 @@ const AlertmanagerYAMLEditor: FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }
   );
 };
 
-const AlertmanagerYAMLEditorWrapper: FC<AlertmanagerYAMLEditorWrapperProps> = memo(
+const AlertmanagerYAMLEditorWrapper = memo<AlertmanagerYAMLEditorWrapperProps>(
   ({ obj, ...props }) => {
     const { t } = useTranslation();
     return (

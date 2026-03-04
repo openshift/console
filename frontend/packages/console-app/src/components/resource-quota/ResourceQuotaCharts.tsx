@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GaugeChart } from '@console/internal/components/graphs/gauge';
 import type { ResourceQuotaKind } from '@console/internal/module/k8s';
@@ -9,7 +10,7 @@ type ResourceQuotaChartsProps = {
   resourceQuota: ResourceQuotaKind;
 };
 
-const ResourceQuotaCharts = ({ resourceQuota }: ResourceQuotaChartsProps): JSX.Element => {
+const ResourceQuotaCharts: FC<ResourceQuotaChartsProps> = ({ resourceQuota }) => {
   const { t } = useTranslation();
   const charts = Object.keys(resourceQuota.status?.hard ?? {}).map((resourceName) => {
     const hard = resourceQuota.status?.hard?.[resourceName];

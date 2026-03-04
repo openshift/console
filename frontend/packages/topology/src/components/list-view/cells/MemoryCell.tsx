@@ -14,7 +14,7 @@ type MemoryCellProps = {
   item: Node;
 };
 
-const MemoryCellComponent: FC<MemoryCellComponentProps> = memo(({ memoryByPod, totalBytes }) => (
+const MemoryCellComponent = memo<MemoryCellComponentProps>(({ memoryByPod, totalBytes }) => (
   <div className="odc-topology-list-view__metrics-cell__detail--memory">
     <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
       <span>

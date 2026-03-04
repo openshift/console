@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import type { ButtonProps } from '@patternfly/react-core';
 import {
@@ -25,7 +26,7 @@ type FavoriteButtonProps = {
   defaultName?: string;
 };
 
-export const FavoriteButton = ({ defaultName }: FavoriteButtonProps) => {
+export const FavoriteButton: FC<FavoriteButtonProps> = ({ defaultName }) => {
   const { t } = useTranslation('console-app');
   const triggerTelemetry = useTelemetry();
   const [isStarred, setIsStarred] = useState(false);

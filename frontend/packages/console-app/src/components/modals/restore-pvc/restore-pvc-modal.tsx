@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { FC, FormEvent } from 'react';
 import { useState } from 'react';
 import {
   FormGroup,
@@ -58,7 +58,7 @@ import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';
 
-const RestorePVCModal = ({ close, cancel, resource }: RestorePVCModalProps) => {
+const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<PersistentVolumeClaimKind>();
   const { t } = useTranslation();
   const navigate = useNavigate();

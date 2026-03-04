@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -10,7 +10,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
-const DeployImagePage: FunctionComponent = () => {
+const DeployImagePage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

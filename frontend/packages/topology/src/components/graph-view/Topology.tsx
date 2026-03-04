@@ -81,7 +81,7 @@ interface TopologyGraphViewProps {
   dragHint?: string;
 }
 
-const TopologyGraphView: FC<TopologyGraphViewProps> = memo(
+const TopologyGraphView = memo<TopologyGraphViewProps>(
   ({ visualizationReady, visualization, controlsDisabled, selectedId, dragHint }) => {
     if (!visualizationReady) {
       return null;

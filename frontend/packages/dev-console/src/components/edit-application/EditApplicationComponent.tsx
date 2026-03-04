@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
@@ -22,7 +22,7 @@ type EditApplicationComponentProps = {
   resources: AppResources;
 };
 
-const EditApplicationComponent: FunctionComponent<EditApplicationComponentProps> = (props) => {
+const EditApplicationComponent: FC<EditApplicationComponentProps> = (props) => {
   const { appName, resources } = props;
   const appLabel =
     resources.editAppResource?.data?.metadata?.labels?.[NAME_LABEL] ||

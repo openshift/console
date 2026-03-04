@@ -1,10 +1,4 @@
-import type {
-  ComponentType,
-  ReactElement,
-  FunctionComponent,
-  ComponentProps,
-  ReactNode,
-} from 'react';
+import type { ComponentType, ReactElement, FC, ComponentProps, ReactNode } from 'react';
 import { isValidElement, useState, useRef, useMemo, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
 import type {
@@ -109,7 +103,7 @@ const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
 const DEFAULT_HANDLE_LENGTH = 32;
 
-const CreateConnectorWidget: FunctionComponent<CreateConnectorWidgetProps> = observer((props) => {
+const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) => {
   const {
     element,
     onKeepAlive,
@@ -279,9 +273,10 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
 ) => (WrappedComponent: ComponentType<Partial<P>>) => {
-  const Component: FunctionComponent<
-    Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }
-  > = ({ children, ...props }) => {
+  const Component: FC<Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }> = ({
+    children,
+    ...props
+  }) => {
     const [show, setShow] = useState(false);
     const [alive, setKeepAlive] = useState(false);
     const onShowCreateConnector = useCallback(() => setShow(true), []);

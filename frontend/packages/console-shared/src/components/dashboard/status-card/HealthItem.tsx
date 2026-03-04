@@ -16,7 +16,7 @@ const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {
   );
 };
 
-const HealthItem: FC<HealthItemProps> = memo(
+const HealthItem = memo<HealthItemProps>(
   ({
     className,
     state,

@@ -51,14 +51,23 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
   }
 };
 
-const ImageStream: FC<{
+interface ImageStreamProps {
   disabled?: boolean;
   label?: string;
   required?: boolean;
   formContextField?: string;
   dataTest?: string;
   reloadCount?: number;
-}> = ({ disabled = false, label, required = false, formContextField, dataTest, reloadCount }) => {
+}
+
+const ImageStream: FC<ImageStreamProps> = ({
+  disabled = false,
+  label,
+  required = false,
+  formContextField,
+  dataTest,
+  reloadCount,
+}) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
   const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
@@ -170,4 +179,4 @@ const ImageStream: FC<{
   );
 };
 
-export default memo(ImageStream);
+export default memo<ImageStreamProps>(ImageStream);

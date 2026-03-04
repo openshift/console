@@ -125,7 +125,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 
   type ItemProps = { title?: string; model?: K8sKind };
 
-  const Item: FC<ItemProps> = memo(({ model }) => (
+  const Item = memo<ItemProps>(({ model }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
@@ -148,7 +148,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     </div>
   ));
 
-  const InvalidItem: FC<ItemProps> = memo(({ title }) => (
+  const InvalidItem = memo<ItemProps>(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
         <Tooltip position="top" content={t('devconsole~Resource not found')}>
