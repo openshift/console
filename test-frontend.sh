@@ -6,25 +6,7 @@ set -euo pipefail
 OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
-pushd dynamic-demo-plugin
-
-# Check for outdated yarn.lock file
-if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
-  echo "Outdated yarn.lock file, commit changes to fix!"
-  git --no-pager diff
-  exit 1
-fi
-
-popd
-
 pushd frontend
-
-# Check for outdated yarn.lock file
-if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
-  echo "Outdated yarn.lock file, commit changes to fix!"
-  git --no-pager diff
-  exit 1
-fi
 
 # Dynamic plugin SDK docs are generated as part of the build, check for changes
 GIT_STATUS="$(git status --short --untracked-files -- packages/console-dynamic-plugin-sdk/docs)"

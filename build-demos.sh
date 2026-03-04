@@ -3,6 +3,6 @@
 set -e
 
 pushd dynamic-demo-plugin
-yarn install
+yarn install --immutable
 yarn run build
 popd
