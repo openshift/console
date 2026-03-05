@@ -30,20 +30,28 @@ const DataComponent: FC<DataComponentProps> = ({ x, y, datum }) => {
   return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
 };
 
-const LabelComponent = ({ clusterID, ...props }) => (
-  <ExternalLink
-    href={`https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${
-      riskSorting[props.datum.id] + 1
-    }`}
-  >
-    <ChartLabel
-      {...props}
-      style={{
-        fill: 'var(--pf-t--global--text--color--link--default)',
-      }}
-    />
-  </ExternalLink>
-);
+const LabelComponent = ({ clusterID, ...props }) => {
+  const riskId = props.datum?.id;
+  const riskIndex = riskId != null ? riskSorting[riskId] : undefined;
+  const totalRisk = Number.isFinite(riskIndex) ? riskIndex + 1 : undefined;
+  const href =
+    clusterID && totalRisk != null
+      ? `https://console.redhat.com/openshift/insights/advisor/clusters/${clusterID}?total_risk=${totalRisk}`
+      : undefined;
+
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" tabIndex={0}>
+      <ChartLabel
+        {...props}
+        style={{
+          ...props.style,
+          fill: 'var(--pf-t--global--text--color--link--default)',
+          cursor: href ? 'pointer' : undefined,
+        }}
+      />
+    </a>
+  );
+};
 
 const SubTitleComponent = (props) => (
   <ChartLabel
