@@ -1,4 +1,5 @@
 import type { FC, ReactElement } from 'react';
+import { useMemo } from 'react';
 import type { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/';
@@ -28,10 +29,7 @@ const AddCardSection: FC<AddCardSectionProps> = ({
   loadingFailed,
   accessCheckFailed,
 }) => {
-  if (loadingFailed || accessCheckFailed) {
-    return <AddCardSectionEmptyState accessCheckFailed={!loadingFailed && accessCheckFailed} />;
-  }
-  const getAddCards = (): ReactElement[] => {
+  const addCards = useMemo((): ReactElement[] => {
     if (!extensionsLoaded) {
       return [];
     }
@@ -44,7 +42,11 @@ const AddCardSection: FC<AddCardSectionProps> = ({
     return addGroups.map(({ id, name, items, icon }) => (
       <AddCard key={id} id={id} title={name} items={items} namespace={namespace} icon={icon} />
     ));
-  };
+  }, [extensionsLoaded, addActionExtensions, addActionGroupExtensions, namespace]);
+
+  if (loadingFailed || accessCheckFailed) {
+    return <AddCardSectionEmptyState accessCheckFailed={!loadingFailed && accessCheckFailed} />;
+  }
 
   return (
     <div data-test="add-cards">
@@ -53,7 +55,7 @@ const AddCardSection: FC<AddCardSectionProps> = ({
         loading={!extensionsLoaded}
         LoadingComponent={AddCardSectionSkeleton}
       >
-        {getAddCards()}
+        {addCards}
       </MasonryLayout>
     </div>
   );

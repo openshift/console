@@ -68,8 +68,6 @@ export const GettingStartedExpandableGrid: FC<GettingStartedExpandableGridProps>
       className="ocs-getting-started-expandable-grid"
       variant="secondary"
       data-test="getting-started"
-      isClickable
-      isSelectable
       isExpanded={isOpen}
     >
       <CardHeader

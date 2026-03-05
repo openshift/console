@@ -1,6 +1,7 @@
 import type { ReactElement, ComponentType, FC } from 'react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { getResizeObserver } from '@patternfly/react-core';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 
@@ -28,7 +29,9 @@ export const MasonryLayout: FC<MasonryLayoutProps> = ({
 }) => {
   const measureRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>(0);
-  const handleResize = useCallback(() => {
+
+  const updateWidth = useCallback(() => {
+    if (!measureRef.current) return;
     const newWidth = measureRef.current.getBoundingClientRect().width;
     if (newWidth) {
       setWidth((oldWidth) =>
@@ -36,27 +39,42 @@ export const MasonryLayout: FC<MasonryLayoutProps> = ({
       );
     }
   }, [resizeThreshold]);
+
+  const handleResize = useDebounceCallback(updateWidth, 100);
   const columnCount = useMemo(() => (width ? Math.floor(width / columnWidth) || 1 : null), [
     columnWidth,
     width,
   ]);
 
   useEffect(() => {
-    handleResize();
+    if (!measureRef.current) return undefined;
 
-    // change the column count if the window is resized
-    const observer = getResizeObserver(undefined, handleResize, true);
-    return () => observer();
-  }, [handleResize]);
+    // Ensure initial measurement happens after DOM is ready and painted
+    const rafId = requestAnimationFrame(() => {
+      handleResize();
+    });
+
+    // Observe container resizes using ResizeObserver
+    // Pass false for useRequestAnimationFrame since handleResize is already debounced
+    const observer = getResizeObserver(measureRef.current, handleResize, false);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      handleResize.cancel();
+      observer();
+    };
+    // Only run once on mount - handleResize is stable but adding it would cause unnecessary re-subscriptions
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: ReactElement[] =
     loading && LoadingComponent
-      ? Array.from({ length: columnCount }, (_, i) => <LoadingComponent key={i.toString()} />)
+      ? Array.from({ length: columnCount || 1 }, (_, i) => <LoadingComponent key={i.toString()} />)
       : children;
 
   return (
     <div className="odc-masonry-container" ref={measureRef}>
-      {columnCount ? <Masonry columnCount={columnCount}>{columns}</Masonry> : null}
+      {columnCount && <Masonry columnCount={columnCount}>{columns}</Masonry>}
     </div>
   );
 };
