@@ -17,17 +17,19 @@ import type {
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import {
+  filterVirtualMachineInstancesByNode,
+  useIsKubevirtPluginActive,
+  useWatchVirtualMachineInstances,
+} from '@console/app/src/components/nodes/NodeVmUtils';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
-  useFlag,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import type {
-  K8sGroupVersionKind,
   K8sResourceCommon,
-  K8sResourceKind,
   NodeCertificateSigningRequestKind,
   OwnerReference,
   RowProps,
@@ -100,13 +102,6 @@ import { NodeStatusWithExtensions } from './NodeStatus';
 import ClientCSRStatus from './status/CSRStatus';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
-
-// TODO: Remove VMI retrieval and VMs count column if/when the plugin is able to add the VMs count column
-const VirtualMachineInstanceGroupVersionKind: K8sGroupVersionKind = {
-  group: 'kubevirt.io',
-  kind: 'VirtualMachineInstance',
-  version: 'v1',
-};
 
 const nodeColumnInfo = Object.freeze({
   name: {
@@ -902,40 +897,22 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     CertificateSigningRequestKind[]
   >(CertificateSigningRequestModel);
 
-  const kubevirtFeature = useFlag('KUBEVIRT_DYNAMIC');
-  const isKubevirtPluginActive =
-    Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
-    window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin') &&
-    kubevirtFeature;
+  // TODO: Remove VMs count column if/when the plugin is able to add the VMs count column
+  const isKubevirtPluginActive = useIsKubevirtPluginActive();
 
-  const [vmis, vmisLoaded, vmisLoadError] = useK8sWatchResource<K8sResourceKind[]>(
-    isKubevirtPluginActive
-      ? {
-          isList: true,
-          groupVersionKind: VirtualMachineInstanceGroupVersionKind,
-        }
-      : undefined,
-  );
+  const [vmis, vmisLoaded, vmisLoadError] = useWatchVirtualMachineInstances();
 
   const vmsByNode = useMemo(() => {
     if (!isKubevirtPluginActive || !nodesLoaded || nodesLoadError || !vmisLoaded || vmisLoadError) {
       return undefined;
     }
 
-    const map = new Map<string, K8sResourceKind[]>(nodes.map((node) => [node.metadata.name, []]));
-    vmis.forEach((vmi) => {
-      const nodeName = vmi.status?.nodeName;
-      if (!nodeName) {
-        return;
-      }
-      const nodeVMs = map.get(nodeName);
-      if (nodeVMs) {
-        nodeVMs.push(vmi);
-      } else {
-        map.set(nodeName, [vmi]);
-      }
-    });
-    return map;
+    return new Map(
+      nodes.map((node) => [
+        node.metadata.name,
+        filterVirtualMachineInstancesByNode(vmis, node.metadata.name),
+      ]),
+    );
   }, [isKubevirtPluginActive, nodes, nodesLoadError, nodesLoaded, vmis, vmisLoadError, vmisLoaded]);
 
   useEffect(() => {
