@@ -8,6 +8,9 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   Truncate,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
@@ -19,7 +22,6 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  Modal,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   useUserPreferenceCompatibility,
@@ -42,8 +44,9 @@ import {
   sourceSort,
   validSubscriptionSort,
 } from './operator-hub-utils';
-import type { OperatorHubItem, TokenizedAuthProvider } from './index';
 import { InfrastructureFeature } from './index';
+import type { OperatorHubItem, TokenizedAuthProvider } from './index';
+import '@console/shared/src/components/catalog/details/CatalogDetailsModal.scss';
 
 // Scoring and priority code no longer used and will be removed with Operator Hub catalog files cleanup effort
 const SCORE = {
@@ -1038,65 +1041,64 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
       />
       {detailsItem && (
         <Modal
-          className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          className="ocs-modal co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
           aria-labelledby="catalog-item-header"
           isOpen={!!detailsItem && showDetails}
           onClose={closeOverlay}
-          title={detailsItem.name}
-          header={
-            <>
-              <CatalogItemHeader
-                className="co-catalog-page__overlay-header"
-                iconClass={detailsItem.iconClass}
-                iconImg={detailsItem.imgUrl}
-                title={titleAndDeprecatedPackage()}
-                vendor={t('olm~{{version}} provided by {{provider}}', {
-                  version: updateVersion || installVersion || detailsItem.version,
-                  provider: detailsItem.provider,
-                })}
-                data-test-id="operator-modal-header"
-                id="catalog-item-header"
-              />
-
-              <div className="co-catalog-page__overlay-actions">
-                {!detailsItem.installed ? (
-                  <Link
-                    className={css(
-                      'pf-v6-c-button',
-                      'pf-m-primary',
-                      {
-                        'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
-                      },
-                      'co-catalog-page__overlay-action',
-                    )}
-                    data-test-id="operator-install-btn"
-                    to={installLink}
-                  >
-                    {t('olm~Install')}
-                  </Link>
-                ) : (
-                  <Button
-                    className="co-catalog-page__overlay-action"
-                    data-test-id="operator-uninstall-btn"
-                    isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
-                    variant="secondary"
-                  >
-                    {t('olm~Uninstall')}
-                  </Button>
-                )}
-              </div>
-            </>
-          }
         >
-          <OperatorHubItemDetails
-            item={detailsItem}
-            updateChannel={updateChannel}
-            setUpdateChannel={setUpdateChannel}
-            updateVersion={updateVersion}
-            setUpdateVersion={setUpdateVersion}
-          />
+          <ModalHeader>
+            <CatalogItemHeader
+              className="co-catalog-page__overlay-header"
+              iconClass={detailsItem.iconClass}
+              iconImg={detailsItem.imgUrl}
+              title={titleAndDeprecatedPackage()}
+              vendor={t('olm~{{version}} provided by {{provider}}', {
+                version: updateVersion || installVersion || detailsItem.version,
+                provider: detailsItem.provider,
+              })}
+              data-test-id="operator-modal-header"
+              id="catalog-item-header"
+            />
+
+            <div className="co-catalog-page__overlay-actions">
+              {!detailsItem.installed ? (
+                <Link
+                  className={css(
+                    'pf-v6-c-button',
+                    'pf-m-primary',
+                    {
+                      'pf-m-disabled': !detailsItem.obj || detailsItem.isInstalling,
+                    },
+                    'co-catalog-page__overlay-action',
+                  )}
+                  data-test-id="operator-install-btn"
+                  to={installLink}
+                >
+                  {t('olm~Install')}
+                </Link>
+              ) : (
+                <Button
+                  className="co-catalog-page__overlay-action"
+                  data-test-id="operator-uninstall-btn"
+                  isDisabled={!detailsItem.installed}
+                  onClick={() => history.push(uninstallLink())}
+                  variant="secondary"
+                >
+                  {t('olm~Uninstall')}
+                </Button>
+              )}
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <OperatorHubItemDetails
+              item={detailsItem}
+              updateChannel={updateChannel}
+              setUpdateChannel={setUpdateChannel}
+              updateVersion={updateVersion}
+              setUpdateVersion={setUpdateVersion}
+            />
+          </ModalBody>
         </Modal>
       )}
     </>

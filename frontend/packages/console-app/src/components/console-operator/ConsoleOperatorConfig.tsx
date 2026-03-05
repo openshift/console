@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom-v5-compat';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   getGroupVersionKindForModel,
   getReferenceForModel,
@@ -35,7 +36,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { consolePluginModal } from '@console/shared/src/components/modals/ConsolePluginModal';
+import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
@@ -102,6 +103,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
   enabled,
 }) => {
   const { t } = useTranslation('console-app');
+  const launchModal = useOverlay();
 
   const {
     consoleOperatorConfig,
@@ -121,7 +123,7 @@ export const ConsolePluginEnabledStatus: FC<ConsolePluginEnabledStatusProps> = (
           type="button"
           isInline
           onClick={() =>
-            consolePluginModal({
+            launchModal(LazyConsolePluginModalOverlay, {
               consoleOperatorConfig,
               pluginName,
               trusted: false,

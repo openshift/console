@@ -1,12 +1,7 @@
 import { useState } from 'react';
-import { Form } from '@patternfly/react-core';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
@@ -16,6 +11,7 @@ import {
 } from '@console/shared/src/components/utils';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
+import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   const { cancel, close, consoleOperatorConfig, csvPluginsCount, pluginName, trusted } = props;
@@ -33,23 +29,26 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>
-        {csvPluginsCount > 1
-          ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin: pluginName })
-          : t('console-shared~Console plugin enablement')}
-      </ModalTitle>
+    <>
+      <ModalHeader
+        title={
+          csvPluginsCount > 1
+            ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin: pluginName })
+            : t('console-shared~Console plugin enablement')
+        }
+        data-test-id="modal-title"
+      />
       <ModalBody>
-        <p>
-          {csvPluginsCount
-            ? t(
-                'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
-              )
-            : t(
-                'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
-              )}
-        </p>
-        <Form>
+        <Form id="console-plugin-modal-form">
+          <p>
+            {csvPluginsCount
+              ? t(
+                  'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+                )
+              : t(
+                  'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+                )}
+          </p>
           <ConsolePluginRadioInputs
             autofocus
             name={pluginName}
@@ -63,18 +62,59 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
           />
         </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={cancel}
-        submitDisabled={(previouslyEnabled && enabled) || (!previouslyEnabled && !enabled)}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          onClick={submit}
+          form="console-plugin-modal-form"
+          isLoading={inProgress}
+          isDisabled={
+            inProgress || (previouslyEnabled && enabled) || (!previouslyEnabled && !enabled)
+          }
+          data-test="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel}>
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const consolePluginModal = createModalLauncher(ConsolePluginModal);
+type ConsolePluginModalProviderProps = {
+  consoleOperatorConfig: K8sResourceKind;
+  csvPluginsCount?: number;
+  pluginName: string;
+  trusted: boolean;
+};
+
+export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalProviderProps> = (
+  props,
+) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <ConsolePluginModal
+        close={handleClose}
+        cancel={handleClose}
+        consoleOperatorConfig={props.consoleOperatorConfig}
+        csvPluginsCount={props.csvPluginsCount}
+        pluginName={props.pluginName}
+        trusted={props.trusted}
+      />
+    </Modal>
+  ) : null;
+};
+
+export default ConsolePluginModalOverlay;
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;

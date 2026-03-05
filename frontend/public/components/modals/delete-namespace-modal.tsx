@@ -120,7 +120,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
         >
           {t('public~Delete')}
         </Button>
-        <Button variant="secondary" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooter>

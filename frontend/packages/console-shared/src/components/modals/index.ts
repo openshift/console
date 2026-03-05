@@ -1,9 +1,14 @@
-export const consolePluginModal = (props) =>
-  import('./ConsolePluginModal' /* webpackChunkName: "shared-modals" */).then((m) =>
-    m.consolePluginModal(props),
-  );
+import { lazy } from 'react';
 
-export const deleteResourceModal = (props) =>
-  import('./DeleteResourceModal' /* webpackChunkName: "shared-modals" */).then((m) =>
-    m.deleteResourceModal(props),
-  );
+// Lazy-loaded OverlayComponent for ConsolePluginModal
+export const LazyConsolePluginModalOverlay = lazy(() =>
+  import('./ConsolePluginModal' /* webpackChunkName: "shared-modals" */).then((m) => ({
+    default: m.ConsolePluginModalOverlay,
+  })),
+);
+
+export const LazyDeleteResourceModalOverlay = lazy(() =>
+  import('./DeleteResourceModal' /* webpackChunkName: "delete-resource-modal" */).then((m) => ({
+    default: m.DeleteResourceModalOverlay,
+  })),
+);
