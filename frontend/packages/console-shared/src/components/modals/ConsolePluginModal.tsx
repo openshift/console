@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Form } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -49,19 +50,17 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
                 'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
               )}
         </p>
-        <Form>
-          <ConsolePluginRadioInputs
-            autofocus
-            name={pluginName}
-            enabled={enabled}
-            onChange={setEnabled}
-          />
-          <ConsolePluginWarning
-            previouslyEnabled={previouslyEnabled}
-            enabled={enabled}
-            trusted={trusted}
-          />
-        </Form>
+        <ConsolePluginRadioInputs
+          autofocus
+          name={pluginName}
+          enabled={enabled}
+          onChange={setEnabled}
+        />
+        <ConsolePluginWarning
+          previouslyEnabled={previouslyEnabled}
+          enabled={enabled}
+          trusted={trusted}
+        />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
@@ -74,13 +73,24 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   );
 };
 
-export const consolePluginModal = createModalLauncher(ConsolePluginModal);
+export const ConsolePluginModalOverlay: OverlayComponent<ConsolePluginModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ConsolePluginModal
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+        consoleOperatorConfig={props.consoleOperatorConfig}
+        csvPluginsCount={props.csvPluginsCount}
+        pluginName={props.pluginName}
+        trusted={props.trusted}
+      />
+    </ModalWrapper>
+  );
+};
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
   csvPluginsCount?: number;
   pluginName: string;
   trusted: boolean;
-  cancel?: () => void;
-  close?: () => void;
-};
+} & ModalComponentProps;
