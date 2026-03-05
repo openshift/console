@@ -1,6 +1,8 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
+import type { FormikHelpers, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import {
@@ -44,21 +46,31 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   fullFormView,
 }) => {
   const { t } = useTranslation();
-  if ((!roleBindings?.loaded && !roleBindings?.loadError) || !roles.loaded) {
-    return <LoadingBox />;
-  }
 
-  const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
-    roleBindings.data,
-    Object.keys(roles.data),
-    namespace,
+  const userRoleBindings: UserRoleBinding[] = useMemo(
+    () =>
+      roleBindings?.loaded
+        ? getUserRoleBindings(roleBindings.data, Object.keys(roles.data), namespace)
+        : [],
+    [roleBindings, roles.data, namespace],
   );
+
+  const memoizedRoleBindings = useMemo(() => ({ projectAccess: userRoleBindings }), [
+    userRoleBindings,
+  ]);
 
   const rbacURL = getDocumentationURL(documentationURLs.usingRBAC);
 
-  const initialValues = {
-    projectAccess: roleBindings.loaded && userRoleBindings,
-  };
+  const initialValues = useMemo(
+    () => ({
+      projectAccess: roleBindings?.loaded && userRoleBindings,
+    }),
+    [roleBindings?.loaded, userRoleBindings],
+  );
+
+  if ((!roleBindings?.loaded && !roleBindings?.loadError) || !roles.loaded) {
+    return <LoadingBox />;
+  }
 
   const handleSubmit = (values, actions) => {
     let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
@@ -111,8 +123,9 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
       });
   };
 
-  const handleReset = (values, actions) => {
-    actions.resetForm({ status: { success: null }, values: initialValues });
+  const handleReset = (_values: FormikValues, actions: FormikHelpers<FormikValues>) => {
+    actions.setStatus({ success: null });
+    actions.setValues(initialValues);
   };
 
   const projectAccessForm = (
@@ -157,7 +170,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
             <ProjectAccessForm
               {...formikProps}
               roles={roles.data}
-              roleBindings={initialValues}
+              roleBindings={memoizedRoleBindings}
               onCancel={fullFormView ? history.goBack : null}
             />
           )}

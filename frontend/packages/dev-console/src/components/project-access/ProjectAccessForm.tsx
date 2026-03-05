@@ -57,6 +57,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   roles,
   roleBindings,
   values,
+  initialValues,
   onCancel,
 }) => {
   const { t } = useTranslation();
@@ -66,7 +67,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   useEffect(() => {
     !_.isEqual(
       ignoreRoleBindingName(roleBindings.projectAccess),
-      ignoreRoleBindingName(values.projectAccess),
+      ignoreRoleBindingName(initialValues.projectAccess),
     )
       ? setIsStaleInfo(true)
       : setIsStaleInfo(false);
