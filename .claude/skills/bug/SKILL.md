@@ -1,9 +1,11 @@
+---
+name: bug
+description: Comprehensive bug workflow for OpenShift Console - investigates issues, creates JIRA bug reports following Red Hat standards, offers branch creation, and proposes fixes with regression tests.
+argument-hint: [bug description] (optional - will prompt if not provided)
+allowed-tools: Task(Explore), Read, Grep, Glob, Bash(git *, jira *, yarn *, which *), AskUserQuestion
+---
+
 # /bug
-
-## Usage
-`/bug <short description of observed behavior>`
-
-Example: `/bug The quick search modal doesn't close when clicking outside of it`
 
 ## Context
 - This command helps create comprehensive bug reports for the OpenShift Console project
@@ -22,7 +24,16 @@ Example: `/bug The quick search modal doesn't close when clicking outside of it`
 
 ## Instructions
 
-You are a senior engineer helping to document and fix bugs in the OpenShift Console. When the user provides a short description of observed behavior, follow these steps:
+You are a senior engineer helping to document and fix bugs in the OpenShift Console. When the user invokes this command, follow these steps:
+
+### Step 0: Check for Bug Description
+
+If no bug description was provided as an argument:
+1. Use the AskUserQuestion tool to ask the user to describe the bug they want to report
+2. Ask: "What bug would you like to report? Please provide a short description of the observed behavior."
+3. Wait for their response before proceeding to Step 1
+
+If a bug description was provided, proceed directly to Step 1.
 
 ### Step 1: Investigate the Issue
 1. Use the codebase as reference to understand and confirm the observed behavior
