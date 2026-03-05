@@ -22,7 +22,6 @@ import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
   FieldLevelHelp,
-  Firehose,
   getDocumentationURL,
   getURLSearchParams,
   history,
@@ -33,7 +32,10 @@ import {
   resourcePathFromModel,
   StatusBox,
 } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   ConsoleOperatorConfigModel,
@@ -1237,40 +1239,45 @@ const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
   </StatusBox>
 );
 
-export const OperatorHubSubscribePage: FC = (props) => {
+export const OperatorHubSubscribePage: FC = () => {
+  const [activeNamespace] = useActiveNamespace();
+  const resources = useK8sWatchResources<{
+    operatorGroup: OperatorGroupKind[];
+    packageManifest: PackageManifestKind[];
+    subscription: SubscriptionKind[];
+  }>({
+    operatorGroup: {
+      isList: true,
+      kind: referenceForModel(OperatorGroupModel),
+    },
+    packageManifest: {
+      isList: true,
+      kind: referenceForModel(PackageManifestModel),
+      namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
+      fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
+      selector: {
+        matchLabels: {
+          catalog: new URLSearchParams(window.location.search).get('catalog'),
+        },
+      },
+    },
+    subscription: {
+      isList: true,
+      kind: referenceForModel(SubscriptionModel),
+    },
+  });
+
+  const loaded = Object.values(resources).every((r) => r.loaded);
+  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
+
   return (
-    <Firehose
-      resources={[
-        {
-          isList: true,
-          kind: referenceForModel(OperatorGroupModel),
-          prop: 'operatorGroup',
-        },
-        {
-          isList: true,
-          kind: referenceForModel(PackageManifestModel),
-          namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
-          fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
-          selector: {
-            matchLabels: {
-              catalog: new URLSearchParams(window.location.search).get('catalog'),
-            },
-          },
-          prop: 'packageManifest',
-        },
-        {
-          isList: true,
-          kind: referenceForModel(SubscriptionModel),
-          prop: 'subscription',
-        },
-      ]}
-    >
-      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <OperatorHubSubscribe
-        {...(props as any)}
-        targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null}
-      />
-    </Firehose>
+    <OperatorHubSubscribe
+      {...resources}
+      namespace={activeNamespace}
+      loaded={loaded}
+      loadError={loadError}
+      targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null}
+    />
   );
 };
 

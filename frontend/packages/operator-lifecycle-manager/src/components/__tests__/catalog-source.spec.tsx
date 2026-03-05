@@ -1,10 +1,11 @@
-import { cloneElement } from 'react';
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as Router from 'react-router-dom-v5-compat';
 import { DetailsPage } from '@console/internal/components/factory';
-import { Firehose } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../../mocks';
@@ -18,6 +19,7 @@ import {
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
+  useK8sWatchResources: jest.fn(),
 }));
 
 jest.mock('react-router-dom-v5-compat', () => ({
@@ -35,10 +37,6 @@ jest.mock('@console/internal/components/factory', () => ({
 
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
-  Firehose: jest.fn(({ children }) => {
-    const props = { packageManifest: { loaded: false } };
-    return typeof children === 'function' ? children(props) : children;
-  }),
   LoadingBox: jest.fn(() => 'Loading...'),
   ResourceSummary: jest.fn(() => null),
   SectionHeading: jest.fn(() => null),
@@ -86,8 +84,8 @@ jest.mock('@patternfly/react-core', () => ({
 }));
 
 const mockDetailsPage = (DetailsPage as unknown) as jest.Mock;
-const mockFirehose = (Firehose as unknown) as jest.Mock;
 const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
+const mockUseK8sWatchResources = useK8sWatchResources as jest.Mock;
 
 describe('CatalogSourceDetails', () => {
   let obj;
@@ -169,7 +167,7 @@ describe('CreateSubscriptionYAML', () => {
       hash: '',
       key: 'default',
     });
-    mockFirehose.mockClear();
+    mockUseK8sWatchResources.mockClear();
   });
 
   afterEach(() => {
@@ -177,12 +175,9 @@ describe('CreateSubscriptionYAML', () => {
   });
 
   it('displays package name in the subscription YAML when loaded', () => {
-    mockFirehose.mockImplementationOnce((firehoseProps) => {
-      const childElement = firehoseProps.children;
-      return cloneElement(childElement, {
-        packageManifest: { loaded: true, data: testPackageManifest },
-        operatorGroup: { loaded: true, data: [] },
-      });
+    mockUseK8sWatchResources.mockReturnValue({
+      packageManifest: { loaded: true, data: testPackageManifest, loadError: null },
+      operatorGroup: { loaded: true, data: [], loadError: null },
     });
 
     renderWithProviders(<CreateSubscriptionYAML />);
@@ -191,12 +186,9 @@ describe('CreateSubscriptionYAML', () => {
   });
 
   it('displays loading indicator when package manifest is not yet loaded', () => {
-    mockFirehose.mockImplementationOnce((firehoseProps) => {
-      const childElement = firehoseProps.children;
-      return cloneElement(childElement, {
-        packageManifest: { loaded: false },
-        operatorGroup: { loaded: false },
-      });
+    mockUseK8sWatchResources.mockReturnValue({
+      packageManifest: { loaded: false, data: undefined, loadError: null },
+      operatorGroup: { loaded: false, data: undefined, loadError: null },
     });
 
     renderWithProviders(<CreateSubscriptionYAML />);
@@ -205,12 +197,9 @@ describe('CreateSubscriptionYAML', () => {
   });
 
   it('displays subscription YAML with default channel information', () => {
-    mockFirehose.mockImplementationOnce((firehoseProps) => {
-      const childElement = firehoseProps.children;
-      return cloneElement(childElement, {
-        packageManifest: { loaded: true, data: testPackageManifest },
-        operatorGroup: { loaded: true, data: [] },
-      });
+    mockUseK8sWatchResources.mockReturnValue({
+      packageManifest: { loaded: true, data: testPackageManifest, loadError: null },
+      operatorGroup: { loaded: true, data: [], loadError: null },
     });
 
     renderWithProviders(<CreateSubscriptionYAML />);

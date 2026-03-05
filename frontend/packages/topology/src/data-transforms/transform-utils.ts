@@ -371,7 +371,10 @@ export const getWorkloadResources: GetWorkloadResources = (
   );
 };
 
-export const getBaseWatchedResources = (namespace: string): WatchK8sResources<any> => {
+export const getBaseWatchedResources = (namespace?: string): WatchK8sResources<any> => {
+  if (!namespace) {
+    return {};
+  }
   return {
     deploymentConfigs: {
       isList: true,

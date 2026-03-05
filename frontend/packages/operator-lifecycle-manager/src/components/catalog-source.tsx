@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import type { K8sResourceKind } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import type {
@@ -15,9 +15,7 @@ import type {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { DetailsPage, Table, TableData, MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResult } from '@console/internal/components/utils';
 import {
-  Firehose,
   LoadingBox,
   ConsoleEmptyState,
   navFactory,
@@ -27,6 +25,7 @@ import {
   ResourceSummary,
   DetailsItem,
 } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import type { K8sKind, K8sModel } from '@console/internal/module/k8s';
@@ -211,14 +210,33 @@ export const CatalogSourceDetailsPage: FC = (props) => {
   );
 };
 
-export const CreateSubscriptionYAML: FC = (props) => {
+export const CreateSubscriptionYAML: FC = () => {
   type CreateProps = {
-    packageManifest: { loaded: boolean; data?: PackageManifestKind };
-    operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
+    packageManifest: { loaded: boolean; data?: PackageManifestKind; loadError?: unknown };
+    operatorGroup: { loaded: boolean; data?: OperatorGroupKind[]; loadError?: unknown };
   };
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  const resources = useK8sWatchResources<{
+    packageManifest: PackageManifestKind;
+    operatorGroup: OperatorGroupKind[];
+  }>({
+    packageManifest: {
+      kind: referenceForModel(PackageManifestModel),
+      isList: false,
+      name: searchParams.get('pkg'),
+      namespace: searchParams.get('catalogNamespace'),
+    },
+    operatorGroup: {
+      kind: referenceForModel(OperatorGroupModel),
+      isList: true,
+      namespace: params.ns,
+    },
+  });
+
   const Create = requireOperatorGroup(
     withFallback<CreateProps>(
       (createProps) => {
@@ -235,15 +253,13 @@ export const CreateSubscriptionYAML: FC = (props) => {
             generateName: ${pkg.metadata.name}-
             namespace: default
           spec:
-            source: ${new URLSearchParams(location.search).get('catalog')}
-            sourceNamespace: ${new URLSearchParams(location.search).get('catalogNamespace')}
+            source: ${searchParams.get('catalog')}
+            sourceNamespace: ${searchParams.get('catalogNamespace')}
             name: ${pkg.metadata.name}
             startingCSV: ${channel.currentCSV}
             channel: ${channel.name}
         `;
-          return (
-            <CreateYAML {...(props as any)} plural={SubscriptionModel.plural} template={template} />
-          );
+          return <CreateYAML plural={SubscriptionModel.plural} template={template} />;
         }
         return <LoadingBox />;
       },
@@ -256,26 +272,7 @@ export const CreateSubscriptionYAML: FC = (props) => {
   );
 
   return (
-    <Firehose
-      resources={[
-        {
-          kind: referenceForModel(PackageManifestModel),
-          isList: false,
-          name: new URLSearchParams(location.search).get('pkg'),
-          namespace: new URLSearchParams(location.search).get('catalogNamespace'),
-          prop: 'packageManifest',
-        },
-        {
-          kind: referenceForModel(OperatorGroupModel),
-          isList: true,
-          namespace: params.ns,
-          prop: 'operatorGroup',
-        },
-      ]}
-    >
-      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <Create {...(props as any)} />
-    </Firehose>
+    <Create packageManifest={resources.packageManifest} operatorGroup={resources.operatorGroup} />
   );
 };
 
@@ -546,8 +543,8 @@ type DisabledPopoverProps = {
 };
 
 type FlattenArgType = {
-  catalogSources?: FirehoseResult<CatalogSourceKind[]>;
-  packageManifests?: FirehoseResult<PackageManifestKind[]>;
+  catalogSources?: WatchK8sResultsObject<CatalogSourceKind[]>;
+  packageManifests?: WatchK8sResultsObject<PackageManifestKind[]>;
   operatorHub: OperatorHubKind;
 };
 
