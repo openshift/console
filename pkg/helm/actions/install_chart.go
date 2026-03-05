@@ -41,35 +41,17 @@ var (
 	svBuild           = svId + `(?:\.` + svId + `)*`
 	svBuildOpt        = `(?:\+` + svBuild + `)?`
 	chartVersionRegex = regexp.MustCompile(`-(` + svVersionCore + svPrereleaseOpt + svBuildOpt + `)\.(?:tgz|tar\.gz)$`)
+
+	dnsLabel  = `[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?`
+	hostPort  = dnsLabel + `(?:\.` + dnsLabel + `)*\.?(?::\d+)?`
+	ociURLRe  = regexp.MustCompile(`(?i)^oci://` + hostPort)
+	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
-// isValidChartURL validates chart URLs for both format correctness and SSRF safety.
-// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz URLs.
-// Rejects private/loopback IPs and cluster-internal hostnames to prevent SSRF.
+// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
 func isValidChartURL(raw string) bool {
-	u, err := url.Parse(raw)
-	if err != nil {
-		return false
-	}
-
-	host := u.Hostname()
-	if host == "" {
-		return false
-	}
-
-	validHost := strings.Contains(host, ".") || u.Port() != "" || host == "localhost"
-	if !validHost {
-		return false
-	}
-
-	switch {
-	case strings.HasPrefix(u.Scheme, "http"):
-		return strings.HasSuffix(u.Path, ".tgz") || strings.HasSuffix(u.Path, ".tar.gz")
-	case u.Scheme == "oci":
-		return true
-	default:
-		return false
-	}
+	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
 // chartVersionFromURL extracts the chart version from a chart URL.

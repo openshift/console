@@ -15,7 +15,7 @@ export function getHelmChartURLValidationSchema(t: TFunction) {
         ),
         (() => {
           const label = /[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source;
-          const host = `${label}(?:\\.${label})*.?`;
+          const host = `${label}(?:\\.${label})*\\.?`;
           const ociRe = new RegExp(`^oci://${host}`, 'i');
           const httpRe = new RegExp(`^https?://${host}/.+\\.(?:tar\\.gz|tgz)$`, 'i');
           return (value: string) => value && (ociRe.test(value) || httpRe.test(value));

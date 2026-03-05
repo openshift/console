@@ -116,7 +116,7 @@
   "Select": "Select",
   "Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.": "Must be a valid OCI URL or a valid HTTP/HTTPS tar file; for example - oci://registry.example.com/chart, https://example.com/chart-1.0.0.tgz.",
   "Invalid chart URL format.": "Invalid chart URL format.",
-  "Install Helm chart from URL.": "Install Helm chart from URL.",
+  "Install Helm chart from URL": "Install Helm chart from URL",
   "To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.": "To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.",
   "Chart URL": "Chart URL",
   "The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.": "The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.",

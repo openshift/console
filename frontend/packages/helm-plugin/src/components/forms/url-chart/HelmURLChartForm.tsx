@@ -74,7 +74,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
     >
       <FormBody flexLayout>
         <FormHeader
-          title={t('helm-plugin~Install Helm chart from URL.')}
+          title={t('helm-plugin~Install Helm chart from URL')}
           helpText={t(
             'helm-plugin~To install a Helm chart, enter the chart URL - Open Container Initiative (OCI) URL or HTTP/HTTPS tar file and version.',
           )}

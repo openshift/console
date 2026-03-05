@@ -508,24 +508,22 @@ func TestIsValidChartURL(t *testing.T) {
 		url   string
 		valid bool
 	}{
-		// Valid URLs
+		// Valid multi-label hosts
 		{"valid OCI registry", "oci://ghcr.io/charts/mychart:1.0.0", true},
 		{"valid OCI with port", "oci://registry.example.com:5000/charts/mychart", true},
 		{"valid HTTPS tgz", "https://example.com/charts/mychart-1.0.0.tgz", true},
 		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz", true},
 		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz", true},
 
-		// localhost exception
+		// Valid single-label hosts (localhost, dev registries)
 		{"allow OCI localhost", "oci://localhost/charts/mychart", true},
 		{"allow OCI localhost with port", "oci://localhost:5000/charts/mychart", true},
 		{"allow HTTP localhost tgz", "http://localhost/chart.tgz", true},
+		{"allow OCI single-label host", "oci://myregistry/chart", true},
+		{"allow HTTP single-label host with port", "http://myregistry:8080/chart.tgz", true},
 
-		// Single-label hostnames (SSRF risk)
-		{"block bare OCI hostname", "oci://anything/chart", false},
+		// Invalid: missing host or bad scheme/format
 		{"block OCI no host", "oci:///chart", false},
-		{"block bare HTTP hostname", "http://metadata/chart.tgz", false},
-
-		// Invalid schemes/formats
 		{"block empty string", "", false},
 		{"block ftp scheme", "ftp://example.com/chart.tgz", false},
 		{"block http without tgz", "http://example.com/charts/mychart", false},
