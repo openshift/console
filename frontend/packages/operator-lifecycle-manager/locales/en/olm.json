@@ -80,6 +80,7 @@
   "Installed Operators are represented by ClusterServiceVersions within this Namespace.": "Installed Operators are represented by ClusterServiceVersions within this Namespace.",
   " For more information, see the <3>Understanding Operators documentation</3>. Or create an Operator and ClusterServiceVersion using the <6>Operator SDK</6>.": " For more information, see the <3>Understanding Operators documentation</3>. Or create an Operator and ClusterServiceVersion using the <6>Operator SDK</6>.",
   "Required": "Required",
+  "No description available": "No description available",
   "Create instance": "Create instance",
   "No Kubernetes APIs are being provided by this Operator.": "No Kubernetes APIs are being provided by this Operator.",
   "{{initializationResourceKind}} required": "{{initializationResourceKind}} required",
