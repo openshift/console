@@ -3,6 +3,8 @@ import { switchPerspective } from '@console/dev-console/integration-tests/suppor
 import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 
+let developerPerspectiveCheckAttempted = false;
+
 export const nav = {
   sidenav: {
     switcher: {
@@ -60,12 +62,22 @@ export const nav = {
                     .scrollIntoView()
                     .contains(newPerspective);
                 } else {
+                  if (developerPerspectiveCheckAttempted) {
+                    throw new Error(
+                      'Developer perspective is not available after checkDeveloperPerspective() already ran. ' +
+                        'The cluster may not have reconciled the operator config in time.',
+                    );
+                  }
+                  developerPerspectiveCheckAttempted = true;
                   checkDeveloperPerspective();
                   cy.byLegacyTestID('perspective-switcher-toggle')
                     .click()
                     .byLegacyTestID('perspective-switcher-menu-option')
                     .contains(newPerspective)
-                    .click({ force: true });
+                    .click({ force: true })
+                    .then(() => {
+                      developerPerspectiveCheckAttempted = false;
+                    });
                 }
               });
             break;

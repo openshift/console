@@ -28,6 +28,14 @@ export const checkDeveloperPerspective = () => {
       cy.reload(true);
       cy.document().its('readyState').should('eq', 'complete');
       cy.log('perspective switcher menu refreshed');
+
+      // Verify the Developer perspective is now available after reload
+      cy.byLegacyTestID('perspective-switcher-toggle').click();
+      cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 30000 })
+        .contains('Developer')
+        .should('exist');
+      cy.log('Developer perspective verified after reload');
+      cy.byLegacyTestID('perspective-switcher-toggle').click();
     });
   });
 };

@@ -135,7 +135,6 @@ describe('Test perspective query parameters', () => {
   });
 
   beforeEach(() => {
-    cy.initAdmin();
     cy.visit('/k8s/cluster/projects');
     listPage.dvRows.shouldBeLoaded();
     checkDeveloperPerspective();
