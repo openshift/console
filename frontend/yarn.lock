@@ -3380,9 +3380,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@file:../../dynamic-plugin-sdk/packages/lib-core::locator=openshift-console%40workspace%3A.":
+"@openshift/dynamic-plugin-sdk@git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main":
   version: 8.1.0
-  resolution: "@openshift/dynamic-plugin-sdk@file:../../dynamic-plugin-sdk/packages/lib-core#../../dynamic-plugin-sdk/packages/lib-core::hash=07ab8b&locator=openshift-console%40workspace%3A."
+  resolution: "@openshift/dynamic-plugin-sdk@https://github.com/openshift/dynamic-plugin-sdk.git#workspace=%40openshift%2Fdynamic-plugin-sdk&commit=c35748e717d3cb259c10c5f70831bbf7705ef457"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
@@ -3390,7 +3390,7 @@ __metadata:
     yup: "npm:^1.7.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/019198a5a5be99d8dd17557e19601a340672a8914c87c3d7672be626cb8751a69992f27ba41a47791a1309bbb722684d16c5356b89f15d580a2b24a49dc3f9de
+  checksum: 10c0/57d3fa90221884b613e6dedf69208219b5697be69352ef24ba71dd8404a40aeca29d39dc3896d6734ad1289b645705db45879183a1e02bcd45d4cfee7190f5bb
   languageName: node
   linkType: hard
 
@@ -17801,7 +17801,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:^1.15.1"
     "@graphql-codegen/typescript-graphql-files-modules": "npm:^1.15.1"
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
-    "@openshift/dynamic-plugin-sdk": "file:../../dynamic-plugin-sdk/packages/lib-core"
+    "@openshift/dynamic-plugin-sdk": "git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
     "@patternfly/patternfly": "npm:~6.4.0"
     "@patternfly/quickstarts": "npm:~6.4.0"
