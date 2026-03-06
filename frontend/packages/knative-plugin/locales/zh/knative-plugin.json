@@ -275,7 +275,7 @@
   "Delete": "删除",
   "Unable to delete {{revlabel}}": "无法删除 {{revlabel}}",
   "You cannot delete the last {{revlabel}} for the {{serviceLabel}}.": "您不能为 {{serviceLabel}} 删除最后一个 {{revlabel}}。",
-  "OK": "确定",
+  "OK": "OK",
   "Reason": "原因",
   "Route details": "路由详情",
   "URL": "URL",
