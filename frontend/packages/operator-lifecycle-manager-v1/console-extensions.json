@@ -33,23 +33,6 @@
     }
   },
   {
-    "type": "console.navigation/resource-cluster",
-    "properties": {
-      "id": "installed-extensions",
-      "section": "ecosystem",
-      "name": "%olm-v1~Installed Operators%",
-      "model": {
-        "kind": "ClusterExtension",
-        "version": "v1",
-        "group": "olm.operatorframework.io"
-      },
-      "startsWith": ["olm.operatorframework.io"]
-    },
-    "flags": {
-      "required": ["CLUSTER_EXTENSION_API", "TECH_PREVIEW", "OLMV1_ENABLED"]
-    }
-  },
-  {
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "dev-catalog",
@@ -113,6 +96,46 @@
       "component": {
         "$codeRef": "CreateClusterExtension"
       }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "olm.operatorframework.io",
+        "version": "v1",
+        "kind": "ClusterExtension"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    },
+    "flags": {
+      "required": ["CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "installed-software",
+      "section": "ecosystem",
+      "name": "%olm-v1~Installed Software%",
+      "insertAfter": "developer-catalog",
+      "href": "/installed-software",
+      "namespaced": true,
+      "startsWith": ["installed-software"]
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW", "OLMV1_ENABLED", "CLUSTER_EXTENSION_API"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/installed-software/all-namespaces", "/installed-software/ns/:ns"],
+      "component": { "$codeRef": "installedSoftwarePage.default" }
     },
     "flags": {
       "required": ["CLUSTER_EXTENSION_API"]
