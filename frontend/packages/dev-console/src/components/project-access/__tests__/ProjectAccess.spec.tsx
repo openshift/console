@@ -7,7 +7,6 @@ jest.mock('@console/internal/components/utils', () => ({
   StatusBox: () => 'StatusBox',
   documentationURLs: { usingRBAC: 'rbac-url' },
   getDocumentationURL: jest.fn(() => 'http://example.com/rbac'),
-  history: { goBack: jest.fn() },
   isManaged: jest.fn(() => false),
 }));
 
@@ -22,6 +21,7 @@ jest.mock('@patternfly/react-core', () => ({
 
 jest.mock('react-router-dom-v5-compat', () => ({
   Link: () => 'Link',
+  useNavigate: () => jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({

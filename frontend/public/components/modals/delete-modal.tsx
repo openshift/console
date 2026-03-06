@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { Alert, Checkbox } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate, To } from 'react-router-dom-v5-compat';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ModalTitle,
@@ -25,7 +25,6 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 
-import { LocationDescriptor } from 'history';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
@@ -179,7 +178,7 @@ export const DeleteModalOverlay: OverlayComponent<DeleteModalProps> = (props) =>
 export type DeleteModalProps = {
   kind: K8sModel;
   resource: K8sResourceKind;
-  redirectTo?: LocationDescriptor;
+  redirectTo?: To;
   message?: JSX.Element;
   btnText?: ReactNode;
   deleteAllResources?: () => Promise<K8sResourceKind[]>;

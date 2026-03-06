@@ -1,9 +1,10 @@
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { history, resourcePathFromModel } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -31,6 +32,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
   buildConfig: watchedBuildConfig,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [initialValues] = useState<BuildConfigFormikValues>(() => {
     const values = convertBuildConfigToFormData(watchedBuildConfig);
@@ -70,7 +72,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
         ? await k8sCreate<BuildConfig>(BuildConfigModel, changedBuildConfig)
         : await k8sUpdate<BuildConfig>(BuildConfigModel, changedBuildConfig, namespace, name);
 
-      history.push(
+      navigate(
         resourcePathFromModel(
           BuildConfigModel,
           updatedBuildConfig.metadata.name,
@@ -82,7 +84,7 @@ const EditBuildConfig: FC<EditBuildConfigProps> = ({
     }
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
 
   return (
     <Formik

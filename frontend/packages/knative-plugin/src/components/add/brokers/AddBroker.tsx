@@ -1,11 +1,12 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { usePerspectives } from '@console/shared/src';
@@ -23,6 +24,8 @@ interface AddBrokerProps {
 }
 
 const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perspectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
@@ -58,7 +61,7 @@ const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   ) => {
     return createResources(values, actions)
       .then(() => {
-        handleRedirect(values.formData.project.name, perspective, perspectiveExtension);
+        handleRedirect(values.formData.project.name, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -69,7 +72,7 @@ const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={brokerValidationSchema(t)}
     >
       {(formikProps) => <AddBrokerForm {...formikProps} namespace={namespace} />}

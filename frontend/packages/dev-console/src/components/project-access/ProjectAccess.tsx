@@ -4,11 +4,10 @@ import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import type { FormikHelpers, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom-v5-compat';
 import {
   documentationURLs,
   getDocumentationURL,
-  history,
   isManaged,
   LoadingBox,
   StatusBox,
@@ -46,6 +45,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   fullFormView,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const userRoleBindings: UserRoleBinding[] = useMemo(
     () =>
@@ -171,7 +171,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
               {...formikProps}
               roles={roles.data}
               roleBindings={memoizedRoleBindings}
-              onCancel={fullFormView ? history.goBack : null}
+              onCancel={fullFormView ? () => navigate(-1) : null}
             />
           )}
         </Formik>

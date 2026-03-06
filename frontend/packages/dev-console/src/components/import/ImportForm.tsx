@@ -1,13 +1,15 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ValidatedOptions, AlertVariant } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
-import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
+import { AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { RouteModel } from '@console/internal/models';
 import type { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -73,6 +75,8 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
   projects,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const fireTelemetryEvent = useTelemetry();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
@@ -244,7 +248,13 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
 
-        handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          navigate,
+          redirectSearchParams,
+        );
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
@@ -273,7 +283,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
       <Formik
         initialValues={initialVals}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={handleCancel}
         validationSchema={validationSchema(t)}
       >
         {renderForm}

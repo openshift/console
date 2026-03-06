@@ -1,9 +1,10 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -32,6 +33,8 @@ interface StateProps {
 type Props = ChannelProps & StateProps;
 
 const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
   const initialFormData: AddChannelFormData = {
@@ -84,7 +87,7 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
   const handleSubmit = (values, actions) => {
     return createResources(values)
       .then(() => {
-        handleRedirect(values.formData.namespace, perspective, perspectiveExtension);
+        handleRedirect(values.formData.namespace, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -95,7 +98,7 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={addChannelValidationSchema(t)}

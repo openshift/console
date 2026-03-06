@@ -2,10 +2,9 @@ import type { ReactNode, FC } from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { SimpleDropdown } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
 import type { Page } from '@console/internal/components/utils/horizontal-nav';
 import { HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
-import { history } from '@console/internal/components/utils/router';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '../pagetitle/PageTitleContext';
@@ -29,6 +28,7 @@ const MultiTabListPage: FC<MultiTabListPageProps> = ({
   telemetryPrefix,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { ns } = useParams();
   const onSelectCreateAction = (actionName: string): void => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
@@ -42,7 +42,7 @@ const MultiTabListPage: FC<MultiTabListPageProps> = ({
       url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
     }
     if (url) {
-      history.push(url);
+      navigate(url);
     }
   };
 

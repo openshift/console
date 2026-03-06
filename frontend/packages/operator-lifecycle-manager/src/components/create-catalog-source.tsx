@@ -11,9 +11,10 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import type { RadioGroupItems } from '@console/internal/components/radio';
 import { RadioGroup } from '@console/internal/components/radio';
-import { ButtonBar, history, NsDropdown } from '@console/internal/components/utils';
+import { ButtonBar, NsDropdown } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -27,6 +28,8 @@ enum AvailabilityValue {
 }
 
 export const CreateCatalogSource = () => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [availability, setAvailability] = useState(AvailabilityValue.ALL_NAMESPACES);
   const [image, setImage] = useState('');
@@ -56,10 +59,10 @@ export const CreateCatalogSource = () => {
           },
         }),
       ).then(() => {
-        history.goBack();
+        navigate(-1);
       });
     },
-    [availability, displayName, handlePromise, image, name, namespace, publisher],
+    [availability, displayName, handlePromise, image, name, namespace, publisher, navigate],
   );
 
   const onNamespaceChange = useCallback((value: string) => {
@@ -177,7 +180,7 @@ export const CreateCatalogSource = () => {
               <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
                 {t('olm~Create')}
               </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
+              <Button type="button" variant="secondary" id="cancel" onClick={handleCancel}>
                 {t('olm~Cancel')}
               </Button>
             </ActionGroup>

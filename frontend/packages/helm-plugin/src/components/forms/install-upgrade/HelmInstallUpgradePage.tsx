@@ -1,17 +1,17 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
@@ -38,6 +38,8 @@ import type { HelmInstallUpgradeFormData } from './HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
 
 const HelmInstallUpgradePage: FC = () => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const location = useLocation();
   const params = useParams();
   const searchParams = new URLSearchParams(location.search);
@@ -204,7 +206,7 @@ const HelmInstallUpgradePage: FC = () => {
           redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
         }
 
-        history.push(redirect);
+        navigate(redirect);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -213,9 +215,9 @@ const HelmInstallUpgradePage: FC = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      history.push(`/helm/all-namespaces`);
+      navigate(`/helm/all-namespaces`);
     } else if (ns !== namespace) {
-      history.push(`/helm/ns/${ns}`);
+      navigate(`/helm/ns/${ns}`);
     }
   };
 
@@ -238,7 +240,7 @@ const HelmInstallUpgradePage: FC = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={handleCancel}
         validationSchema={getHelmActionValidationSchema(helmAction, t)}
       >
         {(formikProps) => (

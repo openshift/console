@@ -1,14 +1,15 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { HELM_CHART_CATALOG_TYPE_ID } from '@console/helm-plugin/src/const';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { history, StatusBox } from '@console/internal/components/utils';
+import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { kindForReference, modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -35,6 +36,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
   showScopeType,
   existingRepoName,
 }) => {
+  const navigate = useNavigate();
   const queryParams = useQueryParams();
   const resourceKind: K8sResourceKindReference = queryParams.get('kind');
   const isEditForm = !!existingRepoName;
@@ -144,7 +146,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
             hcr: HelmChartRepositoryRes.kind,
           }),
         });
-        history.push(redirectURL);
+        navigate(redirectURL);
       })
       .catch((err) => {
         actions.setStatus({
@@ -154,7 +156,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
 
   if (isEditForm && hcrLoaded && !hcr) {
     return <ErrorPage404 />;

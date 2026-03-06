@@ -27,11 +27,11 @@ import {
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import type { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { history } from '@console/internal/components/utils/router';
 import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import { k8sCreate } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -71,6 +71,8 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
   replicasCount,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const initialFormValues = initialValuesFromK8sResource(formData);
   const [formValues, setFormValues] = useState(initialFormValues);
   const [error, setError] = useState('');
@@ -151,8 +153,9 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
     return response
       .then(() => {
         setInProgress(false);
-        history.push(
+        navigate(
           resourcePathFromModel(PodDisruptionBudgetModel, formValues.name, formValues.namespace),
+          { replace: true },
         );
       })
       .catch((err) => {
@@ -302,7 +305,7 @@ const PDBForm: FC<PodDisruptionBudgetFormProps> = ({
                 >
                   {existingResource ? t('console-app~Save') : t('console-app~Create')}
                 </Button>
-                <Button onClick={history.goBack} id="cancel" variant="secondary">
+                <Button onClick={handleCancel} id="cancel" variant="secondary">
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>

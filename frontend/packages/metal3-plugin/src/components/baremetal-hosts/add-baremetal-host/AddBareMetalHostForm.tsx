@@ -1,9 +1,10 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Form, TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import {
   InputField,
   TextAreaField,
@@ -30,7 +31,9 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
   showUpdated,
   values,
 }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   return (
     <Form onSubmit={handleSubmit}>
       <InputField
@@ -131,7 +134,7 @@ const AddBareMetalHostForm: FC<AddBareMetalHostFormProps> = ({
       <FormFooter
         isSubmitting={isSubmitting}
         handleReset={showUpdated && handleReset}
-        handleCancel={history.goBack}
+        handleCancel={handleCancel}
         submitLabel={isEditing ? t('metal3-plugin~Save') : t('metal3-plugin~Create')}
         errorMessage={status && status.submitError}
         disableSubmit={isSubmitting || !dirty || !_.isEmpty(errors)}

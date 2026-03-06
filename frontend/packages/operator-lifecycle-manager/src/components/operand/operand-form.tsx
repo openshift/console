@@ -3,13 +3,9 @@ import { useState, useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import {
-  history,
-  resourcePathFromModel,
-  useScrollToTopOnMount,
-} from '@console/internal/components/utils';
+import { resourcePathFromModel, useScrollToTopOnMount } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
@@ -32,6 +28,7 @@ export const OperandForm: FC<OperandFormProps> = ({
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
   const params = useParams();
+  const navigate = useNavigate();
   const postFormCallback = useResourceConnectionHandler();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
@@ -47,21 +44,22 @@ export const OperandForm: FC<OperandFormProps> = ({
   const handleSubmit = ({ formData: submitFormData }) => {
     k8sCreate(model, processFormData(submitFormData))
       .then((res) => postFormCallback(res))
-      .then(() => next && history.push(next))
+      .then(() => next && navigate(next))
       .catch((e) => setErrors([e.message]));
   };
 
   const handleCancel = () => {
     if (new URLSearchParams(window.location.search).has('useInitializationResource')) {
-      history.replace(
+      navigate(
         resourcePathFromModel(
           ClusterServiceVersionModel,
           csv.metadata.name,
           csv.metadata.namespace,
         ),
+        { replace: true },
       );
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 

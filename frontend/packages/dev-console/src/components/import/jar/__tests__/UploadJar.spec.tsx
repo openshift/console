@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import type { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UploadJar from '../UploadJar';
 
 jest.mock('formik', () => ({
@@ -124,7 +125,7 @@ describe('UploadJar', () => {
   it('Should render formik', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([]);
 
-    render(<UploadJar {...defaultProps} />);
+    renderWithProviders(<UploadJar {...defaultProps} />);
 
     const formikText = screen.getByText(/Formik initialValues=/);
     expect(formikText).toBeInTheDocument();

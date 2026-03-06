@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { HorizontalNav, history } from '@console/internal/components/utils';
+import { HorizontalNav } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
@@ -12,9 +13,9 @@ import MonitoringEvents from './events/MonitoringEvents';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
-const handleNamespaceChange = (newNamespace: string): void => {
+const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {
-    history.push(MONITORING_ALL_NS_PAGE_URI);
+    navigate(MONITORING_ALL_NS_PAGE_URI);
   }
 };
 
@@ -58,11 +59,12 @@ export const PageContents: FC = () => {
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
 export const MonitoringPage = (props) => {
+  const navigate = useNavigate();
   return (
     <NamespacedPage
       hideApplications
       variant={NamespacedPageVariants.light}
-      onNamespaceChange={handleNamespaceChange}
+      onNamespaceChange={(newNamespace) => handleNamespaceChange(newNamespace, navigate)}
     >
       <PageContentsWithStartGuide {...props} />
     </NamespacedPage>

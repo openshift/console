@@ -1,4 +1,4 @@
-import { Location } from 'history';
+import { Location } from 'react-router-dom-v5-compat';
 import { getBrandingDetails } from './branding';
 
 /**
