@@ -89,13 +89,13 @@ const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
 });
 
-type EditYAMLProps = {
+export interface EditYAMLProps {
   /** The sample object to load into the editor */
   sampleObj?: ReturnType<typeof generateObjToLoad>;
   /** Whether to allow multiple YAML documents in the editor */
   allowMultiple?: boolean;
   /** Whether this is a create operation */
-  create: boolean;
+  create?: boolean;
   /** List of YAML samples to display */
   yamlSamplesList?: FirehoseResult;
   /** Custom CSS class for the editor */
@@ -117,7 +117,7 @@ type EditYAMLProps = {
   /** URL to redirect to after saving */
   redirectURL?: string;
   /** Function to clear the file upload state */
-  clearFileUpload: () => void;
+  clearFileUpload?: () => void;
   /** Callback function to save the YAML content */
   onSave?: (yaml: string) => void;
   /** Whether this is a redirect from code import */
@@ -136,14 +136,14 @@ type EditYAMLProps = {
   onCancel?: () => void;
   /** The file upload content */
   fileUpload?: string;
-};
+}
 
 type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
 const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const {
     allowMultiple,
-    create,
+    create = false,
     yamlSamplesList,
     customClass,
     onChange = () => null,
@@ -153,7 +153,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
     genericYAML = false,
     children: customAlerts,
     redirectURL,
-    clearFileUpload,
+    clearFileUpload = _.noop,
     onSave,
     isCodeImportRedirect,
   } = props;

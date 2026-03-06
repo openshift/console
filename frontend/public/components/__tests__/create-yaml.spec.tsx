@@ -7,8 +7,8 @@ import { PodModel, ConfigMapModel } from '../../models';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
 jest.mock('../utils/async', () => ({
-  AsyncComponent: ({ initialResource, header, create, kind }) =>
-    `YAML Editor: ${header} (${create ? 'Create' : 'Edit'} ${kind}) - Resource: ${JSON.stringify(
+  AsyncComponent: ({ initialResource, header, create }) =>
+    `YAML Editor: ${header} (${create ? 'Create' : 'Edit'}) - Resource: ${JSON.stringify(
       initialResource,
     )}`,
 }));

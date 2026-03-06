@@ -47,8 +47,8 @@ describe('Add Identity Provider: HTPasswd', () => {
     });
   });
 
-  it('should render the HTPasswd file file label and elements', () => {
-    verifyIDPFileFields({
+  it('should render the HTPasswd file file label and elements', async () => {
+    await verifyIDPFileFields({
       inputLabel: 'HTPasswd file',
       idPrefix: 'htpasswd-file',
       helpText: 'Upload an HTPasswd file created using the htpasswd command.',
