@@ -15,11 +15,9 @@ import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpg
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
   useResolvedExtensions,
-  isOverviewDetailItem,
   isCustomOverviewDetailItem,
   WatchK8sResource,
-  CustomOverviewDetailItem as CustomOverviewDetailItemType,
-  OverviewDetailItem as OverviewDetailItemType,
+  CustomOverviewDetailItem,
 } from '@console/dynamic-plugin-sdk';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { ClusterVersionModel } from '../../../../models';
@@ -110,10 +108,7 @@ export const DetailsCard: React.FC = () => {
   const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
     ClusterVersionKind
   >(clusterVersionResource);
-  const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
-    isOverviewDetailItem,
-  );
-  const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItemType>(
+  const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItem>(
     isCustomOverviewDetailItem,
   );
 
@@ -256,19 +251,6 @@ export const DetailsCard: React.FC = () => {
                     {t('public~No (single control plane node)')}
                   </OverviewDetailItem>
                 )}
-                {detailItemsExtensions.map((e) => {
-                  const Component = e.properties.component;
-                  return (
-                    <ErrorBoundaryInline
-                      key={e.uid}
-                      wrapper={({ children }) => (
-                        <OverviewDetailItem title="">{children}</OverviewDetailItem>
-                      )}
-                    >
-                      <Component />
-                    </ErrorBoundaryInline>
-                  );
-                })}
                 {customDetailItemsExtensions.map((e) => {
                   const { component: Component, error, isLoading, ...props } = e.properties;
                   return (

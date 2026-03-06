@@ -47,24 +47,6 @@ export type ResourceDetailsPage = Extension<
 >;
 
 /**
- * @deprecated - Use `console.tab/horizontalNav` instead
- * Adds new resource tab page to Console router.
- */
-export type ResourceTabPage = Extension<
-  'console.page/resource/tab',
-  Omit<ResourcePageProperties, 'component'> & {
-    /** The component to be rendered when the route matches. */
-    component: CodeRef<React.ComponentType>;
-    /** The name of the tab. */
-    name: string;
-    /** The optional href for the tab link. If not provided, the first `path` is used. */
-    href?: string;
-    /** When true, will only match if the path matches the `location.pathname` exactly. */
-    exact?: boolean;
-  }
->;
-
-/**
  * Adds new standalone page (rendered outside the common page layout) to Console router.
  *
  * Under the hood we use React Router.
@@ -87,7 +69,3 @@ export const isResourceListPage = (e: Extension): e is ResourceListPage =>
 
 export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage =>
   e.type === 'console.page/resource/details';
-
-/** @deprecated - use `console.tab/horizontalNav` */
-export const isResourceTabPage = (e: Extension): e is ResourceTabPage =>
-  e.type === 'console.page/resource/tab';

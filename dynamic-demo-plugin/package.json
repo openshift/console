@@ -66,7 +66,6 @@
       "listPage": "./components/ListPage.tsx",
       "modalPage": "./components/Modals/ModalPage.tsx",
       "navPage": "./components/Nav.tsx",
-      "overviewDetailItem": "./components/OverviewDetailItem.tsx",
       "perspective": "./utils/perspective.ts",
       "projectOverview": "./utils/project-overview.ts",
       "projectOverviewInventory": "./components/ProjectOverview/Inventory.tsx",

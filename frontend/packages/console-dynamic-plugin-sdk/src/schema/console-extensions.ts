@@ -6,7 +6,6 @@ import type {
   ClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
   CustomOverviewDetailItem,
-  OverviewDetailItem,
 } from '../extensions/cluster-overview';
 import type { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import type { ContextProvider } from '../extensions/context-providers';
@@ -49,7 +48,6 @@ import type {
   RoutePage,
   ResourceDetailsPage,
   ResourceListPage,
-  ResourceTabPage,
 } from '../extensions/pages';
 import type { Perspective } from '../extensions/perspectives';
 import type {
@@ -105,7 +103,6 @@ export type SupportedExtension =
   | SupportedTopologyDetailsExtensions
   | RoutePage
   | ResourceListPage
-  | ResourceTabPage
   | ResourceDetailsPage
   | DashboardsTab
   | DashboardsCard
@@ -135,7 +132,6 @@ export type SupportedExtension =
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
-  | OverviewDetailItem
   | CustomOverviewDetailItem
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem
