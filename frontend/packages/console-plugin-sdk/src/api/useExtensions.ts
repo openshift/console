@@ -10,12 +10,13 @@ import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
  *
  * This hook re-renders the component whenever the list of matching extensions changes.
  *
- * The hook's result is guaranteed to be referentially stable across re-renders.
+ * The hook's result is guaranteed to be referentially stable across re-renders,
+ * assuming referential stability of the `predicate` parameter.
  *
  * @example
  * ```ts
  * const Example = () => {
- *   const navItemExtensions = useExtensions<NavItem>(isNavItem);
+ *   const navItems = useExtensions(isNavItem);
  *   // process extensions and render your component
  * };
  * ```
@@ -25,7 +26,6 @@ import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
  * @see {@link useTranslatedExtensions}
  * @see {@link useSortedExtensions}
  */
-// TODO: consider exposing hook via Console plugin SDK and move ^^ doc to exported symbol
 export const useExtensions: typeof useExtensionsSDK = (predicate) => {
   const extensions = useExtensionsSDK(predicate);
   const sortedExtensions = useSortedExtensions(extensions);
