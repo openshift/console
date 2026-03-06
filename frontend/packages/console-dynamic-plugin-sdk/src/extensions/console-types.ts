@@ -29,7 +29,7 @@ import type {
   ResolvedExtension,
   Selector,
 } from '../api/common-types';
-import type { Extension, ExtensionTypeGuard } from '../types';
+import type { Extension, ExtensionPredicate } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
@@ -286,7 +286,7 @@ export type UseK8sWatchResources = <R extends ResourcesObject>(
 ) => WatchK8sResults<R>;
 
 export type UseResolvedExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
+  predicate: ExtensionPredicate<E>,
 ) => [ResolvedExtension<E>[], boolean, any[]];
 
 export type GetSegmentAnalytics = () => {

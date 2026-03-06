@@ -149,7 +149,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openshift-console/dynamic-plugin-sdk-webpack@portal:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack::locator=%40console%2Fdynamic-demo-plugin%40workspace%3A."
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "npm:^8.2.0"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
     ajv: "npm:^6.12.3"
     chalk: "npm:2.4.x"
@@ -158,7 +158,7 @@ __metadata:
     glob: "npm:7.x"
     lodash: "npm:^4.17.21"
     read-pkg: "npm:5.x"
-    semver: "npm:6.x"
+    semver: "npm:^7.7.4"
   peerDependencies:
     typescript: ">=5.9.3"
     webpack: ">=5.100.0"
@@ -169,7 +169,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openshift-console/dynamic-plugin-sdk@portal:../frontend/packages/console-dynamic-plugin-sdk/dist/core::locator=%40console%2Fdynamic-demo-plugin%40workspace%3A."
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "npm:^8.2.0"
     immutable: "npm:3.x"
     lodash: "npm:^4.17.21"
     reselect: "npm:^5.1.1"
@@ -213,9 +213,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@openshift/dynamic-plugin-sdk@npm:8.0.0"
+"@openshift/dynamic-plugin-sdk@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "@openshift/dynamic-plugin-sdk@npm:8.2.0"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
@@ -223,7 +223,7 @@ __metadata:
     yup: "npm:^1.7.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/a5c7bc5198f75fcc9fad242ffb51e264e860218e7035b87204d429cc47fa566208cc3474af739d3e05a2adc1bfe41ae9e09d3afd93a5b8c0d29f1814ee9f3127
+  checksum: 10c0/a9e3e1a145014a13310acd4630c7a2b7a7545b6c089e1d41e99ceaec061c1a270051d44bd26ddd09ec61bb02533ecfab55663cedb41a20d63acf824067eb63ab
   languageName: node
   linkType: hard
 
@@ -3477,16 +3477,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:6.x":
-  version: 6.3.1
-  resolution: "semver@npm:6.3.1"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/e3d79b609071caa78bcb6ce2ad81c7966a46a7431d9d58b8800cfa9cb6a63699b3899a0e4bcce36167a284578212d9ae6942b6929ba4aa5015c079a67751d42d
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.7.3":
+"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.7.3, semver@npm:^7.7.4":
   version: 7.7.4
   resolution: "semver@npm:7.7.4"
   bin:
