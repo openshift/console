@@ -149,7 +149,7 @@
     ]
   },
   "dependencies": {
-    "@openshift/dynamic-plugin-sdk": "file:../../dynamic-plugin-sdk/packages/lib-core",
+    "@openshift/dynamic-plugin-sdk": "git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main",
     "@openshift/dynamic-plugin-sdk-webpack": "^5.1.0",
     "@patternfly/patternfly": "~6.4.0",
     "@patternfly/quickstarts": "~6.4.0",
