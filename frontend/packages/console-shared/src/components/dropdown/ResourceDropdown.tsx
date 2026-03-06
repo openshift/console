@@ -48,10 +48,9 @@ export interface ResourceDropdownProps {
   menuClassName?: ConsoleSelectProps['menuClassName'];
   placeholder?: ConsoleSelectProps['autocompletePlaceholder'];
   selectedKey: ConsoleSelectProps['selectedKey'];
-  storageKey?: ConsoleSelectProps['storageKey'];
   title?: ConsoleSelectProps['title'];
   titlePrefix?: ConsoleSelectProps['titlePrefix'];
-  userSettingsPrefix?: ConsoleSelectProps['userSettingsPrefix'];
+  userPreferencePrefix?: ConsoleSelectProps['userPreferencePrefix'];
 
   allSelectorItem?: {
     allSelectorKey?: string;
@@ -286,8 +285,7 @@ class ResourceDropdownInternal extends Component<ResourceDropdownProps & { t: TF
         selectedKey={this.props.selectedKey}
         title={this.props.title || this.state.title}
         autocompletePlaceholder={this.props.placeholder}
-        userSettingsPrefix={this.props.userSettingsPrefix}
-        storageKey={this.props.storageKey}
+        userPreferencePrefix={this.props.userPreferencePrefix}
         disabled={this.props.disabled}
       />
     );

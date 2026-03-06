@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as _ from 'lodash';
 import { useSelector } from 'react-redux';
-import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
+import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY } from '@console/app/src/consts';
 import { useNamespacedNotificationAlertsPoller } from '@console/app/src/hooks/useNamespacedNotificationAlertsPoller';
 import type { ObjectMetadata } from '@console/internal/module/k8s';
 import { LabelSelector } from '@console/internal/module/k8s';
@@ -21,7 +21,7 @@ export const useNotificationAlerts = (
   overrideMatchLabels?: ObjectMetadata['labels'],
 ): [NotificationAlerts['data'], NotificationAlerts['loaded'], NotificationAlerts['loadError']] => {
   const [hideUserWorkloadNotifications] = useUserPreference(
-    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY,
     true,
     true,
   );
@@ -66,7 +66,7 @@ export const useNamespacedNotificationAlerts = (
   const { alerts, loaded, loadError } = useNamespacedNotificationAlertsPoller(namespace);
 
   const [hideUserWorkloadNotifications] = useUserPreference(
-    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY,
     true,
     true,
   );

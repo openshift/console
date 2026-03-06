@@ -7,7 +7,7 @@ import { useUserPreference } from '../../hooks/useUserPreference';
 import type { EditorType } from './editor-toggle';
 
 export const useEditorType = (
-  lastViewUserSettingKey: string,
+  lastViewUserPreferenceKey: string,
   defaultValue: EditorType,
   checkEditorTypeEnabled?: (type: EditorType) => boolean,
 ): [EditorType, (type: EditorType) => void, boolean] => {
@@ -15,7 +15,7 @@ export const useEditorType = (
     lastViewedEditorType,
     setLastViewedEditorType,
     lastViewedEditorTypeLoaded,
-  ] = useUserPreference<EditorType>(lastViewUserSettingKey);
+  ] = useUserPreference<EditorType>(lastViewUserPreferenceKey);
   const [preferredEditorType, preferredEditorTypeLoaded] = usePreferredCreateEditMethod();
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     checkEditorTypeEnabled ? checkEditorTypeEnabled(type) : true;

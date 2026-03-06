@@ -35,7 +35,7 @@ export interface SubscribeFormProps {
 
 type Props = FormikProps<FormikValues> & SubscribeFormProps;
 
-const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.addSubscriberForm.editor.lastView';
+const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.addSubscriberForm.editor.lastView';
 
 const SubscribeForm: FC<Props> = ({
   filterEnabled,
@@ -99,7 +99,7 @@ const SubscribeForm: FC<Props> = ({
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

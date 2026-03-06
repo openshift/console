@@ -10,7 +10,7 @@ import {
 import { expectTextsNotInDocument } from '../../../../getting-started-test-utils';
 
 import { GettingStartedSection } from '../getting-started-section';
-import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from '../constants';
+import { CLUSTER_DASHBOARD_USER_PREFERENCE_KEY } from '../constants';
 
 // Mock the child card components
 jest.mock('../cluster-setup-getting-started-card', () => ({
@@ -57,7 +57,7 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+      <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
     await waitFor(() => {
@@ -74,7 +74,7 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+      <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
     await waitFor(() => {
@@ -92,7 +92,7 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+      <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
     await waitFor(() => {
@@ -114,7 +114,7 @@ describe('GettingStartedSection', () => {
     ]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />,
+      <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />,
     );
 
     await waitFor(() => {

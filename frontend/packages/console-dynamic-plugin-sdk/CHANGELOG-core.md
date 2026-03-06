@@ -32,8 +32,8 @@ table in [Console dynamic plugins README](./README.md).
 - **Type breaking**: Removed `ExtensionDeclaration` from `types.ts`. Plugins should use `Extension` type instead ([CONSOLE-3769], [#15778])
 - **Type breaking**: Changed the default type parameters of `Extension<any>` to `Extension<string, AnyObject>` ([CONSOLE-3769], [#15778])
 - **Type breaking**: Fix inaccurate types in `console.topology/details/resource-link` and
-  `console.topology/details/tab-section`. ([CONSOLE-4630], [#15893])
-- **Type breaking**: Fix inaccurate types in `console.catalog/item-type`. ([CONSOLE-4402], [#14869])
+  `console.topology/details/tab-section` extensions ([CONSOLE-4630], [#15893])
+- **Type breaking**: Fix inaccurate types in `console.catalog/item-type` extension ([CONSOLE-4402], [#14869])
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630], [#15893])
 - Make all Console-provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
 

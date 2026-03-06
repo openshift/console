@@ -4,14 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { useGettingStartedShowState, GettingStartedShowState } from './useGettingStartedShowState';
 
 interface RestoreGettingStartedButtonProps {
-  userSettingsKey: string;
+  userPreferenceKey: string;
 }
 
 export const RestoreGettingStartedButton: FC<RestoreGettingStartedButtonProps> = ({
-  userSettingsKey,
+  userPreferenceKey,
 }) => {
   const { t } = useTranslation();
-  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingsKey);
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userPreferenceKey);
 
   if (!showStateLoaded || showState !== GettingStartedShowState.HIDE) {
     return null;

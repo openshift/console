@@ -8,7 +8,7 @@ import { useResolvedExtensions, isTelemetryListener } from '@console/dynamic-plu
 import type { UserKind } from '@console/internal/module/k8s/types';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
-  PREFERRED_TELEMETRY_USER_SETTING_KEY,
+  PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '../constants';
 import { useUser } from './useUser';
@@ -74,7 +74,7 @@ export const useTelemetry = () => {
   // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
 
   const [currentUserPreferenceTelemetryValue] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
-    PREFERRED_TELEMETRY_USER_SETTING_KEY,
+    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
     null,
     true,
   );

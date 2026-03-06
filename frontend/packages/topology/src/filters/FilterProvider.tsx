@@ -1,11 +1,10 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useEffect, useCallback, createContext } from 'react';
-import { useUserPreferenceCompatibility } from '@console/shared';
-import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
+import { useUserPreference } from '@console/shared';
 import type { DisplayFilters } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from './const';
 
-const TOPOLOGY_DISPLAY_FILTERS_USER_SETTINGS_KEY = `devconsole.topology.filters`;
+const TOPOLOGY_DISPLAY_FILTERS_USER_PREFERENCE_KEY = `devconsole.topology.filters`;
 
 const getTopologyFilters = (appliedFilters: AppliedFilters) => {
   const filters = [...DEFAULT_TOPOLOGY_FILTERS];
@@ -38,9 +37,8 @@ const useFilterContextValues = (): [
   boolean,
   SetTopologyFilters,
 ] => {
-  const [appliedFilters, setAppliedFilters, appliedFiltersLoaded] = useUserPreferenceCompatibility(
-    TOPOLOGY_DISPLAY_FILTERS_USER_SETTINGS_KEY,
-    TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY,
+  const [appliedFilters, setAppliedFilters, appliedFiltersLoaded] = useUserPreference(
+    TOPOLOGY_DISPLAY_FILTERS_USER_PREFERENCE_KEY,
     getAppliedFilters(DEFAULT_TOPOLOGY_FILTERS),
   );
   const [filtersLoaded, setFiltersLoaded] = useState<boolean>(false);

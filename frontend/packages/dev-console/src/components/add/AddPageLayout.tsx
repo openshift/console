@@ -112,7 +112,7 @@ const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
       <PageHeading title={title} />
       <PageSection>
         {HelpText}
-        <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
+        <GettingStartedSection userPreferenceKey="devconsole.addPage.gettingStarted" />
         <AddCardSection
           addActionExtensions={filteredAddActionExtensions}
           addActionGroupExtensions={addActionGroupExtensions}

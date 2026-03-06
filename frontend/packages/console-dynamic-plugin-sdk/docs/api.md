@@ -2567,12 +2567,12 @@ A hook that provides a list of user-selected active TableColumns.
 
 ```tsx
   // See implementation for more details on TableColumn type
-  const [activeColumns, userSettingsLoaded] = useActiveColumns({
+  const [activeColumns, columnPreferenceLoaded] = useActiveColumns({
     columns,
     showNamespaceOverride: false,
     columnManagementID,
   });
-  return userSettingsLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+  return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
 ```
 
 
