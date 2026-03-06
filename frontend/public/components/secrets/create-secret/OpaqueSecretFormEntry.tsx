@@ -62,7 +62,8 @@ export const OpaqueSecretFormEntry: FC<OpaqueSecretFormEntryProps> = ({
       </FormGroup>
       <DroppableFileInput
         onChange={handleValueChange}
-        inputFileData={Base64.decode(entry.value)}
+        inputFileData={entry.isBinary_ ? entry.value : Base64.decode(entry.value)}
+        isBase64Input={entry.isBinary_}
         id={`${entry.uid}-value`}
         label={t('public~Value')}
         filenamePlaceholder={t(
