@@ -54,7 +54,7 @@ const enableDemoPlugin = (enable: boolean) => {
     });
   cy.log(`Running plugin test on ci using PLUGIN_PULL_SPEC: ${PLUGIN_PULL_SPEC}`);
   cy.byTestID(`${PLUGIN_NAME}-status`)
-    .should('include.text', enable ? 'loaded' : '-')
+    .should('include.text', enable ? 'Loaded' : '-')
     .then(() => {
       if (!enable) {
         cy.byLegacyTestID(PLUGIN_NAME).click();

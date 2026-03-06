@@ -47,6 +47,7 @@ const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
 
     case 'Pending':
+    case 'pending':
       return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
 
     case 'Planning':
@@ -88,6 +89,7 @@ const Status: React.FC<StatusProps> = ({
     case 'ErrImagePull':
     case 'Error':
     case 'Failed':
+    case 'failed':
     case 'Failure':
     case 'ImagePullBackOff':
     case 'InstallCheckFailed':
@@ -107,6 +109,7 @@ const Status: React.FC<StatusProps> = ({
     case 'Ready':
     case 'Up to date':
     case 'Loaded':
+    case 'loaded':
     case 'Provisioned as node':
     case 'Preferred':
     case 'Connected':
