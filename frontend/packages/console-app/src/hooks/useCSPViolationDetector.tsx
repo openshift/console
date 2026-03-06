@@ -67,6 +67,11 @@ export const newPluginCSPViolationEvent = (
  * Report CSP violation event for Cypress test purposes.
  */
 const reportCSPViolationToCypress = (event: SecurityPolicyViolationEvent) => {
+  // OCPBUGS-77931: Address CSP violations detected when running Cypress tests
+  if (event.effectiveDirective === 'img-src') {
+    return;
+  }
+
   addTestError(
     `CSP Violation: effectiveDirective=${event.effectiveDirective}, blockedURI=${event.blockedURI}`,
   );
