@@ -46,18 +46,33 @@ export * from './common-types';
 export * from './utils';
 
 /**
- * React hook for consuming Console extensions with resolved `CodeRef` properties.
- * This hook accepts the same argument(s) as `useExtensions` hook and returns an adapted list of extension instances, resolving all code references within each extension's properties.
- * Initially, the hook returns an empty array. Once the resolution is complete, the React component is re-rendered with the hook returning an adapted list of extensions.
- * When the list of matching extensions changes, the resolution is restarted. The hook will continue to return the previous result until the resolution completes.
- * The hook's result elements are guaranteed to be referentially stable across re-renders.
+ * React hook for consuming Console extensions containing code references.
+ *
+ * Initially, this hook returns a result tuple `[resolvedExtensions: [], resolved: false, errors: []]`.
+ *
+ * Once the resolution is complete, this hook re-renders the component with a result tuple containing
+ * all matching extensions that had their code references resolved successfully along with any errors
+ * that occurred during the process.
+ *
+ * When the list of matching extensions changes, the resolution is restarted. In such case, the hook
+ * will _not_ re-render the component with empty initial result since it's preferable to use existing
+ * state until the current resolution completes.
+ *
+ * The hook's result is guaranteed to be referentially stable across re-renders, assuming referential
+ * stability of the `predicate` parameter.
+ *
  * @example
  * ```ts
- * const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
- * // process adapted extensions and render your component
+ * const Example = () => {
+ *   const [navItems, navItemsResolved] = useResolvedExtensions(isNavItem);
+ *   // process extensions and render your component
+ * };
  * ```
- * @param typeGuards A list of callbacks that each accept a dynamic plugin extension as an argument and return a boolean flag indicating whether or not the extension meets desired type constraints
- * @returns Tuple containing a list of adapted extension instances with resolved code references, a boolean flag indicating whether the resolution is complete, and a list of errors detected during the resolution.
+ *
+ * @param predicate Predicate (type guard) to filter extensions of a specific type.
+ * @returns Tuple `[resolvedExtensions, resolved, errors]` containing a list of matching extensions,
+ * a boolean flag indicating whether the resolution is complete, and a list of errors detected during
+ * the resolution.
  */
 export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
   .useResolvedExtensions;

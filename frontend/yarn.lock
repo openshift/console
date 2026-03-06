@@ -3380,9 +3380,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@openshift/dynamic-plugin-sdk@npm:8.0.0"
+"@openshift/dynamic-plugin-sdk@file:../../dynamic-plugin-sdk/packages/lib-core::locator=openshift-console%40workspace%3A.":
+  version: 8.1.0
+  resolution: "@openshift/dynamic-plugin-sdk@file:../../dynamic-plugin-sdk/packages/lib-core#../../dynamic-plugin-sdk/packages/lib-core::hash=07ab8b&locator=openshift-console%40workspace%3A."
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
@@ -3390,7 +3390,7 @@ __metadata:
     yup: "npm:^1.7.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/a5c7bc5198f75fcc9fad242ffb51e264e860218e7035b87204d429cc47fa566208cc3474af739d3e05a2adc1bfe41ae9e09d3afd93a5b8c0d29f1814ee9f3127
+  checksum: 10c0/019198a5a5be99d8dd17557e19601a340672a8914c87c3d7672be626cb8751a69992f27ba41a47791a1309bbb722684d16c5356b89f15d580a2b24a49dc3f9de
   languageName: node
   linkType: hard
 
@@ -17801,7 +17801,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:^1.15.1"
     "@graphql-codegen/typescript-graphql-files-modules": "npm:^1.15.1"
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "file:../../dynamic-plugin-sdk/packages/lib-core"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
     "@patternfly/patternfly": "npm:~6.4.0"
     "@patternfly/quickstarts": "npm:~6.4.0"

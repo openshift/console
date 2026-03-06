@@ -1,10 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { isEncodedCodeRef, parseEncodedCodeRef } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import {
-  isEncodedCodeRef,
-  parseEncodedCodeRefValue,
-} from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
 import type { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
 import type { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
@@ -90,16 +87,17 @@ export const getExecutableCodeRefSource = (
   pkg: PluginPackage,
   validationResult: ValidationResult,
 ) => {
-  const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
-  const exposedModules = pkg.consolePlugin.exposedModules || {};
-
   const errorTrace = `in property '${propName}'`;
   const emptyCodeRefSource = '() => Promise.resolve(null)';
+  const refData = parseEncodedCodeRef(ref);
 
-  if (!moduleName || !exportName) {
+  if (!refData) {
     validationResult.addError(`Invalid code reference '${ref.$codeRef}' ${errorTrace}`);
     return emptyCodeRefSource;
   }
+
+  const [moduleName, exportName] = refData;
+  const exposedModules = pkg.consolePlugin.exposedModules || {};
 
   if (!exposedModules[moduleName]) {
     validationResult.addError(`Module '${moduleName}' is not exposed ${errorTrace}`);
