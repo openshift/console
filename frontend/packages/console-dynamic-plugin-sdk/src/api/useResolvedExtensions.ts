@@ -1,42 +1,15 @@
-import { useState, useEffect } from 'react';
+import type { UseResolvedExtensionsOptions as UseResolvedExtensionsOptionsSDK } from '@openshift/dynamic-plugin-sdk';
+import { useResolvedExtensions as useResolvedExtensionsSDK } from '@openshift/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { resolveExtension } from '../coderefs/coderef-resolver';
 import type { UseResolvedExtensions } from '../extensions/console-types';
-import type { Extension, ExtensionTypeGuard, ResolvedExtension } from '../types';
-import { settleAllPromises } from '../utils/promise';
+import type { Extension, ExtensionPredicate, ResolvedExtension } from '../types';
+
+const hookOptions: UseResolvedExtensionsOptionsSDK = {
+  useExtensionsImpl: useExtensions,
+};
 
 export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
+  predicate: ExtensionPredicate<E>,
 ): [ResolvedExtension<E>[], boolean, any[]] => {
-  const extensions = useExtensions<E>(...typeGuards);
-
-  const [resolvedExtensions, setResolvedExtensions] = useState<ResolvedExtension<E>[]>([]);
-  const [resolved, setResolved] = useState<boolean>(false);
-  const [errors, setErrors] = useState<any[]>([]);
-
-  useEffect(() => {
-    let disposed = false;
-
-    // eslint-disable-next-line promise/catch-or-return
-    settleAllPromises(
-      extensions.map((e) => resolveExtension<typeof e, any, ResolvedExtension<E>>(e)),
-    ).then(([fulfilledValues, rejectedReasons]) => {
-      if (!disposed) {
-        setResolvedExtensions(fulfilledValues);
-        setErrors(rejectedReasons);
-        setResolved(true);
-
-        if (rejectedReasons.length > 0) {
-          // eslint-disable-next-line no-console
-          console.error('Detected errors while resolving Console extensions', rejectedReasons);
-        }
-      }
-    });
-
-    return () => {
-      disposed = true;
-    };
-  }, [extensions]);
-
-  return [resolvedExtensions, resolved, errors];
+  return useResolvedExtensionsSDK(predicate, hookOptions);
 };
