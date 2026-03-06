@@ -16,9 +16,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import * as Modal from 'react-modal';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import { unstable_HistoryRouter as UnstableHistoryRouter } from 'react-router-dom';
 import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
-import { useParams, useLocation, Routes, Route } from 'react-router-dom-v5-compat';
+import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
 import store, { applyReduxExtensions, RootState } from '../redux';
 import { useTranslation } from 'react-i18next';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
@@ -31,7 +30,6 @@ import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
-import { history } from './utils/router';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
@@ -382,7 +380,7 @@ const AppRouter: FC = () => {
   );
 
   return (
-    <UnstableHistoryRouter history={history} basename={window.SERVER_FLAGS.basePath}>
+    <BrowserRouter basename={window.SERVER_FLAGS.basePath}>
       <Routes>
         {/*
           Treat the authentication error page as a standalone route.
@@ -392,7 +390,7 @@ const AppRouter: FC = () => {
         {standaloneRoutes}
         <Route path="/*" element={<AppWithExtensions />} />
       </Routes>
-    </UnstableHistoryRouter>
+    </BrowserRouter>
   );
 };
 

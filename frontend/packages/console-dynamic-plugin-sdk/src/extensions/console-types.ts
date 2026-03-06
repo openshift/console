@@ -17,7 +17,7 @@ import type {
 } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import type { To } from 'react-router-dom-v5-compat';
+import type { To } from 'react-router';
 import type {
   ExtensionK8sGroupKindModel,
   K8sModel,
