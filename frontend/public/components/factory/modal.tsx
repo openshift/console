@@ -1,36 +1,11 @@
 import { css } from '@patternfly/react-styles';
 import * as Modal from 'react-modal';
-import type { SyntheticEvent, FC, ReactNode, ReactElement, ComponentType } from 'react';
+import type { SyntheticEvent, FC, ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Content, ContentVariants } from '@patternfly/react-core';
 import CloseButton from '@console/shared/src/components/close-button';
-import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
-import { history } from '../utils/router';
-import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
-import { pluginStore } from '@console/internal/plugins';
-
-/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
-export const createModal: CreateModal = (getModalElement) => {
-  const containerElement = document.getElementById('modal-container');
-  const result = new Promise<void>((resolve) => {
-    const closeModal = (e?: SyntheticEvent) => {
-      if (e && e.stopPropagation) {
-        e.stopPropagation();
-      }
-      ReactDOM.unmountComponentAtNode(containerElement);
-      resolve();
-    };
-    // Modal app element is now set globally in App component
-    containerElement && ReactDOM.render(getModalElement(closeModal), containerElement);
-  });
-  return { result };
-};
 
 /** @deprecated Use PF modals instead */
 export const ModalWrapper: FC<ModalWrapperProps> = ({ blocking, className, children, onClose }) => {
@@ -53,44 +28,15 @@ export const ModalWrapper: FC<ModalWrapperProps> = ({ blocking, className, child
   );
 };
 
-/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
-export const createModalLauncher: CreateModalLauncher = (Component, modalWrapper = true) => ({
-  blocking,
-  modalClassName,
-  close,
-  cancel,
-  ...props
-}) => {
-  const getModalContainer: GetModalContainer = (onClose) => {
-    const handleClose = (e: SyntheticEvent) => {
-      onClose?.(e);
-      close?.();
-    };
-    const handleCancel = (e: SyntheticEvent) => {
-      cancel?.();
-      handleClose(e);
-    };
-
-    return (
-      <Provider store={store}>
-        <PluginStoreProvider store={pluginStore}>
-          <Router {...{ history, basename: window.SERVER_FLAGS.basePath }}>
-            <CompatRouter>
-              {modalWrapper ? (
-                <ModalWrapper blocking={blocking} className={modalClassName} onClose={handleClose}>
-                  <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-                </ModalWrapper>
-              ) : (
-                <Component {...(props as any)} cancel={handleCancel} close={handleClose} />
-              )}
-            </CompatRouter>
-          </Router>
-        </PluginStoreProvider>
-      </Provider>
-    );
-  };
-  return createModal(getModalContainer);
-};
+/**
+ * @deprecated Use the useOverlay/OverlayComponent pattern instead.
+ * This is a temporary no-op stub kept only for backward compatibility while
+ * consumer migration PRs are in flight. It will be removed once all consumers
+ * have been migrated. See CONSOLE-5068.
+ */
+export const createModalLauncher: CreateModalLauncher = () => () => ({
+  result: Promise.resolve({}),
+});
 
 /** @deprecated Use PF modals instead */
 export const ModalTitle: FC<ModalTitleProps> = ({
@@ -238,16 +184,6 @@ export type ModalWrapperProps = {
   onClose?: (event?: SyntheticEvent) => void;
 };
 
-/** @deprecated Use dynamic plugin sdk 'useModal' hook instead */
-export type GetModalContainer = (onClose: (e?: SyntheticEvent) => void) => ReactElement;
-
-type CreateModal = (getModalContainer: GetModalContainer) => { result: Promise<any> };
-
-export type CreateModalLauncherProps = {
-  blocking?: boolean;
-  modalClassName?: string;
-};
-
 export type ModalComponentProps = {
   cancel?: () => void;
   close?: () => void;
@@ -288,6 +224,13 @@ export type ModalSubmitFooterProps = {
   ariaLabel?: string;
 };
 
+/** @deprecated Will be removed in CONSOLE-5068 */
+export type CreateModalLauncherProps = {
+  blocking?: boolean;
+  modalClassName?: string;
+};
+
+/** @deprecated Will be removed in CONSOLE-5068 */
 export type CreateModalLauncher = <P extends ModalComponentProps>(
   C: ComponentType<P>,
   modalWrapper?: boolean,
