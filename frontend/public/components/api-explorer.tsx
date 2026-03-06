@@ -437,7 +437,11 @@ const APIResourcesList = compose(
             />
           </ToolbarItem>
           <ToolbarItem variant="pagination">
-            <Pagination itemCount={sortedResources.length} {...pagination} />
+            <Pagination
+              itemCount={sortedResources.length}
+              titles={{ ofWord: t('public~of') }}
+              {...pagination}
+            />
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
@@ -837,7 +841,11 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
             />
           </FlexItem>
           <FlexItem align={{ default: 'alignRight' }}>
-            <Pagination itemCount={filteredData.length} {...pagination} />
+            <Pagination
+              itemCount={filteredData.length}
+              titles={{ ofWord: t('public~of') }}
+              {...pagination}
+            />
           </FlexItem>
         </Flex>
         <RowFilter
