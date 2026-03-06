@@ -39,6 +39,7 @@ const Details: React.FCC<DetailsProps> = (props) => {
     resourceKind: AlertmanagerModel,
     resource: alertManager,
     titleKey: 'public~Edit Alertmanager replicas',
+    // t('public~Alertmanager maintains the proper number of healthy replicas.')
     messageKey: 'public~Alertmanager maintains the proper number of healthy replicas.',
     path: '/spec/replicas',
     buttonTextKey: 'public~Save',
