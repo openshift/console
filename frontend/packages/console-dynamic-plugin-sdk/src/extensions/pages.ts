@@ -20,20 +20,22 @@ type RoutePageProperties = {
   perspective?: string;
   /** The component to be rendered when the route matches. */
   component: CodeRef<React.ComponentType>;
-  /** Valid URL path or array of paths. Note that React Router v6 does not use path-to-regexp. */
+  /** Valid URL path or array of paths. Note that React Router v7 does not use path-to-regexp. */
   path: string | string[];
   /** When true, will only match if the path matches the URL exactly. */
   exact?: boolean;
 };
 
 /**
- * Adds new page to Console router. Under the hood we use [React Router v6](https://reactrouter.com/docs/en/v6).
+ * Adds new page to Console router.
  *
- * Note that React Router v6 no longer supports passing a string array to the Route `path` prop.
+ * Under the hood we use [React Router](https://reactrouter.com/7.13.1).
+ *
+ * Note that React Router v7 no longer supports passing a string array to the Route `path` prop.
  * In Console, we retain this functionality by rendering multiple Route instances. Make sure to
  * use `exact: true` or sort your Route path values from most specific to least specific.
  *
- * Also note that React Router v6 no longer supports Route `exact` prop - all paths are matched
+ * Also note that React Router v7 no longer supports Route `exact` prop - all paths are matched
  * exactly by default. In Console, we retain the original behavior for backwards compatibility,
  * i.e. use `exact: true` unless you want to match more of the URL.
  *
@@ -73,8 +75,7 @@ export type ResourceTabPage = Extension<
 /**
  * Adds new standalone page (rendered outside the common page layout) to Console router.
  *
- * Under the hood we use React Router.
- * See https://v5.reactrouter.com/
+ * Under the hood we use [React Router](https://reactrouter.com/7.13.1).
  */
 export type StandaloneRoutePage = Extension<
   'console.page/route/standalone',

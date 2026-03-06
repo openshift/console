@@ -50,8 +50,8 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   'react-i18next': {},
   'react-redux': {},
   'react-router': {},
-  'react-router-dom': {},
-  'react-router-dom-v5-compat': {}, // Alias of react-router-dom
+  'react-router-dom': {}, // Deprecated; re-export of react-router
+  'react-router-dom-v5-compat': {}, // Deprecated; aliased to react-router-dom
   redux: {},
   'redux-thunk': {},
 };
