@@ -17893,7 +17893,6 @@ __metadata:
     react-router: "npm:6.29.x"
     react-router-dom: "npm:6.29.x"
     react-router-dom-v5-compat: "npm:^6.11.2"
-    react-router-hash-link: "npm:^2.0.0"
     react-svg: "npm:^16.2.0"
     react-tagsinput: "npm:3.20.x"
     react-virtualized: "npm:9.x"
@@ -19487,18 +19486,6 @@ __metadata:
     react: ">=16.8"
     react-dom: ">=16.8"
   checksum: 10c0/f89f922006b6ff896ba81d82088812e42ae56790ccb838e7041eebe0f7d36ac2a4eca56512a422da4249cca23f389f998e84cf8ff868d4a83defd72951b8fbf9
-  languageName: node
-  linkType: hard
-
-"react-router-hash-link@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "react-router-hash-link@npm:2.0.0"
-  dependencies:
-    prop-types: "npm:^15.6.0"
-  peerDependencies:
-    react: ">=15"
-    react-router-dom: ">=4"
-  checksum: 10c0/83cfef0fd44e100664aba3151e0fca868a45c80292dd7f2f1c3577a9a217fd05b923c6f4a8a60859c5bc550688bd88fbce92b50f5338196e196a66cdb749cfe8
   languageName: node
   linkType: hard
 
