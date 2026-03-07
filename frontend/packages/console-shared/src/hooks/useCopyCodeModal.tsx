@@ -1,12 +1,15 @@
 import { useCallback } from 'react';
+import { Modal, ModalHeader, ModalBody, ModalVariant } from '@patternfly/react-core';
 import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
-import { Modal } from '@console/shared/src/components/modal';
 import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const CopyCodeModal: CopyCodeModalComponent = ({ title, snippet, closeModal }) => (
-  <Modal isOpen onClose={closeModal} title={title} variant="medium">
-    <CopyToClipboard key={snippet} value={snippet} />
+  <Modal isOpen onClose={closeModal} variant={ModalVariant.medium}>
+    <ModalHeader title={title} />
+    <ModalBody>
+      <CopyToClipboard key={snippet} value={snippet} />
+    </ModalBody>
   </Modal>
 );
 
