@@ -169,7 +169,7 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
         <Button
           key="cancel-action"
           type="button"
-          variant="secondary"
+          variant="link"
           disabled={inProgress}
           onClick={closeModal}
           data-test-id="modal-cancel-action"
