@@ -1,3 +1,4 @@
+inheritance: true
 tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
 
 early_access: false
