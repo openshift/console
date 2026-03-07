@@ -94,7 +94,7 @@ describe('Project Access', () => {
       roleBindings: {
         data: [],
         loaded: false,
-        loadError: {},
+        loadError: undefined,
       },
       roles: {
         data: defaultAccessRoles,
