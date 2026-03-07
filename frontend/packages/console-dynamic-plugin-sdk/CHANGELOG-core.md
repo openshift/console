@@ -37,6 +37,12 @@ table in [Console dynamic plugins README](./README.md).
 - Add support for the updated `React.FC` type in `@types/react` version 18 ([CONSOLE-4630], [#15893])
 - Make all Console-provided shared modules optional peer dependencies ([CONSOLE-5050], [#15934])
 
+## 4.21.0 - 2026-03-09
+
+> Initial release for OCP Console 4.21.
+
+- Renamed the "Administrator" perspective to "Core platform" ([OCPBUGS-62126], [#15786])
+
 ## 4.21.0-prerelease.1 - 2025-12-04
 
 - **Deprecated**: `setPluginStore` function in `k8s-utils.ts`. The function is now a noop and the export
@@ -196,6 +202,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-37426]: https://issues.redhat.com/browse/OCPBUGS-37426
 [OCPBUGS-43538]: https://issues.redhat.com/browse/OCPBUGS-43538
 [OCPBUGS-43998]: https://issues.redhat.com/browse/OCPBUGS-43998
+[OCPBUGS-44612]: https://issues.redhat.com/browse/OCPBUGS-44612
 [OCPBUGS-45297]: https://issues.redhat.com/browse/OCPBUGS-45297
 [OCPBUGS-45319]: https://issues.redhat.com/browse/OCPBUGS-45319
 [OCPBUGS-49709]: https://issues.redhat.com/browse/OCPBUGS-49709
@@ -207,7 +214,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
-[OCPBUGS-44612]: https://issues.redhat.com/browse/OCPBUGS-44612
+[OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -253,6 +260,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735
 [#15778]: https://github.com/openshift/console/pull/15778
+[#15786]: https://github.com/openshift/console/pull/15786
 [#15893]: https://github.com/openshift/console/pull/15893
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
