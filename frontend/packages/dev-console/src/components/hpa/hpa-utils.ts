@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { omit, merge } from 'lodash';
+import { merge } from 'lodash';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
 import type {
@@ -93,7 +93,13 @@ export const sanitizeHPAToForm = (
   resource: K8sResourceKind,
 ): HorizontalPodAutoscalerKind => {
   // Remove the default metrics as the user may be crafting their own custom ones
-  const defaultHPA: HorizontalPodAutoscalerKind = omit(getFormData(resource), 'spec.metrics');
+  const formData = getFormData(resource);
+  const { metrics: _metrics, ...specWithoutMetrics } = formData.spec;
+  const defaultHPA: HorizontalPodAutoscalerKind = {
+    ...formData,
+    spec: specWithoutMetrics,
+  };
+
   return merge({}, defaultHPA, newFormData);
 };
 
