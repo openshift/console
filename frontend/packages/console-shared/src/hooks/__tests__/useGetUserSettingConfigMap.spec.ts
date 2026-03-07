@@ -8,7 +8,7 @@ import { useGetUserSettingConfigMap } from '../useGetUserSettingConfigMap';
 
 // Mock dependencies
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),

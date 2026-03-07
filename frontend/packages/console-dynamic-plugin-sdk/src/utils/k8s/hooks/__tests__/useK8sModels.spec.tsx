@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { receivedResources } from '@console/internal/actions/k8s';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { SDKReducers } from '../../../../app';

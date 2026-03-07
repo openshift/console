@@ -23,7 +23,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
   default: () => ['dev', jest.fn()],
 }));
 
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useSelector as jest.MockedFunction<typeof useSelector>;
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 const useUserPreferenceCompatibilityMock = useUserPreferenceCompatibility as jest.Mock;
 
