@@ -3,11 +3,22 @@ import { useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { FormGroup, Radio } from '@patternfly/react-core';
+import {
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  Radio,
+  TextInput,
+} from '@patternfly/react-core';
 
 import { K8sKind, k8sList, k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../models';
-import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceIcon, ResourceName } from '../utils/resource-icon';
 import { resourcePathFromModel } from '../utils/resource-link';
@@ -16,6 +27,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalCallback } from './types';
+import type { ModalComponentProps } from '../factory';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>
@@ -167,132 +180,145 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
   const selectWorkloadPlaceholder = t('public~Select a workload');
 
   return (
-    <form
-      onSubmit={submit}
-      name="co-add-secret-to-workload"
-      className="co-add-secret-to-workload modal-content"
-    >
-      <ModalTitle>{t('public~Add secret to workload')}</ModalTitle>
+    <>
+      <ModalHeader title={t('public~Add secret to workload')} data-test-id="modal-title" />
       <ModalBody>
-        <p className="modal-paragraph">
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             Add all values from <ResourceIcon kind="Secret" />
             {{ secretName }} to a workload as environment variables or a volume.
           </Trans>
-        </p>
-        <div className="form-group">
-          <label className="co-required" htmlFor="co-add-secret-to-workload__workload">
-            {t('public~Add this secret to workload')}
-          </label>
-          <ConsoleSelect
-            items={workloadOptions}
-            selectedKey={selectedWorkloadUID}
-            title={selectWorkloadPlaceholder}
-            onChange={onWorkloadChange}
-            autocompleteFilter={autocompleteFilter}
-            autocompletePlaceholder={selectWorkloadPlaceholder}
-            id="co-add-secret-to-workload__workload"
-            data-test="add-secret-to-workload-button"
-          />
-        </div>
-        <fieldset>
-          <legend className="co-legend co-required">{t('public~Add secret as')}</legend>
-          <div className="pf-v6-c-form">
-            <FormGroup
-              role="radiogroup"
-              fieldId="co-add-secret-to-workload"
-              isStack
-              className="form-group"
-            >
-              <Radio
-                id="co-add-secret-to-workload__envvars"
-                name="co-add-secret-to-workload__add-as"
-                label={t('public~Environment variables')}
-                value="environment"
-                onChange={onAddAsChange}
-                isChecked={addAsEnvironment}
-                data-test="Environment variables-radio-input"
-                data-checked-state={addAsEnvironment}
-              />
-              {addAsEnvironment && (
-                <div className="co-m-radio-desc">
-                  <div className="form-group">
-                    <label htmlFor="co-add-secret-to-workload__prefix">{t('public~Prefix')}</label>
-                    <span className="pf-v6-c-form-control">
-                      <input
-                        name="prefix"
-                        id="co-add-secret-to-workload__prefix"
-                        data-test="add-secret-to-workload-prefix"
-                        placeholder="(optional)"
-                        type="text"
-                        onChange={(e) => setPrefix(e.currentTarget.value)}
-                      />
-                    </span>
-                  </div>
-                </div>
-              )}
-              <Radio
-                id="co-add-secret-to-workload__volume"
-                name="co-add-secret-to-workload__add-as"
-                label={t('public~Volume')}
-                value="volume"
-                onChange={onAddAsChange}
-                isChecked={addAsVolume}
-                data-test="Volume-radio-input"
-                data-checked-state={addAsVolume}
-              />
-              {addAsVolume && (
-                <div className="co-m-radio-desc">
-                  <div className="form-group">
-                    <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
-                      {t('public~Mount path')}
-                    </label>
-                    <span className="pf-v6-c-form-control">
-                      <input
-                        name="mountPath"
-                        id="co-add-secret-to-workload__mountpath"
-                        data-test="add-secret-to-workload-mountpath"
-                        type="text"
-                        onChange={(e) => setMountPath(e.currentTarget.value)}
-                        required
-                      />
-                    </span>
-                  </div>
-                </div>
-              )}
-            </FormGroup>
-          </div>
-        </fieldset>
+        </Content>
+        <Form id="co-add-secret-to-workload" onSubmit={submit}>
+          <FormGroup
+            label={t('public~Add this secret to workload')}
+            isRequired
+            fieldId="co-add-secret-to-workload__workload"
+          >
+            <ConsoleSelect
+              items={workloadOptions}
+              selectedKey={selectedWorkloadUID}
+              title={selectWorkloadPlaceholder}
+              onChange={onWorkloadChange}
+              autocompleteFilter={autocompleteFilter}
+              autocompletePlaceholder={selectWorkloadPlaceholder}
+              id="co-add-secret-to-workload__workload"
+              data-test="add-secret-to-workload-button"
+            />
+          </FormGroup>
+          <FormGroup
+            label={t('public~Add secret as')}
+            isRequired
+            role="radiogroup"
+            fieldId="co-add-secret-to-workload"
+            isStack
+          >
+            <Radio
+              id="co-add-secret-to-workload__envvars"
+              name="co-add-secret-to-workload__add-as"
+              label={t('public~Environment variables')}
+              value="environment"
+              onChange={onAddAsChange}
+              isChecked={addAsEnvironment}
+              data-test="Environment variables-radio-input"
+              data-checked-state={addAsEnvironment}
+              body={
+                addAsEnvironment && (
+                  <FormGroup label={t('public~Prefix')} fieldId="co-add-secret-to-workload__prefix">
+                    <TextInput
+                      name="prefix"
+                      id="co-add-secret-to-workload__prefix"
+                      data-test="add-secret-to-workload-prefix"
+                      placeholder="(optional)"
+                      type="text"
+                      value={prefix}
+                      onChange={(_event, value) => setPrefix(value)}
+                    />
+                  </FormGroup>
+                )
+              }
+            />
+            <Radio
+              id="co-add-secret-to-workload__volume"
+              name="co-add-secret-to-workload__add-as"
+              label={t('public~Volume')}
+              value="volume"
+              onChange={onAddAsChange}
+              isChecked={addAsVolume}
+              data-test="Volume-radio-input"
+              data-checked-state={addAsVolume}
+              body={
+                addAsVolume && (
+                  <FormGroup
+                    label={t('public~Mount path')}
+                    isRequired
+                    fieldId="co-add-secret-to-workload__mountpath"
+                  >
+                    <TextInput
+                      name="mountPath"
+                      id="co-add-secret-to-workload__mountpath"
+                      data-test="add-secret-to-workload-mountpath"
+                      type="text"
+                      value={mountPath}
+                      onChange={(_event, value) => setMountPath(value)}
+                      isRequired
+                    />
+                  </FormGroup>
+                )
+              }
+            />
+          </FormGroup>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={props.cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          onClick={submit}
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+          form="co-add-secret-to-workload"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const AddSecretToWorkloadModalProvider: OverlayComponent<AddSecretToWorkloadModalProps> = (
+export const AddSecretToWorkloadModalOverlay: OverlayComponent<AddSecretToWorkloadModalProps> = (
   props,
 ) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <AddSecretToWorkloadModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <AddSecretToWorkloadModal close={handleClose} cancel={handleClose} {...props} />
+    </Modal>
+  ) : null;
 };
 
 export const useAddSecretToWorkloadModalLauncher = (
   props: AddSecretToWorkloadModalProps,
 ): ModalCallback => {
-  const launcher = useOverlay();
+  const launchModal = useOverlay();
 
-  return useCallback(
-    () => launcher<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalProvider, props),
-    [launcher, props],
-  );
+  return useCallback(() => {
+    // Move focus away from the triggering element to prevent aria-hidden warning
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    return launchModal<AddSecretToWorkloadModalProps>(AddSecretToWorkloadModalOverlay, props);
+  }, [launchModal, props]);
 };
 
 type WorkloadItem = {
@@ -303,10 +329,7 @@ type WorkloadItem = {
 export type AddSecretToWorkloadModalProps = {
   secretName: string;
   namespace: string;
-  cancel?: () => void;
-  close?: () => void;
-  blocking?: boolean;
-};
+} & ModalComponentProps;
 
 export type AddSecretToWorkloadModalState = {
   inProgress: boolean;

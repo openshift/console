@@ -1,18 +1,21 @@
 import type { FC } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import {
-  ModalTitle,
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  Modal,
   ModalBody,
-  ModalSubmitFooter,
-  ModalComponentProps,
-  ModalWrapper,
-} from '../factory/modal';
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-
+import { ModalComponentProps } from '../factory/modal';
 import { ResourceLink } from '../utils/resource-link';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   const submit = (event) => {
@@ -24,36 +27,57 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
   const { owner, resource } = props;
   const { t } = useTranslation();
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('public~Managed resource')}
-      </ModalTitle>
-      <ModalBody className="modal-body">
-        <Trans t={t} ns="public">
-          This resource is managed by{' '}
-          <ResourceLink
-            className="modal__inline-resource-link"
-            inline
-            kind={referenceForOwnerRef(owner)}
-            name={owner.name}
-            namespace={resource.metadata.namespace}
-          />{' '}
-          and any modifications may be overwritten. Edit the managing resource to preserve changes.
-        </Trans>
+    <>
+      <ModalHeader title={t('public~Managed resource')} titleIconVariant="warning" />
+      <ModalBody>
+        <Form id="managed-resource-save-form" onSubmit={submit}>
+          <Content component={ContentVariants.p}>
+            <Trans t={t} ns="public">
+              This resource is managed by{' '}
+              <ResourceLink
+                className="modal__inline-resource-link"
+                inline
+                kind={referenceForOwnerRef(owner)}
+                name={owner.name}
+                namespace={resource.metadata.namespace}
+              />{' '}
+              and any modifications may be overwritten. Edit the managing resource to preserve
+              changes.
+            </Trans>
+          </Content>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter submitText={t('public~Save')} cancel={props.close} inProgress={false} />
-    </form>
+      <ModalFooterWithAlerts>
+        <Button
+          type="submit"
+          variant="primary"
+          data-test="confirm-action"
+          form="managed-resource-save-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={props.close} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const ManagedResourceSaveModalOverlay: OverlayComponent<ManagedResourceSaveModalProps> = (
   props,
 ) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <ManagedResourceSaveModal {...props} close={props.closeOverlay} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <ManagedResourceSaveModal {...props} close={handleClose} />
+    </Modal>
+  ) : null;
 };
 
 type ManagedResourceSaveModalProps = {

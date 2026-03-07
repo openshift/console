@@ -15,7 +15,6 @@ export * from './virtualized-grid';
 export * from './alerts';
 export * from './popover';
 export * from './utils';
-export * from './modal';
 export * from './modals';
 export * from './hpa';
 export * from './multi-tab-list';
