@@ -70,7 +70,7 @@ describe('Status descriptor details items', () => {
 
       const link = screen.getByRole('link', { name: 'someservice' });
       expect(link).toBeVisible();
-      expect(link).toHaveAttribute('href', expect.stringContaining('/services/'));
+      expect(link).toHaveAttribute('href', expect.stringContaining('/core~v1~Service/'));
       expect(link).toHaveAttribute('href', expect.stringContaining('someservice'));
     });
   });

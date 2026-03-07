@@ -95,7 +95,10 @@ describe('Spec descriptors', () => {
 
       const namespaceLink = screen.getByRole('link', { name: 'default' });
       expect(namespaceLink).toBeVisible();
-      expect(namespaceLink).toHaveAttribute('href', expect.stringContaining('/namespaces/default'));
+      expect(namespaceLink).toHaveAttribute(
+        'href',
+        expect.stringContaining('/core~v1~Namespace/default'),
+      );
     });
 
     it('should render a resource requirements control when descriptor has resourceRequirements capability', () => {
@@ -126,7 +129,7 @@ describe('Spec descriptors', () => {
 
       const serviceLink = screen.getByRole('link', { name: OBJ.spec.resourceLink });
       expect(serviceLink).toBeVisible();
-      expect(serviceLink).toHaveAttribute('href', expect.stringContaining('/services/'));
+      expect(serviceLink).toHaveAttribute('href', expect.stringContaining('/core~v1~Service/'));
       expect(serviceLink).toHaveAttribute('href', expect.stringContaining('my-service'));
     });
 

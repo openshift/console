@@ -23,8 +23,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 const modelKey = (model: K8sKind): string => {
-  // TODO: Use `referenceForModel` even for known API objects
-  return model.crd ? referenceForModel(model) : model.kind;
+  return referenceForModel(model);
 };
 
 export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {

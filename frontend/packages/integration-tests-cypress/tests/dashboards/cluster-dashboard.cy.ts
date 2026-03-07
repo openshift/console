@@ -91,15 +91,15 @@ describe('Cluster dashboard', () => {
     it('has all items', () => {
       cy.byLegacyTestID('inventory-card').should('be.visible');
       const inventoryItems = [
-        { title: 'Node', link: '/k8s/cluster/nodes' },
-        { title: 'Pod', link: '/k8s/all-namespaces/pods' },
+        { title: 'Node', link: '/k8s/cluster/core~v1~Node' },
+        { title: 'Pod', link: '/k8s/all-namespaces/core~v1~Pod' },
         {
           title: 'StorageClass',
-          link: '/k8s/cluster/storageclasses',
+          link: '/k8s/cluster/storage.k8s.io~v1~StorageClass',
         },
         {
           title: 'PersistentVolumeClaim',
-          link: '/k8s/all-namespaces/persistentvolumeclaims',
+          link: '/k8s/all-namespaces/core~v1~PersistentVolumeClaim',
         },
       ];
       inventoryItems.forEach((item, i) => {

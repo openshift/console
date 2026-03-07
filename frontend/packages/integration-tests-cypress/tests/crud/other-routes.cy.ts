@@ -22,15 +22,15 @@ describe('Visiting other routes', () => {
       },
     },
     {
-      path: '/k8s/cluster/clusterroles/view',
+      path: '/k8s/cluster/rbac.authorization.k8s.io~v1~ClusterRole/view',
       waitFor: () => cy.get('[data-test="page-heading"] h1').should('exist'),
     },
     {
-      path: '/k8s/cluster/nodes',
+      path: '/k8s/cluster/core~v1~Node',
       waitFor: () => listPage.dvRows.shouldBeLoaded(),
     },
     {
-      path: '/k8s/all-namespaces/events',
+      path: '/k8s/all-namespaces/core~v1~Event',
       waitFor: () => cy.get('[role="row"]').should('be.visible'),
     },
     {
@@ -136,7 +136,7 @@ describe('Test perspective query parameters', () => {
 
   beforeEach(() => {
     cy.initAdmin();
-    cy.visit('/k8s/cluster/projects');
+    cy.visit('/k8s/cluster/project.openshift.io~v1~Project');
     listPage.dvRows.shouldBeLoaded();
     checkDeveloperPerspective();
   });

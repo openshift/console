@@ -12,7 +12,7 @@ describe('Interacting with the environment variable editor', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
     listPage.clickCreateYAMLbutton();
     cy.byTestID('yaml-view-input').click();
     yamlEditor.isLoaded();
@@ -38,7 +38,7 @@ describe('Interacting with the environment variable editor', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/environment`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment/${WORKLOAD_NAME}/environment`);
   });
 
   afterEach(() => {

@@ -23,11 +23,11 @@ describe('Deployment resource details page', () => {
     });
     // Create an HorizontalPodAutoscaler using the cli that autoscales the deployment foo
     cy.exec(CREATE_HPA, { failOnNonZeroExit: false });
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
   });
 
   beforeEach(() => {
-    cy.visitAndWait(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
+    cy.visitAndWait(`/k8s/ns/${testName}/apps~v1~Deployment/${WORKLOAD_NAME}`);
     detailsPage.isLoaded();
   });
 
@@ -36,7 +36,7 @@ describe('Deployment resource details page', () => {
   });
 
   after(() => {
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName(WORKLOAD_NAME);
     listPage.dvRows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');

@@ -32,10 +32,20 @@ describe('resourcePathFromModel', () => {
     });
   };
 
-  testResourcePath(ClusterRoleModel, 'my-role', null, '/k8s/cluster/clusterroles/my-role');
-  testResourcePath(ClusterRoleModel, null, null, '/k8s/cluster/clusterroles');
-  testResourcePath(PodModel, 'my-pod', 'my-project', '/k8s/ns/my-project/pods/my-pod');
-  testResourcePath(PodModel, null, null, '/k8s/all-namespaces/pods');
+  testResourcePath(
+    ClusterRoleModel,
+    'my-role',
+    null,
+    '/k8s/cluster/rbac.authorization.k8s.io~v1~ClusterRole/my-role',
+  );
+  testResourcePath(
+    ClusterRoleModel,
+    null,
+    null,
+    '/k8s/cluster/rbac.authorization.k8s.io~v1~ClusterRole',
+  );
+  testResourcePath(PodModel, 'my-pod', 'my-project', '/k8s/ns/my-project/core~v1~Pod/my-pod');
+  testResourcePath(PodModel, null, null, '/k8s/all-namespaces/core~v1~Pod');
   testResourcePath(
     MachineModel,
     'my-machine',

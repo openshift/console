@@ -142,7 +142,7 @@ describe('YAML Editor Settings', () => {
       yamlEditor.verifyFontSizeInEditor(20);
 
       // Navigate to a pod YAML page
-      cy.visit('/k8s/ns/openshift-console/pods');
+      cy.visit('/k8s/ns/openshift-console/core~v1~Pod');
       listPage.dvRows.shouldBeLoaded();
       listPage.dvRows.clickFirstLinkInFirstRow();
       detailsPage.selectTab('YAML');

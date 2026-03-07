@@ -38,7 +38,7 @@ describe('Namespace', () => {
     cy.testA11y('Create Namespace modal');
     modal.submit();
     modal.shouldBeClosed();
-    cy.url().should('include', `/k8s/cluster/namespaces/${newName}`);
+    cy.url().should('include', `/k8s/cluster/core~v1~Namespace/${newName}`);
 
     cy.log('delete the Namespace');
     nav.sidenav.clickNavLink(['Administration', 'Namespaces']);

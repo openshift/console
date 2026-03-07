@@ -7,9 +7,16 @@ import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { ConnectedPageHeading } from '@console/internal/components/utils/headings';
-import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
+import {
+  ObjectMetadata,
+  PodKind,
+  k8sCreate,
+  k8sKillByName,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
+
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
@@ -201,7 +208,7 @@ export const DebugTerminalPage: FC<DebugTerminalPageProps> = () => {
         kind="Pod"
         obj={{ data: podData }}
         breadcrumbs={[
-          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(params, referenceForModel(PodModel)) },
           {
             name: podName,
             path: resourcePath('Pod', podName, ns),

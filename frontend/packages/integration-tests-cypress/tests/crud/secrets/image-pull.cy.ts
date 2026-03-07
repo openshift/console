@@ -15,7 +15,7 @@ describe('Image pull secrets', () => {
     if (this.currentTest?.title === 'Passwords entered on the console are obfuscated') {
       return;
     }
-    cy.visit(`/k8s/ns/${testName}/secrets/`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Secret/`);
     secrets.clickCreateSecretDropdownButton('image');
   });
 
@@ -89,8 +89,8 @@ describe('Image pull secrets', () => {
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {
-      if (!url.includes(`/secrets/${credentialsImageSecretName}`)) {
-        cy.visit(`/k8s/ns/${testName}/secrets/${credentialsImageSecretName}`);
+      if (!url.includes(`/core~v1~Secret/${credentialsImageSecretName}`)) {
+        cy.visit(`/k8s/ns/${testName}/core~v1~Secret/${credentialsImageSecretName}`);
       }
     });
     secrets.detailsPageIsLoaded(credentialsImageSecretName);
@@ -113,8 +113,8 @@ describe('Image pull secrets', () => {
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {
-      if (!url.includes(`/secrets/${credentialsImageSecretName}`)) {
-        cy.visit(`/k8s/ns/${testName}/secrets/${credentialsImageSecretName}`);
+      if (!url.includes(`/core~v1~Secret/${credentialsImageSecretName}`)) {
+        cy.visit(`/k8s/ns/${testName}/core~v1~Secret/${credentialsImageSecretName}`);
       }
     });
 
@@ -160,9 +160,9 @@ describe('Image pull secrets', () => {
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {
-      if (!url.includes(`/secrets/${uploadConfigFileImageSecretName}`)) {
+      if (!url.includes(`/core~v1~Secret/${uploadConfigFileImageSecretName}`)) {
         // If we're on list page, click on the secret to go to details
-        cy.visit(`/k8s/ns/${testName}/secrets/${uploadConfigFileImageSecretName}`);
+        cy.visit(`/k8s/ns/${testName}/core~v1~Secret/${uploadConfigFileImageSecretName}`);
       }
     });
     secrets.detailsPageIsLoaded(uploadConfigFileImageSecretName);
@@ -180,7 +180,7 @@ describe('Image pull secrets', () => {
   });
   it(`Passwords entered on the console are obfuscated`, () => {
     // Navigate to secrets page and open image secret form
-    cy.visit(`/k8s/ns/${testName}/secrets/`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Secret/`);
     secrets.clickCreateSecretDropdownButton('image');
     cy.get('input[data-test="image-secret-password"]').should('have.attr', 'type', 'password');
     cy.get('button[id="cancel"]').click();
@@ -190,6 +190,6 @@ describe('Image pull secrets', () => {
     cy.get('input[data-test="secret-password"]').should('have.attr', 'type', 'password');
 
     // Clean up - navigate back to secrets list to close any open forms
-    cy.visit(`/k8s/ns/${testName}/secrets/`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Secret/`);
   });
 });

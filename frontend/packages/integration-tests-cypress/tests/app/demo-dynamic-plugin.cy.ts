@@ -124,7 +124,7 @@ if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
                 .should('contain', 'created'),
             )
             .then(() => {
-              cy.visit(`/k8s/ns/${PLUGIN_NAME}/deployments`);
+              cy.visit(`/k8s/ns/${PLUGIN_NAME}/apps~v1~Deployment`);
               listPage.dvRows.shouldBeLoaded();
               listPage.dvFilter.byName(PLUGIN_NAME);
               listPage.dvRows.shouldExist(PLUGIN_NAME);

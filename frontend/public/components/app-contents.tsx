@@ -33,6 +33,8 @@ import {
   AlertmanagerModel,
   CronJobModel,
   HorizontalPodAutoscalerModel,
+  PodModel,
+  ProjectModel,
   VolumeSnapshotModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -133,12 +135,14 @@ const DefaultPage = connectToFlags(
 // REDIRECT ROUTES FOR REACT-ROUTER-V6
 const StatusProjectsRedirect = () => {
   const { ns } = useParams();
-  return <Navigate to={`/k8s/cluster/projects/${ns}`} replace />;
+  return <Navigate to={`/k8s/cluster/${referenceForModel(ProjectModel)}/${ns}`} replace />;
 };
 
 const OverviewProjectsRedirect = () => {
   const { ns } = useParams();
-  return <Navigate to={`/k8s/cluster/projects/${ns}/workloads`} replace />;
+  return (
+    <Navigate to={`/k8s/cluster/${referenceForModel(ProjectModel)}/${ns}/workloads`} replace />
+  );
 };
 
 const AlertManagerRedirect = () => {
@@ -154,6 +158,30 @@ const CronJobRedirect = () => {
 const HorizontalPodRedirect = () => {
   const { ns, name } = useParams();
   return <Navigate to={`/k8s/ns/${ns}/${HorizontalPodAutoscalerModel.plural}/${name}`} replace />;
+};
+
+const PodContainerDebugRedirect = () => {
+  const { ns, podName, name, '*': rest } = useParams();
+  return (
+    <Navigate
+      to={`/k8s/ns/${ns}/${referenceForModel(PodModel)}/${podName}/containers/${name}/debug/${
+        rest || ''
+      }`}
+      replace
+    />
+  );
+};
+
+const PodContainerRedirect = () => {
+  const { ns, podName, name, '*': rest } = useParams();
+  return (
+    <Navigate
+      to={`/k8s/ns/${ns}/${referenceForModel(PodModel)}/${podName}/containers/${name}/${
+        rest || ''
+      }`}
+      replace
+    />
+  );
 };
 
 const AppContents: FC = () => {
@@ -721,6 +749,14 @@ const AppContents: FC = () => {
       <Route path="/k8s/cluster/:plural/:name/*" element={<ResourceDetailsPage />} />
       <Route
         path="/k8s/ns/:ns/pods/:podName/containers/:name/debug/*"
+        element={<PodContainerDebugRedirect />}
+      />
+      <Route
+        path="/k8s/ns/:ns/pods/:podName/containers/:name/*"
+        element={<PodContainerRedirect />}
+      />
+      <Route
+        path={`/k8s/ns/:ns/${referenceForModel(PodModel)}/:podName/containers/:name/debug/*`}
         element={
           <AsyncComponent
             loader={() =>
@@ -732,7 +768,7 @@ const AppContents: FC = () => {
         }
       />
       <Route
-        path="/k8s/ns/:ns/pods/:podName/containers/:name/*"
+        path={`/k8s/ns/:ns/${referenceForModel(PodModel)}/:podName/containers/:name/*`}
         element={
           <AsyncComponent
             loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
