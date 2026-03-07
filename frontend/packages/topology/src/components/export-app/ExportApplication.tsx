@@ -1,6 +1,8 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ToolbarItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useAccessReview } from '@console/internal/components/utils';
 import { useFlag, useIsMobile, useToast } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
@@ -16,6 +18,7 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const toast = useToast();
+  const launchModal = useOverlay();
   const isExportAppAllowed = useFlag(ALLOW_EXPORT_APP);
   const canExportApp = useAccessReview({
     group: ExportModel.apiGroup,
@@ -27,6 +30,10 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
   const showExportAppBtn = canExportApp && isExportAppAllowed && !isMobile;
   const name = EXPORT_CR_NAME;
 
+  const handleClick = useCallback(async () => {
+    await handleExportApplication(name, namespace, toast, launchModal);
+  }, [launchModal, name, namespace, toast]);
+
   return showExportAppBtn ? (
     <ToolbarItem>
       <Button
@@ -34,7 +41,7 @@ const ExportApplication: FC<ExportApplicationProps> = ({ namespace, isDisabled }
         data-test="export-app-btn"
         aria-label={t('topology~Export application')}
         isDisabled={isDisabled}
-        onClick={() => handleExportApplication(name, namespace, toast)}
+        onClick={handleClick}
       >
         {t('topology~Export application')}
       </Button>

@@ -3,13 +3,17 @@ import { useState, useEffect } from 'react';
 import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import type {
+  LaunchOverlay,
+  OverlayComponent,
+} from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
+  ModalWrapper,
   ModalTitle,
   ModalBody,
   ModalFooter,
-  createModalLauncher,
 } from '@console/internal/components/factory/modal';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
@@ -239,18 +243,23 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   );
 };
 
-export const exportApplicationModal = createModalLauncher<ExportApplicationModalProps>(
-  ExportApplicationModal,
+export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (
+  props,
+) => (
+  <ModalWrapper blocking onClose={props.closeOverlay}>
+    <ExportApplicationModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </ModalWrapper>
 );
 
 export const handleExportApplication = async (
   name: string,
   namespace: string,
   toast: ToastContextType,
+  launchModal: LaunchOverlay,
 ) => {
   try {
     const exportRes = await getExportResource(name, namespace);
-    exportApplicationModal({
+    launchModal(ExportApplicationModalOverlay, {
       name,
       namespace,
       exportResource: exportRes,
@@ -259,10 +268,6 @@ export const handleExportApplication = async (
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn('Error while getting export resource:', err);
-    exportApplicationModal({
-      name,
-      namespace,
-      toast,
-    });
+    launchModal(ExportApplicationModalOverlay, { name, namespace, toast });
   }
 };

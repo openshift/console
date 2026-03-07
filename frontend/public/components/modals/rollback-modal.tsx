@@ -1,17 +1,21 @@
+import type { FC, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { Alert, Checkbox } from '@patternfly/react-core';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   getDeploymentConfigVersion,
   getOwnerNameByKind,
 } from '@console/shared/src/utils/resource-utils';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { LoadingInline } from '../utils/status-box';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
+import type { ModalComponentProps } from '../factory/modal';
+import { LoadingInline } from '../utils/status-box';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';
+import type { K8sResourceKind } from '../../module/k8s';
 import { k8sCreate, k8sPatch, k8sUpdate } from '../../module/k8s';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { Alert, Checkbox } from '@patternfly/react-core';
 
 const ANNOTATIONS_TO_SKIP = [
   'kubectl.kubernetes.io/last-applied-configuration',
@@ -22,7 +26,7 @@ const ANNOTATIONS_TO_SKIP = [
   'deprecated.deployment.rollback.to',
 ];
 
-const BaseRollbackModal = (props) => {
+const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const isDCRollback = props.resource.kind === ReplicationControllerModel.kind;
@@ -39,8 +43,8 @@ const BaseRollbackModal = (props) => {
     name: dName,
     namespace: props.resource.metadata.namespace,
   };
-  const [deployment, loaded, loadError] = useK8sWatchResource(deploymentResource);
-  const [deploymentError, setDeploymentError] = useState();
+  const [deployment, loaded, loadError] = useK8sWatchResource<K8sResourceKind>(deploymentResource);
+  const [deploymentError, setDeploymentError] = useState<string>();
 
   const submitDCRollback = () => {
     const dcVersion = getDeploymentConfigVersion(props.resource);
@@ -111,7 +115,7 @@ const BaseRollbackModal = (props) => {
     });
   };
 
-  const submit = (e) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
     if (isDCRollback) {
       return submitDCRollback();
@@ -214,4 +218,12 @@ const BaseRollbackModal = (props) => {
   );
 };
 
-export const rollbackModal = createModalLauncher((props) => <BaseRollbackModal {...props} />);
+export const RollbackModalOverlay: OverlayComponent<RollbackModalProps> = (props) => (
+  <ModalWrapper blocking onClose={props.closeOverlay}>
+    <BaseRollbackModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+  </ModalWrapper>
+);
+
+export type RollbackModalProps = {
+  resource: K8sResourceKind;
+} & ModalComponentProps;

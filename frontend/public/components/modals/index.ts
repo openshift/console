@@ -27,10 +27,12 @@ export const LazyLabelsModalOverlay = lazy(() =>
   })),
 );
 
-export const rollbackModal = (props) =>
-  import('./rollback-modal' /* webpackChunkName: "rollback-modal" */).then((m) =>
-    m.rollbackModal(props),
-  );
+// Lazy-loaded OverlayComponent for Rollback Modal
+export const LazyRollbackModalOverlay = lazy(() =>
+  import('./rollback-modal' /* webpackChunkName: "rollback-modal" */).then((m) => ({
+    default: m.RollbackModalOverlay,
+  })),
+);
 
 // Lazy-loaded OverlayComponent for Configure Update Strategy Modal
 export const LazyConfigureUpdateStrategyModalOverlay = lazy(() =>
