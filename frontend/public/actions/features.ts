@@ -109,7 +109,9 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
             after(dispatch, allowed);
           }
         },
-        (err) => handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn),
+        (err) => {
+          handleError({ response: err.graphQLErrors[0]?.extensions }, flag, dispatch, fn);
+        },
       );
   return fn;
 });
