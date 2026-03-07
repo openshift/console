@@ -125,18 +125,20 @@ export const useRemoveNodeMaintenanceAction = (
 ) => {
   const { t } = useTranslation();
   const hidden = !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance;
-  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const factory = useMemo(
     () => ({
       removeNodeMaintenance: () => ({
         id: 'remove-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: stopNodeMaintenanceModalLauncher,
+        cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         accessReview: host && asAccessReview(maintenanceModel, host, 'delete'),
       }),
     }),
+    // Missing stopNodeMaintenanceModalLauncher dependency - intentionally excluded to prevent
+    // infinite re-renders when used in action hooks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [host, t],
+    [host, t, nodeMaintenance],
   );
   const action = useMemo<Action[]>(() => (!hidden ? [factory.removeNodeMaintenance()] : []), [
     factory,

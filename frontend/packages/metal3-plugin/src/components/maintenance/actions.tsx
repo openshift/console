@@ -6,7 +6,7 @@ import type { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { findNodeMaintenance } from '../../selectors';
 import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
+import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (resource) => {
   const { t } = useTranslation();
@@ -24,6 +24,8 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
     namespaced: false,
   });
 
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
+
   const actions = useMemo(() => {
     const nodeMaintenance = findNodeMaintenance(maintenances, resource.metadata.name);
 
@@ -38,11 +40,13 @@ export const useNodeMaintenanceActions: ExtensionHook<Action[], NodeKind> = (res
       action = {
         id: 'stop-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: () => stopNodeMaintenanceModal(nodeMaintenance, t),
+        cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         insertBefore: 'edit-labels',
       };
     }
     return [action];
+    // missing startNodeMaintenanceModal and stopNodeMaintenanceModalLauncher dependencies,
+    // that causes max depth exceeded error
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maintenances, resource.metadata.name, t]);
 

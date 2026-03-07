@@ -96,7 +96,6 @@
   "Started": "Started",
   "Unknown failure condition": "Unknown failure condition",
   "Failure on task {{taskName}} - check logs for details.": "Failure on task {{taskName}} - check logs for details.",
-  "Error downloading logs.": "Error downloading logs.",
   "An error occurred while retrieving the requested logs.": "An error occurred while retrieving the requested logs.",
   "Unknown error retrieving logs": "Unknown error retrieving logs",
   "Download": "Download",
