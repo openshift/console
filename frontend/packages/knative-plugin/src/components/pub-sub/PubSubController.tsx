@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useCallback, useEffect } from 'react';
+import { Modal } from '@patternfly/react-core';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
-import { ModalWrapper } from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import PubSub from './PubSub';
 import { setPubSubModalLauncher } from './PubSubModalLauncher';
@@ -31,13 +31,13 @@ export const PubSubModalOverlay: OverlayComponent<Props> = (props) => {
   }, [props]);
 
   return (
-    <ModalWrapper blocking onClose={handleOverlayDismiss}>
+    <Modal isOpen onClose={handleOverlayDismiss} variant="small">
       <PubSubController
         cancel={props.cancel || props.closeOverlay}
         close={props.close || props.closeOverlay}
         {...props}
       />
-    </ModalWrapper>
+    </Modal>
   );
 };
 

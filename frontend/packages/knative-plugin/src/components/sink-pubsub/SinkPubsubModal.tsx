@@ -1,16 +1,13 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
+import { Button, Form, ModalBody, ModalHeader } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
 import type { FirehoseResource } from '@console/internal/components/utils';
 import { ResourceDropdownField } from '@console/shared';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
@@ -60,40 +57,56 @@ const SinkPubsubModal: FC<Props> = ({
   const dirty = values?.ref?.name !== initialValues.ref.name;
 
   return (
-    <form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>{labelTitle}</ModalTitle>
-      <ModalBody>
-        <p>
-          <Trans t={t} ns="knative-plugin" i18nKey="Connects <strong>{{resourceName}}</strong> to">
-            Connects <strong>{{ resourceName }}</strong> to
-          </Trans>
-        </p>
-        <FormSection fullWidth>
-          <ResourceDropdownField
-            name="ref.name"
-            resources={resourceDropdown}
-            dataSelector={['metadata', 'name']}
-            fullWidth
-            required
-            placeholder={t('knative-plugin~Select a sink')}
-            showBadge
-            autocompleteFilter={autocompleteFilter}
-            customResourceKey={craftResourceKey}
-            onChange={onSinkChange}
-            autoSelect
-            selectedKey={values?.ref?.name}
-          />
-        </FormSection>
-      </ModalBody>
-      <ModalSubmitFooter
-        inProgress={isSubmitting}
-        submitText={t('knative-plugin~Save')}
-        cancelText={t('knative-plugin~Cancel')}
-        submitDisabled={!dirty}
-        cancel={cancel}
-        errorMessage={status.error}
+    <>
+      <ModalHeader
+        title={labelTitle}
+        labelId="sink-pubsub-modal-title"
+        data-test-id="modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="sink-pubsub-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
+          <p>
+            <Trans
+              t={t}
+              ns="knative-plugin"
+              i18nKey="Connects <strong>{{resourceName}}</strong> to"
+            >
+              Connects <strong>{{ resourceName }}</strong> to
+            </Trans>
+          </p>
+          <FormSection fullWidth>
+            <ResourceDropdownField
+              name="ref.name"
+              resources={resourceDropdown}
+              dataSelector={['metadata', 'name']}
+              fullWidth
+              required
+              placeholder={t('knative-plugin~Select a sink')}
+              showBadge
+              autocompleteFilter={autocompleteFilter}
+              customResourceKey={craftResourceKey}
+              onChange={onSinkChange}
+              autoSelect
+              selectedKey={values?.ref?.name}
+            />
+          </FormSection>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={status.error}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={isSubmitting}
+          isDisabled={!dirty}
+          form="sink-pubsub-form"
+        >
+          {t('knative-plugin~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('knative-plugin~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 

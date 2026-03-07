@@ -143,7 +143,7 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
           </Button>
           <Button
             key="cancel"
-            variant="secondary"
+            variant="link"
             onClick={() => {
               setIsModalOpen(false);
             }}

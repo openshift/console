@@ -205,7 +205,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
               >
                 {props.saveButtonText || t('public~Create')}
               </Button>
-              <Button type="button" variant="secondary" id="cancel" onClick={onCancel || cancel}>
+              <Button type="button" variant="link" id="cancel" onClick={onCancel || cancel}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>

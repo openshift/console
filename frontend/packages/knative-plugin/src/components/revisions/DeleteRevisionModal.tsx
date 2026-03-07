@@ -1,14 +1,9 @@
 import type { FC } from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button, Form, ModalBody, ModalHeader } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel } from '../../models';
 import type { RevisionItems } from '../../utils/traffic-splitting-utils';
@@ -29,42 +24,52 @@ const DeleteRevisionModal: FC<Props> = (props) => {
   const serviceName = deleteRevision.metadata.labels[KNATIVE_SERVING_LABEL];
 
   return (
-    <form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('knative-plugin~Delete {{revlabel}}?', { revlabel: RevisionModel.label })}
-      </ModalTitle>
-      <ModalBody>
-        <p>
-          {t('knative-plugin~Are you sure you want to delete ')}
-          <strong className="co-break-word">{deleteRevision.metadata.name}</strong>{' '}
-          {t('knative-plugin~from ')} <strong className="co-break-word">{serviceName}</strong>{' '}
-          {t('knative-plugin~in namespace ')} <strong>{deleteRevision.metadata.namespace}</strong>?
-        </p>
-        {showTraffic && (
-          <>
-            <Alert
-              isInline
-              className="co-alert"
-              variant="custom"
-              title={t(
-                'knative-plugin~Update the traffic distribution among the remaining Revisions',
-              )}
-            />
-            <TrafficSplittingFields {...props} />
-          </>
-        )}
-      </ModalBody>
-      <ModalSubmitFooter
-        inProgress={isSubmitting}
-        submitText={t('knative-plugin~Delete')}
-        cancelText={t('knative-plugin~Cancel')}
-        cancel={cancel}
-        errorMessage={status.error}
-        submitDisabled={isSubmitting}
-        submitDanger
+    <>
+      <ModalHeader
+        title={t('knative-plugin~Delete {{revlabel}}?', { revlabel: RevisionModel.label })}
+        titleIconVariant="warning"
+        labelId="delete-revision-modal-title"
+        data-test-id="modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="delete-revision-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
+          <p>
+            {t('knative-plugin~Are you sure you want to delete ')}
+            <strong className="co-break-word">{deleteRevision.metadata.name}</strong>{' '}
+            {t('knative-plugin~from ')} <strong className="co-break-word">{serviceName}</strong>{' '}
+            {t('knative-plugin~in namespace ')} <strong>{deleteRevision.metadata.namespace}</strong>
+            ?
+          </p>
+          {showTraffic && (
+            <>
+              <Alert
+                isInline
+                className="co-alert"
+                variant="custom"
+                title={t(
+                  'knative-plugin~Update the traffic distribution among the remaining Revisions',
+                )}
+              />
+              <TrafficSplittingFields {...props} />
+            </>
+          )}
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={status.error}>
+        <Button
+          type="submit"
+          variant="danger"
+          isLoading={isSubmitting}
+          isDisabled={isSubmitting}
+          form="delete-revision-form"
+        >
+          {t('knative-plugin~Delete')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('knative-plugin~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
