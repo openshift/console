@@ -9,7 +9,7 @@ Feature: Web Terminal for Admin user
             #   And user has created or selected namespace "aut-terminal"
 
 
-        @regression @odc-6463
+        @regression @ODC-6463
         Scenario Outline: User is able to open and close multiple terminals in the cloudshell: WT-02-TC01
             Given  user can see terminal icon on masthead
              When  user clicks on the Web Terminal icon on the Masthead
@@ -23,7 +23,7 @@ Feature: Web Terminal for Admin user
                   | 3                   | 2nd             | 3              |
 
 
-        @smoke @odc-6745
+        @smoke @ODC-6745
         Scenario: Create new project with timeout and use Web Terminal: WT-02-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
@@ -35,7 +35,7 @@ Feature: Web Terminal for Admin user
               And user has closed existing terminal workspace
 
 
-        @smoke @odc-6745
+        @smoke @ODC-6745
         Scenario: Create new project and use Web Terminal: WT-02-TC03
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead

@@ -1,4 +1,4 @@
-import { testName } from '../../../integration-tests-cypress/support';
+import { testName } from '../../../integration-tests/support';
 import { SpecCapability, StatusCapability } from '../../src/components/descriptors/types';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {

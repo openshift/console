@@ -102,7 +102,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-2 |
 
 
-        @regression @odc-6375
+        @regression @ODC-6375
         Scenario Outline: Topology sidebar has Triggers section in Resources tab: T-01-TC8
             Given user has created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user navigates to Topology page

@@ -27,10 +27,10 @@ module.exports = defineConfig({
         createHash: () => hash('sha256'),
       });
       // eslint-disable-next-line global-require
-      return require('../../integration-tests-cypress/plugins/index.js')(on, config);
+      return require('../../integration-tests/plugins/index.js')(on, config);
     },
     specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
-    supportFile: '../../integration-tests-cypress/support/index.ts',
+    supportFile: '../../integration-tests/support/index.ts',
     baseUrl: 'http://localhost:9000',
     testIsolation: false,
     experimentalMemoryManagement: true,

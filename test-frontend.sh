@@ -44,7 +44,10 @@ if ! yarn run check-cycles; then
   exit 1
 fi
 
+yarn run gherkin-lint
+
 yarn run lint
+
 if [ "$OPENSHIFT_CI" = true ]; then
   JEST_SUITE_NAME="OpenShift Console Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --maxWorkers=2 --reporters=default --reporters=jest-junit
 else

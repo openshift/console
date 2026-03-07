@@ -304,6 +304,7 @@ describe('Kubernetes resource CRUD operations', () => {
       it(`deletes the resource instance`, () => {
         cy.visit(`${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
         if (isDataViewResource) {
+          listPage.dvRows.shouldBeLoaded();
           listPage.dvFilter.byName(name);
           listPage.dvRows.countShouldBe(1);
           listPage.dvRows.clickKebabAction(name, deleteKind(kind, humanizeKind));

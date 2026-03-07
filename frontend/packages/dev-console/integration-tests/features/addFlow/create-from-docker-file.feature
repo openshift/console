@@ -46,7 +46,7 @@ Feature: Create Application from Docker file
              Then user will be redirected to Add page
 
 
-        @regression @odc-7614
+        @regression @ODC-7614
         Scenario: Create workload from Dockerfile and verify the Exposed Port in the Target Port section: A-05-TC04
             Given user is on Import from Git form
              When user enters Git Repo URL as "https://github.com/rohitkrai03/flask-dockerfile-example"

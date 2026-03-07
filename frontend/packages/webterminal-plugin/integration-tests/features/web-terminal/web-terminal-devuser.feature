@@ -13,7 +13,7 @@ Feature: Web Terminal for Developer user
               # in existed project
               And user has created or selected namespace "aut-terminal-testuser-existed"
 
-        @regression @odc-6745
+        @regression @ODC-6745
         Scenario: Create new project and use Web Terminal: WT-03-TC01
             Given user can see terminal icon on masthead
              When user selects Create Project from Project drop down menu
