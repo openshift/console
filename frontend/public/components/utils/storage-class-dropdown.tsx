@@ -1,221 +1,35 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash';
-import type { ReactNode } from 'react';
-import { Component } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as fuzzy from 'fuzzysearch';
-/* eslint-disable import/named */
-import { WithTranslation, withTranslation } from 'react-i18next';
-
+import { useTranslation } from 'react-i18next';
+import { css } from '@patternfly/react-styles';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceName, ResourceIcon } from './resource-icon';
 import { isDefaultClass } from '../storage-class';
-import { css } from '@patternfly/react-styles';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
 
-/* Component StorageClassDropdown - creates a dropdown list of storage classes */
+export type StorageClassDropdownProps = {
+  id?: string;
+  name?: string;
+  onChange: (object) => void;
+  describedBy?: string;
+  desc?: string;
+  defaultClass?: string;
+  required?: boolean;
+  hideClassName?: string;
+  filter?: (param) => boolean;
+  selectedKey?: string;
+  'data-test'?: string;
+};
 
-export class StorageClassDropdownInnerWithTranslation extends Component<
-  StorageClassDropdownInnerProps,
-  StorageClassDropdownInnerState
-> {
-  readonly state: StorageClassDropdownInnerState = {
-    items: {},
-    name: this.props.name,
-    selectedKey: this.props.selectedKey,
-    title: <LoadingInline />,
-    defaultClass: this.props.defaultClass,
-  };
-
-  UNSAFE_componentWillMount() {
-    this.UNSAFE_componentWillReceiveProps(this.props);
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const { loaded, loadError, resources, t } = nextProps;
-
-    if (loadError) {
-      this.setState({
-        title: (
-          <div className="cos-error-title">
-            {t('public~Error loading {{desc}}', { desc: nextProps.desc })}
-          </div>
-        ),
-      });
-      return;
-    }
-    if (!loaded) {
-      return;
-    }
-
-    const state = {
-      items: {},
-      title: undefined,
-      defaultClass: '',
-    };
-    let unorderedItems = {};
-    const noStorageClass = t('public~No default StorageClass');
-    _.map(resources.StorageClass.data, (resource) => {
-      unorderedItems[resource.metadata.name] = {
-        kindLabel: 'StorageClass',
-        name: resource.metadata.name,
-        description: _.get(resource, 'metadata.annotations.description', ''),
-        default: isDefaultClass(resource),
-        accessMode: _.get(
-          resource,
-          ['metadata', 'annotations', 'storage.alpha.openshift.io/access-mode'],
-          '',
-        ),
-        provisioner: resource.provisioner,
-        parameters: resource.parameters,
-        type: _.get(resource, 'parameters.type', ''),
-        zone: _.get(resource, 'parameters.zone', ''),
-        resource,
-      };
-    });
-
-    //Filter if user provides a custom function
-    if (nextProps.filter) {
-      unorderedItems = Object.keys(unorderedItems)
-        .filter((sc) => nextProps.filter(unorderedItems[sc]))
-        .reduce((acc, key) => {
-          acc[key] = unorderedItems[key];
-          return acc;
-        }, {});
-    }
-
-    // Determine if there is a default storage class
-    state.defaultClass = _.findKey(unorderedItems, 'default');
-    const { selectedKey } = this.state;
-    if (!state.defaultClass) {
-      // Add No Storage Class option if there is not a default storage class
-      unorderedItems[''] = { kindLabel: '', name: noStorageClass };
-    }
-
-    if (!this.props.loaded || !selectedKey || !unorderedItems[selectedKey || state.defaultClass]) {
-      state.title = (
-        <span className="pf-v6-u-text-color-subtle">{t('public~Select StorageClass')}</span>
-      );
-    }
-
-    const selectedItem = unorderedItems[selectedKey || state.defaultClass];
-    if (selectedItem) {
-      state.title = this.getTitle(selectedItem);
-    }
-
-    Object.keys(unorderedItems)
-      .sort()
-      .forEach((key) => {
-        state.items[key] = unorderedItems[key];
-      });
-    this.setState(state);
-  }
-
-  componentDidMount() {
-    const { defaultClass } = this.state;
-    if (defaultClass) {
-      this.onChange(defaultClass);
-    }
-  }
-
-  componentDidUpdate() {
-    const { defaultClass, selectedKey } = this.state;
-    if (selectedKey) {
-      this.onChange(selectedKey);
-    } else if (defaultClass) {
-      this.onChange(defaultClass);
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEqual(this.state, nextState);
-  }
-
-  autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
-
-  getTitle = (storageClass) => {
-    return storageClass.kindLabel ? (
-      <ResourceName kind="StorageClass" name={storageClass.name} />
-    ) : (
-      <span>{storageClass.name}</span>
-    );
-  };
-
-  onChange = (key) => {
-    const storageClass = _.get(this.state, ['items', key], {});
-    this.setState(
-      {
-        selectedKey: key,
-        title: this.getTitle(storageClass),
-      },
-      () => this.props.onChange(storageClass.resource),
-    );
-  };
-
-  render() {
-    const { id, loaded, describedBy, t } = this.props;
-    const items = {};
-    _.each(
-      this.state.items,
-      (props, key) =>
-        (items[key] = key ? (
-          <StorageClassDropdownEntry {...props} />
-        ) : (
-          <StorageClassDropdownNoStorageClassOption {...props} />
-        )),
-    );
-
-    const { selectedKey, defaultClass } = this.state;
-
-    // Only show the dropdown if 'no storage class' is not the only option which depends on defaultClass
-    const itemsAvailableToShow = defaultClass || _.size(items) > 1;
-    return (
-      <>
-        {loaded && itemsAvailableToShow && (
-          <div>
-            <label
-              className={css(this.props.hideClassName, {
-                'co-required': this.props.required,
-              })}
-              htmlFor={id}
-            >
-              {t('public~StorageClass')}
-            </label>
-            <ConsoleSelect
-              className="co-storage-class-dropdown"
-              isFullWidth
-              autocompleteFilter={this.autocompleteFilter}
-              autocompletePlaceholder={t('public~Select StorageClass')}
-              items={items}
-              selectedKey={selectedKey}
-              title={this.state.title}
-              alwaysShowTitle
-              onChange={this.onChange}
-              id={id}
-              dataTest={this.props?.['data-test']}
-              menuClassName="dropdown-menu--text-wrap"
-            />
-            {describedBy && (
-              <p className="help-block" id={describedBy}>
-                {t('public~StorageClass for the new claim')}
-              </p>
-            )}
-          </div>
-        )}
-      </>
-    );
-  }
-}
-
-export const StorageClassDropdownInner = withTranslation()(
-  StorageClassDropdownInnerWithTranslation,
-);
-
-export const StorageClassDropdown = (props) => {
-  return (
-    <Firehose resources={[{ kind: 'StorageClass', prop: 'StorageClass', isList: true }]}>
-      <StorageClassDropdownInner {...props} />
-    </Firehose>
+const getTitle = (storageClass: { kindLabel: string; name: string }): ReactNode => {
+  return storageClass.kindLabel ? (
+    <ResourceName kind="StorageClass" name={storageClass.name} />
+  ) : (
+    <span>{storageClass.name}</span>
   );
 };
 
@@ -243,34 +57,165 @@ const StorageClassDropdownEntry = (props) => {
   );
 };
 
-const StorageClassDropdownNoStorageClassOption = (props) => {
+const StorageClassDropdownNoStorageClassOption: FC<{ name: string }> = ({ name }) => {
   return (
     <span className="co-resource-item">
-      <span className="co-resource-item__resource-name">{props.name}</span>
+      <span className="co-resource-item__resource-name">{name}</span>
     </span>
   );
 };
 
-export type StorageClassDropdownInnerState = {
-  items: any;
-  name: string;
-  selectedKey: string;
-  title: ReactNode;
-  defaultClass: string;
-};
+/* Creates a dropdown list of storage classes */
+export const StorageClassDropdown: FC<StorageClassDropdownProps> = ({
+  id,
+  onChange: onChangeProp,
+  describedBy,
+  desc,
+  required,
+  hideClassName,
+  filter,
+  selectedKey: selectedKeyProp,
+  'data-test': dataTest,
+}) => {
+  const { t } = useTranslation('public');
+  const [data, loaded, loadError] = useK8sWatchResource({
+    kind: 'StorageClass',
+    isList: true,
+  });
 
-export type StorageClassDropdownInnerProps = WithTranslation & {
-  id?: string;
-  loaded?: boolean;
-  loadError?: any;
-  resources?: any;
-  name: string;
-  onChange: (object) => void;
-  describedBy: string;
-  desc?: string;
-  defaultClass: string;
-  required?: boolean;
-  hideClassName?: string;
-  filter?: (param) => boolean;
-  selectedKey?: string;
+  const [selectedKey, setSelectedKey] = useState<string | undefined>(selectedKeyProp);
+  const onChangeRef = useRef(onChangeProp);
+  onChangeRef.current = onChangeProp;
+
+  // Process resources into sorted items and find default storage class
+  const { items, defaultClass } = useMemo(() => {
+    if (!loaded || loadError) {
+      return { items: {} as Record<string, any>, defaultClass: '' };
+    }
+
+    const noStorageClass = t('No default StorageClass');
+    let unorderedItems: Record<string, any> = {};
+
+    _.map(data, (resource: StorageClassResourceKind) => {
+      unorderedItems[resource.metadata.name] = {
+        kindLabel: 'StorageClass',
+        name: resource.metadata.name,
+        description: _.get(resource, 'metadata.annotations.description', ''),
+        default: isDefaultClass(resource),
+        accessMode: _.get(
+          resource,
+          ['metadata', 'annotations', 'storage.alpha.openshift.io/access-mode'],
+          '',
+        ),
+        provisioner: resource.provisioner,
+        parameters: resource.parameters,
+        type: _.get(resource, 'parameters.type', ''),
+        zone: _.get(resource, 'parameters.zone', ''),
+        resource,
+      };
+    });
+
+    if (filter) {
+      unorderedItems = Object.keys(unorderedItems)
+        .filter((sc) => filter(unorderedItems[sc]))
+        .reduce((acc, key) => {
+          acc[key] = unorderedItems[key];
+          return acc;
+        }, {} as Record<string, any>);
+    }
+
+    const foundDefault = _.findKey(unorderedItems, 'default') || '';
+    if (!foundDefault) {
+      unorderedItems[''] = { kindLabel: '', name: noStorageClass };
+    }
+
+    const sortedItems: Record<string, any> = {};
+    Object.keys(unorderedItems)
+      .sort()
+      .forEach((key) => {
+        sortedItems[key] = unorderedItems[key];
+      });
+
+    return { items: sortedItems, defaultClass: foundDefault };
+  }, [loaded, loadError, data, filter, t]);
+
+  const effectiveKey = selectedKey ?? defaultClass;
+
+  // Notify parent when selection or items change
+  useEffect(() => {
+    if (!loaded || loadError) {
+      return;
+    }
+    const selectedItem = items[effectiveKey];
+    if (selectedItem) {
+      onChangeRef.current(selectedItem.resource);
+    }
+  }, [loaded, loadError, effectiveKey, items]);
+
+  // Compute display title
+  const displayTitle = useMemo<ReactNode>(() => {
+    if (loadError) {
+      return <div className="cos-error-title">{t('Error loading {{desc}}', { desc })}</div>;
+    }
+    if (!loaded) {
+      return <LoadingInline />;
+    }
+    const selectedItem = items[effectiveKey];
+    if (selectedItem) {
+      return getTitle(selectedItem);
+    }
+    return <span className="pf-v6-u-text-color-subtle">{t('Select StorageClass')}</span>;
+  }, [loadError, loaded, items, effectiveKey, desc, t]);
+
+  // Build dropdown item elements
+  const dropdownItems = useMemo(() => {
+    const result: Record<string, ReactNode> = {};
+    _.each(items, (props, key) => {
+      result[key] = key ? (
+        <StorageClassDropdownEntry {...props} />
+      ) : (
+        <StorageClassDropdownNoStorageClassOption {...props} />
+      );
+    });
+    return result;
+  }, [items]);
+
+  const handleChange = useCallback((key: string) => {
+    setSelectedKey(key);
+  }, []);
+
+  const autocompleteFilter = useCallback((text, item) => fuzzy(text, item.props.name), []);
+
+  const itemsAvailableToShow = defaultClass || _.size(dropdownItems) > 1;
+
+  return (
+    <>
+      {loaded && itemsAvailableToShow ? (
+        <div>
+          <label className={css(hideClassName, { 'co-required': required })} htmlFor={id}>
+            {t('StorageClass')}
+          </label>
+          <ConsoleSelect
+            className="co-storage-class-dropdown"
+            isFullWidth
+            autocompleteFilter={autocompleteFilter}
+            autocompletePlaceholder={t('Select StorageClass')}
+            items={dropdownItems}
+            selectedKey={effectiveKey}
+            title={displayTitle}
+            alwaysShowTitle
+            onChange={handleChange}
+            id={id}
+            dataTest={dataTest}
+            menuClassName="dropdown-menu--text-wrap"
+          />
+          {describedBy ? (
+            <p className="help-block" id={describedBy}>
+              {t('StorageClass for the new claim')}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </>
+  );
 };

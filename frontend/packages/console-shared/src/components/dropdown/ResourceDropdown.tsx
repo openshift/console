@@ -1,9 +1,8 @@
-import type { FC } from 'react';
-import { Component } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as fuzzy from 'fuzzysearch';
-import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
@@ -29,12 +28,6 @@ const DropdownItem: FC<DropdownItemProps> = ({ model, name }) => (
 );
 
 export type ResourceDropdownItems = ConsoleSelectProps['items'];
-
-interface State {
-  resources: {};
-  items: ResourceDropdownItems;
-  title: ConsoleSelectProps['title'];
-}
 
 export interface ResourceDropdownProps {
   actionItems?: ConsoleSelectProps['actionItems'];
@@ -68,138 +61,116 @@ export interface ResourceDropdownProps {
   resources?: FirehoseResult[];
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
-  onChange?: (key: string, name?: string | object, selectedResource?: K8sResourceKind) => void;
+  onChange?: (
+    key: string,
+    name?: ResourceDropdownItems[keyof ResourceDropdownItems],
+    selectedResource?: K8sResourceKind,
+  ) => void;
   onLoad?: (items: ResourceDropdownItems) => void;
   showBadge?: boolean;
   customResourceKey?: (key: string, resource: K8sResourceKind) => string;
   appendItems?: ResourceDropdownItems;
 }
 
-class ResourceDropdownInternal extends Component<ResourceDropdownProps & { t: TFunction }, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      resources: this.props.loaded ? this.getResourceList(props) : {},
-      items: this.props.loaded ? this.getDropdownList(props, false) : {},
-      title: this.props.loaded ? (
-        <span className="btn-dropdown__item--placeholder">{this.props.placeholder}</span>
-      ) : (
-        <LoadingInline />
-      ),
-    };
+const craftResourceKey = (
+  resource: K8sResourceKind,
+  dataSelector: ResourceDropdownProps['dataSelector'],
+  resourceFilter: ResourceDropdownProps['resourceFilter'],
+  customResourceKey: ResourceDropdownProps['customResourceKey'],
+): { customKey: string; key: string } => {
+  let key;
+  if (resourceFilter && resourceFilter(resource)) {
+    key = _.get(resource, dataSelector);
+  } else if (!resourceFilter) {
+    key = _.get(resource, dataSelector);
   }
-
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  UNSAFE_componentWillReceiveProps(nextProps: ResourceDropdownProps) {
-    const {
-      loaded,
-      loadError,
-      autoSelect,
-      selectedKey,
-      placeholder,
-      onLoad,
-      title,
-      actionItems,
-    } = nextProps;
-    if (!loaded && !loadError) {
-      this.setState({ title: <LoadingInline /> });
-      return;
-    }
-
-    // If autoSelect is true only then have an item pre-selected based on selectedKey.
-    if (!this.props.loadError && !autoSelect && (!this.props.loaded || !selectedKey)) {
-      this.setState({
-        title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
-      });
-    }
-
-    if (loadError) {
-      this.setState({
-        title: (
-          <span className="cos-error-title">
-            {this.props.t('console-shared~Error loading - {{placeholder}}', { placeholder })}
-          </span>
-        ),
-      });
-      return;
-    }
-
-    const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
-    // set placeholder as title if resourceList is empty no actionItems are there
-    if (loaded && !loadError && _.isEmpty(resourceList) && !actionItems && placeholder && !title) {
-      this.setState({
-        title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
-      });
-    }
-    this.setState({ items: resourceList });
-    if (nextProps.loaded && onLoad) {
-      onLoad(resourceList);
-    }
-    this.setState({ resources: this.getResourceList(nextProps) });
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(this.state, nextState) && _.isEqual(this.props, nextProps)) {
-      return false;
-    }
-    return true;
-  }
-
-  private craftResourceKey = (
-    resource: K8sResourceKind,
-    props: ResourceDropdownProps,
-  ): { customKey: string; key: string } => {
-    const { customResourceKey, resourceFilter, dataSelector } = props;
-    let key;
-    if (resourceFilter && resourceFilter(resource)) {
-      key = _.get(resource, dataSelector);
-    } else if (!resourceFilter) {
-      key = _.get(resource, dataSelector);
-    }
-    return {
-      customKey: customResourceKey ? customResourceKey(key, resource) : key,
-      key,
-    };
+  return {
+    customKey: customResourceKey ? customResourceKey(key, resource) : key,
+    key,
   };
+};
 
-  private getResourceList = (nextProps: ResourceDropdownProps) => {
-    const { resources } = nextProps;
-    const resourceList = {};
+export const ResourceDropdown: FC<ResourceDropdownProps> = ({
+  actionItems,
+  allSelectorItem,
+  appendItems,
+  ariaLabel,
+  autocompleteFilter,
+  autoSelect,
+  buttonClassName,
+  className,
+  customResourceKey,
+  dataSelector,
+  disabled,
+  id,
+  isFullWidth,
+  loaded,
+  loadError,
+  menuClassName,
+  noneSelectorItem,
+  onChange,
+  onLoad,
+  placeholder,
+  resourceFilter,
+  resources,
+  selectedKey,
+  showBadge = false,
+  storageKey,
+  title: titleProp,
+  titlePrefix,
+  transformLabel,
+  userSettingsPrefix,
+}) => {
+  const { t } = useTranslation();
+  const [selectedTitle, setSelectedTitle] = useState<ReactNode>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  // Track mount state and previous selectedKey to match class component behavior:
+  // the class constructor never auto-selects, and componentWillReceiveProps
+  // compares against the previous selectedKey (this.props) for onChange calls.
+  const mountedRef = useRef(false);
+  const prevSelectedKeyRef = useRef(selectedKey);
+
+  // Compute resource map: key -> K8sResourceKind
+  const resourceMap = useMemo(() => {
+    if (!loaded) {
+      return {};
+    }
+    const map: Record<string, K8sResourceKind> = {};
     _.each(resources, ({ data }) => {
-      _.each(data, (resource) => {
-        const { customKey, key } = this.craftResourceKey(resource, nextProps);
+      _.each(data, (resource: K8sResourceKind) => {
+        const { customKey, key } = craftResourceKey(
+          resource,
+          dataSelector,
+          resourceFilter,
+          customResourceKey,
+        );
         const indexKey = customKey || key;
         if (indexKey) {
-          resourceList[indexKey] = resource;
+          map[indexKey] = resource;
         }
       });
     });
-    return resourceList;
-  };
+    return map;
+  }, [loaded, resources, dataSelector, resourceFilter, customResourceKey]);
 
-  private getDropdownList = (
-    props: ResourceDropdownProps,
-    updateSelection: boolean,
-  ): ResourceDropdownItems => {
-    const {
-      loaded,
-      actionItems,
-      autoSelect,
-      selectedKey,
-      resources,
-      transformLabel,
-      allSelectorItem,
-      noneSelectorItem,
-      showBadge = false,
-      appendItems,
-    } = props;
-
-    const unsortedList = { ...appendItems };
+  // Compute sorted dropdown items
+  const items = useMemo<ResourceDropdownItems>(() => {
+    if (!loaded || loadError) {
+      return {};
+    }
+    const unsortedList: ResourceDropdownItems = { ...appendItems };
     _.each(resources, ({ data, kind }) => {
       _.reduce(
         data,
-        (acc, resource) => {
-          const { customKey, key: name } = this.craftResourceKey(resource, props);
+        (acc, resource: K8sResourceKind) => {
+          const { customKey, key: name } = craftResourceKey(
+            resource,
+            dataSelector,
+            resourceFilter,
+            customResourceKey,
+          );
           const dataValue = customKey || name;
           if (dataValue) {
             if (showBadge) {
@@ -218,80 +189,147 @@ class ResourceDropdownInternal extends Component<ResourceDropdownProps & { t: TF
         unsortedList,
       );
     });
-    const sortedList = {};
 
+    const sortedList: ResourceDropdownItems = {};
     if (allSelectorItem && !_.isEmpty(unsortedList)) {
       sortedList[allSelectorItem.allSelectorKey] = allSelectorItem.allSelectorTitle;
     }
     if (noneSelectorItem && !_.isEmpty(unsortedList)) {
       sortedList[noneSelectorItem.noneSelectorKey] = noneSelectorItem.noneSelectorTitle;
     }
-
     _.keys(unsortedList)
       .sort()
       .forEach((key) => {
         sortedList[key] = unsortedList[key];
       });
 
-    if (updateSelection) {
-      let selectedItem = selectedKey;
-      if (
-        (_.isEmpty(sortedList) || !sortedList[selectedKey]) &&
-        allSelectorItem &&
-        allSelectorItem.allSelectorKey !== selectedKey
-      ) {
-        selectedItem = allSelectorItem.allSelectorKey;
-      } else if (autoSelect && !selectedKey) {
-        selectedItem =
-          loaded && _.isEmpty(sortedList) && actionItems
-            ? actionItems[0].actionKey
-            : _.get(_.keys(sortedList), 0);
-      }
-      selectedItem && this.handleChange(selectedItem, sortedList);
-    }
     return sortedList;
-  };
+  }, [
+    loaded,
+    loadError,
+    resources,
+    dataSelector,
+    resourceFilter,
+    customResourceKey,
+    appendItems,
+    showBadge,
+    transformLabel,
+    allSelectorItem,
+    noneSelectorItem,
+  ]);
 
-  private handleChange = (key, items) => {
-    const name = items[key];
-    const { actionItems, onChange, selectedKey } = this.props;
-    const selectedActionItem = actionItems && actionItems.find((ai) => key === ai.actionKey);
-    const title = selectedActionItem ? selectedActionItem.actionTitle : name;
-    if (title !== this.state.title) {
-      this.setState({ title });
+  // Auto-selection and title sync when items or selection changes.
+  // Skip the initial mount to match class component behavior (constructor never auto-selects).
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      prevSelectedKeyRef.current = selectedKey;
+      return;
     }
-    if (key !== selectedKey) {
-      onChange && onChange(key, name, this.state.resources[key]);
+
+    if (!loaded || loadError) {
+      prevSelectedKeyRef.current = selectedKey;
+      return;
     }
-  };
 
-  private onChange = (key: string) => {
-    this.handleChange(key, this.state.items);
-  };
+    let selectedItem = selectedKey;
+    if (
+      (_.isEmpty(items) || !items[selectedKey]) &&
+      allSelectorItem &&
+      allSelectorItem.allSelectorKey !== selectedKey
+    ) {
+      selectedItem = allSelectorItem.allSelectorKey;
+    } else if (autoSelect && !selectedKey) {
+      selectedItem =
+        loaded && _.isEmpty(items) && actionItems
+          ? actionItems[0].actionKey
+          : _.get(_.keys(items), 0);
+    }
 
-  render() {
-    return (
-      <ConsoleSelect
-        id={this.props.id}
-        ariaLabel={this.props.ariaLabel}
-        className={this.props.className}
-        menuClassName={this.props.menuClassName}
-        buttonClassName={this.props.buttonClassName}
-        titlePrefix={this.props.titlePrefix}
-        isFullWidth={this.props.isFullWidth}
-        autocompleteFilter={this.props.autocompleteFilter || fuzzy}
-        actionItems={this.props.actionItems}
-        items={this.state.items}
-        onChange={this.onChange}
-        selectedKey={this.props.selectedKey}
-        title={this.props.title || this.state.title}
-        autocompletePlaceholder={this.props.placeholder}
-        userSettingsPrefix={this.props.userSettingsPrefix}
-        storageKey={this.props.storageKey}
-        disabled={this.props.disabled}
-      />
-    );
-  }
-}
+    if (selectedItem) {
+      const name = items[selectedItem];
+      const selectedActionItem =
+        actionItems && actionItems.find((ai) => selectedItem === ai.actionKey);
+      const title = selectedActionItem ? selectedActionItem.actionTitle : name;
+      setSelectedTitle(title);
+      if (selectedItem !== prevSelectedKeyRef.current) {
+        onChangeRef.current?.(selectedItem, name, resourceMap[selectedItem]);
+      }
+    }
 
-export const ResourceDropdown = withTranslation()(ResourceDropdownInternal);
+    prevSelectedKeyRef.current = selectedKey;
+  }, [
+    loaded,
+    loadError,
+    items,
+    selectedKey,
+    autoSelect,
+    allSelectorItem,
+    actionItems,
+    resourceMap,
+  ]);
+
+  // Notify parent when items are loaded
+  useEffect(() => {
+    if (loaded && onLoad) {
+      onLoad(items);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, items]);
+
+  // Compute display title
+  const displayTitle = useMemo<ReactNode>(() => {
+    if (!loaded && !loadError) {
+      return <LoadingInline />;
+    }
+    if (loadError) {
+      return (
+        <span className="cos-error-title">
+          {t('console-shared~Error loading - {{placeholder}}', { placeholder })}
+        </span>
+      );
+    }
+    if (titleProp) {
+      return titleProp;
+    }
+    if (selectedTitle) {
+      return selectedTitle;
+    }
+    return <span className="btn-dropdown__item--placeholder">{placeholder}</span>;
+  }, [loaded, loadError, titleProp, selectedTitle, placeholder, t]);
+
+  const handleChange = useCallback<ConsoleSelectProps['onChange']>(
+    (key) => {
+      const name = items[key];
+      const selectedActionItem = actionItems && actionItems.find((ai) => key === ai.actionKey);
+      const title = selectedActionItem ? selectedActionItem.actionTitle : name;
+      setSelectedTitle(title);
+      if (key !== selectedKey) {
+        onChangeRef.current?.(key, name, resourceMap[key]);
+      }
+    },
+    [items, actionItems, selectedKey, resourceMap],
+  );
+
+  return (
+    <ConsoleSelect
+      id={id}
+      ariaLabel={ariaLabel}
+      className={className}
+      menuClassName={menuClassName}
+      buttonClassName={buttonClassName}
+      titlePrefix={titlePrefix}
+      isFullWidth={isFullWidth}
+      autocompleteFilter={autocompleteFilter || fuzzy}
+      actionItems={actionItems}
+      items={items}
+      onChange={handleChange}
+      selectedKey={selectedKey}
+      title={displayTitle}
+      autocompletePlaceholder={placeholder}
+      userSettingsPrefix={userSettingsPrefix}
+      storageKey={storageKey}
+      disabled={disabled}
+    />
+  );
+};
