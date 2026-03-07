@@ -158,7 +158,7 @@ This extension can be used to trigger a specific action when a specific Promethe
 | ---- | ---------- | -------- | ----------- |
 | `alert` | `string` | no | Alert name as defined by `alert.rule.name` property |
 | `text` | `string` | no | Action text |
-| `action` | `CodeRef<(alert: Alert, launchModal: LaunchModal) => void>` | no | Function to perform side effect |
+| `action` | `CodeRef<(alert: Alert, launchModal: LaunchOverlay) => void>` | no | Function to perform side effect |
 
 ---
 

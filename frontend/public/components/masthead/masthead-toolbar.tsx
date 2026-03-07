@@ -207,6 +207,10 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
 
   const handleGuidedTourClick = (e) => {
     e.preventDefault();
+    // Move focus away from the dropdown menu item to prevent aria-hidden warning
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     fireTelemetryEvent('launch-guided-tour-form-help', {
       id: 'guided-tour-help',
       perspective: activePerspective,

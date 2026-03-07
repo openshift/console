@@ -161,7 +161,7 @@ When('user adds the label {string}', (label: string) => {
 
 When('user clicks on the Save button on the modal to save labels and close the modal', () => {
   cy.get(eventingPO.channel.save).click('center', { force: true });
-  cy.get('[aria-label="Modal"]').should('not.exist');
+  cy.get('[role="dialog"]').should('not.exist');
   navigateTo(devNavigationMenu.Add);
 });
 

@@ -44,7 +44,7 @@ const TestFunctionModal: FC<Props> = (props) => {
             {t('knative-plugin~Test')}
           </Button>
           &nbsp; &nbsp;
-          <Button type="button" variant="secondary" data-test="cancel-action" onClick={cancel}>
+          <Button type="button" variant="link" data-test="cancel-action" onClick={cancel}>
             {t('knative-plugin~Cancel')}
           </Button>
         </form>
@@ -64,7 +64,7 @@ const TestFunctionModal: FC<Props> = (props) => {
           &nbsp;
           <Button
             type="button"
-            variant="secondary"
+            variant="link"
             data-test="close-action"
             onClick={() => {
               clearResponseValues(props);
@@ -85,7 +85,6 @@ const TestFunctionModal: FC<Props> = (props) => {
       header={header}
       className="kn-test-sf-modal"
       onClose={close}
-      position="top"
       footer={footer}
       data-test="test-serverless-function"
     >

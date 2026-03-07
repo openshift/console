@@ -105,7 +105,7 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
         <Button variant="primary" onClick={submit} isLoading={inProgress} isDisabled={!loaded}>
           {t('metal3-plugin~Start Maintenance')}
         </Button>
-        <Button variant="secondary" onClick={closeOverlay}>
+        <Button variant="link" onClick={closeOverlay}>
           {t('metal3-plugin~Cancel')}
         </Button>
       </PfModalFooter>

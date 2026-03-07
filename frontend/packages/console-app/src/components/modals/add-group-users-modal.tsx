@@ -91,9 +91,6 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
         )}
       </ModalBody>
       <ModalFooter>
-        <Button variant="secondary" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
-        </Button>
         <Button
           type="submit"
           variant="primary"
@@ -102,6 +99,9 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
           onClick={onSubmit}
         >
           {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={closeOverlay} type="button">
+          {t('public~Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

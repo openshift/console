@@ -1,20 +1,16 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
-import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import {
-  LazyAnnotationsModalOverlay,
-  LazyDeleteModalOverlay,
-  LazyLabelsModalOverlay,
-  taintsModal,
-  tolerationsModal,
-} from '@console/internal/components/modals';
+import { taintsModal, tolerationsModal } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
+import { useAnnotationsModal } from '@console/shared/src/hooks/useAnnotationsModal';
+import { useDeleteModal } from '@console/shared/src/hooks/useDeleteModal';
+import { useLabelsModal } from '@console/shared/src/hooks/useLabelsModal';
 import type { ActionObject } from './types';
 import { CommonActionCreator } from './types';
 
@@ -45,7 +41,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
   editPath?: string,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
-  const launchModal = useOverlay();
+  const launchAnnotationsModal = useAnnotationsModal(resource);
+  const launchDeleteModal = useDeleteModal(resource, undefined, message);
+  const launchLabelsModal = useLabelsModal(resource);
   const launchCountModal = useConfigureCountModal({
     resourceKind: kind,
     resource,
@@ -79,12 +77,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       [CommonActionCreator.Delete]: (): Action => ({
         id: 'delete-resource',
         label: t('console-app~Delete {{kind}}', { kind: kind?.kind }),
-        cta: () =>
-          launchModal(LazyDeleteModalOverlay, {
-            kind,
-            resource,
-            message,
-          }),
+        cta: launchDeleteModal,
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'delete'),
       }),
       [CommonActionCreator.Edit]: (): Action => {
@@ -100,21 +93,13 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
       [CommonActionCreator.ModifyLabels]: (): Action => ({
         id: 'edit-labels',
         label: t('console-app~Edit labels'),
-        cta: () =>
-          launchModal(LazyLabelsModalOverlay, {
-            kind,
-            resource,
-          }),
+        cta: launchLabelsModal,
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyAnnotations]: (): Action => ({
         id: 'edit-annotations',
         label: t('console-app~Edit annotations'),
-        cta: () =>
-          launchModal(LazyAnnotationsModalOverlay, {
-            kind,
-            resource,
-          }),
+        cta: launchAnnotationsModal,
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
       [CommonActionCreator.ModifyCount]: (): Action => ({
@@ -165,7 +150,16 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
     // to prevent unnecessary re-renders
     // TODO: remove once all Modals have been updated to useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal],
+    [
+      kind,
+      resource,
+      t,
+      message,
+      actualEditPath,
+      launchAnnotationsModal,
+      launchDeleteModal,
+      launchLabelsModal,
+    ],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {
