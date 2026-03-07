@@ -2,7 +2,13 @@ import type { FC, Ref } from 'react';
 import { useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import {
+  Button,
+  Form,
   FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
   Title,
   Select,
   SelectList,
@@ -15,12 +21,6 @@ import { Formik } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import { ResourceIcon } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -31,6 +31,7 @@ import {
   createEventSourceKafkaConnection,
   createSinkConnection,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { TYPE_CONNECTS_TO } from '../../const';
 import { createConnection } from '../../utils';
@@ -79,15 +80,15 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
 
   const sourceLabel = edge.getSource().getLabel();
   return (
-    <form onSubmit={handleSubmit} className="modal-content">
-      <ModalTitle>{t('topology~Move connector')}</ModalTitle>
+    <>
+      <ModalHeader title={t('topology~Move connector')} />
       <ModalBody>
-        <Title headingLevel="h2" size="md" className="co-m-form-row">
-          <Trans ns="topology" t={t}>
-            Connect <strong>{{ sourceLabel }}</strong> to
-          </Trans>
-        </Title>
-        <div className="pf-v6-c-form">
+        <Form id="move-connection-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
+          <Title headingLevel="h2" size="md">
+            <Trans ns="topology" t={t}>
+              Connect <strong>{{ sourceLabel }}</strong> to
+            </Trans>
+          </Title>
           <FormGroup fieldId="target-node" label="Target">
             <Select
               id="target-node-dropdown"
@@ -114,16 +115,25 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
               </SelectList>
             </Select>
           </FormGroup>
-        </div>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        submitText={t('topology~Move')}
-        submitDisabled={!isDirty || isSubmitting}
-        cancel={cancel}
-        inProgress={isSubmitting}
-        errorMessage={status && status.submitError}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={status && status.submitError}>
+        <Button
+          variant="primary"
+          type="submit"
+          form="move-connection-form"
+          isLoading={isSubmitting}
+          isDisabled={!isDirty || isSubmitting}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('topology~Move')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('topology~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -179,11 +189,17 @@ const MoveConnectionModal: FC<MoveConnectionModalProps> = (props) => {
 };
 
 const MoveConnectionModalProvider: OverlayComponent<MoveConnectionModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <MoveConnectionModal cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <MoveConnectionModal cancel={handleClose} close={handleClose} {...props} />
+    </Modal>
+  ) : null;
 };
 
 export const useMoveConnectionModalLauncher = (props: MoveConnectionModalProps) => {

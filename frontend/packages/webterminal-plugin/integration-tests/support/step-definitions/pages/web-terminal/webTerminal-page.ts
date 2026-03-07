@@ -39,7 +39,7 @@ export const webTerminalPage = {
     cy.byLegacyTestID('actions-menu-button').should('be.visible').click();
     cy.get('[role="menu"]').should('be.visible');
     cy.byTestActionID('Delete DevWorkspace').should('be.visible').click();
-    cy.get('[aria-label="Modal"]').should('be.visible');
+    cy.get('[role="dialog"]').should('be.visible');
     cy.byTestID('confirm-action').click();
     cy.byTestID('empty-box').should('be.visible');
   },

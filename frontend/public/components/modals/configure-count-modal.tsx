@@ -1,23 +1,14 @@
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useState, useCallback } from 'react';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  HelperText,
-  HelperTextItem,
-  FormGroup,
-  Form,
-} from '@patternfly/react-core';
+import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sResourceKind, K8sModel } from '../../module/k8s';
 import { NumberSpinner, NumberSpinnerProps } from '../utils/number-spinner';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (props) => {
   const {
@@ -90,7 +81,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
         description={messageKey ? t(messageKey, messageVariablesSafe) : message}
       />
       <ModalBody>
-        <Form>
+        <Form id="configure-count-form">
           <FormGroup>
             <NumberSpinner
               value={value}
@@ -100,22 +91,23 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
               required
               min={0}
             />
-            {errorMessage && (
-              <HelperText isLiveRegion className="pf-v6-u-mt-md">
-                <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
-              </HelperText>
-            )}
           </FormGroup>
         </Form>
       </ModalBody>
-      <ModalFooter>
-        <Button variant="secondary" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
-        </Button>
-        <Button variant="primary" isLoading={inProgress} onClick={submit}>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          onClick={submit}
+          form="configure-count-form"
+        >
           {buttonTextKey ? t(buttonTextKey, buttonTextVariables) : buttonText}
         </Button>
-      </ModalFooter>
+        <Button variant="link" onClick={closeOverlay} type="button">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };
