@@ -1,34 +1,6 @@
 import * as _ from 'lodash';
 import { useCallback, useRef } from 'react';
-import { createBrowserHistory, createMemoryHistory, History } from 'history';
-import { useSearchParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
-
-let createHistory;
-
-try {
-  if (process.env.NODE_ENV === 'test') {
-    // Running in node. Can't use browser history
-    createHistory = createMemoryHistory;
-  } else {
-    createHistory = createBrowserHistory;
-  }
-} catch (unused) {
-  createHistory = createBrowserHistory;
-}
-
-export const history: History = createHistory({ basename: window.SERVER_FLAGS.basePath });
-
-const removeBasePath = (url = '/') =>
-  _.startsWith(url, window.SERVER_FLAGS.basePath)
-    ? url.slice(window.SERVER_FLAGS.basePath.length - 1)
-    : url;
-
-// Monkey patch history to slice off the base path
-(history as any).__replace__ = history.replace;
-history.replace = (url: string) => (history as any).__replace__(removeBasePath(url));
-
-(history as any).__push__ = history.push;
-history.push = (url: string) => (history as any).__push__(removeBasePath(url));
+import { useSearchParams, useLocation, useNavigate } from 'react-router';
 
 /**
  * Hook providing query parameter mutation functions compatible with React Router v6/v7.

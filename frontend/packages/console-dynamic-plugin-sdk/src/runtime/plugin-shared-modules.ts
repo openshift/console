@@ -22,3 +22,15 @@ export const getSharedScope = () => {
 
   return __webpack_share_scopes__[SHARED_SCOPE_NAME];
 };
+
+/**
+ * Patch the webpack share scope so that `react-router-dom-v5-compat` resolves to the
+ * same shared module as `react-router-dom`.
+ *
+ * This ensures dynamic plugins built prior to 4.22 can still import from
+ * `react-router-dom-v5-compat`, and receive the same module instance as `react-router-dom`.
+ */
+export const monkeyPatchSharedScope = () => {
+  const scope = getSharedScope();
+  scope['react-router-dom-v5-compat'] = scope['react-router-dom'];
+};

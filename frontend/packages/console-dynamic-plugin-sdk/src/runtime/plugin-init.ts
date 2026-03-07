@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import {
   initSharedScope,
   getSharedScope,
+  monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
@@ -103,6 +104,9 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
 
   // Initialize webpack share scope object and start loading plugins
   initSharedScope()
+    .then(() => {
+      monkeyPatchSharedScope();
+    })
     .then(() => {
       dynamicPluginNames.forEach((pluginName) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {

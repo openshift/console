@@ -803,16 +803,16 @@ Adds new resource list page to Console router.
 
 ### Summary 
 
-Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/<br/><br/>Note: This extension should not be used for resource list and details page. For adding both list and details page for a resource use the<br/>[console.navigation/resource-ns](#consolenavigationresource-ns) extension, instead, which renders elementary fields.
+Adds new page to Console router.<br/><br/>Under the hood we use [React Router](https://reactrouter.com/7.13.1).<br/><br/>Note that React Router v7 no longer supports passing a string array to the Route `path` prop.<br/>In Console, we retain this functionality by rendering multiple Route instances. Make sure to<br/>use `exact: true` or sort your Route path values from most specific to least specific.<br/><br/>Also note that React Router v7 no longer supports Route `exact` prop - all paths are matched<br/>exactly by default. In Console, we retain the original behavior for backwards compatibility,<br/>i.e. use `exact: true` unless you want to match more of the URL.<br/><br/>This extension should not be used for resource list and details page. For adding both list<br/>and details page for a resource use the `console.navigation/resource-ns` extension instead,<br/>which renders elementary fields.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
-| `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, contributes to all perspectives. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use path-to-regexp. |
+| `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, applies to all perspectives. |
+| `exact` | `boolean` | yes | When true, will only match if the path matches the URL exactly. |
 
 ---
 
@@ -820,15 +820,15 @@ Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br
 
 ### Summary 
 
-Adds new standalone page (rendered outside the common page layout) to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/
+Adds new standalone page (rendered outside the common page layout) to Console router.<br/><br/>Under the hood we use [React Router](https://reactrouter.com/7.13.1).
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use path-to-regexp. |
+| `exact` | `boolean` | yes | When true, will only match if the path matches the URL exactly. |
 
 ---
 

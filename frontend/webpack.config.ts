@@ -249,6 +249,8 @@ const config: Configuration = {
       shared: consoleProvidedSharedModules,
     }),
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
+    // TODO: Remove this when the import is updated in the codebase. This is needed to prevent rebase hell
+    new webpack.NormalModuleReplacementPlugin(/^react-router-dom-v5-compat$/, 'react-router-dom'),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         configFile: path.resolve(__dirname, 'tsconfig.json'),

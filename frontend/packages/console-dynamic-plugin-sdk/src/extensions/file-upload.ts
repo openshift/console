@@ -1,4 +1,4 @@
-import type { To } from 'react-router-dom-v5-compat';
+import type { To } from 'react-router';
 import type { Extension, CodeRef } from '../types';
 
 /** This extension can be used to provide a handler for the file drop action on specific file extensions. */
