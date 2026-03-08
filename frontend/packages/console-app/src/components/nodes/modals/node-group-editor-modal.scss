@@ -1,0 +1,9 @@
+.co-node-group-editor-modal {
+  &__loading-box {
+    height: 200px;
+  }
+  &__groups-list {
+    border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+  }
+}
