@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
@@ -7,10 +7,13 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import ResourceDropdownField from '@console/shared/src/components/formik-fields/ResourceDropdownField';
-import { getSinkableResources } from '../../../utils/get-knative-resources';
+import { ServiceModel as KnativeServiceModel, KafkaSinkModel } from '../../../models';
 import { craftResourceKey } from '../pub-sub-utils';
 
 type PubSubSubscriberProps = {
@@ -55,6 +58,77 @@ const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel
     setResourceAlert(_.isEmpty(resourceList));
   };
 
+  const watchSpec = useMemo(
+    () =>
+      namespace
+        ? {
+            services: {
+              isList: true,
+              kind: referenceForModel(ServiceModel),
+              namespace,
+              optional: true,
+            },
+            ksservices: {
+              isList: true,
+              kind: referenceForModel(KnativeServiceModel),
+              namespace,
+              optional: true,
+            },
+            kafkasinks: {
+              isList: true,
+              kind: referenceForModel(KafkaSinkModel),
+              namespace,
+              optional: true,
+            },
+          }
+        : {},
+    [namespace],
+  );
+
+  const watchedResources = useK8sWatchResources<{
+    services?: K8sResourceKind[];
+    ksservices?: K8sResourceKind[];
+    kafkasinks?: K8sResourceKind[];
+  }>(watchSpec);
+
+  const resources = useMemo(
+    () =>
+      namespace
+        ? [
+            {
+              data: watchedResources.services?.data,
+              loaded: watchedResources.services?.loaded,
+              loadError: watchedResources.services?.loadError,
+              kind: referenceForModel(ServiceModel),
+            },
+            {
+              data: watchedResources.ksservices?.data,
+              loaded: watchedResources.ksservices?.loaded,
+              loadError: watchedResources.ksservices?.loadError,
+              kind: referenceForModel(KnativeServiceModel),
+            },
+            {
+              data: watchedResources.kafkasinks?.data,
+              loaded: watchedResources.kafkasinks?.loaded,
+              loadError: watchedResources.kafkasinks?.loadError,
+              kind: referenceForModel(KafkaSinkModel),
+            },
+          ]
+        : [],
+    [
+      namespace,
+      watchedResources.services?.data,
+      watchedResources.services?.loaded,
+      watchedResources.services?.loadError,
+      watchedResources.ksservices?.data,
+      watchedResources.ksservices?.loaded,
+      watchedResources.ksservices?.loadError,
+      watchedResources.kafkasinks?.data,
+      watchedResources.kafkasinks?.loaded,
+      watchedResources.kafkasinks?.loadError,
+    ],
+  );
+
   // filter out resource which are owned by other resource
   const resourceFilter = ({ metadata }: K8sResourceKind) => !metadata?.ownerReferences?.length;
 
@@ -85,7 +159,7 @@ const PubSubSubscriber: FC<PubSubSubscriberProps> = ({ autoSelect = true, cancel
       )}
       <ResourceDropdownField
         name="formData.spec.subscriber.ref.name"
-        resources={getSinkableResources(namespace)}
+        resources={resources}
         dataSelector={['metadata', 'name']}
         fullWidth
         required

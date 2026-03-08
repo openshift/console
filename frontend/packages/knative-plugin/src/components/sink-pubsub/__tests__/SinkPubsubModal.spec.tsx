@@ -1,10 +1,11 @@
+import * as React from 'react';
 import { render } from '@testing-library/react';
 import SinkPubsubModal from '../SinkPubsubModal';
 
 jest.mock('@console/internal/components/factory/modal', () => ({
-  ModalTitle: jest.fn(() => null),
-  ModalBody: jest.fn(() => null),
-  ModalSubmitFooter: jest.fn(() => null),
+  ModalTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  ModalBody: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  ModalSubmitFooter: () => <div />,
 }));
 
 jest.mock('@console/shared', () => ({

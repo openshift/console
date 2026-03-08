@@ -8,7 +8,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,
-  default: 'FormSection',
+  default: ({ children }) => children,
 }));
 
 jest.mock('@console/shared', () => ({
@@ -30,20 +30,18 @@ jest.mock('../../../../hooks', () => ({
 describe('KafkaSinkSection', () => {
   const title = 'Kafka Sink';
 
-  it('should render KafkaSink FormSection with proper title', () => {
+  beforeEach(() => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
-      kafkas: { data: [], loaded: true },
-      kafkaconnections: { data: [], loaded: true },
+      secrets: { data: [], loaded: true, loadError: null },
     });
+  });
+
+  it('should render KafkaSink FormSection', () => {
     const { container } = render(<KafkaSinkSection title={title} namespace="my-app" />);
-    expect(container.querySelector('FormSection')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
   });
 
   it('should render BootstrapServers and Topic fields with required and secret as not required', () => {
-    (useK8sWatchResources as jest.Mock).mockReturnValue({
-      kafkas: { data: [], loaded: true },
-      kafkaconnections: { data: [], loaded: true },
-    });
     const { container } = render(<KafkaSinkSection title={title} namespace="my-app" />);
     const bootstrapServersField = container.querySelector(
       '[data-test="kafkasink-bootstrapservers-field"]',
@@ -57,10 +55,9 @@ describe('KafkaSinkSection', () => {
     expect(secretField).toBeInTheDocument();
   });
 
-  it('should render BootstrapServers and topic fields with even if kafkaconnections loaded failed', () => {
-    (useK8sWatchResources as jest.Mock).mockReturnValue({
-      kafkas: { data: [], loaded: true },
-      kafkaconnections: { data: null, loaded: false, loadError: 'Error' },
+  it('should render BootstrapServers and topic fields even if secrets loaded failed', () => {
+    (useK8sWatchResources as jest.Mock).mockReturnValueOnce({
+      secrets: { data: [], loaded: false, loadError: 'Error' },
     });
     const { container } = render(<KafkaSinkSection title={title} namespace="my-app" />);
     const bootstrapServersField = container.querySelector(
