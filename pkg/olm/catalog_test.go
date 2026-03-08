@@ -12,7 +12,7 @@ import (
 )
 
 func TestCreateCatalogItem(t *testing.T) {
-	t.Run("should create a catalog item from a valid bundle", func(t *testing.T) {
+	t.Run("should create a catalog item from a valid bundle without icon", func(t *testing.T) {
 		pkg := declcfg.Package{
 			Schema:         "olm.package",
 			Name:           "test-package",
@@ -73,6 +73,36 @@ func TestCreateCatalogItem(t *testing.T) {
 		assert.Equal(t, []string{"test", "example"}, item.Keywords)
 		assert.Equal(t, "Test Provider", item.Provider)
 		assert.Equal(t, "0.1.0", item.Version)
+		assert.False(t, item.HasIcon)
+	})
+
+	t.Run("should set HasIcon to true when package has icon", func(t *testing.T) {
+		pkg := declcfg.Package{
+			Schema:         "olm.package",
+			Name:           "test-package",
+			DefaultChannel: "stable",
+			Icon: &declcfg.Icon{
+				Data:      []byte("icon-data"),
+				MediaType: "image/png",
+			},
+		}
+
+		csvMetadataBytes, err := json.Marshal(property.CSVMetadata{})
+		require.NoError(t, err)
+
+		bundle := declcfg.Bundle{
+			Schema:  "olm.bundle",
+			Name:    "test-package.v0.1.0",
+			Package: "test-package",
+			Properties: []property.Property{
+				{Type: property.TypeCSVMetadata, Value: csvMetadataBytes},
+				{Type: property.TypePackage, Value: json.RawMessage(`{"packageName":"test-package","version":"0.1.0"}`)},
+			},
+		}
+
+		item := CreateCatalogItem("test-catalog", &pkg, &bundle)
+		require.NotNil(t, item)
+		assert.True(t, item.HasIcon)
 	})
 }
 func TestCreateConsoleCatalog(t *testing.T) {

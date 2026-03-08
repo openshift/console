@@ -6,6 +6,7 @@ export type OLMCatalogItem = {
   createdAt: string;
   description: string;
   displayName: string;
+  hasIcon: boolean;
   image: string;
   infrastructureFeatures: string[];
   keywords: string[];
