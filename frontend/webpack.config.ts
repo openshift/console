@@ -317,7 +317,7 @@ const config: Configuration = {
       ],
     }),
     extractCSS,
-    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : [new webpack.ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
