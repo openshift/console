@@ -376,6 +376,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "title": "%olm~Operators%",
       "catalogId": "dev-catalog",
       "type": "operator",
       "provider": { "$codeRef": "useOperatorCatalogItems" }

@@ -18,7 +18,6 @@ import {
   usePerspectives,
 } from '@console/shared/src/hooks/perspective-utils';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import CatalogDefaultNamespaceRedirect from '@console/shared/src/components/catalog/CatalogDefaultNamespaceRedirect';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -264,9 +263,6 @@ const AppContents: FC = () => {
         }
       />
 
-      <Route path="/catalog" element={<CatalogDefaultNamespaceRedirect />} />
-      {/* TODO: Make Software Catalog work with all namespaces. https://issues.redhat.com/browse/CONSOLE-4827 */}
-      <Route path="/catalog/all-namespaces" element={<CatalogDefaultNamespaceRedirect />} />
       <Route
         path="/catalog/instantiate-template"
         element={

@@ -7,7 +7,6 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import type { APIError } from '@console/shared';
-import { useActiveNamespace } from '@console/shared';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import type { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
@@ -20,7 +19,6 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const [activeNamespace] = useActiveNamespace();
   const [helmCharts, setHelmCharts] = useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = useState<APIError>();
 
@@ -47,9 +45,10 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     Object.keys(chartRepositories).length > 0 &&
     Object.values(chartRepositories).some((value) => value.loaded || !!value.loadError);
 
+  const namespaceParam = namespace ? `?namespace=${namespace}` : '';
   useEffect(() => {
     let mounted = true;
-    coFetch(`/api/helm/charts/index.yaml?namespace=${activeNamespace}`)
+    coFetch(`/api/helm/charts/index.yaml${namespaceParam}`)
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
@@ -66,7 +65,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
     return () => {
       mounted = false;
     };
-  }, [activeNamespace]);
+  }, [namespaceParam]);
 
   const normalizedHelmCharts: CatalogItem[] = useMemo(
     () =>
