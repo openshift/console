@@ -8,7 +8,6 @@
     "lint": "yarn --cwd ../.. eslint packages/service-binding-plugin",
     "test": "yarn --cwd ../.. test packages/service-binding-plugin"
   },
-  "dependencies": {},
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
