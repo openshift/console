@@ -22,9 +22,11 @@ import {
   FirehoseResult,
   K8sResourceKindReference,
   K8sResourceKind,
+  K8sResourceCommon,
+  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { Firehose } from '../utils/firehose';
 import { HorizontalNav } from '../utils/horizontal-nav';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { Page } from '../utils/horizontal-nav';
 import {
   ConnectedPageHeading,
@@ -83,8 +85,8 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
             );
           }
           return (
-            p.properties.model.group === kindObj.apiGroup &&
-            p.properties.model.kind === kindObj.kind
+            p.properties.model.group === kindObj?.apiGroup &&
+            p.properties.model.kind === kindObj?.kind
           );
         })
         .map(({ properties: { href, name, component: Component } }) => ({
@@ -101,17 +103,47 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   }, []);
   let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
-  const objResource: FirehoseResource = {
-    kind: props.kind,
-    name: props.name,
-    namespace: props.namespace,
-    isList: false,
-    prop: 'obj',
-  };
+  const objResource = useMemo<FirehoseResource>(
+    () => ({
+      kind: props.kind,
+      name: props.name,
+      namespace: props.namespace,
+      isList: false,
+      prop: 'obj',
+    }),
+    [props.kind, props.name, props.namespace],
+  );
+
   const titleProviderValues = {
     telemetryPrefix: props?.kindObj?.kind,
     titlePrefix: `${props.name} · ${getTitleForNodeKind(props?.kindObj?.kind)}`,
   };
+
+  // Build resources to watch
+  const watchResources = useMemo(() => {
+    const allResources = [...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])];
+    return allResources.reduce((acc, r) => {
+      const key = r.prop || r.kind;
+      acc[key] = {
+        kind: r.kind,
+        name: r.name,
+        namespace: r.namespace,
+        isList: r.isList,
+        selector: r.selector,
+        fieldSelector: r.fieldSelector,
+        limit: r.limit,
+        namespaced: r.namespaced,
+        optional: r.optional,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [props.obj, props.resources, objResource]);
+
+  const watchedResources = useK8sWatchResources<
+    Record<string, K8sResourceCommon | K8sResourceCommon[]>
+  >(watchResources);
+
+  const objData = _.isNil(props.obj) ? watchedResources.obj : props.obj;
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
@@ -124,42 +156,40 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         />
       )}
 
-      <Firehose
-        resources={[...(_.isNil(props.obj) ? [objResource] : []), ...(props.resources ?? [])]}
-      >
-        <ConnectedPageHeading
-          obj={props.obj}
-          title={props.title || props.name}
-          titleFunc={props.titleFunc}
-          menuActions={props.menuActions}
-          buttonActions={props.buttonActions}
-          customActionMenu={props.customActionMenu}
-          kind={props.customKind || props.kind}
-          icon={props.icon}
-          breadcrumbs={pluginBreadcrumbs}
-          breadcrumbsFor={
-            props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, params, location) : undefined)
-          }
-          resourceKeys={resourceKeys}
-          getResourceStatus={props.getResourceStatus}
-          customData={props.customData}
-          badge={props.badge || getBadgeFromType(kindObj?.badge)}
-          OverrideTitle={props.OverrideTitle}
-          helpText={props.helpText}
-          helpAlert={props.helpAlert}
-        />
-        <HorizontalNav
-          obj={props.obj}
-          pages={allPages}
-          pagesFor={props.pagesFor}
-          className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
-          label={props.label || (props.kind as any).label}
-          resourceKeys={resourceKeys}
-          customData={props.customData}
-          createRedirect={props.createRedirect}
-        />
-      </Firehose>
+      <ConnectedPageHeading
+        obj={objData}
+        title={props.title || props.name}
+        titleFunc={props.titleFunc}
+        menuActions={props.menuActions}
+        buttonActions={props.buttonActions}
+        customActionMenu={props.customActionMenu}
+        kind={props.customKind || props.kind}
+        icon={props.icon}
+        breadcrumbs={pluginBreadcrumbs}
+        breadcrumbsFor={
+          props.breadcrumbsFor ??
+          (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, params, location) : undefined)
+        }
+        resourceKeys={resourceKeys}
+        getResourceStatus={props.getResourceStatus}
+        customData={props.customData}
+        badge={props.badge || getBadgeFromType(kindObj?.badge)}
+        OverrideTitle={props.OverrideTitle}
+        helpText={props.helpText}
+        helpAlert={props.helpAlert}
+        {...watchedResources}
+      />
+      <HorizontalNav
+        obj={objData as { data: K8sResourceCommon; loaded: boolean }}
+        pages={allPages}
+        pagesFor={props.pagesFor}
+        className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
+        label={props.label || kindObj?.label}
+        resourceKeys={resourceKeys}
+        customData={props.customData}
+        createRedirect={props.createRedirect}
+        {...watchedResources}
+      />
     </PageTitleContext.Provider>
   );
 }, ErrorBoundaryFallbackPage);

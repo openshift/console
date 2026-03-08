@@ -29,8 +29,8 @@ jest.mock('../utils/scroll-to-top-on-mount', () => ({
   ScrollToTopOnMount: ({ children }: { children }) => children || null,
 }));
 
-jest.mock('../utils/firehose', () => ({
-  Firehose: jest.fn(({ children }) => children),
+jest.mock('../utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(() => [null, false, null]),
 }));
 
 const mockUseParams = ReactRouter.useParams as jest.Mock;
@@ -38,6 +38,7 @@ const mockUseLocation = ReactRouter.useLocation as jest.Mock;
 const mockReactRouterUseLocation = useLocation as jest.Mock;
 const mockUseFavoritesOptions = require('@console/internal/components/useFavoritesOptions')
   .useFavoritesOptions as jest.Mock;
+const mockUseK8sWatchResource = require('../utils/k8s-watch-hook').useK8sWatchResource as jest.Mock;
 
 describe('ContainersDetailsPage', () => {
   beforeEach(() => {
@@ -51,6 +52,7 @@ describe('ContainersDetailsPage', () => {
   });
 
   it('verifies loading state while container data is being fetched', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, false, null]);
     renderWithProviders(<ContainersDetailsPage />);
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();
@@ -58,7 +60,7 @@ describe('ContainersDetailsPage', () => {
 });
 
 describe('ContainerDetails', () => {
-  const obj = { data: { ...testPodInstance } };
+  const pod = { ...testPodInstance };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -79,11 +81,12 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded />);
     });
 
     expect(screen.getByText('crash-app')).toBeVisible();
-    expect(screen.getByText('Waiting')).toBeVisible();
+    // Verify "Waiting" appears in both the page heading and details section
+    expect(screen.getAllByText('Waiting')).toHaveLength(2);
   });
 
   it('verifies the 404 error page when user tries to access non-existent container', async () => {
@@ -94,7 +97,7 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded />);
     });
 
     expect(screen.getByRole('heading', { name: '404: Page Not Found' })).toBeVisible();
@@ -110,7 +113,7 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded={false} />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
     });
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();
