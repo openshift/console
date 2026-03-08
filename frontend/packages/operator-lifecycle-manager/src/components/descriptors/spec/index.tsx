@@ -28,7 +28,7 @@ import type { CapabilityProps, Error } from '../types';
 import { SpecCapability } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { useConfigureSizeModal } from './configure-size';
-import { configureUpdateStrategyModal } from './configure-update-strategy';
+import { useConfigureUpdateStrategyModal } from './configure-update-strategy';
 import type { EndpointListProps } from './endpoint';
 import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
@@ -290,19 +290,19 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
   value,
 }) => {
   const { t } = useTranslation();
+  const launchUpdateStrategyModal = useConfigureUpdateStrategyModal({
+    kindObj: model,
+    resource: obj,
+    specDescriptor: descriptor,
+    specValue: value,
+  });
+
   return (
     <DetailsItem
       description={description}
       label={label}
       obj={obj}
-      onEdit={() =>
-        configureUpdateStrategyModal({
-          kindObj: model,
-          resource: obj,
-          specDescriptor: descriptor,
-          specValue: value,
-        })
-      }
+      onEdit={launchUpdateStrategyModal}
       path={fullPath}
     >
       {value?.type ?? t('public~None')}

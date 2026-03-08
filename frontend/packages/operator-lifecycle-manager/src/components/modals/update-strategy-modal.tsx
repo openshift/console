@@ -2,11 +2,13 @@ import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalBody,
   ModalSubmitFooter,
   ModalTitle,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import {
   ConfigureUpdateStrategy,
@@ -85,7 +87,13 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 };
 
-export const updateStrategyModal = createModalLauncher(UpdateStrategyModal);
+export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 
@@ -95,6 +103,4 @@ export type UpdateStrategyModalProps = {
   resource: K8sResourceKind;
   resourceKind: K8sKind;
   title: string;
-  cancel?: () => void;
-  close?: () => void;
-};
+} & ModalComponentProps;

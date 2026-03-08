@@ -3,11 +3,13 @@ import { useState, useCallback } from 'react';
 import { Grid, GridItem, Radio } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -104,13 +106,17 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   );
 };
 
-export const createInstallPlanApprovalModal = createModalLauncher<InstallPlanApprovalModalProps>(
-  InstallPlanApprovalModal,
-);
-
 export type InstallPlanApprovalModalProps = {
-  cancel?: () => void;
-  close?: () => void;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   obj: InstallPlanKind | SubscriptionKind;
+} & ModalComponentProps;
+
+export const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprovalModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
 };

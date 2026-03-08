@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
-import { useState, useCallback, useEffect } from 'react';
-import {
-  Alert,
-  Backdrop,
-  Modal,
-  ModalVariant,
-  Progress,
-  ProgressSize,
-  Title,
-} from '@patternfly/react-core';
+import { useState, useEffect, useCallback } from 'react';
+import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
@@ -22,7 +14,6 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { Checkbox } from '@console/internal/components/checkbox';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
@@ -37,8 +28,14 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
-import type { K8sKind, K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
-import { modelFor, referenceFor, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  k8sKill,
+  modelFor,
+  referenceFor,
+  k8sPatch,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -62,7 +59,6 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   cancel,
   close,
   csv,
-  k8sKill,
   subscription,
 }) => {
   const { t } = useTranslation();
@@ -153,7 +149,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
     };
 
     const operatorUninstallPromises = [
-      k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
+      k8sKill(SubscriptionModel, subscription, {}, {}, deleteOptions),
       ...(subscription?.status?.installedCSV && (await clusterServiceVersionExists())
         ? [
             k8sKill(
@@ -164,6 +160,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
                   namespace: subscription.metadata.namespace,
                 },
               },
+              {},
               {},
               deleteOptions,
             ),
@@ -185,7 +182,6 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
     consoleOperatorConfig,
     enabledPlugins,
     handleOperatorUninstallPromise,
-    k8sKill,
     removePlugins,
     subscription,
   ]);
@@ -266,7 +262,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       setOperandsRemaining(operands.length);
       const operandDeletionPromises = operands.map((operand: K8sResourceCommon) => {
         const model = modelFor(referenceFor(operand));
-        return k8sKill(model, operand, {}, deleteOptions);
+        return k8sKill(model, operand, {}, {}, deleteOptions);
       });
       // eslint-disable-next-line promise/catch-or-return
       settleAllPromises(operandDeletionPromises).then(([, , results]) => {
@@ -426,18 +422,6 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
       />
     </form>
   );
-};
-
-export const UninstallOperatorOverlay: FC<UninstallOperatorModalProps> = (props) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const closeOverlay = () => setIsOpen(false);
-  return isOpen ? (
-    <Backdrop>
-      <Modal variant={ModalVariant.small} isOpen>
-        <UninstallOperatorModal cancel={closeOverlay} close={closeOverlay} {...props} />;
-      </Modal>
-    </Backdrop>
-  ) : null;
 };
 
 const OperandDeleteProgress: FC<{
@@ -651,42 +635,33 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-export const createUninstallOperatorModal = createModalLauncher(UninstallOperatorModal);
-
-const UninstallOperatorModalProvider: OverlayComponent<UninstallOperatorModalProviderProps> = (
+export const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (
   props,
 ) => {
   return (
     <ModalWrapper blocking onClose={props.closeOverlay}>
-      <UninstallOperatorModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
+      <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </ModalWrapper>
   );
 };
 
-export const useUninstallOperatorModal = (props: UninstallOperatorModalProps) => {
-  const launcher = useOverlay();
+export const useUninstallOperatorModal = (subscription: K8sResourceKind, csv?: K8sResourceKind) => {
+  const launchModal = useOverlay();
   return useCallback(
-    () => launcher<UninstallOperatorModalProviderProps>(UninstallOperatorModalProvider, props),
-    [launcher, props],
+    () =>
+      launchModal<UninstallOperatorModalProps>(UninstallOperatorModalOverlay, {
+        subscription,
+        csv,
+      }),
+    [launchModal, subscription, csv],
   );
 };
 
-type UninstallOperatorModalProviderProps = UninstallOperatorModalProps & ModalComponentProps;
-
 export type UninstallOperatorModalProps = {
-  cancel?: () => void;
-  close?: () => void;
-  k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;
-  k8sGet: (kind: K8sKind, name: string, namespace: string) => Promise<K8sResourceKind>;
-  k8sPatch: (
-    kind: K8sKind,
-    resource: K8sResourceKind,
-    data: { op: string; path: string; value: any }[],
-  ) => Promise<any>;
   subscription: K8sResourceKind;
   csv?: K8sResourceKind;
   blocking?: boolean;
-};
+} & ModalComponentProps;
 
 type OperandsTableProps = {
   operands: K8sResourceCommon[];

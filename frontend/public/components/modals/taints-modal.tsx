@@ -9,15 +9,16 @@ import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
-import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
+import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
 import {
-  createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
   ModalTitle,
+  ModalWrapper,
 } from '../factory';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 
 const TaintsModal = (props: TaintsModalProps) => {
   const [taints, setTaints] = useState(props.resource.spec.taints || []);
@@ -92,7 +93,7 @@ const TaintsModal = (props: TaintsModalProps) => {
             </Thead>
 
             <Tbody>
-              {_.map(taints, (c, i) => (
+              {_.map(taints, (c, i: number) => (
                 <Tr key={i}>
                   <Td dataLabel={t('Key')}>
                     <span className="pf-v6-c-form-control">
@@ -159,10 +160,17 @@ const TaintsModal = (props: TaintsModalProps) => {
   );
 };
 
-export const taintsModal = createModalLauncher(TaintsModal);
-
 export type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: NodeKind;
-  close: () => void;
 } & ModalComponentProps;
+
+const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
+
+export { TaintsModalOverlay };

@@ -16,6 +16,7 @@ import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
@@ -30,7 +31,7 @@ import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
 import { DeprecatedOperatorWarningBadge } from '../deprecated-operator-warnings/deprecated-operator-warnings';
-import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
+import { LazyCommunityOperatorWarningModalOverlay } from '../modals';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import {
   capabilityLevelSort,
@@ -745,6 +746,8 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
     }
   }, [filteredItems, searchParams]);
 
+  const launchModal = useOverlay();
+
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
     setQueryArgument('details-item', item.uid);
     setDetailsItem(item);
@@ -769,7 +772,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
 
   const openOverlay = (item: OperatorHubItem) => {
     if (!ignoreOperatorWarning && item.catalogSource === DefaultCatalogSource.CommunityOperators) {
-      communityOperatorWarningModal({
+      launchModal(LazyCommunityOperatorWarningModalOverlay, {
         showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore),
       });
     } else {
