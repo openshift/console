@@ -47,7 +47,6 @@ import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
-import { Firehose } from '../utils/firehose';
 import { getQueryArgument } from '../utils/router';
 import { kindObj } from '../utils/inject';
 import type { ListDropdownProps } from '../utils/list-dropdown';
@@ -57,7 +56,7 @@ import { ResourceName } from '../utils/resource-icon';
 import { StatusBox, LoadingBox } from '../utils/status-box';
 import { useAccessReview } from '../utils/rbac';
 import { flagPending } from '../../reducers/features';
-import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import { useK8sWatchResource, useK8sWatchResources } from '../utils/k8s-watch-hook';
 
 // Split each binding into one row per subject
 export const flatten = (resources): BindingKind[] =>
@@ -185,18 +184,19 @@ const bindingType = (binding: BindingKind) => {
   if (!binding) {
     return undefined;
   }
-  if (binding.roleRef.name.startsWith('system:')) {
+  if (binding.roleRef?.name?.startsWith('system:')) {
     return 'system';
   }
-  return binding.metadata.namespace ? 'namespace' : 'cluster';
+  return binding.metadata?.namespace ? 'namespace' : 'cluster';
 };
 
 const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
-  return data.map(({ obj: binding }) => {
+  return data.map((row) => {
+    const binding = row.obj;
     const rowCells = {
       [tableColumnInfo[0].id]: {
         cell: <BindingName binding={binding} />,
-        props: getNameCellProps(binding.metadata.name),
+        props: getNameCellProps(binding.metadata?.name),
       },
       [tableColumnInfo[1].id]: {
         cell: <RoleLink binding={binding} />,
@@ -208,7 +208,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
         cell: binding.subject.name,
       },
       [tableColumnInfo[4].id]: {
-        cell: binding.metadata.namespace ? (
+        cell: binding.metadata?.namespace ? (
           <ResourceLink kind="Namespace" name={binding.metadata.namespace} />
         ) : (
           i18next.t('public~All namespaces')
@@ -360,11 +360,24 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
     },
   });
 
-  const data = useMemo(() => flatten(resources), [resources]);
+  // Only flatten when at least one resource has data to prevent undefined iteration
+  const data = useMemo(() => {
+    const hasData = Object.values(resources).some((r) => r.data);
+    return hasData ? flatten(resources) : [];
+  }, [resources]);
 
-  const loaded = Object.values(resources)
-    .filter((r) => !r.loadError)
-    .every((r) => r.loaded);
+  const loaded = useMemo(
+    () =>
+      Object.values(resources)
+        .filter((r) => !r.loadError)
+        .every((r) => r.loaded),
+    [resources],
+  );
+
+  // Aggregate errors from all resources
+  const loadError = useMemo(() => Object.values(resources).find((r) => r.loadError)?.loadError, [
+    resources,
+  ]);
 
   return (
     <>
@@ -377,7 +390,7 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
         <BindingsList
           data={data}
           loaded={loaded}
-          loadError={resources.RoleBinding.loadError}
+          loadError={loadError}
           staticFilters={staticFilters}
         />
       </ListPageBody>
@@ -784,52 +797,79 @@ const getSubjectIndex = () => {
 };
 
 const BindingLoadingWrapper: FC<BindingLoadingWrapperProps> = (props) => {
+  const { obj, loaded, loadError, fixedKeys } = props;
   const [, setActiveNamespace] = useActiveNamespace();
+
+  if (!loaded) {
+    return <LoadingBox />;
+  }
+
+  if (loadError) {
+    return <StatusBox data={obj} loaded={loaded} loadError={loadError} />;
+  }
+
+  if (!obj || _.isEmpty(obj)) {
+    return <StatusBox data={obj} loaded={loaded} loadError={loadError} />;
+  }
+
   const fixed: { [key: string]: any } = {};
-  _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
+  fixedKeys.forEach((k) => (fixed[k] = obj?.[k]));
+
   return (
-    <StatusBox {...props.obj}>
-      <BaseEditRoleBinding
-        {...props}
-        setActiveNamespace={setActiveNamespace}
-        fixed={fixed}
-        obj={props.obj.data}
-      />
-    </StatusBox>
+    <BaseEditRoleBinding
+      {...props}
+      setActiveNamespace={setActiveNamespace}
+      fixed={fixed}
+      obj={obj}
+    />
   );
 };
 
 export const EditRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
+
+  const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
+    kind,
+    name: params.name,
+    namespace: params.ns,
+    isList: false,
+  });
+
   return (
-    <Firehose
-      resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
-    >
-      <BindingLoadingWrapper
-        fixedKeys={['kind', 'metadata', 'roleRef']}
-        subjectIndex={getSubjectIndex()}
-        titleVerbAndKind={t('public~Edit RoleBinding')}
-        saveButtonText={t('public~Save')}
-      />
-    </Firehose>
+    <BindingLoadingWrapper
+      obj={obj}
+      loaded={loaded}
+      loadError={loadError}
+      fixedKeys={['kind', 'metadata', 'roleRef']}
+      subjectIndex={getSubjectIndex()}
+      titleVerbAndKind={t('public~Edit RoleBinding')}
+      saveButtonText={t('public~Save')}
+    />
   );
 };
 
 export const CopyRoleBinding: FC<EditRoleBindingProps> = ({ kind }) => {
   const { t } = useTranslation();
   const params = useParams();
+
+  const [obj, loaded, loadError] = useK8sWatchResource<RoleBindingKind | ClusterRoleBindingKind>({
+    kind,
+    name: params.name,
+    namespace: params.ns,
+    isList: false,
+  });
+
   return (
-    <Firehose
-      resources={[{ kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj' }]}
-    >
-      <BindingLoadingWrapper
-        fixedKeys={['kind']}
-        subjectIndex={getSubjectIndex()}
-        isCreate={true}
-        titleVerbAndKind={t('public~Duplicate RoleBinding')}
-      />
-    </Firehose>
+    <BindingLoadingWrapper
+      obj={obj}
+      loaded={loaded}
+      loadError={loadError}
+      fixedKeys={['kind']}
+      subjectIndex={getSubjectIndex()}
+      isCreate={true}
+      titleVerbAndKind={t('public~Duplicate RoleBinding')}
+    />
   );
 };
 
@@ -844,7 +884,7 @@ type BindingProps = {
 type BindingsListTableProps = {
   data: BindingKind[];
   loaded: boolean;
-  loadError: string;
+  loadError?: unknown;
   mock?: boolean;
   staticFilters?: any;
 };
@@ -881,9 +921,9 @@ type BindingLoadingWrapperProps = {
   titleVerbAndKind: string;
   saveButtonText?: string;
   isCreate?: boolean;
-  obj?: {
-    data: RoleBindingKind | ClusterRoleBindingKind;
-  };
+  obj?: RoleBindingKind | ClusterRoleBindingKind;
+  loaded: boolean;
+  loadError?: unknown;
 };
 
 type EditRoleBindingProps = {

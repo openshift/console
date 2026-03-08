@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import type { JSONSchema7 } from 'json-schema';
 import { startCase, toPath } from 'lodash';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor } from '@console/internal/module/k8s';
 import { getUID } from '../selectors/common';
@@ -22,7 +22,7 @@ export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): EntityM
 };
 
 export const createLookup = <A extends K8sResourceKind>(
-  loadingList: FirehoseResult<A[]>,
+  loadingList: WatchK8sResultsObject<A[]>,
   getKey?: KeyResolver<A>,
 ): K8sEntityMap<A> => {
   if (loadingList && loadingList.loaded) {

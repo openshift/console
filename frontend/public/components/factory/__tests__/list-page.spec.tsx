@@ -1,5 +1,4 @@
 import { screen, fireEvent } from '@testing-library/react';
-
 import { TextFilter } from '@console/internal/components/factory/text-filter';
 import {
   ListPageWrapper,
@@ -7,15 +6,14 @@ import {
   MultiListPage,
 } from '@console/internal/components/factory/list-page';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
 
-let capturedFirehoseProps = null;
-
-jest.mock('@console/internal/components/utils/firehose', () => ({
-  Firehose: (props) => {
-    capturedFirehoseProps = props;
-    return props.children;
-  },
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(() => ({})),
+  useK8sWatchResource: jest.fn(() => [null, true, null]),
 }));
+
+const mockUseK8sWatchResources = k8sWatchHook.useK8sWatchResources as jest.Mock;
 
 describe('TextFilter component', () => {
   it('renders text input without label', () => {
@@ -86,12 +84,12 @@ describe('TextFilter component', () => {
 
 describe('FireMan component', () => {
   it('does not render title when not provided', () => {
-    renderWithProviders(<FireMan resources={[{ kind: 'Pod', prop: 'obj' }]} />);
+    renderWithProviders(<FireMan />);
     expect(screen.queryByText('My pods')).not.toBeInTheDocument();
   });
 
   it('renders title when provided', () => {
-    renderWithProviders(<FireMan resources={[{ kind: 'Node', prop: 'obj' }]} title="My pods" />);
+    renderWithProviders(<FireMan title="My pods" />);
     expect(screen.getByText('My pods')).toBeVisible();
   });
 
@@ -99,13 +97,7 @@ describe('FireMan component', () => {
     const createProps = {};
 
     renderWithProviders(
-      <FireMan
-        resources={[{ kind: 'Pod', prop: 'obj' }]}
-        canCreate
-        createProps={createProps}
-        createButtonText="Create Pod"
-        title="Pod"
-      />,
+      <FireMan canCreate createProps={createProps} createButtonText="Create Pod" title="Pod" />,
     );
 
     const button = screen.getByRole('button', { name: 'Create Pod' });
@@ -152,11 +144,12 @@ describe('ListPageWrapper component', () => {
 
 describe(' MultiListPage component', () => {
   beforeEach(() => {
-    capturedFirehoseProps = null;
+    mockUseK8sWatchResources.mockClear();
   });
 
-  it('renders with Firehose wrapper and displays ListComponent content', () => {
+  it('renders with useK8sWatchResources hook and displays ListComponent content', () => {
     const ListComponent = () => <div>Multi List</div>;
+    mockUseK8sWatchResources.mockReturnValue({});
 
     renderWithProviders(
       <MultiListPage
@@ -167,8 +160,10 @@ describe(' MultiListPage component', () => {
     );
 
     expect(screen.getByText('Multi List')).toBeVisible();
-    expect(capturedFirehoseProps.resources).toHaveLength(1);
-    expect(capturedFirehoseProps.resources[0].kind).toBe('Pod');
-    expect(capturedFirehoseProps.resources[0].name).toBe('example-pod');
+    expect(mockUseK8sWatchResources).toHaveBeenCalled();
+    const watchConfig = mockUseK8sWatchResources.mock.calls[0]?.[0] as any;
+    expect(watchConfig?.Pod).toBeDefined();
+    expect(watchConfig?.Pod?.kind).toBe('Pod');
+    expect(watchConfig?.Pod?.name).toBe('example-pod');
   });
 });

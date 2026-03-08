@@ -6,8 +6,8 @@ import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { FLAGS } from '@console/shared/src/constants';
 import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceName } from './resource-icon';
 import { flagPending } from '../../reducers/features';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
@@ -15,17 +15,17 @@ import { useTranslation } from 'react-i18next';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {
-  FirehoseResource,
   K8sResourceCommon,
   K8sModel,
   K8sResourceKind,
+  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk/src';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
 };
 
-interface ListDropdownResource extends Partial<FirehoseResource> {
+interface ListDropdownResource extends Partial<WatchK8sResource & { prop?: string }> {
   data?: K8sResourceCommon[];
 }
 
@@ -52,7 +52,11 @@ export interface ListDropdownProps {
   loadError?: boolean;
 }
 
-const ListDropdown_: FC<ListDropdownProps> = ({
+interface ListDropdownInternalProps extends Omit<ListDropdownProps, 'resources'> {
+  resources?: Record<string, ListDropdownResource>;
+}
+
+const ListDropdown_: FC<ListDropdownInternalProps> = ({
   desc,
   placeholder,
   loaded,
@@ -197,13 +201,41 @@ const ListDropdown_: FC<ListDropdownProps> = ({
 };
 
 export const ListDropdown: FC<ListDropdownProps> = (props) => {
-  const resources = _.map(props.resources, (resource) =>
-    _.assign({ isList: true, prop: resource.kind }, resource),
+  const watchResources = useMemo(() => {
+    if (!props.resources || props.resources.length === 0) {
+      return {};
+    }
+    return props.resources.reduce((acc, resource) => {
+      // Use prop as key if provided, otherwise fallback to kind
+      const key = resource.prop || resource.kind;
+      acc[key] = {
+        kind: resource.kind,
+        isList: true,
+        namespace: resource.namespace,
+        selector: resource.selector,
+        fieldSelector: resource.fieldSelector,
+        limit: resource.limit,
+        namespaced: resource.namespaced,
+        optional: resource.optional,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [props.resources]);
+
+  const watchedResources = useK8sWatchResources<Record<string, K8sResourceCommon[]>>(
+    watchResources,
   );
+
+  const loaded = useMemo(() => {
+    return Object.values(watchedResources).every((r) => r.loaded);
+  }, [watchedResources]);
+
+  const loadError = useMemo(() => {
+    return Object.values(watchedResources).some((r) => r.loadError);
+  }, [watchedResources]);
+
   return (
-    <Firehose resources={resources}>
-      <ListDropdown_ {...props} />
-    </Firehose>
+    <ListDropdown_ {...props} resources={watchedResources} loaded={loaded} loadError={loadError} />
   );
 };
 

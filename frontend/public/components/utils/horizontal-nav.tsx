@@ -37,12 +37,17 @@ import {
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const editYamlComponent = (props) => (
-  <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
+  <AsyncComponent
+    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
+    obj={props.obj}
+    create={false}
+  />
 );
 export const viewYamlComponent = (props) => (
   <AsyncComponent
     loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
     obj={props.obj}
+    create={false}
     readOnly={true}
   />
 );

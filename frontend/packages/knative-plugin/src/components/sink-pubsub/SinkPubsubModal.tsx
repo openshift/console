@@ -4,18 +4,19 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
   resourceName: string;
-  resourceDropdown: FirehoseResource[];
+  resourceDropdown: WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]>[];
   labelTitle: string;
   cancel?: () => void;
 }

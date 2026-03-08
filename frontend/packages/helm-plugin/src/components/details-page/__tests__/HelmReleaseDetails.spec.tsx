@@ -22,11 +22,6 @@ jest.mock('@console/shared/src/hooks/version', () => ({
   useClusterVersion: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...jest.requireActual('@console/internal/components/utils/firehose'),
-  Firehose: ({ children }) => children,
-}));
-
 describe('HelmReleaseDetails', () => {
   beforeEach(() => {
     helmReleaseDetailsProps = {

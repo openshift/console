@@ -3,9 +3,13 @@ import YAML from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
-import type { AddAction, CatalogItemType, Perspective } from '@console/dynamic-plugin-sdk';
+import type {
+  AddAction,
+  CatalogItemType,
+  Perspective,
+  WatchK8sResultsObject,
+} from '@console/dynamic-plugin-sdk';
 import { isAddAction, isCatalogItemType, isPerspective } from '@console/dynamic-plugin-sdk';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,
   ClusterRoleModel,
@@ -331,7 +335,10 @@ const useDefaultSamples = () => {
     );
 };
 
-export const useResourceSidebarSamples = (kindObj: K8sKind, yamlSamplesList: FirehoseResult) => {
+export const useResourceSidebarSamples = (
+  kindObj: K8sKind,
+  yamlSamplesList: WatchK8sResultsObject<K8sResourceKind[]>,
+) => {
   const defaultSamples = useDefaultSamples();
 
   if (!kindObj) {

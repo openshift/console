@@ -1,30 +1,54 @@
 import type { FC } from 'react';
-import * as _ from 'lodash';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Banner, Flex } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
-import { Firehose } from './utils/firehose';
-import { FirehoseResult } from './utils/types';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { referenceForModel } from '../module/k8s';
 import { ConsoleNotificationModel } from '../models/index';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+
+type ConsoleNotification = K8sResourceCommon & {
+  spec: {
+    location?: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
+    backgroundColor?: string;
+    color?: string;
+    text: string;
+    link?: {
+      href: string;
+      text?: string;
+    };
+  };
+};
 
 type ConsoleNotifierProps = {
   location: 'BannerTop' | 'BannerBottom' | 'BannerTopBottom';
 };
 
-type PrivateConsoleNotifierProps = ConsoleNotifierProps & {
-  obj: FirehoseResult;
-};
+export const ConsoleNotifier: FC<ConsoleNotifierProps> = ({ location }) => {
+  const shouldFetch = useFlag(FLAGS.CONSOLE_NOTIFICATION);
+  const [notifications, loaded, loadError] = useK8sWatchResource<ConsoleNotification[]>(
+    shouldFetch
+      ? {
+          kind: referenceForModel(ConsoleNotificationModel),
+          isList: true,
+        }
+      : null,
+  );
 
-const ConsoleNotifier_: FC<PrivateConsoleNotifierProps> = ({ obj, location }) => {
-  if (_.isEmpty(obj)) {
+  if (loadError) {
+    // eslint-disable-next-line no-console
+    console.error('Error loading console notifications:', loadError);
+    return null;
+  }
+
+  if (!loaded || !notifications?.length) {
     return null;
   }
 
   return (
     <>
-      {_.map(_.get(obj, 'data'), (notification) =>
+      {notifications.map((notification) =>
         notification.spec.location === location ||
         notification.spec.location === 'BannerTopBottom' ||
         // notification.spec.location is optional
@@ -41,7 +65,7 @@ const ConsoleNotifier_: FC<PrivateConsoleNotifierProps> = ({ obj, location }) =>
             <Flex justifyContent={{ default: 'justifyContentCenter' }}>
               <p className="pf-v6-u-text-align-center">
                 {notification.spec.text}{' '}
-                {_.get(notification.spec, ['link', 'href']) && (
+                {notification.spec.link?.href && (
                   <ExternalLink
                     href={notification.spec.link.href}
                     style={{ color: notification.spec.color }}
@@ -57,24 +81,4 @@ const ConsoleNotifier_: FC<PrivateConsoleNotifierProps> = ({ obj, location }) =>
     </>
   );
 };
-ConsoleNotifier_.displayName = 'ConsoleNotifier_';
-
-export const ConsoleNotifier = connectToFlags<ConsoleNotifierProps & WithFlagsProps>(
-  FLAGS.CONSOLE_NOTIFICATION,
-)(({ flags, ...props }) => {
-  const resources = flags[FLAGS.CONSOLE_NOTIFICATION]
-    ? [
-        {
-          kind: referenceForModel(ConsoleNotificationModel),
-          isList: true,
-          prop: 'obj',
-        },
-      ]
-    : [];
-  return (
-    <Firehose resources={resources}>
-      <ConsoleNotifier_ {...(props as PrivateConsoleNotifierProps)} />
-    </Firehose>
-  );
-});
 ConsoleNotifier.displayName = 'ConsoleNotifier';

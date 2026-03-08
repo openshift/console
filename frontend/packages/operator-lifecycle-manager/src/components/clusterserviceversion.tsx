@@ -23,7 +23,7 @@ import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
-import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResource, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import {
   ResourceStatus,
   StatusIconAndText,
@@ -36,7 +36,7 @@ import { Conditions, ConditionTypes } from '@console/internal/components/conditi
 import { ResourceEventStream } from '@console/internal/components/events';
 import type { RowFunctionArgs, Flatten } from '@console/internal/components/factory';
 import { DetailsPage, Table, TableData, MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResult, Page } from '@console/internal/components/utils';
+import type { Page } from '@console/internal/components/utils';
 import {
   AsyncComponent,
   DOC_URL_OPERATORFRAMEWORK_SDK,
@@ -1368,8 +1368,8 @@ export type ClusterServiceVersionListProps = {
   loaded: boolean;
   loadError?: string;
   data: ClusterServiceVersionKind[];
-  subscriptions: FirehoseResult<SubscriptionKind[]>;
-  catalogSources: FirehoseResult<CatalogSourceKind[]>;
+  subscriptions: WatchK8sResultsObject<SubscriptionKind[]>;
+  catalogSources: WatchK8sResultsObject<CatalogSourceKind[]>;
   activeNamespace?: string;
 };
 

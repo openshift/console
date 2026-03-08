@@ -79,9 +79,8 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   const [projectTemplatesLoaded, setProjectTemplatesLoaded] = useState<boolean>(false);
   const [projectTemplatesError, setProjectTemplatesError] = useState<APIError>();
 
-  // Load templates from the shared `openshift` namespace. Don't use Firehose
-  // for templates so that we can request only metadata. This keeps the request
-  // much smaller.
+  // Load templates from the shared `openshift` namespace.
+  // Request only metadata to keep the request much smaller.
   useEffect(() => {
     k8sListPartialMetadata(TemplateModel, { ns: 'openshift' })
       .then((metadata) => {

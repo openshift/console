@@ -42,11 +42,11 @@ export const useBindingActions = (
   const navigate = useNavigate();
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Delete] as const);
 
-  const { subjectIndex, subjects = [] } = obj;
+  const { subjectIndex, subjects } = obj ?? {};
   const subject = subjects?.[subjectIndex];
   const deleteBindingSubject = useWarningModal({
     title: t('public~Delete {{label}} subject?', {
-      label: model.kind,
+      label: model?.kind,
     }),
     children: t('public~Are you sure you want to delete subject {{name}} of type {{kind}}?', {
       name: subject?.name,
@@ -143,9 +143,9 @@ export const useBindingActions = (
         : []),
       factory.DuplicateBinding(),
       factory.EditBindingSubject(),
-      ...(subjects.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
+      ...(subjects?.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
     ];
-  }, [memoizedFilterActions, subject?.kind, factory, subjects.length, commonActions.Delete]);
+  }, [memoizedFilterActions, subject?.kind, factory, subjects?.length, commonActions.Delete]);
 
   return actions;
 };
