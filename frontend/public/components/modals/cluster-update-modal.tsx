@@ -27,8 +27,9 @@ import {
   referenceForModel,
   sortMCPsByCreationTimestamp,
 } from '../../module/k8s';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
-  createModalLauncher,
+  ModalWrapper,
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
@@ -338,7 +339,13 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   );
 };
 
-export const clusterUpdateModal = createModalLauncher(ClusterUpdateModal);
+export const ClusterUpdateModalOverlay: OverlayComponent<ClusterUpdateModalProps> = (props) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <ClusterUpdateModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 type ClusterUpdateModalProps = {
   cv: ClusterVersionKind;
