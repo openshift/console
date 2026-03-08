@@ -8,6 +8,9 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   Truncate,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
@@ -18,7 +21,6 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  Modal,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   useUserPreferenceCompatibility,
@@ -41,8 +43,9 @@ import {
   sourceSort,
   validSubscriptionSort,
 } from './operator-hub-utils';
-import type { OperatorHubItem, TokenizedAuthProvider } from './index';
 import { InfrastructureFeature } from './index';
+import type { OperatorHubItem, TokenizedAuthProvider } from './index';
+import '@console/shared/src/components/catalog/details/CatalogDetailsModal.scss';
 
 // Scoring and priority code no longer used and will be removed with Operator Hub catalog files cleanup effort
 const SCORE = {
@@ -1031,13 +1034,13 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
       />
       {detailsItem && (
         <Modal
-          className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          className="ocs-modal co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
           aria-labelledby="catalog-item-header"
           isOpen={!!detailsItem && showDetails}
           onClose={closeOverlay}
-          title={detailsItem.name}
-          header={
+        >
+          <ModalHeader>
             <>
               <CatalogItemHeader
                 className="co-catalog-page__overlay-header"
@@ -1081,15 +1084,16 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
                 )}
               </div>
             </>
-          }
-        >
-          <OperatorHubItemDetails
-            item={detailsItem}
-            updateChannel={updateChannel}
-            setUpdateChannel={setUpdateChannel}
-            updateVersion={updateVersion}
-            setUpdateVersion={setUpdateVersion}
-          />
+          </ModalHeader>
+          <ModalBody>
+            <OperatorHubItemDetails
+              item={detailsItem}
+              updateChannel={updateChannel}
+              setUpdateChannel={setUpdateChannel}
+              updateVersion={updateVersion}
+              setUpdateVersion={setUpdateVersion}
+            />
+          </ModalBody>
         </Modal>
       )}
     </>
