@@ -8,9 +8,9 @@
     "lint": "yarn --cwd ../.. eslint packages/network-attachment-definition-plugin"
   },
   "dependencies": {
+    "@console/internal": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed",
-    "@console/internal": "0.0.0-fixed",
     "unique-names-generator": "4.3.1"
   },
   "consolePlugin": {
