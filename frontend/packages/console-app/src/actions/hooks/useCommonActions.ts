@@ -7,13 +7,13 @@ import {
   LazyAnnotationsModalOverlay,
   LazyDeleteModalOverlay,
   LazyLabelsModalOverlay,
-  taintsModal,
   tolerationsModal,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
+import { TaintsModalOverlay } from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sModel, K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import type { ActionObject } from './types';
 import { CommonActionCreator } from './types';
@@ -143,9 +143,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          taintsModal({
+          launchModal(TaintsModalOverlay, {
             resourceKind: kind,
-            resource,
+            resource: resource as NodeKind,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -161,9 +161,10 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (tolerationsModal, taintsModal)
-    // to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
+    // Excluding legacy modal launcher functions from dependencies.
+    // These use createModalLauncher() which creates referentially stable functions.
+    // As each modal migrates to useOverlay, it will use launchModal (which IS in deps).
+    // TODO(CONSOLE-5012): Remove this disable when all modals in this file use useOverlay
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [kind, resource, t, message, actualEditPath, launchModal],
   );

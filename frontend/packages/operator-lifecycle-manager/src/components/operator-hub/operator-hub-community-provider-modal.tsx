@@ -3,17 +3,20 @@ import { useState, useCallback } from 'react';
 import { Checkbox, Content, ContentVariants, Icon, Split, SplitItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderModalProps> = ({
   close,
+  cancel,
   showCommunityOperators,
 }) => {
   const { t } = useTranslation();
@@ -66,7 +69,7 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
         submitText={t('olm~Continue')}
         inProgress={false}
         errorMessage=""
-        cancel={close}
+        cancel={cancel}
       />
     </form>
   );
@@ -74,7 +77,18 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
 
 export type OperatorHubCommunityProviderModalProps = {
   showCommunityOperators: (ignoreWarnings: boolean) => void;
-  close?: () => void;
-};
+} & ModalComponentProps;
 
-export const communityOperatorWarningModal = createModalLauncher(OperatorHubCommunityProviderModal);
+export const CommunityOperatorWarningModalOverlay: OverlayComponent<OperatorHubCommunityProviderModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <OperatorHubCommunityProviderModal
+        {...props}
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+      />
+    </ModalWrapper>
+  );
+};

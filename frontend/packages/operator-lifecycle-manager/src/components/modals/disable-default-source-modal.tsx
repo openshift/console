@@ -2,12 +2,13 @@ import type { FC, FormEvent } from 'react';
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
@@ -15,7 +16,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import type { OperatorHubKind } from '../operator-hub';
 
-const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
+const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
   kind,
   operatorHub,
   sourceName,
@@ -72,10 +73,22 @@ const DisableDefaultSourceModal: FC<DisableSourceModalProps> = ({
   );
 };
 
-type DisableSourceModalProps = {
+export const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSourceModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <DisableDefaultSourceModal
+        {...props}
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+      />
+    </ModalWrapper>
+  );
+};
+
+export type DisableDefaultSourceModalProps = {
   kind: K8sKind;
   operatorHub: OperatorHubKind;
   sourceName: string;
 } & ModalComponentProps;
-
-export const disableDefaultSourceModal = createModalLauncher(DisableDefaultSourceModal);

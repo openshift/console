@@ -2,17 +2,19 @@ import type { FC } from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
-  createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { ResourceLink, CopyToClipboard } from '@console/internal/components/utils';
 import type { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
-const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
+export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">
@@ -38,14 +40,18 @@ const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepReso
   );
 };
 
-export const installPlanPreviewModal = createModalLauncher<InstallPlanPreviewModalProps>(
-  InstallPlanPreview,
-);
-
 export type InstallPlanPreviewModalProps = {
   stepResource: StepResource;
-  cancel?: () => void;
-  close?: () => void;
+} & ModalComponentProps;
+
+export const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreviewModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
+    </ModalWrapper>
+  );
 };
 
 InstallPlanPreview.displayName = 'InstallPlanPreview';

@@ -2,13 +2,14 @@ import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
 import { Alert, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { Checkbox } from '@console/internal/components/checkbox';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ModalTitle,
   ModalBody,
-  createModalLauncher,
   ModalSubmitFooter,
+  ModalWrapper,
 } from '@console/internal/components/factory/modal';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
@@ -109,7 +110,15 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
   );
 };
 
-export const editDefaultSourcesModal = createModalLauncher(EditDefaultSourcesModal);
+export const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSourcesModalProps> = (
+  props,
+) => {
+  return (
+    <ModalWrapper blocking onClose={props.closeOverlay}>
+      <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </ModalWrapper>
+  );
+};
 
 type EditDefaultSourcesModalProps = {
   operatorHub: OperatorHubKind;
