@@ -20,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog/v2"
 )
 
 var (
@@ -40,20 +41,17 @@ var (
 	svBuild           = svId + `(?:\.` + svId + `)*`
 	svBuildOpt        = `(?:\+` + svBuild + `)?`
 	chartVersionRegex = regexp.MustCompile(`-(` + svVersionCore + svPrereleaseOpt + svBuildOpt + `)\.(?:tgz|tar\.gz)$`)
+
+	dnsLabel  = `[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?`
+	hostPort  = dnsLabel + `(?:\.` + dnsLabel + `)*\.?(?::\d+)?`
+	ociURLRe  = regexp.MustCompile(`(?i)^oci://` + hostPort)
+	httpURLRe = regexp.MustCompile(`(?i)^https?://` + hostPort + `/.+\.(?:tar\.gz|tgz)$`)
 )
 
-// isValidChartURL returns true for oci://<ref> or http(s)://... with path ending in .tgz or .tar.gz (query params allowed).
+// isValidChartURL validates chart URLs using RFC-compliant hostname labels.
+// Accepts oci://<registry>/<path> and http(s)://<host>/<path>.tgz|tar.gz URLs.
 func isValidChartURL(raw string) bool {
-	u, err := url.Parse(raw)
-	if err != nil {
-		return false
-
-	}
-	if strings.HasPrefix(u.Scheme, "http") {
-		return strings.HasSuffix(u.Path, ".tgz") || strings.HasSuffix(u.Path, ".tar.gz")
-	} else {
-		return u.Scheme == "oci"
-	}
+	return ociURLRe.MatchString(raw) || httpURLRe.MatchString(raw)
 }
 
 // chartVersionFromURL extracts the chart version from a chart URL.
@@ -263,7 +261,7 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 
 // InstallChartFromURL installs a chart from an OCI or direct HTTP(S) chart URL.
 // If not provided, version is extracted from the OCI URL tag when applicable.
-func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, version string) (*release.Release, error) {
+func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
 
 	if !isValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
@@ -296,14 +294,26 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 		ch.Metadata.Annotations = make(map[string]string)
 	}
 	ch.Metadata.Annotations["chart_url"] = url
-
-	release, err := cmd.Run(ch, vals)
+	ch.Metadata.Annotations["installation"] = "url_install"
+	go func() {
+		_, err := cmd.Run(ch, vals)
+		if err == nil {
+			klog.Infof("Successfully installed chart from URL %s as release %s/%s", url, ns, name)
+			if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
+				metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
+			}
+		} else {
+			klog.Errorf("Failed to install chart from URL %s as release %s/%s: %v", url, ns, name, err)
+			if secretErr := createSecret(ns, name, 1, coreClient, err); secretErr != nil {
+				klog.Errorf("Failed to create error-tracking secret for release %s/%s: %v", ns, name, secretErr)
+			}
+			time.Sleep(15 * time.Second)
+			coreClient.Secrets(ns).Delete(context.TODO(), name, v1.DeleteOptions{})
+		}
+	}()
+	secret, err := getSecret(ns, name, 1, coreClient)
 	if err != nil {
 		return nil, err
 	}
-	if ch.Metadata.Name != "" && ch.Metadata.Version != "" {
-		metrics.HandleconsoleHelmInstallsTotal(ch.Metadata.Name, ch.Metadata.Version)
-	}
-
-	return release, nil
+	return &secret, nil
 }

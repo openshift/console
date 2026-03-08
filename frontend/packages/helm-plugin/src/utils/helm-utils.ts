@@ -345,3 +345,24 @@ export const isGoingToTopology = (resources: K8sResourceKind[]) =>
   !!resources.find((resource) =>
     WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
   );
+
+export const fetchChartFromURL = (chartURL: string): Promise<HelmChart> => {
+  return coFetchJSON(`/api/helm/chart?url=${encodeURIComponent(chartURL)}&noRepo=true`);
+};
+
+export const installChartFromURL = (
+  namespace: string,
+  releaseName: string,
+  chartURL: string,
+  chartVersion?: string,
+  values?: Record<string, unknown>,
+) => {
+  return coFetchJSON.post('/api/helm/release/async', {
+    namespace,
+    name: releaseName,
+    chart_url: chartURL, // eslint-disable-line @typescript-eslint/naming-convention
+    ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+    ...(values ? { values } : {}),
+    noRepo: true,
+  });
+};

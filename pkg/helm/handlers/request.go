@@ -8,6 +8,7 @@ type HelmRequest struct {
 	Values       map[string]interface{} `json:"values"`
 	Version      int                    `json:"version"`
 	IndexEntry   string                 `json:"indexEntry"`
+	NoRepo       bool                   `json:"noRepo"`
 }
 
 type HelmVerifierRequest struct {
