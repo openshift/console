@@ -58,18 +58,29 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('resourcequotas', { kind: 'ResourceQuota', humanizeKind: false })
     .set('limitranges', { kind: 'LimitRange', humanizeKind: false })
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler', humanizeKind: false })
-    .set('roles', { kind: 'Role' })
-    .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
-      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
-    })
-    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotClass', {
-      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
-      namespaced: false,
-    })
-    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotContent', {
-      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
-      namespaced: false,
-    });
+    .set('roles', { kind: 'Role' });
+
+  // VolumeSnapshot tests require CSI-based storage classes which are only reliably available on AWS.
+  // These resources are thoroughly tested in tests/storage/snapshot.cy.ts on AWS platforms.
+  // Skip them here to avoid flaky failures on GCP and other platforms.
+  // Normalize env check: CI env vars are strings, so "false" would be truthy without explicit comparison.
+  const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+  const snapshotObjs = isAws
+    ? OrderedMap<string, TestDefinition>()
+        .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
+          kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
+        })
+        .set('snapshot.storage.k8s.io~v1~VolumeSnapshotClass', {
+          kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
+          namespaced: false,
+        })
+        .set('snapshot.storage.k8s.io~v1~VolumeSnapshotContent', {
+          kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
+          namespaced: false,
+        })
+    : OrderedMap<string, TestDefinition>();
+
+  const k8sObjsWithSnapshots = k8sObjs.merge(snapshotObjs);
 
   const openshiftObjs = OrderedMap<string, TestDefinition>()
     .set('deploymentconfigs', {
@@ -90,7 +101,10 @@ describe('Kubernetes resource CRUD operations', () => {
       namespaced: false,
     });
 
-  const testObjs = Cypress.env('openshift') === true ? k8sObjs.merge(openshiftObjs) : k8sObjs;
+  const testObjs =
+    Cypress.env('openshift') === true
+      ? k8sObjsWithSnapshots.merge(openshiftObjs)
+      : k8sObjsWithSnapshots;
   const testLabel = 'automated-test-name';
 
   const resourcesWithCreationForm = new Set([
