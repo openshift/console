@@ -383,7 +383,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   );
 
   return (
-    <>
+    <Modal variant={ModalVariant.small} isOpen onClose={isSubmitInProgress ? undefined : close}>
       <ModalHeader
         title={t('olm~Uninstall Operator?')}
         titleIconVariant="warning"
@@ -445,7 +445,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
-    </>
+    </Modal>
   );
 };
 
@@ -664,9 +664,7 @@ export const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorMo
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
-      <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </Modal>
+    <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
   );
 };
 

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import {
   Button,
   Form,
@@ -97,6 +97,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
   const [storage, setStorage] = useState<string>(
     _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
   );
+  const formId = useId();
 
   const submit = (e) => {
     e.preventDefault();
@@ -116,7 +117,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
     <>
       <ModalHeader title={props.title} data-test-id="modal-title" />
       <ModalBody>
-        <Form id="resource-requirements-form" onSubmit={(e) => submit(e)}>
+        <Form id={formId} onSubmit={(e) => submit(e)}>
           <Grid hasGutter>
             <GridItem>{props.description}</GridItem>
             <ResourceRequirements
@@ -135,7 +136,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
         <Button
           type="submit"
           variant="primary"
-          form="resource-requirements-form"
+          form={formId}
           isLoading={inProgress}
           isDisabled={inProgress}
           data-test="confirm-action"

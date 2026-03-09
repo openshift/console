@@ -64,7 +64,6 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
         <Button
           type="submit"
           variant="danger"
-          onClick={submit}
           form="disable-default-source-form"
           isLoading={inProgress}
           isDisabled={inProgress}

@@ -107,7 +107,6 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
         <Button
           type="submit"
           variant="primary"
-          onClick={submit}
           form="edit-default-sources-form"
           isLoading={inProgress}
           isDisabled={inProgress}

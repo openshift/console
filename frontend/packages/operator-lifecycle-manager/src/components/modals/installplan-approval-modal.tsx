@@ -70,11 +70,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               value={InstallPlanApproval.Automatic}
               label={`${t(`olm~Automatic`)} (${t('public~default')})`}
               description={t('olm~New updates will be installed as soon as they become available.')}
-              onChange={(e) =>
-                setSelectedApprovalStrategy(
-                  (e.target as HTMLInputElement).value as InstallPlanApproval,
-                )
-              }
+              onChange={() => setSelectedApprovalStrategy(InstallPlanApproval.Automatic)}
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Automatic}
               data-checked-state={selectedApprovalStrategy === InstallPlanApproval.Automatic}
             />
@@ -86,11 +82,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               description={t(
                 'olm~New updates need to be manually approved before installation begins.',
               )}
-              onChange={(e) =>
-                setSelectedApprovalStrategy(
-                  (e.target as HTMLInputElement).value as InstallPlanApproval,
-                )
-              }
+              onChange={() => setSelectedApprovalStrategy(InstallPlanApproval.Manual)}
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Manual}
               data-checked-state={selectedApprovalStrategy === InstallPlanApproval.Manual}
             />
