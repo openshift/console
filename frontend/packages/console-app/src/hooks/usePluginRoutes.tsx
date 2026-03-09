@@ -58,9 +58,7 @@ const RoutePage: FC<RoutePageProps> = ({ extension, activePerspective, setActive
 };
 
 /**
- * Converts a route page extension into an array of React Router v7 Route elements.
- *
- * Supports multiple paths per extension and exact matching.
+ * Converts Console route page extension data to React Router v7 route components.
  */
 export const mapExtensionToRoutes = (data: {
   uid: string;
