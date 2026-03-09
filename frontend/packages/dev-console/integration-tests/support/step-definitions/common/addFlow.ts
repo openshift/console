@@ -145,3 +145,29 @@ Then(
 Given('user has installed Gitops primer Operator', () => {
   verifyAndInstallGitopsPrimerOperator();
 });
+
+When('user navigates to catalog all namespaces page', () => {
+  cy.visit('/catalog/all-namespaces');
+  app.waitForLoad();
+});
+
+Then('user will see {string} page heading', (heading: string) => {
+  cy.get('[data-test="page-heading"] h1').should('contain.text', heading);
+});
+
+Then('user will see {string} help text', (helpText: string) => {
+  cy.contains(helpText).should('be.visible');
+});
+
+Then('user will not see catalog tiles or items', () => {
+  cy.get('.catalog-tile-pf').should('not.exist');
+  cy.get('[class$="catalog-tile"]').should('not.exist');
+});
+
+Then('user will see catalog tiles or items', () => {
+  catalogPage.isCardsDisplayed();
+});
+
+Then('user will not see {string} help text', (helpText: string) => {
+  cy.contains(helpText).should('not.exist');
+});

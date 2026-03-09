@@ -10,6 +10,7 @@ const LOCALIZATION_LANGUAGE_LABEL = 'console.openshift.io/lang';
 const LOCALIZATION_COUNTRY_LABEL = 'console.openshift.io/country';
 
 export const createSampleLink = (sample: ConsoleSample, activeNamespace: string): string | null => {
+  const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
   if (isGitImportSource(sample.spec.source)) {
     const { gitImport } = sample.spec.source;
     const searchParams = new URLSearchParams();
@@ -22,7 +23,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
     if (gitImport.repository.contextDir) {
       searchParams.set('git.contextDir', gitImport.repository.contextDir);
     }
-    return `/import/ns/${activeNamespace}?${searchParams}`;
+    return `/import${namespacePath}?${searchParams}`;
   }
 
   if (isContainerImportSource(sample.spec.source)) {
@@ -30,7 +31,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
     const searchParams = new URLSearchParams();
     searchParams.set('sample', sample.metadata.name);
     searchParams.set('image', containerImport.image);
-    return `/deploy-image/ns/${activeNamespace}?${searchParams}`;
+    return `/deploy-image${namespacePath}?${searchParams}`;
   }
 
   // Unsupported source type, will be dropped.
