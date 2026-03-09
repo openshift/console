@@ -40,6 +40,7 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
         title={t('olm~Show community Operator')}
         titleIconVariant="info"
         data-test-id="modal-title"
+        labelId="community-operator-warning-modal-title"
       />
       <ModalBody>
         <Form id="community-provider-form" onSubmit={submit}>
@@ -92,7 +93,12 @@ export const CommunityOperatorWarningModalOverlay: OverlayComponent<OperatorHubC
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="community-operator-warning-modal-title"
+    >
       <OperatorHubCommunityProviderModal
         {...props}
         close={props.closeOverlay}

@@ -62,7 +62,7 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
 
   return (
     <>
-      <ModalHeader title={title} data-test-id="modal-title" />
+      <ModalHeader title={title} data-test-id="modal-title" labelId="update-strategy-modal-title" />
       <ModalBody>
         <Form id="update-strategy-form" onSubmit={submit}>
           <ConfigureUpdateStrategy
@@ -87,12 +87,7 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button
-          variant="link"
-          onClick={cancel}
-          isDisabled={inProgress}
-          data-test-id="modal-cancel-action"
-        >
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -102,7 +97,12 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
 
 export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="update-strategy-modal-title"
+    >
       <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </Modal>
   );

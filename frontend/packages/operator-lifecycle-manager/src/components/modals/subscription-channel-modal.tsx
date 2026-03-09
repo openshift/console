@@ -54,7 +54,11 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
 
   return (
     <>
-      <ModalHeader title={t('olm~Change Subscription update channel')} data-test-id="modal-title" />
+      <ModalHeader
+        title={t('olm~Change Subscription update channel')}
+        data-test-id="modal-title"
+        labelId="subscription-channel-modal-title"
+      />
       <ModalBody>
         <Form id="subscription-channel-form" onSubmit={submit}>
           <FormGroup
@@ -106,12 +110,7 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button
-          variant="link"
-          onClick={cancel}
-          isDisabled={inProgress}
-          data-test-id="modal-cancel-action"
-        >
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -129,7 +128,12 @@ export const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChann
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="subscription-channel-modal-title"
+    >
       <SubscriptionChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </Modal>
   );

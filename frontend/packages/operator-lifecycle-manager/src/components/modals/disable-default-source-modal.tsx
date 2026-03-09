@@ -52,6 +52,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
         title={t('olm~Disable CatalogSource?')}
         titleIconVariant="warning"
         data-test-id="modal-title"
+        labelId="disable-default-source-modal-title"
       />
       <ModalBody>
         <Form id="disable-default-source-form" onSubmit={submit}>
@@ -72,12 +73,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
         >
           {t('public~Disable')}
         </Button>
-        <Button
-          variant="link"
-          onClick={cancel}
-          isDisabled={inProgress}
-          data-test-id="modal-cancel-action"
-        >
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -89,7 +85,12 @@ export const DisableDefaultSourceModalOverlay: OverlayComponent<DisableDefaultSo
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="disable-default-source-modal-title"
+    >
       <DisableDefaultSourceModal
         {...props}
         close={props.closeOverlay}

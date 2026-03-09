@@ -69,7 +69,11 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
 
   return (
     <>
-      <ModalHeader title={t('olm~Edit default sources')} data-test-id="modal-title" />
+      <ModalHeader
+        title={t('olm~Edit default sources')}
+        data-test-id="modal-title"
+        labelId="edit-default-sources-modal-title"
+      />
       <ModalBody>
         <Form id="edit-default-sources-form" onSubmit={submit}>
           <FormGroup
@@ -115,12 +119,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button
-          variant="link"
-          onClick={cancel}
-          isDisabled={inProgress}
-          data-test-id="modal-cancel-action"
-        >
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -132,7 +131,12 @@ export const EditDefaultSourcesModalOverlay: OverlayComponent<EditDefaultSources
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="edit-default-sources-modal-title"
+    >
       <EditDefaultSourcesModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </Modal>
   );

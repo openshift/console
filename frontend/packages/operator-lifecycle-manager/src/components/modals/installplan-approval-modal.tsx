@@ -56,7 +56,11 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
 
   return (
     <>
-      <ModalHeader title={t('olm~Change update approval strategy')} data-test-id="modal-title" />
+      <ModalHeader
+        title={t('olm~Change update approval strategy')}
+        data-test-id="modal-title"
+        labelId="installplan-approval-modal-title"
+      />
       <ModalBody>
         <Form id="installplan-approval-form" onSubmit={submit}>
           <FormGroup
@@ -101,12 +105,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button
-          variant="link"
-          onClick={cancel}
-          isDisabled={inProgress}
-          data-test-id="modal-cancel-action"
-        >
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
@@ -123,7 +122,12 @@ export const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprov
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="installplan-approval-modal-title"
+    >
       <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
     </Modal>
   );

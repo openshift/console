@@ -31,6 +31,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
           </>
         }
         data-test-id="modal-title"
+        labelId="installplan-preview-modal-title"
       />
       <ModalBody>
         <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest))} />
@@ -52,7 +53,12 @@ export const InstallPlanPreviewModalOverlay: OverlayComponent<InstallPlanPreview
   props,
 ) => {
   return (
-    <Modal variant={ModalVariant.medium} isOpen onClose={props.closeOverlay}>
+    <Modal
+      variant={ModalVariant.medium}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="installplan-preview-modal-title"
+    >
       <InstallPlanPreview {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
     </Modal>
   );
