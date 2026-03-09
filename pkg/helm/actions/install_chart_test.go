@@ -405,40 +405,48 @@ func TestInstallChartAsync(t *testing.T) {
 
 func TestInstallChartFromURL(t *testing.T) {
 	tests := []struct {
+		testName      string
 		releaseName   string
 		chartPath     string
 		chartName     string
 		chartVersion  string
 		plainHTTP     bool
 		skipTLSVerify bool
+		expectError   bool
 	}{
 		{
+			testName:      "valid HTTP chart URL",
 			releaseName:   "valid-chart-path",
 			chartPath:     "http://localhost:9181/charts/influxdb-3.0.2.tgz",
 			chartName:     "influxdb",
 			chartVersion:  "3.0.2",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   false,
 		},
 		{
+			testName:      "valid OCI chart URL",
 			releaseName:   "valid-chart-path",
 			chartPath:     "oci://localhost:5000/helm-charts/mychart:0.1.0",
 			chartName:     "mychart",
 			chartVersion:  "0.1.0",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   false,
 		},
 		{
+			testName:      "invalid chart URL rejected synchronously",
 			releaseName:   "invalid-chart-path",
 			chartPath:     "http://localhost:9181/charts/influxdb/filename",
 			chartName:     "influxdb",
 			chartVersion:  "3.0.1",
 			plainHTTP:     true,
 			skipTLSVerify: true,
+			expectError:   true,
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.releaseName, func(t *testing.T) {
+		t.Run(tt.testName, func(t *testing.T) {
 			store := storage.Init(driver.NewMemory())
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
@@ -450,15 +458,81 @@ func TestInstallChartFromURL(t *testing.T) {
 			err := GetOCIRegistry(actionConfig, tt.skipTLSVerify, tt.plainHTTP)
 			require.NoError(t, err)
 
-			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, tt.chartVersion)
-			if tt.releaseName == "valid-chart-path" {
-				require.NoError(t, err)
-				require.Equal(t, tt.releaseName, rel.Name)
-				require.Equal(t, tt.chartVersion, rel.Chart.Metadata.Version)
-				require.Equal(t, tt.chartPath, rel.Chart.Metadata.Annotations["chart_url"])
+			objs := []runtime.Object{}
+			clientInterface := k8sfake.NewSimpleClientset(objs...)
+			coreClient := clientInterface.CoreV1()
 
-			} else if tt.releaseName == "invalid-chart-path" {
+			if tt.expectError {
+				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
 				require.Error(t, err)
+				require.Nil(t, rel)
+				return
+			}
+
+			// For valid URLs: create the release secret in a background goroutine
+			// to simulate what Helm's cmd.Run would do, unblocking getSecret's Watch.
+			secretName := fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName)
+			go func() {
+				time.Sleep(2 * time.Second)
+				secretsDriver := driver.NewSecrets(coreClient.Secrets("test-namespace"))
+				r := release.Release{
+					Name:      tt.releaseName,
+					Namespace: "test-namespace",
+					Info: &release.Info{
+						FirstDeployed: helmTime.Time{},
+						Status:        "pending-install",
+					},
+					Version: 1,
+					Chart: &chart.Chart{
+						Metadata: &chart.Metadata{
+							Name:        tt.chartName,
+							Version:     tt.chartVersion,
+							Annotations: map[string]string{"chart_url": tt.chartPath},
+						},
+					},
+				}
+				secretsDriver.Create(secretName, &r)
+			}()
+
+			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+			require.NoError(t, err)
+			require.NotNil(t, rel)
+			require.Equal(t, secretName, rel.ObjectMeta.Name)
+		})
+	}
+}
+
+func TestIsValidChartURL(t *testing.T) {
+	tests := []struct {
+		name  string
+		url   string
+		valid bool
+	}{
+		// Valid multi-label hosts
+		{"valid OCI registry", "oci://ghcr.io/charts/mychart:1.0.0", true},
+		{"valid OCI with port", "oci://registry.example.com:5000/charts/mychart", true},
+		{"valid HTTPS tgz", "https://example.com/charts/mychart-1.0.0.tgz", true},
+		{"valid HTTP tgz", "http://example.com/charts/mychart-1.0.0.tgz", true},
+		{"valid HTTPS tar.gz", "https://example.com/charts/mychart-1.0.0.tar.gz", true},
+
+		// Valid single-label hosts (localhost, dev registries)
+		{"allow OCI localhost", "oci://localhost/charts/mychart", true},
+		{"allow OCI localhost with port", "oci://localhost:5000/charts/mychart", true},
+		{"allow HTTP localhost tgz", "http://localhost/chart.tgz", true},
+		{"allow OCI single-label host", "oci://myregistry/chart", true},
+		{"allow HTTP single-label host with port", "http://myregistry:8080/chart.tgz", true},
+
+		// Invalid: missing host or bad scheme/format
+		{"block OCI no host", "oci:///chart", false},
+		{"block empty string", "", false},
+		{"block ftp scheme", "ftp://example.com/chart.tgz", false},
+		{"block http without tgz", "http://example.com/charts/mychart", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isValidChartURL(tt.url)
+			if got != tt.valid {
+				t.Errorf("isValidChartURL(%q) = %v, want %v", tt.url, got, tt.valid)
 			}
 		})
 	}

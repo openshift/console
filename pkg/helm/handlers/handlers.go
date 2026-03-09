@@ -33,6 +33,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.K
 		installChartFromURL:     actions.InstallChartFromURL,
 		listReleases:            actions.ListReleases,
 		getRelease:              actions.GetRelease,
+		getChartFromURL:         actions.GetChartFromURL,
 		getChart:                actions.GetChart,
 		upgradeReleaseAsync:     actions.UpgradeReleaseAsync,
 		upgradeRelease:          actions.UpgradeRelease,
@@ -63,7 +64,7 @@ type helmHandlers struct {
 	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
 	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
-	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, string) (*release.Release, error)
+	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string) (*kv1.Secret, error)
 	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
@@ -72,6 +73,7 @@ type helmHandlers struct {
 	rollbackRelease       func(string, int, *action.Configuration) (*release.Release, error)
 	getRelease            func(string, *action.Configuration) (*release.Release, error)
 	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
+	getChartFromURL       func(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error)
 	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
 }
@@ -144,13 +146,29 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 		return
 	}
 
-	conf := h.getActionConfigurations(h.ApiServerHost, req.Namespace, user.Token, &h.Transport)
+	namespace := req.Namespace
+	if namespace == "" {
+		namespace = "default"
+	}
+
+	conf := h.getActionConfigurations(h.ApiServerHost, namespace, user.Token, &h.Transport)
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	resp, err := h.installChartAsync(req.Namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, true, req.IndexEntry)
+
+	if req.NoRepo {
+		resp, err := h.installChartFromURL(namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.CoreClient, req.ChartVersion)
+		if err != nil {
+			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
+			return
+		}
+		serverutils.SendResponse(w, http.StatusCreated, resp)
+		return
+	}
+
+	resp, err := h.installChartAsync(namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.DynamicClient, handlerClients.CoreClient, true, req.IndexEntry)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
 		return
@@ -210,14 +228,29 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	chartUrl := params.Get("url")
 	namespace := params.Get("namespace")
 	indexEntry := params.Get("indexEntry")
-	// scope request to default namespace
+	noRepo := params.Get("noRepo") == "true"
+
+	if namespace == "" {
+		namespace = "default"
+	}
+
 	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	resp, err := h.getChart(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, indexEntry)
+
+	var resp *chart.Chart
+	if noRepo {
+		if chartUrl == "" {
+			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "chart URL is required"})
+			return
+		}
+		resp, err = h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true)
+	} else {
+		resp, err = h.getChart(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, indexEntry)
+	}
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
 		return
@@ -415,28 +448,33 @@ func (h *helmHandlers) HandleUninstallReleaseAsync(user *auth.User, w http.Respo
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *helmHandlers) HandleInstallChartFromURL(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	var req HelmRequest
-
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to parse request: %v", err)})
-		return
-	}
-
-	namespace := req.Namespace
-	if namespace == "" {
-		namespace = r.URL.Query().Get("namespace")
-	}
+func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	namespace := params.Get("namespace")
 	if namespace == "" {
 		namespace = "default"
 	}
+	chartUrl := params.Get("url")
 
-	conf := h.getActionConfigurations(h.ApiServerHost, namespace, user.Token, &h.Transport)
-	resp, err := h.installChartFromURL(namespace, req.Name, req.ChartUrl, req.Values, conf, req.ChartVersion)
-	if err != nil {
-		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
+	if chartUrl == "" {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "chart URL is required"})
 		return
 	}
-	serverutils.SendResponse(w, http.StatusCreated, resp)
+
+	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	handlerClients, err := NewHandlerClients(conf)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
+		return
+	}
+	resp, err := h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true)
+	if err != nil {
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	res, _ := json.Marshal(resp)
+	w.Write(res)
 }
