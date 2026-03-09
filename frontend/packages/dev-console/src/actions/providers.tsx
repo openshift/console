@@ -34,7 +34,7 @@ import {
   ADD_TO_PROJECT,
 } from '../const';
 import { AddActions, disabledActionsFilter } from './add-resources';
-import { DeleteApplicationAction } from './context-menu';
+import { useDeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
 
 type TopologyActionProvider = (data: {
@@ -295,6 +295,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
   );
   const primaryResource = appData.resources?.[0]?.resource || {};
   const [kindObj, inFlight] = useK8sModel(referenceFor(primaryResource));
+  const deleteApplicationAction = useDeleteApplicationAction(appData, kindObj);
 
   return useMemo(() => {
     if (element.getType() === TYPE_APPLICATION_GROUP) {
@@ -305,7 +306,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
         ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
         : undefined;
       const actions = [
-        ...(connectorSource ? [] : [DeleteApplicationAction(appData, kindObj)]),
+        ...(connectorSource ? [] : [deleteApplicationAction]),
         AddActions.FromGit(namespace, application, sourceReference, path, !isImportResourceAccess),
         AddActions.ContainerImage(
           namespace,
@@ -352,13 +353,12 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
     element,
     inFlight,
     connectorSource,
-    appData,
-    kindObj,
     namespace,
     application,
     isImportResourceAccess,
     isCatalogImageResourceAccess,
     isServerlessEnabled,
     isJavaImageStreamEnabled,
+    deleteApplicationAction,
   ]);
 };

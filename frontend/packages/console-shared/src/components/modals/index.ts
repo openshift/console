@@ -7,7 +7,8 @@ export const LazyConsolePluginModalOverlay = lazy(() =>
   })),
 );
 
-export const deleteResourceModal = (props) =>
-  import('./DeleteResourceModal' /* webpackChunkName: "shared-modals" */).then((m) =>
-    m.deleteResourceModal(props),
-  );
+export const LazyDeleteResourceModalOverlay = lazy(() =>
+  import('./DeleteResourceModal' /* webpackChunkName: "shared-modals" */).then((m) => ({
+    default: m.DeleteResourceModalOverlay,
+  })),
+);
