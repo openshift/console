@@ -1,4 +1,4 @@
 build_root_image:
-  name: tectonic-console-builder
-  namespace: ci
-  tag: v28
+  name: release
+  namespace: openshift
+  tag: tectonic-console-builder-v29
