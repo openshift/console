@@ -221,7 +221,7 @@ const EditYAMLInner: React.FC<EditYAMLInnerProps> = (props) => {
   const { t } = useTranslation();
 
   const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
-    'editor' in monacoRef?.current ? monacoRef.current.editor : undefined;
+    monacoRef?.current && 'editor' in monacoRef.current ? monacoRef.current.editor : undefined;
 
   const getModel = React.useCallback(
     (obj) => {
