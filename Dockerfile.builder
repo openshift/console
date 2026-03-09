@@ -10,9 +10,12 @@
 
 FROM golang:1.22-bullseye
 
-### Install NodeJS and yarn
+### Install NodeJS and corepack
 ENV NODE_VERSION="v22.14.0"
-ENV YARN_VERSION="v1.22.22"
+ENV COREPACK_VERSION="0.34.6"
+
+# assume our package manager is safe to download
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # yarn needs a home writable by any user running the container
 ENV HOME=/opt/home
@@ -43,9 +46,6 @@ RUN chmod 777 /usr/local/lib/node_modules
 # cleanup
 RUN rm -rf /tmp/node-v*
 
-RUN cd /tmp && \
-    wget --quiet -O /tmp/yarn.tar.gz https://github.com/yarnpkg/yarn/releases/download/${YARN_VERSION}/yarn-${YARN_VERSION}.tar.gz && \
-    tar xf yarn.tar.gz && \
-    rm -f /tmp/yarn.tar.gz && \
-    mv /tmp/yarn-${YARN_VERSION} /usr/local/yarn && \
-    ln -s /usr/local/yarn/bin/yarn /usr/local/bin/yarn
+# Install corepack
+RUN npm install -g corepack@${COREPACK_VERSION} && \
+    corepack enable
