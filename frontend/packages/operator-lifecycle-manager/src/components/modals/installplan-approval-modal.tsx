@@ -1,18 +1,22 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
-import { Grid, GridItem, Radio } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  Radio,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 import type { SubscriptionKind, InstallPlanKind } from '../../types';
@@ -51,15 +55,15 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">{t('olm~Change update approval strategy')}</ModalTitle>
+    <>
+      <ModalHeader title={t('olm~Change update approval strategy')} data-test-id="modal-title" />
       <ModalBody>
-        <Grid hasGutter>
-          <GridItem>
-            <p>{t('olm~What strategy is used for approving updates?')}</p>
-          </GridItem>
-
-          <GridItem>
+        <Form id="installplan-approval-form" onSubmit={submit}>
+          <FormGroup
+            label={t('olm~What strategy is used for approving updates?')}
+            fieldId="approval-strategy"
+            role="radiogroup"
+          >
             <Radio
               id="approval-strategy-automatic"
               name="approval-strategy"
@@ -74,8 +78,6 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Automatic}
               data-checked-state={selectedApprovalStrategy === InstallPlanApproval.Automatic}
             />
-          </GridItem>
-          <GridItem>
             <Radio
               id="approval-strategy-manual"
               name="approval-strategy"
@@ -92,17 +94,31 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
               isChecked={selectedApprovalStrategy === InstallPlanApproval.Manual}
               data-checked-state={selectedApprovalStrategy === InstallPlanApproval.Manual}
             />
-          </GridItem>
-        </Grid>
+          </FormGroup>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        inProgress={inProgress}
-        errorMessage={errorMessage}
-        cancel={cancel}
-        submitText={t('public~Save')}
-        submitDisabled={getApprovalStrategy(obj) === selectedApprovalStrategy}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form="installplan-approval-form"
+          isLoading={inProgress}
+          isDisabled={inProgress || getApprovalStrategy(obj) === selectedApprovalStrategy}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button
+          variant="link"
+          onClick={cancel}
+          isDisabled={inProgress}
+          data-test-id="modal-cancel-action"
+        >
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -115,8 +131,8 @@ export const InstallPlanApprovalModalOverlay: OverlayComponent<InstallPlanApprov
   props,
 ) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
       <InstallPlanApprovalModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </ModalWrapper>
+    </Modal>
   );
 };

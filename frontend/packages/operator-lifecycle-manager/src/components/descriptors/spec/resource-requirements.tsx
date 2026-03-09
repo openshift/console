@@ -1,19 +1,23 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Button, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  Grid,
+  GridItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
@@ -109,29 +113,46 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
   };
 
   return (
-    <form onSubmit={(e) => submit(e)} className="modal-content">
-      <ModalTitle>{props.title}</ModalTitle>
+    <>
+      <ModalHeader title={props.title} data-test-id="modal-title" />
       <ModalBody>
-        <Grid hasGutter>
-          <GridItem>{props.description}</GridItem>
-          <ResourceRequirements
-            cpu={cpu}
-            memory={memory}
-            storage={storage}
-            onChangeCPU={setCPU}
-            onChangeMemory={setMemory}
-            onChangeStorage={setStorage}
-            path={path}
-          />
-        </Grid>
+        <Form id="resource-requirements-form" onSubmit={(e) => submit(e)}>
+          <Grid hasGutter>
+            <GridItem>{props.description}</GridItem>
+            <ResourceRequirements
+              cpu={cpu}
+              memory={memory}
+              storage={storage}
+              onChangeCPU={setCPU}
+              onChangeMemory={setMemory}
+              onChangeStorage={setStorage}
+              path={path}
+            />
+          </Grid>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form="resource-requirements-form"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button
+          variant="link"
+          onClick={cancel}
+          isDisabled={inProgress}
+          data-test-id="modal-cancel-action"
+        >
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -139,13 +160,13 @@ const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsMod
   props,
 ) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
       <ResourceRequirementsModal
         {...props}
         close={props.closeOverlay}
         cancel={props.closeOverlay}
       />
-    </ModalWrapper>
+    </Modal>
   );
 };
 

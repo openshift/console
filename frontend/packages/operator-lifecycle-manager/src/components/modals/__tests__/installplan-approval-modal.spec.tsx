@@ -13,12 +13,8 @@ jest.mock('@console/internal/module/k8s', () => ({
   modelFor: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ...jest.requireActual('@console/internal/components/factory/modal'),
-  ModalTitle: jest.fn(({ children }) => children),
-  ModalBody: jest.fn(({ children }) => children),
-  ModalSubmitFooter: jest.fn(() => null),
-  ModalWrapper: jest.fn(({ children }) => children),
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 const mockModelFor = modelFor as jest.Mock;

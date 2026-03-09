@@ -7,16 +7,8 @@ import type { SubscriptionKind, PackageManifestKind } from '../../../types';
 import type { SubscriptionChannelModalProps } from '../subscription-channel-modal';
 import { SubscriptionChannelModal } from '../subscription-channel-modal';
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ...jest.requireActual('@console/internal/components/factory/modal'),
-  ModalTitle: jest.fn(({ children }) => children),
-  ModalBody: jest.fn(({ children }) => children),
-  ModalSubmitFooter: jest.fn(({ submitText, submitDisabled }) => (
-    <button type="submit" disabled={submitDisabled}>
-      {submitText}
-    </button>
-  )),
-  ModalWrapper: jest.fn(({ children }) => children),
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 describe('SubscriptionChannelModal', () => {
@@ -96,10 +88,8 @@ describe('SubscriptionChannelModal', () => {
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
     fireEvent.click(nightlyRadio);
 
-    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(k8sUpdate).toHaveBeenCalledTimes(1);
@@ -121,10 +111,8 @@ describe('SubscriptionChannelModal', () => {
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
     fireEvent.click(nightlyRadio);
 
-    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(close).toHaveBeenCalledTimes(1);

@@ -108,8 +108,7 @@ export const operator = {
       modal.modalTitleShouldContain('Uninstall Operator?');
       cy.get('.loading-skeleton--table', { timeout: 120000 }).should('not.exist');
     },
-    checkDeleteAllOperands: () =>
-      cy.byTestID('Delete all operand instances for this operator__checkbox').click(),
+    checkDeleteAllOperands: () => cy.byTestID('delete-all-operands').click(),
   },
   createOperand: (
     operatorName: string,
