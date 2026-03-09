@@ -36,7 +36,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
         <CopyToClipboard value={safeDump(JSON.parse(stepResource.manifest))} />
       </ModalBody>
       <ModalFooter>
-        <Button variant="secondary" onClick={() => cancel()}>
+        <Button variant="primary" onClick={() => cancel()}>
           {t('public~OK')}
         </Button>
       </ModalFooter>
