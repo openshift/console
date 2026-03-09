@@ -1,3 +1,4 @@
+import { useAccessibleResources } from '@console/app/src/components/nodes/utils/useAccessibleResources';
 import type {
   K8sGroupVersionKind,
   K8sResourceKind,
@@ -5,7 +6,6 @@ import type {
 } from '@console/dynamic-plugin-sdk/src';
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { MachineModel } from '@console/internal/models';
 import type { K8sKind, MachineKind } from '@console/internal/module/k8s';
 import { getName, getNodeMachineNameAndNamespace } from '@console/shared/src';
@@ -68,26 +68,27 @@ export const useWatchBareMetalHost = (
 ): WatchK8sResult<K8sResourceKind | undefined> => {
   const isBareMetalPluginActive = useIsBareMetalPluginActive();
 
-  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useK8sWatchResource<
-    K8sResourceKind[]
+  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useAccessibleResources<
+    K8sResourceKind
   >(
     isBareMetalPluginActive
       ? {
-          isList: true,
           groupVersionKind: BareMetalHostGroupVersionKind,
+          isList: true,
+          namespaced: true,
         }
       : undefined,
   );
-
-  const [machines, machinesLoaded, machinesLoadError] = useK8sWatchResource<MachineKind[]>(
+  const [machines, machinesLoaded, machinesLoadError] = useAccessibleResources<MachineKind>(
     isBareMetalPluginActive
       ? {
-          isList: true,
           groupVersionKind: {
             group: MachineModel.apiGroup,
             version: MachineModel.apiVersion,
             kind: MachineModel.kind,
           },
+          isList: true,
+          namespaced: true,
         }
       : undefined,
   );

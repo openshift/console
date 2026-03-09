@@ -84,7 +84,9 @@ const getMachineConfigPoolUpdateStatus = (mcp: MachineConfigPoolKind) => {
   return null;
 };
 
-const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps> = ({ obj }) => {
+export const MachineConfigPoolCharacteristics: FC<MachineConfigPoolCharacteristicsProps> = ({
+  obj,
+}) => {
   const configuration = _.get(obj, 'status.configuration');
   const maxUnavailable = _.get(obj, 'spec.maxUnavailable', 1);
   const { t } = useTranslation();
@@ -200,7 +202,7 @@ const MachineConfigPoolCounts: FC<MachineConfigPoolCountsProps> = ({ obj }) => {
   );
 };
 
-const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj }) => {
+export const MachineConfigPoolSummary: FC<MachineConfigPoolSummaryProps> = ({ obj }) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const { t } = useTranslation();
   return (

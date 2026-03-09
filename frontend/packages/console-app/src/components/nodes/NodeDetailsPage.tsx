@@ -14,6 +14,7 @@ import {
 } from '@console/shared/src/components/actions';
 import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
+import { NodeConfiguration } from './configuration/NodeConfiguration';
 import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
@@ -43,6 +44,12 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
         component: NodeDetails,
       },
       navFactory.editYaml(),
+      {
+        href: 'configuration',
+        // t('console-app~Configuration')
+        nameKey: 'console-app~Configuration',
+        component: NodeConfiguration,
+      },
       navFactory.pods(NodePodsPage),
       navFactory.logs(NodeLogs),
       navFactory.events(ResourceEventStream),
