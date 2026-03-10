@@ -3,4 +3,11 @@
   --pf-v6-c-code-block__pre--FontFamily: var(--pf-v6-c-code-block__pre--FontFamily);
   --pf-v6-c-code-block__pre--FontSize: var(--pf-t--global--font--size--sm);
   --pf-v6-c-content--MarginBottom: var(--pf-t--global--spacer--md);
+  --co-glass-background-light: url('../imgs/okd-glass-light.svg');
+  --co-glass-background-dark: url('../imgs/okd-glass-dark.svg');
+}
+
+:root:where(.pf-v6-theme-redhat) { // i.e., ServerFlags.branding !== 'okd'
+  --co-glass-background-light: url('../imgs/openshift-glass-light.jpg');
+  --co-glass-background-dark: url('../imgs/openshift-glass-dark.jpg');
 }

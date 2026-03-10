@@ -48,14 +48,27 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript" nonce="[[ .ScriptNonce ]]">
+      [[ if not (and .ServerFlags.ReleaseVersion (eq (slice .ServerFlags.ReleaseVersion 0 1) "4")) ]]
+
+      [[ if ne .ServerFlags.Branding "okd" ]]
+      document.documentElement.classList.add('pf-v6-theme-redhat', 'pf-v6-icon-set-rh-ui');
+      [[ end ]]
+
+      let contrast = localStorage.getItem('bridge/contrast') || 'systemDefault';
+      if (contrast === 'systemDefault' && window.matchMedia('(prefers-contrast: more)').matches) {
+        contrast = 'contrast';
+      }
+      document.documentElement.classList.toggle('pf-v6-theme-high-contrast', contrast === 'contrast');
+      document.documentElement.classList.toggle('pf-v6-theme-glass', contrast === 'glass');
+      [[ end ]]
+
       window.SERVER_FLAGS = [[ .ServerFlags ]];
+
       let theme = localStorage.getItem('bridge/theme') || 'systemDefault';
       if (theme === 'systemDefault' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         theme = 'dark';
       }
-      if (theme === 'dark') {
-        document.documentElement.classList.add('pf-v6-theme-dark');
-      }
+      document.documentElement.classList.toggle('pf-v6-theme-dark', theme === 'dark');
     </script>
   </head>
 

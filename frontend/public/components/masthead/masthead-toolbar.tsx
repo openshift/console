@@ -160,6 +160,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const quickstartFlag = useFlag(FLAGS.CONSOLE_QUICKSTART);
   const dispatch = useConsoleDispatch();
+  const { redHat } = useTheme();
   const [activeNamespace] = useActiveNamespace();
   const [activePerspective] = useActivePerspective();
   const [requestTokenURL, externalLoginCommand] = useCopyLoginCommands();
@@ -637,6 +638,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
               aria-label={t('public~Utility menu')}
               ref={toggleRef}
               variant="plain"
+              isCircle={redHat}
               onClick={() => setIsKebabDropdownOpen(!isKebabDropdownOpen)}
               isExpanded={isKebabDropdownOpen}
               data-quickstart-id="qs-masthead-utilitymenu"
@@ -758,6 +760,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                       aria-label={t('public~Application launcher')}
                       ref={toggleRef}
                       variant="plain"
+                      isCircle={redHat}
                       onClick={() => setIsAppLauncherDropdownOpen(!isAppLauncherDropdownOpen)}
                       isExpanded={isKebabDropdownOpen}
                       data-test-id="application-launcher"
@@ -775,8 +778,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                  // this usage of the undocumented variant was approved by UX
                   variant="plain"
                   count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
@@ -795,6 +796,7 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                     aria-label={t('public~Help menu')}
                     ref={toggleRef}
                     variant="plain"
+                    isCircle={redHat}
                     onClick={() => setIsHelpDropdownOpen(!isHelpDropdownOpen)}
                     isExpanded={isHelpDropdownOpen}
                     data-test="help-dropdown-toggle"
@@ -827,8 +829,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
               <NotificationBadge
                 aria-label={t('public~Notification drawer')}
                 onClick={drawerToggle}
-                // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                // this usage of the undocumented variant was approved by UX
                 variant="plain"
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"

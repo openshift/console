@@ -3,6 +3,7 @@ import { Button, Tooltip } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
@@ -13,6 +14,8 @@ export const CloudShellMastheadButton: FC = () => {
   const fireTelemetryEvent = useTelemetry();
   const open = useIsCloudShellExpanded();
   const toggleCloudShellExpanded = useToggleCloudShellExpanded();
+
+  const { redHat } = useTheme();
 
   const { t } = useTranslation('webterminal-plugin');
 
@@ -30,6 +33,7 @@ export const CloudShellMastheadButton: FC = () => {
       <Button
         icon={<TerminalIcon />}
         variant="plain"
+        isCircle={redHat}
         aria-label={t('Command line terminal')}
         onClick={openCloudshell}
         className={css({ 'pf-m-selected': open }, 'co-masthead-button')}
