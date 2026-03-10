@@ -19,13 +19,13 @@ const InstalledSoftwarePage: FC = () => {
       href: '',
       name: t('olm-v1~Cluster extensions (OLMv1)'),
       badge: [
-        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        <Flex key="olmv1-tech-preview-badge" alignItems={{ default: 'alignItemsCenter' }}>
           <OLMv1TechPreviewBadge />
         </Flex>,
       ],
-      component: () => <ClusterExtensionListPage namespace={ns} />,
+      component: () => <ClusterExtensionListPage />,
     }),
-    [ns, t],
+    [t],
   );
 
   const clusterServiceVersionsPage = useMemo<Page>(

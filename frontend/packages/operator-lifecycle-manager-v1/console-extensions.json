@@ -138,7 +138,7 @@
       "component": { "$codeRef": "installedSoftwarePage.default" }
     },
     "flags": {
-      "required": ["CLUSTER_EXTENSION_API"]
+      "required": ["TECH_PREVIEW", "OLMV1_ENABLED", "CLUSTER_EXTENSION_API"]
     }
   }
 ]

@@ -151,11 +151,7 @@ const useClusterExtensionColumns = (): TableColumn<ClusterExtensionKind>[] => {
   return columns;
 };
 
-interface ClusterExtensionListPageProps {
-  namespace?: string;
-}
-
-const ClusterExtensionListPage: FC<ClusterExtensionListPageProps> = () => {
+const ClusterExtensionListPage: FC = () => {
   const { t } = useTranslation();
   const [clusterExtensions, loaded, loadError] = useK8sWatchResource<ClusterExtensionKind[]>({
     kind: referenceForModel(ClusterExtensionModel),
