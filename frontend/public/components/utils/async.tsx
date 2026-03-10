@@ -1,4 +1,4 @@
-import { ComponentType, lazy, ComponentProps, Suspense, useRef, FC } from 'react';
+import { ComponentType, lazy, ComponentProps, Suspense, useRef, FC, isValidElement } from 'react';
 import { LoadingBox } from './status-box';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 
@@ -76,7 +76,17 @@ export const AsyncComponent = <C extends ComponentType | React.FCC>({
   if (!sameLoader(loaderRef.current, loader)) {
     loaderRef.current = loader;
     lazyComponentRef.current = lazy(() =>
-      withRetry(loader)().then((module) => ({ default: module })),
+      withRetry(loader)().then((module) => {
+        // If the loader returned a React element, the "loader" prop is a
+        // component function that was invoked instead of a CodeRef loader.
+        // This can happen when useResolvedExtensions mutates a shared extension
+        // object's CodeRef into the resolved component (OCPBUGS-77246).
+        // Fall back to using the loader itself as the component.
+        if (isValidElement(module) && typeof loader === 'function') {
+          return { default: (loader as unknown) as ComponentType };
+        }
+        return { default: module };
+      }),
     );
   }
 

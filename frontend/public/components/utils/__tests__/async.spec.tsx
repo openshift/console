@@ -125,6 +125,21 @@ describe('AsyncComponent', () => {
     });
   });
 
+  it('renders the component when loader is already a resolved component function (OCPBUGS-77246)', async () => {
+    // Simulates the case where useResolvedExtensions mutates a shared extension
+    // object, replacing the CodeRef with the resolved component. The "loader"
+    // is then the component itself; calling it returns a React element instead
+    // of a Promise<Component>.
+    const MutatedComponent = () => <div>Mutated Component</div>;
+    const loader = MutatedComponent as any;
+
+    renderWithProviders(<AsyncComponent loader={loader} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Mutated Component')).toBeVisible();
+    });
+  });
+
   it('renders new component if props.loader changes', async () => {
     const loaderFoo = () => Promise.resolve(Foo);
     const loaderBar = () => Promise.resolve(Bar);
