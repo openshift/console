@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom-v5-compat';
 import {
   IncompleteDataError,
   TimeoutError,
@@ -8,12 +8,10 @@ import { useFavoritesOptions } from '@console/internal/components/useFavoritesOp
 import { StatusBox } from '..';
 
 jest.mock('react-router-dom-v5-compat', () => ({
+  useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('react-router', () => ({
-  useLocation: jest.fn(),
-}));
 const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
 jest.mock('@console/internal/components/useFavoritesOptions', () => ({
   useFavoritesOptions: jest.fn(),

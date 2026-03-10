@@ -5,13 +5,13 @@ import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router-dom-v5-compat';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
@@ -42,7 +42,10 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
   const params = useParams();
   const { t } = useTranslation();
   const [activePerspective] = useActivePerspective();
+  const navigate = useNavigate();
   const namespace = params.ns;
+
+  const handleReset = useCallback(() => navigate(-1), [navigate]);
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(WizardStep.ChartDetails);
   const [chartData, setChartData] = useState<HelmChart | null>(null);
@@ -174,7 +177,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
         redirect = `/helm-releases/ns/${namespace}/release/${releaseName}`;
       }
 
-      history.push(redirect);
+      navigate(redirect);
     } catch (err) {
       actions.setStatus({ submitError: err.message });
     }
@@ -182,9 +185,9 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
   const handleNamespaceChange = (ns: string) => {
     if (ns === ALL_NAMESPACES_KEY) {
-      history.push(`/helm/all-namespaces`);
+      navigate(`/helm/all-namespaces`);
     } else if (ns !== namespace) {
-      history.push(`/helm/ns/${ns}/url-chart`);
+      navigate(`/helm/ns/${ns}/url-chart`);
     }
   };
 
@@ -221,7 +224,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
         <Formik
           initialValues={chartDetails || initialChartFormValues}
           onSubmit={(values) => handleNextStep(values)}
-          onReset={history.goBack}
+          onReset={handleReset}
           validationSchema={getHelmChartURLValidationSchema(t)}
           enableReinitialize
         >

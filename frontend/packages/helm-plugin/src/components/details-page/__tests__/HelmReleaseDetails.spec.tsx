@@ -1,7 +1,5 @@
 import type { ComponentProps } from 'react';
-import { screen, render } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import * as Router from 'react-router-dom-v5-compat';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import type HelmReleaseDetails from '../HelmReleaseDetails';
@@ -12,8 +10,14 @@ let loadedHelmReleaseDetailsProps: ComponentProps<typeof LoadedHelmReleaseDetail
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(() => ({ pathname: '', location: '' })),
+  useParams: jest.fn().mockReturnValue({ ns: 'xyz' }),
+  useLocation: jest.fn().mockReturnValue({
+    pathname: '/helm-releases/ns/xyz/release/helm-mysql',
+    search: '',
+    state: null,
+    hash: '',
+    key: 'default',
+  }),
   useNavigate: jest.fn(),
 }));
 
@@ -57,57 +61,30 @@ describe('HelmReleaseDetails', () => {
         data: mockHelmReleases[0],
       },
     };
-
-    jest.spyOn(Router, 'useParams').mockReturnValue({
-      ns: 'xyz',
-    });
-    jest.spyOn(Router, 'useLocation').mockReturnValue({
-      pathname: '/helm-releases/ns/xyz/release/helm-mysql',
-      search: '',
-      state: null,
-      hash: '',
-      key: 'default',
-    });
   });
 
   it('should show the loading box if helm release data is not loaded', () => {
     loadedHelmReleaseDetailsProps.helmRelease.loaded = false;
-    render(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByTestId('loading-box')).toBeTruthy();
   });
 
   it('should show an error if helm release data could not be loaded', () => {
     loadedHelmReleaseDetailsProps.helmRelease.loadError = new Error('An error!');
-    render(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByTestId('console-empty-state')).toBeTruthy();
   });
 
   it('should show the loading box if secret is not loaded', () => {
     loadedHelmReleaseDetailsProps.secrets.loaded = false;
     loadedHelmReleaseDetailsProps.secrets.loadError = undefined;
-    render(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByTestId('loading-box')).toBeTruthy();
   });
 
   it('should show the status box if there is an error loading the secret', () => {
     loadedHelmReleaseDetailsProps.secrets.loadError = 'error 404';
-    render(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByTestId('console-empty-state')).toBeTruthy();
   });
 
@@ -122,11 +99,7 @@ describe('HelmReleaseDetails', () => {
 
   it('should show the ErrorPage404 for an incorrect release name in the url', () => {
     loadedHelmReleaseDetailsProps.secrets.data = [];
-    renderWithProviders(
-      <BrowserRouter>
-        <LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />
-      </BrowserRouter>,
-    );
+    renderWithProviders(<LoadedHelmReleaseDetails {...loadedHelmReleaseDetailsProps} />);
     expect(screen.getByText('404: Page Not Found')).toBeTruthy();
     expect(screen.getByText('Page Not Found (404)')).toBeTruthy();
   });
