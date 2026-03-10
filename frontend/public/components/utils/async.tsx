@@ -75,8 +75,33 @@ export const AsyncComponent = <C extends ComponentType | React.FCC>({
 
   if (!sameLoader(loaderRef.current, loader)) {
     loaderRef.current = loader;
+    // WORKAROUND (OCPBUGS-77246): useResolvedExtensions mutates shared
+    // extension objects in-place, replacing CodeRef loaders with resolved
+    // component functions. When useExtensions later returns the same object
+    // (e.g. for console.tab/horizontalNav), the "loader" is the component
+    // itself rather than a CodeRef. Wrap the loader so that each call
+    // detects this and returns the component directly.
+    //
+    // This workaround is not needed in 4.22+ where useResolvedExtensions
+    // deep-clones the raw extension object before resolution, fixing the
+    // root cause.
+    const safeLoader = (): Promise<C> => {
+      let result: unknown;
+      try {
+        result = loader();
+      } catch {
+        // Threw synchronously (e.g. hooks called outside render) -- loader is a component
+        return Promise.resolve((loader as unknown) as C);
+      }
+      if (result && typeof (result as any).then === 'function') {
+        // Normal case: loader returned a thenable (CodeRef / dynamic import)
+        return result as Promise<C>;
+      }
+      // Returned a non-Promise (e.g. React element) -- loader is a component
+      return Promise.resolve((loader as unknown) as C);
+    };
     lazyComponentRef.current = lazy(() =>
-      withRetry(loader)().then((module) => ({ default: module })),
+      withRetry(safeLoader)().then((module) => ({ default: module })),
     );
   }
 

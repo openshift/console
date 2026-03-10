@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { screen, waitFor, act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
@@ -122,6 +123,38 @@ describe('AsyncComponent', () => {
       const component = screen.getByText('Foo Component');
       expect(component).toBeInTheDocument();
       expect(component).toHaveClass(className);
+    });
+  });
+
+  it('renders the component when loader is a resolved component without hooks (OCPBUGS-77246)', async () => {
+    // Simulates the case where useResolvedExtensions mutates a shared extension
+    // object, replacing the CodeRef with the resolved component. The "loader"
+    // is then the component itself; calling it returns a React element instead
+    // of a Promise<Component>.
+    const MutatedComponent = () => <div>Mutated Component</div>;
+    const loader = MutatedComponent as any;
+
+    renderWithProviders(<AsyncComponent loader={loader} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Mutated Component')).toBeVisible();
+    });
+  });
+
+  it('renders the component when loader is a resolved component with hooks (OCPBUGS-77246)', async () => {
+    // Same mutation scenario, but the component uses hooks. Calling it outside
+    // React's render cycle throws "Invalid hook call", which AsyncComponent
+    // must catch and recover from.
+    const MutatedComponentWithHooks = () => {
+      const [text] = useState('Hooked Component');
+      return <div>{text}</div>;
+    };
+    const loader = MutatedComponentWithHooks as any;
+
+    renderWithProviders(<AsyncComponent loader={loader} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Hooked Component')).toBeVisible();
     });
   });
 
