@@ -338,6 +338,16 @@ type ConsoleCustomization struct {
 	// +listMapKey=id
 	// +optional
 	Perspectives []Perspective `json:"perspectives"`
+	// customLoginServerURL is an optional field that, when set, overrides the server
+	// address displayed in the 'oc login' command shown in the console. Use this
+	// to advertise an alternative API endpoint (for example, a Proxy
+	// or any other front-end that accepts oc login traffic) without changing
+	// how the console itself communicates with the Kubernetes API server.
+	// When omitted, the console falls back to the standard cluster API server URL.
+	// Must be a valid HTTPS URL.
+	// +optional
+	// +kubebuilder:validation:Pattern=`^$|^https://[^\s].*$`
+	CustomLoginServerURL string `json:"customLoginServerURL,omitempty"`
 }
 
 // ProjectAccess contains options for project access roles

@@ -5,9 +5,10 @@ import { useFlag } from './flag';
 
 const COPY_LOGIN_COMMANDS_ENDPOINT = '/api/copy-login-commands';
 
-export const useCopyLoginCommands = (): [string, string] => {
+export const useCopyLoginCommands = (): [string, string, string] => {
   const [requestTokenURL, setRequestTokenURL] = useState<string>();
   const [externalLoginCommand, setExternalLoginCommand] = useState<string>();
+  const [loginServerURL, setLoginServerURL] = useState<string>('');
   const authEnabled = useFlag(FLAGS.AUTH_ENABLED);
   useEffect(() => {
     if (authEnabled) {
@@ -15,6 +16,8 @@ export const useCopyLoginCommands = (): [string, string] => {
         .then((resp) => {
           const newRequestTokenURL = resp?.requestTokenURL ?? '';
           const newExternalLoginCommand = resp?.externalLoginCommand ?? '';
+          const newLoginServerURL = resp?.customLoginServerURL ?? '';
+          setLoginServerURL(newLoginServerURL);
           if (newRequestTokenURL) {
             setRequestTokenURL(newRequestTokenURL);
             setExternalLoginCommand('');
@@ -28,9 +31,10 @@ export const useCopyLoginCommands = (): [string, string] => {
           console.warn(`GET ${COPY_LOGIN_COMMANDS_ENDPOINT} failed: ${err}`);
           setRequestTokenURL('');
           setExternalLoginCommand('');
+          setLoginServerURL('');
         });
     }
   }, [authEnabled]);
 
-  return [requestTokenURL, externalLoginCommand];
+  return [requestTokenURL, externalLoginCommand, loginServerURL];
 };

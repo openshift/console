@@ -412,6 +412,10 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			fs.Set("capabilities", string(capabilities))
 		}
 	}
+
+	if customization.CustomLoginServerURL != "" {
+		fs.Set("custom-login-server-url", customization.CustomLoginServerURL)
+	}
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {
