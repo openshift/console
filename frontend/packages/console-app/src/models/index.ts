@@ -3,7 +3,11 @@ import { K8sKind } from '@console/internal/module/k8s';
 export const QuickStartModel: K8sKind = {
   kind: 'ConsoleQuickStart',
   label: 'ConsoleQuickStart',
+  // t('console-app~ConsoleQuickStart')
+  labelKey: 'console-app~ConsoleQuickStart',
   labelPlural: 'ConsoleQuickStarts',
+  // t('console-app~ConsoleQuickStarts')
+  labelPluralKey: 'console-app~ConsoleQuickStarts',
   apiGroup: 'console.openshift.io',
   apiVersion: 'v1',
   abbr: 'CQS',
