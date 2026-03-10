@@ -64,25 +64,35 @@ export const LazyDeletePVCModalOverlay = lazy(() =>
   })),
 );
 
-export const clusterChannelModal = (props) =>
-  import('./cluster-channel-modal' /* webpackChunkName: "cluster-channel-modal" */).then((m) =>
-    m.clusterChannelModal(props),
-  );
+// Lazy-loaded OverlayComponent for Cluster Channel Modal
+export const LazyClusterChannelModalOverlay = lazy(() =>
+  import('./cluster-channel-modal' /* webpackChunkName: "cluster-channel-modal" */).then((m) => ({
+    default: m.ClusterChannelModalOverlay,
+  })),
+);
 
-export const clusterMoreUpdatesModal = (props) =>
-  import(
-    './cluster-more-updates-modal' /* webpackChunkName: "cluster-more-updates-modal" */
-  ).then((m) => m.clusterMoreUpdatesModal(props));
+// Lazy-loaded OverlayComponent for Cluster More Updates Modal
+export const LazyClusterMoreUpdatesModalOverlay = lazy(() =>
+  import('./cluster-more-updates-modal' /* webpackChunkName: "cluster-more-updates-modal" */).then(
+    (m) => ({
+      default: m.ClusterMoreUpdatesModalOverlay,
+    }),
+  ),
+);
 
-export const clusterUpdateModal = (props) =>
-  import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */).then((m) =>
-    m.clusterUpdateModal(props),
-  );
+// Lazy-loaded OverlayComponent for Cluster Update Modal
+export const LazyClusterUpdateModalOverlay = lazy(() =>
+  import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */).then((m) => ({
+    default: m.ClusterUpdateModalOverlay,
+  })),
+);
 
-export const tolerationsModal = (props) =>
-  import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */).then((m) =>
-    m.tolerationsModal(props),
-  );
+// Lazy-loaded OverlayComponent for Tolerations Modal
+export const LazyTolerationsModalOverlay = lazy(() =>
+  import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */).then((m) => ({
+    default: m.TolerationsModalOverlay,
+  })),
+);
 
 // Lazy-loaded OverlayComponent for Expand PVC Modal
 export const LazyExpandPVCModalOverlay = lazy(() =>
