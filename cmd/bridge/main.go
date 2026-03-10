@@ -639,6 +639,8 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
+	_, err = flags.ValidateFlagIsURL("custom-login-server-url", *fCustomLoginServerURL, true)
+	flags.FatalIfFailed(err)
 	srv.LoginServerURL = *fCustomLoginServerURL
 
 	clusterManagementURL, err := url.Parse(clusterManagementURL)

@@ -344,9 +344,13 @@ type ConsoleCustomization struct {
 	// or any other front-end that accepts oc login traffic) without changing
 	// how the console itself communicates with the Kubernetes API server.
 	// When omitted, the console falls back to the standard cluster API server URL.
-	// Must be a valid HTTPS URL.
+	// The value must be either empty or an absolute HTTPS URL (i.e. starting with
+	// 'https://') and must not exceed 1024 characters.
+	// +openshift:enable:FeatureGate=ConsoleCustomLoginServerURL
 	// +optional
-	// +kubebuilder:validation:Pattern=`^$|^https://[^\s].*$`
+	// +kubebuilder:validation:XValidation:rule="size(self) == 0 || isURL(self)",message="custom login server url must be a valid absolute URL"
+	// +kubebuilder:validation:XValidation:rule="size(self) == 0 || url(self).getScheme() == 'https'",message="custom login server url scheme must be https"
+	// +kubebuilder:validation:MaxLength=1024
 	CustomLoginServerURL string `json:"customLoginServerURL,omitempty"`
 }
 
