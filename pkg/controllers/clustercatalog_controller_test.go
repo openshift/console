@@ -182,7 +182,10 @@ func TestReconcileUpdateCatalogError(t *testing.T) {
 
 	result, err := reconciler.Reconcile(context.Background(), req)
 
-	require.Error(t, err)
+	// The reconciler should NOT return an error (which would trigger exponential
+	// backoff in controller-runtime). Instead it returns nil error with RequeueAfter
+	// to ensure a predictable 30s retry interval.
+	require.NoError(t, err)
 	assert.Equal(t, reconcile.Result{
 		RequeueAfter: 30 * time.Second,
 	}, result)

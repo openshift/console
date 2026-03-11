@@ -64,9 +64,14 @@ func (r *ClusterCatalogReconciler) Reconcile(ctx context.Context, req reconcile.
 
 	err = r.catalogService.UpdateCatalog(req.Name, baseURL)
 	if err != nil {
+		// Log the error but return nil error with RequeueAfter. Returning both
+		// a non-zero Result and a non-nil error causes controller-runtime to
+		// ignore RequeueAfter and use exponential backoff instead, which can
+		// delay recovery for minutes after a transient failure.
+		klog.Errorf("Failed to update catalog %s: %v, retrying in 30s", req.Name, err)
 		return ctrl.Result{
 			RequeueAfter: 30 * time.Second,
-		}, err
+		}, nil
 	}
 
 	return ctrl.Result{}, nil

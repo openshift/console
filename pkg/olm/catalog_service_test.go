@@ -18,14 +18,55 @@ import (
 )
 
 type mockCatalogdClient struct {
-	packages []declcfg.Package
-	bundles  []declcfg.Bundle
-	err      error
+	packages         []declcfg.Package
+	bundles          []declcfg.Bundle
+	packageIconMap   map[string]*declcfg.Package // packageName -> package with icon
+	err              error
+	fetchPackageErr  error
+	fetchPackageCode int
 }
 
 func (m *mockCatalogdClient) FetchMetas(catalog string, baseURL string, r *http.Request) (*http.Response, error) {
 	// This mock implementation is not used in these tests, but required by the interface
 	return nil, fmt.Errorf("FetchMetas not implemented in mock")
+}
+
+func (m *mockCatalogdClient) FetchPackageIcon(catalog, baseURL, packageName string) (*http.Response, error) {
+	if m.fetchPackageErr != nil {
+		return nil, m.fetchPackageErr
+	}
+
+	if m.fetchPackageCode == http.StatusNotFound {
+		return &http.Response{
+			StatusCode: http.StatusNotFound,
+			Body:       io.NopCloser(bytes.NewReader([]byte{})),
+		}, nil
+	}
+
+	pkg, ok := m.packageIconMap[packageName]
+	if !ok {
+		return &http.Response{
+			StatusCode: http.StatusNotFound,
+			Body:       io.NopCloser(bytes.NewReader([]byte{})),
+		}, nil
+	}
+
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	pkgMap := map[string]any{
+		"schema":         declcfg.SchemaPackage,
+		"name":           pkg.Name,
+		"defaultChannel": pkg.DefaultChannel,
+		"icon":           pkg.Icon,
+	}
+	if err := encoder.Encode(pkgMap); err != nil {
+		return nil, err
+	}
+
+	return &http.Response{
+		StatusCode: http.StatusOK,
+		Body:       io.NopCloser(bytes.NewReader(buf.Bytes())),
+	}, nil
 }
 
 func (m *mockCatalogdClient) FetchAll(catalog, baseURL, ifNotModifiedSince string, maxAge time.Duration) (*http.Response, error) {
@@ -196,6 +237,43 @@ func TestUpdateCatalog(t *testing.T) {
 		err := service.UpdateCatalog("test-catalog", "")
 		assert.Error(t, err)
 	})
+
+	t.Run("should preserve existing cache on fetch failure", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		// Pre-populate cache with existing data
+		existingItems := []ConsoleCatalogItem{{Name: "existing-item", Catalog: "test-catalog"}}
+		c.Set(getCatalogItemsKey("test-catalog"), existingItems, cache.DefaultExpiration)
+		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+		c.Set(getCatalogLastModifiedKey("test-catalog"), "Thu, 01 Jan 2026 00:00:00 GMT", cache.NoExpiration)
+
+		client := &mockCatalogdClient{
+			err: fmt.Errorf("connection refused"),
+		}
+		service := &CatalogService{
+			cache:  c,
+			client: client,
+			index:  map[string]struct{}{"test-catalog": {}},
+		}
+
+		err := service.UpdateCatalog("test-catalog", "http://catalogd.test")
+		assert.Error(t, err)
+
+		// Verify existing cache data is still intact
+		items, found := c.Get(getCatalogItemsKey("test-catalog"))
+		assert.True(t, found, "cached items should be preserved on transient error")
+		assert.Equal(t, existingItems, items)
+
+		baseURL, found := c.Get(getCatalogBaseURLKey("test-catalog"))
+		assert.True(t, found, "cached baseURL should be preserved on transient error")
+		assert.Equal(t, "http://catalogd.test", baseURL)
+
+		_, found = c.Get(getCatalogLastModifiedKey("test-catalog"))
+		assert.True(t, found, "cached last-modified should be preserved on transient error")
+
+		// Verify index is still intact
+		_, inIndex := service.index["test-catalog"]
+		assert.True(t, inIndex, "catalog should remain in index on transient error")
+	})
 }
 
 func TestGetCatalogItems(t *testing.T) {
@@ -226,5 +304,134 @@ func TestGetCatalogItems(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, items, returnedItems)
+	})
+}
+
+func TestGetPackageIcon(t *testing.T) {
+	t.Run("should return icon from cache", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		cachedIcon := &CachedIcon{
+			Data:         []byte("cached-icon-data"),
+			MediaType:    "image/svg+xml",
+			LastModified: time.Now().UTC().Format(http.TimeFormat),
+			ETag:         "cached-etag",
+		}
+		c.Set(getCatalogIconKey("test-catalog", "test-package"), cachedIcon, cache.NoExpiration)
+
+		service := &CatalogService{
+			cache: c,
+			index: make(map[string]struct{}),
+		}
+
+		icon, err := service.GetPackageIcon("test-catalog", "test-package")
+
+		require.NoError(t, err)
+		assert.Equal(t, cachedIcon, icon)
+	})
+
+	t.Run("should fetch icon from catalogd on cache miss", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		// Set the base URL so the service knows where to fetch from
+		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+
+		iconData := []byte("test-icon-data")
+		client := &mockCatalogdClient{
+			packageIconMap: map[string]*declcfg.Package{
+				"test-package": {
+					Name: "test-package",
+					Icon: &declcfg.Icon{
+						Data:      iconData,
+						MediaType: "image/png",
+					},
+				},
+			},
+		}
+
+		service := &CatalogService{
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
+		}
+
+		icon, err := service.GetPackageIcon("test-catalog", "test-package")
+
+		require.NoError(t, err)
+		require.NotNil(t, icon)
+		assert.Equal(t, iconData, icon.Data)
+		assert.Equal(t, "image/png", icon.MediaType)
+		assert.NotEmpty(t, icon.ETag)
+		assert.NotEmpty(t, icon.LastModified)
+
+		// Verify the icon was cached
+		cachedIcon, found := c.Get(getCatalogIconKey("test-catalog", "test-package"))
+		assert.True(t, found)
+		assert.Equal(t, icon, cachedIcon)
+	})
+
+	t.Run("should return nil when package not found", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+
+		client := &mockCatalogdClient{
+			packageIconMap:   map[string]*declcfg.Package{},
+			fetchPackageCode: http.StatusNotFound,
+		}
+
+		service := &CatalogService{
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
+		}
+
+		icon, err := service.GetPackageIcon("test-catalog", "nonexistent-package")
+
+		require.NoError(t, err)
+		assert.Nil(t, icon)
+	})
+
+	t.Run("should return nil when package has no icon", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+
+		client := &mockCatalogdClient{
+			packageIconMap: map[string]*declcfg.Package{
+				"test-package": {
+					Name: "test-package",
+					Icon: nil, // No icon
+				},
+			},
+		}
+
+		service := &CatalogService{
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
+		}
+
+		icon, err := service.GetPackageIcon("test-catalog", "test-package")
+
+		require.NoError(t, err)
+		assert.Nil(t, icon)
+	})
+
+	t.Run("should return error when fetch fails", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		c.Set(getCatalogBaseURLKey("test-catalog"), "http://catalogd.test", cache.NoExpiration)
+
+		client := &mockCatalogdClient{
+			fetchPackageErr: fmt.Errorf("network error"),
+		}
+
+		service := &CatalogService{
+			cache:  c,
+			client: client,
+			index:  make(map[string]struct{}),
+		}
+
+		icon, err := service.GetPackageIcon("test-catalog", "test-package")
+
+		require.Error(t, err)
+		assert.Nil(t, icon)
+		assert.Contains(t, err.Error(), "network error")
 	})
 }
