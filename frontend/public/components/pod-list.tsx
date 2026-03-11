@@ -59,6 +59,7 @@ import { OwnerReferences } from './utils/owner-references';
 import { ResourceLink, resourcePath } from './utils/resource-link';
 import { LoadingBox } from './utils/status-box';
 import { formatBytesAsMiB, formatCores } from './utils/units';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -115,11 +116,14 @@ const tableColumnInfo = [
 
 const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
   const { t } = useTranslation();
+  const { getResizableProps } = useColumnWidthSettings(PodModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         sort: 'metadata.name',
         props: {
           ...cellIsStickyProps,
@@ -130,6 +134,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -138,6 +143,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podPhase)),
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -147,6 +153,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => podReadiness(obj).readyCount)),
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -155,6 +162,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Restarts'),
         id: tableColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, podRestarts)),
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -163,6 +171,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: showNodes ? t('public~Node') : t('public~Owner'),
         id: tableColumnInfo[5].id,
         sort: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -172,6 +181,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         id: tableColumnInfo[6].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'memory'))),
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -181,6 +191,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         id: tableColumnInfo[7].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, (obj) => UIActions.getPodMetric(obj, 'cpu'))),
+        resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -189,6 +200,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Created'),
         id: tableColumnInfo[8].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
         },
@@ -197,6 +209,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Node'),
         id: tableColumnInfo[9].id,
         sort: 'spec.nodeName',
+        resizableProps: getResizableProps(tableColumnInfo[9].id),
         props: {
           modifier: 'nowrap',
         },
@@ -206,6 +219,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~Labels'),
         id: tableColumnInfo[10].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
           modifier: 'nowrap',
         },
@@ -215,6 +229,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: t('public~IP address'),
         id: tableColumnInfo[11].id,
         sort: 'status.podIP',
+        resizableProps: getResizableProps(tableColumnInfo[11].id),
         props: {
           modifier: 'nowrap',
         },
@@ -223,6 +238,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
       {
         title: t('public~Receiving Traffic'),
         id: tableColumnInfo[12].id,
+        resizableProps: getResizableProps(tableColumnInfo[12].id),
         props: {
           modifier: 'nowrap',
         },
@@ -236,7 +252,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         },
       },
     ];
-  }, [t, showNodes]);
+  }, [t, showNodes, getResizableProps]);
   return columns;
 };
 
@@ -553,6 +569,7 @@ export const PodList: FC<PodListProps> = ({
         hideNameLabelFilters={hideNameLabelFilters}
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
+        isResizable
       />
     </Suspense>
   );

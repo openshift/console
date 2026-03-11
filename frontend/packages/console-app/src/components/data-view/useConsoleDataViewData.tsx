@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useRef, useEffect, useMemo } from 'react';
-import type { DataViewTh } from '@patternfly/react-data-view';
 import { useDataViewPagination } from '@patternfly/react-data-view';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { ThProps } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -35,6 +35,7 @@ export const useConsoleDataViewData = <
   showNamespaceOverride,
   columnManagementID,
   customRowData,
+  isResizable = true,
 }: {
   columns: TableColumn<TData>[];
   filteredData: TData[];
@@ -43,6 +44,7 @@ export const useConsoleDataViewData = <
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
   customRowData?: TCustomRowData;
+  isResizable?: boolean;
 }) => {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -79,7 +81,7 @@ export const useConsoleDataViewData = <
 
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(
     () =>
-      activeColumns.map(({ id, title, sort, props }, index) => {
+      activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
         const headerProps: ThProps = {
           ...props,
           dataLabel: title,
@@ -101,6 +103,7 @@ export const useConsoleDataViewData = <
           title,
           sortFunction: sort,
           props: headerProps,
+          resizableProps: isResizable ? resizableProps : undefined,
           cell: title ? (
             <span>{title}</span>
           ) : (
@@ -108,7 +111,7 @@ export const useConsoleDataViewData = <
           ),
         };
       }),
-    [activeColumns, t],
+    [activeColumns, t, isResizable],
   );
 
   const { sortBy, onSort } = useConsoleDataViewSort<TData>({

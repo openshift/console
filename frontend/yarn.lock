@@ -3534,7 +3534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:~6.4.1":
+"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.1.0, @patternfly/react-core@npm:^6.4.0, @patternfly/react-core@npm:^6.4.1, @patternfly/react-core@npm:~6.4.0":
   version: 6.4.1
   resolution: "@patternfly/react-core@npm:6.4.1"
   dependencies:
@@ -3618,7 +3618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-table@npm:~6.4.1":
+"@patternfly/react-table@npm:^6.0.0, @patternfly/react-table@npm:^6.4.0, @patternfly/react-table@npm:~6.4.0":
   version: 6.4.1
   resolution: "@patternfly/react-table@npm:6.4.1"
   dependencies:

@@ -334,9 +334,7 @@
     "hosted-git-info": "^3.0.8",
     "lodash-es": "^4.17.23",
     "postcss": "^8.2.13",
-    "async": "^3.2.5",
-    "@patternfly/react-table": "~6.4.1",
-    "@patternfly/react-core": "~6.4.1"
+    "async": "^3.2.5"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"

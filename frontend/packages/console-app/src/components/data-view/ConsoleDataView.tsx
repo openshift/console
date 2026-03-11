@@ -76,6 +76,7 @@ export const ConsoleDataView = <
   hideLabelFilter,
   hideColumnManagement,
   mock,
+  isResizable,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
@@ -102,6 +103,7 @@ export const ConsoleDataView = <
     showNamespaceOverride,
     columnManagementID,
     customRowData,
+    isResizable,
   });
 
   const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
@@ -211,6 +213,7 @@ export const ConsoleDataView = <
             gridBreakPoint=""
             variant="compact"
             data-test="data-view-table"
+            isResizable={isResizable}
           />
         </InnerScrollContainer>
       </DataView>
