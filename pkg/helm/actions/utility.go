@@ -3,6 +3,7 @@ package actions
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -109,6 +110,10 @@ func getChartInfoFromChartUrl(
 		return nil, fmt.Errorf("error listing repositories: %v", err)
 	}
 
+	urlInfo, err := url.Parse(chartUrl)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing chart URL: %v", err)
+	}
 	for _, repository := range repositories {
 		idx, err := repository.IndexFile()
 		if err != nil {
@@ -129,7 +134,11 @@ func getChartInfoFromChartUrl(
 			}
 		}
 	}
-	return nil, fmt.Errorf("could not find a repository for the chart url %q in namespace %q", chartUrl, namespace)
+	printUrl := fmt.Sprintf("%s://%s%s", urlInfo.Scheme, urlInfo.Host, urlInfo.Path)
+	klog.Infof("No matching repository found for url %q in namespace %q, proceeding without repository authentication", printUrl, namespace)
+	return &ChartInfo{
+		Version: chartVersionFromURL(chartUrl),
+	}, nil
 }
 
 // getRepositoryConnectionConfig returns the connection configuration for the
