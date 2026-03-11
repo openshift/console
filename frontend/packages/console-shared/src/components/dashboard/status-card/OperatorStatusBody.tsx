@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { GetOperatorsWithStatuses, OperatorRowProps } from '@console/dynamic-plugin-sdk';
+import { LazyLoader } from '@console/internal/components/utils/async';
 import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';
-import { LazyLoader } from '@console/plugin-sdk';
 import { getMostImportantStatuses } from './state-utils';
 import { HealthState } from './states';
 import StatusItem, { StatusPopupSection } from './StatusPopup';
@@ -81,11 +81,15 @@ type OperatorsSectionProps = {
   Row: React.ComponentType<
     OperatorRowProps & {
       LoadingComponent: () => JSX.Element;
-      Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+      Component:
+        | React.ComponentType<OperatorRowProps>
+        | LazyLoader<React.ComponentType<OperatorRowProps>>;
       key: string;
       isResolved: boolean;
     }
   >;
   isResolved: boolean;
-  Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+  Component:
+    | React.ComponentType<OperatorRowProps>
+    | LazyLoader<React.ComponentType<OperatorRowProps>>;
 };

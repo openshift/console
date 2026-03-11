@@ -87,9 +87,13 @@ export const CreateYAMLInner = ({
     }
     return <ErrorPage404 />;
   }
-  const header = t('public~Create {{objLabel}}', {
-    objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
-  });
+  const header = isCreate
+    ? t('public~Create {{objLabel}}', {
+        objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
+      })
+    : t('public~Edit {{objLabel}}', {
+        objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
+      });
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
 
@@ -99,7 +103,6 @@ export const CreateYAMLInner = ({
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}
       create={isCreate}
-      kind={kindObj.kind}
       header={header}
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}

@@ -6,7 +6,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
@@ -101,9 +100,7 @@ const AttachStorageInner: React.FC<AttachStorageFormProps> = (props) => {
         }
       />
       <PaneBody>
-        <ErrorBoundaryPage>
-          <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
-        </ErrorBoundaryPage>
+        <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
       </PaneBody>
     </>
   );
