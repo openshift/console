@@ -17,6 +17,7 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
 import { NodeConfiguration } from './configuration/NodeConfiguration';
+import { NodeHealth } from './health/NodeHealth';
 import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
 import NodeLogs from './NodeLogs';
@@ -57,6 +58,12 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
               component: NodeConfiguration,
             },
             {
+              href: 'health',
+              // t('console-app~Health')
+              nameKey: 'console-app~Health',
+              component: NodeHealth,
+            },
+            {
               href: 'workload',
               // t('console-app~Workload')
               nameKey: 'console-app~Workload',
@@ -64,9 +71,12 @@ export const NodeDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) =
             },
             navFactory.editYaml(),
           ]
-        : [navFactory.editYaml(), navFactory.pods(NodePodsPage)]),
-      navFactory.logs(NodeLogs),
-      navFactory.events(ResourceEventStream),
+        : [
+            navFactory.editYaml(),
+            navFactory.pods(NodePodsPage),
+            navFactory.logs(NodeLogs),
+            navFactory.events(ResourceEventStream),
+          ]),
       ...(!isWindowsNode(node) ? [navFactory.terminal(NodeTerminal)] : []),
     ],
     [nodeMgmtV1Enabled],

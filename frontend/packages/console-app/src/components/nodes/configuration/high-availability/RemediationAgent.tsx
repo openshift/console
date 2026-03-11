@@ -113,7 +113,7 @@ const RemediationAgent: FC<RemediationAgentProps> = ({
               {rows.length === 0 ? (
                 <tr className="pf-v6-c-table__tr">
                   <td className="pf-v6-c-table__td" colSpan={4}>
-                    {t('console-app~No matching remediation actions')}
+                    {t('console-app~No matching remediation agents')}
                   </td>
                 </tr>
               ) : (

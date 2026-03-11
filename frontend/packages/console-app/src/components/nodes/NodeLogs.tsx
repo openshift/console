@@ -19,8 +19,11 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { coFetch } from '@console/internal/co-fetch';
 import { useTheme } from '@console/internal/components/ThemeProvider';
+import { SectionHeading } from '@console/internal/components/utils';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { modelFor, resourceURL } from '@console/internal/module/k8s';
@@ -176,6 +179,7 @@ const HeaderBanner: FC<{ lineCount: number }> = ({ lineCount }) => {
 
 const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const { getQueryArgument, setQueryArgument, removeQueryArgument } = useQueryParamsMutator();
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   const {
     kind,
@@ -369,6 +373,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
 
   return (
     <PaneBody fullHeight>
+      {nodeMgmtV1Enabled ? <SectionHeading text={t('console-app~Logs')} /> : null}
       <div className="log-window-wrapper">
         {(isLoadingLog || errorExists) && logControls}
         {(lineCount >= MAX_LINE_COUNT || trimmedContent?.length > 0) && !isLoadingLog && (

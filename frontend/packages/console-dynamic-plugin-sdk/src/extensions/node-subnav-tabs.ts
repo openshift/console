@@ -19,6 +19,9 @@ export type NodeSubNavTab = Extension<
      *     Operating system: 50
      *     Machine: 40
      *     High availability: 30
+     *   health:
+     *     Performance: 70
+     *     Logs: 30
      *   workloads:
      *     Pods: 30
      */
