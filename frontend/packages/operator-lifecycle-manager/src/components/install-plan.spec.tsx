@@ -1,4 +1,5 @@
 import { Button, Hint } from '@patternfly/react-core';
+import { Tbody, Tr, Td } from '@patternfly/react-table';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
@@ -21,6 +22,7 @@ import {
 } from '@console/internal/components/utils';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { testInstallPlan } from '../../mocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../models';
 import { InstallPlanKind, InstallPlanApproval } from '../types';
@@ -316,31 +318,31 @@ describe('InstallPlanPreview', () => {
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
     const wrapper = shallow(<InstallPlanPreview obj={obj} />);
-    expect(wrapper.find('.co-m-pane__body').length).toEqual(1);
-    wrapper.find('.co-m-pane__body').forEach((section) => {
-      expect(section.find('tbody').find('tr').length).toEqual(2);
+    expect(wrapper.find(PaneBody).length).toEqual(1);
+    wrapper.find(PaneBody).forEach((section) => {
+      expect(section.find(Tbody).find(Tr).length).toEqual(2);
     });
   });
 
   it('renders link to view install plan component if it exists', () => {
     const wrapper = shallow(<InstallPlanPreview obj={obj} />);
-    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(0);
+    const row = wrapper.find(PaneBody).find(Tbody).find(Tr).at(0);
 
-    expect(row.find('td').at(0).find(ResourceLink).props().name).toEqual(
+    expect(row.find(Td).at(0).find(ResourceLink).props().name).toEqual(
       obj.status.plan[0].resource.name,
     );
   });
 
   it('renders link to open preview modal for install plan component if not created yet', () => {
     const wrapper = shallow(<InstallPlanPreview obj={obj} />);
-    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(1);
+    const row = wrapper.find(PaneBody).find(Tbody).find(Tr).at(1);
     const modalSpy = spyOn(modal, 'installPlanPreviewModal').and.returnValue(null);
 
-    expect(row.find('td').at(0).find(ResourceIcon).props().kind).toEqual(
+    expect(row.find(Td).at(0).find(ResourceIcon).props().kind).toEqual(
       referenceForStepResource(obj.status.plan[1].resource),
     );
 
-    row.find('td').at(0).find(Button).simulate('click');
+    row.find(Td).at(0).find(Button).simulate('click');
 
     expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(obj.status.plan[1].resource);
   });
