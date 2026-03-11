@@ -71,7 +71,10 @@ export type NodeSubNavTab = Extension<
      *   - Storage: 70
      *   - Machine: 50
      *     High availability: 30
-     *   workloads:
+     *  health:
+     *     Performance: 70
+     *     Logs: 30
+     *  workloads:
      *     Pods: 30
      */
     page: {
