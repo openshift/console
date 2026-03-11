@@ -49,6 +49,7 @@ export const init = () => {
           return parsed;
         },
       },
+      showSupportNotice: false,
       lng: getLastLanguage(),
       fallbackLng: 'en',
       load: 'languageOnly',
@@ -66,7 +67,6 @@ export const init = () => {
         'insights-plugin',
         'knative-plugin',
         'metal3-plugin',
-        'notification-drawer',
         'olm',
         'olm-v1',
         'shipwright-plugin',
@@ -81,24 +81,10 @@ export const init = () => {
       keySeparator: false,
       postProcess: ['pseudo'],
       interpolation: {
-        format: function (value, format, lng, options) {
-          if (format === 'number') {
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
-            return new Intl.NumberFormat(lng).format(value);
-          }
-          if (value instanceof Date) {
-            if (format === 'fromNow') {
-              return fromNow(value, null, options);
-            }
-            return dateTimeFormatter.format(value);
-          }
-          return value;
-        },
         escapeValue: false, // not needed for react as it escapes by default
       },
       react: {
         useSuspense: true,
-        wait: true,
         transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
       },
       saveMissing: true,
@@ -109,8 +95,17 @@ export const init = () => {
         console.error(formattedMessage);
       },
     })
-    // Update loading promise and pass values and errors to the caller
     .then((value) => {
+      i18n.services.formatter.add('number', (val, lng) => {
+        return new Intl.NumberFormat(lng).format(val);
+      });
+      i18n.services.formatter.add('fromNow', (val, lng, options) => {
+        return fromNow(val, null, options);
+      });
+      i18n.services.formatter.add('dateTime', (val) => {
+        return dateTimeFormatter.format(val);
+      });
+      // Update loading promise and pass values and errors to the caller
       resolvedLoading(true);
       return value;
     })
