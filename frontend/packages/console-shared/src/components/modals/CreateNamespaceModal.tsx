@@ -3,15 +3,20 @@ import { useState } from 'react';
 import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   Button,
-  Alert,
+  Content,
+  ContentVariants,
+  Form,
+  FormGroup,
+  MenuToggle,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
   Select,
   SelectOption,
   SelectList,
-  MenuToggle,
-  Content,
-  ContentVariants,
+  TextInput,
 } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import type { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
@@ -19,9 +24,9 @@ import type { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-s
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { SelectorInput } from '@console/internal/components/utils/selector-input';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { NamespaceModel, NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const allow = 'allow';
 const deny = 'deny';
@@ -151,80 +156,58 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
   return (
     <Modal
       variant={ModalVariant.small}
-      title={t('console-shared~Create Namespace')}
       isOpen
       onClose={closeModal}
-      actions={[
-        <Button
-          key="confirm-action"
-          type="submit"
-          variant="primary"
-          disabled={inProgress}
-          onClick={submit}
-          data-test="confirm-action"
-          id="confirm-action"
-        >
-          {t('console-shared~Create')}
-        </Button>,
-        <Button
-          key="cancel-action"
-          type="button"
-          variant="link"
-          disabled={inProgress}
-          onClick={closeModal}
-          data-test-id="modal-cancel-action"
-        >
-          {t('console-shared~Cancel')}
-        </Button>,
-        ...(inProgress ? [<LoadingInline key="loading-inline" />] : []),
-      ]}
+      aria-labelledby="create-namespace-modal-title"
     >
-      <form onSubmit={submit} name="form" className="modal-content">
-        <div className="form-group">
-          <label htmlFor="input-name" className="co-required">
-            {t('console-shared~Name')}
-          </label>
-          <FieldLevelHelp>
-            <Content component={ContentVariants.p}>
-              {t(
-                "console-shared~A Namespace name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
-              )}
-            </Content>
-            <Content component={ContentVariants.p}>
-              {t(
-                "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
-              )}
-            </Content>
-          </FieldLevelHelp>
-          <div className="modal-body__field">
-            <span className="pf-v6-c-form-control">
-              <input
-                id="input-name"
-                data-test="input-name"
-                name="name"
-                type="text"
-                onChange={(e) => setName(e.target.value)}
-                value={name || ''}
-                required
-              />
-            </span>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="tags-input">{t('console-shared~Labels')}</label>
-          <div className="modal-body__field">
+      <ModalHeader
+        title={t('console-shared~Create Namespace')}
+        labelId="create-namespace-modal-title"
+      />
+      <ModalBody>
+        <Form onSubmit={submit} id="create-namespace-form">
+          <FormGroup
+            label={t('console-shared~Name')}
+            isRequired
+            fieldId="input-name"
+            labelHelp={
+              <FieldLevelHelp>
+                <Content component={ContentVariants.p}>
+                  {t(
+                    "console-shared~A Namespace name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+                  )}
+                </Content>
+                <Content component={ContentVariants.p}>
+                  {t(
+                    "console-shared~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+                  )}
+                </Content>
+              </FieldLevelHelp>
+            }
+          >
+            <TextInput
+              id="input-name"
+              data-test="input-name"
+              name="name"
+              type="text"
+              onChange={(_event, value) => setName(value)}
+              value={name}
+              isRequired
+            />
+          </FormGroup>
+          <FormGroup label={t('console-shared~Labels')}>
             <SelectorInput
               labelClassName="co-m-namespace"
               onChange={(value) => setLabels(value)}
               tags={labels}
             />
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="network-policy">{t('console-shared~Default network policy')}</label>
-          <div className="modal-body__field ">
+          </FormGroup>
+          <FormGroup
+            label={t('console-shared~Default network policy')}
+            fieldId="network-policy-select"
+          >
             <Select
-              id="dropdown-selectbox"
+              id="network-policy-select"
               isOpen={isOpen}
               selected={selected}
               onSelect={onSelect}
@@ -234,20 +217,31 @@ export const CreateNamespaceModal: ModalComponent<CreateProjectModalProps> = ({
             >
               <SelectList>{selectOptions}</SelectList>
             </Select>
-          </div>
-        </div>
-        {errorMessage && (
-          <Alert
-            isInline
-            className="co-alert co-alert--scrollable"
-            variant="danger"
-            title={t('console-shared~An error occurred')}
-            data-test="alert-error"
-          >
-            <div className="co-pre-line">{errorMessage}</div>
-          </Alert>
-        )}
-      </form>
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isDisabled={inProgress}
+          isLoading={inProgress}
+          form="create-namespace-form"
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('console-shared~Create')}
+        </Button>
+        <Button
+          type="button"
+          variant="link"
+          isDisabled={inProgress}
+          onClick={closeModal}
+          data-test-id="modal-cancel-action"
+        >
+          {t('console-shared~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

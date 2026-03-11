@@ -52,4 +52,14 @@ describe('ReplaceCodeModal', () => {
     fireEvent.click(getByText('Keep both'));
     expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
   });
+
+  it('should call handleCodeReplace when close button (X) is clicked', () => {
+    const { getByLabelText } = renderComponent();
+
+    const closeButton = getByLabelText('Close');
+    expect(closeButton).toBeTruthy();
+
+    fireEvent.click(closeButton);
+    expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
+  });
 });
