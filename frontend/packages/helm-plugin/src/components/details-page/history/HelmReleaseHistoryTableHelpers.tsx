@@ -1,6 +1,9 @@
 import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
-import type { DataViewTd, DataViewTh } from '@patternfly/react-data-view';
+import type {
+  DataViewTd,
+  DataViewTh,
+} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';

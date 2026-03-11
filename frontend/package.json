@@ -158,7 +158,7 @@
     "@patternfly/react-code-editor": "~6.4.0",
     "@patternfly/react-component-groups": "~6.4.0",
     "@patternfly/react-core": "~6.4.0",
-    "@patternfly/react-data-view": "~6.3.0",
+    "@patternfly/react-data-view": "6.4.0-prerelease.12",
     "@patternfly/react-drag-drop": "~6.4.0",
     "@patternfly/react-icons": "~6.4.0",
     "@patternfly/react-log-viewer": "~6.3.0",
@@ -334,7 +334,9 @@
     "hosted-git-info": "^3.0.8",
     "lodash-es": "^4.17.23",
     "postcss": "^8.2.13",
-    "async": "^3.2.5"
+    "async": "^3.2.5",
+    "@patternfly/react-table": "~6.4.1",
+    "@patternfly/react-core": "~6.4.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
