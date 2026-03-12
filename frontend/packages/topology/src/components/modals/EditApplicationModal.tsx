@@ -48,6 +48,7 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
       <ModalHeader
         title={t('topology~Edit application grouping')}
         labelId="edit-application-modal-title"
+        data-test-id="modal-title"
       />
       <ModalBody>
         <Form id="edit-application-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
