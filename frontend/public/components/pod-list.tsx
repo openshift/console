@@ -1,9 +1,9 @@
 import {
   actionsCellProps,
-  cellIsStickyProps,
   ConsoleDataView,
   getNameCellProps,
   initialFiltersDefault,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   ConsoleDataViewColumn,
@@ -126,7 +126,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         sort: 'metadata.name',
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -248,7 +248,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
         title: '',
         id: tableColumnInfo[13].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];

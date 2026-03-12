@@ -226,7 +226,7 @@ export const cellIsStickyProps = {
   stickyMinWidth: '0',
 };
 
-const nameCellProps = {
+export const nameCellProps = {
   ...cellIsStickyProps,
   hasRightBorder: true,
 };
