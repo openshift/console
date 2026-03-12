@@ -25,7 +25,7 @@ type ColumnResizeOnResize = (
  * configMap key and each resize adds/updates only that column's entry.
  *
  * @param model - K8s model (e.g. PodModel) for the resource table
- * @returns getResizableProps(columnId) and getWidth(columnId) for each column
+ * @returns getResizableProps(columnId), getWidth(columnId), and resetAllColumnWidths()
  */
 export const useColumnWidthSettings = (
   model: K8sModel,
@@ -39,6 +39,8 @@ export const useColumnWidthSettings = (
     resizeButtonAriaLabel: string;
   };
   getWidth: (columnId: string) => number | undefined;
+  /** Reset saved widths for all columns in this table. */
+  resetAllColumnWidths: () => void;
 } => {
   const resolvedTableId = useMemo(() => referenceForModel(model), [model]);
 
@@ -64,6 +66,14 @@ export const useColumnWidthSettings = (
     [resolvedTableId, setColumnWidths],
   );
 
+  const resetAllColumnWidths = useCallback(() => {
+    setColumnWidths((prev) => {
+      const existing = prev ?? {};
+      const { [resolvedTableId]: _removed, ...rest } = existing;
+      return rest;
+    });
+  }, [resolvedTableId, setColumnWidths]);
+
   const getWidth = useCallback((columnId: string) => columnWidths?.[resolvedTableId]?.[columnId], [
     columnWidths,
     resolvedTableId,
@@ -83,7 +93,7 @@ export const useColumnWidthSettings = (
     [columnWidths, resolvedTableId, setColumnWidth],
   );
 
-  return { getResizableProps, getWidth };
+  return { getResizableProps, getWidth, resetAllColumnWidths };
 };
 
 /**
@@ -99,14 +109,16 @@ export const useResizableColumnProps = (
   width?: number;
   onResize: ColumnResizeOnResize;
   resizeButtonAriaLabel: string;
+  resetAllColumnWidths: () => void;
 } => {
-  const { getResizableProps, getWidth } = useColumnWidthSettings(model);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
   const resizableProps = getResizableProps(columnId);
   return useMemo(
     () => ({
       ...resizableProps,
       width: getWidth(columnId),
+      resetAllColumnWidths,
     }),
-    [resizableProps, getWidth, columnId],
+    [resizableProps, getWidth, columnId, resetAllColumnWidths],
   );
 };

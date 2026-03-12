@@ -114,9 +114,11 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
+const usePodsColumns = (
+  showNodes: boolean,
+): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
-  const { getResizableProps } = useColumnWidthSettings(PodModel);
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
   const columns = useMemo(() => {
     return [
@@ -253,7 +255,7 @@ const usePodsColumns = (showNodes: boolean): TableColumn<PodKind>[] => {
       },
     ];
   }, [t, showNodes, getResizableProps]);
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 const Cores: FC<CoresProps> = ({ cores }) => {
@@ -460,7 +462,7 @@ export const PodList: FC<PodListProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const columns = usePodsColumns(showNodes);
+  const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
   const podMetrics = useSelector<RootState, UIActions.PodMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'pod']);
@@ -570,6 +572,7 @@ export const PodList: FC<PodListProps> = ({
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
         isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

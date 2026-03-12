@@ -1760,6 +1760,7 @@
   "{{kind}} {{name}} violates policy {{warning}}": "{{kind}} {{name}} violates policy {{warning}}",
   "Learn more": "Learn more",
   "Filter by name": "Filter by name",
+  "Reset column widths": "Reset column widths",
   "{{label}} table": "{{label}} table",
   "Filter by label": "Filter by label",
   "Selected group is unavailable": "Selected group is unavailable",
@@ -1801,7 +1802,6 @@
   "Disable": "Disable",
   "Disabled": "Disabled",
   "Enabled": "Enabled",
-  "Select service account": "Select service account",
   "Failed to load kubecontrollermanager": "Failed to load kubecontrollermanager",
   "Failed to parse cloud provider config {{cm}}": "Failed to parse cloud provider config {{cm}}",
   "The following content was expected to be defined in the configMap: {{ expectedValues }}": "The following content was expected to be defined in the configMap: {{ expectedValues }}",
@@ -1810,5 +1810,6 @@
   "Failed to patch cloud provider config": "Failed to patch cloud provider config",
   "Failed to add taint to nodes": "Failed to add taint to nodes",
   "Failed to patch infrastructure spec": "Failed to patch infrastructure spec",
-  "Unexpected error": "Unexpected error"
+  "Unexpected error": "Unexpected error",
+  "Select service account": "Select service account"
 }

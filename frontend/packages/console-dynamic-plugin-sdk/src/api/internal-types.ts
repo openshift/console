@@ -356,6 +356,8 @@ export type ConsoleDataViewProps<
   hideColumnManagement?: boolean;
   mock?: boolean;
   isResizable?: boolean;
+  /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
+  resetAllColumnWidths?: () => void;
 };
 
 // ConsoleDataView helper types
