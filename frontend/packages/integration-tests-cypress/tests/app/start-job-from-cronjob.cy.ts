@@ -54,7 +54,7 @@ describe('Start a Job from a CronJob', () => {
   });
 
   it('verify "Start Job" on the CronJob list page', () => {
-    cy.visit(`/k8s/ns/${testName}/cronjobs`);
+    cy.visit(`/k8s/ns/${testName}/batch~v1~CronJob`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvRows.clickKebabAction(CRONJOB_NAME, 'Start Job');
     detailsPage.isLoaded();
@@ -63,14 +63,14 @@ describe('Start a Job from a CronJob', () => {
   });
 
   it('verify the number of Jobs in CronJob > Jobs tab list page', () => {
-    cy.visit(`/k8s/ns/${testName}/cronjobs`);
+    cy.visit(`/k8s/ns/${testName}/batch~v1~CronJob`);
     listPage.dvRows.shouldBeLoaded();
-    cy.visit(`/k8s/ns/${testName}/cronjobs/${CRONJOB_NAME}/jobs`);
+    cy.visit(`/k8s/ns/${testName}/batch~v1~CronJob/${CRONJOB_NAME}/jobs`);
     listPage.dvRows.countShouldBe(2);
   });
 
   it('verify the number of events in CronJob > Events tab list page', () => {
-    cy.visit(`/k8s/ns/${testName}/cronjobs/${CRONJOB_NAME}/events`);
+    cy.visit(`/k8s/ns/${testName}/batch~v1~CronJob/${CRONJOB_NAME}/events`);
     cy.byTestID('event-totals').should('have.text', 'Showing 2 events');
   });
 });

@@ -51,7 +51,7 @@ describe(`${crd} CRD`, () => {
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}`);
     detailsPage.titleShouldContain(name);
 
-    cy.visit(`/k8s/ns/${testName}/pods`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod`);
     listPage.clickCreateYAMLbutton();
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
@@ -66,7 +66,7 @@ describe(`${crd} CRD`, () => {
       });
     });
 
-    cy.visit(`/k8s/ns/${testName}/pods/${podName}/logs`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod/${podName}/logs`);
     cy.get(cell).should('exist');
 
     cy.visit(`/k8s/cluster/console.openshift.io~v1~${crd}/${name}/yaml`);
@@ -79,11 +79,11 @@ describe(`${crd} CRD`, () => {
       });
     });
 
-    cy.visit(`/k8s/ns/${testName}/pods/${podName}/logs`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod/${podName}/logs`);
     cy.get('[data-test="resource-log-toolbar"').should('exist');
     cy.get(cell).should('not.exist');
 
-    cy.visit(`/k8s/ns/${testName}/pods?name=${podName}`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod?name=${podName}`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvRows.clickKebabAction(podName, 'Delete Pod');
     modal.shouldBeOpened();

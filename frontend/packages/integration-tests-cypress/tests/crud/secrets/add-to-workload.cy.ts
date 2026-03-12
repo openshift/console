@@ -51,7 +51,7 @@ describe('Add Secret to Workloads', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/ns/${testName}/secrets/${secretName}`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Secret/${secretName}`);
   });
 
   afterEach(() => {

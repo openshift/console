@@ -100,7 +100,7 @@ describe('Annotations', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/ns/${testName}/configmaps/${configmapName}`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~ConfigMap/${configmapName}`);
     detailsPage.isLoaded();
     detailsPage.titleShouldContain(configmapName);
     cy.byTestID('edit-annotations').contains('0 annotations');

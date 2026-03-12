@@ -16,7 +16,7 @@ describe('Filtering and Searching', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
     listPage.clickCreateYAMLbutton();
     cy.byTestID('yaml-view-input').click();
 
@@ -43,7 +43,7 @@ describe('Filtering and Searching', () => {
   });
 
   after(() => {
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName(WORKLOAD_NAME);
     listPage.dvRows.clickKebabAction(WORKLOAD_NAME, 'Delete Deployment');
@@ -54,16 +54,16 @@ describe('Filtering and Searching', () => {
   });
 
   it('filters Pod from object detail', () => {
-    cy.visit(`/k8s/ns/${testName}/deployments`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment`);
     listPage.dvRows.shouldExist(WORKLOAD_NAME);
-    cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment/${WORKLOAD_NAME}/pods`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName(WORKLOAD_NAME);
     listPage.dvRows.countShouldBe(3);
   });
 
   it('filters invalid Pod from object detail', () => {
-    cy.visit(`/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
+    cy.visit(`/k8s/ns/${testName}/apps~v1~Deployment/${WORKLOAD_NAME}/pods`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName('XYZ123');
     cy.get('[data-test="data-view-table"]').within(() => {
@@ -72,7 +72,7 @@ describe('Filtering and Searching', () => {
   });
 
   it('filters from Pods list', () => {
-    cy.visit(`/k8s/all-namespaces/pods`);
+    cy.visit(`/k8s/all-namespaces/core~v1~Pod`);
     listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName(WORKLOAD_NAME);
     listPage.dvRows.countShouldBe(3);

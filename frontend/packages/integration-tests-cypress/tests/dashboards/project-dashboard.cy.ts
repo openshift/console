@@ -7,7 +7,7 @@ describe('Project dashboard', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/cluster/projects/${testName}`);
+    cy.visit(`/k8s/cluster/project.openshift.io~v1~Project/${testName}`);
   });
 
   describe('Details Card', () => {
@@ -34,7 +34,10 @@ describe('Project dashboard', () => {
 
     it('has View all link', () => {
       cy.byTestID('details-card-view-all').click();
-      cy.url().should('include', `/k8s/cluster/projects/${testName}/details`);
+      cy.url().should(
+        'include',
+        `/k8s/cluster/project.openshift.io~v1~Project/${testName}/details`,
+      );
     });
   });
 
@@ -48,15 +51,21 @@ describe('Project dashboard', () => {
   describe('Inventory Card', () => {
     it('has all items', () => {
       const inventoryItems = [
-        { kind: 'Deployment', path: `/k8s/ns/${testName}/deployments` },
-        { kind: 'DeploymentConfig', path: `/k8s/ns/${testName}/deploymentconfigs` },
-        { kind: 'StatefulSets', path: `/k8s/ns/${testName}/statefulsets` },
-        { kind: 'Pod', path: `/k8s/ns/${testName}/pods` },
-        { kind: 'PersistentVolumeClaim', path: `/k8s/ns/${testName}/persistentvolumeclaims` },
-        { kind: 'Service', path: `/k8s/ns/${testName}/services` },
-        { kind: 'Route', path: `/k8s/ns/${testName}/routes` },
-        { kind: 'ConfigMap', path: `/k8s/ns/${testName}/configmaps` },
-        { kind: 'Secret', path: `/k8s/ns/${testName}/secrets` },
+        { kind: 'Deployment', path: `/k8s/ns/${testName}/apps~v1~Deployment` },
+        {
+          kind: 'DeploymentConfig',
+          path: `/k8s/ns/${testName}/apps.openshift.io~v1~DeploymentConfig`,
+        },
+        { kind: 'StatefulSets', path: `/k8s/ns/${testName}/apps~v1~StatefulSet` },
+        { kind: 'Pod', path: `/k8s/ns/${testName}/core~v1~Pod` },
+        {
+          kind: 'PersistentVolumeClaim',
+          path: `/k8s/ns/${testName}/core~v1~PersistentVolumeClaim`,
+        },
+        { kind: 'Service', path: `/k8s/ns/${testName}/core~v1~Service` },
+        { kind: 'Route', path: `/k8s/ns/${testName}/route.openshift.io~v1~Route` },
+        { kind: 'ConfigMap', path: `/k8s/ns/${testName}/core~v1~ConfigMap` },
+        { kind: 'Secret', path: `/k8s/ns/${testName}/core~v1~Secret` },
         {
           kind: 'VolumeSnapshot',
           path: `/k8s/ns/${testName}/snapshot.storage.k8s.io~v1~VolumeSnapshot`,

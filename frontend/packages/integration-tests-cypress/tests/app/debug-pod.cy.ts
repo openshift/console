@@ -51,9 +51,9 @@ describe('Debug pod', () => {
   });
 
   it('Opens debug terminal page from Logs subsection', () => {
-    cy.visit(`/k8s/ns/${testName}/pods`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod`);
     listPage.dvRows.shouldExist(POD_NAME);
-    cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod/${POD_NAME}`);
     detailsPage.isLoaded();
     detailsPage.selectTab('Logs');
     detailsPage.isLoaded();
@@ -65,7 +65,7 @@ describe('Debug pod', () => {
   });
 
   it('Opens debug terminal page from Pod Details - Status tool tip', () => {
-    cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod/${POD_NAME}`);
     detailsPage.isLoaded();
     cy.byTestID('popover-status-button').click();
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
@@ -76,7 +76,7 @@ describe('Debug pod', () => {
   });
 
   it('Opens debug terminal page from Pods Page - Status tool tip', () => {
-    cy.visit(`/k8s/ns/${testName}/pods`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod`);
     listPage.dvRows.shouldExist(POD_NAME);
     listPage.dvRows.clickStatusButton(POD_NAME);
     // Click on first debug link
@@ -96,7 +96,7 @@ describe('Debug pod', () => {
   });
 
   it('Debug pod should be terminated after leaving debug container page', () => {
-    cy.visit(`/k8s/ns/${testName}/pods`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Pod`);
     listPage.dvRows.shouldExist(POD_NAME);
     listPage.dvFilter.by('Running');
     cy.exec(

@@ -45,7 +45,7 @@ describe('ExportViewLogButton', () => {
   it('should render a link and correct href path', () => {
     renderWithProviders(<ExportViewLogButton name="test" namespace="test" />);
     const logButton = screen.getByTestId('export-view-log-btn');
-    expect(logButton).toHaveAttribute('href', '/k8s/ns/test/pods/test/logs');
+    expect(logButton).toHaveAttribute('href', '/k8s/ns/test/core~v1~Pod/test/logs');
   });
 
   it('should call onViewLog callback', async () => {

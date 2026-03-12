@@ -30,7 +30,7 @@ describe('Editing labels', () => {
     cy.login();
     cy.initAdmin();
     cy.createProjectWithCLI(testName);
-    cy.visit(`k8s/ns/${testName}/${plural}/~new`);
+    cy.visit(`k8s/ns/${testName}/core~v1~ConfigMap/~new`);
     yamlEditor.isLoaded();
     yamlEditor.getEditorContent().then((content) => {
       const newContent = _.defaultsDeep({}, yaml, safeLoad(content));
@@ -42,7 +42,7 @@ describe('Editing labels', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`k8s/ns/${testName}/configmaps/${name}`);
+    cy.visit(`k8s/ns/${testName}/core~v1~ConfigMap/${name}`);
     detailsPage.isLoaded();
     detailsPage.clickPageActionFromDropdown('Edit labels');
     modal.shouldBeOpened();

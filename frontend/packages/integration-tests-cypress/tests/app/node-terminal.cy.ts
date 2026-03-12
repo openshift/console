@@ -16,7 +16,7 @@ describe('Node terminal', () => {
   });
 
   it('Opens a debug terminal', () => {
-    cy.visit(`/k8s/cluster/nodes`);
+    cy.visit(`/k8s/cluster/core~v1~Node`);
     listPage.titleShouldHaveText('Nodes');
     listPage.dvRows.shouldBeLoaded();
     listPage.dvRows.clickFirstLinkInFirstRow();

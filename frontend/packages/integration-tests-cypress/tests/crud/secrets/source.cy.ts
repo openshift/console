@@ -18,7 +18,7 @@ describe('Source secrets', () => {
   });
 
   beforeEach(() => {
-    cy.visit(`/k8s/ns/${testName}/secrets/`);
+    cy.visit(`/k8s/ns/${testName}/core~v1~Secret/`);
     secrets.clickCreateSecretDropdownButton('source');
   });
 

@@ -25,9 +25,11 @@ import {
   ContainerStatus,
   EnvVar,
   PodKind,
+  referenceForModel,
   ResourceList,
   VolumeMount,
 } from '../module/k8s';
+import { PodModel } from '../models';
 import * as k8sProbe from '../module/k8s/probe';
 import {
   getContainerRestartCount,
@@ -510,7 +512,7 @@ export const ContainerDetails: FC<ContainerDetailsProps> = (props) => {
         kind="Container"
         getResourceStatus={() => containerStateValue}
         breadcrumbsFor={() => [
-          { name: t('public~Pods'), path: getBreadcrumbPath(params, 'pods') },
+          { name: t('public~Pods'), path: getBreadcrumbPath(params, referenceForModel(PodModel)) },
           {
             name: params.podName,
             path: resourcePath('Pod', params.podName, params.ns),
