@@ -2,7 +2,8 @@ package actions
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -70,7 +71,7 @@ func TestGetRelease(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -155,7 +156,7 @@ func TestGetReleaseWithTlsData(t *testing.T) {
 			actionConfig := &action.Configuration{
 				RESTClientGetter: FakeConfig{},
 				Releases:         store,
-				KubeClient:       &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:       &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
@@ -166,9 +167,9 @@ func TestGetReleaseWithTlsData(t *testing.T) {
 			}
 			// create a secret in required namespace
 			if tt.createSecret {
-				certificate, errCert := ioutil.ReadFile("./server.crt")
+				certificate, errCert := os.ReadFile("./server.crt")
 				require.NoError(t, errCert)
-				key, errKey := ioutil.ReadFile("./server.key")
+				key, errKey := os.ReadFile("./server.key")
 				require.NoError(t, errKey)
 				data := map[string][]byte{
 					tlsSecretKey:     key,
@@ -179,7 +180,7 @@ func TestGetReleaseWithTlsData(t *testing.T) {
 			}
 			//create a configMap in openshift-config namespace
 			if tt.createConfigMap {
-				caCert, err := ioutil.ReadFile("./cacert.pem")
+				caCert, err := os.ReadFile("./cacert.pem")
 				require.NoError(t, err)
 				data := map[string]string{
 					caBundleKey: string(caCert),
