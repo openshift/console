@@ -4,7 +4,7 @@ This project emulates a standalone repository hosting a sample
 [dynamic plugin](/frontend/packages/console-dynamic-plugin-sdk/README.md) for OpenShift Console.
 
 It is meant to serve as a reference for Console plugin developers and for testing dynamic plugin
-capabilities via end-to-end tests.
+capabilities via end-to-end tests.test
 
 ## Local development
 
