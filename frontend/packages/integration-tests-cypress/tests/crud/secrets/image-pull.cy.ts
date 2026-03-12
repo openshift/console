@@ -15,11 +15,21 @@ describe('Image pull secrets', () => {
     if (this.currentTest?.title === 'Passwords entered on the console are obfuscated') {
       return;
     }
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('image');
   });
 
   afterEach(() => {
+    const credentialsImageSecretName = `registry-credentials-image-secret-${testName}`;
+    const uploadConfigFileImageSecretName = `upload-configuration-file-image-secret-${testName}`;
+    cy.exec(
+      `oc delete secret -n ${testName} ${credentialsImageSecretName} ${uploadConfigFileImageSecretName}`,
+      {
+        failOnNonZeroExit: false,
+      },
+    );
     checkErrors();
   });
 
@@ -76,7 +86,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('[data-test="page-heading"] h1').contains(heading);
+    cy.byTestID('page-heading').contains(heading);
     secrets.enterSecretName(credentialsImageSecretName);
     secrets.clickAddCredentialsButton();
     cy.get('[data-test-id="create-image-secret-form"]').each(($el, index) => {
@@ -86,6 +96,7 @@ describe('Image pull secrets', () => {
       cy.wrap($el).find('[data-test="image-secret-email"]').type(`${mail}${index}`);
     });
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {
@@ -100,6 +111,9 @@ describe('Image pull secrets', () => {
 
     cy.log('Edit secret with whitespace in input values');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load
+    cy.byTestID('page-heading').contains('Edit image pull secret');
+    cy.get('[data-test-id="create-image-secret-form"]').should('have.length', 2);
     secrets.clickRemoveEntryButton();
     cy.byTestID('image-secret-address').clear();
     cy.byTestID('image-secret-address').type(`  ${addressUpdated}  `);
@@ -110,6 +124,7 @@ describe('Image pull secrets', () => {
     cy.byTestID('image-secret-email').clear();
     cy.byTestID('image-secret-email').type(`  ${mailUpdated}  `);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {
@@ -142,7 +157,7 @@ describe('Image pull secrets', () => {
     };
 
     cy.log('Create secret');
-    cy.get('[data-test="page-heading"] h1').contains(heading);
+    cy.byTestID('page-heading').contains(heading);
     secrets.enterSecretName(uploadConfigFileImageSecretName);
     cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('config-file').click();
@@ -157,6 +172,7 @@ describe('Image pull secrets', () => {
     cy.byTestID('save-changes', { timeout: 30000 }).should('be.visible').and('be.enabled');
 
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     // Navigate to secret details page (save may go to list page)
     cy.url({ timeout: 30000 }).then((url) => {

@@ -12,11 +12,16 @@ describe('Webhook secret', () => {
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('webhook');
   });
 
   afterEach(() => {
+    cy.exec(`oc delete secret -n ${testName} ${webhookSecretName}`, {
+      failOnNonZeroExit: false,
+    });
     checkErrors();
   });
 
@@ -26,10 +31,11 @@ describe('Webhook secret', () => {
 
   it(`Create, edit, and delete a webhook secret`, () => {
     cy.log('Create secret');
-    cy.get('[data-test="page-heading"] h1').contains('Create webhook secret');
+    cy.byTestID('page-heading').contains('Create webhook secret');
     secrets.enterSecretName(webhookSecretName);
     cy.byTestID('secret-key').type(webhookSecretKey);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
     secrets.detailsPageIsLoaded(webhookSecretName);
 
     cy.log('Verify secret');
@@ -39,8 +45,12 @@ describe('Webhook secret', () => {
 
     cy.log('Edit secret');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load
+    cy.byTestID('page-heading').contains('Edit webhook secret');
+    cy.byTestID('webhook-generate-button').should('be.visible');
     cy.byTestID('webhook-generate-button').click();
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(webhookSecretName);
