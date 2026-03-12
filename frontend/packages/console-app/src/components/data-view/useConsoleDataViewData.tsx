@@ -14,6 +14,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import type { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
@@ -47,6 +48,8 @@ export const useConsoleDataViewData = <
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const prevFiltersRef = useRef(filters);
+  const [activeNamespace] = useActiveNamespace();
+  const prevNamespaceRef = useRef(activeNamespace);
 
   const pagination = useDataViewPagination({
     perPage: 50,
@@ -54,13 +57,17 @@ export const useConsoleDataViewData = <
     setSearchParams,
   });
 
-  // Reset pagination to page 1 when filters change
+  // Reset pagination to page 1 when filters or namespace change
   useEffect(() => {
     const currentFilters = filters;
     const prevFilters = prevFiltersRef.current;
     const filtersChanged = !_.isEqual(currentFilters, prevFilters);
 
-    if (filtersChanged && pagination.page > 1) {
+    const currentNamespace = activeNamespace;
+    const prevNamespace = prevNamespaceRef.current;
+    const namespaceChanged = currentNamespace !== prevNamespace;
+
+    if ((filtersChanged || namespaceChanged) && pagination.page > 1) {
       setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
         newParams.set('page', '1');
@@ -69,7 +76,8 @@ export const useConsoleDataViewData = <
     }
 
     prevFiltersRef.current = currentFilters;
-  }, [filters, pagination.page, setSearchParams]);
+    prevNamespaceRef.current = currentNamespace;
+  }, [filters, activeNamespace, pagination.page, setSearchParams]);
 
   const [activeColumns] = useActiveColumns({
     columns,
