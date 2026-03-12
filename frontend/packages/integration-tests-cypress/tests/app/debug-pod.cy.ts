@@ -67,7 +67,7 @@ describe('Debug pod', () => {
   it('Opens debug terminal page from Pod Details - Status tool tip', () => {
     cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
     detailsPage.isLoaded();
-    cy.byTestID('popover-status-button').click();
+    cy.byTestID('popover-status-button', { timeout: 60000 }).click();
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');

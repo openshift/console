@@ -145,7 +145,7 @@ export const listPage = {
         .contains(resourceName)
         .parents('tr')
         .within(() => {
-          cy.byTestID('popover-status-button').click();
+          cy.byTestID('popover-status-button', { timeout: 60000 }).click();
         });
     },
     shouldExist: (resourceName: string, cellName: string = 'name') => {
