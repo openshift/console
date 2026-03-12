@@ -11,6 +11,13 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
  */
 export type ColumnWidthUserSettings = Record<string, Record<string, number>>;
 
+/** Callback when a table column is resized: event, column id, and new width in pixels. */
+type ColumnResizeOnResize = (
+  event: MouseEvent<HTMLDivElement>,
+  id: string | number | undefined,
+  width: number,
+) => void;
+
 /**
  * Table-level hook: one source of truth per table so that each column resize merges into
  * the same state and creates/updates an entry for that column without replacing others.
@@ -28,11 +35,7 @@ export const useColumnWidthSettings = (
   ) => {
     isResizable: true;
     width?: number;
-    onResize: (
-      event: MouseEvent<HTMLDivElement>,
-      id: string | number | undefined,
-      width: number,
-    ) => void;
+    onResize: ColumnResizeOnResize;
     resizeButtonAriaLabel: string;
   };
   getWidth: (columnId: string) => number | undefined;
@@ -67,16 +70,16 @@ export const useColumnWidthSettings = (
   ]);
 
   const getResizableProps = useCallback(
-    (columnId: string) => ({
-      isResizable: true as const,
-      width: columnWidths?.[resolvedTableId]?.[columnId],
-      onResize: (
-        _event: MouseEvent<HTMLDivElement>,
-        _id: string | number | undefined,
-        newWidth: number,
-      ) => setColumnWidth(columnId, newWidth),
-      resizeButtonAriaLabel: `Resize ${columnId} column`,
-    }),
+    (columnId: string) => {
+      const onResize: ColumnResizeOnResize = (_event, _id, newWidth) =>
+        setColumnWidth(columnId, newWidth);
+      return {
+        isResizable: true as const,
+        width: columnWidths?.[resolvedTableId]?.[columnId],
+        onResize,
+        resizeButtonAriaLabel: `Resize ${columnId} column`,
+      };
+    },
     [columnWidths, resolvedTableId, setColumnWidth],
   );
 
@@ -94,11 +97,7 @@ export const useResizableColumnProps = (
 ): {
   isResizable: true;
   width?: number;
-  onResize: (
-    event: MouseEvent<HTMLDivElement>,
-    id: string | number | undefined,
-    width: number,
-  ) => void;
+  onResize: ColumnResizeOnResize;
   resizeButtonAriaLabel: string;
 } => {
   const { getResizableProps, getWidth } = useColumnWidthSettings(model);
