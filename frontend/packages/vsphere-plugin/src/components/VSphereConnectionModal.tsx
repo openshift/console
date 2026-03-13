@@ -123,7 +123,6 @@ const validationSchema = Yup.lazy((values: ConnectionFormFormikValues) =>
       )
       .matches(datastoreRegex, `Must match regex ${datastoreRegex}`),
     folder: Yup.string()
-      .required('Virtual Machine Folder is required.')
       .test('Correct prefix', `Must start with /${values.datacenter}/vm/`, (value: string) => {
         if (!value || !values.datacenter) {
           return true;
