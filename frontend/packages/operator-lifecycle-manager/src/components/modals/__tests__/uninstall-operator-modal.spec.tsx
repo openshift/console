@@ -21,6 +21,10 @@ jest.mock('@console/shared/src/hooks/useOperands', () => ({
   useOperands: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
+}));
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key.replace(/^[^~]+~/, ''), // Remove namespace prefix (e.g., "olm~")
@@ -74,7 +78,8 @@ describe(UninstallOperatorModal.name, () => {
   it('deletes subscription when form is submitted', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(2);
@@ -96,7 +101,8 @@ describe(UninstallOperatorModal.name, () => {
   it('deletes ClusterServiceVersion when form is submitted', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(2);
@@ -125,7 +131,8 @@ describe(UninstallOperatorModal.name, () => {
       <UninstallOperatorModal {...uninstallOperatorModalProps} subscription={testSubscription} />,
     );
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(1);
@@ -135,7 +142,8 @@ describe(UninstallOperatorModal.name, () => {
   it('calls close callback after successful form submission', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
       expect(uninstallOperatorModalProps.close).toHaveBeenCalledTimes(1);
