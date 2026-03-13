@@ -306,7 +306,9 @@ export const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({
   loaded,
   ...props
 }) => {
-  const columns = useWorkloadColumns<DeploymentConfigKind>();
+  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(
+    DeploymentConfigModel,
+  );
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -318,6 +320,8 @@ export const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

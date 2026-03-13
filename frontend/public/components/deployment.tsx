@@ -226,7 +226,7 @@ const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
 };
 
 export const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useWorkloadColumns<DeploymentKind>();
+  const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentKind>(DeploymentModel);
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -237,6 +237,8 @@ export const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...pro
         loaded={loaded}
         columns={columns}
         getDataViewRows={getDataViewRows}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
