@@ -11,7 +11,8 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, To } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
+import type { To } from 'react-router';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalComponentProps } from '../factory/modal';
 import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';

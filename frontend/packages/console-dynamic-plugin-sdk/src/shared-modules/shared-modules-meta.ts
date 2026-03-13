@@ -49,9 +49,9 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   react: {},
   'react-i18next': {},
   'react-redux': {},
-  'react-router': { singleton: false }, // fixes runtime error when both v5-compat and v5 are present
-  'react-router-dom': {},
-  'react-router-dom-v5-compat': {},
+  'react-router': {},
+  'react-router-dom': {}, // Deprecated; re-export of react-router
+  'react-router-dom-v5-compat': {}, // Deprecated; aliased to react-router-dom
   redux: {},
   'redux-thunk': {},
 };

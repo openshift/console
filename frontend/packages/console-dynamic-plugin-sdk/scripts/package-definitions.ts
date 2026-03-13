@@ -76,7 +76,14 @@ const parseDeps = (
   missingDepCallback: MissingDependencyCallback,
 ) => {
   const srcDeps = { ...pkg.devDependencies, ...pkg.dependencies };
-  depNames.filter((name) => !srcDeps[name]).forEach(missingDepCallback);
+
+  depNames
+    // Console does not have an explicit react-router-dom-v5-compat dependency.
+    // react-router-dom-v5-compat shared module impl. delegates to react-router.
+    .filter((name) => name !== 'react-router-dom-v5-compat')
+    .filter((name) => !srcDeps[name])
+    .forEach(missingDepCallback);
+
   return _.pick(srcDeps, depNames);
 };
 

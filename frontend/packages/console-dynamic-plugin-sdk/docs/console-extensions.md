@@ -773,7 +773,7 @@ This extension can be used to add a separator between navigation items in the na
 
 ### Summary 
 
-Adds new resource details page to Console router.
+Adds a new resource details page to Console router.
 
 ### Properties
 
@@ -788,7 +788,7 @@ Adds new resource details page to Console router.
 
 ### Summary 
 
-Adds new resource list page to Console router.
+Adds a new resource list page to Console router.
 
 ### Properties
 
@@ -803,16 +803,16 @@ Adds new resource list page to Console router.
 
 ### Summary 
 
-Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/<br/><br/>Note: This extension should not be used for resource list and details page. For adding both list and details page for a resource use the<br/>[console.navigation/resource-ns](#consolenavigationresource-ns) extension, instead, which renders elementary fields.
+Adds a new page to the Console router.<br/><br/>Console application uses [React Router v7](https://reactrouter.com/).<br/><br/>Note that React Router v7 no longer supports passing a string array to the Route `path` prop.<br/>Console retains this functionality by rendering multiple Route instances. To ensure the route<br/>matches the correct paths, consider using `exact: true` and sorting your Route path values<br/>from most specific to least specific.<br/><br/>Also note that React Router v7 no longer supports Route `exact` prop, i.e. paths are matched<br/>as `exact: true` by default. Console retains the original behavior for backwards compatibility.<br/>Use `exact: true` unless you want to match more of the URL.<br/><br/>Do not use this extension for resource list and details pages. To add a list or details page<br/>for a resource, use the `console.navigation/resource-ns` extension instead.
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
-| `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, contributes to all perspectives. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
+| `perspective` | `string` | yes | The perspective to which this page belongs to. If not specified, applies to all perspectives. |
+| `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
 ---
 
@@ -820,15 +820,15 @@ Adds new page to Console router.<br/><br/>Under the hood we use React Router.<br
 
 ### Summary 
 
-Adds new standalone page (rendered outside the common page layout) to Console router.<br/><br/>Under the hood we use React Router.<br/>See https://v5.reactrouter.com/
+Adds a new standalone page rendered outside the common Console page layout.<br/><br/>Console application uses [React Router v7](https://reactrouter.com/).
 
 ### Properties
 
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `path` | `string \| string[]` | no | Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+| `path` | `string \| string[]` | no | Valid URL path or array of paths. Note that React Router v7 does not use `path-to-regexp`. |
+| `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
 ---
 
@@ -1407,7 +1407,7 @@ This extension can be used to specify extra build environment variable fields un
 
 ### Summary [DEPRECATED]
 
-@deprecated - Use `console.tab/horizontalNav` instead<br/>Adds new resource tab page to Console router.
+@deprecated - Use `console.tab/horizontalNav` instead
 
 ### Properties
 
@@ -1417,5 +1417,5 @@ This extension can be used to specify extra build environment variable fields un
 | `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
 | `name` | `string` | no | The name of the tab. |
 | `href` | `string` | yes | The optional href for the tab link. If not provided, the first `path` is used. |
-| `exact` | `boolean` | yes | When true, will only match if the path matches the `location.pathname` exactly. |
+| `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
