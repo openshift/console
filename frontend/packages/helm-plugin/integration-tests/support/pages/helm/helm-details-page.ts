@@ -31,7 +31,7 @@ export const helmDetailsPage = {
   },
   enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-release') => {
     modal.modalTitleShouldContain('Delete Helm Release?');
-    cy.get('form strong').should('have.text', releaseName);
+    cy.byTestID('resource-name').should('have.text', releaseName);
     cy.get(helmPO.uninstallHelmRelease.releaseName).type(releaseName);
   },
   checkHelmTab: (name: string) => {
