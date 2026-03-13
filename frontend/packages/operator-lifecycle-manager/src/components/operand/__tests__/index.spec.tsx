@@ -59,9 +59,8 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
   ],
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: () => jest.fn(),
 }));
 
 jest.mock('@console/internal/components/factory', () => ({
@@ -211,6 +210,7 @@ describe('OperandDetailsPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
   });
 
@@ -250,6 +250,7 @@ describe('ProvidedAPIsPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
   });
 
@@ -284,6 +285,7 @@ describe('ProvidedAPIPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
   });
 

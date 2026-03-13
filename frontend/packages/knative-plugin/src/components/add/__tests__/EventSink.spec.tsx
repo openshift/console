@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   mockKameletSink,
@@ -7,15 +7,11 @@ import {
 } from '../__mocks__/Kamelet-data';
 import EventSink from '../EventSink';
 
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useConsoleSelector as jest.Mock;
 
-jest.mock('react-redux', () => {
-  const originalModule = jest.requireActual('react-redux');
-  return {
-    ...originalModule,
-    useSelector: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
 
 jest.mock('formik', () => ({
   ...jest.requireActual('formik'),

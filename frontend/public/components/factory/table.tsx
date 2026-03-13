@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import type { FC, ReactText, ReactNode, ComponentType } from 'react';
 import { memo, useMemo, useState, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import {
   TableGridBreakpoint,
   SortByDirection,
@@ -483,7 +483,7 @@ export const Table: FC<TableProps> = ({
   onRowsRendered,
   'data-test': dataTest,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);

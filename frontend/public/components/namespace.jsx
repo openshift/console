@@ -14,7 +14,8 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
@@ -345,7 +346,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
 
 export const NamespacesList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const columns = useNamespacesColumns();
   const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -353,7 +354,7 @@ export const NamespacesList = (props) => {
     undefined,
     true,
   );
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -656,7 +657,7 @@ const getProjectDataViewRows = (
 };
 
 const ProjectLink = ({ project }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [, setLastNamespace] = useUserPreferenceCompatibility(
     LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
     LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
@@ -719,7 +720,7 @@ export const ProjectsTable = (props) => {
 
 export const ProjectList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
   const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -731,7 +732,7 @@ export const ProjectList = (props) => {
   const showMetrics = isPrometheusAvailable && canGetNS;
   const showActions = true;
   const columns = useProjectsColumns({ showMetrics, showActions });
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {

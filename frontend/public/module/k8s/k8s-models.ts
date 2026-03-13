@@ -1,14 +1,12 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
-
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { getModelExtensionMetadata } from './get-resources';
 import * as staticModels from '../../models';
 import { apiVersionCompare } from '@console/internal/module/k8s/crd-versions';
 import { kindForReference } from '@console/internal/module/k8s/for-ref';
 import { referenceForModel, referenceForGroupVersionKind } from './k8s-ref';
 import store from '../../redux';
-import type { RootState } from '../../redux';
 import { pluginStore } from '../../plugins';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
@@ -125,7 +123,7 @@ export const useModelFinder = () => {
   const referenceForGroupVersionPlural = (group: string) => (version: string) => (plural: string) =>
     [group || 'core', version, plural].join('~');
 
-  const models = useSelector<RootState, ImmutableMap<string, K8sModel>>(({ k8s }) =>
+  const models = useConsoleSelector<ImmutableMap<string, K8sModel>>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'models']),
   );
   const pluralsToModelMap = models.reduce((acc, curr) => {
@@ -133,7 +131,7 @@ export const useModelFinder = () => {
     acc[ref] = curr;
     return acc;
   }, {});
-  const groupVersionMap = useSelector<RootState, DiscoveryResources['groupVersionMap']>(({ k8s }) =>
+  const groupVersionMap = useConsoleSelector<DiscoveryResources['groupVersionMap']>(({ k8s }) =>
     k8s.getIn(['RESOURCES', 'groupToVersionMap']),
   );
 

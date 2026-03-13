@@ -6,7 +6,6 @@ import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt
 import type { ISortBy, OnSort } from '@patternfly/react-table';
 import { SortByDirection, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/dynamic-plugin-sdk';
@@ -32,7 +31,6 @@ import type {
   K8sResourceKindReference,
 } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
@@ -43,6 +41,7 @@ import {
 import { Status } from '@console/shared/src/components/status/Status';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import type { Comparator } from '@console/shared/src/utils/comparators';
 import { boolComparator, localeComparator } from '@console/shared/src/utils/comparators';
 
@@ -299,7 +298,7 @@ const ConsolePluginsTable: FC<ConsolePluginsTableProps> = ({ obj, rows }) => {
 
 const DevPluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
   const pluginInfo = usePluginInfo();
-  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
 
@@ -329,7 +328,7 @@ const PluginsPage: FC<ConsoleOperatorConfigPageProps> = (props) => {
   const enabledPlugins = useMemo(() => props?.obj?.spec?.plugins ?? [], [
     props?.obj?.spec?.plugins,
   ]);
-  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
   const rows = useMemo<ConsolePluginTableRow[]>(() => {

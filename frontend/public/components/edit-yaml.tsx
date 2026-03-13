@@ -2,7 +2,9 @@ import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
@@ -188,10 +190,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const [callbackCommand, setCallbackCommand] = useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = useState(false);
   const [olsCode, setOLSCode] = useState('');
-  const olsCodeBlock = useSelector(getOLSCodeBlock);
+  const olsCodeBlock = useConsoleSelector(getOLSCodeBlock);
 
   const closeOLS = () => action(ActionType.CloseOLS);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const monacoRef = useRef<CodeEditorRef>();
   const editor = useRef();

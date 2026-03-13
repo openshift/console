@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import {
@@ -31,7 +31,6 @@ import { FieldLevelHelp } from './utils/field-level-help';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { ResourceLink } from './utils/resource-link';
 import { ConfigMapModel, SecretModel } from '../models';
-import { RootState } from '../redux';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
@@ -367,13 +366,13 @@ export const EnvironmentPage: FC<EnvironmentPageProps> = (props) => {
 
   const { t } = useTranslation();
 
-  const model = useSelector(
-    (state: RootState) =>
+  const model = useConsoleSelector(
+    (state) =>
       state.k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) ||
       state.k8s.getIn(['RESOURCES', 'models', obj?.kind]),
   );
 
-  const impersonate = useSelector((state: RootState) => getImpersonate(state));
+  const impersonate = useConsoleSelector((state) => getImpersonate(state));
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   const initialCurrentEnvVars = useMemo(() => new CurrentEnvVars(rawEnvData), [rawEnvData]);

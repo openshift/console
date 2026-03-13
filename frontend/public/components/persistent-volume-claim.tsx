@@ -3,7 +3,8 @@ import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import i18next, { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   Alert,
   AlertActionCloseButton,
@@ -36,7 +37,6 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -516,7 +516,7 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = usePersistentVolumeClaimColumns();
-  const pvcMetrics = useSelector<RootState, PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
+  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
@@ -595,7 +595,7 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
 }) => {
   const { t } = useTranslation();
   const createPropExtensions = useExtensions(isPVCCreateProp);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const [response, loadError, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,

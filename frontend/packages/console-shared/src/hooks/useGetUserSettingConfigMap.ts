@@ -1,10 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { USER_SETTING_CONFIGMAP_NAMESPACE } from '../utils/user-settings';
 
 export const useGetUserSettingConfigMap = () => {
@@ -27,7 +26,7 @@ export const useGetUserSettingConfigMap = () => {
   };
 
   // User and impersonate info
-  const userInfo = useSelector((state: RootState) => {
+  const userInfo = useConsoleSelector((state) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
     return { impersonateName, uid, username };

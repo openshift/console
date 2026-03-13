@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { useIsCloudShellActive, useIsCloudShellExpanded } from '../reducers/cloud-shell-selectors';
 import { setCloudShellExpanded, setCloudShellCommand } from './cloud-shell-actions';
 
 export const useCloudShellCommandDispatch = (): ((command: string | null) => void) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   return useCallback(
     (command: string) => {
       dispatch(setCloudShellCommand(command));
@@ -19,7 +19,7 @@ export const useCloudShellCommandDispatch = (): ((command: string | null) => voi
 export const useToggleCloudShellExpanded = (): (() => void) => {
   const isExpanded = useIsCloudShellExpanded();
   const isActive = useIsCloudShellActive();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const { t } = useTranslation('webterminal-plugin');
   const confirmClose = useWarningModal({
     title: t('Close terminal?'),

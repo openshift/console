@@ -13,14 +13,13 @@ jest.mock('react', () => ({
   useContext: jest.fn(),
 }));
 
-jest.mock('react-redux', () => {
-  const ActualReactRedux = jest.requireActual('react-redux');
-  return {
-    ...ActualReactRedux,
-    useSelector: jest.fn(),
-    useDispatch: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
+}));
 
 jest.mock('@console/shared', () => {
   const ActualShared = jest.requireActual('@console/shared');

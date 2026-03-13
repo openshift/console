@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import {
   setActiveNamespace as setActiveNamespaceForStore,
@@ -9,6 +8,7 @@ import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { usePreferredNamespace } from '../user-preferences/namespace/usePreferredNamespace';
 import { getValueForNamespace } from './getValueForNamespace';
 import { useLastNamespace } from './useLastNamespace';
@@ -35,7 +35,7 @@ export const useValuesForNamespaceContext: UseValuesForNamespaceContext = () => 
   const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();
   const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
   const useProjects: boolean = useFlag(FLAGS.OPENSHIFT);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const updateNamespace = (ns) => {
     if (ns !== activeNamespace) {

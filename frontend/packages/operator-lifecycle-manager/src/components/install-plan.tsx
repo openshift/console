@@ -19,7 +19,6 @@ import { sortable } from '@patternfly/react-table';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useParams, Link, useNavigate } from 'react-router';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -46,7 +45,6 @@ import {
   k8sPatch,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
 import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
@@ -54,6 +52,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -274,7 +273,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
-  const user: UserInfo = useSelector<RootState, object>(getUser);
+  const user = useConsoleSelector<UserInfo>(getUser);
 
   const [username, setUsername] = useState(updateUser(isOpenShift, user));
 

@@ -1,6 +1,6 @@
 import type { FC, ComponentType } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,6 @@ import { ConsoleEmptyState } from './utils/status-box';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import type { RootState } from '../redux';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
@@ -25,7 +24,7 @@ export const OpenShiftGettingStarted: FC<OpenShiftGettingStartedProps> = () => {
   const canCreateNamespace = useFlag(FLAGS.CAN_CREATE_NS);
   const canCreateProject = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const canCreate = canCreateNamespace || canCreateProject;
-  const createProjectMessage = useSelector(({ UI }: RootState) => UI.get('createProjectMessage'));
+  const createProjectMessage = useConsoleSelector(({ UI }) => UI.get('createProjectMessage'));
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
   const onClickCreate = () =>
     createNamespaceOrProjectModal({

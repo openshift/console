@@ -33,7 +33,8 @@ import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataV
 import * as _ from 'lodash';
 import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Link } from 'react-router';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
@@ -47,7 +48,6 @@ import {
   podReadiness,
   podRestarts,
 } from '../module/k8s/pods';
-import type { RootState } from '../redux';
 import ListPageCreate from './factory/ListPage/ListPageCreate';
 import ListPageHeader from './factory/ListPage/ListPageHeader';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -464,7 +464,7 @@ export const PodList: FC<PodListProps> = ({
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = usePodsColumns(showNodes);
 
-  const podMetrics = useSelector<RootState, UIActions.PodMetrics>(({ UI }) => {
+  const podMetrics = useConsoleSelector<UIActions.PodMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'pod']);
   });
 
@@ -591,7 +591,7 @@ export const PodsPage: FC<PodPageProps> = ({
   showNamespaceOverride,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,

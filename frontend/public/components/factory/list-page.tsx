@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +93,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     nameFilter,
     omitFilterToolbar,
   } = props;
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import type { Reducer, Dispatch, ReducerAction } from 'react';
 import { createContext, useReducer, useState, useEffect, useCallback } from 'react';
 import { pick, union, isEqual } from 'lodash';
-import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
@@ -10,6 +9,7 @@ import { INTERNAL_DO_NOT_USE_isGuidedTour as isGuidedTour } from '@console/dynam
 import { getFlagsObject } from '@console/internal/reducers/features';
 import type { RootState } from '@console/internal/redux';
 import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTranslatedExtensions';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
 import type { TourDataType, Step } from './type';
@@ -131,8 +131,8 @@ export const useTourValuesForContext = (): TourContextType => {
   const tourExtension = useTranslatedTourExtensions();
   const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);
   const selectorSteps = tour?.properties?.tour?.steps ?? [];
-  const flags = useSelector(
-    (state: RootState) => getRequiredFlagsByTour(state, selectorSteps),
+  const flags = useConsoleSelector(
+    (state) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
   const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(

@@ -2,7 +2,7 @@ import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
 import * as _ from 'lodash';
 import { useLocation } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import {
   Badge,
   Button,
@@ -86,7 +86,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   rowSearchFilters = [],
 }) => {
   const { setOrRemoveQueryArgument } = useQueryParamsMutator();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const location = useLocation();
   const launchModal = useOverlay();
 

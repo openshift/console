@@ -3,12 +3,12 @@ import { useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router';
 import { QueryBrowser } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import type { Humanize } from '@console/internal/components/utils';
 import type { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import './MonitoringDashboardGraph.scss';
 
 export enum GraphTypes {
@@ -57,7 +57,7 @@ export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
   endTime,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const onZoom = useCallback(
     (from, to) => {
       dispatch(dashboardsSetEndTime(to, 'dev'));

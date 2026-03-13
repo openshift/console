@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
-import { useSelector } from 'react-redux';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { ConfigMapKind } from '@console/internal/module/k8s';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   createConfigMap,
   updateConfigMap,
@@ -13,7 +13,7 @@ import { useUserPreference } from '../useUserPreference';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const createConfigMapMock = createConfigMap as jest.Mock;
 const updateConfigMapMock = updateConfigMap as jest.Mock;
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useConsoleSelector as jest.Mock;
 const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
 
 jest.mock('@console/internal/components/useFavoritesOptions', () => ({
@@ -36,13 +36,9 @@ jest.mock('../../utils/user-settings', () => {
   };
 });
 
-jest.mock('react-redux', () => {
-  const originalModule = jest.requireActual('react-redux');
-  return {
-    ...originalModule,
-    useSelector: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
 
 const originalConsole = { ...console };
 const consoleMock = jest.fn();

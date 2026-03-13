@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
@@ -12,6 +11,7 @@ import { modelFor, referenceFor, getGroupVersionKind } from '@console/internal/m
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { CamelKameletBindingModel, KafkaSinkModel } from '../../models';
@@ -55,7 +55,7 @@ const EventSink: FC<EventSinkProps> = ({
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
-  const application = useSelector(getActiveApplication);
+  const application = useConsoleSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
 
   let sinkApiVersion = '';

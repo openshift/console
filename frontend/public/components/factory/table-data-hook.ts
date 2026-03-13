@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
@@ -112,9 +112,11 @@ export const useTableData = ({
     [tableSelectorCreator, listId],
   );
 
-  const [currentSortField, currentSortFunc, currentSortOrder = defaultSortOrder] = useSelector(
-    sortSelector,
-  );
+  const [
+    currentSortField,
+    currentSortFunc,
+    currentSortOrder = defaultSortOrder,
+  ] = useConsoleSelector(sortSelector);
 
   return useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;

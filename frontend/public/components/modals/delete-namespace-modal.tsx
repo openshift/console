@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useNavigate } from 'react-router';
-import { RootState } from '@console/internal/redux';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
@@ -41,8 +41,8 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
    * This is a workaround because modal launcher renders all modals outside of main app context.
    * This leads to namespace context not being available in modal so we access the redux store and use settings directly as a workaround.
    *  */
-  const dispatch = useDispatch();
-  const activeNamespace = useSelector((state: RootState) => getActiveNamespace(state));
+  const dispatch = useConsoleDispatch();
+  const activeNamespace = useConsoleSelector((state) => getActiveNamespace(state));
   const [, setLastNamespace] = useUserPreferenceCompatibility<string>(
     LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
     LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,

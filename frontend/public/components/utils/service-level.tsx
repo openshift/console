@@ -7,7 +7,8 @@ import {
   NotificationDrawerListItemHeader,
   Skeleton,
 } from '@patternfly/react-core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
@@ -16,7 +17,6 @@ import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { SecretModel } from '../../models';
 import { FieldLevelHelp } from './field-level-help';
-import { RootState } from '../../redux';
 import { NotificationTypes } from './types';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
@@ -87,7 +87,7 @@ const TrialDaysLeft: FC<{
 };
 
 const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [loadingSecret, setLoadingSecret] = useState(false);
   const [loadingServiceLevel, setLoadingServiceLevel] = useState(false);
 
@@ -180,7 +180,7 @@ const useGetServiceLevel = (
     clusterID,
     trialDateEnd,
     hasSecretAccess,
-  } = useSelector(({ UI }: RootState) => UI.get('serviceLevel'));
+  } = useConsoleSelector(({ UI }) => UI.get('serviceLevel'));
   const [loadingSecret, loadingServiceLevel, loadServiceLevel] = useLoadServiceLevel();
 
   useEffect(() => {

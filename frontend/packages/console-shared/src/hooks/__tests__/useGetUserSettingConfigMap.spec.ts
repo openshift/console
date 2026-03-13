@@ -1,22 +1,21 @@
 import { renderHook } from '@testing-library/react';
-import { useSelector } from 'react-redux';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { USER_SETTING_CONFIGMAP_NAMESPACE } from '../../utils/user-settings';
 import { useGetUserSettingConfigMap } from '../useGetUserSettingConfigMap';
 
 // Mock dependencies
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useConsoleSelector as jest.Mock;
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
 }));
 
 describe('useGetUserSettingConfigMap', () => {

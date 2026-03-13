@@ -2,20 +2,20 @@ import type { FC } from 'react';
 import { useCallback } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
 import type { Tab } from '@console/internal/components/utils';
 import { SimpleTabNav } from '@console/internal/components/utils';
-import type { RootState } from '@console/internal/redux';
 import { useQueryParams } from '@console/shared/src';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import SideBarTabLoader from '../providers/SideBarTabLoader';
 
 const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const { t } = useTranslation();
-  const selectedTab = useSelector<RootState, string>(({ UI }) =>
+  const selectedTab = useConsoleSelector<string>(({ UI }) =>
     UI.getIn(['overview', 'selectedDetailsTab']),
   );
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const queryParams = useQueryParams();
   const selectTabParam = queryParams.get('selectTab');
   const handleClickTab = useCallback(
