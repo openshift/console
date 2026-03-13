@@ -303,7 +303,4 @@ module.exports = {
       ],
     },
   ],
-
-  // Hack to get `react-router-dom-v5-compat` aliasing to work
-  'import/no-unresolved': ['error', { ignore: ['react-router-dom-v5-compat', 'react-router-dom'] }],
 };

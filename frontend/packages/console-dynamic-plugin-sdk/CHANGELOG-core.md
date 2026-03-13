@@ -15,8 +15,8 @@ table in [Console dynamic plugins README](./README.md).
 - **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
 - **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
-- **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router-dom-v5-compat`) ([CONSOLE-4990], [#15959])
-- **Type breaking**: Changed `FileUploadHandler` return type from `void` to `To | void`. Handlers can now return a path (from `react-router-dom-v5-compat`) for programmatic navigation instead of calling history methods directly ([CONSOLE-4990], [#15959])
+- **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router`) ([CONSOLE-4990], [#15959])
+- **Type breaking**: Changed `FileUploadHandler` return type from `void` to `To | void`. Handlers can now return a path (from `react-router`) for programmatic navigation instead of calling history methods directly ([CONSOLE-4990], [#15959])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
   by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
 

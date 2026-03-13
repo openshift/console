@@ -27,10 +27,10 @@ export const getSharedScope = () => {
  * Patch the webpack share scope object for backwards compatibility with existing plugins.
  *
  * - add `react-router-dom-v5-compat` module aliased to `react-router`
- *
- * TODO: remove this code when `react-router-dom-v5-compat` shared module gets removed
+ * - add `react-router-dom` module aliased to `react-router`
  */
 export const monkeyPatchSharedScope = () => {
   const scope = getSharedScope();
+  scope['react-router-dom'] = scope['react-router'];
   scope['react-router-dom-v5-compat'] = scope['react-router'];
 };

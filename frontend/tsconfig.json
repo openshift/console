@@ -15,7 +15,6 @@
     "typeRoots": ["node_modules/@types", "@types"],
     "types": ["node", "jest", "console"],
     "paths": {
-      "react-router-dom-v5-compat": ["./node_modules/react-router-dom"],
       "@console/internal/*": ["./public/*"],
       "@console/app/*": ["./packages/console-app/*"],
       "@console/dynamic-plugin-sdk/*": ["./packages/console-dynamic-plugin-sdk/*"],

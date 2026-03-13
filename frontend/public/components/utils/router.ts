@@ -4,7 +4,7 @@ import { useSearchParams, useLocation, useNavigate } from 'react-router';
 
 /**
  * Hook providing query parameter mutation functions compatible with React Router v6/v7.
- * Uses useSearchParams from react-router-dom-v5-compat for React Router v6+ compatibility.
+ * Uses useSearchParams from react-router for React Router v6+ compatibility.
  *
  * All mutation functions only trigger updates when values actually change.
  * All mutations use replace mode to avoid polluting browser history.
