@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useCallback } from 'react';
 import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sResourceKind, K8sModel } from '../../module/k8s';
@@ -122,15 +123,16 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
  */
 export const useConfigureCountModal = (baseProps?: Partial<ConfigureCountModalProps>) => {
   const launcher = useOverlay();
+  const memoizedBaseProps = useDeepCompareMemoize(baseProps);
   return useCallback(
     (overrideProps?: Partial<ConfigureCountModalProps>) => {
       const mergedProps = {
-        ...baseProps,
+        ...memoizedBaseProps,
         ...overrideProps,
       };
       launcher<ConfigureCountModalProps>(ConfigureCountModal, mergedProps);
     },
-    [launcher, baseProps],
+    [launcher, memoizedBaseProps],
   );
 };
 
