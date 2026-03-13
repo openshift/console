@@ -6,8 +6,7 @@ import type {
   PrometheusResponse,
   ResourcesObject,
   WatchK8sResults,
-  FirehoseResourcesResult,
-  FirehoseResult,
+  WatchK8sResultsObject,
   OverviewCardSpan,
   K8sResourceKind,
 } from './console-types';
@@ -18,7 +17,7 @@ import type {
 export type CardSpan = OverviewCardSpan;
 
 export type GetOperatorsWithStatuses<R extends K8sResourceCommon = K8sResourceCommon> = (
-  resources: FirehoseResourcesResult,
+  resources: WatchK8sResults<ResourcesObject>,
 ) => OperatorStatusWithResources<R>[];
 
 export type K8sActivityProps<R extends K8sResourceCommon = K8sResourceCommon> = {
@@ -53,13 +52,13 @@ export type OperatorHealth = {
 export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
   t?: TFunction,
-  additionalResource?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>,
+  additionalResource?: WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>,
   infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type PrometheusHealthPopupProps = {
   responses: { response: PrometheusResponse; error: any }[];
-  k8sResult?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
+  k8sResult?: WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>;
   hide: () => void;
 };
 
@@ -80,7 +79,7 @@ export type SubsystemHealth = {
 export type URLHealthHandler<
   R,
   T extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
-> = (response: R, error: any, additionalResource?: FirehoseResult<T>) => SubsystemHealth;
+> = (response: R, error: any, additionalResource?: WatchK8sResultsObject<T>) => SubsystemHealth;
 
 export type StatusPopupItemProps = {
   children: ReactNode;

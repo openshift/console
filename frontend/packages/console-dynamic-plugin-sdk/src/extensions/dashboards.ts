@@ -8,8 +8,8 @@ import type {
   StatusGroupMapper,
   WatchK8sResources,
   WatchK8sResults,
-  FirehoseResource,
-  FirehoseResult,
+  WatchK8sResourceWithProp,
+  WatchK8sResultsObject,
 } from './console-types';
 import type {
   CardSpan,
@@ -62,7 +62,7 @@ export type DashboardsOverviewHealthPrometheusSubsystem = Extension<
     /** Resolve the subsystem's health. */
     healthHandler: CodeRef<PrometheusHealthHandler>;
     /** Additional resource which will be fetched and passed to `healthHandler`. */
-    additionalResource?: CodeRef<FirehoseResource>;
+    additionalResource?: CodeRef<WatchK8sResourceWithProp>;
     /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
     popupComponent?: CodeRef<React.ComponentType<PrometheusHealthPopupProps>>;
     /** The title of the popover. */
@@ -96,13 +96,13 @@ export type DashboardsOverviewHealthURLSubsystem<
      */
     fetch?: CodeRef<Fetch>;
     /** Additional resource which will be fetched and passed to `healthHandler`. */
-    additionalResource?: CodeRef<FirehoseResource>;
+    additionalResource?: CodeRef<WatchK8sResourceWithProp>;
     /** Loader for popup content. If defined, a health item will be represented as a link which opens popup with given content. */
     popupComponent?: CodeRef<
       React.ComponentType<{
         healthResult?: T;
         healthResultError?: any;
-        k8sResult?: FirehoseResult<R>;
+        k8sResult?: WatchK8sResultsObject<R>;
       }>
     >;
     /** The title of the popover. */
@@ -138,7 +138,7 @@ export type DashboardsOverviewHealthOperator<
     /** Title of operators section in the popup. */
     title: string;
     /** Kubernetes resources which will be fetched and passed to `healthHandler`. */
-    resources: CodeRef<FirehoseResource[]>;
+    resources: CodeRef<WatchK8sResourceWithProp[]>;
     /** Resolves status for the operators. */
     getOperatorsWithStatuses?: CodeRef<GetOperatorsWithStatuses<T>>;
     /** Loader for popup row component. */
@@ -193,7 +193,7 @@ export type DashboardsOverviewResourceActivity<
   'console.dashboards/overview/activity/resource',
   {
     /** The utilization item to be replaced. */
-    k8sResource: CodeRef<FirehoseResource & { isList: true }>;
+    k8sResource: CodeRef<WatchK8sResourceWithProp & { isList: true }>;
     /** Function which determines if the given resource represents the action. If not defined, every resource represents activity. */
     isActivity?: CodeRef<(resource: T) => boolean>;
     /** Timestamp for the given action, which will be used for ordering. */

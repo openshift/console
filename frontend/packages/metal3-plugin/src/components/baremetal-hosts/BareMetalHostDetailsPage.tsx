@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import type { FirehoseResource } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import type {
   K8sResourceKind,
@@ -45,7 +45,7 @@ const BareMetalHostDetailsPage: FC<BareMetalHostDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
-  const resources: FirehoseResource[] = [
+  const resources: WatchK8sResourceWithProp[] = [
     {
       kind: referenceForModel(MachineModel),
       namespaced: true,

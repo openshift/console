@@ -1,26 +1,13 @@
-import type {
-  K8sResourceKindReference,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import type { K8sResourceKind } from '../../module/k8s/types';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-export type FirehoseResult<
-  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]
-> = {
-  loaded: boolean;
-  loadError: string;
-  optional?: boolean;
-  data: R;
-  kind?: string;
-};
-
-export type FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
-
-export type FirehoseResourcesResult<
-  R extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] }
-> = {
-  [k in keyof R]: FirehoseResult<R[k]>;
+/**
+ * Extension of WatchK8sResource that includes the prop field required by
+ * legacy components like MultiListPage and DetailsPage.
+ * Use WatchK8sResource from @console/dynamic-plugin-sdk for new components
+ * that use the useK8sWatchResources hook.
+ */
+export type WatchK8sResourceWithProp = WatchK8sResource & {
+  prop: string;
 };
 
 /*
@@ -46,19 +33,6 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1,
 }
-
-export type FirehoseResource = {
-  kind: K8sResourceKindReference;
-  name?: string;
-  namespace?: string;
-  isList?: boolean;
-  selector?: Selector;
-  prop: string;
-  namespaced?: boolean;
-  optional?: boolean;
-  limit?: number;
-  fieldSelector?: string;
-};
 
 export type HumanizeResult = {
   string: string;

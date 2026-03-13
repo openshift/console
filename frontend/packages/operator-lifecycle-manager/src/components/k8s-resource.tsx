@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import type { Flatten, RowFunctionArgs } from '@console/internal/components/factory';
 import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
-import type { FirehoseResource } from '@console/internal/components/utils';
 import { ResourceLink, ConsoleEmptyState } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import {
   ConfigMapModel,
   DeploymentModel,
@@ -148,8 +148,8 @@ export const Resources: FC<ResourcesProps> = (props) => {
   const { plural } = useParams<ResourcesPageRouteParams>();
   const providedAPI = providedAPIForReference(props.customData, plural);
 
-  const firehoseResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
-    ({ name, kind, version }): FirehoseResource => {
+  const watchResources = (providedAPI?.resources ?? DEFAULT_RESOURCES).map(
+    ({ name, kind, version }): WatchK8sResourceWithProp => {
       const group = name ? name.substring(name.indexOf('.') + 1) : '';
       const reference = group ? referenceForGroupVersionKind(group)(version)(kind) : kind;
       const model = modelFor(reference);
@@ -172,13 +172,13 @@ export const Resources: FC<ResourcesProps> = (props) => {
   return (
     <MultiListPage
       filterLabel={t('olm~Resources by name')}
-      resources={firehoseResources}
+      resources={watchResources}
       rowFilters={[
         {
           type: 'clusterserviceversion-resource-kind',
           filterGroupName: t('olm~Kind'),
           reducer: ({ kind }) => kindForReference(kind),
-          items: firehoseResources.map(({ kind }) => ({
+          items: watchResources.map(({ kind }) => ({
             id: kindForReference(kind),
             title: kindForReference(kind),
           })),

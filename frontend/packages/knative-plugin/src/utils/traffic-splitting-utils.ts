@@ -1,4 +1,4 @@
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { WatchK8sResourceWithProp } from '@console/internal/components/utils/types';
 import type { K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import type { Traffic } from '../types';
 import {
@@ -25,7 +25,9 @@ export const trafficDataForPatch = (traffic: Traffic[], service: K8sResourceKind
   },
 ];
 
-export const knativeServingResourcesTrafficSplitting = (namespace: string): FirehoseResource[] => [
+export const knativeServingResourcesTrafficSplitting = (
+  namespace: string,
+): WatchK8sResourceWithProp[] => [
   ...knativeServingResourcesRevision(namespace),
   ...knativeServingResourcesConfigurations(namespace),
 ];

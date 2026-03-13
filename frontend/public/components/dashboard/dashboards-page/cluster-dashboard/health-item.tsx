@@ -28,7 +28,6 @@ import {
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { useDashboardResources } from '@console/shared/src/hooks/useDashboardResources';
 import { K8sKind } from '../../../../module/k8s';
-import { FirehoseResourcesResult } from '../../../utils/types';
 import { AsyncComponent, LazyLoader } from '../../../utils/async';
 import { resourcePath } from '../../../utils/resource-link';
 import { useK8sWatchResource, useK8sWatchResources } from '../../../utils/k8s-watch-hook';
@@ -310,6 +309,6 @@ type ResourceHealthItemProps = {
 };
 
 type OperatorsPopupProps = {
-  resources: FirehoseResourcesResult;
+  resources: WatchK8sResults<ResourcesObject>;
   operatorSubsystems: ResolvedExtension<DashboardsOverviewHealthOperator>['properties'][];
 };

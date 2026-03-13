@@ -1,8 +1,9 @@
 import type {
   ExtPodKind,
+  K8sResourceCommon,
   PodControllerOverviewItem,
+  WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
 import type { DeploymentKind, PodKind } from '@console/internal/module/k8s';
 
 export type {
@@ -15,19 +16,19 @@ export type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export interface PodDataResources {
-  replicationControllers: FirehoseResult;
-  replicaSets: FirehoseResult;
-  pods: FirehoseResult<PodKind[]>;
-  deploymentConfigs?: FirehoseResult;
-  deployments?: FirehoseResult<DeploymentKind[]>;
+  replicationControllers: WatchK8sResultsObject<K8sResourceCommon[]>;
+  replicaSets: WatchK8sResultsObject<K8sResourceCommon[]>;
+  pods: WatchK8sResultsObject<PodKind[]>;
+  deploymentConfigs?: WatchK8sResultsObject<K8sResourceCommon[]>;
+  deployments?: WatchK8sResultsObject<DeploymentKind[]>;
 }
 
 export interface PodRingResources {
-  pods: FirehoseResult<PodKind[]>;
-  replicaSets: FirehoseResult;
-  replicationControllers: FirehoseResult;
-  deployments?: FirehoseResult<DeploymentKind[]>;
-  deploymentConfigs?: FirehoseResult;
+  pods: WatchK8sResultsObject<PodKind[]>;
+  replicaSets: WatchK8sResultsObject<K8sResourceCommon[]>;
+  replicationControllers: WatchK8sResultsObject<K8sResourceCommon[]>;
+  deployments?: WatchK8sResultsObject<DeploymentKind[]>;
+  deploymentConfigs?: WatchK8sResultsObject<K8sResourceCommon[]>;
 }
 
 export interface PodRingData {

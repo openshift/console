@@ -226,31 +226,12 @@ export type WatchK8sResourcesGeneric = {
   };
 };
 
-export type FirehoseResource = {
-  kind: K8sResourceKindReference;
-  name?: string;
-  namespace?: string;
-  isList?: boolean;
-  selector?: Selector;
+/**
+ * Extension of WatchK8sResource that includes the prop field required by
+ * components and extension types.
+ */
+export type WatchK8sResourceWithProp = WatchK8sResource & {
   prop: string;
-  namespaced?: boolean;
-  optional?: boolean;
-  limit?: number;
-  fieldSelector?: string;
-};
-
-export type FirehoseResult<
-  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon[]
-> = {
-  loaded: boolean;
-  loadError: string;
-  optional?: boolean;
-  data: R;
-  kind?: string;
-};
-
-export type FirehoseResourcesResult = {
-  [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
 };
 
 export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];

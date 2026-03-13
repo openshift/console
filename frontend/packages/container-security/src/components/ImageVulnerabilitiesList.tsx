@@ -2,9 +2,8 @@ import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import type { RowFilter } from '@console/dynamic-plugin-sdk';
+import type { RowFilter, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Priority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
@@ -76,9 +75,7 @@ const ImageVulnerabilitiesList: FC<ImageVulnerabilitiesListProps> = (props) => {
         },
       ]}
       title={t('container-security~Vulnerabilities')}
-      flatten={(
-        resources: FirehoseResourcesResult<{ imageVulnerabilities: ImageManifestVuln }>,
-      ) => {
+      flatten={(resources: WatchK8sResults<{ imageVulnerabilities: ImageManifestVuln }>) => {
         return _.sortBy(
           _.flatten(
             (resources?.imageVulnerabilities?.data?.spec?.features ?? []).map((feature) =>

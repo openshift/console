@@ -4,11 +4,11 @@ import * as fuzzy from 'fuzzysearch';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel, modelFor, referenceFor } from '@console/internal/module/k8s';
 
@@ -65,7 +65,7 @@ export interface ResourceDropdownProps {
   transformLabel?: Function;
   loaded?: boolean;
   loadError?: string;
-  resources?: FirehoseResult[];
+  resources?: WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]>[];
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   onChange?: (key: string, name?: string | object, selectedResource?: K8sResourceKind) => void;
@@ -195,15 +195,16 @@ class ResourceDropdownInternal extends Component<ResourceDropdownProps & { t: TF
     } = props;
 
     const unsortedList = { ...appendItems };
-    _.each(resources, ({ data, kind }) => {
+    _.each(resources, ({ data }) => {
+      const dataArray = Array.isArray(data) ? data : [data];
       _.reduce(
-        data,
+        dataArray,
         (acc, resource) => {
           const { customKey, key: name } = this.craftResourceKey(resource, props);
           const dataValue = customKey || name;
           if (dataValue) {
             if (showBadge) {
-              const model = modelFor(referenceFor(resource)) || (kind && modelFor(kind));
+              const model = modelFor(referenceFor(resource));
               acc[dataValue] = model ? (
                 <DropdownItem key={resource.metadata.uid} model={model} name={name} />
               ) : (

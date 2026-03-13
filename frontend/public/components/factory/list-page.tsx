@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom-v5-compat';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
@@ -13,6 +13,8 @@ import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fall
 import {
   ColumnLayout,
   K8sResourceCommon,
+  WatchK8sResource,
+  WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -21,13 +23,12 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Firehose } from '../utils/firehose';
-import {
-  FirehoseResource,
-  FirehoseResourcesResult,
-  FirehoseResultObject,
-  FirehoseResult,
-} from '../utils/types';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import type {
+  WatchK8sResults,
+  ResourcesObject,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+
 import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
@@ -62,7 +63,10 @@ type ListPageWrapperProps<L = any, C = any> = {
   hideLabelFilter?: boolean;
   columnLayout?: ColumnLayout;
   name?: string;
-  resources?: FirehoseResourcesResult;
+  /** Resources fetched via useK8sWatchResources */
+  watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
+  loaded?: boolean;
+  loadError?: unknown;
   reduxIDs?: string[];
   textFilter?: string;
   nameFilterPlaceholder?: string;
@@ -89,7 +93,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     hideLabelFilter,
     columnLayout,
     name,
-    resources,
+    watchedResources,
     nameFilter,
     omitFilterToolbar,
   } = props;
@@ -102,7 +106,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
-  const data = flatten ? flatten(resources) : [];
+  const data = flatten ? flatten(watchedResources) : [];
   const Filter = (
     <FilterToolbar
       rowFilters={rowFilters}
@@ -144,7 +148,7 @@ export type FireManProps = {
   createProps?: CreateProps;
   fieldSelector?: string;
   filterLabel?: string;
-  resources: FirehoseResource[];
+  reduxIDs?: string[];
   badge?: ReactNode;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
@@ -155,7 +159,7 @@ export type FireManProps = {
 
 export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
   const {
-    resources,
+    reduxIDs = [],
     textFilter,
     canCreate,
     createAccessReview,
@@ -168,34 +172,14 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
   } = props;
   const navigate = useNavigate();
 
-  const [reduxIDs, setReduxIDs] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = useState();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     params.forEach((v, k) => applyFilter(k, v));
-
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-    setReduxIDs(reduxId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-
-    if (_.isEqual(reduxId, reduxIDs)) {
-      return;
-    }
-
-    // reapply filters to the new list...
-    setReduxIDs(reduxId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources]);
 
   const updateURL = (filterName: string, options: any) => {
     if (filterName !== textFilter) {
@@ -291,7 +275,6 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
       </ListPageHeader>
       <PaneBody>
         {inject(props.children, {
-          resources,
           expand,
           reduxIDs,
           applyFilter,
@@ -303,9 +286,9 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
 FireMan.displayName = 'FireMan';
 
 export type Flatten<
-  F extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
+  F extends ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
   R = any
-> = (resources: FirehoseResourcesResult<F>) => R;
+> = (resources: WatchK8sResults<F>) => R;
 
 export type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   kind: string;
@@ -353,7 +336,8 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideColumnManagement,
     columnLayout,
     omitFilterToolbar,
-    flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
+    flatten = (_resources) =>
+      (_resources[name || kind] ?? ({} as WatchK8sResultsObject<K8sResourceCommon[]>)).data,
   } = props;
   const { t } = useTranslation();
   const params = useParams();
@@ -471,7 +455,7 @@ export type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
   hideTextFilter?: boolean;
   helpText?: ReactNode;
   helpAlert?: ReactNode;
-  resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
+  resources: (WatchK8sResource & { prop?: string })[];
   staticFilters?: { key: string; value: string }[];
   nameFilter?: string;
   omitFilterToolbar?: boolean;
@@ -510,12 +494,57 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
   } = props;
 
   const { t } = useTranslation();
-  const resources = _.map(props.resources, (r) => ({
-    ...r,
-    isList: r.isList !== undefined ? r.isList : true,
-    namespace: r.namespaced ? namespace : r.namespace,
-    prop: r.prop || r.kind,
-  }));
+
+  // Build watch resources configuration for useK8sWatchResources
+  const watchResources = useMemo(() => {
+    if (mock) {
+      return {};
+    }
+    return props.resources.reduce((acc, r) => {
+      const key = r.prop || r.kind;
+      const resourceNamespace = r.namespaced ? namespace : r.namespace;
+      acc[key] = {
+        kind: r.kind,
+        name: r.name,
+        namespace: resourceNamespace,
+        isList: r.isList !== undefined ? r.isList : true,
+        selector: r.selector,
+        fieldSelector: r.fieldSelector,
+        limit: r.limit,
+        namespaced: r.namespaced,
+        optional: r.optional,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [props.resources, namespace, mock]);
+
+  // Build redux IDs for filter management
+  const reduxIDs = useMemo(
+    () =>
+      props.resources.map((r) => {
+        const resourceNamespace = r.namespaced ? namespace : r.namespace;
+        return makeReduxID(
+          kindObj(r.kind),
+          makeQuery(resourceNamespace, r.selector, r.fieldSelector, r.name),
+        );
+      }),
+    [props.resources, namespace],
+  );
+
+  const watchedResources = useK8sWatchResources<
+    Record<string, K8sResourceCommon | K8sResourceCommon[]>
+  >(watchResources);
+
+  // Aggregate individual resource loading states into a single boolean (true when all loaded, excluding errors)
+  const loaded = useMemo(() => {
+    const resourceValues = Object.values(watchedResources);
+    // If we expect resources but haven't received any yet, we're still loading
+    if (Object.keys(watchResources).length > 0 && resourceValues.length === 0) {
+      return false;
+    }
+    // Check if all resources (excluding errors) are loaded
+    return resourceValues.filter((r) => !r.loadError).every((r) => r.loaded);
+  }, [watchedResources, watchResources]);
 
   return (
     <FireMan
@@ -527,32 +556,33 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
       helpAlert={helpAlert}
-      resources={mock ? [] : resources}
+      reduxIDs={mock ? [] : reduxIDs}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
     >
-      <Firehose resources={mock ? [] : resources}>
-        <ListPageWrapper
-          flatten={flatten}
-          kinds={_.map(resources, 'kind')}
-          label={label}
-          ListComponent={ListComponent}
-          textFilter={textFilter}
-          rowFilters={rowFilters}
-          staticFilters={staticFilters}
-          customData={customData}
-          hideLabelFilter={hideLabelFilter}
-          hideNameLabelFilters={hideNameLabelFilters}
-          hideColumnManagement={hideColumnManagement}
-          columnLayout={columnLayout}
-          nameFilterPlaceholder={nameFilterPlaceholder}
-          labelFilterPlaceholder={labelFilterPlaceholder}
-          nameFilter={nameFilter}
-          namespace={namespace}
-          omitFilterToolbar={omitFilterToolbar}
-        />
-      </Firehose>
+      <ListPageWrapper
+        flatten={flatten}
+        kinds={_.map(props.resources, 'kind')}
+        label={label}
+        ListComponent={ListComponent}
+        textFilter={textFilter}
+        rowFilters={rowFilters}
+        staticFilters={staticFilters}
+        customData={customData}
+        hideLabelFilter={hideLabelFilter}
+        hideNameLabelFilters={hideNameLabelFilters}
+        hideColumnManagement={hideColumnManagement}
+        columnLayout={columnLayout}
+        nameFilterPlaceholder={nameFilterPlaceholder}
+        labelFilterPlaceholder={labelFilterPlaceholder}
+        nameFilter={nameFilter}
+        namespace={namespace}
+        omitFilterToolbar={omitFilterToolbar}
+        watchedResources={mock ? {} : watchedResources}
+        loaded={loaded}
+        reduxIDs={reduxIDs}
+      />
     </FireMan>
   );
 };

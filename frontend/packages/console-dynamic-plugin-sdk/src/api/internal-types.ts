@@ -78,7 +78,7 @@ export type HealthItemProps = WithClassNameProps<{
 
 export type ResourceInventoryItemProps = {
   resources: K8sResourceCommon[];
-  additionalResources?: { [key: string]: [] };
+  additionalResources?: { [key: string]: K8sResourceCommon[] };
   mapper?: StatusGroupMapper;
   kind: K8sModel;
   isLoading: boolean;
