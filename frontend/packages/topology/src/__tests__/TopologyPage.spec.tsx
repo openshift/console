@@ -1,7 +1,7 @@
 import { configure, screen } from '@testing-library/react';
 import * as Router from 'react-router';
-import * as RouterUtils from '@console/internal/components/utils/router';
 import { useQueryParams, useUserPreferenceCompatibility } from '@console/shared/src';
+import * as RouterUtils from '@console/shared/src/hooks/useQueryParamsMutator';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
@@ -43,8 +43,8 @@ jest.mock('react-router', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/utils/router', () => ({
-  ...jest.requireActual('@console/internal/components/utils/router'),
+jest.mock('@console/shared/src/hooks/useQueryParamsMutator', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParamsMutator'),
   useQueryParamsMutator: jest.fn(),
 }));
 

@@ -17,7 +17,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
 import {
@@ -27,6 +26,7 @@ import {
   useUserPreferenceCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';

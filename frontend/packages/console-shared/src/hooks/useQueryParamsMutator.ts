@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { useCallback, useRef } from 'react';
+import * as _ from 'lodash';
 import { useSearchParams, useLocation, useNavigate } from 'react-router';
 
 /**
@@ -170,11 +170,11 @@ export const useQueryParamsMutator = () => {
  * Migration guide:
  * ```typescript
  * // Before (legacy):
- * import { getQueryArgument } from './router';
+ * import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
  * const value = getQueryArgument('key');
  *
  * // After (React components):
- * import { useQueryParamsMutator } from './router';
+ * import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
  * const { getQueryArgument } = useQueryParamsMutator();
  * const value = getQueryArgument('key');
  * ```

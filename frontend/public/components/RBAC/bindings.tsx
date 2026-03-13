@@ -48,7 +48,7 @@ import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/da
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
 import { Firehose } from '../utils/firehose';
-import { getQueryArgument } from '../utils/router';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { kindObj } from '../utils/inject';
 import type { ListDropdownProps } from '../utils/list-dropdown';
 import { ListDropdown, NsDropdown } from '../utils/list-dropdown';

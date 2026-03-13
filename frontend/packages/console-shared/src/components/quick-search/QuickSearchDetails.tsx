@@ -3,7 +3,7 @@ import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import CatalogBadges from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';

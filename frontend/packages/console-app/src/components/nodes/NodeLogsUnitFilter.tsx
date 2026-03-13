@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { FlexItem, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getQueryArgument } from '@console/internal/components/utils/router';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 
 type NodeLogsUnitFilterProps = {
   onChangeUnit: (value: string) => void;

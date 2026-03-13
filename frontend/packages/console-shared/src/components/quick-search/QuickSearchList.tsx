@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import type { CatalogType } from '../catalog';
 import { getIconProps } from '../catalog';

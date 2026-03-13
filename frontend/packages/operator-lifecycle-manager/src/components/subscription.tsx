@@ -38,7 +38,6 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import type { K8sKind, K8sModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -57,6 +56,7 @@ import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyA
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,

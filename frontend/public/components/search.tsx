@@ -38,7 +38,7 @@ import {
 } from '../module/k8s';
 import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
 import { ResourceIcon } from './utils/resource-icon';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { AsyncComponent } from './utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';

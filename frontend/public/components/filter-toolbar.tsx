@@ -31,7 +31,7 @@ import {
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import AutocompleteInput from './autocomplete';

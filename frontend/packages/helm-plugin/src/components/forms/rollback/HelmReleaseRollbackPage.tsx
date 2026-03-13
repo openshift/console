@@ -6,8 +6,8 @@ import { useParams, useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { getQueryArgument } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import type { HelmRelease, HelmActionOrigins } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';

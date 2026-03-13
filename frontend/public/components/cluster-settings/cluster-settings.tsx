@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   ClusterServiceVersionKind,

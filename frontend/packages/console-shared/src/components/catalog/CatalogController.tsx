@@ -10,13 +10,13 @@ import type {
   CatalogCategory,
 } from '@console/dynamic-plugin-sdk';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
 import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/const';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useFlag } from '../../hooks/flag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';

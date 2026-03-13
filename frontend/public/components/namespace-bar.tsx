@@ -20,7 +20,7 @@ import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
 import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import type { RootState } from '../redux';
 import { setActiveApplication } from '../actions/ui';

@@ -1,6 +1,6 @@
-import { getQueryArgument } from '@console/internal/components/utils';
 import type { K8sResourceKindReference } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import type { DisplayFilters, TopologyDisplayOption } from '../topology-types';
 import { TopologyDisplayFilterType } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from './const';

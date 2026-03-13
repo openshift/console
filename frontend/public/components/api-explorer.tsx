@@ -62,7 +62,7 @@ import { AsyncComponent } from './utils/async';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { HorizontalNav } from './utils/horizontal-nav';
 import { LinkifyExternal } from './utils/link';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';

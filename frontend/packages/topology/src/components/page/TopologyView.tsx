@@ -24,11 +24,11 @@ import {
   isTopologyRelationshipProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '../../const';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
