@@ -74,7 +74,12 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   };
 
   return (
-    <Modal isOpen onClose={closeOverlay} variant="small">
+    <Modal
+      isOpen
+      onClose={closeOverlay}
+      variant="small"
+      aria-labelledby="configure-count-modal-title"
+    >
       <ModalHeader
         title={titleKey ? (t(titleKey, titleVariables) as string) : title}
         labelId="configure-count-modal-title"

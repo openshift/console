@@ -141,6 +141,7 @@ describe('ColumnManagementModal component', () => {
             }, []),
           ),
           type: columnManagementType,
+          showNamespaceOverride: true,
         }}
         userSettingState={null}
         setUserSettingState={jest.fn()}
@@ -205,6 +206,7 @@ describe('ColumnManagementModal component', () => {
             id: columnManagementID,
             selectedColumns: new Set(modifiedColumns),
             type: columnManagementType,
+            showNamespaceOverride: true,
           }}
           userSettingState={null}
           setUserSettingState={jest.fn()}

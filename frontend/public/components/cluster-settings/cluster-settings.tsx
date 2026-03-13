@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
@@ -888,7 +888,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   obj: cv,
   autoscalers,
 }) => {
-  const { removeQueryArgument } = useQueryParamsMutator();
+  const { getQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
@@ -908,16 +908,26 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
   const workerMachineConfigPool = getMCPByName(machineConfigPools, NodeTypes.worker);
   const launchModal = useOverlay();
+  const modalOpenedRef = useRef(false);
+
+  // Check URL params once to avoid re-reading on every cv change
+  const hasShowVersions = useMemo(() => !!getQueryArgument('showVersions'), [getQueryArgument]);
+  const hasShowChannels = useMemo(() => !!getQueryArgument('showChannels'), [getQueryArgument]);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has('showVersions')) {
+    if (modalOpenedRef.current) {
+      return;
+    }
+    if (hasShowVersions) {
       launchModal(LazyClusterUpdateModalOverlay, { cv });
       removeQueryArgument('showVersions');
-    } else if (new URLSearchParams(window.location.search).has('showChannels')) {
+      modalOpenedRef.current = true;
+    } else if (hasShowChannels) {
       launchModal(LazyClusterChannelModalOverlay, { cv });
       removeQueryArgument('showChannels');
+      modalOpenedRef.current = true;
     }
-  }, [launchModal, cv, removeQueryArgument]);
+  }, [launchModal, cv, removeQueryArgument, hasShowVersions, hasShowChannels]);
 
   return (
     <>

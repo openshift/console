@@ -87,6 +87,13 @@ export const LazyClusterUpdateModalOverlay = lazy(() =>
   })),
 );
 
+// Lazy-loaded OverlayComponent for Taints Modal
+export const LazyTaintsModalOverlay = lazy(() =>
+  import('./taints-modal' /* webpackChunkName: "taints-modal" */).then((m) => ({
+    default: m.TaintsModalOverlay,
+  })),
+);
+
 // Lazy-loaded OverlayComponent for Tolerations Modal
 export const LazyTolerationsModalOverlay = lazy(() =>
   import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */).then((m) => ({
