@@ -2,9 +2,18 @@ import * as _ from 'lodash';
 import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import {
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
 import {
   ContainerSpec,
   getVolumeType,
@@ -15,8 +24,8 @@ import {
   VolumeMount,
 } from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { ModalCallback } from './types';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
@@ -81,43 +90,63 @@ export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   const label = kind.label;
   const resourceName = resource.metadata.name;
   return (
-    <form onSubmit={submit} className="modal-content">
-      <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('public~Remove volume?')}
-      </ModalTitle>
-      <ModalBody className="modal-body">
-        <div>
+    <>
+      <ModalHeader
+        title={t('public~Remove volume?')}
+        titleIconVariant="warning"
+        labelId="remove-volume-modal-title"
+      />
+      <ModalBody>
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             Are you sure you want to remove volume{' '}
             <strong className="co-break-word">{{ volumeName }}</strong> from{' '}
             <strong>{{ label }}</strong>: <strong>{{ resourceName }}</strong>?
           </Trans>
-        </div>
+        </Content>
         {type && (
-          <div>
-            <label>
-              {t('public~Note: This will not remove the underlying {{type}}.', { type })}
-            </label>
-          </div>
+          <Content component={ContentVariants.p}>
+            {t('public~Note: This will not remove the underlying {{type}}.', { type })}
+          </Content>
         )}
+        <Form id="remove-volume-form" onSubmit={submit} />
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitDanger
-        submitText={t('public~Remove volume')}
-        cancel={props.cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="danger"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          form="remove-volume-form"
+        >
+          {t('public~Remove volume')}
+        </Button>
+        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const RemoveVolumeModalProvider: OverlayComponent<RemoveVolumeModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <RemoveVolumeModal close={props.closeOverlay} cancel={props.closeOverlay} {...props} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="remove-volume-modal-title"
+    >
+      <RemoveVolumeModal close={handleClose} cancel={handleClose} {...props} />
+    </Modal>
+  ) : null;
 };
 
 export const useRemoveModalLauncher = (props: RemoveVolumeModalProps): ModalCallback => {

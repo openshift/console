@@ -1,28 +1,28 @@
 import type { FormEventHandler } from 'react';
 import { useState, useRef, useCallback } from 'react';
 import {
+  Button,
+  Content,
+  ContentVariants,
   Form,
+  FormGroup,
   FormHelperText,
-  FormSection,
   HelperText,
   HelperTextItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
   Radio,
-  Stack,
-  StackItem,
   TextInput,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 import { ClusterVersionModel } from '../../models';
 import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '../factory/modal';
+import { ModalComponentProps } from '../factory/modal';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {
   documentationURLs,
@@ -73,95 +73,120 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
 
   return (
     <>
-      <ModalTitle>{t('public~Edit upstream configuration')}</ModalTitle>
-      <Form onSubmit={submit} name="form" className="pf-v6-c-form--no-gap">
-        <ModalBody>
-          <p>
-            {t(
-              'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
-            )}
-          </p>
-          {!isManaged() && !isUpstream() && (
-            <p>
-              <ExternalLink
-                href={updateURL}
-                text={t('public~Learn more about OpenShift local update services.')}
-              />
-            </p>
+      <ModalHeader
+        title={t('public~Edit upstream configuration')}
+        data-test-id="modal-title"
+        labelId="configure-cluster-upstream-modal-title"
+      />
+      <ModalBody>
+        <Content component={ContentVariants.p}>
+          {t(
+            'public~Select a configuration to receive updates. Updates can be configured to receive information from Red Hat or a custom update service.',
           )}
-          <FormSection title={t('public~Configuration')}>
-            <Stack hasGutter>
-              <StackItem>
-                <Radio
-                  name="config-default"
-                  id="config-default"
-                  onChange={() => {
-                    setCustomSelected(false);
-                    setInvalidCustomURL(false);
-                  }}
-                  label={t('public~Default')}
-                  isChecked={!customSelected}
-                />
-                <TextInput
-                  id={'cluster-version-default-upstream-server-url'}
-                  type="url"
-                  readOnly
-                  value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
-                  readOnlyVariant="default"
-                />
-                <FormHelperText>
-                  <HelperText>
-                    <HelperTextItem>
-                      {t('public~Receive update information from Red Hat.')}
-                    </HelperTextItem>
-                  </HelperText>
-                </FormHelperText>
-              </StackItem>
-              <StackItem>
-                <Radio
-                  name="config-custom"
-                  id="config-custom"
-                  onChange={() => {
-                    setCustomSelected(true);
-                    customURLInputRef.current.focus();
-                  }}
-                  label={t('public~Custom update service')}
-                  isChecked={customSelected}
-                />
-                <TextInput
-                  id="cluster-version-custom-upstream-server-url"
-                  type="url"
-                  placeholder="https://example.com/api/upgrades_info/v1/graph"
-                  value={customURL}
-                  onChange={(_event, text) => {
-                    setCustomSelected(true);
-                    setCustomURL(text);
-                    setInvalidCustomURL(false);
-                  }}
-                  validated={invalidCustomURL ? 'error' : 'default'}
-                  ref={customURLInputRef}
-                />
-                {invalidCustomURL && (
-                  <FormHelperText>
-                    <HelperText>
-                      <HelperTextItem icon={<ExclamationCircleIcon />} variant="error">
-                        {t('public~Please enter a URL.')}
-                      </HelperTextItem>
-                    </HelperText>
-                  </FormHelperText>
-                )}
-              </StackItem>
-            </Stack>
-          </FormSection>
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={errorMessage}
-          inProgress={inProgress}
-          submitText={t('public~Save')}
-          cancel={props.cancel}
-          submitDisabled={invalidCustomURL}
-        />
-      </Form>
+        </Content>
+        {!isManaged() && !isUpstream() && (
+          <Content component={ContentVariants.p}>
+            <ExternalLink
+              href={updateURL}
+              text={t('public~Learn more about OpenShift local update services.')}
+            />
+          </Content>
+        )}
+        <Form id="configure-cluster-upstream-form" onSubmit={submit}>
+          <FormGroup
+            label={t('public~Configuration')}
+            role="radiogroup"
+            fieldId="co-add-secret-to-workload"
+            isStack
+          >
+            <Radio
+              name="config-default"
+              id="config-default"
+              onChange={() => {
+                setCustomSelected(false);
+                setInvalidCustomURL(false);
+              }}
+              label={t('public~Default')}
+              isChecked={!customSelected}
+              body={
+                !customSelected && (
+                  <>
+                    <TextInput
+                      id={'cluster-version-default-upstream-server-url'}
+                      type="url"
+                      readOnly
+                      value={CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER}
+                      readOnlyVariant="default"
+                    />
+                    <FormHelperText className="pf-v6-u-mt-sm">
+                      <HelperText>
+                        <HelperTextItem>
+                          {t('public~Receive update information from Red Hat.')}
+                        </HelperTextItem>
+                      </HelperText>
+                    </FormHelperText>
+                  </>
+                )
+              }
+            />
+            <Radio
+              name="config-custom"
+              id="config-custom"
+              onChange={() => {
+                setCustomSelected(true);
+                setTimeout(() => {
+                  customURLInputRef.current?.focus();
+                }, 0);
+              }}
+              label={t('public~Custom update service')}
+              isChecked={customSelected}
+              body={
+                customSelected && (
+                  <>
+                    <TextInput
+                      id="cluster-version-custom-upstream-server-url"
+                      type="url"
+                      placeholder="https://example.com/api/upgrades_info/v1/graph"
+                      value={customURL}
+                      onChange={(_event, text) => {
+                        setCustomSelected(true);
+                        setCustomURL(text);
+                        setInvalidCustomURL(false);
+                      }}
+                      validated={invalidCustomURL ? 'error' : 'default'}
+                      ref={customURLInputRef}
+                    />
+                    {invalidCustomURL && (
+                      <FormHelperText className="pf-v6-u-mt-sm">
+                        <HelperText>
+                          <HelperTextItem icon={<ExclamationCircleIcon />} variant="error">
+                            {t('public~Please enter a URL.')}
+                          </HelperTextItem>
+                        </HelperText>
+                      </FormHelperText>
+                    )}
+                  </>
+                )
+              }
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={inProgress || invalidCustomURL}
+          data-test="confirm-action"
+          form="configure-cluster-upstream-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
     </>
   );
 };
@@ -169,15 +194,22 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
 export const ConfigureClusterUpstreamModalOverlay: OverlayComponent<ConfigureClusterUpstreamModalProps> = (
   props,
 ) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <ConfigureClusterUpstreamModal
-        {...props}
-        cancel={props.closeOverlay}
-        close={props.closeOverlay}
-      />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="configure-cluster-upstream-modal-title"
+    >
+      <ConfigureClusterUpstreamModal {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
 };
 
 export type ConfigureClusterUpstreamModalProps = {
