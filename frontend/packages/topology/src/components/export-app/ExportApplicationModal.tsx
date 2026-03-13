@@ -1,6 +1,13 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { Button, AlertVariant, Flex, FlexItem } from '@patternfly/react-core';
+import {
+  Button,
+  AlertVariant,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import type {
@@ -9,12 +16,6 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
-import {
-  ModalWrapper,
-  ModalTitle,
-  ModalBody,
-  ModalFooter,
-} from '@console/internal/components/factory/modal';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -23,6 +24,7 @@ import {
   TOAST_TIMEOUT_DEFAULT,
   TOAST_TIMEOUT_LONG,
 } from '@console/shared/src';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
@@ -170,9 +172,13 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   const exportInProgress = exportResource && exportResource.status?.completed !== true;
 
   return (
-    <div className="modal-content" data-test="export-application-modal">
-      <ModalTitle>{t('topology~Export Application')}</ModalTitle>
-      <ModalBody>
+    <>
+      <ModalHeader
+        title={t('topology~Export Application')}
+        data-test-id="modal-title"
+        labelId="export-application-modal-title"
+      />
+      <ModalBody data-test="export-application-modal">
         {exportInProgress ? (
           startTime ? (
             <Trans t={t} ns="topology">
@@ -190,65 +196,60 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
           </Trans>
         )}
       </ModalBody>
-      <ModalFooter inProgress={false} errorMessage={errMessage}>
-        <Flex justifyContent={{ default: 'justifyContentFlexEnd' }}>
-          <FlexItem>
+      <ModalFooterWithAlerts errorMessage={errMessage}>
+        <Button
+          type="button"
+          variant="secondary"
+          data-test={exportInProgress ? 'export-cancel-btn' : 'cancel-btn'}
+          onClick={() => (exportInProgress ? handleCancel() : cancel())}
+        >
+          {exportInProgress ? t('topology~Cancel Export') : t('topology~Cancel')}
+        </Button>
+        {exportInProgress && (
+          <>
             <Button
               type="button"
               variant="secondary"
-              data-test={exportInProgress ? 'export-cancel-btn' : 'cancel-btn'}
-              onClick={() => (exportInProgress ? handleCancel() : cancel())}
+              data-test="export-restart-btn"
+              onClick={handleRestart}
             >
-              {exportInProgress ? t('topology~Cancel Export') : t('topology~Cancel')}
+              {t('topology~Restart Export')}
             </Button>
-          </FlexItem>
-          {exportInProgress && (
-            <>
-              <FlexItem>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  data-test="export-restart-btn"
-                  onClick={handleRestart}
-                >
-                  {t('topology~Restart Export')}
-                </Button>
-              </FlexItem>
-              <FlexItem>
-                <ExportViewLogButton name={name} namespace={namespace} onViewLog={cancel} />
-              </FlexItem>
-            </>
-          )}
-          <FlexItem>
-            <Button
-              type="button"
-              variant="primary"
-              data-test={
-                exportResource && exportResource.status?.completed !== true
-                  ? 'export-close-btn'
-                  : 'close-btn'
-              }
-              onClick={() =>
-                exportResource && exportResource.status?.completed !== true
-                  ? cancel()
-                  : handleStartExport()
-              }
-            >
-              {t('topology~OK')}
-            </Button>
-          </FlexItem>
-        </Flex>
-      </ModalFooter>
-    </div>
+            <ExportViewLogButton name={name} namespace={namespace} onViewLog={cancel} />
+          </>
+        )}
+        <Button
+          type="button"
+          variant="primary"
+          data-test={
+            exportResource && exportResource.status?.completed !== true
+              ? 'export-close-btn'
+              : 'close-btn'
+          }
+          onClick={() =>
+            exportResource && exportResource.status?.completed !== true
+              ? cancel()
+              : handleStartExport()
+          }
+        >
+          {t('topology~OK')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (
   props,
 ) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
+  <Modal
+    variant={ModalVariant.small}
+    isOpen
+    onClose={props.closeOverlay}
+    aria-labelledby="export-application-modal-title"
+  >
     <ExportApplicationModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-  </ModalWrapper>
+  </Modal>
 );
 
 export const handleExportApplication = async (

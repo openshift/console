@@ -216,7 +216,7 @@ Then('user will see {string} modal', (modalName: string) => {
 
 Then('user will see alert {string}', (alertName: string) => {
   app.waitForDocumentLoad();
-  cy.get('.modal-body-content').contains(alertName).should('be.visible');
+  cy.get('.pf-v6-c-modal-box__body').contains(alertName).should('be.visible');
   modal.cancel();
 });
 

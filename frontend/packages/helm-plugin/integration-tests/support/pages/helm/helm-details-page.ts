@@ -23,7 +23,7 @@ export const helmDetailsPage = {
     cy.get('dl dt').contains(fieldName).next('dd').should('contain.text', fieldValue);
   },
   uninstallHelmRelease: () => {
-    cy.get('form.modal-content').within(() => {
+    cy.get('form').within(() => {
       cy.byLegacyTestID('modal-title').should('contain.text', 'Delete Helm Release?');
       cy.get('button[type=submit]').click({ force: true });
     });
