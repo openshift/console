@@ -3,7 +3,7 @@ import { useMemo, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';

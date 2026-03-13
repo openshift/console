@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import type { K8sModel } from '@console/dynamic-plugin-sdk';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';

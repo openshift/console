@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';

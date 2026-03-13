@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom-v5-compat';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import { useQueryParamsMutator } from '../router';
 
 describe('useQueryParamsMutator', () => {

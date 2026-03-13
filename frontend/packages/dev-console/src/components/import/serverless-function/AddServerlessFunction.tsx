@@ -4,7 +4,7 @@ import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';

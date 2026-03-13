@@ -1,7 +1,7 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';

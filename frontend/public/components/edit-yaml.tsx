@@ -9,7 +9,7 @@ import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';

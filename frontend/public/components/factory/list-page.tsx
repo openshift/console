@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';

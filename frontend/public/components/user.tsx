@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import * as _ from 'lodash';
 import {
   Button,

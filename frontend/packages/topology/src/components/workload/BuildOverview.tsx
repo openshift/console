@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Button, List, ListItem } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';

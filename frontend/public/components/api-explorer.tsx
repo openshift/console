@@ -1,11 +1,5 @@
 import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
-import {
-  useLocation,
-  useParams,
-  Link,
-  useSearchParams,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { connect } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import * as _ from 'lodash';

@@ -2,7 +2,7 @@ import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { JobModel, PodModel } from '@console/internal/models';

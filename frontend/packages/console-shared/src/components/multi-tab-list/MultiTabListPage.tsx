@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { ActionListItem, Button } from '@patternfly/react-core';
 import { SimpleDropdown } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, Link, useNavigate } from 'react-router';
 import type { Page } from '@console/internal/components/utils/horizontal-nav';
 import { HorizontalNav } from '@console/internal/components/utils/horizontal-nav';
 import { referenceForModel } from '@console/internal/module/k8s';

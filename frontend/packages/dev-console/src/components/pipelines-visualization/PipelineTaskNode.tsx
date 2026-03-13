@@ -15,7 +15,7 @@ import {
   WhenDecorator,
 } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';

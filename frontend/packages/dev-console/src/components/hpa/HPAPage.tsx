@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { ErrorPage404 } from '@console/internal/components/error';
 import type { PageComponentProps } from '@console/internal/components/utils';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils';

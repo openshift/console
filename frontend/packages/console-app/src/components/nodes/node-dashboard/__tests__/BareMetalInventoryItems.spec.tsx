@@ -21,7 +21,7 @@ jest.mock('@console/app/src/components/nodes/NodeBareMetalUtils', () => ({
   useWatchBareMetalHost: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   Link: jest.fn(({ to, children }) => <a href={to}>{children}</a>),
 }));
 

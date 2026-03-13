@@ -14,7 +14,7 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';

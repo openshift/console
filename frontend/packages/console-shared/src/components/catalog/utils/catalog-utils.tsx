@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 import * as _ from 'lodash';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router';
 import type { CatalogItemType } from '@console/dynamic-plugin-sdk';
 import { isCatalogItemType } from '@console/dynamic-plugin-sdk';
 import type {

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { TableData } from '@console/internal/components/factory';
 import { ResourceLink, ResourceIcon } from '@console/internal/components/utils';

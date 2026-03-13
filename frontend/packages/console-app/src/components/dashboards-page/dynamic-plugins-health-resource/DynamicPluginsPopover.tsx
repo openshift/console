@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { WatchK8sResults, WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';

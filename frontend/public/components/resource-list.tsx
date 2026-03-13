@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';

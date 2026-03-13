@@ -4,7 +4,7 @@ import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import type { FormikHelpers, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import {
   documentationURLs,
   getDocumentationURL,

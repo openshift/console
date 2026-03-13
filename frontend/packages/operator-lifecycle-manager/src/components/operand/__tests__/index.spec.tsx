@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router';
 import { DetailsPage } from '@console/internal/components/factory';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testResourceInstance, testClusterServiceVersion } from '../../../../mocks';
@@ -13,8 +13,8 @@ import {
   OperandStatus,
 } from '../index';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

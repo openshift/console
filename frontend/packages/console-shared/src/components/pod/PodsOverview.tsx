@@ -3,7 +3,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { Alert, AlertActionLink, Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { PodStatus } from '@console/internal/components/pod-list';
 import { PodTraffic } from '@console/internal/components/pod-traffic';
 import { SidebarSectionHeading } from '@console/internal/components/utils/headings';

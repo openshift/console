@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import type { FormikHelpers, FormikProps } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type {
   HorizontalPodAutoscalerKind,

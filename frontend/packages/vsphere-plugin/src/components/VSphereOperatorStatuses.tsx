@@ -10,7 +10,7 @@ import {
   t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import {
   StatusPopupItem,

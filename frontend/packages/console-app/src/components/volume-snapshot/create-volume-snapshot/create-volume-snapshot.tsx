@@ -14,7 +14,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { PVCStatusComponent } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,

@@ -27,7 +27,7 @@ import {
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { MatchLabels } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';

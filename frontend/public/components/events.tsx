@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   Label,

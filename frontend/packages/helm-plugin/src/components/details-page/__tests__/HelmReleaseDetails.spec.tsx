@@ -8,8 +8,8 @@ import { LoadedHelmReleaseDetails } from '../HelmReleaseDetails';
 let helmReleaseDetailsProps: ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: ComponentProps<typeof LoadedHelmReleaseDetails>;
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn().mockReturnValue({ ns: 'xyz' }),
   useLocation: jest.fn().mockReturnValue({
     pathname: '/helm-releases/ns/xyz/release/helm-mysql',

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { HorizontalNav } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';

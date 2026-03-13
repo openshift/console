@@ -1,6 +1,5 @@
 import { screen, act } from '@testing-library/react';
-import * as ReactRouter from 'react-router-dom-v5-compat';
-import { useLocation } from 'react-router';
+import * as ReactRouter from 'react-router';
 
 import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { PodKind } from '../../module/k8s';
@@ -9,14 +8,9 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { ContainersDetailsPage, ContainerDetails, ContainerDetailsList } from '../container';
 
 // Mock router hooks
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
-}));
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
+  useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
 
@@ -35,7 +29,6 @@ jest.mock('../utils/firehose', () => ({
 
 const mockUseParams = ReactRouter.useParams as jest.Mock;
 const mockUseLocation = ReactRouter.useLocation as jest.Mock;
-const mockReactRouterUseLocation = useLocation as jest.Mock;
 const mockUseFavoritesOptions = require('@console/internal/components/useFavoritesOptions')
   .useFavoritesOptions as jest.Mock;
 
@@ -44,9 +37,6 @@ describe('ContainersDetailsPage', () => {
     jest.clearAllMocks();
     mockUseParams.mockReturnValue({ podName: 'test-name', ns: 'default' });
     mockUseLocation.mockReturnValue({ pathname: '/k8s/ns/default/pods/test-name/containers' });
-    mockReactRouterUseLocation.mockReturnValue({
-      pathname: '/k8s/ns/default/pods/test-name/containers',
-    });
     mockUseFavoritesOptions.mockReturnValue([[], jest.fn(), true]);
   });
 
@@ -63,9 +53,6 @@ describe('ContainerDetails', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseLocation.mockReturnValue({
-      pathname: '/k8s/ns/default/pods/test-name/containers/crash-app',
-    });
-    mockReactRouterUseLocation.mockReturnValue({
       pathname: '/k8s/ns/default/pods/test-name/containers/crash-app',
     });
     mockUseFavoritesOptions.mockReturnValue([[], jest.fn(), true]);

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
 import { AsyncComponent } from './utils/async';
 

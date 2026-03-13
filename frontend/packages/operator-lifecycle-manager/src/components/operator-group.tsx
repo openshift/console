@@ -2,7 +2,7 @@ import type { ComponentClass, ComponentType, FC } from 'react';
 import { Component as ReactComponent } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';

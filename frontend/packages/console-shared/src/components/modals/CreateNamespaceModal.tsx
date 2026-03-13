@@ -18,7 +18,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import type { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';

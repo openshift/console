@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { usePerspectives } from '@console/shared/src';
@@ -11,8 +11,8 @@ jest.mock('@console/shared/src', () => ({
   usePerspectives: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useLocation: jest.fn(() => ({ pathname: '' })),
 }));
 

@@ -2,7 +2,7 @@ import type { ReactElement, FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import type {
   ResolvedExtension,

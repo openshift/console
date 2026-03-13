@@ -1,7 +1,7 @@
 import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
 import * as _ from 'lodash';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import {
   Badge,

@@ -34,7 +34,7 @@ import * as _ from 'lodash';
 import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { PodModel } from '../models';

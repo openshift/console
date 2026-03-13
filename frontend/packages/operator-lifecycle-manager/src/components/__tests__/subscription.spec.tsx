@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -29,8 +29,8 @@ import {
   SubscriptionStatus,
 } from '../subscription';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
 }));
 

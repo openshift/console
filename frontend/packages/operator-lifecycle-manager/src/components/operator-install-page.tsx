@@ -11,8 +11,8 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import type { LinkProps } from 'react-router-dom-v5-compat';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import type { LinkProps } from 'react-router';
+import { useParams, Link } from 'react-router';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';

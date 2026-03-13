@@ -1,6 +1,6 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { Table, MultiListPage, DetailsPage } from '@console/internal/components/factory';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -19,8 +19,8 @@ import {
   InstallPlanDetails,
 } from '../install-plan';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
 }));
 

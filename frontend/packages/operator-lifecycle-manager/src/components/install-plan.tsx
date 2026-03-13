@@ -20,7 +20,7 @@ import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, Link, useNavigate } from 'react-router';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';

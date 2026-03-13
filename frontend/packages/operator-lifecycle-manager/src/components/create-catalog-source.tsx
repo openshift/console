@@ -11,7 +11,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { RadioGroupItems } from '@console/internal/components/radio';
 import { RadioGroup } from '@console/internal/components/radio';
 import { ButtonBar, NsDropdown } from '@console/internal/components/utils';

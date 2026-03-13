@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import type { CSVDescription, PackageManifestKind } from '../types';
 
 export const useCurrentCSVDescription: UseCurrentCSVDescription = (

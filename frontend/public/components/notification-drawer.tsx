@@ -13,7 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useDispatch } from 'react-redux';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, NavigateFunction, useNavigate } from 'react-router';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';

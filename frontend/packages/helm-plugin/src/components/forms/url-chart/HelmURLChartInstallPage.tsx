@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import type { JSONSchema7 } from 'json-schema';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';

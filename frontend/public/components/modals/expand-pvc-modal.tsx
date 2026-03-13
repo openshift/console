@@ -1,6 +1,6 @@
 import { useState, useCallback, FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import {
   Button,
   Content,

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useCallback, useContext } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { EventModel, NodeModel } from '@console/internal/models';

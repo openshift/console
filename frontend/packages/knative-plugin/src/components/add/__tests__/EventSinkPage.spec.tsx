@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { useEventSinkStatus } from '../../../hooks/useEventSinkStatus';
 import {
   mockKameletSink,
@@ -12,8 +12,8 @@ jest.mock('../../../hooks/useEventSinkStatus', () => ({
   useEventSinkStatus: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -74,6 +74,7 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
   });
 
@@ -133,6 +134,7 @@ describe('EventSinkPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
     const { container } = render(<EventSinkPage />);
     expect(container.querySelector('EventSink')).toBeInTheDocument();

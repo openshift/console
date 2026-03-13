@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';

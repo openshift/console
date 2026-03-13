@@ -1,5 +1,5 @@
 import type { ComponentProps, FC } from 'react';
-import { generatePath, useNavigate, useParams } from 'react-router-dom-v5-compat';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';

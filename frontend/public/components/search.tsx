@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import {
   Accordion,
   AccordionContent,

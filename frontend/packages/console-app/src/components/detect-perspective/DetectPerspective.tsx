@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { createPath, useLocation } from 'react-router-dom-v5-compat';
+import { createPath, useLocation } from 'react-router';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { PerspectiveContext } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';

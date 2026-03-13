@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import * as _ from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { k8sCreateResource, k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';

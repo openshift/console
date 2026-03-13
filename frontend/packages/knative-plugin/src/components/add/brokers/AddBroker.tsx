@@ -4,7 +4,7 @@ import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

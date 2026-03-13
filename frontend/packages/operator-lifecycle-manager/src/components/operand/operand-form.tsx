@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { resourcePathFromModel, useScrollToTopOnMount } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';

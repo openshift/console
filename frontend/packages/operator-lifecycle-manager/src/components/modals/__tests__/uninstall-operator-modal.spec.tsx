@@ -35,8 +35,8 @@ jest.mock('react-i18next', () => ({
 }));
 
 const mockNavigate = jest.fn();
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useNavigate: () => mockNavigate,
 }));
 

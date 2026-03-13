@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import type { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';

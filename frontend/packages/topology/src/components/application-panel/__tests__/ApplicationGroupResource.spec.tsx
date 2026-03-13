@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import ApplicationGroupResource from '../ApplicationGroupResource';
 

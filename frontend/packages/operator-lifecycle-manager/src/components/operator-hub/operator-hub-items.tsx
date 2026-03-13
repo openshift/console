@@ -15,7 +15,7 @@ import {
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom-v5-compat';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';

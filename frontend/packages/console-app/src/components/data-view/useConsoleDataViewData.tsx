@@ -6,7 +6,7 @@ import type { ThProps } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import type { ConsoleDataViewTh } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type {
   TableColumn,

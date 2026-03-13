@@ -3,7 +3,7 @@ import { useMemo, useCallback, Suspense } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import {
   actionsCellProps,
   cellIsStickyProps,

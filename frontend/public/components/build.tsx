@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Alert,

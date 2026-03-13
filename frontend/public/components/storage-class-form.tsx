@@ -1,7 +1,7 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';

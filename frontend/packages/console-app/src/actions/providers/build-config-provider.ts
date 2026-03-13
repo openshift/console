@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { redirect } from 'react-router-dom-v5-compat';
+import { redirect } from 'react-router';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sModel, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { BuildConfig } from '@console/internal/components/build-config';
