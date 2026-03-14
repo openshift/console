@@ -53,7 +53,7 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
             <Content component={ContentVariants.p}>
               <ExternalLink
                 href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-                text={t("olm~Learn more about Red Hat's third party software support policy")}
+                text={t('olm~Learn more about Red Hat’s third party software support policy')}
               />
             </Content>
           )}
