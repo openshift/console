@@ -25,7 +25,7 @@ import {
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
-import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon, MagicIcon } from '@patternfly/react-icons';
 
 import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
@@ -34,6 +34,7 @@ import {
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager';
 import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@openshift/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
@@ -113,6 +114,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { FLAGS } from '@console/shared/src/constants';
 
 import {
@@ -902,6 +904,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );
+
   const serviceLevelTitle = useServiceLevelTitle();
 
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -944,6 +947,25 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                     </DescriptionListTerm>
                     <DescriptionListDescription data-test="cv-current-version">
                       <CurrentVersion cv={cv} />
+
+                      {/* Add Success OLS Button for recent updates */}
+                      {(() => {
+                        const lastUpdate = cv.status?.history?.[0];
+                        const isRecentUpdate =
+                          lastUpdate?.state === 'Completed' &&
+                          lastUpdate?.completionTime &&
+                          new Date(lastUpdate.completionTime) >
+                            new Date(Date.now() - 24 * 60 * 60 * 1000); // Within last 24 hours
+
+                        return (
+                          isRecentUpdate &&
+                          status === ClusterUpdateStatus.UpToDate && (
+                            <div className="pf-v6-u-mt-sm">
+                              <UpdateWorkflowOLSButton phase="success" cv={cv} />
+                            </div>
+                          )
+                        );
+                      })()}
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                 </DescriptionList>
@@ -955,6 +977,14 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                       <DescriptionListTerm>{t('public~Update status')}</DescriptionListTerm>
                       <DescriptionListDescription>
                         <UpdateStatus cv={cv} />
+                        {/* Add Failure OLS Button */}
+                        {(status === ClusterUpdateStatus.Failing ||
+                          status === ClusterUpdateStatus.UpdatingAndFailing ||
+                          status === ClusterUpdateStatus.ErrorRetrieving) && (
+                          <div className="pf-v6-u-mt-sm">
+                            <UpdateWorkflowOLSButton phase="failure" cv={cv} />
+                          </div>
+                        )}
                       </DescriptionListDescription>
                     </DescriptionListGroup>
                   </DescriptionList>
@@ -967,6 +997,12 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                         </DescriptionListDescription>
                       </DescriptionListGroup>
                     </DescriptionList>
+                    {/* Add Precheck OLS Button */}
+                    {hasAvailableUpdates(cv) && (
+                      <div className="pf-v6-u-mb-sm pf-v6-u-text-align-center">
+                        <UpdateWorkflowOLSButton phase="precheck" cv={cv} />
+                      </div>
+                    )}
                     <UpdateLink cv={cv} canUpgrade={canUpgrade} />
                   </div>
                 </div>
@@ -1009,12 +1045,18 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
                 )}
                 {(status === ClusterUpdateStatus.UpdatingAndFailing ||
                   status === ClusterUpdateStatus.Updating) && (
-                  <UpdateInProgress
-                    desiredVersion={desiredVersion}
-                    machineConfigPools={machineConfigPools}
-                    updateStartedTime={updateStartedTime}
-                    workerMachineConfigPool={workerMachineConfigPool}
-                  />
+                  <>
+                    <UpdateInProgress
+                      desiredVersion={desiredVersion}
+                      machineConfigPools={machineConfigPools}
+                      updateStartedTime={updateStartedTime}
+                      workerMachineConfigPool={workerMachineConfigPool}
+                    />
+                    {/* Add Status OLS Button */}
+                    <div className="pf-v6-u-mt-md pf-v6-u-text-align-center">
+                      <UpdateWorkflowOLSButton phase="status" cv={cv} />
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -1353,4 +1395,327 @@ type ClusterVersionDetailsTableProps = {
 
 type ClusterOperatorTabPageProps = {
   obj: ClusterVersionKind;
+};
+
+interface UpdateWorkflowOLSButtonProps {
+  phase: 'precheck' | 'failure' | 'status' | 'success';
+  cv: ClusterVersionKind;
+  className?: string;
+}
+
+const UpdateWorkflowOLSButton: FC<UpdateWorkflowOLSButtonProps> = ({ phase, cv, className }) => {
+  const { t } = useTranslation();
+  const isOLSAvailable = useFlag('LIGHTSPEED_CONSOLE');
+  const fireTelemetryEvent = useTelemetry();
+
+  // ClusterVersion subset helper functions for different workflow phases
+  const getPreUpdateClusterVersionSubset = () => ({
+    metadata: {
+      name: cv.metadata?.name,
+      creationTimestamp: cv.metadata?.creationTimestamp,
+    },
+    spec: {
+      channel: cv.spec?.channel,
+      clusterID: cv.spec?.clusterID,
+      desiredUpdate: cv.spec?.desiredUpdate,
+      upstream: cv.spec?.upstream,
+    },
+    status: {
+      desired: cv.status?.desired,
+      conditions: cv.status?.conditions,
+      availableUpdates: cv.status?.availableUpdates,
+      conditionalUpdates: cv.status?.conditionalUpdates,
+      observedGeneration: cv.status?.observedGeneration,
+    },
+  });
+
+  const getPostUpdateClusterVersionSubset = () => ({
+    metadata: {
+      name: cv.metadata?.name,
+    },
+    spec: {
+      channel: cv.spec?.channel,
+      clusterID: cv.spec?.clusterID,
+    },
+    status: {
+      desired: cv.status?.desired,
+      history: cv.status?.history?.slice(0, 2), // Just last 2 updates
+      conditions: cv.status?.conditions?.filter((c) =>
+        ['Available', 'Progressing', 'Failing'].includes(c.type),
+      ),
+      observedGeneration: cv.status?.observedGeneration,
+    },
+  });
+
+  const getMidUpdateClusterVersionSubset = () => ({
+    metadata: {
+      name: cv.metadata?.name,
+    },
+    spec: {
+      channel: cv.spec?.channel,
+      clusterID: cv.spec?.clusterID,
+    },
+    status: {
+      desired: cv.status?.desired,
+      history: cv.status?.history?.slice(0, 1), // Current update attempt
+      conditions: cv.status?.conditions, // Full conditions for NLP analysis
+      observedGeneration: cv.status?.observedGeneration,
+    },
+  });
+
+  // Find the OLS extension provided by lightspeed-console plugin
+  const [olsExtension] = useExtensions<any>(
+    (e): e is any =>
+      e.type === 'console.action/provider' && e.properties?.contextId === 'ols-open-handler',
+  );
+
+  // Don't render if OLS is not available
+  if (!isOLSAvailable || !olsExtension) {
+    return null;
+  }
+
+  // Helper functions for data processing
+  const getCurrentVersionSafe = () => getLastCompletedUpdate(cv);
+  const getDesiredVersionSafe = () => getDesiredClusterVersion(cv);
+  const getUpdateStatus = () => getClusterUpdateStatus(cv);
+  const getAvailableUpdatesSafe = () => getSortedAvailableUpdates(cv);
+
+  const calculateUpdateDuration = (startTime?: string, endTime?: string): string | null => {
+    if (!startTime || !endTime) {
+      return null;
+    }
+    const duration = Math.round(
+      (new Date(endTime).getTime() - new Date(startTime).getTime()) / 60000,
+    );
+    return duration > 0 ? `${duration} minutes` : null;
+  };
+
+  // Enhanced prompt generation with ClusterVersion context only
+  const generateEnhancedPrompt = (): string => {
+    const currentVersion = getCurrentVersionSafe();
+    const desiredVersion = getDesiredVersionSafe();
+    const status = getUpdateStatus();
+    const availableUpdates = getAvailableUpdatesSafe();
+    const environment = isManaged() ? 'managed' : 'self-managed';
+    const updateChannel = cv.spec?.channel || 'unknown';
+
+    switch (phase) {
+      case 'precheck': {
+        const targetVersion = availableUpdates[0]?.version;
+        const recentFailures =
+          cv.status?.history?.slice(0, 5).filter((h) => h.state !== 'Completed').length || 0;
+
+        return `I'm planning to update my ${environment} OpenShift cluster from ${currentVersion} to ${targetVersion} via ${updateChannel} channel.
+
+Recent update history shows ${recentFailures} non-successful attempts in the last 5 updates.
+
+Please provide comprehensive pre-update guidance including:
+1. Specific prerequisites and compatibility checks for this version jump
+2. Resource requirements and capacity planning
+3. Backup and rollback strategies
+4. Risk assessment based on the cluster configuration in the attached data
+5. Estimated update duration and maintenance window planning
+6. Any known issues or breaking changes for this update path
+
+Focus on actionable steps I should take before starting the update. Use the attached ClusterVersion data to assess current cluster state and readiness.`;
+      }
+
+      case 'failure': {
+        const failureConditions =
+          cv.status?.conditions?.filter(
+            (c) => c.type === 'Failing' || (c.type === 'Progressing' && c.status === 'False'),
+          ) || [];
+
+        const updateStartTime = cv.status?.history?.find((h) => h.version === desiredVersion)
+          ?.startedTime;
+        const failureDuration = updateStartTime
+          ? Math.round((Date.now() - new Date(updateStartTime).getTime()) / 60000)
+          : null;
+
+        return `My ${environment} OpenShift cluster update has failed.
+
+Update Details:
+- From: ${currentVersion} to ${desiredVersion}
+- Channel: ${updateChannel}
+- Status: ${status}
+${failureDuration ? `- Failed after: ${failureDuration} minutes` : ''}
+
+Key failure conditions:
+${failureConditions
+  .map((c) => `- ${c.type}: ${c.message || c.reason || 'No details available'}`)
+  .join('\n')}
+
+Please analyze the attached ClusterVersion conditions and help me:
+1. Analyze the root cause of this update failure
+2. Provide step-by-step troubleshooting guidance
+3. Suggest remediation actions to resolve the issues
+4. Advise on safe recovery or rollback options if needed
+5. Recommend preventive measures for future updates
+
+Use natural language processing on the condition messages to understand what components may need attention. Request specific resource data if you need to investigate particular operators, nodes, or machine config pools.`;
+      }
+
+      case 'status': {
+        const progressCondition = cv.status?.conditions?.find((c) => c.type === 'Progressing');
+        const updateStartTime2 = cv.status?.history?.find((h) => h.version === desiredVersion)
+          ?.startedTime;
+        const currentDuration = updateStartTime2
+          ? Math.round((Date.now() - new Date(updateStartTime2).getTime()) / 60000)
+          : null;
+
+        return `My ${environment} OpenShift cluster is currently updating from ${currentVersion} to ${desiredVersion}.
+
+Update Details:
+- Channel: ${updateChannel}
+- Status: ${status}
+${currentDuration ? `- Duration so far: ${currentDuration} minutes` : ''}
+
+Current Progress: ${progressCondition?.message || 'Update in progress'}
+
+Please analyze the attached ClusterVersion data and help me:
+1. Assess if the update is progressing normally
+2. Identify any potential issues or bottlenecks from the condition messages
+3. Provide guidance on expected timeline and next steps
+4. Advise on monitoring best practices during the update
+5. Suggest actions if the update appears stuck or slow
+
+Use the condition messages to understand the current state and request specific component data if needed for deeper analysis.`;
+      }
+
+      case 'success': {
+        const completedUpdate = cv.status?.history?.find(
+          (h) => h.state === 'Completed' && h.version === currentVersion,
+        );
+        const updateDuration = completedUpdate
+          ? calculateUpdateDuration(completedUpdate.startedTime, completedUpdate.completionTime)
+          : null;
+
+        return `My ${environment} OpenShift cluster has successfully updated to version ${currentVersion}.
+
+Update Details:
+- Previous version: ${cv.status?.history?.[1]?.version || 'unknown'}
+- Channel: ${updateChannel}
+- Duration: ${updateDuration || 'unknown'}
+- Completed: ${completedUpdate?.completionTime || 'unknown'}
+
+Please review the attached ClusterVersion data and help me:
+1. Verify the update completed successfully
+2. Recommend post-update validation steps
+3. Guide me through cluster health checks
+4. Suggest any needed configuration updates
+5. Advise on monitoring for post-update issues
+
+Focus on what I can validate from the ClusterVersion status and what additional component checks you recommend.`;
+      }
+
+      default:
+        return `I need help with my ${environment} OpenShift cluster update workflow.`;
+    }
+  };
+
+  // ClusterVersion-only attachment creation for different workflow phases
+  const createPrecheckAttachments = () => [
+    {
+      attachmentType: 'YAML' as const,
+      kind: 'ClusterVersion',
+      name: 'pre-update-cluster-version',
+      namespace: undefined,
+      value: JSON.stringify(getPreUpdateClusterVersionSubset(), null, 2),
+    },
+  ];
+
+  const createFailureAttachments = () => [
+    {
+      attachmentType: 'YAML' as const,
+      kind: 'ClusterVersion',
+      name: 'failure-cluster-version',
+      namespace: undefined,
+      value: JSON.stringify(getMidUpdateClusterVersionSubset(), null, 2),
+    },
+  ];
+
+  const createStatusAttachments = () => [
+    {
+      attachmentType: 'YAML' as const,
+      kind: 'ClusterVersion',
+      name: 'status-cluster-version',
+      namespace: undefined,
+      value: JSON.stringify(getMidUpdateClusterVersionSubset(), null, 2),
+    },
+  ];
+
+  const createSuccessAttachments = () => [
+    {
+      attachmentType: 'YAML' as const,
+      kind: 'ClusterVersion',
+      name: 'success-cluster-version',
+      namespace: undefined,
+      value: JSON.stringify(getPostUpdateClusterVersionSubset(), null, 2),
+    },
+  ];
+
+  const createWorkflowAttachments = () => {
+    switch (phase) {
+      case 'precheck':
+        return createPrecheckAttachments();
+      case 'failure':
+        return createFailureAttachments();
+      case 'status':
+        return createStatusAttachments();
+      case 'success':
+        return createSuccessAttachments();
+      default:
+        return [];
+    }
+  };
+
+  const getButtonText = (): string => {
+    switch (phase) {
+      case 'precheck':
+        return t('public~Ask Lightspeed about update prerequisites');
+      case 'failure':
+        return t('public~Ask Lightspeed about update failures');
+      case 'status':
+        return t('public~Ask Lightspeed about update progress');
+      case 'success':
+        return t('public~Ask Lightspeed about update verification');
+      default:
+        return t('public~Ask Lightspeed');
+    }
+  };
+
+  const handleClick = () => {
+    const openOLS = olsExtension.properties.provider();
+    const prompt = generateEnhancedPrompt();
+    const attachments = createWorkflowAttachments();
+
+    // Open OLS with workflow-specific context and cluster data
+    openOLS(prompt, attachments);
+
+    // Track usage by workflow phase with ClusterVersion context only
+    fireTelemetryEvent('OLS Update Workflow Button Clicked', {
+      source: 'cluster-settings',
+      updatePhase: phase,
+      clusterVersion: getCurrentVersionSafe(),
+      updateStatus: getUpdateStatus(),
+      environment: isManaged() ? 'managed' : 'self-managed',
+      updateChannel: cv.spec?.channel,
+      attachmentCount: attachments.length,
+    });
+  };
+
+  return (
+    <Button
+      variant="link"
+      size="sm"
+      onClick={handleClick}
+      icon={<MagicIcon />}
+      iconPosition="start"
+      className={className}
+      data-test={`ols-update-${phase}`}
+      aria-label={getButtonText()}
+    >
+      {getButtonText()}
+    </Button>
+  );
 };
