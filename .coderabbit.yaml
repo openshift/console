@@ -1,33 +1,22 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+inheritance: true
+
 tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
 
 early_access: false
 reviews:
-  # Disable fortune messages for professional reviews
   in_progress_fortune: false
-
-  # Assertive profile for thorough, senior-engineer-level reviews
-  # This ensures comprehensive feedback on architecture, security, performance, and best practices
   profile: chill
 
-  # Request changes workflow to ensure quality standards
   request_changes_workflow: false
-
-  # Enable high-level summaries for better PR understanding
   high_level_summary: true
 
-  # Disable poems for professional tone
   poem: false
-
-  # Disable review status to prevent repeated status comments on each review
   review_status: false
-
-  # Auto-review configuration
   auto_review:
     enabled: true
-    # Disable incremental reviews - only review once per PR, not on every commit
-    # This prevents repeated summaries and review comments on each push
     auto_incremental_review: false
-    # Review drafts to catch issues early
     drafts: false
     ignore_title_keywords:
       - WIP
@@ -37,47 +26,33 @@ reviews:
     labels:
       - '!do-not-merge/work-in-progress'
 
-  # Commit status integration
   commit_status: true
-
-  # Don't fail commit status to allow merges with comments
   fail_commit_status: false
-
-  # Collapse walkthrough for better visibility
   collapse_walkthrough: true
-
-  # Show summary of changed files
   changed_files_summary: false
-
-  # Generate sequence diagrams for complex flows
   sequence_diagrams: false
-
-  # Estimate code review effort
-  # Helps prioritize and allocate review time appropriately
   estimate_code_review_effort: false
-
-  # Assess linked issues for business context and requirements
   assess_linked_issues: false
-
-  # Show related issues
   related_issues: false
-
-  # Show related PRs
   related_prs: false
-
-  # Suggest labels based on changes
-  # Helps categorize and track changes
   suggested_labels: false
-
-# Knowledge base configuration - Reference documentation for accurate reviews
+  review_details: true
 knowledge_base:
   code_guidelines:
     enabled: true
     filePatterns:
-      # Repository documentation
       - "AGENTS.md"
       - "TESTING.md"
       - "STYLEGUIDE.md"
       - "CONTRIBUTING.md"
       - "README.md"
       - "INTERNATIONALIZATION.md"
+  linked_repositories:
+    - repository: "openshift/console-operator"
+      instructions: >-
+        Console operator manages console deployment.
+        pkg/serverconfig/types.go is synchronized with console-operator's
+        pkg/console/subresource/consoleserver/types.go - these structs MUST remain in sync.
+        Flag changes in console-operator that affect: ConsolePlugin CRD lifecycle,
+        plugin enablement config, console route/ingress configuration,
+        or operator-managed feature gates that console reads at runtime.
