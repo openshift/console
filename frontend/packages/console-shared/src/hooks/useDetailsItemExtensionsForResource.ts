@@ -6,7 +6,7 @@ import type {
   DetailsItemColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import { isDetailsItem } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
-import type { ResolvedExtension, ExtensionTypeGuard } from '@console/dynamic-plugin-sdk/src/types';
+import type { ResolvedExtension, ExtensionPredicate } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceFor, referenceForExtensionModel } from '@console/internal/module/k8s/k8s';
 
 /**
@@ -20,7 +20,7 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
   obj,
   column,
 ) => {
-  const typeGuard = useCallback<ExtensionTypeGuard<DetailsItem>>(
+  const predicate = useCallback<ExtensionPredicate<DetailsItem>>(
     (e): e is DetailsItem => {
       if (!isDetailsItem(e)) return false;
       const columnMatches = e.properties.column === column;
@@ -30,7 +30,7 @@ export const useDetailsItemExtensionsForResource: UseDetailsItemExtensionsForRes
     [obj, column],
   );
 
-  const [extensions] = useResolvedExtensions<DetailsItem>(typeGuard);
+  const [extensions] = useResolvedExtensions<DetailsItem>(predicate);
 
   return useMemo(
     () =>

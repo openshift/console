@@ -12,13 +12,14 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.2 - TBD
 
+- **Breaking**: `useResolvedExtensions` hook now supports a single predicate parameter ([#16115])
 - **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
 - **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
 - **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router-dom-v5-compat`) ([CONSOLE-4990], [#15959])
 - **Type breaking**: Changed `FileUploadHandler` return type from `void` to `To | void`. Handlers can now return a path (from `react-router-dom-v5-compat`) for programmatic navigation instead of calling history methods directly ([CONSOLE-4990], [#15959])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
-  by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
+  locally: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, `ResolvedExtension` and `ExtensionPredicate` ([CONSOLE-3769], [#15904], [#16115])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 
@@ -50,7 +51,7 @@ table in [Console dynamic plugins README](./README.md).
 - **Type breaking**: Fix `popupComponent` prop type in extension `console.dashboards/overview/health/resource` ([CONSOLE-4796], [#15526])
 - **Type breaking**: `AlwaysOnExtension` and `ModelDefinition` types are removed from `api/common-types`. ([CONSOLE-3769], [#15509])
 - The following types are now re-exported from `@openshift/dynamic-plugin-sdk` instead of being defined
-  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update`. ([CONSOLE-4840], [#15509], [#15671])
+  locally: `ExtensionFlags`, `ExtensionTypeGuard`, `ResolvedCodeRefProperties`, `RemoteEntryModule`, and `Update` ([CONSOLE-4840], [#15509], [#15671])
 - Add optional `fetch` property to extension `console.dashboards/overview/health/url` ([CONSOLE-4796], [#15526])
 - Add optional `infrastructure` parameter to `PrometheusHealthHandler` type ([CONSOLE-4796], [#15526])
 - Allow `K8sResourceKind` in `TopologyDataObject`, `TopologyResourcesObject`, and `OverviewItem` types ([CONSOLE-4840], [#15699])
@@ -264,6 +265,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15893]: https://github.com/openshift/console/pull/15893
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
+[#15959]: https://github.com/openshift/console/pull/15959
 [#16019]: https://github.com/openshift/console/pull/16019
 [#16057]: https://github.com/openshift/console/pull/16057
-[#15959]: https://github.com/openshift/console/pull/15959
+[#16115]: https://github.com/openshift/console/pull/16115

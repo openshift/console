@@ -19,10 +19,11 @@ import {
   MachineModel,
   PrometheusModel,
 } from '../models';
-import { K8sModel } from '../module/k8s';
-import { referenceForGroupVersionKind, referenceForModel } from '../module/k8s/k8s-ref';
+import { K8sModel, referenceForExtensionModel } from '../module/k8s';
+import { referenceForModel } from '../module/k8s/k8s-ref';
 import type { RootState } from '../redux';
 import { ActionType as K8sActionType } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
+import type { LoadedExtension } from '@openshift/dynamic-plugin-sdk';
 import { FeatureState } from '@console/dynamic-plugin-sdk/src/app/features';
 import { FeatureAction, ActionType } from '../actions/flags';
 import { pluginStore } from '../plugins';
@@ -67,17 +68,14 @@ const addToCRDs = (ref: string, flag: string) => {
   }
 };
 
-const getModelRef = (e: ModelFeatureFlag) => {
-  const model = e.properties.model;
-  return referenceForGroupVersionKind(model.group)(model.version)(model.kind);
-};
+const getModelRef = (e: ModelFeatureFlag) => referenceForExtensionModel(e.properties.model);
 
-// TODO: When migrating to @openshift/dynamic-plugin-sdk, use the type parameter from
-// pluginStore.getExtensions<...>() to avoid `as any` cast.
-(pluginStore.getExtensions().filter(isModelFeatureFlag) as any).forEach((ff) => {
-  // This is incorrect (for `ExtensionK8sModel` we should use `referenceForExtensionModel`).
-  addToCRDs(referenceForModel(ff.properties.model), ff.properties.flag);
-});
+pluginStore
+  .getExtensions()
+  .filter(isModelFeatureFlag)
+  .forEach((ff: LoadedExtension<ModelFeatureFlag>) => {
+    addToCRDs(getModelRef(ff), ff.properties.flag);
+  });
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: FeatureState, action: FeatureAction): FeatureState => {

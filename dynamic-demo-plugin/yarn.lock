@@ -153,7 +153,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openshift-console/dynamic-plugin-sdk-webpack@portal:../frontend/packages/console-dynamic-plugin-sdk/dist/webpack::locator=%40console%2Fdynamic-demo-plugin%40workspace%3A."
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
     ajv: "npm:^6.12.3"
     chalk: "npm:2.4.x"
@@ -173,7 +173,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@openshift-console/dynamic-plugin-sdk@portal:../frontend/packages/console-dynamic-plugin-sdk/dist/core::locator=%40console%2Fdynamic-demo-plugin%40workspace%3A."
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main"
     immutable: "npm:3.x"
     lodash: "npm:^4.17.21"
     reselect: "npm:4.x"
@@ -220,9 +220,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@openshift/dynamic-plugin-sdk@npm:8.0.0"
+"@openshift/dynamic-plugin-sdk@git+https://github.com/openshift/dynamic-plugin-sdk.git#workspace=@openshift/dynamic-plugin-sdk&head=main":
+  version: 8.1.0
+  resolution: "@openshift/dynamic-plugin-sdk@https://github.com/openshift/dynamic-plugin-sdk.git#workspace=%40openshift%2Fdynamic-plugin-sdk&commit=c35748e717d3cb259c10c5f70831bbf7705ef457"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
@@ -230,7 +230,7 @@ __metadata:
     yup: "npm:^1.7.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/a5c7bc5198f75fcc9fad242ffb51e264e860218e7035b87204d429cc47fa566208cc3474af739d3e05a2adc1bfe41ae9e09d3afd93a5b8c0d29f1814ee9f3127
+  checksum: 10c0/57d3fa90221884b613e6dedf69208219b5697be69352ef24ba71dd8404a40aeca29d39dc3896d6734ad1289b645705db45879183a1e02bcd45d4cfee7190f5bb
   languageName: node
   linkType: hard
 
