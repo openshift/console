@@ -1760,6 +1760,7 @@
   "{{kind}} {{name}} violates policy {{warning}}": "{{kind}} {{name}} violates policy {{warning}}",
   "Learn more": "Learn more",
   "Filter by name": "Filter by name",
+  "Reset column widths": "Reset column widths",
   "{{label}} table": "{{label}} table",
   "Filter by label": "Filter by label",
   "Selected group is unavailable": "Selected group is unavailable",

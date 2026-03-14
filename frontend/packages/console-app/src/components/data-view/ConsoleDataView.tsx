@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -14,7 +14,7 @@ import {
   DataViewToolbar,
 } from '@patternfly/react-data-view';
 import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
-import { ColumnsIcon } from '@patternfly/react-icons';
+import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -76,9 +76,17 @@ export const ConsoleDataView = <
   hideLabelFilter,
   hideColumnManagement,
   mock,
+  isResizable,
+  resetAllColumnWidths,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
+  const [tableKey, setTableKey] = useState(0);
+
+  const handleResetColumnWidths = useCallback(() => {
+    resetAllColumnWidths?.();
+    setTableKey((k) => k + 1);
+  }, [resetAllColumnWidths]);
 
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
@@ -102,6 +110,7 @@ export const ConsoleDataView = <
     showNamespaceOverride,
     columnManagementID,
     customRowData,
+    isResizable,
   });
 
   const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
@@ -172,8 +181,8 @@ export const ConsoleDataView = <
           }
           clearAllFilters={clearAllFilters}
           actions={
-            !hideColumnManagement && (
-              <ResponsiveActions breakpoint="lg">
+            <ResponsiveActions breakpoint="lg">
+              {!hideColumnManagement && (
                 <ResponsiveAction
                   isPersistent
                   variant="plain"
@@ -190,8 +199,21 @@ export const ConsoleDataView = <
                     <ColumnsIcon />
                   </Tooltip>
                 </ResponsiveAction>
-              </ResponsiveActions>
-            )
+              )}
+              {isResizable && resetAllColumnWidths && (
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={handleResetColumnWidths}
+                  aria-label={t('public~Reset column widths')}
+                  data-test="reset-column-widths"
+                >
+                  <Tooltip content={t('public~Reset column widths')} trigger="mouseenter">
+                    <UndoIcon />
+                  </Tooltip>
+                </ResponsiveAction>
+              )}
+            </ResponsiveActions>
           }
           pagination={
             <Pagination
@@ -203,6 +225,7 @@ export const ConsoleDataView = <
         />
         <InnerScrollContainer>
           <DataViewTable
+            key={tableKey}
             aria-label={t(`public~{{label}} table`, { label })}
             // @ts-expect-error - TODO(react18): CONSOLE-5040: Remove ConsoleDataViewColumn bodge
             columns={dataViewColumns}
@@ -211,6 +234,7 @@ export const ConsoleDataView = <
             gridBreakPoint=""
             variant="compact"
             data-test="data-view-table"
+            isResizable={isResizable}
           />
         </InnerScrollContainer>
       </DataView>
@@ -223,7 +247,7 @@ export const cellIsStickyProps = {
   stickyMinWidth: '0',
 };
 
-const nameCellProps = {
+export const nameCellProps = {
   ...cellIsStickyProps,
   hasRightBorder: true,
 };

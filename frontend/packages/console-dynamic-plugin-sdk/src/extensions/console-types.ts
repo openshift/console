@@ -311,6 +311,7 @@ export type TableColumn<D> = ICell & {
   id: string;
   additional?: boolean;
   sort?: ((data: D[], sortDirection: SortByDirection) => D[]) | string;
+  resizableProps?: any;
 };
 
 export type RowProps<D, R extends any = {}> = {

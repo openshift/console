@@ -1,13 +1,16 @@
 import type { MouseEvent, FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
 import { Pagination } from '@patternfly/react-core';
-import type { DataViewTd, DataViewTh } from '@patternfly/react-data-view';
 import {
   DataView,
   DataViewTable,
   DataViewToolbar,
   useDataViewPagination,
 } from '@patternfly/react-data-view';
+import type {
+  DataViewTd,
+  DataViewTh,
+} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import { InnerScrollContainer, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom-v5-compat';
