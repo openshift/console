@@ -828,6 +828,7 @@ export const MarkdownView = (props: {
   styles?: string;
   exactHeight?: boolean;
   truncateContent?: boolean;
+  emptyMsg?: string;
 }) => {
   return (
     <AsyncComponent
@@ -870,7 +871,11 @@ export const CRDCard: FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
         </span>
       </CardTitle>
       <CardBody>
-        <MarkdownView content={crd.description} truncateContent />
+        <MarkdownView
+          content={crd.description}
+          truncateContent
+          emptyMsg={t('olm~No description available')}
+        />
       </CardBody>
       {canCreate && createRoute && (
         <RequireCreatePermission model={model} namespace={csv.metadata.namespace}>
