@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
-import { useState, FormEvent } from 'react';
+import { useState, useMemo, FormEvent } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
@@ -67,6 +67,17 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
       return acc;
     }, {}),
   );
+  // Store binary data separately to preserve it during edits
+  const binaryData = useMemo(
+    () =>
+      Object.entries(props.obj?.data ?? {}).reduce<Record<string, string>>((acc, [key, value]) => {
+        if (isBinary(null, Buffer.from(value, 'base64'))) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {}),
+    [props.obj?.data],
+  );
   const [base64StringData, setBase64StringData] = useState(props?.obj?.data ?? {});
   const [disableForm, setDisableForm] = useState(false);
   const title = useSecretTitle(isCreate, formType);
@@ -75,7 +86,19 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
 
   const onDataChanged = (secretsData) => {
     setStringData({ ...secretsData?.stringData });
-    setBase64StringData({ ...secretsData?.base64StringData });
+    // Preserve binary values by merging them with form data
+    // This prevents corruption of binary data when editing other fields
+    const mergedData = Object.entries(binaryData).reduce(
+      (acc, [key, value]) => {
+        // If the binary entry still exists in the form data (same key), preserve its value
+        if (acc[key]) {
+          return { ...acc, [key]: value };
+        }
+        return acc;
+      },
+      { ...secretsData?.base64StringData },
+    );
+    setBase64StringData(mergedData);
   };
 
   const onError = (err) => {
