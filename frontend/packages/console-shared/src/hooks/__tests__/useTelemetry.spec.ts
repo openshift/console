@@ -102,28 +102,28 @@ describe('getClusterProperties', () => {
     expect(getClusterProperties().clusterType).toBe('TEST');
   });
 
-  it('returns DEVSANDBOX when CLUSTER_TYPE is "OSD" but and DEVSANDBOX is "true"', () => {
+  it('returns DEVSANDBOX when DEVSANDBOX is "true" regardless of CLUSTER_TYPE', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
-      telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'true' },
+      telemetry: { CLUSTER_TYPE: 'ROSA', DEVSANDBOX: 'true' },
     };
     expect(getClusterProperties().clusterType).toBe('DEVSANDBOX');
   });
 
-  it('returns the clusterType that it is configured if CLUSTER_TYPE is not OSD (in the future) but DEVSANDBOX is still "true"', () => {
+  it('returns DEVSANDBOX when DEVSANDBOX is "true" even if CLUSTER_TYPE is a different value', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       telemetry: { CLUSTER_TYPE: 'a_FUTURE_DEVSANDBOX_KEY', DEVSANDBOX: 'true' },
     };
-    expect(getClusterProperties().clusterType).toBe('a_FUTURE_DEVSANDBOX_KEY');
+    expect(getClusterProperties().clusterType).toBe('DEVSANDBOX');
   });
 
-  it('returns the clusterType that it is configured if CLUSTER_TYPE is OSD but DEVSANDBOX is not exactly "true"', () => {
+  it('returns the configured clusterType when DEVSANDBOX is not exactly "true"', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
-      telemetry: { CLUSTER_TYPE: 'OSD', DEVSANDBOX: 'false' },
+      telemetry: { CLUSTER_TYPE: 'ROSA', DEVSANDBOX: 'false' },
     };
-    expect(getClusterProperties().clusterType).toBe('OSD');
+    expect(getClusterProperties().clusterType).toBe('ROSA');
   });
 });
 
@@ -204,12 +204,12 @@ describe('useTelemetry', () => {
     });
   });
 
-  it('calls the listener with clusterType DEVSANDBOX when CLUSTER_TYPE is OSD and DEVSANDBOX is "true"', () => {
+  it('calls the listener with clusterType DEVSANDBOX when DEVSANDBOX is "true"', () => {
     window.SERVER_FLAGS = {
       ...originServerFlags,
       consoleVersion: 'x.y.z',
       telemetry: {
-        CLUSTER_TYPE: 'OSD',
+        CLUSTER_TYPE: 'ROSA',
         DEVSANDBOX: 'true',
         STATE: CLUSTER_TELEMETRY_ANALYTICS.ENFORCE,
       },
