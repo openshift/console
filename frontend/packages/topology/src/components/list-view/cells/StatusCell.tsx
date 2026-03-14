@@ -2,13 +2,13 @@ import type { FC } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { podPhase } from '@console/internal/module/k8s';
 import type { PodRCData } from '@console/shared';
-import { usePodsWatcher } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 
 import './StatusCell.scss';

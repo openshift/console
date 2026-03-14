@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { CardHeader, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { GettingStartedExpandableGrid, useUserPreference } from '@console/shared';
+import { GettingStartedExpandableGrid } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { FUNCTIONS_GETTING_STARTED_SECTION_USER_SETTING_KEY } from '../../const';
 import { FunctionsDocsGettingStartedCard } from './FunctionsDocsGettingStartedCard';
 import { QuickStartGettingStartedCard } from './QuickStartGettingStartedCard';

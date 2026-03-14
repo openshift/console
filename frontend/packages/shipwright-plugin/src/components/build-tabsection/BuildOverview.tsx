@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import {
   ResourceLink,
   resourcePath,
@@ -9,7 +9,7 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import type { OverviewItem } from '@console/shared';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildModel, BuildModelV1Alpha1, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
 import type { Build, BuildRun } from '../../types';

@@ -5,9 +5,9 @@ import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
-  useUserPreference,
 } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 export const TelemetryNotifier = () => {
   const { t } = useTranslation();
 

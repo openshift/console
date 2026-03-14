@@ -29,7 +29,7 @@ import {
   NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
 } from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { alphanumericCompare } from '@console/shared/src/utils';
 import { isSystemNamespace } from './filters';

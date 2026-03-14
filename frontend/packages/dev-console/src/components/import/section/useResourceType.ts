@@ -1,7 +1,8 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { useEffect } from 'react';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
-import { useUserPreference, useFlag } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   LAST_RESOURCE_TYPE_STORAGE_KEY,
   PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY,

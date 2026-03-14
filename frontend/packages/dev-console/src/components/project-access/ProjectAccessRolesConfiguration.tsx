@@ -12,7 +12,6 @@ import {
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { ClusterRoleModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
@@ -21,6 +20,7 @@ import {
   LoadError,
   SaveStatus,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const defaultClusterRoleNames = ['admin', 'edit', 'view'];
 

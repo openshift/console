@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useMemo, useCallback, useState, useEffect, Suspense } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import {
@@ -20,7 +20,7 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterRoleBindingModel } from '../../models';
 import {
@@ -48,7 +48,7 @@ import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/da
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
 import { Firehose } from '../utils/firehose';
-import { getQueryArgument } from '../utils/router';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { kindObj } from '../utils/inject';
 import type { ListDropdownProps } from '../utils/list-dropdown';
 import { ListDropdown, NsDropdown } from '../utils/list-dropdown';

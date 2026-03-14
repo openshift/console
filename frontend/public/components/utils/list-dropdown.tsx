@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants';
 import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { Firehose } from './firehose';

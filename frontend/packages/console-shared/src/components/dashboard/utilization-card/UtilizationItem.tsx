@@ -15,7 +15,7 @@ import {
 } from '@console/internal/components/graphs/area';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import type { ByteDataTypes } from '../../../graph-helper/data-utils';
-import { useUtilizationDuration } from '../../../hooks';
+import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
 import { YellowExclamationTriangleIcon, RedExclamationCircleIcon } from '../../status';
 
 const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 0).getTime();

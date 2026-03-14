@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { pluralize } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { OperatorRowProps } from '@console/dynamic-plugin-sdk';
 import {
   resourcePathFromModel,

@@ -1,4 +1,4 @@
-export { useDebounceCallback } from '../../hooks/debounce';
+export { useDebounceCallback } from '../../hooks/useDebounceCallback';
 
 export { default as useConsoleOperatorConfig } from './useConsoleOperatorConfig';
 export { default as patchConsoleOperatorConfig } from './patchConsoleOperatorConfig';

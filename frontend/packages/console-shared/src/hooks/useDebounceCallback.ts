@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
 import type { DebounceSettings } from 'lodash';
 import { debounce } from 'lodash';
-import { useDeepCompareMemoize } from './deep-compare-memoize';
+import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 
 interface Cancelable {
   cancel(): void;

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import type { FC, ReactText, ReactNode, ComponentType } from 'react';
 import { memo, useMemo, useState, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import {
   TableGridBreakpoint,
   SortByDirection,
@@ -22,14 +22,14 @@ import {
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { pvcUsed } from '@console/shared/src/sorts/pvc';
 import { snapshotSize, snapshotSource } from '@console/shared/src/sorts/snapshot';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getName } from '@console/shared/src/selectors/common';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import {
@@ -483,7 +483,7 @@ export const Table: FC<TableProps> = ({
   onRowsRendered,
   'data-test': dataTest,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const navigate = useNavigate();
   const filters = useDeepCompareMemoize(initFilters);
   const Header = useDeepCompareMemoize(initHeader);

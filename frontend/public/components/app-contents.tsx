@@ -1,14 +1,7 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
-import {
-  Route,
-  Routes,
-  Navigate,
-  useParams,
-  useLocation,
-  matchRoutes,
-} from 'react-router-dom-v5-compat';
+import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -16,7 +9,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   getPerspectiveVisitedKey,
   usePerspectives,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';

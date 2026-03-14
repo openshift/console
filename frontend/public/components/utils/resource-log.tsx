@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -63,11 +63,10 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { usePrevious } from '@console/shared/src/hooks/previous';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { usePrevious } from '@console/shared/src/hooks/usePrevious';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
@@ -534,7 +533,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const previousTotalLineCount = usePrevious(totalLineCount);
   const linkURL = getResourceLogURL(resource, containerName, null, false, logType);
   const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
-  const imp = useSelector((state: RootState) => getImpersonate(state));
+  const imp = useConsoleSelector((state) => getImpersonate(state));
   const subprotocols = useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [imp]);
   const [wrapLines, setWrapLines] = useUserPreference<boolean>(
     LOG_WRAP_LINES_USERSETTINGS_KEY,

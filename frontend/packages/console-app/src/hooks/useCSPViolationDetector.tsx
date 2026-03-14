@@ -3,13 +3,13 @@ import { usePluginStore } from '@openshift/dynamic-plugin-sdk';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { setPluginCSPViolations } from '@console/internal/actions/ui';
-import type { RootState } from '@console/internal/redux';
 import { useToast } from '@console/shared/src/components/toast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { ONE_DAY } from '@console/shared/src/constants/time';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useLocalStorageCache } from '@console/shared/src/hooks/useLocalStorageCache';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
@@ -73,10 +73,10 @@ export const useCSPViolationDetector = () => {
   const toastContext = useToast();
   const fireTelemetryEvent = useTelemetry();
   const pluginStore = usePluginStore();
-  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [, cacheEvent] = useLocalStorageCache<PluginCSPViolationEvent>(
     LOCAL_STORAGE_CSP_VIOLATIONS_KEY,
     CSP_VIOLATION_EXPIRATION,

@@ -1,11 +1,11 @@
 import type { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
 import type { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
 import {

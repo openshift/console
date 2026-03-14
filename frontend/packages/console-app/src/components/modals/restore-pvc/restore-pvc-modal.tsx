@@ -16,7 +16,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { ModalComponentProps } from '@console/internal/components/factory';
@@ -51,7 +51,7 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { Status } from '@console/shared/src/components/status/Status';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import { onlyPvcSCs } from '@console/shared/src/selectors/storage';
 import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';

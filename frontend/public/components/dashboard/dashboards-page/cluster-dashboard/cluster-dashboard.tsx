@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { StatusCard } from './status-card';
 import { DetailsCard } from './details-card';
 import { InventoryCard } from './inventory-card';

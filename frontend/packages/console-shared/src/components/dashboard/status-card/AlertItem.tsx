@@ -2,7 +2,7 @@ import type { FC, ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import type { AlertAction } from '@console/dynamic-plugin-sdk';
 import { isAlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';

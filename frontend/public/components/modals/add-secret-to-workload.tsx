@@ -2,7 +2,7 @@ import type { FC, ReactEventHandler, FormEvent, ReactNode } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import {
   Button,
   Content,

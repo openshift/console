@@ -10,7 +10,7 @@ import {
   getInfrastructurePlatform,
   isSingleNode,
 } from '@console/shared/src/selectors/infrastructure';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
@@ -45,7 +45,7 @@ import {
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
 import { LoadingInline } from '../../../utils/status-box';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 

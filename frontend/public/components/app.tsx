@@ -15,10 +15,12 @@ import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
 import * as Modal from 'react-modal';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
-import store, { applyReduxExtensions, RootState } from '../redux';
+import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
 import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
@@ -60,10 +62,10 @@ import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-suppo
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
@@ -172,7 +174,7 @@ const App: FC<{
     setPrevParams(params);
   }, [location, params, prevLocation, prevParams]);
 
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // Handle feature refresh after impersonation changes
   useImpersonateRefreshFeatures();
@@ -244,8 +246,8 @@ const App: FC<{
     }
   };
 
-  const isNotificationDrawerExpanded = useSelector(
-    ({ UI }: RootState) => !!UI.getIn(['notifications', 'isExpanded']),
+  const isNotificationDrawerExpanded = useConsoleSelector(
+    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
   );
 
   const drawerRef = useRef<HTMLElement | null>(null);
@@ -400,7 +402,7 @@ const CaptureTelemetry = memo(() => {
   const [debounceTime, setDebounceTime] = useState(5000);
   const [titleOnLoad, setTitleOnLoad] = useState('');
   // notify of identity change
-  const user = useSelector(getUser);
+  const user = useConsoleSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
   const location = useLocation();
 

@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import type { Location } from 'react-router-dom-v5-compat';
-import { createPath } from 'react-router-dom-v5-compat';
+import type { Location } from 'react-router';
+import { createPath } from 'react-router';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { ALL_NAMESPACES_KEY } from '../constants/common';
 
 export const useTabbedTableBreadcrumbsFor = (
@@ -21,7 +20,7 @@ export const useTabbedTableBreadcrumbsFor = (
 ) => {
   const { t } = useTranslation();
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
-  const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
+  const currentNamespace = useConsoleSelector((state) => getActiveNamespace(state));
   const nsURL =
     ALL_NAMESPACES_KEY === currentNamespace ? 'all-namespaces' : `ns/${currentNamespace}`;
   return useMemo(

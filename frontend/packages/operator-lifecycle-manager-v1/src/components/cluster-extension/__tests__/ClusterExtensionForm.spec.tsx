@@ -19,8 +19,8 @@ jest.mock('@console/internal/components/utils', () => ({
   resourcePathFromModel: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks', () => ({
-  ...jest.requireActual('@console/shared/src/hooks'),
+jest.mock('@console/shared/src/hooks/useTextInputModal', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useTextInputModal'),
   useTextInputModal: jest.fn(() => jest.fn()),
 }));
 

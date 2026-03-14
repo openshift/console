@@ -1,15 +1,14 @@
 import type { ReactElement } from 'react';
 import { SVGDefsProvider } from '@patternfly/react-topology';
 import { render, screen } from '@testing-library/react';
-import { useRoutesWatcher } from '@console/shared';
+import { useRoutesWatcher } from '@console/shared/src/hooks/useRoutesWatcher';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { ROUTE_URL_ANNOTATION, ROUTE_DISABLED_ANNOTATION } from '../../../../../../const';
 import { WorkloadModelProps } from '../../../../../../data-transforms/transform-utils';
 import { OdcBaseNode } from '../../../../../../elements';
 import UrlDecorator from '../UrlDecorator';
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/hooks/useRoutesWatcher', () => ({
   useRoutesWatcher: jest.fn(),
 }));
 

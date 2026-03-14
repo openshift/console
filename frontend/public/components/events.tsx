@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   Label,
@@ -30,7 +30,7 @@ import {
 import { withStartGuide } from './start-guide';
 import { EventModel, NodeModel } from '../models';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';

@@ -1,7 +1,7 @@
 import type { FC, ReactNode, CSSProperties } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Popover } from '@patternfly/react-core';
-import { useDebounceCallback } from '../../hooks/debounce';
+import { useDebounceCallback } from '../../hooks/useDebounceCallback';
 import './ClampedText.scss';
 
 type ClampedTextProps = {

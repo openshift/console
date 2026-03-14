@@ -1,8 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserPreference } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
@@ -21,8 +21,8 @@ jest.mock('../explore-admin-features-getting-started-card', () => ({
   ExploreAdminFeaturesGettingStartedCard: () => 'Explore new features',
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...jest.requireActual('@console/shared/src/hooks/flag'),
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useFlag'),
   useFlag: jest.fn<boolean, []>(),
 }));
 

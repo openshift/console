@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { useUserPreference } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY =
   'devconsole.import.secureRoutingOptions';

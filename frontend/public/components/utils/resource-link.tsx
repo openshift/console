@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { css } from '@patternfly/react-styles';
 
 import { FLAGS } from '@console/shared/src/constants';

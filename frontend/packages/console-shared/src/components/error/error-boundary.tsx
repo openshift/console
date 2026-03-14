@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode, FC } from 'react';
 import { Component } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 
 type ErrorBoundaryProps = {

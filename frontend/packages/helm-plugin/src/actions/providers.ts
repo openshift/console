@@ -9,7 +9,8 @@ import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getResource } from '@console/topology/src/utils';
 import {
   FLAG_HELM_CHARTS_CATALOG_TYPE,

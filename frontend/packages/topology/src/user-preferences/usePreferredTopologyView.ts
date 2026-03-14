@@ -1,4 +1,4 @@
-import { useUserPreference } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 const PREFERRED_TOPOLOGY_VIEW_USER_SETTING_KEY = 'topology.preferredView';
 

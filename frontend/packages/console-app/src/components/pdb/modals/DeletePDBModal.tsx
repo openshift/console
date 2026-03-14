@@ -7,7 +7,7 @@ import type { ModalComponentProps } from '@console/internal/components/factory/m
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { k8sKill } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { PodDisruptionBudgetModel } from '../../../models';
 import type { PodDisruptionBudgetKind } from '../types';
 

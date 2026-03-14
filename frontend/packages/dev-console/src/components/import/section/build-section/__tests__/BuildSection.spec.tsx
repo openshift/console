@@ -27,10 +27,16 @@ jest.mock('@console/internal/components/build', () => ({
   getStrategyType: jest.fn(() => 'source'),
 }));
 
+jest.mock('@console/shared/src/hooks/useDebounceCallback', () => ({
+  useDebounceCallback: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  useFlag: jest.fn(() => false),
+}));
+
 jest.mock('@console/shared/src', () => ({
   EnvironmentField: (props) => `EnvironmentField envs=${JSON.stringify(props.envs)}`,
-  useDebounceCallback: jest.fn(() => jest.fn()),
-  useFlag: jest.fn(() => false),
 }));
 
 jest.mock('@console/git-service/src', () => ({

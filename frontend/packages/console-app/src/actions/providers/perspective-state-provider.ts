@@ -1,9 +1,9 @@
 import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
-import type { Perspective } from '@console/shared/src/hooks/perspective-utils';
+import type { Perspective } from '@console/shared/src/hooks/usePerspectives';
 import {
   hasReviewAccess,
   PerspectiveVisibilityState,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
 import { FLAG_DEVELOPER_PERSPECTIVE } from '../../consts';
 
 export const useDeveloperPerspectiveStateProvider = (setFeatureFlag: SetFeatureFlag) => {

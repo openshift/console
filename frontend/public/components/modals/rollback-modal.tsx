@@ -17,7 +17,7 @@ import {
   getDeploymentConfigVersion,
   getOwnerNameByKind,
 } from '@console/shared/src/utils/resource-utils';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '../factory/modal';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { LoadingInline } from '../utils/status-box';

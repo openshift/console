@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Navigate } from 'react-router-dom-v5-compat';
+import { Navigate } from 'react-router';
 
 const CatalogRedirect: FC = () => <Navigate to={`/catalog?catalogType=operator`} replace />;
 

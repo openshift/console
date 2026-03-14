@@ -2,12 +2,12 @@
 import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import {
@@ -93,7 +93,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     nameFilter,
     omitFilterToolbar,
   } = props;
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
   useEffect(() => {

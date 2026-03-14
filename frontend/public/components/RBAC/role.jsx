@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Component, useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router';
 import { RoleModel, RoleBindingModel } from '../../models';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';

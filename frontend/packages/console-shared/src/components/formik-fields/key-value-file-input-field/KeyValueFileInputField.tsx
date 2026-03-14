@@ -16,7 +16,8 @@ import type { FormikValues } from 'formik';
 import { FieldArray, useField, useFormikContext } from 'formik';
 import { get, uniqueId } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DroppableFileInputField, InputField, useFormikValidationFix } from '@console/shared/src';
+import { DroppableFileInputField, InputField } from '@console/shared/src';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import type { FieldProps } from '../field-types';
 import { getFieldId } from '../field-utils';
 

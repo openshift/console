@@ -9,7 +9,7 @@ import {
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions, isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/dist/core/lib/types';

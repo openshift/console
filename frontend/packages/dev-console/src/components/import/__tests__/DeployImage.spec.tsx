@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -91,6 +91,7 @@ describe('DeployImage Page Test', () => {
       state: null,
       hash: null,
       key: 'test',
+      unstable_mask: undefined,
     });
   });
 

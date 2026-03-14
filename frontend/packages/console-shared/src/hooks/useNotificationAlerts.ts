@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
 import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
 import { useNamespacedNotificationAlertsPoller } from '@console/app/src/hooks/useNamespacedNotificationAlertsPoller';
 import type { ObjectMetadata } from '@console/internal/module/k8s';
 import { LabelSelector } from '@console/internal/module/k8s';
 import type { NotificationAlerts } from '@console/internal/reducers/observe';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { SYSTEM_ALERT_RULE_LABEL } from '../constants/monitoring';
 import { useUserPreference } from './useUserPreference';
 
@@ -25,7 +24,7 @@ export const useNotificationAlerts = (
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
+  const { data: alerts, loaded, loadError } = useConsoleSelector<NotificationAlerts>(
     ({ observe }) => observe.get('notificationAlerts') ?? {},
   );
 

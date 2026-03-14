@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useEffect, useCallback, createContext } from 'react';
-import { useUserPreferenceCompatibility } from '@console/shared';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
 import type { DisplayFilters } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from './const';

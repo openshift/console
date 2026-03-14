@@ -1,12 +1,12 @@
 import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmReleaseResources from '../HelmReleaseResources';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
 }));
 

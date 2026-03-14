@@ -19,7 +19,7 @@ jest.mock('@patternfly/react-core', () => ({
   ContentVariants: { p: 'p' },
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   Link: () => 'Link',
   useNavigate: () => jest.fn(),
 }));

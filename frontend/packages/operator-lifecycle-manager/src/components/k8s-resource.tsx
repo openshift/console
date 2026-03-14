@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import type { Flatten, RowFunctionArgs } from '@console/internal/components/factory';
 import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
 import type { FirehoseResource } from '@console/internal/components/utils';

@@ -20,13 +20,13 @@ import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   USERSETTINGS_PREFIX,
-  useUserPreference,
   TOAST_TIMEOUT_DEFAULT,
   TOAST_TIMEOUT_LONG,
 } from '@console/shared/src';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   createExportResource,
   getExportAppData,

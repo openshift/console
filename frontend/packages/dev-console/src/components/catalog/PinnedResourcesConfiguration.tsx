@@ -21,7 +21,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { YellowExclamationTriangleIcon, useTelemetry } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
@@ -33,11 +33,12 @@ import {
 import type {
   Perspective,
   PerspectivePinnedResource,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
 import {
   PerspectiveVisibilityState,
   usePerspectives,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.

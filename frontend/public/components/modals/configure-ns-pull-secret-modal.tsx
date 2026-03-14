@@ -21,7 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';

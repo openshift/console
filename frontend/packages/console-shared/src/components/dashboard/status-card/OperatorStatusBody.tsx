@@ -2,7 +2,7 @@ import type { FC, ComponentType } from 'react';
 import { useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { GetOperatorsWithStatuses, OperatorRowProps } from '@console/dynamic-plugin-sdk';
 import type { LazyLoader } from '@console/internal/components/utils/async';
 import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';

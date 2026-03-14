@@ -5,14 +5,7 @@ import * as _ from 'lodash';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import {
-  Routes,
-  Route,
-  useParams,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { Routes, Route, useParams, Navigate, useLocation, useNavigate } from 'react-router';
 import {
   HorizontalNavTab,
   isHorizontalNavTab,

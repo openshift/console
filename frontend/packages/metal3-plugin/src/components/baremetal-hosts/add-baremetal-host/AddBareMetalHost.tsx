@@ -4,7 +4,7 @@ import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel, LoadingBox, LoadError } from '@console/internal/components/utils';
@@ -13,7 +13,7 @@ import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
+import { usePrevious } from '@console/shared/src/hooks/usePrevious';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {

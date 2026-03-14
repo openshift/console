@@ -17,7 +17,7 @@ import type { ModalComponentProps } from '@console/internal/components/factory/m
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 import type { SubscriptionKind, InstallPlanKind } from '../../types';
 import { InstallPlanApproval } from '../../types';

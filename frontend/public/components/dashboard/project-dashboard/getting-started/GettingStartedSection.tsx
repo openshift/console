@@ -1,12 +1,13 @@
 import type { FC } from 'react';
-import { FLAGS, useUserPreference } from '@console/shared';
+import { FLAGS } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   QuickStartGettingStartedCard,
   GettingStartedExpandableGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { SampleGettingStartedCard } from './SampleGettingStartedCard';
 import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 

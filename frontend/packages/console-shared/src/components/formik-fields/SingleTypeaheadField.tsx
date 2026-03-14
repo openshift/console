@@ -5,7 +5,7 @@ import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { SingleTypeaheadDropdown } from '@console/internal/components/utils/single-typeahead-dropdown';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { SingleTypeaheadFieldProps, SelectInputOption } from './field-types';
 import { getFieldId } from './field-utils';
 

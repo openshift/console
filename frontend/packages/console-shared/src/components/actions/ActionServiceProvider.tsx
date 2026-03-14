@@ -10,7 +10,7 @@ import type {
 } from '@console/dynamic-plugin-sdk';
 import { isActionGroup } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useDeepCompareMemoize } from '../../hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '../../hooks/useDeepCompareMemoize';
 import ActionsLoader from './loader/ActionsLoader';
 import type { ActionContext } from './types';
 import { createMenuOptions } from './utils';

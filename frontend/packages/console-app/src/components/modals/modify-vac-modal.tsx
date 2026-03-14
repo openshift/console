@@ -15,7 +15,7 @@ import { VolumeAttributesClassDropdown } from '@console/internal/components/util
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, close, cancel }) => {
   const { t } = useTranslation();

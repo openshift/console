@@ -1,19 +1,19 @@
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
-import type { RootState } from '@console/internal/redux';
 import type { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 export const useDeprecatedOperatorWarnings = () => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
-  const deprecatedPackage = useSelector((state: RootState) =>
+  const deprecatedPackage = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
     state.UI.getIn(['deprecatedOperator', 'package']),
   );
-  const deprecatedChannel = useSelector((state: RootState) =>
+  const deprecatedChannel = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
     state.UI.getIn(['deprecatedOperator', 'channel']),
   );
-  const deprecatedVersion = useSelector((state: RootState) =>
+  const deprecatedVersion = useConsoleSelector<DeprecatedOperatorWarning>((state) =>
     state.UI.getIn(['deprecatedOperator', 'version']),
   );
 

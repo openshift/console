@@ -1,6 +1,6 @@
 import { isValidElement, memo } from 'react';
 import { SimpleListItem, Title, Content } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useToast } from '@console/shared/src';

@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';

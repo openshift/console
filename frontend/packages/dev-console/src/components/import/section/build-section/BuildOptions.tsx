@@ -7,7 +7,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src/types';
 import { LoadingInline } from '@console/internal/components/utils';
 import type { SelectInputOption } from '@console/shared';
-import { SingleDropdownField, useFlag } from '@console/shared';
+import { SingleDropdownField } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_OPENSHIFT_BUILDCONFIG, FLAG_OPENSHIFT_PIPELINE } from '../../../../const';
 import {
   isPreferredStrategyAvailable,

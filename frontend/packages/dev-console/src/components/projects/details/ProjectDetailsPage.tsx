@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
+import type { NavigateFunction } from 'react-router';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
 import { DetailsPage } from '@console/internal/components/factory';
 import { NamespaceDetails } from '@console/internal/components/namespace';

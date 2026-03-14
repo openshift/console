@@ -2,28 +2,27 @@ import { useEffect } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import type { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AdmissionWebhookWarning, SDKStoreState } from '@console/dynamic-plugin-sdk/src';
 import {
   getAdmissionWebhookWarnings,
   removeAdmissionWebhookWarning,
-} from '@console/dynamic-plugin-sdk/src';
+} from '@console/dynamic-plugin-sdk/src/app/core';
+import type { AdmissionWebhookWarning } from '@console/dynamic-plugin-sdk/src/app/redux-types';
 import {
   documentationURLs,
   getDocumentationURL,
 } from '@console/internal/components/utils/documentation';
-import { useToast } from '@console/shared/src';
+import { useToast } from '@console/shared/src/components/toast';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 type UseAdmissionWebhookWarnings = () => ImmutableMap<string, AdmissionWebhookWarning>;
 const useAdmissionWebhookWarnings: UseAdmissionWebhookWarnings = () =>
-  useSelector<SDKStoreState, ImmutableMap<string, AdmissionWebhookWarning>>(
-    getAdmissionWebhookWarnings,
-  );
+  useConsoleSelector<ImmutableMap<string, AdmissionWebhookWarning>>(getAdmissionWebhookWarnings);
 
 export const AdmissionWebhookWarningNotifications = () => {
   const { t } = useTranslation();
   const toastContext = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const admissionWebhookWarnings = useAdmissionWebhookWarnings();
   useEffect(() => {
     const docURL = getDocumentationURL(documentationURLs.admissionWebhookWarning);

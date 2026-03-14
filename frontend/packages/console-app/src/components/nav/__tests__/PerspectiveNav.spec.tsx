@@ -12,7 +12,7 @@ jest.mock('@console/shared/src/hooks/usePinnedResources', () => ({
   usePinnedResources: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectives: jest.fn(),
 }));
 

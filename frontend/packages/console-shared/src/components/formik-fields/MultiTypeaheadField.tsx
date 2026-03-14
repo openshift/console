@@ -22,7 +22,7 @@ import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

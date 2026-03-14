@@ -1,6 +1,6 @@
 import { useState, useCallback, FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import {
   Button,
   Content,
@@ -19,7 +19,7 @@ import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 // Modal for expanding persistent volume claims

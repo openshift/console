@@ -14,7 +14,7 @@ import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clip
 import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
 import type { ClusterVersionKind } from '@console/internal/module/k8s/types';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 
 export const ErrorDetailsBlock: FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation('console-shared');

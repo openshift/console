@@ -10,7 +10,6 @@ import {
   ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
@@ -19,6 +18,7 @@ import {
   LoadError,
   SaveStatus,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { QuickStartModel } from '../../models';
 import { getQuickStartNameRef, useQuickStarts } from './utils/useQuickStarts';
 

@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ModalTitle,
@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '../../hooks/promise-handler';
+import { usePromiseHandler } from '../../hooks/usePromiseHandler';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
 

@@ -8,7 +8,7 @@ import type { Node, NodeModel } from '@patternfly/react-topology';
 import { observer, useHover, createSvgIdUrl } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { K8sResourceKind, WatchK8sResults } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';

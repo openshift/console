@@ -39,7 +39,7 @@ jest.mock('../MonitoringOverviewEvents', () => ({
   default: () => 'MonitoringOverviewEvents',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   Link: () => 'Link',
 }));
 

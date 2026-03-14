@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useEffect, useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -9,9 +9,10 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { useQueryParamsMutator } from '@console/internal/components/utils';
-import { useQueryParams, useUserPreferenceCompatibility } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import {
   LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,

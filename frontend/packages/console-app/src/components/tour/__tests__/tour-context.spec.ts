@@ -1,14 +1,13 @@
 import { renderHook } from '@testing-library/react';
-import { useSelector } from 'react-redux';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { TourActions } from '../const';
 import { tourReducer, useTourValuesForContext, useTourStateForPerspective } from '../tour-context';
 import type { TourDataType } from '../type';
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions', () => ({
@@ -23,7 +22,7 @@ jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', ()
   default: () => ['dev', jest.fn()],
 }));
 
-const useSelectorMock = useSelector as jest.Mock;
+const useSelectorMock = useConsoleSelector as jest.Mock;
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
 const useUserPreferenceCompatibilityMock = useUserPreferenceCompatibility as jest.Mock;
 

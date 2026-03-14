@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import {
   ResourceLink,
   resourcePath,
@@ -10,7 +10,8 @@ import {
 } from '@console/internal/components/utils';
 import type { K8sResourceKind, JobKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { PodStatus, usePodsWatcher } from '@console/shared';
+import { PodStatus } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import './JobsOverview.scss';
 
 const kind: string = 'Job';

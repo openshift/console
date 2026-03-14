@@ -16,7 +16,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, Link, useNavigate } from 'react-router';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { RadioGroup } from '@console/internal/components/radio';
 import {

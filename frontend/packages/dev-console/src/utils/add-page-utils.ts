@@ -1,5 +1,5 @@
 import type { SyntheticEvent } from 'react';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router';
 import type { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import type { AddGroup } from '../components/types';

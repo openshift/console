@@ -4,8 +4,8 @@ import type { ExtensionK8sModel, K8sModel } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel, useModelFinder } from '@console/internal/module/k8s';
 import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
-import type { Perspective } from './perspective-utils';
-import { usePerspectives } from './perspective-utils';
+import type { Perspective } from './usePerspectives';
+import { usePerspectives } from './usePerspectives';
 import { useTelemetry } from './useTelemetry';
 import { useUserPreferenceCompatibility } from './useUserPreferenceCompatibility';
 

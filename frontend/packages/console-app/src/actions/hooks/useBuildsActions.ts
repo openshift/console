@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { redirect } from 'react-router-dom-v5-compat';
+import { redirect } from 'react-router';
 import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';

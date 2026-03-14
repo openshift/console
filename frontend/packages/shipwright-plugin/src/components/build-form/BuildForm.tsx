@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import {
   CodeEditorField,
   FlexForm,

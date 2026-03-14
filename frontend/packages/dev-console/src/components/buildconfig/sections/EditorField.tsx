@@ -3,8 +3,9 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { RedExclamationCircleIcon, useDebounceCallback } from '@console/shared/src';
+import { RedExclamationCircleIcon } from '@console/shared/src';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 
 type EditorFieldProps = Partial<BasicCodeEditorProps> & {
   name: string;

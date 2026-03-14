@@ -12,12 +12,12 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useHideLightspeed } from '@console/app/src/components/user-preferences/lightspeed/useHideLightspeed';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConsolePluginModel } from '@console/internal/models';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import './Lightspeed.scss';
 

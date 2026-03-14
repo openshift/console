@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { ProjectModel } from '@console/internal/models';
 import type { WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
-import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
+import { InputField, ResourceDropdownField, FLAGS } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
 import './NamespaceSection.scss';
 

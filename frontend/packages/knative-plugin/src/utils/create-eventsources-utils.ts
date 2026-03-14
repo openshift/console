@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router';
 import {
   getAppLabels,
   getCommonAnnotations,

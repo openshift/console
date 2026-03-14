@@ -4,7 +4,7 @@ import { ClusterVersionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import type { ClusterVersionKind } from '@console/internal/module/k8s/types';
 import { FLAGS } from '../constants';
-import { useFlag } from './flag';
+import { useFlag } from './useFlag';
 
 export const useClusterVersion = (): ClusterVersionKind => {
   const isClusterVersion = useFlag(FLAGS.CLUSTER_VERSION);

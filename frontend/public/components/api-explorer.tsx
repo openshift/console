@@ -1,11 +1,5 @@
 import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
-import {
-  useLocation,
-  useParams,
-  Link,
-  useSearchParams,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { connect } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import * as _ from 'lodash';
@@ -68,7 +62,7 @@ import { AsyncComponent } from './utils/async';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { HorizontalNav } from './utils/horizontal-nav';
 import { LinkifyExternal } from './utils/link';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';

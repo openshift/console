@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import { useDeepCompareMemoize } from './deep-compare-memoize';
+import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 
 export const useFormikValidationFix = (value: any) => {
   const { validateForm } = useFormikContext<FormikValues>();

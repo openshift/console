@@ -1,7 +1,7 @@
 import type { ReactElement, ComponentType, FC } from 'react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { getResizeObserver } from '@patternfly/react-core';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { Masonry } from './Masonry';
 import './MasonryLayout.scss';
 

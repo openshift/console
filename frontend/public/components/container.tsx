@@ -2,7 +2,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import {
   CodeBlock,
   CodeBlockCode,

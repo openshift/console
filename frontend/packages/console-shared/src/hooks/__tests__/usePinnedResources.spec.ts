@@ -3,7 +3,7 @@ import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/us
 import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
-import { usePerspectives } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { usePinnedResources } from '../usePinnedResources';
 import { useUserPreferenceCompatibility } from '../useUserPreferenceCompatibility';
 
@@ -13,7 +13,7 @@ const useUserPreferenceCompatibilityMock = useUserPreferenceCompatibility as jes
 const useModelFinderMock = useModelFinder as jest.Mock;
 const setPinnedResourcesMock = jest.fn();
 
-jest.mock('@console/shared/src/hooks/perspective-utils', () => ({ usePerspectives: jest.fn() }));
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({ usePerspectives: jest.fn() }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
 }));

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { CreateProjectModalProps } from '@console/dynamic-plugin-sdk/src';
 import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { CreateNamespaceModal } from '../components/modals/CreateNamespaceModal';
 import { CreateProjectModal } from '../components/modals/CreateProjectModal';
 

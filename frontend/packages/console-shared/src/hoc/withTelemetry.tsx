@@ -1,5 +1,5 @@
 import type { ComponentType, FC } from 'react';
-import { useTelemetry } from '../hooks';
+import { useTelemetry } from '../hooks/useTelemetry';
 
 type WithTelemetryProps = {
   fireTelementryEvent: (eventType: string, properties: any) => void;

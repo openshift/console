@@ -1,7 +1,7 @@
 import { AlertActionLink } from '@patternfly/react-core';
 import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { DeploymentActionCreator, CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';

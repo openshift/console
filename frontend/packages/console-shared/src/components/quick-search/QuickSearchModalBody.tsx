@@ -1,9 +1,9 @@
 import type { ReactNode, FC, FormEvent } from 'react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
 import type { CatalogType } from '../catalog';
 import QuickSearchBar from './QuickSearchBar';

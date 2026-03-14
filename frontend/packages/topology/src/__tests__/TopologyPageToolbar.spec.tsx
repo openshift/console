@@ -3,7 +3,7 @@ import { configure, render, screen } from '@testing-library/react';
 import * as FileUploadContextModule from '@console/app/src/components/file-upload/file-upload-context';
 import * as AddToProjectAccessModule from '@console/dev-console/src/utils/useAddToProjectAccess';
 import * as rbacModule from '@console/internal/components/utils/rbac';
-import * as SharedHooks from '@console/shared';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { ModelContext } from '../data-transforms/ModelContext';
 import { TopologyViewType } from '../topology-types';
@@ -13,23 +13,17 @@ jest.mock('react', () => ({
   useContext: jest.fn(),
 }));
 
-jest.mock('react-redux', () => {
-  const ActualReactRedux = jest.requireActual('react-redux');
-  return {
-    ...ActualReactRedux,
-    useSelector: jest.fn(),
-    useDispatch: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    useQueryParams: () => new Map(),
-    useIsMobile: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useIsMobile', () => ({
+  useIsMobile: jest.fn(),
+}));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: jest.fn(),
@@ -44,7 +38,7 @@ jest.mock('@console/app/src/components/file-upload/file-upload-context', () => (
 }));
 
 const useAccessReviewMock = rbacModule.useAccessReview as jest.Mock;
-const useIsMobileMock = SharedHooks.useIsMobile as jest.Mock;
+const useIsMobileMock = useIsMobile as jest.Mock;
 const useAddToProjectAccessMock = AddToProjectAccessModule.useAddToProjectAccess as jest.Mock;
 const useContextMock = useContext as jest.Mock;
 

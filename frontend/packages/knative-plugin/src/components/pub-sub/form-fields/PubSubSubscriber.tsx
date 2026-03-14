@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import ResourceDropdownField from '@console/shared/src/components/formik-fields/ResourceDropdownField';

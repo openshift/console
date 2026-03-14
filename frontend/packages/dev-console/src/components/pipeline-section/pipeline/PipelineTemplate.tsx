@@ -14,13 +14,8 @@ import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/ima
 import { GitProvider, getGitService } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import {
-  BlueInfoCircleIcon,
-  CheckboxField,
-  DropdownField,
-  RadioGroupField,
-  useFlag,
-} from '@console/shared';
+import { BlueInfoCircleIcon, CheckboxField, DropdownField, RadioGroupField } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,
   PIPELINE_RUNTIME_LABEL,

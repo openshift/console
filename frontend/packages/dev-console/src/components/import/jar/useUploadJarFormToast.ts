@@ -1,13 +1,14 @@
 import { useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BuildConfigModel, BuildModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useActiveNamespace, useToast, getOwnedResources } from '@console/shared';
+import { useToast, getOwnedResources } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 export const useUploadJarFormToast = () => {
   const toast = useToast();

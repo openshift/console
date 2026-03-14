@@ -5,7 +5,7 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core'
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { ModalComponentProps } from '@console/internal/components/factory';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
 import type { BareMetalHostKind } from '../../types';
 import { PowerOffWarning } from './PowerOffHostModal';

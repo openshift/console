@@ -6,7 +6,7 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { makeNodeUnschedulable } from '../../../k8s/requests/nodes';
 
 type ConfigureUnschedulableModalProps = {

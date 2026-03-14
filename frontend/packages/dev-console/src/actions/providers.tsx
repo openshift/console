@@ -17,10 +17,10 @@ import type { AccessReviewResourceAttributes, K8sResourceKind } from '@console/i
 import { referenceFor } from '@console/internal/module/k8s';
 import {
   isCatalogTypeEnabled,
-  useActiveNamespace,
-  useFlag,
   useIsSoftwareCatalogEnabled,
-} from '@console/shared';
+} from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { useJavaImageStreamEnabled } from '../components/import/jar/useJavaImageStreamEnabled';

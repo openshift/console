@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { data, visibleRows, onRowSelected } from '../__mocks__/select-list-data';
-import { useSelectList } from '../select-list';
+import { useSelectList } from '../useSelectList';
 
 const dummyFormEvent: FormEvent<HTMLInputElement> = ({} as unknown) as FormEvent<HTMLInputElement>;
 

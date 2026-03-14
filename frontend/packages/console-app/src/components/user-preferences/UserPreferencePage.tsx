@@ -3,7 +3,7 @@ import type { FC, ReactElement, JSXElementConstructor, MouseEvent } from 'react'
 import type { TabProps, TabContentProps } from '@patternfly/react-core';
 import { Tabs, Tab, TabTitleText, TabContent, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import {
   useResolvedExtensions,
   isUserPreferenceGroup,

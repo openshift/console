@@ -4,7 +4,6 @@ import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   actionsCellProps,
   cellIsStickyProps,
@@ -64,7 +63,6 @@ import type {
   ControlPlaneMachineSetKind,
 } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
@@ -72,6 +70,8 @@ import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
@@ -588,7 +588,7 @@ const NodeList: FC<NodeListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = useNodesColumns(vmsEnabled);
-  const nodeMetrics = useSelector<RootState, NodeMetrics>(({ UI }) => {
+  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
   const columnManagementID = referenceForModel(NodeModel);
@@ -855,7 +855,7 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 };
 
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const { t } = useTranslation();
 
   const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(

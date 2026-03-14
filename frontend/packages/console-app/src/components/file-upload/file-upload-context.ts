@@ -2,7 +2,7 @@ import { createContext, useState, useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { FileUpload } from '@console/dynamic-plugin-sdk';
 import { isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src/components/toast';

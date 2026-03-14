@@ -2,8 +2,8 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
-
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import {
@@ -20,9 +20,8 @@ import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
 import { Firehose } from './utils/firehose';
 import { FirehoseResult } from './utils/types';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import type { RootState } from '../redux';
 import { setActiveApplication } from '../actions/ui';
 
 export type NamespaceBarDropdownsProps = {
@@ -44,7 +43,7 @@ export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
 }) => {
   const { removeQueryArgument } = useQueryParamsMutator();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const activePerspective = useActivePerspective()[0];
   const [activeNamespaceError, setActiveNamespaceError] = useState(false);
@@ -121,7 +120,7 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   children,
   hideProjects = false,
 }) => {
-  const useProjects = useSelector<RootState, boolean>(({ k8s }) =>
+  const useProjects = useConsoleSelector<boolean>(({ k8s }) =>
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
   return (

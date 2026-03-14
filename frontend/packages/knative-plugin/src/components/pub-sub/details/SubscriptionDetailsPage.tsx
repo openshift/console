@@ -1,15 +1,11 @@
 import type { ComponentProps, FC } from 'react';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-} from '@console/shared';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { serverlessTab } from '../../../utils/serverless-tab-utils';
 import SubscriptionDetails from './SubscriptionDetails';
 

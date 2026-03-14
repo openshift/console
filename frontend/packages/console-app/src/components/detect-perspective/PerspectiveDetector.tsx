@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
-import { useLocation, createPath } from 'react-router-dom-v5-compat';
+import { useLocation, createPath } from 'react-router';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { usePerspectives } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 type DetectorProps = {
   setActivePerspective: (perspective: string, next: string) => void;

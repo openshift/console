@@ -19,7 +19,7 @@ import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { K8sResourceKind } from '../../module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalComponentProps } from '../factory/modal';
 import { ResourceIcon } from '../utils/resource-icon';
 import { SelectorInput } from '../utils/selector-input';

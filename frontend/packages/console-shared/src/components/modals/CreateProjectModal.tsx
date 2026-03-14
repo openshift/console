@@ -13,8 +13,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type {
   CreateProjectModal as CreateProjectModalExtension,
   CreateProjectModalProps,
@@ -33,6 +32,7 @@ import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import type { ModalComponent } from 'packages/console-dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 
 const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
@@ -40,7 +40,7 @@ const DefaultCreateProjectModal: ModalComponent<CreateProjectModalProps> = ({
   onSubmit,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [inProgress, setInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [name, setName] = useState('');

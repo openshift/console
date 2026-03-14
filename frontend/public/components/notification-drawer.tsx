@@ -12,8 +12,8 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { useDispatch } from 'react-redux';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { Link, NavigateFunction, useNavigate } from 'react-router';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
@@ -56,7 +56,7 @@ import {
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import {
   Alert,
   AlertAction,
@@ -244,7 +244,7 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
   const launchModal = useModal();

@@ -4,14 +4,14 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
-  useQueryParams,
   CatalogQueryParams,
   CatalogServiceProvider,
   CatalogController,
-  isCatalogTypeEnabled,
   ALL_NAMESPACES_KEY,
-  useActiveNamespace,
 } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 

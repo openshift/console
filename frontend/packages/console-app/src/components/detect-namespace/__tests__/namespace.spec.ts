@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePreferredNamespace } from '../../user-preferences/namespace/usePreferredNamespace';
 import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
@@ -14,18 +14,17 @@ jest.mock('react', () => ({
   useState: jest.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 
@@ -41,7 +40,7 @@ jest.mock('../../user-preferences/namespace/usePreferredNamespace', () => ({
   usePreferredNamespace: jest.fn(),
 }));
 
-const useDispatchMock = useDispatch as jest.Mock;
+const useDispatchMock = useConsoleDispatch as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
 const useLocationMock = useLocation as jest.Mock;
 const useLastNamespaceMock = useLastNamespace as jest.Mock;

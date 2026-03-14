@@ -8,7 +8,6 @@ import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk/s
 import { isAddAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk/src';
 import './AddCardItem.scss';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
@@ -17,6 +16,7 @@ import {
   LoadError,
   SaveStatus,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type SoftwareCatalogAddPageConfig = K8sResourceKind & {
   spec: {

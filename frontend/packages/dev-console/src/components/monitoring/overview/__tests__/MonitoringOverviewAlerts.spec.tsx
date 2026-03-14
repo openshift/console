@@ -7,7 +7,7 @@ jest.mock('@patternfly/react-core', () => ({
   Alert: () => 'Alert',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   Link: () => 'Link',
 }));
 

@@ -3,7 +3,7 @@ import { useMemo, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
@@ -17,9 +17,11 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
-import { BadgeType, getBadgeFromType, usePerspectives, useRelatedHPA } from '@console/shared';
+import { BadgeType, getBadgeFromType } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 import {
   getInitialValuesKnatify,
   knatifyResources,

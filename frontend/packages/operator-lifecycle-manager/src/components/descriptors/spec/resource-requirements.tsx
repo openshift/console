@@ -18,8 +18,8 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
   const { t } = useTranslation();

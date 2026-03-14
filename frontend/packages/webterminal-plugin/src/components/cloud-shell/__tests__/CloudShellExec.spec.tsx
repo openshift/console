@@ -4,13 +4,9 @@ import { WorkspaceModel } from '../../../../models';
 import type { CloudShellExecProps } from '../CloudShellExec';
 import { InternalCloudShellExec } from '../CloudShellExec';
 
-jest.mock('@console/shared', () => {
-  const originalModule = jest.requireActual('@console/shared');
-  return {
-    ...originalModule,
-    useTelemetry: () => {},
-  };
-});
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => () => {},
+}));
 
 const workspace = 'test1';
 const namespace = 'namespace1';
