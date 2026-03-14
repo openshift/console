@@ -9,7 +9,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ImageStreamModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
-import { usePerspectives } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';

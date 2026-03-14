@@ -6,12 +6,8 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-  ActionMenu,
-} from '@console/shared';
+import { ActionMenuVariant, ActionServiceProvider, ActionMenu } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {

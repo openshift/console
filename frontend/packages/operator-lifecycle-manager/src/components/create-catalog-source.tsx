@@ -19,7 +19,7 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {

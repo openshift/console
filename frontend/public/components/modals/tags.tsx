@@ -17,7 +17,7 @@ import {
 import { NameValueEditorPair } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 /**
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the

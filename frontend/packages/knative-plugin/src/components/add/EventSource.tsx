@@ -15,8 +15,9 @@ import {
 } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';

@@ -1,1 +1,1 @@
-export { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+export { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';

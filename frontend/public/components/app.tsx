@@ -62,10 +62,10 @@ import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-suppo
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';

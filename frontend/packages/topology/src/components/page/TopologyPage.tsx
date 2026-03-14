@@ -9,9 +9,10 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { useQueryParams, useUserPreferenceCompatibility } from '@console/shared';
 import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import {
   LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY,
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,

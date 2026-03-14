@@ -5,7 +5,7 @@ import { MenuToggle, Select, SelectList, SelectOption } from '@patternfly/react-
 import { useTranslation } from 'react-i18next';
 import type { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
-import { useUtilizationDuration } from '../../../hooks';
+import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
 
 export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,

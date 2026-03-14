@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   expectExternalLinkAttributes,
   cleanupServerFlag,
@@ -15,11 +15,11 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/version', () => ({
+jest.mock('@console/shared/src/hooks/useClusterVersion', () => ({
   useOpenShiftVersion: () => '4.8.0',
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 

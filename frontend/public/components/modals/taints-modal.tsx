@@ -20,7 +20,7 @@ import { ConsoleSelect } from '@console/internal/components/utils/console-select
 import { EmptyBox } from '../utils/status-box';
 import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
 import { ModalComponentProps } from '../factory';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 

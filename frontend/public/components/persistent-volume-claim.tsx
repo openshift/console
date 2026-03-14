@@ -47,7 +47,7 @@ import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { Conditions } from './conditions';

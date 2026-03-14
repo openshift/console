@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import type { Tab } from '@console/internal/components/utils';
 import { SimpleTabNav } from '@console/internal/components/utils';
-import { useQueryParams } from '@console/shared/src';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import SideBarTabLoader from '../providers/SideBarTabLoader';
 
 const SimpleTabNavWrapper: FC<{ tabs: Tab[] }> = ({ tabs }) => {

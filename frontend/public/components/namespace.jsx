@@ -36,7 +36,7 @@ import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icon
 import { getName } from '@console/shared/src/selectors/common';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';

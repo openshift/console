@@ -1,7 +1,8 @@
 import { configure, screen } from '@testing-library/react';
 import * as Router from 'react-router';
-import { useQueryParams, useUserPreferenceCompatibility } from '@console/shared/src';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import * as RouterUtils from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
@@ -12,7 +13,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(() => [[], true, null]),
 }));
 
-jest.mock('@console/shared/src/hooks/version', () => ({
+jest.mock('@console/shared/src/hooks/useClusterVersion', () => ({
   useClusterVersion: jest.fn(() => [{}, true]),
 }));
 
@@ -24,14 +25,13 @@ jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
   useConsoleDispatch: jest.fn(),
 }));
 
-jest.mock('@console/shared/src', () => {
-  const ActualShared = jest.requireActual('@console/shared/src');
-  return {
-    ...ActualShared,
-    useQueryParams: jest.fn(),
-    useUserPreferenceCompatibility: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  useQueryParams: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
+  useUserPreferenceCompatibility: jest.fn(),
+}));
 
 jest.mock('../user-preferences/usePreferredTopologyView', () => ({
   usePreferredTopologyView: jest.fn(),

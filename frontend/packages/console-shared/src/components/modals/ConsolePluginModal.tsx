@@ -15,7 +15,7 @@ import {
   ConsolePluginRadioInputs,
   ConsolePluginWarning,
 } from '@console/shared/src/components/utils';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
 
 export const ConsolePluginModal = (props: ConsolePluginModalProps) => {

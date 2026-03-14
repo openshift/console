@@ -11,7 +11,7 @@ import {
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
 } from '@console/shared/src/constants/common';
 import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 import {

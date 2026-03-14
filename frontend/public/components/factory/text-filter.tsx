@@ -1,5 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from '@console/shared/src/constants/common';
-import { useDocumentListener } from '@console/shared/src/hooks/document-listener';
+import { useDocumentListener } from '@console/shared/src/hooks/useDocumentListener';
 import { TextInput, TextInputProps } from '@patternfly/react-core';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';

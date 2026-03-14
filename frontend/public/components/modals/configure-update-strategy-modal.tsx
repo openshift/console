@@ -25,7 +25,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
 import { ModalComponentProps } from '../factory/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const getNumberOrPercent = (value) => {

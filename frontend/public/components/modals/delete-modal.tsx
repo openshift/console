@@ -28,7 +28,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum

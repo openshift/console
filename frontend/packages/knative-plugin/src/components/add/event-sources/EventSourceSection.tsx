@@ -10,7 +10,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { descriptorsToUISchema } from '@console/operator-lifecycle-manager/src/components/operand/utils';
-import { DynamicFormField, useFormikValidationFix } from '@console/shared';
+import { DynamicFormField } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { formDescriptorData } from '../../../utils/create-eventsources-utils';
 import { EventSources } from '../import-types';
 import ApiServerSection from './ApiServerSection';

@@ -16,7 +16,7 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { UNASSIGNED_KEY } from '../../const';
 import { updateResourceApplication } from '../../utils/application-utils';
 import ApplicationSelector from '../dropdowns/ApplicationSelector';

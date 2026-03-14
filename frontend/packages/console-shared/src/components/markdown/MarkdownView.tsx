@@ -6,7 +6,8 @@ import * as _ from 'lodash';
 import * as sanitizeHtml from 'sanitize-html';
 import type { ShowdownOptions, ShowdownExtension } from 'showdown';
 import { Converter } from 'showdown';
-import { useForceRender, useResizeObserver } from '../../hooks';
+import { useForceRender } from '../../hooks/useForceRender';
+import { useResizeObserver } from '../../hooks/useResizeObserver';
 
 import './MarkdownView.scss';
 

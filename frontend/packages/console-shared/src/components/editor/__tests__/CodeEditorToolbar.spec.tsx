@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useOLSConfig } from '../../../hooks/ols-hook';
+import { useOLSConfig } from '../../../hooks/useOLSConfig';
 import { AskOpenShiftLightspeedButton, CodeEditorToolbar } from '../CodeEditorToolbar';
 
 jest.mock('react-i18next', () => ({
@@ -13,7 +13,7 @@ jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
   useConsoleDispatch: jest.fn(),
 }));
 
-jest.mock('../../../hooks/ols-hook', () => ({
+jest.mock('../../../hooks/useOLSConfig', () => ({
   useOLSConfig: jest.fn(),
 }));
 

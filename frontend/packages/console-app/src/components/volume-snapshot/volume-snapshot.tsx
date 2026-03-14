@@ -41,7 +41,7 @@ import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { snapshotSource } from '@console/shared/src/sorts/snapshot';
 import { volumeSnapshotStatus } from '../../status';

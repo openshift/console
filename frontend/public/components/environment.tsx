@@ -14,7 +14,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { AccessReviewResourceAttributes, getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import {
   k8sPatch,
   k8sGet,

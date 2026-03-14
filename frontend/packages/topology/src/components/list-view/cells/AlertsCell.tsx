@@ -7,14 +7,14 @@ import { useTranslation } from 'react-i18next';
 import type { OverviewItemAlerts } from '@console/shared';
 import {
   Status as TooltipStatus,
-  useBuildConfigsWatcher,
   getBuildAlerts,
   getResourcePausedAlert,
-  usePodsWatcher,
-  useReplicationControllersWatcher,
   getReplicationControllerAlerts,
-  useIsMobile,
 } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import { useReplicationControllersWatcher } from '@console/shared/src/hooks/useReplicationControllersWatcher';
 import { getResource } from '../../../utils';
 import { useResourceQuotaAlert } from '../../workload/resource-alert';
 

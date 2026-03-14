@@ -9,8 +9,8 @@ import {
   getPodData,
   podDataInProgress,
   usePodRingLabel,
-  useRelatedHPA,
 } from '@console/shared';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 
 interface InnerPodStatusRadius {
   innerPodStatusOuterRadius: number;

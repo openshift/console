@@ -21,7 +21,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,

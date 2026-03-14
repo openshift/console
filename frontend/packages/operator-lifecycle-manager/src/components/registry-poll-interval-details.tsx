@@ -18,7 +18,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { CatalogSourceModel } from '../models';
 import type { CatalogSourceKind } from '../types';
 

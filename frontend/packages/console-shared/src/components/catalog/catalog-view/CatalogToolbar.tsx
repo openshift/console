@@ -6,7 +6,8 @@ import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 // TODO(CONSOLE-4823): Remove this hard-coded component when OLMv1 GAs
 import { OLMv1Switch } from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Switch';
-import { useDebounceCallback, useFlag } from '@console/shared/src/hooks';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { NO_GROUPING } from '../utils/category-utils';
 import type { CatalogStringMap } from '../utils/types';
 import { CatalogSortOrder } from '../utils/types';

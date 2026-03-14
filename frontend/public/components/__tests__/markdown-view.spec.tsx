@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserPreference } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { SyncMarkdownView } from '../markdown-view';
 
 jest.mock('showdown', () => ({

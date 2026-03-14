@@ -1,4 +1,4 @@
-import { ScrollDirection, getScrollDirection } from '../scroll';
+import { ScrollDirection, getScrollDirection } from '../useScrollDirection';
 
 describe('getScrollDirection', () => {
   it('should return scrolled to bottom', () => {

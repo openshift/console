@@ -6,7 +6,8 @@ import type { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extension
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { USERSETTINGS_PREFIX, useToast, useUserPreference } from '@console/shared/src';
+import { USERSETTINGS_PREFIX, useToast } from '@console/shared/src';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ExportModel } from '../../models';
 import type { ExportAppUserSettings } from './types';
 

@@ -1,5 +1,5 @@
 import type { ComponentType, FC } from 'react';
-import { useUserPreference } from '../hooks';
+import { useUserPreference } from '../hooks/useUserPreference';
 
 export type WithUserPreferenceProps<T> = {
   userSettingState: T;

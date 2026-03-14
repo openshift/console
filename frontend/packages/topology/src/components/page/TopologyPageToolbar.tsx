@@ -10,7 +10,7 @@ import type { FileUploadContextType } from '@console/app/src/components/file-upl
 import { FileUploadContext } from '@console/app/src/components/file-upload/file-upload-context';
 import { allImportResourceAccess } from '@console/dev-console/src/actions/add-resources';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
-import { useIsMobile } from '@console/shared';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import type { ExtensibleModel } from '../../data-transforms/ModelContext';
 import { ModelContext } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';

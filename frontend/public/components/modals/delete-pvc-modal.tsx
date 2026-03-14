@@ -18,7 +18,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import { ModalComponentProps } from '../factory';
 import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '../../models';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const DeletePVCModal = (props: DeletePVCModalProps) => {

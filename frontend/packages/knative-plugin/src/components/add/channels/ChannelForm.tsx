@@ -10,11 +10,11 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
   FlexForm,
-  useFormikValidationFix,
   FormBody,
   CodeEditorField,
   SyncedEditorField,
 } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
   isDefaultChannel,

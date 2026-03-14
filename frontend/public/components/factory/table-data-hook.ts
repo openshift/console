@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { RootState } from '../../redux';

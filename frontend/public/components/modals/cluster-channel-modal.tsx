@@ -30,7 +30,7 @@ import {
   getLastCompletedUpdate,
   k8sPatch,
 } from '../../module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ClusterChannelModal = (props: ClusterChannelModalProps) => {

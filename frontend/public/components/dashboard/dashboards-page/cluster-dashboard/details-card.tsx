@@ -10,7 +10,7 @@ import {
   getInfrastructurePlatform,
   isSingleNode,
 } from '@console/shared/src/selectors/infrastructure';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {

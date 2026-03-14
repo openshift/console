@@ -9,8 +9,8 @@ import { handleRedirect } from '@console/dev-console/src/components/import/impor
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { usePerspectives } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { EventingBrokerModel } from '../../../models';
 import type { AddBrokerFormYamlValues } from '../import-types';
 import { convertFormToBrokerYaml, addBrokerInitialValues } from './add-broker-utils';

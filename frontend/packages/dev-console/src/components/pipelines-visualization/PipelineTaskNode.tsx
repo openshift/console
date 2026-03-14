@@ -20,7 +20,7 @@ import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models/pipelines';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';

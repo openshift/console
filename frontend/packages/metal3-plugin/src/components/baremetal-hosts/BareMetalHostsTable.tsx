@@ -10,7 +10,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';

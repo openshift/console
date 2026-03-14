@@ -26,7 +26,7 @@ import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUser } from '@console/shared/src/hooks/useUser';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';

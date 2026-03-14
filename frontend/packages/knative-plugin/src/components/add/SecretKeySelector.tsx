@@ -11,7 +11,8 @@ import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
-import { getFieldId, useFormikValidationFix } from '@console/shared';
+import { getFieldId } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 
 interface SecretKeySelectorProps {
   name: string;

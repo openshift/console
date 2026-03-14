@@ -2,12 +2,15 @@ import { render, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { usePerspectives } from '@console/shared/src';
-import type { Perspective as PerspectiveType } from '@console/shared/src/hooks';
-import { PerspectiveVisibilityState } from '@console/shared/src/hooks';
+import {
+  usePerspectives,
+  PerspectiveVisibilityState,
+} from '@console/shared/src/hooks/usePerspectives';
+import type { Perspective as PerspectiveType } from '@console/shared/src/hooks/usePerspectives';
 import PerspectiveDetector from '../PerspectiveDetector';
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/usePerspectives'),
   usePerspectives: jest.fn(),
 }));
 

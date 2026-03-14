@@ -51,8 +51,8 @@ import LazyActionMenu, {
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,

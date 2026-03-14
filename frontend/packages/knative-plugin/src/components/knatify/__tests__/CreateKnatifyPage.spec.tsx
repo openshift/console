@@ -1,6 +1,6 @@
 import * as Router from 'react-router';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import CreateKnatifyPage from '../CreateKnatifyPage';
@@ -9,7 +9,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/hpa-hooks', () => ({
+jest.mock('@console/shared/src/hooks/useRelatedHPA', () => ({
   useRelatedHPA: jest.fn(),
 }));
 

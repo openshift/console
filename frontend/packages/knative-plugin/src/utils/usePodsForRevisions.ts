@@ -5,11 +5,9 @@ import { DeploymentModel } from '@console/internal/models';
 import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import type { PodControllerOverviewItem } from '@console/shared';
-import {
-  getReplicaSetsForResource,
-  useDeepCompareMemoize,
-  useDebounceCallback,
-} from '@console/shared';
+import { getReplicaSetsForResource } from '@console/shared';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 
 export const usePodsForRevisions = (
   revisionIds: string | string[],

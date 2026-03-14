@@ -5,7 +5,8 @@ import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
 import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
 import type { DaemonSetKind } from '@console/internal/module/k8s';
-import { PodRing, usePodsWatcher } from '@console/shared';
+import { PodRing } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getResource } from '../../utils';
 
 type DaemonSetOverviewDetailsProps = {

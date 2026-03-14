@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useParams } from 'react-router';
-import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
+import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { AsyncComponent } from './utils/async';
 
 const CreateResource: FC = () => {

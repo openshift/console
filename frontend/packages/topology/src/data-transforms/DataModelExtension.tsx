@@ -11,7 +11,7 @@ import {
   modelForGroupKind,
   referenceForExtensionModel,
 } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import type { ExtensibleModel, ModelExtensionContext } from './ModelContext';
 import { ModelContext } from './ModelContext';
 

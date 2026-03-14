@@ -32,7 +32,7 @@ import {
   createSinkConnection,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { TYPE_CONNECTS_TO } from '../../const';
 import { createConnection } from '../../utils';
 

@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { action } from 'typesafe-actions';
 import type { CodeEditorToolbarProps } from '@console/dynamic-plugin-sdk';
 import { ActionType } from '@console/internal/reducers/ols';
-import { useOLSConfig } from '@console/shared/src/hooks/ols-hook';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
+import { useOLSConfig } from '@console/shared/src/hooks/useOLSConfig';
 
 export const AskOpenShiftLightspeedButton: FC = () => {
   const { t } = useTranslation('console-shared');

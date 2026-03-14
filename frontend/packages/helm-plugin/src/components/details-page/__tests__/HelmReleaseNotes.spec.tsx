@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { useUserPreference } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import HelmReleaseNotes from '../notes/HelmReleaseNotes';

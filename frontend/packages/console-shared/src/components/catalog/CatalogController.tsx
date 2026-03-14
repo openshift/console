@@ -17,7 +17,7 @@ import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/c
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { useFlag } from '../../hooks/flag';
+import { useFlag } from '../../hooks/useFlag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';

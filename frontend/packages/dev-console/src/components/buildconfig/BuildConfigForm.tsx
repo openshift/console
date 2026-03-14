@@ -9,11 +9,11 @@ import {
   FormFooter,
   FormHeader,
   SyncedEditorField,
-  useActiveNamespace,
   CodeEditorField,
 } from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import BuildConfigFormEditor from './BuildConfigFormEditor';
 import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-utils';

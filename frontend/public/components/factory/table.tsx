@@ -29,7 +29,7 @@ import { pvcUsed } from '@console/shared/src/sorts/pvc';
 import { snapshotSize, snapshotSource } from '@console/shared/src/sorts/snapshot';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getName } from '@console/shared/src/selectors/common';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
 import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import {

@@ -5,7 +5,7 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import type { FormikValues } from 'formik';
 import { FieldArray, useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../../hooks/useFormikValidationFix';
 import SecondaryStatus from '../../status/SecondaryStatus';
 import type { MultiColumnFieldProps } from '../field-types';
 import { getSpans } from './multicolumn-field-utils';

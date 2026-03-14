@@ -5,7 +5,7 @@ import { useField, useFormikContext } from 'formik';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import type { FirehoseResource } from '@console/internal/components/utils/types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { ResourceDropdown } from '../dropdown/ResourceDropdown';
 import type { DropdownFieldProps } from './field-types';

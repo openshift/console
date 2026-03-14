@@ -1,15 +1,15 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { expectExternalLinkAttributes } from '../../../../getting-started-test-utils';
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 
-jest.mock('@console/shared/src/hooks/version', () => ({
+jest.mock('@console/shared/src/hooks/useClusterVersion', () => ({
   useOpenShiftVersion: () => '4.16.0',
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 

@@ -11,9 +11,9 @@ import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy
 import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
-import { useFlag } from '@console/shared/src';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,
   FUNC_PIPELINE_RUNTIME_LABEL,

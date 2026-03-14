@@ -21,7 +21,7 @@ import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { LinkifyExternal } from '../utils/link';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import {
   ClusterVersionKind,
   getConditionUpgradeableFalse,

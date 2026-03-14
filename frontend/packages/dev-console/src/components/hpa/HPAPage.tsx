@@ -9,8 +9,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getGroupVersionKind } from '@console/internal/module/k8s';
-import { useRelatedHPA } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getRequestsWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';

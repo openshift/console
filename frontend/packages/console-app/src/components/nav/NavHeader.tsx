@@ -6,7 +6,7 @@ import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
 import { t } from 'i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;

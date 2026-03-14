@@ -37,8 +37,8 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { LazyColumnManagementModalOverlay } from './modals';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { TextFilter } from './factory/text-filter';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import useRowFilterFix from './useRowFilterFix';

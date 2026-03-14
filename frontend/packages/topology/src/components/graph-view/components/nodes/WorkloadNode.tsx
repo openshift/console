@@ -18,9 +18,9 @@ import {
   getFiringAlerts,
   getPodStatus,
   getSeverityAlertType,
-  useBuildConfigsWatcher,
-  usePodsWatcher,
 } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../../workload/resource-alert';

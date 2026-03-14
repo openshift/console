@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { useAccessReview } from '@console/internal/components/utils';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import * as shipwrightBuildHook from '../../../../../utils/shipwright-build-hook';
 import { BuildOption as NamedBuildOption } from '../BuildOptions';
 import { usePipelineAccessReview } from '../usePipelineAccessReview';
@@ -27,6 +27,9 @@ const spyUsePipelineAccessReview = usePipelineAccessReview as jest.Mock;
 jest.mock('@console/shared', () => ({
   SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
   SelectInputOption: {},
+}));
+
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 

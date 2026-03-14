@@ -3,8 +3,8 @@ import { act, renderHook } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePreferredNamespace } from '../../user-preferences/namespace/usePreferredNamespace';
 import { useValuesForNamespaceContext } from '../namespace';
 import { useLastNamespace } from '../useLastNamespace';
@@ -24,7 +24,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 

@@ -4,7 +4,7 @@ import type { PerspectiveType, UseActivePerspective } from '@console/dynamic-plu
 import {
   usePerspectiveExtension,
   usePerspectives,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { ACM_PERSPECTIVE_ID } from '../../consts';
 import { usePreferredPerspective } from '../user-preferences/perspective/usePreferredPerspective';

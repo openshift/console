@@ -13,7 +13,7 @@ import { ConsoleEmptyState } from './utils/status-box';
 import { ProjectModel } from '../models';
 import { K8sResourceKind } from '../module/k8s/types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 

@@ -8,7 +8,7 @@ import { DaemonSetModel } from '@console/internal/models';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { podPhase } from '@console/internal/module/k8s';
 import type { PodRCData } from '@console/shared';
-import { usePodsWatcher } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 
 import './StatusCell.scss';

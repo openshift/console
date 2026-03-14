@@ -28,13 +28,9 @@ import { GitProvider } from '@console/git-service/src';
 import type { FirehoseResource } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import type { ConfigMapKind } from '@console/internal/module/k8s/types';
-import {
-  RadioGroupField,
-  InputField,
-  ResourceDropdownField,
-  useActiveNamespace,
-} from '@console/shared/src';
+import { RadioGroupField, InputField, ResourceDropdownField } from '@console/shared/src';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PermissionsSection from './PermissionsSection';
 
 type WebhoookSectionProps = {

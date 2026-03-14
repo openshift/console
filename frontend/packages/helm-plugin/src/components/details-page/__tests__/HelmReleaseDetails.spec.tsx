@@ -22,7 +22,7 @@ jest.mock('react-router', () => ({
 }));
 
 // jest mock useClusterVersion
-jest.mock('@console/shared/src/hooks/version', () => ({
+jest.mock('@console/shared/src/hooks/useClusterVersion', () => ({
   useClusterVersion: jest.fn(),
 }));
 

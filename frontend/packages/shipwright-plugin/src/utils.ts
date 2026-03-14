@@ -5,7 +5,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceCondition, K8sResourceKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { getBuildRunStatus } from './components/buildrun-status/BuildRunStatus';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
 import {

@@ -48,7 +48,7 @@ import {
   ResourceHealthItem,
 } from './health-item';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   useNamespacedNotificationAlerts,
   useNotificationAlerts,

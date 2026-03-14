@@ -15,13 +15,9 @@ import {
 } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-} from '@console/shared';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 

@@ -56,7 +56,7 @@ import {
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import {
   Alert,
   AlertAction,

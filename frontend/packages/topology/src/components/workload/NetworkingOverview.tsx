@@ -4,8 +4,9 @@ import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/lo
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
-import { useRoutesWatcher, useServicesWatcher } from '@console/shared';
 import { RouteLocation } from '@console/shared/src/components/utils/routes';
+import { useRoutesWatcher } from '@console/shared/src/hooks/useRoutesWatcher';
+import { useServicesWatcher } from '@console/shared/src/hooks/useServicesWatcher';
 
 const ServicePortList: FC<ServicePortListProps> = ({ service }) => {
   const ports = service.spec?.ports ?? [];

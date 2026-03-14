@@ -7,8 +7,9 @@ import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { referenceFor, podPhase } from '@console/internal/module/k8s';
-import { AllPodStatus, usePodsWatcher } from '@console/shared';
+import { AllPodStatus } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';

@@ -9,7 +9,7 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type { FC, Ref } from 'react';
 import { useState, useCallback } from 'react';

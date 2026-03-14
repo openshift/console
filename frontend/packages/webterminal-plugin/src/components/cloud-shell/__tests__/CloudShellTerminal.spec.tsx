@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
 import useCloudShellNamespace from '../useCloudShellNamespace';
 import useCloudShellWorkspace from '../useCloudShellWorkspace';
@@ -27,13 +27,9 @@ jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => {
   };
 });
 
-jest.mock('@console/shared', () => {
-  const originalModule = jest.requireActual('@console/shared');
-  return {
-    ...originalModule,
-    useFlag: jest.fn<boolean, []>(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  useFlag: jest.fn<boolean, []>(),
+}));
 
 const useFlagMock = useFlag as jest.Mock;
 

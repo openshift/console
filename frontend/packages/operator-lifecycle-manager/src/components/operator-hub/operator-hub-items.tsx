@@ -23,10 +23,10 @@ import {
   GreenCheckCircleIcon,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
-  useUserPreferenceCompatibility,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';

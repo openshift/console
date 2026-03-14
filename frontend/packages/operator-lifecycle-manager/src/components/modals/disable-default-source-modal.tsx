@@ -8,7 +8,7 @@ import type { ModalComponentProps } from '@console/internal/components/factory/m
 import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { OperatorHubKind } from '../operator-hub';
 
 const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({

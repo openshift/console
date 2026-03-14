@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/factory/modal';
 import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '../../hooks/promise-handler';
+import { usePromiseHandler } from '../../hooks/usePromiseHandler';
 import { InputField } from '../formik-fields';
 import { YellowExclamationTriangleIcon } from '../status';
 

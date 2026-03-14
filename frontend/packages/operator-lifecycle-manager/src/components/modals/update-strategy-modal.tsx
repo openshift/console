@@ -12,7 +12,7 @@ import {
 import type { K8sKind, K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,

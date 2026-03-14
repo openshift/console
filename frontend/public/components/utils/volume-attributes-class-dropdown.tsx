@@ -7,7 +7,7 @@ import { LoadingInline, ResourceName, ResourceIcon } from '.';
 import { css } from '@patternfly/react-styles';
 import { VolumeAttributesClassModel } from '../../models';
 import { VolumeAttributesClassKind } from '../../module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 

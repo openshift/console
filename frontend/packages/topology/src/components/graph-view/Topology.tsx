@@ -32,8 +32,9 @@ import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/exte
 import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
 import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
-import { useQueryParams, withUserPreferenceCompatibility } from '@console/shared';
+import { withUserPreferenceCompatibility } from '@console/shared';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';

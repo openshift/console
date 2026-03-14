@@ -13,7 +13,7 @@ import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
+import { usePrevious } from '@console/shared/src/hooks/usePrevious';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {

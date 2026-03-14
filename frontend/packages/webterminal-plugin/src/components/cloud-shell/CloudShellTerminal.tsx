@@ -8,7 +8,8 @@ import { StatusBox, LoadError } from '@console/internal/components/utils/status-
 import type { UserInfo } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
 import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
-import { useFlag, withUserPreferenceCompatibility } from '@console/shared';
+import { withUserPreferenceCompatibility } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';

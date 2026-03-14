@@ -2,7 +2,7 @@ import { screen, act } from '@testing-library/react';
 import * as Router from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useQueryParams } from '@console/shared/src';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferencePage from '../UserPreferencePage';
 import {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useIsCloudShellExpanded } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { CloudShellDrawer } from '../CloudShellDrawer';
 
@@ -11,7 +11,7 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/MultiTabbedTer
   MultiTabbedTerminal: () => 'Terminal content',
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 

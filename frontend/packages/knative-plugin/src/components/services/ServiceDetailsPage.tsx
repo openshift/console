@@ -18,14 +18,10 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-} from '@console/shared';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { RevisionModel, RouteModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import type { RevisionKind, ServiceKind } from '../../types';

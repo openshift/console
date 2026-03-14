@@ -112,7 +112,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants';
 
 import {

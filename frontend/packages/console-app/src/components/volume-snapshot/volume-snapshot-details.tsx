@@ -29,7 +29,7 @@ import { ActionMenuVariant } from '@console/shared/src/components/actions/types'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { snapshotSource } from '@console/shared/src/sorts/snapshot';
 import { volumeSnapshotStatus } from '../../status';
 
