@@ -20,12 +20,9 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
-import {
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
@@ -572,9 +569,8 @@ export const PodsPage: FC<PodPageProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -613,7 +609,8 @@ export const PodsPage: FC<PodPageProps> = ({
     groupVersionKind: resourceKind,
     namespace: namespace || 'default',
   };
-  if (!userSettingsLoaded) {
+
+  if (!columnPreferenceLoaded) {
     return null;
   }
 

@@ -60,7 +60,7 @@ const BuildConfigForm: FC<
     />
   );
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.buildConfigForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'devconsole.buildConfigForm.editor.lastView';
 
   const sanitizeToForm = (yamlbuildConfig: BuildConfig) =>
     convertBuildConfigToFormData(yamlbuildConfig, values).formData;
@@ -98,7 +98,7 @@ const BuildConfigForm: FC<
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

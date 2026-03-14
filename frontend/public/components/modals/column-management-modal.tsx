@@ -20,14 +20,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import {
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
-import {
-  WithUserPreferenceCompatibilityProps,
-  withUserPreferenceCompatibility,
-} from '@console/shared/src/hoc/withUserPreferenceCompatibility';
+  WithUserPreferenceProps,
+  withUserPreference,
+} from '@console/shared/src/hoc/withUserPreference';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ModalComponentProps } from '../factory';
@@ -79,7 +76,7 @@ const NamespaceColumnHelpText: FC = () => {
 };
 
 export const ColumnManagementModal: FC<
-  ColumnManagementModalProps & WithUserPreferenceCompatibilityProps<object>
+  ColumnManagementModalProps & WithUserPreferenceProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
   const { t } = useTranslation();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
@@ -210,12 +207,11 @@ export const ColumnManagementModal: FC<
   );
 };
 
-const ColumnManagementModalWithSettings = withUserPreferenceCompatibility<
-  ColumnManagementModalProps & WithUserPreferenceCompatibilityProps<object>,
+const ColumnManagementModalWithSettings = withUserPreference<
+  ColumnManagementModalProps & WithUserPreferenceProps<object>,
   object
 >(
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   undefined,
   true,
 )(ColumnManagementModal);

@@ -14,7 +14,7 @@ import { K8sResourceKind } from '../../../../module/k8s';
 import { ClusterDashboardContext } from './context';
 
 import { GettingStartedSection } from './getting-started/getting-started-section';
-import { CLUSTER_DASHBOARD_USER_SETTINGS_KEY } from './getting-started/constants';
+import { CLUSTER_DASHBOARD_USER_PREFERENCE_KEY } from './getting-started/constants';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
@@ -40,7 +40,7 @@ export const ClusterDashboard: FC<{}> = () => {
     <ClusterDashboardContext.Provider value={context}>
       <Dashboard>
         {consoleCapabilityGettingStartedBannerIsEnabled && (
-          <GettingStartedSection userSettingKey={CLUSTER_DASHBOARD_USER_SETTINGS_KEY} />
+          <GettingStartedSection userPreferenceKey={CLUSTER_DASHBOARD_USER_PREFERENCE_KEY} />
         )}
         <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
       </Dashboard>

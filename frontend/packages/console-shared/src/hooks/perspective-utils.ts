@@ -7,7 +7,7 @@ import type {
 import { isPerspective, checkAccess } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { USERSETTINGS_PREFIX } from '../constants';
+import { USER_PREFERENCE_PREFIX } from '../constants';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
 
@@ -39,7 +39,7 @@ export type Perspective = {
 };
 
 export const getPerspectiveVisitedKey = (perspective: PerspectiveType): string =>
-  `${USERSETTINGS_PREFIX}.${PERSPECTIVE_VISITED_FEATURE_KEY}.${perspective}`;
+  `${USER_PREFERENCE_PREFIX}.${PERSPECTIVE_VISITED_FEATURE_KEY}.${perspective}`;
 
 export const hasReviewAccess = async (accessReview: PerspectiveAccessReview) => {
   let hasAccess: boolean = true;

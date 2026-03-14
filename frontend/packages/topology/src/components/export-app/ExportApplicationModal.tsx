@@ -19,7 +19,7 @@ import type { ModalComponentProps } from '@console/internal/components/factory/m
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  USERSETTINGS_PREFIX,
+  USER_PREFERENCE_PREFIX,
   useUserPreference,
   TOAST_TIMEOUT_DEFAULT,
   TOAST_TIMEOUT_LONG,
@@ -50,7 +50,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   const [startTime, setStartTime] = useState<string>(null);
   const [errMessage, setErrMessage] = useState<string>('');
   const [exportAppToast, setExportAppToast] = useUserPreference<ExportAppUserSettings>(
-    `${USERSETTINGS_PREFIX}.exportApp`,
+    `${USER_PREFERENCE_PREFIX}.exportApp`,
     {},
     true,
   );

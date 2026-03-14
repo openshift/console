@@ -22,9 +22,8 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
-  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
-  useUserPreferenceCompatibility,
+  COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
+  useUserPreference,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { isModifiedEvent } from '@console/shared/src/utils';
@@ -573,9 +572,10 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { setQueryArgument, removeQueryArgument, getQueryArgument } = useQueryParamsMutator();
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreferenceCompatibility<
-    boolean
-  >(userSettingsKey, storeKey, false);
+  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreference<boolean>(
+    ignoreWarningPreferenceKey,
+    false,
+  );
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
   const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(undefined);

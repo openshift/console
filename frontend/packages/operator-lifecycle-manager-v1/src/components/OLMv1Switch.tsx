@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
+import { OLMV1_ENABLED_USER_PREFERENCE_KEY } from '../const';
 
 /**
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
@@ -16,7 +16,7 @@ export const OLMv1Switch: FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserPreference<boolean>(
-    OLMV1_ENABLED_USER_SETTING_KEY,
+    OLMV1_ENABLED_USER_PREFERENCE_KEY,
     techPreviewEnabled ?? false,
     true,
   );
