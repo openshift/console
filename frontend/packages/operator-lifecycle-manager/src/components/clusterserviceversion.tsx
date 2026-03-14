@@ -770,9 +770,11 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
         ),
     );
 
+  const showTitle = props.showTitle !== false;
+
   return (
     <>
-      <DocumentTitle>{title}</DocumentTitle>
+      {showTitle && <DocumentTitle>{title}</DocumentTitle>}
       <MultiListPage
         {...props}
         resources={[
@@ -812,11 +814,11 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
             optional: true,
           },
         ]}
-        title={title}
+        title={showTitle ? title : undefined}
         flatten={flatten}
         namespace={props.namespace}
         ListComponent={ClusterServiceVersionList}
-        helpText={helpText}
+        helpText={showTitle ? helpText : undefined}
         textFilter="cluster-service-version"
       />
     </>
@@ -1359,9 +1361,10 @@ type ClusterServiceVersionStatusProps = {
 };
 
 export type ClusterServiceVersionsPageProps = {
-  kind: string;
   namespace: string;
-  resourceDescriptions: CRDDescription[];
+  kind?: string;
+  resourceDescriptions?: CRDDescription[];
+  showTitle?: boolean;
 };
 
 export type ClusterServiceVersionListProps = {
