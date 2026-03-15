@@ -16,6 +16,7 @@ export const convertToForm = (resource: HelmChartRepositoryType) => {
     ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
     disabled: resource?.spec?.disabled ?? false,
     tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
+    basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
     repoDescription: resource?.spec?.description ?? '',
     repoUrl: resource?.spec?.connectionConfig?.url ?? '',
     metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
@@ -25,12 +26,14 @@ export const convertToForm = (resource: HelmChartRepositoryType) => {
 export const convertToHelmChartRepository = (
   formValues: HelmChartRepositoryFormData,
   namespace: string,
+  existingRepo?: HelmChartRepositoryType,
 ): HelmChartRepositoryType => {
   const {
     repoName,
     ca,
     disabled,
     tlsClientConfig,
+    basicAuthConfig,
     repoDescription,
     repoUrl,
     metadata,
@@ -54,6 +57,11 @@ export const convertToHelmChartRepository = (
         url: repoUrl,
         ...(ca ? { ca: { name: ca } } : {}),
         ...(tlsClientConfig ? { tlsClientConfig: { name: tlsClientConfig } } : {}),
+        ...(basicAuthConfig &&
+        (scope === 'ProjectHelmChartRepository' ||
+          existingRepo?.kind === 'ProjectHelmChartRepository')
+          ? { basicAuthConfig: { name: basicAuthConfig } }
+          : {}),
       },
       ...(repoDescription ? { description: repoDescription } : {}),
       ...(disabled ? { disabled } : {}),
