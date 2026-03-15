@@ -7,8 +7,8 @@ import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sKill } from '@console/internal/module/k8s';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ModalFooterWithAlerts } from '../modals/ModalFooterWithAlerts';
 
 const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload }) => {

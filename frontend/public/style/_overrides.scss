@@ -209,8 +209,7 @@ $masthead-logo-max-height: 60px;
 }
 
 // specificity targeting form elements to override --pf-t--global--font--size--md
-.pf-v6-c-page,
-.modal-dialog {
+.pf-v6-c-page {
   .pf-v6-c-app-launcher,
   .pf-v6-c-button,
   .pf-v6-c-dropdown,
