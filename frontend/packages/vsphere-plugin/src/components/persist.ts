@@ -511,6 +511,12 @@ const getPersistInfrastructureOp = async (
     vCenterDomainCfg.topology.resourcePool,
   );
 
+  // Template is in the form: /<datacenter>/vm/<extraPart>
+  const extraPartMatch = (vCenterDomainCfg.topology.template || '').match(/\/vm\/(.+)$/);
+  if (extraPartMatch) {
+    vCenterDomainCfg.topology.template = `/${values.datacenter}/vm/${extraPartMatch[1]}`;
+  }
+
   const vCenterCfg = initValues.vcenter
     ? infrastructure.spec.platformSpec.vsphere.vcenters.find((c) => c.server === initValues.vcenter)
     : infrastructure.spec.platformSpec.vsphere.vcenters[0];
