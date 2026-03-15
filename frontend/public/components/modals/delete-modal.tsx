@@ -153,7 +153,7 @@ export const DeleteModal = (props: DeleteModalProps) => {
                 <Trans t={t} ns="public">
                   This resource is managed by{' '}
                   <ResourceLink
-                    className="modal__inline-resource-link"
+                    className="pf-v6-u-mr-0"
                     inline
                     kind={referenceForOwnerRef(owner)}
                     name={owner.name}

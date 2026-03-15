@@ -88,12 +88,7 @@ const TaintsModal = (props: TaintsModalProps) => {
           {_.isEmpty(taints) ? (
             <EmptyBox label={t('Taints')} />
           ) : (
-            <Table
-              aria-label={t('Taints')}
-              variant="compact"
-              borders={false}
-              className="co-modal-table"
-            >
+            <Table aria-label={t('Taints')} variant="compact" borders={false}>
               <Thead>
                 <Tr>
                   <Th>{t('Key')}</Th>
