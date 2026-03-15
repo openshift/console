@@ -27,7 +27,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalCallback } from './types';
-import type { ModalComponentProps } from '../factory';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];

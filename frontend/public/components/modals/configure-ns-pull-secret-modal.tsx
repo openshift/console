@@ -26,7 +26,7 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { useState, useCallback } from 'react';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ResourceIcon } from '../utils/resource-icon';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 

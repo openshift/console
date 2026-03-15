@@ -40,7 +40,7 @@ import {
   sortMCPsByCreationTimestamp,
 } from '../../module/k8s';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,

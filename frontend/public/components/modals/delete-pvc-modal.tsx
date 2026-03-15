@@ -15,7 +15,7 @@ import { getName } from '@console/shared/src/selectors/common';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '../../models';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';

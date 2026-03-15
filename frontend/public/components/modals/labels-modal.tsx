@@ -20,7 +20,7 @@ import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/co
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { K8sResourceKind } from '../../module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ResourceIcon } from '../utils/resource-icon';
 import { SelectorInput } from '../utils/selector-input';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';

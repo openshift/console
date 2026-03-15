@@ -14,7 +14,7 @@ import {
   isMinorVersionNewer,
   showReleaseNotes,
 } from '../../module/k8s';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,

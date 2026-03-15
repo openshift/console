@@ -14,7 +14,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { To } from 'react-router';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
 import {
   k8sKill,
@@ -153,7 +153,7 @@ export const DeleteModal = (props: DeleteModalProps) => {
                 <Trans t={t} ns="public">
                   This resource is managed by{' '}
                   <ResourceLink
-                    className="modal__inline-resource-link"
+                    className="pf-v6-u-mr-0"
                     inline
                     kind={referenceForOwnerRef(owner)}
                     name={owner.name}

@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
 import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
-import { ModalComponentProps } from '../factory';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
@@ -88,12 +88,7 @@ const TaintsModal = (props: TaintsModalProps) => {
           {_.isEmpty(taints) ? (
             <EmptyBox label={t('Taints')} />
           ) : (
-            <Table
-              aria-label={t('Taints')}
-              variant="compact"
-              borders={false}
-              className="co-modal-table"
-            >
+            <Table aria-label={t('Taints')} variant="compact" borders={false}>
               <Thead>
                 <Tr>
                   <Th>{t('Key')}</Th>

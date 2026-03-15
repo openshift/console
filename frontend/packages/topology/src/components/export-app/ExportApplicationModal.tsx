@@ -15,7 +15,6 @@ import type {
   OverlayComponent,
 } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -27,6 +26,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import type { ToastContextType } from '@console/shared/src/components/toast/ToastContext';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   createExportResource,
   getExportAppData,

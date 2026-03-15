@@ -23,7 +23,6 @@ import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   LinkifyExternal,
   ResourceLink,
@@ -45,6 +44,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
 import { DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
