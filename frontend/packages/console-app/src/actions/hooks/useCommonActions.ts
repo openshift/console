@@ -161,11 +161,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (launchCountModal)
-    // to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal],
+    [kind, resource, t, message, actualEditPath, launchModal, launchCountModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {
