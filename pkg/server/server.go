@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -122,6 +123,7 @@ type jsGlobals struct {
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL                string                     `json:"kubeAPIServerURL"`
+	CustomLoginServerURL            string                     `json:"customLoginServerURL,omitempty"`
 	K8sMode                         string                     `json:"k8sMode"`
 	LoadTestFactor                  int                        `json:"loadTestFactor"`
 	LoginErrorURL                   string                     `json:"loginErrorURL"`
@@ -192,6 +194,7 @@ type Server struct {
 	KnativeChannelCRDLister             ResourceLister
 	KnativeEventSourceCRDLister         ResourceLister
 	KubeAPIServerURL                    string // JS global only. Not used for proxying.
+	LoginServerURL                      string
 	KubeVersion                         string
 	LoadTestFactor                      int
 	MonitoringDashboardConfigMapLister  ResourceLister
@@ -758,6 +761,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		K8sMode:                   s.K8sMode,
 		KubeAdminLogoutURL:        s.Authenticator.GetSpecialURLs().KubeAdminLogout,
 		KubeAPIServerURL:          s.KubeAPIServerURL,
+		CustomLoginServerURL:      s.LoginServerURL,
 		LoadTestFactor:            s.LoadTestFactor,
 		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
@@ -829,6 +833,29 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("not found"))
 }
 
+// serverFlagRe matches the --server=VALUE token in an oc login command string.
+var serverFlagRe = regexp.MustCompile(`(^|\s)--server=\S+`)
+
+// applyLoginServerURL substitutes (or appends) the --server= flag in an oc
+// login command string with loginServerURL. Returns cmd unchanged when either
+// argument is empty.
+func applyLoginServerURL(cmd, loginServerURL string) string {
+	if loginServerURL == "" || cmd == "" {
+		return cmd
+	}
+	serverFlag := "--server=" + loginServerURL
+	if serverFlagRe.MatchString(cmd) {
+		return serverFlagRe.ReplaceAllStringFunc(cmd, func(match string) string {
+			// Preserve any leading whitespace captured by the group.
+			if strings.HasPrefix(match, " ") || strings.HasPrefix(match, "\t") {
+				return match[:1] + serverFlag
+			}
+			return serverFlag
+		})
+	}
+	return cmd + " " + serverFlag
+}
+
 func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Invalid method: only GET is allowed"})
@@ -840,9 +867,14 @@ func (s *Server) handleCopyLogin(w http.ResponseWriter, r *http.Request) {
 	serverutils.SendResponse(w, http.StatusOK, struct {
 		RequestTokenURL      string `json:"requestTokenURL"`
 		ExternalLoginCommand string `json:"externalLoginCommand"`
+		// CustomLoginServerURL is included when the operator has configured an override
+		// server address (e.g. a Proxy). Empty string means the frontend
+		// should use the default cluster API server URL.
+		CustomLoginServerURL string `json:"customLoginServerURL,omitempty"`
 	}{
 		RequestTokenURL:      specialAuthURLs.RequestToken,
-		ExternalLoginCommand: s.Authenticator.GetOCLoginCommand(),
+		ExternalLoginCommand: applyLoginServerURL(s.Authenticator.GetOCLoginCommand(), s.LoginServerURL),
+		CustomLoginServerURL: s.LoginServerURL,
 	})
 }
 
