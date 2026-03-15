@@ -19,7 +19,7 @@ import { ConsoleSelect } from '@console/internal/components/utils/console-select
 import { EmptyBox } from '../utils/status-box';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '../factory';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
@@ -118,12 +118,7 @@ const TolerationsModal = (props: TolerationsModalProps) => {
           {_.isEmpty(tolerations) ? (
             <EmptyBox label={t('public~Tolerations')} />
           ) : (
-            <Table
-              aria-label={t('public~Tolerations')}
-              variant="compact"
-              borders={false}
-              className="co-modal-table"
-            >
+            <Table aria-label={t('public~Tolerations')} variant="compact" borders={false}>
               <Thead>
                 <Tr>
                   <Th>{t('public~Key')}</Th>

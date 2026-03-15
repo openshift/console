@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { Button, Form, ModalBody, ModalHeader } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { RevisionItems } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingFields from './TrafficSplittingFields';
 

@@ -20,7 +20,7 @@ import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 import { ClusterVersionModel } from '../../models';
 import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { k8sKill } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { PodDisruptionBudgetModel } from '../../../models';
 import type { PodDisruptionBudgetKind } from '../types';
 

@@ -14,12 +14,12 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { ModalComponentProps } from '@console/internal/components/factory';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
 import { CephClusterModel } from '../../models';

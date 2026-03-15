@@ -11,7 +11,6 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
@@ -20,6 +19,7 @@ import {
   ConsolePluginWarning,
 } from '@console/shared/src/components/utils';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
 import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 

@@ -4,7 +4,6 @@ import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patt
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import {
   ConfigureUpdateStrategy,
   getNumberOrPercent,
@@ -13,6 +12,7 @@ import type { K8sKind, K8sResourceKind, Patch } from '@console/internal/module/k
 import { k8sPatch } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,

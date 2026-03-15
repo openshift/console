@@ -13,7 +13,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
