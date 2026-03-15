@@ -33,7 +33,7 @@ export const useBindingActions = (
   filterActions?: BindingActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
-  const [model] = useK8sModel(referenceFor(obj));
+  const [model] = useK8sModel(obj ? referenceFor(obj) : null);
   const dispatch = useConsoleDispatch();
   const startImpersonate = useCallback(
     (kind, name) => dispatch(UIActions.startImpersonate(kind, name)),
@@ -42,11 +42,11 @@ export const useBindingActions = (
   const navigate = useNavigate();
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Delete] as const);
 
-  const { subjectIndex, subjects = [] } = obj;
+  const { subjectIndex, subjects } = obj ?? {};
   const subject = subjects?.[subjectIndex];
   const deleteBindingSubject = useWarningModal({
     title: t('public~Delete {{label}} subject?', {
-      label: model.kind,
+      label: model?.kind,
     }),
     children: t('public~Are you sure you want to delete subject {{name}} of type {{kind}}?', {
       name: subject?.name,
@@ -96,25 +96,25 @@ export const useBindingActions = (
       [BindingActionCreator.DuplicateBinding]: () => ({
         id: 'duplicate-binding',
         label: t('public~Duplicate {{kindLabel}}', {
-          kindLabel: model.kind,
+          kindLabel: model?.kind,
         }),
         cta: {
           href: `${decodeURIComponent(
-            resourceObjPath(obj, model.kind),
+            resourceObjPath(obj, model?.kind),
           )}/copy?subjectIndex=${subjectIndex}`,
         },
         // Only perform access checks when duplicating cluster role bindings.
         // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-        accessReview: obj.metadata?.namespace ? null : asAccessReview(model, obj, 'create'),
+        accessReview: obj?.metadata?.namespace ? null : asAccessReview(model, obj, 'create'),
       }),
       [BindingActionCreator.EditBindingSubject]: () => ({
         id: 'edit-binding-subject',
         label: t('public~Edit {{kindLabel}} subject', {
-          kindLabel: model.kind,
+          kindLabel: model?.kind,
         }),
         cta: {
           href: `${decodeURIComponent(
-            resourceObjPath(obj, model.kind),
+            resourceObjPath(obj, model?.kind),
           )}/edit?subjectIndex=${subjectIndex}`,
         },
         accessReview: asAccessReview(model, obj, 'update'),
@@ -122,7 +122,7 @@ export const useBindingActions = (
       [BindingActionCreator.DeleteBindingSubject]: () => ({
         id: 'delete-binding-subject',
         label: t('public~Delete {{label}} subject', {
-          label: model.kind,
+          label: model?.kind,
         }),
         cta: () => deleteBindingSubject(),
         accessReview: asAccessReview(model, obj, 'patch'),
@@ -143,9 +143,9 @@ export const useBindingActions = (
         : []),
       factory.DuplicateBinding(),
       factory.EditBindingSubject(),
-      ...(subjects.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
+      ...(subjects?.length === 1 ? [commonActions.Delete] : [factory.DeleteBindingSubject()]),
     ];
-  }, [memoizedFilterActions, subject?.kind, factory, subjects.length, commonActions.Delete]);
+  }, [memoizedFilterActions, subject?.kind, factory, subjects?.length, commonActions.Delete]);
 
   return actions;
 };
