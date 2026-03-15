@@ -111,7 +111,7 @@ Feature: Install the Helm Release
              Then user will see Blue certified badge associated with heading of the helm chart
 
 
-        @regression @odc-5713
+        @regression @ODC-5713
         Scenario Outline: Namespace-scoped Helm Chart Repositories in the dev catalog: HR-06-TC12
             Given user is at Add page
             # Uncomment below for cluster not having projecthelmchartrepositories CRD
@@ -122,11 +122,11 @@ Feature: Install the Helm Release
               And user will not see "Ibm Repo" under Chart repositories filter in a new namespace "test-helm1"
 
         Examples:
-                  | crd_yaml                           | cr_yaml                                         |
-                  | test-data/namespaced-helm-crd.yaml | test-data/namespaced-helm-chart-repository.yaml |
+                  | cr_yaml                                         |
+                  | test-data/namespaced-helm-chart-repository.yaml |
 
 
-        @regression @manual @odc-5713
+        @regression @manual @ODC-5713
         Scenario: Creating projecthelmchartrepository by non-admin user: HR-06-TC13
             Given user is at Add page
             # Uncomment below for cluster not having projecthelmchartrepositories CRD

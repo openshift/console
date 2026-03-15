@@ -1,4 +1,4 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '../../../../../integration-tests/views/details-page';
 import { addOptions } from '../../constants/add';
 import { pageTitle } from '../../constants/pageTitle';
 import { cardTitle } from '../../pageObjects/add-flow-po';

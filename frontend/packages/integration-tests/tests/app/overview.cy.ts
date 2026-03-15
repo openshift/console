@@ -6,7 +6,7 @@ import {
   StatefulSetModel,
   DeploymentConfigModel,
   DaemonSetModel,
-} from '../../../../public/models';
+} from '@console/internal/models';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { masthead } from '../../views/masthead';

@@ -1,4 +1,4 @@
-import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
+import { checkErrors, create, testName } from '@console/cypress-integration-tests/support';
 import { testDeprecatedCatalogSource, testDeprecatedSubscription } from '../mocks';
 import { operator } from '../views/operator.view';
 

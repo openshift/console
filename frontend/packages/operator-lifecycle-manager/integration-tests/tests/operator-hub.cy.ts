@@ -1,4 +1,4 @@
-import { checkErrors, testName } from '../../../integration-tests-cypress/support';
+import { checkErrors, testName } from '@console/cypress-integration-tests/support';
 
 describe('Interacting with Operators', () => {
   before(() => {

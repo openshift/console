@@ -100,7 +100,7 @@ Feature: Topology chart area
              Then user is able to see context menu options like Edit Application Grouping, Edit Pod Count, Pause Rollouts, Add Health Checks, Add Horizontal Pod Autoscaler, Add Storage, Edit Update Strategy, Edit Labels, Edit Annotations, Edit Deployment, Delete Deployment
 
 
-        @regression @odc-4944 @manual
+        @regression @ODC-4944 @manual
         Scenario: Zoom In to 50% in topology: T-06-TC10
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -111,7 +111,7 @@ Feature: Topology chart area
               And label are shown when hovering over the node
 
 
-        @regression @odc-4944 @manual
+        @regression @ODC-4944 @manual
         Scenario: Zoom In to 30% in topology: T-06-TC11
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -312,7 +312,7 @@ Feature: Topology chart area
              Then user will see service binding connection
 
 
-        @regression @odc-6361
+        @regression @ODC-6361
         Scenario: Search with label: T-06-TC27
             Given user has created a deployment workload "nodejs-1"
               And user has created a deployment workload "nodejs-2"
@@ -322,7 +322,7 @@ Feature: Topology chart area
              Then user can see the workload "nodejs-1" visible
 
 
-        @regression @odc-6361
+        @regression @ODC-6361
         Scenario: Check last selected node in topology per project per session: T-06-TC28
             Given user has created a deployment workload "nodejs-1"
               And user has created a deployment workload "nodejs-2"
@@ -333,7 +333,7 @@ Feature: Topology chart area
              Then user will see the the workload "nodejs-2" selected with sidebar open
 
 
-        @regression @odc-5947
+        @regression @ODC-5947
         Scenario: Create Service Binding option in nodes actions menu: T-06-TC29
             Given user has installed Service Binding operator
               And user has created or selected namespace "binding-service"
@@ -346,7 +346,7 @@ Feature: Topology chart area
               And user will see alert "No bindable services available"
 
 
-        @regression @manual @odc-5947
+        @regression @manual @ODC-5947
         Scenario: Bindable services options in Create Service Binding modal: T-06-TC30
             Given user has installed Service Binding operator
               And user is at Topology page chart view
@@ -362,7 +362,7 @@ Feature: Topology chart area
               And user is able to see service binding connector with name "node-js2-d-kafka-example-pg-pc" after clicking on create with "example-pg" option selected in Create Service Binding modal
 
 
-        @regression @manual @odc-5947
+        @regression @manual @ODC-5947
         Scenario: Drag and drop connector to existing bindable resource: T-06-TC31
             Given user has installed Service Binding operator
               And user is at Topology page chart view
@@ -376,7 +376,7 @@ Feature: Topology chart area
               And user will see Secret section with secret present
 
 
-        @regression @manual @odc-5947
+        @regression @manual @ODC-5947
         Scenario: Specify the name and the bindable object to connect to in Create Service Binding modal: T-06-TC32
             Given user has installed Service Binding operator
               And user is at Topology page chart view
@@ -392,7 +392,7 @@ Feature: Topology chart area
               And user will see the name "node-kc-connection-1" in connector sidebar
 
 
-        @regression @manual @odc-5947
+        @regression @manual @ODC-5947
         Scenario: Create connection to already existing service binding connection: T-06-TC33
             Given user has installed Service Binding operator
               And user is at Topology page chart view
@@ -405,7 +405,7 @@ Feature: Topology chart area
              Then user will see error "Service binding already exists. Select a different service to connect to."
 
 
-        @regression @odc-4944 @manual
+        @regression @ODC-4944 @manual
         Scenario: Status on Service binding in topology: T-06-TC34
             Given user has installed Service Binding operator
               And user has installed Redis Operator
@@ -425,7 +425,7 @@ Feature: Topology chart area
               And user can see "Error" in Status section on service binding connnector topology sidebar
 
 
-        @regression @odc-4944 @broken-test
+        @regression @ODC-4944 @broken-test
         # Redis operator having issues after 0.14 updates, it does not appears in topology
         # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Connected status on Service binding details page: T-06-TC35
@@ -442,7 +442,7 @@ Feature: Topology chart area
              Then user will see "Connected" Status on Service binding details page
 
 
-        @regression @odc-4944 @broken-test
+        @regression @ODC-4944 @broken-test
         # Redis operator having issues after 0.14 updates, it does not appears in topology
         # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Error status on Service binding details page: T-06-TC36
@@ -459,7 +459,7 @@ Feature: Topology chart area
              Then user will see "Error" Status on Service binding details page
 
 
-        @regression @odc-7120 @broken-test
+        @regression @ODC-7120 @broken-test
         # Redis operator having issues after 0.14 updates, it does not appears in topology
         # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Create connection using import YAML with Service Binding using Label Selector: T-06-TC37
@@ -478,7 +478,7 @@ Feature: Topology chart area
              Then user will see service binding connection
 
 
-        @regression @odc-7120 @broken-test
+        @regression @ODC-7120 @broken-test
         # Redis operator having issues after 0.14 updates, it does not appears in topology
         # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Label specified in Label Selector section on Service binding details page: T-06-TC38
@@ -496,7 +496,7 @@ Feature: Topology chart area
              Then user will see "app=node-ej" in Label Selector section on Service binding details page
 
 
-        @regression @odc-7120 @broken-test
+        @regression @ODC-7120 @broken-test
         # Redis operator having issues after 0.14 updates, it does not appears in topology
         # https://github.com/OT-CONTAINER-KIT/redis-operator/issues/526
         Scenario: Label specified in Label Selector section on Service binding side panel: T-06-TC39

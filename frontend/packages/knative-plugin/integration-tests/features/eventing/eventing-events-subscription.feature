@@ -15,7 +15,7 @@ Feature: Knative Events Subscription
               And user sends an event to the Broker in the namespace "knative-events-aut"
 
 
-        @smoke @odc-7665
+        @smoke @ODC-7665
         Scenario: Add Trigger to Event Subscription: KE-07-TC02
             Given user is at Add page
              When user clicks on Events card
@@ -28,8 +28,3 @@ Feature: Knative Events Subscription
               And user clicks the Subscribe button
              Then user will see connection between Broker and Subscriber
               And user will see sidebar in topology page with title "events-test10" on clicking the connection
-
-
-
-
-

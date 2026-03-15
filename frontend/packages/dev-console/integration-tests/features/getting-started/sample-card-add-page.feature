@@ -14,7 +14,7 @@ Feature: Create Sample Application
               And user is able to see different sample applications
               And sample applications are based on the builder images
 
-        @regression @odc-7128
+        @regression @ODC-7128
         Scenario Outline: Create Sample Application from Add page: GS-03-TC05
             Given user is at Add page
              When user clicks on the Samples card
@@ -23,7 +23,7 @@ Feature: Create Sample Application
               And user clicks on Create button
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page list view
-              
+
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
@@ -42,7 +42,7 @@ Feature: Create Sample Application
               And user will see builder image below builder image version dropdown
               And user will see git url is ineditable field
               And user will see create and cancel button
-            
+
         @regression
         Scenario: Edit Sample Appliation form: GS-03-TC03
             Given user is in Add flow of dev perspective
