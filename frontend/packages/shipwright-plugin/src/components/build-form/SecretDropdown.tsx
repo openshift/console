@@ -1,7 +1,11 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
+import type { SecretKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
 
 interface SecretDropdownProps {
@@ -12,15 +16,32 @@ interface SecretDropdownProps {
 const SecretDropdown: FC<SecretDropdownProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
-  const resources = [
-    {
+
+  const watchedResources = useK8sWatchResources<{ secrets: SecretKind[] }>({
+    secrets: {
       isList: true,
-      kind: SecretModel.kind,
+      kind: referenceForModel(SecretModel),
       namespace,
-      prop: SecretModel.id,
       optional: true,
     },
-  ];
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: watchedResources.secrets?.data,
+        loaded: watchedResources.secrets?.loaded,
+        loadError: watchedResources.secrets?.loadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [
+      watchedResources.secrets?.data,
+      watchedResources.secrets?.loaded,
+      watchedResources.secrets?.loadError,
+    ],
+  );
+
   return (
     <ResourceDropdownField
       name={name}

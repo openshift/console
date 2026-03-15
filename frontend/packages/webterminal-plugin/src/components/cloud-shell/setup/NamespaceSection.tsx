@@ -1,11 +1,14 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import type { WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { InputField, ResourceDropdownField, FLAGS } from '@console/shared';
@@ -33,6 +36,29 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
     [setFieldValue, setFieldTouched],
   );
 
+  const watchedResources = useK8sWatchResources<{ projects: K8sResourceKind[] }>({
+    projects: {
+      isList: true,
+      kind: referenceForModel(ProjectModel),
+    },
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: watchedResources.projects.data,
+        loaded: watchedResources.projects.loaded,
+        loadError: watchedResources.projects.loadError,
+        kind: ProjectModel.kind,
+      },
+    ],
+    [
+      watchedResources.projects.data,
+      watchedResources.projects.loaded,
+      watchedResources.projects.loadError,
+    ],
+  );
+
   const handleOnLoad = (projectList: { [key: string]: string }) => {
     const noProjects = _.isEmpty(projectList);
     if (noProjects || !projectList[namespace.value]) {
@@ -55,13 +81,7 @@ const NamespaceSection: FC<NamespaceSectionProps> = ({ flags }) => {
         fullWidth
         required
         selectedKey={namespace.value}
-        resources={[
-          {
-            isList: true,
-            kind: ProjectModel.kind,
-            prop: ProjectModel.id,
-          },
-        ]}
+        resources={resources}
         dataSelector={['metadata', 'name']}
         onChange={onDropdownChange}
         actionItems={

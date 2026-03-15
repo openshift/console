@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   FormGroup,
   Alert,
@@ -12,15 +12,18 @@ import { useFormikContext, useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import {
-  knativeServingResourcesServices,
-  knativeEventingResourcesBroker,
-  k8sServices,
-  knativeKafkaSinks,
-} from '../../../../utils/get-knative-resources';
+  ServiceModel as KnativeServiceModel,
+  EventingBrokerModel,
+  KafkaSinkModel,
+} from '../../../../models';
+import { useChannelModels } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 import { SinkType } from '../../import-types';
 
@@ -62,13 +65,112 @@ const SinkResources: FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
     [setFieldValue, setFieldTouched, validateForm],
   );
   const contextAvailable = isMoveSink ? false : !!initialValues.formData.sink.name;
-  const resourcesData = [
-    ...k8sServices(namespace),
-    ...knativeServingResourcesServices(namespace),
-    ...getDynamicChannelResourceList(namespace),
-    ...knativeEventingResourcesBroker(namespace),
-    ...knativeKafkaSinks(namespace),
-  ];
+
+  // Get dynamic channel models
+  const { loaded: channelsLoaded, eventSourceChannels: channels } = useChannelModels();
+
+  // Build watch spec for static resources
+  const watchSpec = useMemo(() => {
+    const spec: Record<string, WatchK8sResource> = {
+      services: {
+        isList: true,
+        kind: referenceForModel(ServiceModel),
+        namespace,
+        optional: true,
+      },
+      ksservices: {
+        isList: true,
+        kind: referenceForModel(KnativeServiceModel),
+        namespace,
+        optional: true,
+      },
+      brokers: {
+        isList: true,
+        kind: referenceForModel(EventingBrokerModel),
+        namespace,
+        optional: true,
+      },
+      kafkasinks: {
+        isList: true,
+        kind: referenceForModel(KafkaSinkModel),
+        namespace,
+        optional: true,
+      },
+    };
+
+    // Add dynamic channels when loaded
+    if (channelsLoaded && channels.length > 0) {
+      channels.forEach((model) => {
+        const ref = referenceForModel(model);
+        spec[ref] = {
+          isList: true,
+          kind: ref,
+          namespace,
+          optional: true,
+        };
+      });
+    }
+
+    return spec;
+  }, [namespace, channelsLoaded, channels]);
+
+  const watchedResources = useK8sWatchResources<Record<string, K8sResourceKind[]>>(watchSpec);
+
+  // Transform watched resources to expected format
+  const resourcesData = useMemo(() => {
+    const result = [];
+
+    // Add static resources
+    if (watchedResources.services) {
+      result.push({
+        data: watchedResources.services.data,
+        loaded: watchedResources.services.loaded,
+        loadError: watchedResources.services.loadError,
+        kind: referenceForModel(ServiceModel),
+      });
+    }
+    if (watchedResources.ksservices) {
+      result.push({
+        data: watchedResources.ksservices.data,
+        loaded: watchedResources.ksservices.loaded,
+        loadError: watchedResources.ksservices.loadError,
+        kind: referenceForModel(KnativeServiceModel),
+      });
+    }
+    if (watchedResources.brokers) {
+      result.push({
+        data: watchedResources.brokers.data,
+        loaded: watchedResources.brokers.loaded,
+        loadError: watchedResources.brokers.loadError,
+        kind: referenceForModel(EventingBrokerModel),
+      });
+    }
+    if (watchedResources.kafkasinks) {
+      result.push({
+        data: watchedResources.kafkasinks.data,
+        loaded: watchedResources.kafkasinks.loaded,
+        loadError: watchedResources.kafkasinks.loadError,
+        kind: referenceForModel(KafkaSinkModel),
+      });
+    }
+
+    // Add dynamic channel resources
+    if (channelsLoaded && channels.length > 0) {
+      channels.forEach((model) => {
+        const ref = referenceForModel(model);
+        if (watchedResources[ref]) {
+          result.push({
+            data: watchedResources[ref].data,
+            loaded: watchedResources[ref].loaded,
+            loadError: watchedResources[ref].loadError,
+            kind: ref,
+          });
+        }
+      });
+    }
+
+    return result;
+  }, [watchedResources, channelsLoaded, channels]);
 
   const handleOnLoad = (resourceList: { [key: string]: string }) => {
     if (isEmpty(resourceList)) {
