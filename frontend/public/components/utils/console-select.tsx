@@ -96,18 +96,6 @@ const ConsoleSelectItem: FC<{
   </SelectOption>
 );
 
-/** Returns true if the given `ref` is inside of the legacy modal container */
-const useInsideLegacyModal = (ref: RefObject<HTMLElement>) => {
-  const [insideLegacyModal, setInsideLegacyModal] = useState(false);
-
-  useEffect(() => {
-    const modal = ref.current?.closest('#modal-container');
-    setInsideLegacyModal(!!modal);
-  }, [ref]);
-
-  return insideLegacyModal;
-};
-
 /**
  * A Select is a dropdown that indicates state.
  *
@@ -173,8 +161,6 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Component refs */
   const dropdownWrapperRef = useRef<HTMLDivElement>(null);
-
-  const insideLegacyModal = useInsideLegacyModal(dropdownWrapperRef);
 
   /* Event handlers */
   const onClick = useCallback(
@@ -320,7 +306,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         zIndex={9999}
         popperProps={{
           preventOverflow: menuClassName === 'prevent-overflow',
-          appendTo: renderInline || insideLegacyModal ? 'inline' : undefined,
+          appendTo: renderInline ? 'inline' : undefined,
         }}
         isScrollable
         style={style}

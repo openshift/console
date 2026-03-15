@@ -274,10 +274,6 @@ button.pf-v6-c-dropdown__menu-item.pf-m-disabled {
   pointer-events: auto;
 }
 
-#modal-container .pf-v6-c-backdrop {
-  position: absolute !important;
-}
-
 // Patternfly defaults to globally removing the list element bullets via ul {list-style:none} and selectively applies it using their List component via ul.pf-v6-c-list. We chose to override this because of the amount of ul elements in our codebase that expect the default to be ul {list-style:disc}
 ul {
   list-style: disc;
