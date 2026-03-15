@@ -114,7 +114,7 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useWorkloadColumns<DaemonSetKind>();
+  const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -126,6 +126,8 @@ export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
