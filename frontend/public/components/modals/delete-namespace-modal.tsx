@@ -4,7 +4,7 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useNavigate } from 'react-router';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ModalComponentProps } from '@console/internal/components/factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,

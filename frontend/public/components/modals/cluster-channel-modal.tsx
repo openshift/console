@@ -23,7 +23,7 @@ import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { isManaged } from '../utils/documentation';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterVersionKind,
   getAvailableClusterChannels,

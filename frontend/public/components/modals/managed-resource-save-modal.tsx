@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ResourceLink } from '../utils/resource-link';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 

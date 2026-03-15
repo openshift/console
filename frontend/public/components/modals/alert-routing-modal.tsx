@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '../factory/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { K8sResourceKind } from '../../module/k8s';
 import { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
 import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';

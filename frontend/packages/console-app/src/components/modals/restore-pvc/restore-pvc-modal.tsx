@@ -19,7 +19,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory';
 import {
   dropdownUnits,
   snapshotPVCStorageClassAnnotation,
@@ -54,6 +53,7 @@ import { Status } from '@console/shared/src/components/status/Status';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import { onlyPvcSCs } from '@console/shared/src/selectors/storage';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 

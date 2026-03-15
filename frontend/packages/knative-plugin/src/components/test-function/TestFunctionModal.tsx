@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, Form, ModalHeader, ModalBody, ModalFooter } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { ServiceKind } from '../../types';
 import RequestPane from './RequestPane';
 import ResponsePane from './ResponsePane';

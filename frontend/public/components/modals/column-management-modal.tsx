@@ -30,7 +30,7 @@ import {
 } from '@console/shared/src/hoc/withUserPreferenceCompatibility';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import type { ModalComponentProps } from '../factory';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const MAX_VIEW_COLS = 9;
 
@@ -85,7 +85,7 @@ export const ColumnManagementModal: FC<
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
 
-  const [checkedColumns, setCheckedColumns] = useState(
+  const [checkedColumns, setCheckedColumns] = useState<Set<string>>(
     columnLayout.selectedColumns && columnLayout.selectedColumns.size !== 0
       ? new Set(columnLayout.selectedColumns)
       : new Set(defaultColumns.map((col) => col.id)),
