@@ -12,7 +12,10 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.2 - TBD
 
-- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook ([CONSOLE-3769], [#15904])
+- **Breaking**: Removed support for `console.page/resource/tab` and `console.dashboards/overview/detail/item`
+  extensions. Use `console.tab/horizontalNav` and `console.dashboards/custom/overview/detail/item` extensions
+  instead ([CONSOLE-5093], [#16043])
+- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook, use `pluginName` instead ([CONSOLE-3769], [#15904])
 - **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
 - **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router`) ([CONSOLE-4990], [#15959])
@@ -191,6 +194,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
+[CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -264,6 +268,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15893]: https://github.com/openshift/console/pull/15893
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934
-[#16019]: https://github.com/openshift/console/pull/16019
-[#16057]: https://github.com/openshift/console/pull/16057
 [#15959]: https://github.com/openshift/console/pull/15959
+[#16019]: https://github.com/openshift/console/pull/16019
+[#16043]: https://github.com/openshift/console/pull/16043
+[#16057]: https://github.com/openshift/console/pull/16057

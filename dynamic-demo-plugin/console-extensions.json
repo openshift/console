@@ -379,12 +379,6 @@
     }
   },
   {
-    "type": "console.dashboards/overview/detail/item",
-    "properties": {
-      "component": { "$codeRef": "overviewDetailItem.default" }
-    }
-  },
-  {
     "type": "console.dashboards/custom/overview/detail/item",
     "properties": {
       "title": "%plugin__console-demo-plugin~Custom Overview Detail Title%",

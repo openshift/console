@@ -78,8 +78,6 @@
 76.  [dev-console.add/action](#dev-consoleaddaction)
 77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
 78.  [dev-console.import/environment](#dev-consoleimportenvironment)
-79. [DEPRECATED] [console.dashboards/overview/detail/item](#consoledashboardsoverviewdetailitem)
-80. [DEPRECATED] [console.page/resource/tab](#consolepageresourcetab)
 
 ---
 
@@ -1386,36 +1384,4 @@ This extension can be used to specify extra build environment variable fields un
 | `imageStreamName` | `string` | no | Name of the image stream to provide custom environment variables for |
 | `imageStreamTags` | `string[]` | no | List of supported image stream tags |
 | `environments` | `ImageEnvironment[]` | no | List of environment variables |
-
----
-
-## `console.dashboards/overview/detail/item`
-
-### Summary [DEPRECATED]
-
-@deprecated use CustomOverviewDetailItem type instead
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `component` | `CodeRef<ComponentType>` | no | The value, based on the DetailItem component |
-
----
-
-## `console.page/resource/tab`
-
-### Summary [DEPRECATED]
-
-@deprecated - Use `console.tab/horizontalNav` instead
-
-### Properties
-
-| Name | Value Type | Optional | Description |
-| ---- | ---------- | -------- | ----------- |
-| `model` | `ExtensionK8sGroupKindModel` | no | The model for which this resource page links to. |
-| `component` | `CodeRef<React.ComponentType<{}>>` | no | The component to be rendered when the route matches. |
-| `name` | `string` | no | The name of the tab. |
-| `href` | `string` | yes | The optional href for the tab link. If not provided, the first `path` is used. |
-| `exact` | `boolean` | yes | When `true`, the path must match the URL exactly. |
 
