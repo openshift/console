@@ -20,12 +20,6 @@ jest.mock('../useNavExtensionForPerspective', () => ({
   useNavExtensionsForPerspective: jest.fn(() => []),
 }));
 
-jest.mock('react-dnd', () => ({
-  ...jest.requireActual('react-dnd'),
-  useDrag: jest.fn(() => [{}, jest.fn(), jest.fn()]),
-  useDrop: jest.fn(() => [{}, jest.fn()]),
-}));
-
 const mockK8sModel = {
   apiVersion: 'v1',
   label: 'Test',
@@ -74,14 +68,14 @@ describe('Perspective Nav', () => {
     renderPerspectiveNav();
 
     expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Drag button' })).not.toBeInTheDocument();
   });
 
   it('should render draggable pinned items when more than one pinned resource is available', () => {
     setupPinnedResources(['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig']);
     renderPerspectiveNav();
 
-    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag button' });
     expect(dragButtons).toHaveLength(2);
     dragButtons.forEach((button) => expect(button).toBeVisible());
 
@@ -94,14 +88,14 @@ describe('Perspective Nav', () => {
     renderPerspectiveNav();
 
     expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Drag button' })).not.toBeInTheDocument();
   });
 
   it('should handle multiple valid and one invalid pinned resource', () => {
     setupPinnedResources(['core~v1~ConfigMap', 'build.openshift.io~v1~BuildConfig', 'foo']);
     renderPerspectiveNav();
 
-    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag button' });
     expect(dragButtons).toHaveLength(2);
     dragButtons.forEach((button) => expect(button).toBeVisible());
 
@@ -114,7 +108,7 @@ describe('Perspective Nav', () => {
     renderPerspectiveNav();
 
     expect(screen.getByRole('link', { name: 'ConfigMaps' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Drag button' })).not.toBeInTheDocument();
   });
 
   it('should handle multiple valid and multiple invalid pinned resources', () => {
@@ -127,7 +121,7 @@ describe('Perspective Nav', () => {
     ]);
     renderPerspectiveNav();
 
-    const dragButtons = screen.getAllByRole('button', { name: 'Drag to reorder' });
+    const dragButtons = screen.getAllByRole('button', { name: 'Drag button' });
     expect(dragButtons).toHaveLength(2);
     dragButtons.forEach((button) => expect(button).toBeVisible());
 
@@ -140,6 +134,6 @@ describe('Perspective Nav', () => {
     renderPerspectiveNav();
 
     expect(screen.queryByRole('link', { name: 'ConfigMaps' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Drag button' })).not.toBeInTheDocument();
   });
 });

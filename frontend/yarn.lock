@@ -3534,7 +3534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.1.0, @patternfly/react-core@npm:^6.4.0, @patternfly/react-core@npm:^6.4.1, @patternfly/react-core@npm:~6.4.0":
+"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.1.0, @patternfly/react-core@npm:^6.4.0, @patternfly/react-core@npm:^6.4.1, @patternfly/react-core@npm:^6.5.0-prerelease.37, @patternfly/react-core@npm:~6.4.0":
   version: 6.4.1
   resolution: "@patternfly/react-core@npm:6.4.1"
   dependencies:
@@ -3551,9 +3551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-data-view@npm:6.4.0-prerelease.12":
-  version: 6.4.0-prerelease.12
-  resolution: "@patternfly/react-data-view@npm:6.4.0-prerelease.12"
+"@patternfly/react-data-view@npm:~6.4.0-prerelease.12":
+  version: 6.4.0
+  resolution: "@patternfly/react-data-view@npm:6.4.0"
   dependencies:
     "@patternfly/react-component-groups": "npm:^6.1.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -3564,29 +3564,29 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/3e563cf3c8bcb468a1e96911582a6998025dfb79d5ab851930ecf16f557b5741f2ba1ab3af4027eba54feb6d8ee54a00e7cb12ac4c1090ee5ecaa032d5f93388
+  checksum: 10c0/da60fd99cf0ab51494d42d90c9f87a424f3896a47af8794a2492ca2331c7aadac6b845eae5ed75c3b411b5d1e48facf834eb6a43b0b6e6cdf92297197d2be7ec
   languageName: node
   linkType: hard
 
-"@patternfly/react-drag-drop@npm:~6.4.0":
-  version: 6.4.1
-  resolution: "@patternfly/react-drag-drop@npm:6.4.1"
+"@patternfly/react-drag-drop@npm:~6.5.0-prerelease.38":
+  version: 6.5.0-prerelease.38
+  resolution: "@patternfly/react-drag-drop@npm:6.5.0-prerelease.38"
   dependencies:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
-    "@patternfly/react-core": "npm:^6.4.1"
-    "@patternfly/react-icons": "npm:^6.4.0"
-    "@patternfly/react-styles": "npm:^6.4.0"
+    "@patternfly/react-core": "npm:^6.5.0-prerelease.37"
+    "@patternfly/react-icons": "npm:^6.5.0-prerelease.15"
+    "@patternfly/react-styles": "npm:^6.5.0-prerelease.13"
     resize-observer-polyfill: "npm:^1.5.1"
   peerDependencies:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/0a2334b0982efc607d5a50aa13d036771a582590a1cd4b9f47603d3173cf30d3725a8a7162f39fd0df76441ed4c9c26fb0ea076bf1300a0561ec4cd9f467edc4
+  checksum: 10c0/df819848045650bc5b7aa0f06efdde3a68d7b88834dc8c2ca701ec196342d01b70eea9726235528a0f617b50bfc50dcd15e682a2a1728b6286c35ae7760eff68
   languageName: node
   linkType: hard
 
-"@patternfly/react-icons@npm:^6.0.0, @patternfly/react-icons@npm:^6.0.0-prerelease.7, @patternfly/react-icons@npm:^6.4.0, @patternfly/react-icons@npm:~6.4.0":
+"@patternfly/react-icons@npm:^6.0.0, @patternfly/react-icons@npm:^6.0.0-prerelease.7, @patternfly/react-icons@npm:^6.4.0, @patternfly/react-icons@npm:^6.5.0-prerelease.15, @patternfly/react-icons@npm:~6.4.0":
   version: 6.4.0
   resolution: "@patternfly/react-icons@npm:6.4.0"
   peerDependencies:
@@ -3611,7 +3611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.1.0, @patternfly/react-styles@npm:^6.4.0, @patternfly/react-styles@npm:~6.4.0":
+"@patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.1.0, @patternfly/react-styles@npm:^6.4.0, @patternfly/react-styles@npm:^6.5.0-prerelease.13, @patternfly/react-styles@npm:~6.4.0":
   version: 6.4.0
   resolution: "@patternfly/react-styles@npm:6.4.0"
   checksum: 10c0/ed94ec58ddeb21eeecb24a6bbaf2e64d2fb4e641d1e8e49107fa162e7b115a23f9e59242d390937cc2d48a1ee5b2e1133c133e9dd47a5b9b08bf9a157bf8b437
@@ -17761,8 +17761,8 @@ __metadata:
     "@patternfly/react-code-editor": "npm:~6.4.0"
     "@patternfly/react-component-groups": "npm:~6.4.0"
     "@patternfly/react-core": "npm:~6.4.0"
-    "@patternfly/react-data-view": "npm:6.4.0-prerelease.12"
-    "@patternfly/react-drag-drop": "npm:~6.4.0"
+    "@patternfly/react-data-view": "npm:~6.4.0-prerelease.12"
+    "@patternfly/react-drag-drop": "npm:~6.5.0-prerelease.38"
     "@patternfly/react-icons": "npm:~6.4.0"
     "@patternfly/react-log-viewer": "npm:~6.3.0"
     "@patternfly/react-styles": "npm:~6.4.0"
