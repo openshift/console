@@ -20,7 +20,7 @@ import {
   filterVirtualMachineInstancesByNode,
   useIsKubevirtPluginActive,
   useWatchVirtualMachineInstances,
-} from '@console/app/src/components/nodes/NodeVmUtils';
+} from '@console/app/src/components/nodes/utils/NodeVmUtils';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
   getGroupVersionKindForResource,

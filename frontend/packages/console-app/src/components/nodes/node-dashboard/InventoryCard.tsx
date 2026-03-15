@@ -29,7 +29,7 @@ import {
   useIsKubevirtPluginActive,
   useWatchVirtualMachineInstances,
   VirtualMachineModel,
-} from '../NodeVmUtils';
+} from '../utils/NodeVmUtils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {

@@ -110,7 +110,7 @@ const getDataViewRows = (data: { obj: MachineKind }[], columns: TableColumn<Mach
   });
 };
 
-const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) => {
+export const MachineDetails: FC<MachineDetailsProps> = ({ obj, hideConditions }) => {
   const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
   const instanceType = getMachineInstanceType(obj);
@@ -180,10 +180,12 @@ const MachineDetails: FC<MachineDetailsProps> = ({ obj }: { obj: MachineKind }) 
           </GridItem>
         </Grid>
       </PaneBody>
-      <PaneBody>
-        <SectionHeading text={t('public~Conditions')} />
-        <Conditions conditions={obj.status?.providerStatus?.conditions} />
-      </PaneBody>
+      {!hideConditions ? (
+        <PaneBody>
+          <SectionHeading text={t('public~Conditions')} />
+          <Conditions conditions={obj.status?.providerStatus?.conditions} />
+        </PaneBody>
+      ) : null}
     </>
   );
 };
@@ -349,6 +351,7 @@ export const MachineDetailsPage: FC = (props) => (
 
 export type MachineDetailsProps = {
   obj: MachineKind;
+  hideConditions?: boolean;
 };
 
 export type MachinePageProps = {
