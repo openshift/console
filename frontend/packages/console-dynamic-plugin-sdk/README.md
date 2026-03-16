@@ -128,48 +128,48 @@ Plugins should use PatternFly components and styles for a consistent user interf
 
 ## Console version compatibility
 
-To make your plugin compatible with a range of Console versions, you can adopt one of the strategies
-used in existing plugin projects listed below. Make sure to follow [release notes](./release-notes)
-and adapt your code to avoid compatibility issues, including any changes in plugin APIs, shared modules
-and PatternFly support.
+To make your plugin compatible with multiple Console versions, adopt one of the strategies listed below.
+Make sure to follow [release notes](./release-notes) and adapt your code accordingly to avoid compatibility
+issues.
 
 ### Target one Console version per code branch
 
 Example project: https://github.com/kubevirt-ui/kubevirt-plugin
 
-Create a code branch per supported Console version, e.g. `release-4.21` for use with Console 4.21.
-Use Console 4.21 plugin SDK packages. Review plugin metadata and ensure that the `@console/pluginAPI`
-dependency (if present) covers any earlier Console versions that should support and load your plugin.
+Create a code branch for each supported Console version. For example, create a `release-4.21` branch for
+use with Console 4.21. Build the plugin using the Console 4.21 SDK packages. If you use `@console/pluginAPI`
+dependency in your plugin metadata, make sure it targets earlier Console versions that must load the plugin.
 
-You will need to set up CI and other workflows to ensure that changes in `release-4.21` branch are
-tested on a cluster with Console 4.21 (and similarly for other target versions). When deploying your
-plugin on the cluster, make sure to use the appropriate plugin version based on OCP Console version.
+Set up CI and related workflows so that changes in your `release-4.21` branch are tested on a cluster that
+runs Console 4.21. Apply the same approach for each supported Console version. When deploying the plugin,
+use the plugin version that matches the Console version on the cluster. This ensures that the plugin uses
+the same API version as the Console, avoiding compatibility issues between plugin code and Console APIs.
 
-- Pros: zero API version skew, i.e. use 4.21 APIs in Console 4.21
-- Cons: added complexity due to code branching and related workflows
+With this approach you can target a specific Console version without any Console plugin API version skew.
 
 ### Target multiple Console versions per code branch
 
 Example project: https://github.com/stolostron/console/tree/main/frontend/plugins
 
-In your main development branch, use Console plugin SDK packages with versions that correspond to
-the oldest Console version supported by your plugin. The assumption is that newer Console versions
-support plugins built for older Console versions, unless the version skew is too high. For example,
-using Console 4.19 plugin SDK packages and targeting Console versions 4.19 to 4.21.
+In the main development branch, use the Console plugin SDK packages that match the oldest Console version
+your plugin supports. This approach relies on newer Console versions continuing to support plugins built
+for earlier versions. For example, using the Console 4.19 plugin SDK package enables the plugin to target
+Console versions 4.19 through to the latest version.
 
-Review plugin metadata and make sure that the `@console/pluginAPI` dependency matches the supported
-Console version range, e.g. `>=4.19.0-0`.
+Review the plugin metadata and make sure that the `@console/pluginAPI` dependency is present and matches
+the supported Console version range; for example, `>=4.19.0-0`.
 
-You will need to set up CI and other workflows to ensure that your plugin is tested on _all_ of the
-supported Console versions. When deploying your plugin on the cluster, check that OCP Console version
-meets the supported Console version range.
+Set up CI and related workflows to test your plugin on all supported Console versions. When deploying the
+plugin, verify that the Console version on the cluster falls within the supported Console version range.
 
-- Pros: no need for code branching, i.e. use a single branch for all development
-- Cons: possible API version skew due to using oldest supported Console plugin SDK packages
+This approach uses a single development branch without the need to maintain separate release branches for
+different Console versions. Be aware of the Console plugin API version skew potential due to your plugin
+supporting multiple Console versions.
 
 ## Shared modules
 
-Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with its dynamic plugins.
+Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with its
+dynamic plugins.
 
 The following shared modules are provided by Console, without plugins providing their own fallback:
 
@@ -186,8 +186,8 @@ The following shared modules are provided by Console, without plugins providing 
 - `redux`
 - `redux-thunk`
 
-Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
-in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
+Shared modules which are provided by Console are listed as optional `peerDependencies` in the manifest
+of `@openshift-console/dynamic-plugin-sdk` package.
 
 ## How to upgrade your plugins
 
