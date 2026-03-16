@@ -444,7 +444,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                     }}
                     categoryName={translatedNameFilterTitle}
                   >
-                    <div className="pf-v6-c-input-group co-filter-group">
+                    <div className="pf-v6-c-input-group">
                       {showSearchFiltersDropdown && (
                         <ConsoleSelect
                           alwaysShowTitle

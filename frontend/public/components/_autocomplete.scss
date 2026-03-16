@@ -2,12 +2,6 @@
   position: relative;
   width: 100%;
   z-index: var(--pf-t--global--z-index--sm);
-  @media (max-width: $screen-xs-min) {
-    max-width: calc(100% - 95px);
-  }
-  @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
-    max-width: 200px;
-  }
 }
 
 .co-suggestion-box__suggestions {
@@ -17,9 +11,6 @@
   gap: var(--pf-t--global--spacer--gap--group--vertical);
   position: absolute;
   width: 100%;
-  @media (min-width: $screen-xs-min) and (max-width: $screen-sm-min) {
-    max-width: 200px;
-  }
 }
 
 .co-suggestion-box__suggestions--shadowed {

@@ -45,7 +45,7 @@ export const DataViewLabelFilter = <TData,>({
         applyLabelFilters([]);
       }}
     >
-      <div className="pf-v6-c-input-group co-filter-group">
+      <div className="pf-v6-c-input-group">
         <AutocompleteInput
           color="purple"
           onSuggestionSelect={(selected) => {
