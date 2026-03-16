@@ -4,7 +4,6 @@ import {
   ReactNode,
   Ref,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -53,7 +52,7 @@ import {
   SHOW_FULL_LOG_USERSETTINGS_KEY,
 } from '@console/shared/src/constants';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { Loading } from '@console/shared/src/components/loading/Loading';
 import { FetchProgressModal } from '@console/shared/src/components/modals/FetchProgressModal';
 import { TogglePlay } from './toggle-play';
@@ -497,7 +496,7 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   resourceStatus,
 }) => {
   const { t } = useTranslation('public');
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   const [showFullLog, setShowFullLog] = useUserPreference<boolean>(
     SHOW_FULL_LOG_USERSETTINGS_KEY,
     false,

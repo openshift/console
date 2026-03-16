@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { createContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const THEME_USER_SETTING_KEY = 'console.theme';
@@ -12,7 +12,11 @@ export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
 
 type PROCESSED_THEME = typeof THEME_DARK | typeof THEME_LIGHT;
 
-export const applyThemeBehaviour = (
+type Theme = {
+  theme: PROCESSED_THEME;
+};
+
+const applyThemeBehaviour = (
   theme: string,
   onDarkBehaviour?: () => string,
   onLightBehaviour?: () => string,
@@ -40,7 +44,9 @@ export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PR
   ) as PROCESSED_THEME;
 };
 
-export const ThemeContext = createContext<PROCESSED_THEME>(undefined);
+export const ThemeContext = createContext<Theme>({
+  theme: THEME_LIGHT,
+});
 
 interface ThemeProviderProps {
   children?: ReactNode;
@@ -83,5 +89,13 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     themeLoaded && localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
   }, [theme, themeLoaded]);
 
-  return <ThemeContext.Provider value={processedTheme}>{children}</ThemeContext.Provider>;
+  const providerValue = useMemo<Theme>(() => {
+    return {
+      theme: processedTheme,
+    };
+  }, [processedTheme]);
+
+  return <ThemeContext.Provider value={providerValue}>{children}</ThemeContext.Provider>;
 };
+
+export const useTheme = () => useContext(ThemeContext);

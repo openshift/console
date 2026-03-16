@@ -1,5 +1,4 @@
 import type { ReactNode, FC } from 'react';
-import { useContext } from 'react';
 import {
   Grid,
   GridItem,
@@ -10,7 +9,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import type { PopoverPlacement } from '@console/shared/src/components/popover/const';
 import Popover from '@console/shared/src/components/popover/Popover';
 import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
@@ -58,7 +57,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
     <StepFooter
