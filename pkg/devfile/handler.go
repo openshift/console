@@ -34,6 +34,35 @@ func DevfileSamplesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(sampleIndex)
 }
 
+// parseDevfileWithFallback attempts to parse the devfile with full parent/plugin
+// resolution (flattened). If that fails (e.g. the parent registry is unreachable or
+// the OCI pull times out), it retries without flattening. The unflattened parse
+// still provides all locally-defined components and commands, which is sufficient
+// for the outer-loop resource generation the console backend performs.
+func parseDevfileWithFallback(devfileContentBytes []byte, httpTimeout *int) (parser.DevfileObj, error) {
+	devfileObj, _, err := devfile.ParseDevfileAndValidate(parser.ParserArgs{
+		Data:        devfileContentBytes,
+		HTTPTimeout: httpTimeout,
+	})
+	if err == nil {
+		return devfileObj, nil
+	}
+
+	klog.Warningf("Flattened devfile parse failed, retrying without parent resolution: %v", err)
+
+	flattenedDevfile := false
+	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{
+		Data:             devfileContentBytes,
+		HTTPTimeout:      httpTimeout,
+		FlattenedDevfile: &flattenedDevfile,
+	})
+	if err != nil {
+		return parser.DevfileObj{}, err
+	}
+
+	return devfileObj, nil
+}
+
 func DevfileHandler(w http.ResponseWriter, r *http.Request) {
 	var (
 		data       DevfileForm
@@ -48,11 +77,10 @@ func DevfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get devfile content and parse it using a library call in the future
 	devfileContentBytes := []byte(data.Devfile.DevfileContent)
-	//reduce the http request and response timeouts on the devfile library parser to 10s
 	httpTimeout := 10
-	devfileObj, _, err = devfile.ParseDevfileAndValidate(parser.ParserArgs{Data: devfileContentBytes, HTTPTimeout: &httpTimeout})
+
+	devfileObj, err = parseDevfileWithFallback(devfileContentBytes, &httpTimeout)
 	if err != nil {
 		errMsg := "Failed to parse devfile:"
 		if strings.Contains(err.Error(), "schemaVersion not present in devfile") {
