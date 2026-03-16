@@ -20,34 +20,49 @@ const DEPRECATED_OPERATOR_WARNING_CHANNEL_ID = 'deprecated-operator-warning-chan
 const DEPRECATED_OPERATOR_WARNING_VERSION_ID = 'deprecated-operator-warning-version';
 
 describe('Deprecated operator warnings', () => {
+  const subscriptionName = testDeprecatedSubscription.metadata.name;
+  const subscriptionNamespace = testDeprecatedSubscription.metadata.namespace;
+  const csvName = testDeprecatedSubscription.spec.startingCSV;
+  const catalogSourceName = testDeprecatedCatalogSource.metadata.name;
+  const catalogSourceNamespace = testDeprecatedCatalogSource.metadata.namespace;
+
+  const cleanupOperatorResources = () => {
+    // Delete subscription first to stop operator reconciliation
+    cy.exec(
+      `oc delete subscription ${subscriptionName} -n ${subscriptionNamespace} --ignore-not-found --wait=false`,
+      { failOnNonZeroExit: false, timeout: 60000 },
+    );
+    // Delete CSV to remove the operator
+    cy.exec(
+      `oc delete clusterserviceversion ${csvName} -n ${subscriptionNamespace} --ignore-not-found --wait=false`,
+      { failOnNonZeroExit: false, timeout: 60000 },
+    );
+    // Delete any InstallPlans related to the operator
+    cy.exec(
+      `oc delete installplan -n ${subscriptionNamespace} -l operators.coreos.com/${subscriptionName}.${subscriptionNamespace}= --ignore-not-found --wait=false`,
+      { failOnNonZeroExit: false, timeout: 60000 },
+    );
+  };
+
   before(() => {
     cy.login();
-    // Make test idempotent for local testing by deleting test resources if they exist
+    // Clean up any existing resources from previous failed runs
+    cleanupOperatorResources();
     cy.exec(
-      `oc delete subscription ${testDeprecatedSubscription.metadata.name} -n ${testDeprecatedSubscription.metadata.namespace}`,
-      { failOnNonZeroExit: false },
+      `oc delete catalogsource ${catalogSourceName} -n ${catalogSourceNamespace} --ignore-not-found --wait=false`,
+      { failOnNonZeroExit: false, timeout: 60000 },
     );
-    cy.exec(
-      `oc delete clusterserviceversion ${testDeprecatedSubscription.spec.startingCSV} -n ${testDeprecatedSubscription.metadata.namespace}`,
-      { failOnNonZeroExit: false },
-    );
-    // eslint-disable-next-line promise/catch-or-return
-    cy.exec(
-      `oc delete ${testDeprecatedCatalogSource.kind} ${testDeprecatedCatalogSource.metadata.name} -n ${testDeprecatedCatalogSource.metadata.namespace}`,
-      { failOnNonZeroExit: false },
-    ).then(({ stderr }) => {
-      if (stderr && !stderr.includes('not found')) {
-        throw new Error(stderr);
-      }
-      return create(testDeprecatedCatalogSource);
-    });
+    create(testDeprecatedCatalogSource);
   });
 
   after(() => {
     cy.visit('/');
-    operator.uninstall(testOperator.name);
+    // Clean up operator resources
+    cleanupOperatorResources();
+    // Clean up catalog source
     cy.exec(
-      `oc delete ${testDeprecatedCatalogSource.kind} ${testDeprecatedCatalogSource.metadata.name} -n ${testDeprecatedCatalogSource.metadata.namespace}`,
+      `oc delete catalogsource ${catalogSourceName} -n ${catalogSourceNamespace} --ignore-not-found --wait=false`,
+      { failOnNonZeroExit: false, timeout: 60000 },
     );
     checkErrors();
   });
