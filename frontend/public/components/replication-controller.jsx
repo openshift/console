@@ -32,10 +32,11 @@ import {
 } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
+  nameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ReplicationControllerModel } from '../models';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -216,14 +217,19 @@ const getDataViewRows = (data, columns) => {
 
 const useReplicationControllersColumns = () => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    ReplicationControllerModel,
+  );
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -231,6 +237,7 @@ const useReplicationControllersColumns = () => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -239,6 +246,7 @@ const useReplicationControllersColumns = () => {
         title: t('public~Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -247,6 +255,7 @@ const useReplicationControllersColumns = () => {
         title: t('public~Phase'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.annotations["openshift.io/deployment.phase"]',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -255,6 +264,7 @@ const useReplicationControllersColumns = () => {
         title: t('public~Owner'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.ownerReferences[0].name',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -263,6 +273,7 @@ const useReplicationControllersColumns = () => {
         title: t('public~Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -271,16 +282,17 @@ const useReplicationControllersColumns = () => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const ReplicationControllersList = ({ data, loaded, ...props }) => {
-  const columns = useReplicationControllersColumns();
+  const { columns, resetAllColumnWidths } = useReplicationControllersColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -292,6 +304,8 @@ const ReplicationControllersList = ({ data, loaded, ...props }) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
