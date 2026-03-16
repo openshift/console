@@ -146,6 +146,15 @@ export const shouldLogout = (url: string): boolean => {
   return false;
 };
 
+/**
+ * Converts Go-style Unicode escape sequences (\uXXXX, \UXXXXXXXX) in K8s API error
+ * messages back to actual Unicode characters for proper display in the browser.
+ */
+export const unescapeGoUnicode = (str: string): string =>
+  str
+    .replace(/\\U([0-9a-fA-F]{8})/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
+
 export const validateStatus = async (
   response: Response,
   url: string,
@@ -217,6 +226,6 @@ export const validateStatus = async (
       reason = response.statusText;
     }
 
-    throw new HttpError(reason, response.status, response, json);
+    throw new HttpError(unescapeGoUnicode(reason), response.status, response, json);
   });
 };
