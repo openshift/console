@@ -41,7 +41,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
   const { setFieldValue } = useFormikContext<ConfigMapFormInitialValues>();
   const { editorType, formData, yamlData, formReloadCount, isCreateFlow, resourceVersion } = values;
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.configMapForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.configMapForm.editor.lastView';
   const isStale = !!configMap && configMap?.metadata?.resourceVersion !== resourceVersion;
   const immutableCfg = !!configMap && configMap.immutable;
   const immutableCfgError = t(
@@ -105,7 +105,7 @@ export const ConfigMapFormEditor: FC<FormikProps<any> & ConfigMapFormEditorProps
             sanitizeTo: () =>
               sanitizeToYaml(formData, _.merge({}, configMap, safeYAMLToJS(yamlData))),
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

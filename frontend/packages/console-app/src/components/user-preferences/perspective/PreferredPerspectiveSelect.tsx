@@ -11,7 +11,7 @@ import {
 } from '@console/shared/src/hooks/usePerspectives';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
-  PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+  PREFERRED_PERSPECTIVE_USER_PREFERENCE_KEY,
   usePreferredPerspective,
 } from './usePreferredPerspective';
 
@@ -56,7 +56,7 @@ const PreferrredPerspectiveSelect: FC = () => {
       if (selection !== preferredPerspectiveID) {
         setPreferredPerspectiveID(selection === lastViewed ? null : selection);
         fireTelemetryEvent('User Preference Changed', {
-          property: PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+          property: PREFERRED_PERSPECTIVE_USER_PREFERENCE_KEY,
           value: selection,
         });
       }

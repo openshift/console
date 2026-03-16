@@ -159,12 +159,12 @@ export const TableData: FC<TableDataProps> = require('@console/internal/componen
  * @example
  * ```tsx
  *   // See implementation for more details on TableColumn type
- *   const [activeColumns, userSettingsLoaded] = useActiveColumns({
+ *   const [activeColumns, columnPreferenceLoaded] = useActiveColumns({
  *     columns,
  *     showNamespaceOverride: false,
  *     columnManagementID,
  *   });
- *   return userSettingsLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+ *   return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
  * ```
  */
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')

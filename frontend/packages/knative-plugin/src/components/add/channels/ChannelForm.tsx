@@ -44,7 +44,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   namespace,
   channels,
 }) => {
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.channelForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.channelForm.editor.lastView';
   const {
     values,
     setFieldValue,
@@ -147,7 +147,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
                     channelYamltoFormData(formData, values.formData),
                 }}
                 yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+                lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               />
             </>
           )}

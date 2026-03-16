@@ -26,15 +26,14 @@ import { Status } from '@console/shared/src/components/status/Status';
 import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
 import {
   FLAGS,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
   REQUESTER_FILTER,
 } from '@console/shared/src/constants/common';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
@@ -348,9 +347,8 @@ export const NamespacesList = (props) => {
   const { t } = useTranslation();
   const dispatch = useConsoleDispatch();
   const columns = useNamespacesColumns();
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -423,7 +421,7 @@ export const NamespacesList = (props) => {
     return !filters.requester || filters.requester.includes(String(requesterType));
   }, []);
 
-  if (!userSettingsLoaded) {
+  if (!columnPreferenceLoaded) {
     return null;
   }
 
@@ -658,10 +656,7 @@ const getProjectDataViewRows = (
 
 const ProjectLink = ({ project }) => {
   const dispatch = useConsoleDispatch();
-  const [, setLastNamespace] = useUserPreferenceCompatibility(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
+  const [, setLastNamespace] = useUserPreference(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   const basePath = url.pathname;
@@ -722,9 +717,8 @@ export const ProjectList = (props) => {
   const { t } = useTranslation();
   const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -805,7 +799,7 @@ export const ProjectList = (props) => {
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS) || !userSettingsLoaded) {
+  if (flagPending(canGetNS) || !columnPreferenceLoaded) {
     return null;
   }
 

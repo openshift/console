@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import type { K8sModel } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { COLUMN_WIDTH_CONFIGMAP_KEY } from '@console/shared/src/constants/common';
+import { COLUMN_WIDTH_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 /**
@@ -45,7 +45,7 @@ export const useColumnWidthSettings = (
   const resolvedTableId = useMemo(() => referenceForModel(model), [model]);
 
   const [columnWidths, setColumnWidths] = useUserPreference<ColumnWidthUserSettings>(
-    COLUMN_WIDTH_CONFIGMAP_KEY,
+    COLUMN_WIDTH_USER_PREFERENCE_KEY,
     {},
   );
 

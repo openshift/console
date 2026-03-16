@@ -3,7 +3,7 @@ import { Banner, Button, Flex, PageSection } from '@patternfly/react-core';
 
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
-  PREFERRED_TELEMETRY_USER_SETTING_KEY,
+  PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
@@ -14,7 +14,11 @@ export const TelemetryNotifier = () => {
   const [
     currentUserPreferenceTelemetryValue,
     setCurrentUserPreferenceTelemetryValue,
-  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
+  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
+    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+    null,
+    true,
+  );
 
   const userResponse = (value: USER_TELEMETRY_ANALYTICS) => {
     setCurrentUserPreferenceTelemetryValue(value);

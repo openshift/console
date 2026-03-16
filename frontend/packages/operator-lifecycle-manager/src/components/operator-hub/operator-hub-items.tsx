@@ -21,12 +21,11 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
-  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
+  COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
@@ -573,9 +572,10 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { setQueryArgument, removeQueryArgument, getQueryArgument } = useQueryParamsMutator();
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreferenceCompatibility<
-    boolean
-  >(userSettingsKey, storeKey, false);
+  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreference<boolean>(
+    ignoreWarningPreferenceKey,
+    false,
+  );
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
   const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(undefined);

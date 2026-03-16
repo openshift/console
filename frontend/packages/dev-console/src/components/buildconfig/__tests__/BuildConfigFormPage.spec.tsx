@@ -16,8 +16,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 // For internal used Dropdowns
-jest.mock('@console/shared/src/hooks/useUserPreferenceCompatibility', () => ({
-  useUserPreferenceCompatibility: () => ['', () => {}],
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => ['', () => {}, true],
 }));
 
 jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({

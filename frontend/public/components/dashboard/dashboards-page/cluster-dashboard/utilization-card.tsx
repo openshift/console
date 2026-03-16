@@ -275,7 +275,7 @@ export const UtilizationCard = () => {
     ClusterOverviewMultilineUtilizationItem
   >(isClusterOverviewMultilineUtilizationItem);
 
-  // TODO: add `useUserPreferenceCompatibility` to store selectedNodes
+  // TODO: add `useUserPreference` to store selectedNodes
   const onNodeSelect = (event: MouseEvent, selection: string) => {
     const selectionUpdated = selection === 'control plane' ? 'master' : selection;
     if (selectedNodes.includes(selectionUpdated)) {

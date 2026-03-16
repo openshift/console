@@ -4,8 +4,8 @@ import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
-  LAST_RESOURCE_TYPE_STORAGE_KEY,
-  PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY,
+  LAST_RESOURCE_TYPE_USER_PREFERENCE_KEY,
+  PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY,
 } from '../../../const';
 import { Resources } from '../import-types';
 
@@ -19,10 +19,10 @@ export const useResourceType = (): [string, Dispatch<SetStateAction<string>>] =>
     preferredResourceType,
     setPreferredResourceType,
     preferredResourceTypeLoaded,
-  ] = useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_SETTING_KEY, defaultResourceType);
+  ] = useUserPreference<string>(PREFERRED_RESOURCE_TYPE_USER_PREFERENCE_KEY, defaultResourceType);
 
   const [resourceType, setResourceType, resourceTypeLoaded] = useUserPreference<string>(
-    LAST_RESOURCE_TYPE_STORAGE_KEY,
+    LAST_RESOURCE_TYPE_USER_PREFERENCE_KEY,
     defaultResourceType,
   );
 
