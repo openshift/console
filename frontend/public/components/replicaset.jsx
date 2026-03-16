@@ -37,10 +37,11 @@ import {
 } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ReplicaSetModel } from '../models';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -200,14 +201,17 @@ const getDataViewRows = (data, columns) => {
 
 const useReplicaSetsColumns = () => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ReplicaSetModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -215,6 +219,7 @@ const useReplicaSetsColumns = () => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -223,6 +228,7 @@ const useReplicaSetsColumns = () => {
         title: t('public~Status'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.numReplicas)),
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -231,15 +237,16 @@ const useReplicaSetsColumns = () => {
         title: t('public~Labels'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('public~Owner'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.ownerReferences[0].name',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -248,6 +255,7 @@ const useReplicaSetsColumns = () => {
         title: t('public~Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -256,16 +264,17 @@ const useReplicaSetsColumns = () => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const ReplicaSetsList = ({ data, loaded, ...props }) => {
-  const columns = useReplicaSetsColumns();
+  const { columns, resetAllColumnWidths } = useReplicaSetsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -277,6 +286,8 @@ const ReplicaSetsList = ({ data, loaded, ...props }) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
