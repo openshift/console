@@ -27,6 +27,7 @@ import {
   ResourceListPage as ResourceListPageExt,
   isResourceListPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { useNamespaceFromURL } from './useNamespaceFromURL';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'params'), props);
@@ -72,7 +73,8 @@ const ResourceListPage_ = connectToPlural(
 
 export const ResourceListPage = (props) => {
   const params = useParams();
-  return <ResourceListPage_ {...props} params={params} />;
+  const ns = useNamespaceFromURL();
+  return <ResourceListPage_ {...props} params={{ ...params, ns }} />;
 };
 
 const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) => {
@@ -125,7 +127,8 @@ const ResourceDetailsPage_ = connectToPlural((props: ResourceDetailsPageProps) =
 
 export const ResourceDetailsPage = (props) => {
   const params = useParams();
-  return <ResourceDetailsPage_ {...props} params={params} />;
+  const ns = useNamespaceFromURL();
+  return <ResourceDetailsPage_ {...props} params={{ ...params, ns }} />;
 };
 
 export type ResourceListPageProps = {
