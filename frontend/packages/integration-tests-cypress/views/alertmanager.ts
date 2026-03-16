@@ -68,10 +68,14 @@ export const alertmanager = {
     cy.exec(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${defaultAlertmanagerYaml}}]'`,
     ),
-  save: () => cy.byTestID('save-changes').should('be.enabled').click(),
+  save: () => {
+    cy.byTestID('save-changes').should('be.enabled').click();
+    // wait for the changes to rollout
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(10000);
+  },
   showAdvancedConfiguration: () => cy.byTestID('advanced-configuration').find('button').click(),
   validateCreation: (receiverName: string, typeCellName: string, labelCellName: string) => {
-    listPage.dvFilter.byName(receiverName);
     listPage.dvRows.shouldExist(receiverName);
     listPage.dvRows.shouldExist(receiverName, typeCellName);
     listPage.dvRows.shouldExist(receiverName, labelCellName);

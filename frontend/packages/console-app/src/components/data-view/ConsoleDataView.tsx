@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
+import './ConsoleDataView.scss';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -14,6 +15,7 @@ import {
 } from '@patternfly/react-data-view';
 import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -170,7 +172,10 @@ export const ConsoleDataView = <
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}
     >
-      <DataView activeState={activeState}>
+      <DataView
+        activeState={activeState}
+        className={css(dataViewFilterNodes.length === 1 && 'co-console-data-view-single-filter')}
+      >
         <DataViewToolbar
           filters={
             dataViewFilterNodes.length > 0 && (
