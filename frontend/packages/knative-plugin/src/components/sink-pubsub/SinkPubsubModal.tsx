@@ -5,14 +5,14 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import type { FirehoseResource } from '@console/internal/components/utils';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
 import { ResourceDropdownField } from '@console/shared';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
   resourceName: string;
-  resourceDropdown: FirehoseResource[];
+  resourceDropdown: FirehoseResult[];
   labelTitle: string;
   cancel?: () => void;
 }

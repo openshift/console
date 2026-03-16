@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
@@ -7,7 +8,9 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { HelmChartRepositoryType } from '@console/helm-plugin/src/types/helm-types';
 import { ExpandCollapse } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   InputField,
   ResourceDropdownField,
@@ -40,6 +43,57 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
     values: { formData },
   } = useFormikContext<FormikValues>();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
+
+  const watchedResources = useK8sWatchResources<{
+    configMaps: K8sResourceKind[];
+    secrets: K8sResourceKind[];
+  }>({
+    configMaps: {
+      isList: true,
+      kind: ConfigMapModel.kind,
+      namespace: 'openshift-config',
+      optional: true,
+    },
+    secrets: {
+      isList: true,
+      kind: SecretModel.kind,
+      namespace: 'openshift-config',
+      optional: true,
+    },
+  });
+
+  const configMapResources = useMemo(
+    () => [
+      {
+        data: watchedResources.configMaps?.data,
+        loaded: watchedResources.configMaps?.loaded,
+        loadError: watchedResources.configMaps?.loadError,
+        kind: ConfigMapModel.kind,
+      },
+    ],
+    [
+      watchedResources.configMaps?.data,
+      watchedResources.configMaps?.loaded,
+      watchedResources.configMaps?.loadError,
+    ],
+  );
+
+  const secretResources = useMemo(
+    () => [
+      {
+        data: watchedResources.secrets?.data,
+        loaded: watchedResources.secrets?.loaded,
+        loadError: watchedResources.secrets?.loadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [
+      watchedResources.secrets?.data,
+      watchedResources.secrets?.loaded,
+      watchedResources.secrets?.loadError,
+    ],
+  );
+
   return (
     <FormSection>
       {showScopeType && !existingRepo && (
@@ -110,15 +164,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
           <ResourceDropdownField
             name="formData.ca"
             label={t('helm-plugin~CA certificate')}
-            resources={[
-              {
-                isList: true,
-                kind: ConfigMapModel.kind,
-                namespace: 'openshift-config',
-                optional: true,
-                prop: ConfigMapModel.id,
-              },
-            ]}
+            resources={configMapResources}
             dataSelector={['metadata', 'name']}
             fullWidth
             placeholder={t('helm-plugin~Select ConfigMap')}
@@ -129,15 +175,7 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
           <ResourceDropdownField
             name="formData.tlsClientConfig"
             label={t('helm-plugin~TLS Client config')}
-            resources={[
-              {
-                isList: true,
-                kind: SecretModel.kind,
-                namespace: 'openshift-config',
-                optional: true,
-                prop: SecretModel.id,
-              },
-            ]}
+            resources={secretResources}
             dataSelector={['metadata', 'name']}
             fullWidth
             placeholder={t('helm-plugin~Select Secret')}
