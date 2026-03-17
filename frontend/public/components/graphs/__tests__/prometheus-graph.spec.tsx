@@ -62,6 +62,7 @@ describe('PrometheusGraphLink', () => {
       </PrometheusGraphLink>,
     );
     act(() => {
+      store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
       store.dispatch(UIActions.setActiveNamespace('default'));
     });
 
@@ -78,7 +79,7 @@ describe('PrometheusGraphLink', () => {
       },
       {
         perspective: 'dev',
-        expectedUrl: '/monitoring/query-browser?query0=test&namespace=default',
+        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test&namespace=default',
         description: 'dev perspective graph link',
       },
     ];
@@ -93,6 +94,7 @@ describe('PrometheusGraphLink', () => {
           </PrometheusGraphLink>,
         );
         act(() => {
+          store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
           store.dispatch(UIActions.setActiveNamespace('default'));
         });
 
