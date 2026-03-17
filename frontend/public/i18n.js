@@ -100,7 +100,7 @@ export const init = () => {
         return new Intl.NumberFormat(lng).format(val);
       });
       i18n.services.formatter.add('fromNow', (val, lng, options) => {
-        return fromNow(val, null, options);
+        return fromNow(val, null, options, lng);
       });
       i18n.services.formatter.add('dateTime', (val) => {
         return dateTimeFormatter.format(val);
