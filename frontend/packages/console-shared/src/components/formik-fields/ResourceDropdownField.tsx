@@ -4,30 +4,26 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import type { FirehoseResult } from '@console/internal/components/utils/types';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
-import type { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
+import type { ResourceDropdownProps } from '../dropdown/ResourceDropdown';
 import { ResourceDropdown } from '../dropdown/ResourceDropdown';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
-  dataSelector: string[] | number[] | symbol[];
+  dataSelector: ResourceDropdownProps['dataSelector'];
   resources: FirehoseResult[];
-  showBadge?: boolean;
-  onLoad?: (items: ResourceDropdownItems) => void;
-  onChange?: (key: string, name?: string | object, resource?: K8sResourceKind) => void;
-  resourceFilter?: (resource: K8sResourceKind) => boolean;
-  autoSelect?: boolean;
+  showBadge?: ResourceDropdownProps['showBadge'];
+  onLoad?: ResourceDropdownProps['onLoad'];
+  onChange?: ResourceDropdownProps['onChange'];
+  resourceFilter?: ResourceDropdownProps['resourceFilter'];
+  autoSelect?: ResourceDropdownProps['autoSelect'];
   placeholder?: string;
-  actionItems?: {
-    actionTitle: string;
-    actionKey: string;
-  }[];
-  appendItems?: ResourceDropdownItems;
-  customResourceKey?: (key: string, resource: K8sResourceKind) => string;
+  actionItems?: ResourceDropdownProps['actionItems'];
+  appendItems?: ResourceDropdownProps['appendItems'];
+  customResourceKey?: ResourceDropdownProps['customResourceKey'];
   dataTest?: string;
-  menuClassName?: string;
+  menuClassName?: ResourceDropdownProps['menuClassName'];
 }
 
 const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
@@ -80,7 +76,7 @@ const ResourceDropdownField: FC<ResourceDropdownFieldProps> = ({
         resources={resources}
         loaded={loaded}
         loadError={loadError}
-        onChange={(value: string, name: string | object, resource: K8sResourceKind) => {
+        onChange={(value, name, resource) => {
           props.onChange && props.onChange(value, name, resource);
           setFieldValue(props.name, value);
           setFieldTouched(props.name, true);
