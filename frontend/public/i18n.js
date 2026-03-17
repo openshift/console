@@ -6,8 +6,6 @@ import Pseudo from 'i18next-pseudo/es';
 import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 
-import { dateTimeFormatter, fromNow } from './components/utils/datetime';
-
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 const language = params.get('lng');
@@ -96,15 +94,6 @@ export const init = () => {
       },
     })
     .then((value) => {
-      i18n.services.formatter.add('number', (val, lng) => {
-        return new Intl.NumberFormat(lng).format(val);
-      });
-      i18n.services.formatter.add('fromNow', (val, lng, options) => {
-        return fromNow(val, null, options, lng);
-      });
-      i18n.services.formatter.add('dateTime', (val) => {
-        return dateTimeFormatter.format(val);
-      });
       // Update loading promise and pass values and errors to the caller
       resolvedLoading(true);
       return value;
