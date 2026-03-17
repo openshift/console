@@ -16,32 +16,16 @@ type Theme = {
   theme: PROCESSED_THEME;
 };
 
-const applyThemeBehaviour = (
-  theme: string,
-  onDarkBehaviour?: () => string,
-  onLightBehaviour?: () => string,
-) => {
+export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
   if (darkThemeMq.matches && theme === THEME_SYSTEM_DEFAULT) {
     theme = THEME_DARK;
   }
   if (theme === THEME_DARK) {
-    return onDarkBehaviour();
+    htmlTagElement.classList.add(THEME_DARK_CLASS);
+    return THEME_DARK;
   }
-  return onLightBehaviour();
-};
-
-export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
-  return applyThemeBehaviour(
-    theme,
-    () => {
-      htmlTagElement.classList.add(THEME_DARK_CLASS);
-      return THEME_DARK;
-    },
-    () => {
-      htmlTagElement.classList.remove(THEME_DARK_CLASS);
-      return THEME_LIGHT;
-    },
-  ) as PROCESSED_THEME;
+  htmlTagElement.classList.remove(THEME_DARK_CLASS);
+  return THEME_LIGHT;
 };
 
 export const ThemeContext = createContext<Theme>({
@@ -52,8 +36,8 @@ interface ThemeProviderProps {
   children?: ReactNode;
 }
 
-export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
-  const htmlTagElement = document.documentElement;
+/** Hook to determine the theme to apply, based on user preference and system settings. */
+const useProcessedTheme = () => {
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserPreference(
     THEME_USER_SETTING_KEY,
@@ -62,32 +46,37 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   );
   const [processedTheme, setProcessedTheme] = useState<PROCESSED_THEME>(localTheme);
 
-  const mqListener = useCallback(
-    (e) => {
-      if (e.matches) {
-        htmlTagElement?.classList.add(THEME_DARK_CLASS);
-        setProcessedTheme(THEME_DARK);
-      } else {
-        htmlTagElement?.classList.remove(THEME_DARK_CLASS);
-        setProcessedTheme(THEME_LIGHT);
-      }
-    },
-    [htmlTagElement],
-  );
+  const applyTheme = useCallback((isDark: boolean) => {
+    const resolved = updateThemeClass(document.documentElement, isDark ? THEME_DARK : THEME_LIGHT);
+    setProcessedTheme(resolved);
+  }, []);
 
   useEffect(() => {
+    if (!themeLoaded) {
+      return;
+    }
+
     if (theme === THEME_SYSTEM_DEFAULT) {
-      darkThemeMq.addEventListener('change', mqListener);
+      applyTheme(darkThemeMq.matches);
+      const listener = (e: MediaQueryListEvent) => applyTheme(e.matches);
+      darkThemeMq.addEventListener('change', listener);
+      return () => darkThemeMq.removeEventListener('change', listener);
     }
-    if (themeLoaded) {
-      setProcessedTheme(updateThemeClass(htmlTagElement, theme));
-    }
-    return () => darkThemeMq.removeEventListener('change', mqListener);
-  }, [htmlTagElement, mqListener, theme, themeLoaded]);
+
+    applyTheme(theme === THEME_DARK);
+  }, [applyTheme, theme, themeLoaded]);
 
   useEffect(() => {
-    themeLoaded && localStorage.setItem(THEME_LOCAL_STORAGE_KEY, theme);
-  }, [theme, themeLoaded]);
+    if (themeLoaded) {
+      localStorage.setItem(THEME_LOCAL_STORAGE_KEY, processedTheme);
+    }
+  }, [processedTheme, themeLoaded]);
+
+  return processedTheme;
+};
+
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
+  const processedTheme = useProcessedTheme();
 
   const providerValue = useMemo<Theme>(() => {
     return {
