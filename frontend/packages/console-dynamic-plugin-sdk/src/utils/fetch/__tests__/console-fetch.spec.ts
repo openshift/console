@@ -20,6 +20,10 @@ describe('unescapeGoUnicode', () => {
     )}${String.fromCodePoint(0x2ebf1)}`;
     expect(unescapeGoUnicode(input)).toBe(expected);
   });
+
+  it('should not throw on out-of-range 8-digit escape sequences', () => {
+    expect(unescapeGoUnicode('\\UFFFFFFFF')).toBe('\\UFFFFFFFF');
+  });
 });
 
 describe('consoleFetch', () => {

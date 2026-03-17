@@ -152,7 +152,10 @@ export const shouldLogout = (url: string): boolean => {
  */
 export const unescapeGoUnicode = (str: string): string =>
   str
-    .replace(/\\U([0-9a-fA-F]{8})/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/\\U([0-9a-fA-F]{8})/g, (match, hex) => {
+      const codePoint = parseInt(hex, 16);
+      return codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
+    })
     .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
 
 export const validateStatus = async (
@@ -192,7 +195,7 @@ export const validateStatus = async (
   if (response.status === 403) {
     return response.json().then((json) => {
       throw new HttpError(
-        json.message || 'Access denied due to cluster policy.',
+        unescapeGoUnicode(json.message || 'Access denied due to cluster policy.'),
         response.status,
         response,
         json,
