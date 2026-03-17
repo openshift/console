@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -15,6 +15,7 @@ import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circ
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { Alert } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
@@ -39,11 +40,26 @@ type MonitoringOverviewProps = {
 const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
   const { t } = useTranslation();
   const { resource, pods, resourceEvents, monitoringAlerts } = props;
+  const [perspective] = useActivePerspective();
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const [expanded, setExpanded] = useState([
     'metrics',
     ...(firingAlerts.length > 0 ? ['monitoring-alerts'] : []),
   ]);
+
+  const resourceLink = useMemo(() => {
+    const params = new URLSearchParams({
+      namespace: resource?.metadata?.namespace,
+      type: resource?.kind?.toLowerCase(),
+    });
+
+    if (perspective === 'dev') {
+      params.set('dashboard', 'dashboard-k8s-resources-workloads-namespace');
+      return `/dev-monitoring/ns/${resource?.metadata?.namespace}?${params.toString()}`;
+    }
+
+    return `/monitoring/dashboards/dashboard-k8s-resources-workloads-namespace?${params.toString()}`;
+  }, [resource, perspective]);
 
   if (
     !resourceEvents ||
@@ -73,17 +89,6 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
         : [...expanded, id];
     setExpanded(newExpanded);
   };
-
-  // query params:
-  // namespace - used within dashboard logic for variables
-  // project-dropdown-value - used for namespace dropdown for console
-
-  const dashboardLinkParams = new URLSearchParams({
-    workload: resource?.metadata?.name ?? '',
-    type: resource?.kind?.toLowerCase() ?? '',
-    'project-dropdown-value': resource?.metadata?.namespace ?? '',
-    namespace: resource?.metadata?.namespace ?? '',
-  });
 
   return (
     <div className="odc-monitoring-overview">
@@ -144,10 +149,7 @@ const MonitoringOverview: FC<MonitoringOverviewProps> = (props) => {
             ) : (
               <>
                 <div className="odc-monitoring-overview__view-monitoring-dashboards">
-                  <Link
-                    to={`/monitoring/dashboards/dashboard-k8s-resources-workload?${dashboardLinkParams.toString()}`}
-                    data-test="observe-dashboards-link"
-                  >
+                  <Link to={resourceLink} data-test="observe-dashboards-link">
                     {t('devconsole~View dashboards')}
                   </Link>
                 </div>
