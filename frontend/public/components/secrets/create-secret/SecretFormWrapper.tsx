@@ -15,13 +15,13 @@ import {
   HelperTextItem,
   Modal,
   ModalBody,
-  ModalFooter,
   ModalHeader,
   ModalVariant,
   ButtonVariant,
 } from '@patternfly/react-core';
 import { useParams, useNavigate } from 'react-router';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../../module/k8s';
 import { ButtonBar } from '../../utils/button-bar';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -171,7 +171,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
     <Modal isOpen={true} onClose={onCancel || cancel} title={title} variant={ModalVariant.medium}>
       <ModalHeader title={title} />
       <ModalBody>{renderBody()}</ModalBody>
-      <ModalFooter>
+      <ModalFooterWithAlerts errorMessage={error}>
         <Button
           type="submit"
           variant={ButtonVariant.primary}
@@ -184,8 +184,7 @@ export const SecretFormWrapper: FC<BaseEditSecretProps_> = (props) => {
         <Button variant={ButtonVariant.link} onClick={onCancel || cancel} isDisabled={inProgress}>
           {t('public~Cancel')}
         </Button>
-        {error && <div className="pf-v6-u-danger-color-100 pf-v6-u-mt-md">{error}</div>}
-      </ModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   ) : (
     <>
