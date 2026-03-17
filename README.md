@@ -15,7 +15,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 14 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.20
+1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
 2. [go](https://golang.org/) >= 1.18+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.4/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
@@ -451,13 +451,12 @@ yarn add <package@version>
 Update existing frontend dependencies:
 
 ```
-yarn upgrade <package@version>
+yarn up <package@version>
 ```
 
-To upgrade yarn itself, download a new yarn release from
-<https://github.com/yarnpkg/yarn/releases>, replace the release in
-`frontend/.yarn/releases` with the new version, and update `yarn-path` in
-`frontend/.yarnrc`.
+To upgrade yarn itself, run `yarn set version <version>` in `frontend` directory. This will update the yarn
+release file in `frontend/.yarn/releases` and the `yarnPath` in `frontend/.yarnrc.yml`, as well as the
+`packageManager` field in `frontend/package.json`.
 
 #### Supported Browsers
 
