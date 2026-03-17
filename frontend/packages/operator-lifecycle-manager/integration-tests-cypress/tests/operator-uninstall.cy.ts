@@ -18,6 +18,23 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-backup',
 };
 
+const operatorPackageName = 'datagrid';
+
+const cleanupOperatorResources = (namespace: string) => {
+  cy.exec(
+    `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
+  );
+  cy.exec(
+    `oc delete csv -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
+  );
+  cy.exec(
+    `oc delete installplan -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
+  );
+};
+
 const alertExists = (titleText: string) => {
   cy.get('.co-alert').contains(titleText).should('exist');
 };
@@ -26,6 +43,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
+    cleanupOperatorResources(testName);
     operator.install(
       testOperator.name,
       testOperator.operatorCardTestID,
@@ -46,6 +64,7 @@ describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   after(() => {
+    cleanupOperatorResources(testName);
     cy.deleteProjectWithCLI(testName);
   });
 

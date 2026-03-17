@@ -22,16 +22,16 @@ const operatorPackageName = 'datagrid';
 
 const cleanupOperatorResources = (namespace: string) => {
   cy.exec(
-    `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
-    { failOnNonZeroExit: false, timeout: 120000 },
+    `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
   );
   cy.exec(
-    `oc delete csv -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
-    { failOnNonZeroExit: false, timeout: 120000 },
+    `oc delete csv -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
   );
   cy.exec(
-    `oc delete installplan -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
-    { failOnNonZeroExit: false, timeout: 120000 },
+    `oc delete installplan -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found --wait=false`,
+    { failOnNonZeroExit: false, timeout: 60000 },
   );
 };
 
