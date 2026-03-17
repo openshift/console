@@ -78,13 +78,14 @@ describe('PrometheusGraphLink', () => {
       },
       {
         perspective: 'dev',
-        expectedUrl: '/monitoring/query-browser?query0=test&namespace=default',
+        expectedUrl: '/dev-monitoring/ns/default/metrics?query0=test&namespace=default',
         description: 'dev perspective graph link',
       },
     ];
 
     testScenarios.forEach(({ perspective, expectedUrl, description }) => {
       it(`should generate correct URL for ${description}`, () => {
+        store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
         useActivePerspectiveMock.mockReturnValue([perspective, () => {}]);
 
         renderWithProviders(
