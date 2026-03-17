@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom-v5-compat';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { QueryBrowser } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { dashboardsSetEndTime, dashboardsSetTimespan } from '@console/internal/actions/observe';
 import { Humanize } from '@console/internal/components/utils';
@@ -17,6 +18,7 @@ export enum GraphTypes {
 
 const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
   const { t } = useTranslation();
+  const [perspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return null;
@@ -26,7 +28,11 @@ const PrometheusGraphLink = ({ query, namespace, ariaChartLinkLabel }) => {
   return (
     <Link
       aria-label={ariaChartLinkLabel}
-      to={`/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`}
+      to={
+        perspective === 'dev'
+          ? `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`
+          : `/monitoring/query-browser?${params.toString()}`
+      }
     >
       {t('devconsole~Inspect')}
     </Link>
