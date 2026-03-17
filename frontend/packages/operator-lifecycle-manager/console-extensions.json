@@ -366,7 +366,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/operatorhub",
+      "path": ["/operatorhub", "/catalog"],
       "exact": true,
       "component": {
         "$codeRef": "CatalogRedirect"

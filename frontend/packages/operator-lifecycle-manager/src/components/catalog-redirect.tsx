@@ -1,6 +1,12 @@
 import type { FC } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 
-const CatalogRedirect: FC = () => <Navigate to={`/catalog?catalogType=operator`} replace />;
+const CatalogRedirect: FC = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  searchParams.set('catalogType', 'operator');
+
+  return <Navigate to={`/catalog/all-namespaces?${searchParams.toString()}`} replace />;
+};
 
 export default CatalogRedirect;
