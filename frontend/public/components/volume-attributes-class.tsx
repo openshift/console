@@ -28,12 +28,13 @@ import { VolumeAttributesClassModel } from '../models';
 import { DASH } from '@console/shared';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 const [group, version] = VolumeAttributesClassModel.apiVersion.split('/');
 
@@ -45,16 +46,24 @@ export const VolumeAttributesClassGVK: K8sGroupVersionKind = {
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'driverName' }, { id: 'parameters' }, { id: '' }];
 
-const useVolumeAttributesClassColumns = () => {
+const useVolumeAttributesClassColumns = (): {
+  columns: TableColumn<VolumeAttributesClassKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    VolumeAttributesClassModel,
+  );
+
   const columns: TableColumn<VolumeAttributesClassKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -62,6 +71,7 @@ const useVolumeAttributesClassColumns = () => {
         title: t('public~Driver name'),
         id: tableColumnInfo[1].id,
         sort: 'driverName',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -69,6 +79,7 @@ const useVolumeAttributesClassColumns = () => {
       {
         title: t('public~Parameters'),
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -77,12 +88,13 @@ const useVolumeAttributesClassColumns = () => {
         title: '',
         id: tableColumnInfo[3].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (data, columns) => {
@@ -134,7 +146,7 @@ export const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   loadError,
   ...restProps
 }) => {
-  const columns = useVolumeAttributesClassColumns();
+  const { columns, resetAllColumnWidths } = useVolumeAttributesClassColumns();
   const isLoaded = loaded !== undefined ? loaded : true;
 
   return (
@@ -149,6 +161,8 @@ export const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
         initialFilters={initialFiltersDefault}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
