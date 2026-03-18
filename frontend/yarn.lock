@@ -12247,16 +12247,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-node@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "eslint-import-resolver-node@npm:0.3.2"
-  dependencies:
-    debug: "npm:^2.6.9"
-    resolve: "npm:^1.5.0"
-  checksum: 10c0/3cd5b7c5f6ba7a733745ae54386f33f528fc524fb04e59b8171e85a4875247eb782d38736cf200da68437e88a376a6521b5331baba230267315ca2930a873ebb
-  languageName: node
-  linkType: hard
-
 "eslint-import-resolver-node@npm:^0.3.4":
   version: 0.3.4
   resolution: "eslint-import-resolver-node@npm:0.3.4"
@@ -12280,16 +12270,6 @@ __metadata:
     eslint: "*"
     eslint-plugin-import: "*"
   checksum: 10c0/6d05fd0c7ce676d56b6eda2e8ee12bcccd6978db31892046785ea0560c9024833ff89be3763ec522eaa08401230a7a424347041fbcaa2191f094ad839eda92b9
-  languageName: node
-  linkType: hard
-
-"eslint-module-utils@npm:^2.4.1":
-  version: 2.5.0
-  resolution: "eslint-module-utils@npm:2.5.0"
-  dependencies:
-    debug: "npm:^2.6.9"
-    pkg-dir: "npm:^2.0.0"
-  checksum: 10c0/c1fcd592ed6aa211e5e5e87ee08cf36966ab50047664da66151e538e46ff7c05513313634c6cc08de0e5e638a13235843d438c9e2df50b1722f2eaffef033c69
   languageName: node
   linkType: hard
 
@@ -12375,29 +12355,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:2.19.1":
-  version: 2.19.1
-  resolution: "eslint-plugin-import@npm:2.19.1"
-  dependencies:
-    array-includes: "npm:^3.0.3"
-    array.prototype.flat: "npm:^1.2.1"
-    contains-path: "npm:^0.1.0"
-    debug: "npm:^2.6.9"
-    doctrine: "npm:1.5.0"
-    eslint-import-resolver-node: "npm:^0.3.2"
-    eslint-module-utils: "npm:^2.4.1"
-    has: "npm:^1.0.3"
-    minimatch: "npm:^3.0.4"
-    object.values: "npm:^1.1.0"
-    read-pkg-up: "npm:^2.0.0"
-    resolve: "npm:^1.12.0"
-  peerDependencies:
-    eslint: 2.x - 6.x
-  checksum: 10c0/63b5defd2454364ca61cab756b93a43228952db5633f7bd0acc089f9877f282541dbaa32822d6413d1780a54441340df64c7194e5faa2eac3a705447202bf182
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-import@npm:^2.22.1":
+"eslint-plugin-import@npm:2.19.1, eslint-plugin-import@npm:^2.22.1":
   version: 2.22.1
   resolution: "eslint-plugin-import@npm:2.22.1"
   dependencies:
@@ -24170,7 +24128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.10.0, resolve@npm:^1.5.0":
+"resolve@npm:^1.10.0":
   version: 1.10.1
   resolution: "resolve@npm:1.10.1"
   dependencies:
@@ -24271,7 +24229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.5.0#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>":
   version: 1.10.1
   resolution: "resolve@patch:resolve@npm%3A1.10.1#optional!builtin<compat/resolve>::version=1.10.1&hash=c3c19d"
   dependencies:
