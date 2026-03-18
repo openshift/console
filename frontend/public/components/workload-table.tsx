@@ -164,7 +164,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
   model: K8sModel,
 ): { columns: TableColumn<T>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(model);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
 
   const columns = useMemo(() => {
     return [
@@ -203,6 +203,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
+          style: { width: `${getWidth(tableColumnInfo[3].id) ?? 200}px` },
         },
       },
       {
@@ -222,7 +223,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         },
       },
     ];
-  }, [t, getResizableProps]);
+  }, [t, getResizableProps, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };
