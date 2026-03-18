@@ -16,6 +16,7 @@ import {
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
@@ -117,7 +118,9 @@ const usePersistentVolumeColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(PersistentVolumeModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    PersistentVolumeModel,
+  );
 
   const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
     () => [
@@ -154,7 +157,10 @@ const usePersistentVolumeColumns = (): {
         sort: 'metadata.labels',
         id: tableColumnInfo[4].id,
         resizableProps: getResizableProps(tableColumnInfo[4].id),
-        props: { modifier: 'nowrap' },
+        props: {
+          modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[4].id)),
+        },
       },
       {
         title: t('public~Created'),
@@ -169,7 +175,7 @@ const usePersistentVolumeColumns = (): {
         props: { ...actionsCellProps },
       },
     ],
-    [t, getResizableProps],
+    [t, getResizableProps, getWidth],
   );
 
   return { columns, resetAllColumnWidths };
