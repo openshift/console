@@ -40,6 +40,7 @@ import {
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
@@ -201,7 +202,9 @@ const getDataViewRows = (data, columns) => {
 
 const useReplicaSetsColumns = () => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ReplicaSetModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    ReplicaSetModel,
+  );
 
   const columns = useMemo(() => {
     return [
@@ -240,6 +243,7 @@ const useReplicaSetsColumns = () => {
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
       },
       {
@@ -268,7 +272,7 @@ const useReplicaSetsColumns = () => {
         },
       },
     ];
-  }, [t, getResizableProps]);
+  }, [t, getResizableProps, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };

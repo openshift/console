@@ -30,6 +30,7 @@ import {
   getNameCellProps,
   nameCellProps,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
@@ -326,7 +327,7 @@ const useHorizontalPodAutoscalersColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
     HorizontalPodAutoscalerModel,
   );
 
@@ -358,6 +359,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
         },
       },
       {
@@ -395,7 +397,7 @@ const useHorizontalPodAutoscalersColumns = (): {
         },
       },
     ];
-  }, [t, getResizableProps]);
+  }, [t, getResizableProps, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };

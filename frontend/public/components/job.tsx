@@ -46,6 +46,7 @@ import {
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
@@ -244,7 +245,7 @@ const useJobsColumns = (): {
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(JobModel);
 
   const columns = useMemo(() => {
     return [
@@ -274,6 +275,7 @@ const useJobsColumns = (): {
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
         },
       },
       {
@@ -313,7 +315,7 @@ const useJobsColumns = (): {
         },
       },
     ];
-  }, [t, getResizableProps]);
+  }, [t, getResizableProps, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };
