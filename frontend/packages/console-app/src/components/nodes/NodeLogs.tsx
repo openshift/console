@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FC, Ref } from 'react';
 import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
@@ -20,7 +20,7 @@ import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { modelFor, resourceURL } from '@console/internal/module/k8s';
@@ -211,7 +211,7 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
     true,
   );
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
 
   const isJournal = path === 'journal';
 

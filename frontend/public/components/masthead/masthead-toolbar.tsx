@@ -53,7 +53,7 @@ import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
-import { ThemeContext, THEME_DARK } from '../ThemeProvider';
+import { useTheme, THEME_DARK } from '../ThemeProvider';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 
@@ -86,7 +86,7 @@ const FeedbackModalLocalized: FC<FeedbackModalLocalizedProps> = ({
   reportBugLink,
 }) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   return (
     <FeedbackModal
       onShareFeedback="https://console.redhat.com/self-managed-feedback-form?source=openshift"

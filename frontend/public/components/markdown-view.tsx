@@ -1,8 +1,7 @@
 import type { FC } from 'react';
-import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownView, MarkdownProps } from '@console/shared/src/components/markdown/MarkdownView';
-import { ThemeContext, updateThemeClass } from './ThemeProvider';
+import { useTheme, updateThemeClass } from './ThemeProvider';
 
 type SyncMarkdownProps = Omit<MarkdownProps, 'theme' | 'updateThemeClass' | 'emptyMsg'> & {
   emptyMsg?: string;
@@ -12,7 +11,7 @@ type SyncMarkdownProps = Omit<MarkdownProps, 'theme' | 'updateThemeClass' | 'emp
 export const SyncMarkdownView: FC<SyncMarkdownProps> = ({ emptyMsg, theme, ...rest }) => {
   const { t } = useTranslation();
   emptyMsg = emptyMsg || t('public~Not available');
-  const contextTheme = useContext(ThemeContext);
+  const { theme: contextTheme } = useTheme();
   const markDownTheme = theme || contextTheme;
   return (
     <MarkdownView
