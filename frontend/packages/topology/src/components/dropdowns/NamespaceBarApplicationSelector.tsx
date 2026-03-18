@@ -74,7 +74,7 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
       }}
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
-      userSettingsPrefix={APPLICATION_USERSETTINGS_PREFIX}
+      userPreferencePrefix={APPLICATION_USERSETTINGS_PREFIX}
       storageKey={APPLICATION_LOCAL_STORAGE_KEY}
       disabled={disabled}
     />
