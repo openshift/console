@@ -15,7 +15,7 @@ import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ListInput } from '@console/internal/components/utils/list-input';
 import { GroupModel } from '@console/internal/models';
 import type { GroupKind } from '@console/internal/module/k8s';
-import type { ModalComponentProps } from 'public/components/factory/modal';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 type AddGroupUsersModalProps = {
   group: GroupKind;

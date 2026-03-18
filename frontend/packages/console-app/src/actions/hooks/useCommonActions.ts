@@ -135,7 +135,6 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
           launchModal(LazyTolerationsModalOverlay, {
             resourceKind: kind,
             resource,
-            modalClassName: 'modal-lg',
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),

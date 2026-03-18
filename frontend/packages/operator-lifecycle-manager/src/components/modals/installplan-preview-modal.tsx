@@ -10,8 +10,8 @@ import {
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { ResourceLink, CopyToClipboard } from '@console/internal/components/utils';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 

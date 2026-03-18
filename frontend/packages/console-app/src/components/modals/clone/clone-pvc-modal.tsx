@@ -22,7 +22,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory';
 import type { DataPoint } from '@console/internal/components/graphs';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
@@ -53,6 +52,7 @@ import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 

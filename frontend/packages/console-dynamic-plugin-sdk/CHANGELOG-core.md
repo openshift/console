@@ -180,6 +180,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4402]: https://issues.redhat.com/browse/CONSOLE-4402
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
+[CONSOLE-4447]: https://issues.redhat.com/browse/CONSOLE-4447
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
 [CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4630]: https://issues.redhat.com/browse/CONSOLE-4630
@@ -268,3 +269,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16019]: https://github.com/openshift/console/pull/16019
 [#16057]: https://github.com/openshift/console/pull/16057
 [#15959]: https://github.com/openshift/console/pull/15959
+[#16061]: https://github.com/openshift/console/pull/16061

@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { limitsValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getLimitsDataFromResource, getResourceLimitsData } from '@console/shared/src';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import ResourceLimitsModal from './ResourceLimitsModal';
 
 export type ResourceLimitsModalLauncherProps = {

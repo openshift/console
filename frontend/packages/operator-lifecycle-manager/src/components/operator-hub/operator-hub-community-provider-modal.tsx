@@ -14,9 +14,9 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderModalProps> = ({
   close,

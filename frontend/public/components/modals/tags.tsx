@@ -8,7 +8,7 @@ import { k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { NameValueEditorPair } from '../utils/types';
 import { AsyncComponent } from '../utils/async';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
