@@ -118,7 +118,7 @@ const usePodsColumns = (
   showNodes: boolean,
 ): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
   const columns = useMemo(() => {
     return [
@@ -224,6 +224,7 @@ const usePodsColumns = (
         resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
           modifier: 'nowrap',
+          style: { width: `${getWidth(tableColumnInfo[10].id) ?? 200}px` },
         },
         additional: true,
       },
@@ -254,7 +255,7 @@ const usePodsColumns = (
         },
       },
     ];
-  }, [t, showNodes, getResizableProps]);
+  }, [t, showNodes, getResizableProps, getWidth]);
   return { columns, resetAllColumnWidths };
 };
 
