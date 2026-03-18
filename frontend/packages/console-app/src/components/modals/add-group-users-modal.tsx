@@ -1,21 +1,14 @@
 import type { MouseEventHandler } from 'react';
 import { useState } from 'react';
-import {
-  Alert,
-  AlertVariant,
-  Modal,
-  Button,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from '@patternfly/react-core';
+import { Alert, AlertVariant, Modal, Button, ModalBody, ModalHeader } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ListInput } from '@console/internal/components/utils/list-input';
 import { GroupModel } from '@console/internal/models';
 import type { GroupKind } from '@console/internal/module/k8s';
-import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from 'public/components/factory/modal';
 
 type AddGroupUsersModalProps = {
   group: GroupKind;
@@ -77,20 +70,10 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
               initialValues={values}
               onChange={setValues}
             />
-            {errorMessage && (
-              <Alert
-                isInline
-                className="pf-v6-u-mt-md"
-                variant={AlertVariant.danger}
-                title={t('public~Error occurred')}
-              >
-                {errorMessage}
-              </Alert>
-            )}
           </>
         )}
       </ModalBody>
-      <ModalFooter>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
         <Button
           type="submit"
           variant="primary"
@@ -103,7 +86,7 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
         <Button variant="link" onClick={closeOverlay} type="button">
           {t('public~Cancel')}
         </Button>
-      </ModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };
