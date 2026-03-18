@@ -197,7 +197,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go 1.25, nodejs/yarn, kubectl
+go 1.25+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
