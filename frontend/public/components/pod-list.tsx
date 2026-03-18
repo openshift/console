@@ -1,6 +1,7 @@
 import {
   actionsCellProps,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
   getNameCellProps,
   initialFiltersDefault,
   nameCellProps,
@@ -224,7 +225,7 @@ const usePodsColumns = (
         resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
           modifier: 'nowrap',
-          style: { width: `${getWidth(tableColumnInfo[10].id) ?? 200}px` },
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
         additional: true,
       },

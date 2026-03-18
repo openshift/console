@@ -264,3 +264,15 @@ export const actionsCellProps = {
   hasLeftBorder: true,
   isActionCell: true,
 };
+
+/**
+ * Returns the style prop for a Labels column so it can be shared across tables.
+ * @param width - Persisted or current width in pixels (e.g. from getWidth(columnId))
+ * @param defaultWidth - Default width when no width is provided (default 200)
+ * @returns Style object for the column's props.style
+ */
+export const getLabelsColumnWidthStyleProp = (width: number | undefined, defaultWidth = 200) => ({
+  style: {
+    width: `${width ?? defaultWidth}px`,
+  },
+});

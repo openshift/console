@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import {
   actionsCellProps,
+  getLabelsColumnWidthStyleProp,
   getNameCellProps,
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
@@ -203,7 +204,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
-          style: { width: `${getWidth(tableColumnInfo[3].id) ?? 200}px` },
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
       },
       {
