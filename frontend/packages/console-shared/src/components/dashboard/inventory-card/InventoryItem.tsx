@@ -9,9 +9,8 @@ import {
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions, isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
-import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/dist/core/lib/types';
+import type { DashboardsInventoryItemGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
