@@ -125,16 +125,13 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   const [selectedTitle, setSelectedTitle] = useState<ReactNode>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
-  const onLoadRef = useRef(onLoad);
-  onLoadRef.current = onLoad;
 
-  // Track mount state and previous selectedKey to match class component behavior:
-  // the class constructor never auto-selects, and componentWillReceiveProps
-  // compares against the previous selectedKey (this.props) for onChange calls.
-  const mountedRef = useRef(false);
+  const hasLoadedRef = useRef(false);
+
+  const initiallyLoadedRef = useRef(loaded);
   const prevSelectedKeyRef = useRef(selectedKey);
 
-  // Compute resource map: key -> K8sResourceKind
+  /** Compute resource map: key -> K8sResourceKind */
   const resourceMap = useMemo(() => {
     if (!loaded) {
       return {};
@@ -193,12 +190,14 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
     });
 
     const sortedList: ResourceDropdownItems = {};
+
     if (allSelectorItem && !_.isEmpty(unsortedList)) {
       sortedList[allSelectorItem.allSelectorKey] = allSelectorItem.allSelectorTitle;
     }
     if (noneSelectorItem && !_.isEmpty(unsortedList)) {
       sortedList[noneSelectorItem.noneSelectorKey] = noneSelectorItem.noneSelectorTitle;
     }
+
     _.keys(unsortedList)
       .sort()
       .forEach((key) => {
@@ -221,15 +220,16 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   ]);
 
   // Auto-selection and title sync when items or selection changes.
-  // Skip the initial mount to match class component behavior (constructor never auto-selects).
+  // Skip auto-selection on mount to match original class component behavior
+  // (constructor computed items but never auto-selected).
   useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true;
+    if (!loaded || loadError) {
       prevSelectedKeyRef.current = selectedKey;
       return;
     }
 
-    if (!loaded || loadError) {
+    if (initiallyLoadedRef.current) {
+      initiallyLoadedRef.current = false;
       prevSelectedKeyRef.current = selectedKey;
       return;
     }
@@ -272,18 +272,18 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   ]);
 
   // Notify parent when resources finish loading (loaded transitions to true).
-  // The old class component only called onLoad in UNSAFE_componentWillReceiveProps
-  // when loaded first became true, not on every items change.
-  const prevLoadedRef = useRef(loaded);
   useEffect(() => {
-    if (loaded && !prevLoadedRef.current && onLoadRef.current) {
-      onLoadRef.current(items);
+    if (loaded && onLoad && !hasLoadedRef.current) {
+      onLoad(items);
+      hasLoadedRef.current = true;
     }
-    prevLoadedRef.current = loaded;
-  }, [loaded, items]);
+  }, [loaded, onLoad, items]);
 
-  // Compute display title
+  /** Compute display title */
   const displayTitle = useMemo<ReactNode>(() => {
+    if (titleProp) {
+      return titleProp;
+    }
     if (!loaded && !loadError) {
       return <LoadingInline />;
     }
@@ -293,9 +293,6 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
           {t('console-shared~Error loading - {{placeholder}}', { placeholder })}
         </span>
       );
-    }
-    if (titleProp) {
-      return titleProp;
     }
     if (selectedTitle) {
       return selectedTitle;
