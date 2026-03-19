@@ -8,7 +8,6 @@
     "lint": "yarn --cwd ../.. eslint packages/shipwright-plugin",
     "test": "yarn --cwd ../.. test packages/shipwright-plugin"
   },
-  "dependencies": {},
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
