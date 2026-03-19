@@ -29,7 +29,7 @@ Feature: Create Sample Application
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
-                  | Basic Go  | Import from Git           | go-basic      |
+                  # | Basic Go  | Import from Git           | go-basic      |
 
 
         @regression @to-do

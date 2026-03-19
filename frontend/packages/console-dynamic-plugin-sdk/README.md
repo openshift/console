@@ -227,7 +227,7 @@ list of plugin names (disable specific plugins) or an empty string (disable all 
 To see the latest published version of the given package:
 
 ```sh
-yarn info <package-name> dist-tags --json | jq .data.latest
+yarn npm info <package-name> --json | jq -r '.["dist-tags"].latest'
 ```
 
 Before publishing, it's recommended to log into your npm user account:
