@@ -24,7 +24,6 @@ export type TextColumnFieldProps = FieldProps & {
   tooltipDeleteRow?: string;
   placeholder?: string;
   onChange?: OnChangeHandler;
-  dndEnabled?: boolean;
   children?: TextColumnFieldChildProps;
   helpText?: React.ReactNode;
 };
@@ -33,14 +32,4 @@ export type TextColumnItemProps = TextColumnFieldProps & {
   idx: number;
   rowValues: string[];
   arrayHelpers: ArrayHelpers;
-};
-
-export const ItemTypes = {
-  TextColumn: 'TextColumn',
-};
-
-export type DragItem = {
-  idx: number;
-  id: string;
-  type: string;
 };

@@ -37,10 +37,9 @@ const ExecNewPodForm: FC<ExecNewPodFormProps> = ({ resourceObj, lifecycleHook, d
         addLabel={t('devconsole~Add another argument')}
         placeholder={t('devconsole~Add argument')}
         helpText={t(
-          'devconsole~Enter the command to run inside the container. The command is considered sucessful if its exit code is 0. Drag and drop to reorder arguments.',
+          'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
         )}
         required
-        dndEnabled
         disableDeleteRow={
           deploymentStrategy[dataAttribute][lifecycleHook].lch.execNewPod.command?.length === 1
         }

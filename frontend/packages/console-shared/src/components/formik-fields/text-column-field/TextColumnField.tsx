@@ -6,20 +6,9 @@ import { getFieldId } from '../field-utils';
 import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import type { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
 import TextColumnItem from './TextColumnItem';
-import TextColumnItemWithDnd from './TextColumnItemWithDnd';
 
 const TextColumnField: FC<TextColumnFieldProps> = (props) => {
-  const {
-    required,
-    name,
-    label,
-    addLabel,
-    helpText,
-    isReadOnly,
-    onChange,
-    children,
-    dndEnabled = false,
-  } = props;
+  const { required, name, label, addLabel, helpText, isReadOnly, onChange, children } = props;
   const [field, { touched, error }] = useField<string[]>(name);
   useFormikValidationFix(field.value);
   const rowValues = field.value ?? [];
@@ -40,31 +29,13 @@ const TextColumnField: FC<TextColumnFieldProps> = (props) => {
             isRequired={required}
             data-test={props['data-test'] || 'text-column-field'}
           >
-            {dndEnabled ? (
-              <>
-                {rowValues.map((v, idx) => {
-                  return (
-                    <TextColumnItemWithDnd
-                      {...getTextColumnProps({ ...props, rowValues, idx, arrayHelpers })}
-                    >
-                      {children}
-                    </TextColumnItemWithDnd>
-                  );
-                })}
-              </>
-            ) : (
-              <>
-                {rowValues.map((v, idx) => {
-                  return (
-                    <TextColumnItem
-                      {...getTextColumnProps({ ...props, rowValues, idx, arrayHelpers })}
-                    >
-                      {children}
-                    </TextColumnItem>
-                  );
-                })}
-              </>
-            )}
+            {rowValues.map((v, idx) => {
+              return (
+                <TextColumnItem {...getTextColumnProps({ ...props, rowValues, idx, arrayHelpers })}>
+                  {children}
+                </TextColumnItem>
+              );
+            })}
             {!isReadOnly && (
               <MultiColumnFieldFooter
                 addLabel={addLabel}
