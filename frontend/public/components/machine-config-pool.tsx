@@ -20,11 +20,12 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { Conditions } from './conditions';
 import { MachineConfigPoolModel } from '../models';
 import { machineConfigReference, MachineConfigPage } from './machine-config';
@@ -303,16 +304,24 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => {
+const useMachineConfigPoolColumns = (): {
+  columns: TableColumn<MachineConfigPoolKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    MachineConfigPoolModel,
+  );
+
   const columns: TableColumn<MachineConfigPoolKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -320,6 +329,7 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
         title: t('public~Configuration'),
         id: tableColumnInfo[1].id,
         sort: 'status.configuration.name',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -327,6 +337,7 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
       {
         title: t('public~Degraded'),
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -334,6 +345,7 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
       {
         title: t('public~Update status'),
         id: tableColumnInfo[3].id,
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -342,12 +354,13 @@ const useMachineConfigPoolColumns = (): TableColumn<MachineConfigPoolKind>[] => 
         title: '',
         id: tableColumnInfo[4].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const getDataViewRows: GetDataViewRows<MachineConfigPoolKind, Action[]> = (data, columns) => {
@@ -399,7 +412,7 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
   loadError,
   ...props
 }) => {
-  const columns = useMachineConfigPoolColumns();
+  const { columns, resetAllColumnWidths } = useMachineConfigPoolColumns();
 
   return (
     <>
@@ -414,6 +427,8 @@ const MachineConfigPoolList: FC<MachineConfigPoolListProps> = ({
           columns={columns}
           getDataViewRows={getDataViewRows}
           hideColumnManagement={true}
+          isResizable
+          resetAllColumnWidths={resetAllColumnWidths}
         />
       </Suspense>
     </>
