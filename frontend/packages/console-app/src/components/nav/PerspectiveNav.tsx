@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { NavGroup, NavList } from '@patternfly/react-core';
+import { NavList } from '@patternfly/react-core';
 import type { DragDropSortProps, DraggableObject } from '@patternfly/react-drag-drop';
 import { DragDropSort } from '@patternfly/react-drag-drop';
 import { useTranslation } from 'react-i18next';
@@ -71,9 +71,8 @@ const PerspectiveNav: FC<{}> = () => {
         <PluginNavItem key={extension.uid} extension={extension} />
       ))}
       {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? (
-        <NavGroup
-          className="co-draggable-nav-group no-title"
-          title=""
+        <section
+          className="pf-v6-c-nav__section no-title"
           aria-label={t('console-app~Pinned resources')}
         >
           {draggableItems.length === 1 ? (
@@ -81,7 +80,7 @@ const PerspectiveNav: FC<{}> = () => {
           ) : (
             <DragDropSort items={draggableItems} onDrop={onDrop} />
           )}
-        </NavGroup>
+        </section>
       ) : null}
     </>
   );

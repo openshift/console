@@ -74,6 +74,7 @@ const PinnedResource: FC<PinnedResourceProps> = ({ resourceRef, onChange, navRes
       model={{ group: apiGroup, version: apiVersion, kind }}
       id={resourceRef}
       className="pf-v6-u-flex-grow-1"
+      listItem={false}
       dataAttributes={{
         className: 'pf-v6-u-py-0 pf-v6-u-pr-0',
         'data-test': 'draggable-pinned-resource-item',
