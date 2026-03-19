@@ -7,10 +7,11 @@ import { ListPageBody, TableColumn } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
+  nameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import {
   Tooltip,
   Button,
@@ -276,9 +277,13 @@ const MachineSetDetails: FC<MachineSetDetailsProps> = ({ obj }) => {
   );
 };
 
-const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
+const useMachineSetColumns = (): {
+  columns: TableColumn<MachineSetKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
   const context = useContext(CapacityResolverContext);
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineSetModel);
 
   const columns: TableColumn<MachineSetKind>[] = useMemo(() => {
     return [
@@ -286,8 +291,9 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -295,6 +301,7 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -303,6 +310,7 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
         title: t('public~Machines'),
         id: tableColumnInfo[2].id,
         sort: 'status.readyReplicas',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -312,6 +320,7 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
         id: tableColumnInfo[3].id,
         sort: (data, direction) =>
           data.sort(sortResourceByValue(direction, getMachineSetInstanceType)),
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -323,6 +332,7 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
           ? (data, direction) =>
               data.sort(sortResourceByValue(direction, (obj) => context.capacityResolver(obj).cpu))
           : undefined,
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -336,6 +346,7 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
                 sortResourceByValue(direction, (obj) => context.capacityResolver(obj).memory),
               )
           : undefined,
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -344,12 +355,13 @@ const useMachineSetColumns = (): TableColumn<MachineSetKind>[] => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t, context]);
-  return columns;
+  }, [t, context, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const getDataViewRows = (
@@ -406,7 +418,7 @@ const getDataViewRows = (
 };
 
 const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
-  const columns = useMachineSetColumns();
+  const { columns, resetAllColumnWidths } = useMachineSetColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -419,6 +431,8 @@ const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadErro
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
