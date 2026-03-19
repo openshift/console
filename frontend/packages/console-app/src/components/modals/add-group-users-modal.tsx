@@ -8,11 +8,10 @@ import { ListInput } from '@console/internal/components/utils/list-input';
 import { GroupModel } from '@console/internal/models';
 import type { GroupKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import type { ModalComponentProps } from 'public/components/factory/modal';
 
 type AddGroupUsersModalProps = {
   group: GroupKind;
-} & ModalComponentProps;
+};
 
 const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, closeOverlay }) => {
   const { t } = useTranslation();
