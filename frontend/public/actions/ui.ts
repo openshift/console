@@ -145,7 +145,16 @@ export const formatNamespaceRoute = (
   }
 
   if (location) {
-    path += `${location.search}${location.hash}`;
+    // When namespace changes, reset page to 1 but preserve perPage preference
+    if (previousNS !== activeNamespace) {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.delete('page');
+      const search = searchParams.toString();
+      path += search ? `?${search}` : '';
+      path += location.hash;
+    } else {
+      path += `${location.search}${location.hash}`;
+    }
   }
 
   return path;
