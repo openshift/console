@@ -19,10 +19,11 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/shared/src/constants/ui';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
@@ -63,16 +64,22 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   });
 };
 
-const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
+const useLimitRangeColumns = (): {
+  columns: TableColumn<K8sResourceKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(LimitRangeModel);
+
+  const columns = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -80,6 +87,7 @@ const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -88,6 +96,7 @@ const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -96,17 +105,19 @@ const useLimitRangeColumns = (): TableColumn<K8sResourceKind>[] => {
         title: '',
         id: tableColumnInfo[3].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
-  const columns = useLimitRangeColumns();
+  const { columns, resetAllColumnWidths } = useLimitRangeColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -117,6 +128,8 @@ export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = 
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
