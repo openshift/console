@@ -49,7 +49,7 @@ export const HashLink: FC<HashLinkProps> = ({ smooth, onClick, to, ...rest }) =>
       if (isSamePage) {
         e.preventDefault();
         if (location.hash === `#${id}`) {
-          // Hash unchanged — useLayoutEffect won't fire, scroll directly
+          // Hash unchanged: useLayoutEffect won't fire, scroll directly
           document.getElementById(id)?.scrollIntoView(scrollOptions);
         } else {
           scrollTargetRef.current = id;
