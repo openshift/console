@@ -233,7 +233,7 @@ const App: React.FC<{
   };
 
   const content = (
-    <>
+    <Suspense fallback={<LoadingBox blame="App content suspense" />}>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -289,7 +289,7 @@ const App: React.FC<{
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
-    </>
+    </Suspense>
   );
 
   return (
