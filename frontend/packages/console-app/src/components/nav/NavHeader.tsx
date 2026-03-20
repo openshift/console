@@ -10,6 +10,7 @@ import {
 import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
 import { t } from 'i18next';
 import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
 
 export type NavHeaderProps = {
@@ -23,13 +24,12 @@ type PerspectiveDropdownItemProps = {
   onClick: (perspective: string) => void;
 };
 
+const IconLoadingComponent: React.FC = () => <>&emsp;</>;
+
 const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
   perspective,
   onClick,
 }) => {
-  const LazyIcon = React.useMemo(() => React.lazy(perspective.properties.icon), [
-    perspective.properties.icon,
-  ]);
   return (
     <SelectOption
       key={perspective.properties.id}
@@ -38,9 +38,10 @@ const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
         onClick(perspective.properties.id);
       }}
       icon={
-        <React.Suspense fallback={<>&emsp;</>}>
-          <LazyIcon />
-        </React.Suspense>
+        <AsyncComponent
+          loader={() => perspective.properties.icon().then((m) => m.default)}
+          LoadingComponent={IconLoadingComponent}
+        />
       }
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
@@ -84,8 +85,6 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [activePerspective, perspectiveExtensions],
   );
 
-  const LazyIcon = React.useMemo(() => icon && React.lazy(icon), [icon]);
-
   return perspectiveDropdownItems.length > 1 ? (
     <div
       className="oc-nav-header"
@@ -103,7 +102,14 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
             onClick={() => togglePerspectiveOpen()}
-            icon={<LazyIcon />}
+            icon={
+              icon && (
+                <AsyncComponent
+                  loader={() => icon().then((m) => m.default)}
+                  LoadingComponent={IconLoadingComponent}
+                />
+              )
+            }
           >
             {name && (
               <Title headingLevel="h2" size="md">
