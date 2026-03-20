@@ -166,6 +166,28 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
   return result;
 };
 
+/**
+ * PatternFly packages that support dynamic modules to be used with webpack module federation.
+ *
+ * Console provided {@link sharedPluginModules} should NOT be listed here.
+ */
+const dynamicModulePatternFlyPackages = [
+  '@patternfly/react-charts',
+  '@patternfly/react-core',
+  '@patternfly/react-data-view',
+  '@patternfly/react-icons',
+  '@patternfly/react-table',
+  '@patternfly/react-templates',
+];
+
+type DynamicModulePackageSpec = Partial<{
+  /** @default 'dist/esm/index.js' */
+  indexModule: string;
+
+  /** @default 'module' */
+  resolutionField: string;
+}>;
+
 export type ConsoleRemotePluginOptions = Partial<{
   /**
    * Console dynamic plugin metadata.
@@ -267,21 +289,10 @@ export type ConsoleRemotePluginOptions = Partial<{
      * Each package listed here should include a `dist/dynamic` directory containing `package.json`
      * files that refer to specific modules of that package.
      *
-     * If not specified, the following packages will be included:
-     * - `@patternfly/react-core`
-     * - `@patternfly/react-icons`
-     * - `@patternfly/react-table`
+     * If not specified, use packages listed in {@link dynamicModulePatternFlyPackages} with default
+     * settings.
      */
-    packageSpecs: Record<
-      string,
-      Partial<{
-        /** @default 'dist/esm/index.js' */
-        indexModule: string;
-
-        /** @default 'module' */
-        resolutionField: string;
-      }>
-    >;
+    packageSpecs: Record<string, DynamicModulePackageSpec>;
 
     /**
      * Import transformations will be applied to modules that match this filter.
@@ -348,24 +359,24 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       path.resolve(process.cwd(), 'node_modules'),
     ];
 
-    this.sharedDynamicModuleMaps = Object.entries(
-      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
-        '@patternfly/react-core': {},
-        '@patternfly/react-icons': {},
-        '@patternfly/react-table': {},
-      },
-    ).reduce<Record<string, DynamicModuleMap>>(
-      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
-        const basePath = resolvedModulePaths
-          .map((p) => path.resolve(p, pkgName))
-          .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+    const sharedDynamicModulePackageSpecs =
+      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ??
+      dynamicModulePatternFlyPackages.reduce<Record<string, DynamicModulePackageSpec>>(
+        (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
+        {},
+      );
 
-        return basePath
-          ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
-          : acc;
-      },
-      {},
-    );
+    this.sharedDynamicModuleMaps = Object.entries(sharedDynamicModulePackageSpecs).reduce<
+      Record<string, DynamicModuleMap>
+    >((acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
+      const basePath = resolvedModulePaths
+        .map((p) => path.resolve(p, pkgName))
+        .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+
+      return basePath
+        ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
+        : acc;
+    }, {});
   }
 
   apply(compiler: Compiler) {
