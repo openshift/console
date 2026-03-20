@@ -10,6 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.3 - TBD
+
+- **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to `moduleFilter` ([CONSOLE-5065], [#16224])
+- Update the default list of PatternFly packages that support dynamic modules ([CONSOLE-5065], [#16182])
+- Add support for `dist/dynamic-modules.json` when resolving dynamic module maps ([CONSOLE-5065], [#16224])
+
 ## 4.22.0-prerelease.2 - 2026-03-26
 
 - **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`. Migrate by
@@ -110,6 +116,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4623]: https://issues.redhat.com/browse/CONSOLE-4623
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
+[CONSOLE-5065]: https://issues.redhat.com/browse/CONSOLE-5065
 [CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
@@ -145,3 +152,5 @@ table in [Console dynamic plugins README](./README.md).
 [#15934]: https://github.com/openshift/console/pull/15934
 [#15945]: https://github.com/openshift/console/pull/15945
 [#16178]: https://github.com/openshift/console/pull/16178
+[#16182]: https://github.com/openshift/console/pull/16182
+[#16224]: https://github.com/openshift/console/pull/16224
