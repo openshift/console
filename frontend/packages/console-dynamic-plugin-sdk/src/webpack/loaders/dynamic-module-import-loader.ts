@@ -6,6 +6,7 @@ export type DynamicModuleImportLoaderOptions = {
   dynamicModuleMaps: Record<string, DynamicModuleMap>;
   resourceMetadata: { jsx: boolean };
   skipTypeOnlyImports?: boolean;
+  skipImportPrefixes?: string[];
 };
 
 export type DynamicModuleImportLoader = LoaderDefinitionFunction<DynamicModuleImportLoaderOptions>;
@@ -45,7 +46,12 @@ const getImportInfo = (importDeclaration: ts.ImportDeclaration) => {
  * @see https://webpack.js.org/contribute/writing-a-loader/
  */
 const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
-  const { dynamicModuleMaps, resourceMetadata, skipTypeOnlyImports = true } = this.getOptions();
+  const {
+    dynamicModuleMaps,
+    resourceMetadata,
+    skipTypeOnlyImports = true,
+    skipImportPrefixes = [],
+  } = this.getOptions();
 
   const sourceContainsDynamicModuleReference = Object.keys(dynamicModuleMaps).some(
     (m) => source.indexOf(m) !== -1,
@@ -89,6 +95,10 @@ const dynamicModuleImportLoader: DynamicModuleImportLoader = function (source) {
       }
 
       const { moduleSpecifier, importNameToAlias } = getImportInfo(node);
+
+      if (skipImportPrefixes.findIndex((prefix) => moduleSpecifier.startsWith(prefix)) >= 0) {
+        return;
+      }
 
       const dynamicModuleName = Object.keys(dynamicModuleMaps).find((m) =>
         moduleSpecifier.startsWith(m),

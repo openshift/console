@@ -5,6 +5,12 @@ import * as path from 'path';
 import * as glob from 'glob';
 import * as ts from 'typescript';
 
+// TODO(vojtech): getDynamicModuleMap function has been ported to PatternFly React project:
+// https://github.com/patternfly/patternfly-react/blob/main/scripts/parse-dynamic-modules.mjs
+//
+// We should remove Console specific getDynamicModuleMap implementation in favor of expecting
+// PatternFly packages that support dynamic modules to always provide dist/dynamic-modules.json
+
 const defaultCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2020,
   module: ts.ModuleKind.ESNext,
@@ -50,9 +56,12 @@ export type DynamicModuleMap = { [exportName: string]: string };
  * Dynamic modules nested under `deprecated` or `next` directories are ignored.
  *
  * If the referenced index module does not exist, an empty object is returned.
+ *
+ * @see https://github.com/patternfly/patternfly-react/blob/main/scripts/parse-dynamic-modules.mjs
  */
 export const getDynamicModuleMap = (
   basePath: string,
+  dynamicModuleDir = 'dist/dynamic',
   indexModule = 'dist/esm/index.js',
   resolutionField = 'module',
   tsCompilerOptions = defaultCompilerOptions,
@@ -68,7 +77,7 @@ export const getDynamicModuleMap = (
   }
 
   const dynamicModulePathToPkgDir = glob
-    .sync(`${basePath}/dist/dynamic/**/package.json`)
+    .sync(`${basePath}/${dynamicModuleDir}/**/package.json`)
     .reduce<Record<string, string>>((acc, pkgFile) => {
       // eslint-disable-next-line
       const pkg = require(pkgFile);

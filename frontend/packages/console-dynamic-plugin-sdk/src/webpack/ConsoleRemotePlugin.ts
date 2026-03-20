@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import type {
   EncodedExtension,
@@ -18,16 +17,13 @@ import {
   getSharedModuleMetadata,
 } from '../shared-modules/shared-modules-meta';
 import type { DynamicModuleMap } from '../utils/dynamic-module-parser';
-import { getDynamicModuleMap } from '../utils/dynamic-module-parser';
 import { parseJSONC } from '../utils/jsonc';
 import { loadSchema } from '../utils/schema';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
-import type { DynamicModuleImportLoaderOptions } from './loaders/dynamic-module-import-loader';
-
-const dynamicModuleImportLoader =
-  '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader';
+import type { DynamicModulePackageSpecs } from './DynamicModuleImportPlugin';
+import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicModuleImportPlugin';
 
 const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
 
@@ -54,51 +50,66 @@ const getPluginSDKPackagePeerDependencies = () =>
 const getPatternFlyStyles = (baseDir: string) =>
   glob.sync(`${baseDir}/node_modules/@patternfly/react-styles/**/*.css`);
 
-// Shared modules that can be used by the dynamic plugin
-// https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-const getWebpackSharedModules = () => {
+/**
+ * Get webpack shared module configuration to use by Console plugins.
+ *
+ * This includes Console provided {@link sharedPluginModules} and shared dynamic modules
+ * resolved from {@link dynamicModulePackageSpecs}.
+ *
+ * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+ */
+const getWebpackSharedModules = (
+  pkg: ConsolePluginPackageJSON,
+  dynamicModuleMaps: Record<string, DynamicModuleMap>,
+): WebpackSharedObject => {
   const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
 
-  return sharedPluginModules.reduce<WebpackSharedObject>((acc, moduleName) => {
-    const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
-    const providedVersionRange = sdkPkgDeps[moduleName];
-    const moduleConfig: WebpackSharedConfig = { singleton };
+  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
+    (acc, moduleName) => {
+      const { singleton, allowFallback } = getSharedModuleMetadata(moduleName);
+      const providedVersionRange = sdkPkgDeps[moduleName];
+      const moduleConfig: WebpackSharedConfig = { singleton };
 
-    if (!allowFallback) {
-      moduleConfig.import = false;
-    }
+      if (!allowFallback) {
+        moduleConfig.import = false;
+      }
 
-    if (semver.validRange(providedVersionRange)) {
-      moduleConfig.requiredVersion = providedVersionRange;
-    }
+      if (semver.validRange(providedVersionRange)) {
+        moduleConfig.requiredVersion = providedVersionRange;
+      }
 
-    acc[moduleName] = moduleConfig;
-    return acc;
-  }, {});
-};
+      acc[moduleName] = moduleConfig;
 
-const getWebpackSharedDynamicModules = (
-  pkg: ConsolePluginPackageJSON,
-  moduleName: string,
-  moduleRequests: string[],
-) => {
-  const pluginDeps = getPackageDependencies(pkg);
-  const moduleVersion = getVendorPackageVersion(moduleName);
-  const moduleVersionRange = pluginDeps[moduleName];
-  const moduleConfig: WebpackSharedConfig = {};
+      return acc;
+    },
+    {},
+  );
 
-  if (semver.valid(moduleVersion)) {
-    moduleConfig.version = moduleVersion;
-  }
+  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+    (acc, [moduleName, dynamicModuleMap]) => {
+      const pluginDeps = getPackageDependencies(pkg);
+      const moduleVersion = getVendorPackageVersion(moduleName);
+      const moduleVersionRange = pluginDeps[moduleName];
+      const moduleConfig: WebpackSharedConfig = {};
 
-  if (semver.validRange(moduleVersionRange)) {
-    moduleConfig.requiredVersion = moduleVersionRange;
-  }
+      if (semver.valid(moduleVersion)) {
+        moduleConfig.version = moduleVersion;
+      }
 
-  return moduleRequests.reduce<WebpackSharedObject>((acc, request) => {
-    acc[`${moduleName}/${request}`] = moduleConfig;
-    return acc;
-  }, {});
+      if (semver.validRange(moduleVersionRange)) {
+        moduleConfig.requiredVersion = moduleVersionRange;
+      }
+
+      Object.values(dynamicModuleMap).forEach((request) => {
+        acc[`${moduleName}/${request}`] = moduleConfig;
+      });
+
+      return acc;
+    },
+    {},
+  );
+
+  return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
 };
 
 /**
@@ -130,7 +141,7 @@ const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): strin
 
     if (deprecated && pluginDeps[moduleName]) {
       warnings.push(
-        `shared modules: [DEPRECATION ALERT] '${moduleName}' is deprecated. ${deprecated}`,
+        `[DEPRECATION WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`,
       );
     }
   });
@@ -169,10 +180,9 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
 /**
  * PatternFly packages that support dynamic modules to be used with webpack module federation.
  *
- * Console provided {@link sharedPluginModules} should NOT be listed here.
+ * Console provided {@link sharedPluginModules} should _NOT_ be listed here.
  */
 const dynamicModulePatternFlyPackages = [
-  '@patternfly/react-charts',
   '@patternfly/react-core',
   '@patternfly/react-data-view',
   '@patternfly/react-icons',
@@ -180,13 +190,19 @@ const dynamicModulePatternFlyPackages = [
   '@patternfly/react-templates',
 ];
 
-type DynamicModulePackageSpec = Partial<{
-  /** @default 'dist/esm/index.js' */
-  indexModule: string;
+/**
+ * Default shared dynamic module package definitions.
+ */
+export const dynamicModulePackageSpecs = dynamicModulePatternFlyPackages.reduce<
+  DynamicModulePackageSpecs
+>((acc, moduleName) => ({ ...acc, [moduleName]: {} }), {});
 
-  /** @default 'module' */
-  resolutionField: string;
-}>;
+export const dynamicModuleImportTransformFilter = (moduleRequest: string) => {
+  const isCode = /\.(jsx?|tsx?)$/.test(moduleRequest);
+  const isVendor = moduleRequest.includes('/node_modules/');
+
+  return isCode && (!isVendor || moduleRequest.includes('/node_modules/@openshift-console/'));
+};
 
 export type ConsoleRemotePluginOptions = Partial<{
   /**
@@ -250,9 +266,9 @@ export type ConsoleRemotePluginOptions = Partial<{
   /**
    * Some vendor packages may support dynamic modules to be used with webpack module federation.
    *
-   * If a module request matches the `transformImports` filter, that module will have its imports
-   * transformed so that any _index_ imports for given vendor packages become imports for specific
-   * dynamic modules of these vendor packages.
+   * If a module request matches the `moduleFilter`, code of that module will be modified so that
+   * any _index_ imports for given vendor packages become imports for specific dynamic modules of
+   * these vendor packages.
    *
    * For example, the following import:
    * ```ts
@@ -268,11 +284,23 @@ export type ConsoleRemotePluginOptions = Partial<{
    * Each dynamic module (such as `@patternfly/react-core/dist/dynamic/components/Alert`) will
    * be treated as a separate shared module at runtime. This approach allows for more efficient
    * federation of vendor package code, as opposed to sharing the whole vendor package index
-   * (such as `@patternfly/react-core`) that pulls in all of its code.
+   * (such as `@patternfly/react-core`) that would cause all of its code to be pulled into the
+   * Console compilation and inflate the vendor bundle size.
    */
   sharedDynamicModuleSettings: Partial<{
     /**
-     * Paths to `node_modules` directories to search when parsing dynamic modules.
+     * Packages that support dynamic modules for use with webpack module federation.
+     *
+     * Each vendor package listed here should include a `dist/dynamic` directory containing
+     * `package.json` files representing parts of that package to be shared separately between
+     * the Console application and its plugins at runtime.
+     *
+     * If not specified, use a default list of PatternFly packages that support dynamic modules.
+     */
+    packageSpecs: DynamicModulePackageSpecs;
+
+    /**
+     * Paths to `node_modules` directories to search when resolving dynamic modules.
      *
      * Paths listed here _must_ be absolute.
      *
@@ -284,33 +312,22 @@ export type ConsoleRemotePluginOptions = Partial<{
     modulePaths: string[];
 
     /**
-     * Attempt to parse dynamic modules for these packages.
-     *
-     * Each package listed here should include a `dist/dynamic` directory containing `package.json`
-     * files that refer to specific modules of that package.
-     *
-     * If not specified, use packages listed in {@link dynamicModulePatternFlyPackages} with default
-     * settings.
-     */
-    packageSpecs: Record<string, DynamicModulePackageSpec>;
-
-    /**
-     * Import transformations will be applied to modules that match this filter.
+     * Modules that match this filter will have their imports transformed.
      *
      * If not specified, the following conditions must be all true for a module to be matched:
-     * - request ends with one of `.js`, `.jsx`, `.ts`, `.tsx`
+     * - request ends with `.js`, `.jsx`, `.ts` or `.tsx`
      * - request does not contain `node_modules` path elements (i.e. not a vendor module request),
      *   _except_ for `@openshift-console/*` packages
      */
-    transformImports: (moduleRequest: string) => boolean;
+    moduleFilter: (moduleRequest: string) => boolean;
   }>;
 }>;
 
 /**
  * Generates Console dynamic plugin remote container and related assets.
  *
- * Refer to `frontend/packages/console-dynamic-plugin-sdk/src/shared-modules.ts` for details on
- * Console application vs. dynamic plugins shared module configuration.
+ * Refer to `console-dynamic-plugin-sdk/src/shared-modules.ts` for details on Console provided
+ * shared modules and their configuration.
  *
  * @see {@link sharedPluginModules}
  * @see {@link getSharedModuleMetadata}
@@ -322,7 +339,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
 
   private readonly pkg = loadPluginPackageJSON();
 
-  private readonly sharedDynamicModuleMaps: Record<string, DynamicModuleMap>;
+  private readonly dynamicModuleMaps: Record<string, DynamicModuleMap>;
 
   constructor(options: ConsoleRemotePluginOptions = {}) {
     this.adaptedOptions = {
@@ -342,6 +359,8 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       validateConsoleProvidedSharedModules(this.pkg).report();
     }
 
+    validateConsoleBuildMetadata(this.adaptedOptions.pluginMetadata).report();
+
     const overlapDependencyNames = _.intersection(
       Object.keys(this.adaptedOptions.pluginMetadata.dependencies ?? {}),
       Object.keys(this.adaptedOptions.pluginMetadata.optionalDependencies ?? {}),
@@ -359,24 +378,10 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       path.resolve(process.cwd(), 'node_modules'),
     ];
 
-    const sharedDynamicModulePackageSpecs =
-      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ??
-      dynamicModulePatternFlyPackages.reduce<Record<string, DynamicModulePackageSpec>>(
-        (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
-        {},
-      );
-
-    this.sharedDynamicModuleMaps = Object.entries(sharedDynamicModulePackageSpecs).reduce<
-      Record<string, DynamicModuleMap>
-    >((acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
-      const basePath = resolvedModulePaths
-        .map((p) => path.resolve(p, pkgName))
-        .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
-
-      return basePath
-        ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
-        : acc;
-    }, {});
+    this.dynamicModuleMaps = resolveDynamicModuleMaps(
+      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? dynamicModulePackageSpecs,
+      resolvedModulePaths,
+    );
   }
 
   apply(compiler: Compiler) {
@@ -401,6 +406,8 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
 
+    // Dynamic plugin assets should be loaded from /api/plugins/<plugin-name> endpoint.
+    // Console Bridge server will fetch the asset from the appropriate plugin web server.
     const publicPath = `/api/plugins/${name}/`;
 
     if (compiler.options.output.publicPath !== undefined) {
@@ -420,17 +427,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       }
     });
 
-    const consoleProvidedSharedModules = getWebpackSharedModules();
-
-    const sharedDynamicModules = Object.entries(this.sharedDynamicModuleMaps).reduce<
-      WebpackSharedObject
-    >(
-      (acc, [moduleName, dynamicModuleMap]) => ({
-        ...acc,
-        ...getWebpackSharedDynamicModules(this.pkg, moduleName, Object.values(dynamicModuleMap)),
-      }),
-      {},
-    );
+    const sharedModules = getWebpackSharedModules(this.pkg, this.dynamicModuleMaps);
 
     new DynamicRemotePlugin({
       pluginMetadata: {
@@ -444,7 +441,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
         exposedModules,
       },
       extensions,
-      sharedModules: { ...consoleProvidedSharedModules, ...sharedDynamicModules },
+      sharedModules,
       entryCallbackSettings: {
         name: REMOTE_ENTRY_CALLBACK,
       },
@@ -454,10 +451,14 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
           : 'plugin-entry.js',
     }).apply(compiler);
 
-    validateConsoleBuildMetadata(pluginMetadata).report();
+    new DynamicModuleImportPlugin({
+      dynamicModuleMaps: this.dynamicModuleMaps,
+      moduleFilter: sharedDynamicModuleSettings.moduleFilter ?? dynamicModuleImportTransformFilter,
+    }).apply(compiler);
 
-    if (validateExtensionIntegrity) {
-      compiler.hooks.emit.tap(ConsoleRemotePlugin.name, (compilation) => {
+    // Post-build validations performed before emitting assets
+    compiler.hooks.emit.tap(ConsoleRemotePlugin.name, (compilation) => {
+      if (validateExtensionIntegrity) {
         const result = new ExtensionValidator('Console plugin extensions').validate(
           compilation,
           extensions,
@@ -471,49 +472,11 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
           error.file = extensionsFile;
           compilation.errors.push(error);
         }
-      });
-    }
+      }
 
-    const transformImports =
-      sharedDynamicModuleSettings.transformImports ??
-      ((moduleRequest) => {
-        const isCode = /\.(jsx?|tsx?)$/.test(moduleRequest);
-        const isVendor = moduleRequest.includes('/node_modules/');
-
-        return isCode && (!isVendor || moduleRequest.includes('/node_modules/@openshift-console/'));
-      });
-
-    compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
       getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
         compilation.warnings.push(new compiler.webpack.WebpackError(message));
       });
-
-      const modifiedModules: string[] = [];
-
-      compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
-        ConsoleRemotePlugin.name,
-        (loaders, normalModule) => {
-          const { userRequest } = normalModule;
-
-          const moduleRequest = userRequest.substring(
-            userRequest.lastIndexOf('!') === -1 ? 0 : userRequest.lastIndexOf('!') + 1,
-          );
-
-          if (!modifiedModules.includes(moduleRequest) && transformImports(moduleRequest)) {
-            const loaderOptions: DynamicModuleImportLoaderOptions = {
-              dynamicModuleMaps: this.sharedDynamicModuleMaps,
-              resourceMetadata: { jsx: /\.(jsx|tsx)$/.test(moduleRequest) },
-            };
-
-            normalModule.loaders.push({
-              loader: dynamicModuleImportLoader,
-              options: loaderOptions,
-            } as any);
-
-            modifiedModules.push(moduleRequest);
-          }
-        },
-      );
     });
   }
 }
