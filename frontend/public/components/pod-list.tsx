@@ -1,6 +1,7 @@
 import {
   actionsCellProps,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
   getNameCellProps,
   initialFiltersDefault,
   nameCellProps,
@@ -118,7 +119,7 @@ const usePodsColumns = (
   showNodes: boolean,
 ): { columns: TableColumn<PodKind>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(PodModel);
 
   const columns = useMemo(() => {
     return [
@@ -224,6 +225,7 @@ const usePodsColumns = (
         resizableProps: getResizableProps(tableColumnInfo[10].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
         additional: true,
       },
@@ -254,7 +256,7 @@ const usePodsColumns = (
         },
       },
     ];
-  }, [t, showNodes, getResizableProps]);
+  }, [t, showNodes, getResizableProps, getWidth]);
   return { columns, resetAllColumnWidths };
 };
 
