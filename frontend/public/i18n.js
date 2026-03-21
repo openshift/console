@@ -7,8 +7,6 @@ import { transformNamespace } from 'i18next-v4-format-converter';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 
-import { dateTimeFormatter, fromNow } from './components/utils/datetime';
-
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 const language = params.get('lng');
@@ -50,6 +48,7 @@ export const init = () => {
           return parsed;
         },
       },
+      showSupportNotice: false,
       lng: getLastLanguage(),
       fallbackLng: 'en',
       load: 'languageOnly',
@@ -67,7 +66,6 @@ export const init = () => {
         'insights-plugin',
         'knative-plugin',
         'metal3-plugin',
-        'notification-drawer',
         'olm',
         'olm-v1',
         'shipwright-plugin',
@@ -82,24 +80,10 @@ export const init = () => {
       keySeparator: false,
       postProcess: ['pseudo'],
       interpolation: {
-        format: function (value, format, lng, options) {
-          if (format === 'number') {
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
-            return new Intl.NumberFormat(lng).format(value);
-          }
-          if (value instanceof Date) {
-            if (format === 'fromNow') {
-              return fromNow(value, null, options);
-            }
-            return dateTimeFormatter.format(value);
-          }
-          return value;
-        },
         escapeValue: false, // not needed for react as it escapes by default
       },
       react: {
         useSuspense: true,
-        wait: true,
         transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
       },
       saveMissing: true,
@@ -110,8 +94,8 @@ export const init = () => {
         console.error(formattedMessage);
       },
     })
-    // Update loading promise and pass values and errors to the caller
     .then((value) => {
+      // Update loading promise and pass values and errors to the caller
       resolvedLoading(true);
       return value;
     })
