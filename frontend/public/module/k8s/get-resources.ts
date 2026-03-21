@@ -12,7 +12,8 @@ import {
   translateExtension,
 } from '@console/plugin-sdk/src/utils/extension-i18n';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
-import { fetchURL } from '../../graphql/client';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
 import { pluginStore } from '../../plugins';
 import { loading as i18nLoading } from '../../i18n';
 
@@ -138,7 +139,7 @@ export const getModelExtensionMetadata = (
 };
 
 export const getResources = (): Promise<DiscoveryResources> =>
-  fetchURL('/apis').then((res) => {
+  coFetchJSON(`${k8sBasePath}/apis`).then((res) => {
     const groupVersionMap = res.groups.reduce(
       (acc, { name, versions, preferredVersion: { version } }) => {
         acc[name] = {
@@ -150,10 +151,12 @@ export const getResources = (): Promise<DiscoveryResources> =>
       {},
     );
     const all = _.flatten<string>(
-      res.groups.map((group) => group.versions.map((version) => `/apis/${version.groupVersion}`)),
+      res.groups.map((group) =>
+        group.versions.map((version) => `${k8sBasePath}/apis/${version.groupVersion}`),
+      ),
     )
-      .concat(['/api/v1'])
-      .map((p) => fetchURL<APIResourceList>(p).catch((err) => err));
+      .concat([`${k8sBasePath}/api/v1`])
+      .map((p) => coFetchJSON(p).catch((err) => err));
 
     // Wait also until the known translation bundles are resolved
     all.push(i18nLoading);

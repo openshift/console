@@ -441,25 +441,6 @@ github.com/gorilla/websocket
 github.com/gosuri/uitable
 github.com/gosuri/uitable/util/strutil
 github.com/gosuri/uitable/util/wordwrap
-# github.com/graph-gophers/graphql-go v1.6.0
-## explicit; go 1.16
-github.com/graph-gophers/graphql-go
-github.com/graph-gophers/graphql-go/ast
-github.com/graph-gophers/graphql-go/decode
-github.com/graph-gophers/graphql-go/errors
-github.com/graph-gophers/graphql-go/internal/common
-github.com/graph-gophers/graphql-go/internal/exec
-github.com/graph-gophers/graphql-go/internal/exec/packer
-github.com/graph-gophers/graphql-go/internal/exec/resolvable
-github.com/graph-gophers/graphql-go/internal/exec/selected
-github.com/graph-gophers/graphql-go/internal/query
-github.com/graph-gophers/graphql-go/internal/schema
-github.com/graph-gophers/graphql-go/internal/validation
-github.com/graph-gophers/graphql-go/introspection
-github.com/graph-gophers/graphql-go/log
-github.com/graph-gophers/graphql-go/relay
-github.com/graph-gophers/graphql-go/trace/noop
-github.com/graph-gophers/graphql-go/trace/tracer
 # github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 ## explicit
 github.com/gregjones/httpcache
@@ -706,10 +687,6 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
-## explicit
-github.com/rawagner/graphql-transport-ws/graphqlws
-github.com/rawagner/graphql-transport-ws/graphqlws/internal/connection
 # github.com/redhat-certification/chart-verifier v0.0.0-20250415162918-111669f9d053
 ## explicit; go 1.23.5
 github.com/redhat-certification/chart-verifier/internal/chartverifier

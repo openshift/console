@@ -27,7 +27,6 @@ FROM registry.ci.openshift.org/ocp/4.22:base-rhel9
 RUN mkdir -p /opt/bridge/bin
 COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
 COPY --from=nodebuilder /opt/app-root/src/frontend/public/dist /opt/bridge/static
-COPY --from=gobuilder /go/src/github.com/openshift/console/pkg/graphql/schema.graphql /pkg/graphql/schema.graphql
 
 WORKDIR /
 # doesn't require a root user.

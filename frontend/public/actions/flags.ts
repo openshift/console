@@ -5,7 +5,8 @@ import { receivedResources } from '@console/dynamic-plugin-sdk/src/app/k8s/actio
 import { K8sModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { ActionType as Action, action } from 'typesafe-actions';
-import { fetchURL } from '../graphql/client';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 
 export enum ActionType {
@@ -14,7 +15,7 @@ export enum ActionType {
   UpdateModelFlags = 'updateModelFlags',
 }
 
-const projectListPath = '/apis/project.openshift.io/v1/projects?limit=1';
+const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
 
 export const retryFlagDetection = (dispatch, cb) => {
   setTimeout(() => cb(dispatch), 15000);
@@ -48,7 +49,7 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
     return;
   }
 
-  fetchURL(projectListPath).then(
+  coFetchJSON(projectListPath).then(
     (res) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
     (err) =>
       err?.response?.status === 404

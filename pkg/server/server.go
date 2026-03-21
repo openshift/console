@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -28,8 +27,6 @@ import (
 	"github.com/openshift/console/pkg/crdschema"
 	devconsole "github.com/openshift/console/pkg/devconsole"
 	"github.com/openshift/console/pkg/devfile"
-	gql "github.com/openshift/console/pkg/graphql"
-	"github.com/openshift/console/pkg/graphql/resolver"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/middleware"
@@ -43,9 +40,6 @@ import (
 	"github.com/openshift/console/pkg/usersettings"
 	"github.com/openshift/console/pkg/utils"
 	"github.com/openshift/console/pkg/version"
-
-	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/rawagner/graphql-transport-ws/graphqlws"
 )
 
 // Public constants
@@ -68,7 +62,6 @@ const (
 	devfileEndpoint                       = "/api/devfile/"
 	devfileSamplesEndpoint                = "/api/devfile/samples/"
 	gitopsEndpoint                        = "/api/gitops/"
-	graphQLEndpoint                       = "/api/graphql"
 	helmChartRepoProxyEndpoint            = "/api/helm/charts/"
 	indexPageTemplateName                 = "index.html"
 	k8sProxyEndpoint                      = "/api/kubernetes/"
@@ -117,7 +110,6 @@ type jsGlobals struct {
 	GOARCH                          string                     `json:"GOARCH"`
 	GOOS                            string                     `json:"GOOS"`
 	GrafanaPublicURL                string                     `json:"grafanaPublicURL"`
-	GraphQLBaseURL                  string                     `json:"graphqlBaseURL"`
 	I18nNamespaces                  []string                   `json:"i18nNamespaces"`
 	InactivityTimeout               int                        `json:"inactivityTimeout"`
 	KubeAdminLogoutURL              string                     `json:"kubeAdminLogoutURL"`
@@ -373,36 +365,6 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handle(terminal.ProxyEndpoint, authHandlerWithUser(terminalProxy.HandleProxy))
 	handleFunc(terminal.AvailableEndpoint, terminalProxy.HandleProxyEnabled)
 	handleFunc(terminal.InstalledNamespaceEndpoint, terminalProxy.HandleTerminalInstalledNamespace)
-
-	graphQLSchema, err := os.ReadFile("pkg/graphql/schema.graphql")
-	if err != nil {
-		panic(err)
-	}
-	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.DisableIntrospection()}
-	k8sResolver := resolver.K8sResolver{K8sProxy: k8sProxy}
-	rootResolver := resolver.RootResolver{K8sResolver: &k8sResolver}
-	schema := graphql.MustParseSchema(string(graphQLSchema), &rootResolver, opts...)
-	handler := graphqlws.NewHandler()
-	handler.InitPayload = resolver.InitPayload
-	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
-	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		headers := map[string]interface{}{
-			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
-		}
-		if impUser := r.Header.Get("Impersonate-User"); impUser != "" {
-			headers["Impersonate-User"] = impUser
-		}
-		if consoleGroups := r.Header.Get("X-Console-Impersonate-Groups"); consoleGroups != "" {
-			groups := strings.Split(consoleGroups, ",")
-			groups = append(groups, "system:authenticated")
-			headers["Impersonate-Group"] = groups
-		} else if impGroups := r.Header.Values("Impersonate-Group"); len(impGroups) > 0 {
-			impGroups = append(impGroups, "system:authenticated")
-			headers["Impersonate-Group"] = impGroups
-		}
-		ctx := context.WithValue(context.Background(), resolver.HeadersKey, headers)
-		graphQLHandler(w, r.WithContext(ctx))
-	}))
 
 	if s.prometheusProxyEnabled() {
 		// Only proxy requests to the Prometheus API, not the UI.
@@ -767,7 +729,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOARCH:                    s.GOARCH,
 		GOOS:                      s.GOOS,
 		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		I18nNamespaces:            s.I18nNamespaces,
 		InactivityTimeout:         s.InactivityTimeout,
 		K8sMode:                   s.K8sMode,
