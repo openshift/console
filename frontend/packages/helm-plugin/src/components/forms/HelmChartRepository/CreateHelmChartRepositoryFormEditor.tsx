@@ -25,6 +25,7 @@ export type FormData = {
     repoDescription?: string;
     ca?: string;
     tlsClientConfig?: string;
+    basicAuthConfig?: string;
     disabled?: boolean;
   };
 };
@@ -32,17 +33,25 @@ export type FormData = {
 type CreateHelmChartRepositoryFormEditorProps = {
   showScopeType: boolean;
   existingRepo: HelmChartRepositoryType;
+  namespace: string;
 };
 
 const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEditorProps> = ({
   showScopeType,
   existingRepo,
+  namespace,
 }) => {
   const { t } = useTranslation();
   const {
     values: { formData },
   } = useFormikContext<FormikValues>();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
+
+  const isProjectScoped =
+    formData.scope === 'ProjectHelmChartRepository' ||
+    existingRepo?.kind === 'ProjectHelmChartRepository';
+
+  const resourceNamespace = isProjectScoped ? namespace : 'openshift-config';
 
   const watchedResources = useK8sWatchResources<{
     configMaps: K8sResourceKind[];
@@ -51,13 +60,13 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
     configMaps: {
       isList: true,
       kind: ConfigMapModel.kind,
-      namespace: 'openshift-config',
+      namespace: resourceNamespace,
       optional: true,
     },
     secrets: {
       isList: true,
       kind: SecretModel.kind,
-      namespace: 'openshift-config',
+      namespace: resourceNamespace,
       optional: true,
     },
   });
@@ -182,6 +191,19 @@ const CreateHelmChartRepositoryFormEditor: FC<CreateHelmChartRepositoryFormEdito
             showBadge
             autocompleteFilter={autocompleteFilter}
           />
+
+          {isProjectScoped && (
+            <ResourceDropdownField
+              name="formData.basicAuthConfig"
+              label={t('helm-plugin~Basic authentication')}
+              resources={secretResources}
+              dataSelector={['metadata', 'name']}
+              fullWidth
+              placeholder={t('helm-plugin~Select Secret')}
+              showBadge
+              autocompleteFilter={autocompleteFilter}
+            />
+          )}
         </FormSection>
       </ExpandCollapse>
     </FormSection>
