@@ -1,5 +1,3 @@
-var fs = require('fs');
-
 module.exports = {
   root: true,
   env: {
@@ -27,7 +25,7 @@ module.exports = {
     extraFileExtensions: ['.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc', 'no-barrel-files'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'eslint-plugin-tsdoc', 'no-barrel-files'],
   rules: {
     camelcase: [
       'error',
@@ -109,13 +107,6 @@ module.exports = {
     'react/display-name': 'off',
     'react/no-unescaped-entities': 'off',
     'require-atomic-updates': 'off',
-    'graphql/template-strings': [
-      'error',
-      {
-        env: 'literal',
-        schemaString: fs.readFileSync('../pkg/graphql/schema.graphql', 'utf-8'),
-      },
-    ],
     'tsdoc/syntax': 'warn',
     // Disable import rules with too many false positives in TypeScript
     'import/no-named-as-default-member': 'off',

@@ -29,7 +29,6 @@ declare interface Window {
     statuspageID: string;
     GOARCH: string;
     GOOS: string;
-    graphqlBaseURL: string;
     developerCatalogCategories: string;
     perspectives: string;
     developerCatalogTypes: string;

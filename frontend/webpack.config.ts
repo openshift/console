@@ -256,11 +256,6 @@ const config: Configuration = {
           filename: 'assets/[path][name][ext]',
         },
       },
-      {
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: 'graphql-tag/loader',
-      },
     ],
   },
   optimization: {
@@ -361,7 +356,7 @@ const config: Configuration = {
 
 if (CHECK_CYCLES === 'true') {
   new CircularDependencyPreset({
-    exclude: /node_modules|public\/dist|\.(gql|html)$/,
+    exclude: /node_modules|public\/dist|\.html$/,
     reportFile: '.webpack-cycles',
   }).apply(config.plugins);
 }

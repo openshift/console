@@ -15,7 +15,6 @@ import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage, ActionType } from './common';
-import { subsClient, setForceHTTP } from '../graphql/client';
 import {
   beginImpersonate,
   endImpersonate,
@@ -220,24 +219,14 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
 
   dispatch(beginImpersonate(kind, name, subprotocols, groups));
 
-  // Close WebSocket to trigger reconnection with new impersonation headers
-  // Wait for the close to complete before proceeding
-  subsClient.close(false, true);
-
   // Don't clear/refresh flags here - the App component's useLayoutEffect will handle it
   // This ensures flags refresh happens in sync with React's render cycle
 };
 
-export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
-  setForceHTTP(true);
-  dispatch(detectFeatures()).then(() => setForceHTTP(false));
-};
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
-  subsClient.close(false, true);
-  setForceHTTP(true);
   dispatch(clearSSARFlags());
-  dispatch(detectFeatures()).then(() => setForceHTTP(false));
+  dispatch(detectFeatures());
 };
 export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
   // const url = new URL(window.location.href);
