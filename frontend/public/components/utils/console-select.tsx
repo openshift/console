@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   Divider,
   SelectGroup,
@@ -61,8 +61,6 @@ export type ConsoleSelectProps = {
   selectedKey?: string;
   /** Where to place spacers in the dropdown */
   spacerBefore?: Set<string>;
-  /** Key for storing bookmarks in user settings */
-  storageKey?: string;
   /** Style for the dropdown */
   style?: CSSProperties;
   /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
@@ -70,7 +68,7 @@ export type ConsoleSelectProps = {
   /** Prefix for the title in the dropdown toggle */
   titlePrefix?: string;
   /** User settings id prefix for bookmarks */
-  userSettingsPrefix?: string;
+  userPreferencePrefix?: string;
   /** By default, the title prop is shown as the placeholder for when no item is selected. This prop forces the title to always be shown */
   alwaysShowTitle?: boolean;
   /** Whether to render the dropdown inline */
@@ -118,12 +116,11 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   menuClassName,
   onChange,
   spacerBefore = new Set(),
-  storageKey,
   style,
   title,
   alwaysShowTitle = false,
   titlePrefix,
-  userSettingsPrefix,
+  userPreferencePrefix,
   renderInline = false,
   ...props
 }) => {
@@ -135,19 +132,13 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
-  const bookmarkUserPreferenceKey = userSettingsPrefix
-    ? `${userSettingsPrefix}.bookmarks`
+  const bookmarkUserPreferenceKey = userPreferencePrefix
+    ? `${userPreferencePrefix}.bookmarks`
     : undefined;
-  const bookmarkStorageKey = storageKey ? `${storageKey}-bookmarks` : undefined;
 
-  const enableBookmarks = !!bookmarkUserPreferenceKey || !!bookmarkStorageKey;
+  const enableBookmarks = !!bookmarkUserPreferenceKey;
 
-  const [bookmarks, setBookmarks] = useUserPreferenceCompatibility(
-    bookmarkUserPreferenceKey,
-    bookmarkStorageKey,
-    {},
-    true,
-  );
+  const [bookmarks, setBookmarks] = useUserPreference(bookmarkUserPreferenceKey, {}, true);
 
   const onBookmark = useCallback(
     (key: string, isBookmarked: boolean) => {

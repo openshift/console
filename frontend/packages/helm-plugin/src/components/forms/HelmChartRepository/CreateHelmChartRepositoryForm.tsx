@@ -39,7 +39,7 @@ const CreateHelmChartRepositoryForm: FC<
 }) => {
   const { t } = useTranslation();
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
     'helm-plugin.createHelmChartRepository.editor.lastView';
 
   const formEditor = (
@@ -109,7 +109,7 @@ const CreateHelmChartRepositoryForm: FC<
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, useEffect, useMemo, useContext } from 'react';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
-export const THEME_USER_SETTING_KEY = 'console.theme';
+export const THEME_USER_PREFERENCE_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
 const THEME_DARK_CLASS = 'pf-v6-theme-dark';
@@ -40,7 +40,7 @@ interface ThemeProviderProps {
 const useProcessedTheme = () => {
   const localTheme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY) as PROCESSED_THEME;
   const [theme, , themeLoaded] = useUserPreference(
-    THEME_USER_SETTING_KEY,
+    THEME_USER_PREFERENCE_KEY,
     THEME_SYSTEM_DEFAULT,
     true,
   );

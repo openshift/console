@@ -8,7 +8,7 @@ import type {
   DetailsResourceAlertContent,
 } from '@console/dynamic-plugin-sdk';
 import { isDetailsResourceAlert, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { USERSETTINGS_PREFIX } from '@console/shared';
+import { USER_PREFERENCE_PREFIX } from '@console/shared';
 import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
 import { useUserPreferenceLocalStorage } from '@console/shared/src/hooks/useUserPreferenceLocalStorage';
 import { deserializeData } from '@console/shared/src/utils/user-settings';
@@ -23,16 +23,16 @@ const ResolveResourceAlerts: FC<{
   const [cfData, cfLoaded, cfLoadError] = useGetUserSettingConfigMap();
   const [showAlert, setShowAlert] = useUserPreferenceLocalStorage(
     `${element.getId()}`,
-    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
+    `${USER_PREFERENCE_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
     deserializeData(
-      cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+      cfData?.data?.[`${USER_PREFERENCE_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
     ) || true,
   );
 
   useEffect(() => {
     if (cfData && cfLoaded && !cfLoadError) {
       const alertSetting = deserializeData(
-        cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+        cfData?.data?.[`${USER_PREFERENCE_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
       );
       setShowAlert(alertSetting);
     }

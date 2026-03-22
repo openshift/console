@@ -41,10 +41,9 @@ export interface ResourceDropdownProps {
   menuClassName?: ConsoleSelectProps['menuClassName'];
   placeholder?: ConsoleSelectProps['autocompletePlaceholder'];
   selectedKey: ConsoleSelectProps['selectedKey'];
-  storageKey?: ConsoleSelectProps['storageKey'];
   title?: ConsoleSelectProps['title'];
   titlePrefix?: ConsoleSelectProps['titlePrefix'];
-  userPreferencePrefix?: ConsoleSelectProps['userSettingsPrefix'];
+  userPreferencePrefix?: ConsoleSelectProps['userPreferencePrefix'];
 
   allSelectorItem?: {
     allSelectorKey?: string;
@@ -115,7 +114,6 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
   resources,
   selectedKey,
   showBadge = false,
-  storageKey,
   title: titleProp,
   titlePrefix,
   transformLabel,
@@ -329,8 +327,7 @@ export const ResourceDropdown: FC<ResourceDropdownProps> = ({
       selectedKey={selectedKey}
       title={displayTitle}
       autocompletePlaceholder={placeholder}
-      userSettingsPrefix={userPreferencePrefix}
-      storageKey={storageKey}
+      userPreferencePrefix={userPreferencePrefix}
       disabled={disabled}
     />
   );

@@ -88,7 +88,7 @@ const HelmInstallUpgradeForm: FC<
 
   const uiSchema = useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.installUgradeForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'helm.installUgradeForm.editor.lastView';
 
   const formEditor = formData && formSchema && (
     <DynamicFormField
@@ -185,7 +185,7 @@ const HelmInstallUpgradeForm: FC<
               name="editorType"
               formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
               yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-              lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               prune={prune}
               noMargin
             />

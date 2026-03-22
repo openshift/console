@@ -53,7 +53,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   const uiSchema = useMemo(() => (formSchema ? getJSONSchemaOrder(formSchema, {}) : {}), [
     formSchema,
   ]);
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.urlInstallForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'helm.urlInstallForm.editor.lastView';
 
   const formEditor = formData && formSchema && (
     <DynamicFormField
@@ -163,7 +163,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
               name="editorType"
               formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
               yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-              lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               prune={prune}
               noMargin
             />
