@@ -289,18 +289,41 @@ module.exports = {
   'prefer-rest-params': 'error',
   'prefer-spread': 'error',
 
-  // Prevent imports from @patternfly/react-icons CJS distribution
+  // Prevent imports from @patternfly CJS distributions (dist/js or dist/cjs).
+  // The import/no-restricted-paths rule does not support globs, so each package
+  // with a CJS distribution must be listed individually.
+  // TODO: change this to a glob when our eslint is no longer ancient
   'import/no-restricted-paths': [
     'error',
     {
       zones: [
-        {
+        'react-core',
+        'react-icons',
+        'react-table',
+        'react-charts',
+        'react-code-editor',
+        'react-data-view',
+        'react-drag-drop',
+        'react-log-viewer',
+        'react-styles',
+        'react-templates',
+        'react-tokens',
+        'react-topology',
+        'react-virtualized-extension',
+        'react-catalog-view-extension',
+      ]
+        .map((pkg) => ({
           target: './',
-          from: 'node_modules/@patternfly/react-icons/dist/js',
-          except: ['./index.js'],
-          message: 'Import from the ESM entry point instead: @patternfly/react-icons',
-        },
-      ],
+          from: `node_modules/@patternfly/${pkg}/dist/js`,
+          message: 'Import from the package index instead of the CJS dist/js path.',
+        }))
+        .concat(
+          ['react-component-groups', 'react-data-view', 'react-user-feedback'].map((pkg) => ({
+            target: './',
+            from: `node_modules/@patternfly/${pkg}/dist/cjs`,
+            message: 'Import from the package index instead of the CJS dist/cjs path.',
+          })),
+        ),
     },
   ],
 };
