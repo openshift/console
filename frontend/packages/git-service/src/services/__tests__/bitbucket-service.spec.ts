@@ -294,4 +294,87 @@ describe('Bitbucket Service', () => {
       nockDone();
     });
   });
+
+  it('should preserve scheme and port for Bitbucket Server API calls', async () => {
+    const gitSource: GitSource = {
+      url: 'http://bb.example.com:7990/scm/PROJ/repo.git',
+    };
+    const gitService = new BitbucketService(gitSource);
+
+    const scope = nock('http://bb.example.com:7990')
+      .get('/rest/api/1.0/projects/PROJ/repos/repo')
+      .reply(200, { slug: 'repo' });
+
+    const status = await gitService.isRepoReachable();
+    expect(status).toEqual(RepoStatus.Reachable);
+    scope.done();
+  });
+
+  describe('getRepoMetadata - Protocol and Port Handling', () => {
+    it('should use HTTPS protocol for standard Bitbucket URL', () => {
+      const gitSource: GitSource = { url: 'https://bitbucket.org/owner/repo' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://bitbucket.org');
+    });
+
+    it('should preserve HTTP protocol', () => {
+      const gitSource: GitSource = { url: 'http://bitbucket.example.com/owner/repo' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://bitbucket.example.com');
+    });
+
+    it('should preserve custom port with HTTPS', () => {
+      const gitSource: GitSource = { url: 'https://bitbucket.example.com:8443/owner/repo' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://bitbucket.example.com:8443');
+    });
+
+    it('should preserve custom port with HTTP', () => {
+      const gitSource: GitSource = { url: 'http://bitbucket.example.com:8080/owner/repo' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://bitbucket.example.com:8080');
+    });
+
+    it('should default to HTTPS for SSH URLs and preserve port', () => {
+      const gitSource: GitSource = { url: 'git@bitbucket.example.com:2222/owner/repo.git' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://bitbucket.example.com:2222');
+    });
+
+    it('should default to HTTPS for git:// protocol URLs', () => {
+      const gitSource: GitSource = { url: 'git://bitbucket.example.com/owner/repo.git' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://bitbucket.example.com');
+    });
+
+    it('should preserve non-standard port regardless of original protocol', () => {
+      const gitSource: GitSource = { url: 'ssh://git@bitbucket.example.com:9999/owner/repo.git' };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('https://bitbucket.example.com:9999');
+    });
+
+    it('should handle Bitbucket Server URL with custom port', () => {
+      const gitSource: GitSource = {
+        url: 'http://bb.example.com:7990/scm/proj/repo.git',
+      };
+      const gitService = new BitbucketService(gitSource);
+      const metadata = gitService.getRepoMetadata();
+
+      expect(metadata.host).toBe('http://bb.example.com:7990');
+    });
+  });
 });

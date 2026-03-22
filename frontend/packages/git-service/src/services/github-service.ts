@@ -44,8 +44,9 @@ export class GithubService extends BaseService {
     super(gitsource);
     const authOpts = this.getAuthProvider();
     this.metadata = this.getRepoMetadata();
-    const baseUrl =
-      this.metadata.host === 'github.com' ? null : `https://${this.metadata.host}/api/v3`;
+    const { resource, port } = GitUrlParse(this.gitsource.url);
+    const isGithubDotCom = resource === 'github.com' && !port;
+    const baseUrl = isGithubDotCom ? null : `${this.metadata.host}/api/v3`;
     this.client = new Octokit({ ...authOpts, baseUrl });
   }
 
@@ -60,13 +61,19 @@ export class GithubService extends BaseService {
     }
   };
 
-  protected getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, source } = GitUrlParse(this.gitsource.url);
+  getRepoMetadata = (): RepoMetadata => {
+    const { name, owner, protocols, port, resource } = GitUrlParse(this.gitsource.url);
+    const rawProtocol = protocols?.[0];
+    const isHttpProtocol = rawProtocol === 'http' || rawProtocol === 'https';
+    const protocol = isHttpProtocol ? rawProtocol : 'https';
+
+    const host = port ? `${protocol}://${resource}:${port}` : `${protocol}://${resource}`;
+
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     return {
       repoName: name,
       owner,
-      host: source,
+      host,
       defaultBranch: this.gitsource.ref,
       contextDir,
       devfilePath: this.gitsource.devfilePath,
@@ -175,10 +182,11 @@ export class GithubService extends BaseService {
       },
       events: ['push', 'pull_request'],
     };
-    const AddWebhookBaseURL =
-      this.metadata.host === 'github.com'
-        ? `https://api.github.com`
-        : `https://${this.metadata.host}/api/v3`;
+    const { resource, port } = GitUrlParse(this.gitsource.url);
+    const isGithubDotCom = resource === 'github.com' && !port;
+    const AddWebhookBaseURL = isGithubDotCom
+      ? `https://api.github.com`
+      : `${this.metadata.host}/api/v3`;
 
     const webhookRequestBody: GithubWebhookRequest = {
       headers,
