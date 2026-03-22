@@ -14,10 +14,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-
+import { GripVerticalIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { withTranslation } from 'react-i18next';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './types';

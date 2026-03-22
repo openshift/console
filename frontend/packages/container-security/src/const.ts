@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { chart_color_black_500 as black500 } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
-import { chart_color_orange_300 as orange300 } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { chart_color_red_orange_100 as redorange100 } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_100';
-import { chart_color_red_orange_300 as redorange300 } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_300';
-import { chart_color_red_orange_400 as redorange400 } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_400';
-import { chart_color_yellow_400 as yellow400 } from '@patternfly/react-tokens/dist/js/chart_color_yellow_400';
+import { chart_color_black_500 as black500 } from '@patternfly/react-tokens/dist/esm/chart_color_black_500';
+import { chart_color_orange_300 as orange300 } from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
+import { chart_color_red_orange_100 as redorange100 } from '@patternfly/react-tokens/dist/esm/chart_color_red_orange_100';
+import { chart_color_red_orange_300 as redorange300 } from '@patternfly/react-tokens/dist/esm/chart_color_red_orange_300';
+import { chart_color_red_orange_400 as redorange400 } from '@patternfly/react-tokens/dist/esm/chart_color_red_orange_400';
+import { chart_color_yellow_400 as yellow400 } from '@patternfly/react-tokens/dist/esm/chart_color_yellow_400';
 /* eslint-enable @typescript-eslint/naming-convention */
 import { Map as ImmutableMap } from 'immutable';
 import type { ImageManifestVuln } from './types';

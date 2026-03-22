@@ -12,8 +12,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';

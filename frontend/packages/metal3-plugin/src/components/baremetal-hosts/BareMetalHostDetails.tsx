@@ -7,7 +7,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
+import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';

@@ -1,4 +1,4 @@
-import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
+import { CogsIcon } from '@patternfly/react-icons';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
 

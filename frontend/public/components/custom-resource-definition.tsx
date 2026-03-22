@@ -11,7 +11,7 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { BanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage } from './factory/details';

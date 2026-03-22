@@ -8,7 +8,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';

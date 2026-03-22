@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';

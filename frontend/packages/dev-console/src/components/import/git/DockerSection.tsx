@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
+import { CubeIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';

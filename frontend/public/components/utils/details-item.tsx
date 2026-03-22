@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import {
   Breadcrumb,
   BreadcrumbItem,

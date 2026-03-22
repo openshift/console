@@ -17,7 +17,7 @@ import {
   TextInputGroupUtilities,
   Button,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
+import { TimesIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';

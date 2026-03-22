@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 /* eslint-disable camelcase */
 import { t_color_blue_50 as blue300 } from '@patternfly/react-tokens';
-import { chart_color_blue_100 as blue100 } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
-import { chart_color_blue_200 as blue200 } from '@patternfly/react-tokens/dist/js/chart_color_blue_200';
+import { chart_color_blue_100 as blue100 } from '@patternfly/react-tokens/dist/esm/chart_color_blue_100';
+import { chart_color_blue_200 as blue200 } from '@patternfly/react-tokens/dist/esm/chart_color_blue_200';
 import * as _ from 'lodash';
 /* eslint-enable camelcase */
 import { useRefWidth } from '@console/internal/components/utils';

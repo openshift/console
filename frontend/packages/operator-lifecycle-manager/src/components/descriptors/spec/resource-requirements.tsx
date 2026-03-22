@@ -10,7 +10,7 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';

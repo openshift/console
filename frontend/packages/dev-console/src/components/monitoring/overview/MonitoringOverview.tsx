@@ -11,7 +11,7 @@ import {
   EmptyState,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { Alert } from '@console/dynamic-plugin-sdk';

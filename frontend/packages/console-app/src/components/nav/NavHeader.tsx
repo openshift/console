@@ -2,7 +2,7 @@ import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
+import { CogsIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';

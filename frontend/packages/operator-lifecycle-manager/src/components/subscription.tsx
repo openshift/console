@@ -15,8 +15,7 @@ import {
   GridItem,
   Grid,
 } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';

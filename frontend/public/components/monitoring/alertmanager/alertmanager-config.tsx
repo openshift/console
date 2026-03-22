@@ -22,7 +22,7 @@ import {
   GridItem,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useTranslation } from 'react-i18next';
 

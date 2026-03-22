@@ -12,7 +12,7 @@ import {
   FormFieldGroup,
   ActionGroup,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 
 export const PullSecretCredentialEntry: FC<PullSecretCredentialEntryProps> = ({
   id,

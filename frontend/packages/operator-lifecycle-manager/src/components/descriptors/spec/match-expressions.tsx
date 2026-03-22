@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import { CodeIcon } from '@patternfly/react-icons/dist/esm/icons/code-icon';
+import { CodeIcon } from '@patternfly/react-icons';
 import { shallowEqual } from 'react-redux';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { getFlagsObject, flagPending } from '@console/internal/reducers/features';

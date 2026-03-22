@@ -28,7 +28,7 @@ import {
   useCombineRefs,
   useHover,
 } from '@patternfly/react-topology';
-import styles from '@patternfly/react-topology/dist/js/css/topology-components';
+import styles from '@patternfly/react-topology/dist/esm/css/topology-components';
 import { observer } from 'mobx-react';
 import type {
   ElementProps,

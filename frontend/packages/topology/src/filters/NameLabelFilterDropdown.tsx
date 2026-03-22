@@ -2,7 +2,7 @@ import type { FC, Ref } from 'react';
 import { useState } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption, MenuToggle } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { FilterIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import AutocompleteInput from '@console/internal/components/autocomplete';
 import { TextFilter } from '@console/internal/components/factory/text-filter';

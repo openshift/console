@@ -1,9 +1,7 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
 import { Tooltip, Popover, Button, Icon } from '@patternfly/react-core';
-import { ListIcon } from '@patternfly/react-icons/dist/esm/icons/list-icon';
-import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
-import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
+import { ListIcon, QuestionCircleIcon, TopologyIcon } from '@patternfly/react-icons';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { InProgressIcon } from '@patternfly/react-icons';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { FLAGS } from '@console/shared/src/constants/common';
 import {

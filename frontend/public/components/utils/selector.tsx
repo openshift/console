@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
-import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
+import { SearchIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 

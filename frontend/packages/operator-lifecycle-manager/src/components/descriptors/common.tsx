@@ -1,8 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { Button } from '@patternfly/react-core';
-import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
-import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';

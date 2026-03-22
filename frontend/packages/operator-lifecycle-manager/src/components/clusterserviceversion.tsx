@@ -16,8 +16,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';

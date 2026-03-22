@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Split, SplitItem, Bullseye, Icon } from '@patternfly/react-core';
-import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { t_color_gray_50 as color200 } from '@patternfly/react-tokens';
 import type { PodRingSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { LoadingInline } from '@console/internal/components/utils/status-box';

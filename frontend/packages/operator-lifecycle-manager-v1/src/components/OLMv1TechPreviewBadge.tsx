@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Label, Popover } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 /**

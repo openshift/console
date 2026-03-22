@@ -1,13 +1,15 @@
-import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon';
-import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
-import { DatabaseIcon } from '@patternfly/react-icons/dist/esm/icons/database-icon';
-import { ExportIcon } from '@patternfly/react-icons/dist/esm/icons/export-icon';
-import { FileUploadIcon } from '@patternfly/react-icons/dist/esm/icons/file-upload-icon';
-import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
-import { LaptopCodeIcon } from '@patternfly/react-icons/dist/esm/icons/laptop-code-icon';
-import { OsImageIcon } from '@patternfly/react-icons/dist/esm/icons/os-image-icon';
-import { OutlinedFileCodeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-file-code-icon';
-import { ShareSquareIcon } from '@patternfly/react-icons/dist/esm/icons/share-square-icon';
+import {
+  BoltIcon,
+  CatalogIcon,
+  DatabaseIcon,
+  ExportIcon,
+  FileUploadIcon,
+  GitAltIcon,
+  LaptopCodeIcon,
+  OsImageIcon,
+  OutlinedFileCodeIcon,
+  ShareSquareIcon,
+} from '@patternfly/react-icons';
 import devfileIcon from '../images/devfile.svg';
 import dockerfileIcon from '../images/dockerfile.svg';
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 const HelmReleaseNotesEmptyState: FC = () => {

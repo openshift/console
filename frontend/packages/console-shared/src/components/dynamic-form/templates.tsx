@@ -1,8 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import type {
   ArrayFieldTemplateProps,
   FieldTemplateProps,

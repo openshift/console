@@ -15,7 +15,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
+import { HelpIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';

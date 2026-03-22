@@ -7,7 +7,7 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { SearchIcon } from '@patternfly/react-icons/dist/esm/icons/search-icon';
+import { SearchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 type CatalogEmptyStateProps = {

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
