@@ -62,13 +62,17 @@ export const listPage = {
         cy.get('.pf-v6-c-menu-toggle').first().click(),
       );
       cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
-      cy.get('[aria-label="Filter by name"]').clear().type(name);
+      cy.get('[aria-label="Filter by name"]').should('be.enabled').clear();
+      cy.get('[aria-label="Filter by name"]').type(name);
     },
     by: (checkboxLabel: string) => {
+      // Wait for list data to settle before opening the filter, otherwise a
+      // concurrent re-render (e.g. after a project switch) closes the menu.
+      cy.byTestID('data-view-table').should('be.visible');
       cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
-      cy.get(
-        `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
-      ).click();
+      cy.get(`[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`)
+        .should('be.visible')
+        .click();
       cy.url().should('include', `=${checkboxLabel}`);
       cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
     },

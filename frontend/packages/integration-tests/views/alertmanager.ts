@@ -5,7 +5,6 @@ import type {
   AlertmanagerConfig,
   AlertmanagerReceiver,
 } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';
-import { detailsPage } from './details-page';
 import { listPage } from './list-page';
 import * as yamlEditor from './yaml-editor';
 
@@ -87,7 +86,7 @@ export const alertmanager = {
     cy.visit(`/settings/cluster/alertmanagerconfig/receivers/${receiverName}/edit`);
   },
   visitYAMLPage: () => {
-    detailsPage.selectTab('YAML');
+    cy.visit('/settings/cluster/alertmanageryaml');
     yamlEditor.isLoaded();
   },
 };

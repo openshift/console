@@ -17,6 +17,7 @@ const clusterRoleBindingName = 'example-cluster-rolebinding';
 const createExampleRoles = () => {
   cy.log('create Role instance');
   nav.sidenav.clickNavLink(['User Management', 'Roles']);
+  listPage.titleShouldHaveText('Roles');
   listPage.dvRows.shouldBeLoaded();
   projectDropdown.selectProject(testName);
   projectDropdown.shouldContain(testName);
@@ -50,12 +51,13 @@ const createExampleRoles = () => {
       cy.byTestID('yaml-error').should('not.exist');
     });
   });
-  detailsPage.breadcrumb(0).click();
+  detailsPage.isLoaded();
 };
 
 const createExampleRoleBindings = () => {
   cy.log('create RoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
+  listPage.titleShouldHaveText('RoleBindings');
   listPage.dvRows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   roleBindings.titleShouldHaveText('Create RoleBinding');
@@ -65,9 +67,11 @@ const createExampleRoleBindings = () => {
   roleBindings.inputSubject('subject-name');
   roleBindings.clickSaveChangesButton();
   cy.byTestID('yaml-error').should('not.exist');
+  detailsPage.isLoaded();
 
   cy.log('create ClusterRoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
+  listPage.titleShouldHaveText('RoleBindings');
   listPage.dvRows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   roleBindings.titleShouldHaveText('Create RoleBinding');
@@ -77,13 +81,16 @@ const createExampleRoleBindings = () => {
   roleBindings.inputSubject('subject-name');
   roleBindings.clickSaveChangesButton();
   cy.byTestID('yaml-error').should('not.exist');
+  detailsPage.isLoaded();
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
 };
 
 const deleteClusterExamples = () => {
   cy.log('delete ClusterRole instance');
   nav.sidenav.clickNavLink(['User Management', 'Roles']);
+  listPage.titleShouldHaveText('Roles');
   listPage.dvRows.shouldBeLoaded();
+  listPage.dvFilter.by('cluster');
   listPage.dvFilter.byName(clusterRoleName);
   listPage.dvRows.clickKebabAction(clusterRoleName, 'Delete ClusterRole');
   modal.shouldBeOpened();
@@ -92,7 +99,9 @@ const deleteClusterExamples = () => {
   detailsPage.isLoaded();
   cy.log('delete ClusterRoleBindings instance');
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
+  listPage.titleShouldHaveText('RoleBindings');
   listPage.dvRows.shouldBeLoaded();
+  listPage.dvFilter.by('cluster');
   listPage.dvFilter.byName(clusterRoleBindingName);
   listPage.dvRows.clickKebabAction(clusterRoleBindingName, 'Delete ClusterRoleBinding');
   modal.shouldBeOpened();
@@ -122,6 +131,7 @@ describe('Roles and RoleBindings', () => {
     nav.sidenav.clickNavLink(['User Management', 'Roles']);
     listPage.dvRows.shouldBeLoaded();
     projectDropdown.selectProject(testName);
+    listPage.dvRows.shouldBeLoaded();
     listPage.dvFilter.byName(roleName);
     listPage.dvRows.clickRowByName(roleName);
     detailsPage.isLoaded();

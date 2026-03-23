@@ -46,6 +46,8 @@ export const secrets = {
   clickRevealValues: () => {
     // Wait for page to fully stabilize
     cy.byTestID('loading-indicator', { timeout: 5000 }).should('not.exist');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
     // Click reveal-values button with force to handle re-renders
     cy.byTestID('reveal-values', { timeout: 30000 }).should('be.visible').click({ force: true });
     // Wait for data to be revealed

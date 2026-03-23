@@ -98,8 +98,7 @@ Given('user is at the Helm page', () => {
 });
 
 Given('user is at the Helm Release tab in admin perspective', () => {
-  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
-  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.clickNavLink(['Ecosystem', 'Helm']);
   cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
