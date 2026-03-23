@@ -84,8 +84,7 @@ Given('user is able to see {string} in helm page in admin view', (helmRelease: s
 });
 
 When('user clicks on the Helm Release tab in admin perspective', () => {
-  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
-  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.clickNavLink(['Ecosystem', 'Helm']);
   cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 

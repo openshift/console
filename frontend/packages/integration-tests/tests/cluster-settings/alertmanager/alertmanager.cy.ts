@@ -53,8 +53,7 @@ describe('Alertmanager', () => {
   });
 
   it('displays the Alertmanager YAML page and saves Alertmanager YAML', () => {
-    alertmanager.visitAlertmanagerPage();
-    detailsPage.selectTab('YAML');
+    alertmanager.visitYAMLPage();
     yamlEditor.isLoaded();
     cy.byTestID('alert-success').should('not.exist');
     yamlEditor.clickSaveCreateButton();

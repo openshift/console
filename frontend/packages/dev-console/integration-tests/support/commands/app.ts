@@ -32,9 +32,11 @@ Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
 });
 
 Cypress.Commands.add('clickNavLink', (path: string[]) => {
-  cy.get(`[data-component="pf-nav-expandable"]`) // this assumes all top level menu items are expandable
+  cy.get(`[data-test="nav"]`) // this assumes all top level menu items are expandable
     .contains(path[0])
     .click(); // open top, expandable menu
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(500); // wait for animation
   cy.get('#page-sidebar').contains(path[1]).click();
 });
 
