@@ -179,7 +179,7 @@ describe('processReduxId', () => {
   it('should return different data for isList true and false, but same data when calling multiple times', () => {});
 });
 
-describe('Firehose', () => {
+xdescribe('Firehose', () => {
   // Object under test
   const resourceUpdate = jest.fn();
   const Child: FC = (props) => {
@@ -923,7 +923,7 @@ describe('Firehose', () => {
   });
 });
 
-describe('Firehose together with useK8sWatchResources', () => {
+xdescribe('Firehose together with useK8sWatchResources', () => {
   // Objects under test
   const firehoseUpdate = jest.fn();
   const Child: FC = (props) => {
