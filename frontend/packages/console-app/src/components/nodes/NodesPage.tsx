@@ -10,6 +10,7 @@ import {
   initialFiltersDefault,
   ConsoleDataView,
   nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
@@ -164,7 +165,7 @@ const useNodesColumns = (
   vmsEnabled: boolean,
 ): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
 
   const columns = useMemo(() => {
     return [
@@ -321,6 +322,7 @@ const useNodesColumns = (
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(nodeColumnInfo.labels.id)),
         },
         additional: true,
       },
@@ -352,7 +354,7 @@ const useNodesColumns = (
         },
       },
     ];
-  }, [t, vmsEnabled, getResizableProps]);
+  }, [t, vmsEnabled, getWidth, getResizableProps]);
 
   return { columns, resetAllColumnWidths };
 };
