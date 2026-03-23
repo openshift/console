@@ -99,6 +99,7 @@ import {
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
@@ -178,7 +179,9 @@ const namespaceColumnInfo = [
 
 const useNamespacesColumns = () => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(NamespaceModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    NamespaceModel,
+  );
 
   const columns = useMemo(
     () => [
@@ -263,6 +266,7 @@ const useNamespacesColumns = () => {
         resizableProps: getResizableProps(namespaceColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(namespaceColumnInfo[8].id)),
         },
         additional: true,
       },
@@ -274,7 +278,7 @@ const useNamespacesColumns = () => {
         },
       },
     ],
-    [t, getResizableProps],
+    [t, getResizableProps, getWidth],
   );
 
   return { columns, resetAllColumnWidths };
@@ -481,7 +485,9 @@ const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
   const { t } = useTranslation();
-  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ProjectModel);
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    ProjectModel,
+  );
 
   const columns = useMemo(() => {
     const cols = [
@@ -575,6 +581,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         resizableProps: getResizableProps(projectColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(projectColumnInfo[8].id)),
         },
         additional: true,
       },
@@ -591,7 +598,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
     }
 
     return cols;
-  }, [t, showMetrics, showActions, getResizableProps]);
+  }, [t, showMetrics, showActions, getResizableProps, getWidth]);
 
   return { columns, resetAllColumnWidths };
 };
