@@ -247,9 +247,14 @@ export const UtilizationItem = memo<UtilizationItemProps>(
         } else if ([limitState, requestedState].includes(LIMIT_STATE.WARN)) {
           LimitIcon = YellowExclamationTriangleIcon;
         }
-        setLimitReqState && setLimitReqState({ limit: limitState, requested: requestedState });
       }
     }
+
+    useEffect(() => {
+      if (setLimitReqState) {
+        setLimitReqState({ limit: limitState, requested: requestedState });
+      }
+    }, [limitState, requestedState, setLimitReqState]);
 
     const currentHumanized = !_.isNil(current) ? humanizeValue(current).string : null;
 
