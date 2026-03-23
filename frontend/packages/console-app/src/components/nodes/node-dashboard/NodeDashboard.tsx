@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
@@ -77,9 +77,9 @@ export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) 
 const NodeDashboard: FC<NodeDashboardProps> = ({ obj }) => {
   const [state, dispatch] = useReducer(reducer, initialState(obj));
 
-  if (obj !== state.obj) {
+  useEffect(() => {
     dispatch({ type: ActionType.OBJ, payload: obj });
-  }
+  }, [obj]);
 
   const setCPULimit = useCallback(
     (payload: LimitRequested) => dispatch({ type: ActionType.CPU_LIMIT, payload }),
