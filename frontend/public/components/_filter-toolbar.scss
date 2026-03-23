@@ -1,29 +1,3 @@
-.co-filter-dropdown__item {
-  display: inline-flex;
-  pointer-events: none;
-}
-
-.co-filter-dropdown__list-item {
-  list-style: none;
-}
-
-/* No way to reach this ul */
-.co-filter-dropdown-group > ul {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.co-filter-dropdown-item {
-  display: inline-flex;
-  margin: var(--pf-t--global--spacer--xs) 0;
-}
-
 .co-filter-dropdown-item__name {
   padding: 0 var(--pf-t--global--spacer--xs);
-}
-
-@media (min-width: $pf-v6-global--breakpoint--md) {
-  .co-filter-group {
-    width: 350px !important; // enable full placeholder text to display
-  }
 }

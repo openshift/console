@@ -10,7 +10,6 @@ import {
   DataView,
   DataViewState,
   DataViewTable,
-  DataViewTextFilter,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
 import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
@@ -26,6 +25,7 @@ import { LazyColumnManagementModalOverlay } from '@console/internal/components/m
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
+import { DataViewTextFilter } from './DataViewTextFilter';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
