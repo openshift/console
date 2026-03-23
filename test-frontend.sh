@@ -31,6 +31,13 @@ if [ -n "$GIT_STATUS" ]; then
   exit 1
 fi
 
+if ! yarn dedupe --strategy highest --check ; then
+  echo "You have duplicate version resolutions of some packages in yarn.lock. Run 'yarn dedupe' and commit the updated yarn.lock."
+  yarn dedupe --strategy highest
+  git --no-pager diff
+  exit 1
+fi
+
 yarn run lint
 if [ "$OPENSHIFT_CI" = true ]; then
   JEST_SUITE_NAME="OpenShift Console Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --maxWorkers=2 --reporters=default --reporters=jest-junit
