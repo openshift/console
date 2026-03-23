@@ -47,11 +47,10 @@ const UserPreferencePage: FC = () => {
 
   // fetch the default user preference group from the url params if available
   const { group: groupIdFromUrl } = useParams();
-  const initialTabId =
+  const activeTabId =
     sortedUserPreferenceGroups.find((extension) => extension.id === groupIdFromUrl)?.id ||
     sortedUserPreferenceGroups[0]?.id ||
     'general';
-  const [activeTabId, setActiveTabId] = useState<string>(initialTabId);
 
   const [userPreferenceTabs, userPreferenceTabContents] = useMemo<
     [ReactElement<TabProps, JSXElementConstructor<TabProps>>[], ReactElement<TabContentProps>[]]
@@ -102,12 +101,11 @@ const UserPreferencePage: FC = () => {
   const [spotlightElement, setSpotlightElement] = useState<Element | null>(null);
 
   useEffect(() => {
-    setActiveTabId(groupIdFromUrl ?? 'general');
     if (spotlight) {
       const element = document.querySelector(spotlight);
       setSpotlightElement(element);
     }
-  }, [groupIdFromUrl, spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
+  }, [spotlight, userPreferenceItemResolved, userPreferenceTabContents]);
 
   // utils and callbacks
   const handleTabClick = (event: MouseEvent<HTMLElement>, eventKey: string) => {
@@ -115,7 +113,6 @@ const UserPreferencePage: FC = () => {
       return;
     }
     event.preventDefault();
-    setActiveTabId(eventKey);
     navigate(`${USER_PREFERENCES_BASE_URL}/${eventKey}`, { replace: true });
   };
   const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
