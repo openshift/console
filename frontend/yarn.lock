@@ -3552,8 +3552,8 @@ __metadata:
   linkType: hard
 
 "@patternfly/react-data-view@npm:~6.4.0-prerelease.12":
-  version: 6.4.0
-  resolution: "@patternfly/react-data-view@npm:6.4.0"
+  version: 6.4.0-prerelease.12
+  resolution: "@patternfly/react-data-view@npm:6.4.0-prerelease.12"
   dependencies:
     "@patternfly/react-component-groups": "npm:^6.1.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -3564,7 +3564,7 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/da60fd99cf0ab51494d42d90c9f87a424f3896a47af8794a2492ca2331c7aadac6b845eae5ed75c3b411b5d1e48facf834eb6a43b0b6e6cdf92297197d2be7ec
+  checksum: 10c0/3e563cf3c8bcb468a1e96911582a6998025dfb79d5ab851930ecf16f557b5741f2ba1ab3af4027eba54feb6d8ee54a00e7cb12ac4c1090ee5ecaa032d5f93388
   languageName: node
   linkType: hard
 

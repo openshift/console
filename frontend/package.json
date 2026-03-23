@@ -90,7 +90,7 @@
     "transform": {
       "get-local-plugins\\.js$": "./scripts/jest-transform-local-plugins.js",
       "^.+\\.(gql|graphql)$": "./scripts/jest-transform-graphql.js",
-      "^.+\\.(ts|tsx|js|jsx)$": [
+      "^.+\\.(ts|tsx|js|jsx|mjs)$": [
         "@swc/jest",
         {
           "module": {
