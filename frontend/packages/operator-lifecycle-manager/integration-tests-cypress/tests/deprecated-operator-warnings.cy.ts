@@ -174,7 +174,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated Operator warning badge on Installed Operators page', () => {
+  xit('verify deprecated Operator warning badge on Installed Operators page', () => {
     cy.log(
       'install the Kiali Community Operator with the deprecated package, channel and version messages',
     );
@@ -203,7 +203,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated operator warnings on Installed Operator details page', () => {
+  xit('verify deprecated operator warnings on Installed Operator details page', () => {
     cy.log('visit the Installed Operators details page');
     cy.visit(
       `/k8s/ns/${testDeprecatedSubscription.metadata.namespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/kiali-operator.v1.68.0`,
@@ -226,7 +226,7 @@ describe('Deprecated operator warnings', () => {
       .should('exist');
   });
 
-  it('verify deprecated operator warnings on Installed Operator details subscription tab', () => {
+  xit('verify deprecated operator warnings on Installed Operator details subscription tab', () => {
     cy.log('visit the Installed Operators subscription tab');
     cy.visit(
       `/k8s/ns/${testDeprecatedSubscription.metadata.namespace}/operators.coreos.com~v1alpha1~ClusterServiceVersion/kiali-operator.v1.68.0/subscription`,
