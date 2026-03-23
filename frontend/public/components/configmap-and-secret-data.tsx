@@ -138,8 +138,18 @@ const SecretDataRevealButton: FC<SecretDataRevealButtonProps> = ({ reveal, onCli
 
 export const SecretData: FC<SecretDataProps> = ({ data }) => {
   const [reveal, setReveal] = useState(false);
-  const [hasRevealableContent, setHasRevealableContent] = useState(false);
   const { t } = useTranslation();
+
+  const hasRevealableContent = useMemo(
+    () =>
+      data
+        ? Object.keys(data).some((k) => {
+            const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
+            return !isBinary && data[k];
+          })
+        : false,
+    [data],
+  );
 
   const dataDescriptionList = useMemo(() => {
     return data
@@ -147,9 +157,6 @@ export const SecretData: FC<SecretDataProps> = ({ data }) => {
           .sort()
           .map((k) => {
             const isBinary = ITOB.isBinary(k, Buffer.from(data[k], 'base64'));
-            if (!isBinary && data[k]) {
-              setHasRevealableContent(hasRevealableContent || !isBinary);
-            }
             return (
               <DescriptionListGroup key={k}>
                 <DescriptionListTerm i18n-not-translated="true" data-test="secret-data-term">
@@ -166,7 +173,7 @@ export const SecretData: FC<SecretDataProps> = ({ data }) => {
             );
           })
       : [];
-  }, [data, reveal, hasRevealableContent]);
+  }, [data, reveal]);
 
   return (
     <>
