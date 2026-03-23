@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Gallery, GalleryItem, Alert, Stack, StackItem } from '@patternfly/react-core';
 import i18next from 'i18next';
 import * as _ from 'lodash';
@@ -272,10 +272,12 @@ export const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) =
     return true;
   });
 
-  setHealthCheck({
-    failingHealthCheck,
-    reboot,
-  });
+  useEffect(() => {
+    setHealthCheck({
+      failingHealthCheck,
+      reboot,
+    });
+  }, [failingHealthCheck, reboot, setHealthCheck]);
 
   return (
     <HealthItem
