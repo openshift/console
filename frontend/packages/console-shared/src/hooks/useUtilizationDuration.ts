@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as UIActions from '@console/internal/actions/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -12,10 +12,10 @@ export const useUtilizationDuration: UseUtilizationDuration = (
   const duration =
     useConsoleSelector<number>(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ??
     DEFAULT_DURATION;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const endDate = useConsoleSelector<Date>(
-    ({ UI }) => UI.getIn(['utilizationDuration', 'endDate']) ?? new Date(),
+  const storeEndDate = useConsoleSelector<Date | undefined>(({ UI }) =>
+    UI.getIn(['utilizationDuration', 'endDate']),
   );
+  const endDate = useMemo(() => storeEndDate ?? new Date(), [storeEndDate]);
   const selectedKey =
     useConsoleSelector<string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
     DEFAULT_DURATION_KEY;

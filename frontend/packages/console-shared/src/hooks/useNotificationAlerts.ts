@@ -9,6 +9,8 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import { SYSTEM_ALERT_RULE_LABEL } from '../constants/monitoring';
 import { useUserPreference } from './useUserPreference';
 
+const emptyNotificationAlerts: NotificationAlerts = {} as NotificationAlerts;
+
 /** Get notification alerts from redux and filter by current user notification settings OR the
   provided override labels. Alerts that match on override labels will not be fitlered even if
   current user settings would normally exclude them.
@@ -24,9 +26,10 @@ export const useNotificationAlerts = (
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useConsoleSelector<NotificationAlerts>(
-    ({ observe }) => observe.get('notificationAlerts') ?? {},
+  const notificationAlerts = useConsoleSelector<NotificationAlerts | undefined>(({ observe }) =>
+    observe.get('notificationAlerts'),
   );
+  const { data: alerts, loaded, loadError } = notificationAlerts ?? emptyNotificationAlerts;
 
   const [filteredAlerts, setFilteredAlerts] = useState<NotificationAlerts['data']>([]);
 

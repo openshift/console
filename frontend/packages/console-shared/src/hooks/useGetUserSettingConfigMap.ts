@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { shallowEqual } from 'react-redux';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk/src';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -30,7 +31,7 @@ export const useGetUserSettingConfigMap = () => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
     return { impersonateName, uid, username };
-  });
+  }, shallowEqual);
 
   // Hash the username asynchronously
   useEffect(() => {

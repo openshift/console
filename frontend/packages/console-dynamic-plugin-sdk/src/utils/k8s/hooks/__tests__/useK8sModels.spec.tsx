@@ -103,10 +103,8 @@ describe('useK8sModels', () => {
     expect(models1).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
     expect(models2).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
 
-    // It was saved in immutable redux store and will be cloned.
-    expect(models1).not.toBe(models2);
-    expect(models1.ConfigMap).toBe(models2.ConfigMap);
-    expect(models1.Secret).toBe(models2.Secret);
+    // Memoized via createSelector: same immutable input produces same JS output reference.
+    expect(models1).toBe(models2);
   });
 
   it('should return the same model JSON when rendering twice', () => {
@@ -136,9 +134,7 @@ describe('useK8sModels', () => {
     expect(models1).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
     expect(models2).toEqual({ ConfigMap: ConfigMapModel, Secret: SecretModel });
 
-    // It was saved in immutable redux store and will be cloned.
-    expect(models1).not.toBe(models2);
-    expect(models1.ConfigMap).toBe(models2.ConfigMap);
-    expect(models1.Secret).toBe(models2.Secret);
+    // Memoized via createSelector: same immutable input produces same JS output reference.
+    expect(models1).toBe(models2);
   });
 });
