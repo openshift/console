@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { LogSnippet } from '@patternfly/react-component-groups';
 import { Button, List, ListItem } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Trans, useTranslation } from 'react-i18next';
@@ -19,7 +20,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
 import type { BuildConfigOverviewItem } from '@console/shared';
-import { LogSnippet, Status } from '@console/shared';
+import { Status } from '@console/shared';
 import './BuildOverview.scss';
 
 const MAX_VISIBLE = 3;
@@ -83,7 +84,13 @@ const BuildStatus = ({ build }: { build: K8sResourceKind }) => {
     status: { logSnippet, message, phase },
   } = build;
   const unsuccessful = [BuildPhase.Error, BuildPhase.Failed].includes(phase);
-  return unsuccessful ? <LogSnippet message={message} logSnippet={logSnippet} /> : null;
+  return unsuccessful ? (
+    <LogSnippet
+      className="pf-v6-u-pt-sm pf-v6-u-pb-sm pf-v6-u-pl-md"
+      message={<p>{message}</p>}
+      logSnippet={logSnippet}
+    />
+  ) : null;
 };
 
 const BuildOverviewItem: FC<BuildOverviewListItemProps> = ({ build }) => {
