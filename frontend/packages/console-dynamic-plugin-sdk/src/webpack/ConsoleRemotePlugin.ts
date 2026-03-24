@@ -121,6 +121,23 @@ export const validateConsoleExtensionsFileSchema = (
   return new SchemaValidator(description).validate(schema, extensions);
 };
 
+const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
+  const pluginDeps = getPackageDependencies(pkg);
+  const warnings: string[] = [];
+
+  sharedPluginModules.forEach((moduleName) => {
+    const { deprecated } = getSharedModuleMetadata(moduleName);
+
+    if (deprecated && pluginDeps[moduleName]) {
+      warnings.push(
+        `shared modules: [DEPRECATION ALERT] '${moduleName}' is deprecated. ${deprecated}`,
+      );
+    }
+  });
+
+  return warnings;
+};
+
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
   const pluginDeps = getPackageDependencies(pkg);
   const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
@@ -372,6 +389,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     } = pluginMetadata;
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
+
     const publicPath = `/api/plugins/${name}/`;
 
     if (compiler.options.output.publicPath !== undefined) {
@@ -455,6 +473,10 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       });
 
     compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
+      getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
+        compilation.warnings.push(new compiler.webpack.WebpackError(message));
+      });
+
       const modifiedModules: string[] = [];
 
       compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
