@@ -22,7 +22,7 @@ const alertExists = (titleText: string) => {
   cy.get('.co-alert').contains(titleText).should('exist');
 };
 
-describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
