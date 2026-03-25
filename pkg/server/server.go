@@ -395,7 +395,7 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 			impGroups = append(impGroups, "system:authenticated")
 			headers["Impersonate-Group"] = impGroups
 		}
-		ctx := context.WithValue(r.Context(), resolver.HeadersKey, headers)
+		ctx := context.WithValue(context.Background(), resolver.HeadersKey, headers)
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
 
