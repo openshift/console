@@ -9,7 +9,6 @@ import {
   DataView,
   DataViewState,
   DataViewTable,
-  DataViewTextFilter,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
 import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
@@ -22,6 +21,7 @@ import { TableColumn } from '@console/internal/module/k8s';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
+import { DataViewTextFilter } from './DataViewTextFilter';
 import { ResourceFilters, ResourceMetadata, GetDataViewRows } from './types';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
