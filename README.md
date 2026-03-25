@@ -16,7 +16,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
-2. [go](https://golang.org/) >= 1.22+
+2. [go](https://golang.org/) >= 1.25
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
 
@@ -131,7 +131,7 @@ In order to update the `tectonic-console-builder` to a new version (e.g., v29), 
    and `YARN_VERSION` environment variables to the desired versions.
 3. Run `./push-builder.sh` script build and push the updated builder image to quay.io.
    Note: You can test the image using `./builder-run.sh ./build-backend.sh`.
-   To update the image on quay.io, you need edit permission to the quay.io/coreos/  tectonic-console-builder repo.
+   To update the image on quay.io, you need edit permission to the [`coreos/tectonic-console-builder` repo](https://quay.io/repository/coreos/tectonic-console-builder).
 4. Lastly, update the mapping of `tectonic-console-builder` image tag in
    [openshift/release](https:// github.com/openshift/release/blob/master/core-services/image-mirroring/supplemental-ci-images/mapping_supplemental_ci_images_ci) repository.
    Note: There could be scenario were you would have to add the new image reference in the "mapping_supplemental_ci_images_ci" file, i.e. to avoid CI downtime for upcoming release cycle.
@@ -197,7 +197,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go 1.18+, nodejs/yarn, kubectl
+go 1.25+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
