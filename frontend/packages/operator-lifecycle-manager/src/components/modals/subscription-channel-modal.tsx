@@ -1,18 +1,25 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
-import { Radio, Form, FormGroup } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import {
-  createModalLauncher,
-  ModalTitle,
+  Button,
+  Form,
+  FormGroup,
+  Modal,
   ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
+  ModalHeader,
+  ModalVariant,
+  Radio,
+} from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { ResourceLink } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
-import { SubscriptionKind, PackageManifestKind } from '../../types';
+import type { SubscriptionKind, PackageManifestKind } from '../../types';
 import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 
 export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
@@ -46,13 +53,19 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">
-        {t('olm~Change Subscription update channel')}
-      </ModalTitle>
+    <>
+      <ModalHeader
+        title={t('olm~Change Subscription update channel')}
+        data-test-id="modal-title"
+        labelId="subscription-channel-modal-title"
+      />
       <ModalBody>
-        <Form>
-          <FormGroup label={t('olm~Which channel is used to receive updates?')} isStack>
+        <Form id="subscription-channel-form" onSubmit={submit}>
+          <FormGroup
+            label={t('olm~Which channel is used to receive updates?')}
+            fieldId="channel"
+            role="radiogroup"
+          >
             {pkg?.status?.channels?.map?.((channel) => {
               const checked = selectedChannel === channel.name;
               return (
@@ -85,25 +98,43 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
           </FormGroup>
         </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        inProgress={inProgress}
-        errorMessage={errorMessage}
-        cancel={cancel}
-        submitText={t('public~Save')}
-        submitDisabled={selectedChannel === currentChannel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form="subscription-channel-form"
+          isLoading={inProgress}
+          isDisabled={inProgress || selectedChannel === currentChannel}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const createSubscriptionChannelModal = createModalLauncher<SubscriptionChannelModalProps>(
-  SubscriptionChannelModal,
-);
-
 export type SubscriptionChannelModalProps = {
-  cancel?: () => void;
-  close?: () => void;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   subscription: SubscriptionKind;
   pkg: PackageManifestKind;
+} & ModalComponentProps;
+
+export const SubscriptionChannelModalOverlay: OverlayComponent<SubscriptionChannelModalProps> = (
+  props,
+) => {
+  return (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="subscription-channel-modal-title"
+    >
+      <SubscriptionChannelModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </Modal>
+  );
 };

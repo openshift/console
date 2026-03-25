@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Alert, ExpandableSection, Tooltip } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,17 +10,12 @@ import {
   BuildOptions,
   ReadableResourcesNames,
 } from '@console/dev-console/src/components/import/import-types';
-import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { GitProvider, getGitService } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import {
-  BlueInfoCircleIcon,
-  CheckboxField,
-  DropdownField,
-  RadioGroupField,
-  useFlag,
-} from '@console/shared';
+import { BlueInfoCircleIcon, CheckboxField, DropdownField, RadioGroupField } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,
   PIPELINE_RUNTIME_LABEL,
@@ -27,7 +23,7 @@ import {
   FUNC_PIPELINE_RUNTIME_LABEL,
 } from '../../../const';
 import { PipelineModel } from '../../../models/pipelines';
-import { PipelineKind } from '../../../types/pipeline';
+import type { PipelineKind } from '../../../types/pipeline';
 import PipelineVisualization from '../../pipelines-visualization/PipelineVisualization';
 import { PipelineType } from '../import-types';
 import PacSection from './PacSection';

@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
@@ -9,13 +10,13 @@ import {
   FLAG_OPENSHIFT_PIPELINE,
   CLUSTER_PIPELINE_NS,
 } from '@console/dev-console/src/const';
-import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
-import { FlagsObject } from '@console/internal/reducers/features';
+import type { FlagsObject } from '@console/internal/reducers/features';
 import { PipelineModel } from '../../../models/pipelines';
-import { PipelineKind } from '../../../types/pipeline';
+import type { PipelineKind } from '../../../types/pipeline';
 import PipelineTemplate from './PipelineTemplate';
 
 import './PipelineSection.scss';

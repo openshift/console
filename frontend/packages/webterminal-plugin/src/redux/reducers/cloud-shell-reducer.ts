@@ -1,4 +1,5 @@
-import { CloudShellActions, Actions } from '../actions/cloud-shell-actions';
+import type { CloudShellActions } from '../actions/cloud-shell-actions';
+import { Actions } from '../actions/cloud-shell-actions';
 
 type State = {
   isExpanded: boolean;

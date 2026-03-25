@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { SDKStoreState } from '../../../app/redux-types';
-import { UseK8sModels } from '../../../extensions/console-types';
-import { K8sModel } from '../../../lib-core';
+import type { SDKStoreState } from '../../../app/redux-types';
+import type { UseK8sModels } from '../../../extensions/console-types';
+import type { K8sModel } from '../../../lib-core';
 
 /**
  * Hook that retrieves all current k8s models from redux.

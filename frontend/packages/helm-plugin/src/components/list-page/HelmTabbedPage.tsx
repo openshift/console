@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -9,8 +9,11 @@ import CreateProjectListPage, {
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { useAccessReview, useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { LoadingBox, Page } from '@console/internal/components/utils';
-import { MenuActions, MultiTabListPage, useFlag } from '@console/shared';
+import type { Page } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
+import type { MenuActions } from '@console/shared';
+import { MultiTabListPage } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
 import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
@@ -66,6 +69,13 @@ const HelmPage: FC<{ namespace: string | undefined }> = ({ namespace }) => {
           ? t('helm-plugin~Repository')
           : undefined,
       onSelection: () => `/helm-repositories/ns/${namespace || 'default'}/~new/form`,
+    },
+    helmChartInstallation: {
+      label:
+        projectHelmChartCreateAccess || helmChartCreateAccess
+          ? t('helm-plugin~Helm chart URL')
+          : undefined,
+      onSelection: () => `/helm/ns/${namespace || 'default'}/url-chart`,
     },
   };
 

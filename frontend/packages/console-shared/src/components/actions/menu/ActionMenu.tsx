@@ -2,7 +2,7 @@ import type { ComponentProps, FC } from 'react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Menu, MenuContent, MenuList, Popper } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Action, MenuOption } from '@console/dynamic-plugin-sdk';
+import type { Action, MenuOption } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 import { ActionMenuVariant } from '../types';
 import ActionMenuContent from './ActionMenuContent';

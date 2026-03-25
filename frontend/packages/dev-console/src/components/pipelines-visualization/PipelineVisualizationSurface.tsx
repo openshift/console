@@ -1,9 +1,8 @@
 import type { FC } from 'react';
 import { useState, useRef, useCallback, useEffect } from 'react';
+import type { Model, Node, Controller, ComponentFactory } from '@patternfly/react-topology';
 import {
   GRAPH_LAYOUT_END_EVENT,
-  Model,
-  Node,
   Visualization,
   VisualizationSurface,
   VisualizationProvider,
@@ -12,19 +11,17 @@ import {
   defaultControlButtonsOptions,
   TopologyControlBar,
   TopologyView,
-  Controller,
   GRAPH_POSITION_CHANGE_EVENT,
-  ComponentFactory,
 } from '@patternfly/react-topology';
 import MeasureBounds from './measure';
 import { layoutFactory, getLayoutData } from './reducer';
+import type { PipelineLayout } from './types';
 import {
   DROP_SHADOW_SPACING,
   GRAPH_MAX_HEIGHT_PERCENT,
   GRAPH_MIN_WIDTH,
   TOOLBAR_HEIGHT,
   NODE_HEIGHT,
-  PipelineLayout,
 } from './types';
 
 type PipelineVisualizationSurfaceProps = {

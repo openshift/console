@@ -3,13 +3,15 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { LinkIcon } from '@patternfly/react-icons/dist/esm/icons/link-icon';
-import {
+import type {
   Node,
-  observer,
   WithDragNodeProps,
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
+} from '@patternfly/react-topology';
+import {
+  observer,
   useHover,
   useVisualizationController,
   ScaleDetailsLevel,

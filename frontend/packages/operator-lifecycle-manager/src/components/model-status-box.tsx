@@ -1,7 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
-import { GroupVersionKind, kindForReference } from '@console/internal/module/k8s';
+import type { GroupVersionKind } from '@console/internal/module/k8s';
+import { kindForReference } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 type ModelStatusBoxProps = {

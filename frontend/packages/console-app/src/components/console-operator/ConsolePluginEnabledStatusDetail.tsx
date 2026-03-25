@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
-import { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
+import type { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import {
   ConsolePluginEnabledStatus,
@@ -16,12 +16,7 @@ const ConsolePluginEnabledStatusDetail: FC<DetailsItemComponentProps> = ({ obj }
   const pluginName = useMemo(() => obj?.metadata?.name, [obj?.metadata?.name]);
 
   const pluginInfo = useMemo(
-    () =>
-      pluginInfoEntries.find((entry) =>
-        entry.status === 'loaded'
-          ? entry.metadata.name === pluginName
-          : entry.pluginName === pluginName,
-      ),
+    () => pluginInfoEntries.find((entry) => entry.manifest.name === pluginName),
     [pluginInfoEntries, pluginName],
   );
   const enabledPlugins = useMemo<string[]>(() => consoleOperatorConfig?.spec?.plugins ?? [], [

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FormProps } from '@patternfly/react-core';
+import type { FormProps } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import formStyles from '@patternfly/react-styles/css/components/Form/form';
 

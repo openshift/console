@@ -3,23 +3,18 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
-import { ListPageBody, K8sModel } from '@console/dynamic-plugin-sdk';
+import { useParams, useLocation, useNavigate } from 'react-router';
+import type { K8sModel } from '@console/dynamic-plugin-sdk';
+import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { ResourceEventStream } from '@console/internal/components/events';
-import {
-  DetailsPage,
-  Table,
-  TableData,
-  RowFunctionArgs,
-  Flatten,
-  Filter,
-} from '@console/internal/components/factory';
+import type { RowFunctionArgs, Flatten, Filter } from '@console/internal/components/factory';
+import { DetailsPage, Table, TableData } from '@console/internal/components/factory';
 import { useListPageFilter } from '@console/internal/components/factory/ListPage/filter-hook';
 import {
   ListPageCreateDropdown,
@@ -42,20 +37,22 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { connectToModel } from '@console/internal/kinds';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import {
+import type {
   GroupVersionKind,
   K8sKind,
   K8sResourceCondition,
   K8sResourceKind,
   OwnerReference,
+  CustomResourceDefinitionKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
+import {
   apiVersionForReference,
   kindForReference,
   referenceFor,
   referenceForModel,
   nameForModel,
-  CustomResourceDefinitionKind,
   definitionFor,
-  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import {
   Status,
@@ -63,24 +60,25 @@ import {
   LazyActionMenu,
   ActionMenuVariant,
   getNamespace,
-  useActiveNamespace,
 } from '@console/shared';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { useResourceDetailsPage } from '@console/shared/src/hooks/useResourceDetailsPage';
 import { useResourceListPage } from '@console/shared/src/hooks/useResourceListPage';
-import { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
 import { DescriptorDetailsItem, DescriptorDetailsItems } from '../descriptors';
 import { DescriptorConditions } from '../descriptors/status/conditions';
-import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
+import type { StatusDescriptor } from '../descriptors/types';
+import { DescriptorType, StatusCapability } from '../descriptors/types';
 import { isMainStatusDescriptor } from '../descriptors/utils';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
 import { Resources } from '../k8s-resource';
@@ -739,7 +737,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 
 type OperandDetailsPageRouteParams = RouteParams<'appName' | 'ns' | 'name' | 'plural'>;
 
-const DefaultOperandDetailsPage = ({ k8sModel }: DefaultOperandDetailsPageProps) => {
+const DefaultOperandDetailsPage: FC<DefaultOperandDetailsPageProps> = ({ k8sModel }) => {
   const { t } = useTranslation();
   const params = useParams();
   const { appName, ns, name, plural } = params;

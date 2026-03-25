@@ -1,5 +1,6 @@
 import type { FC, Ref } from 'react';
 import { useState, useEffect } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   FormGroup,
   FormSection,
@@ -10,18 +11,17 @@ import {
   SelectOption,
   SelectList,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import {
-  isPerspective,
+import type {
   Perspective as PerspectiveExtension,
   AccessReviewResourceAttributes,
 } from '@console/dynamic-plugin-sdk/src';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { isPerspective } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useTelemetry } from '@console/shared/src';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -29,8 +29,8 @@ import {
   FormLayout,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 enum PerspectiveVisibilityState {
   Enabled = 'Enabled',

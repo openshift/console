@@ -1,7 +1,9 @@
 import type { FC } from 'react';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
+import type { FormikValues, FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { EventingBrokerModel, EventingTriggerModel, EventingSubscriptionModel } from '../../models';
 import { craftResourceKey, sanitizeResourceName } from './pub-sub-utils';

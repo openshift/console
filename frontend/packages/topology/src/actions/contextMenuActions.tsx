@@ -1,13 +1,10 @@
 import { Fragment } from 'react';
 import { Title } from '@patternfly/react-core';
-import { Node, ContextSubMenuItem, ContextMenuItem, Graph } from '@patternfly/react-topology';
-import {
-  Action,
-  GroupedMenuOption,
-  MenuOption,
-  MenuOptionType,
-} from '@console/dynamic-plugin-sdk/src';
-import { ContextMenuActions } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { Node, Graph } from '@patternfly/react-topology';
+import { ContextSubMenuItem, ContextMenuItem } from '@patternfly/react-topology';
+import type { Action, GroupedMenuOption, MenuOption } from '@console/dynamic-plugin-sdk/src';
+import { MenuOptionType } from '@console/dynamic-plugin-sdk/src';
+import type { ContextMenuActions } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { referenceFor } from '@console/internal/module/k8s';
 import { getMenuOptionType, orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';

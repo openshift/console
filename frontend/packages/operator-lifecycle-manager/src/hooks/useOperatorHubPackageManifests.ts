@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { WatchK8sResult } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { WatchK8sResult } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { strConcat } from '@console/shared/src';
-import { PackageManifestKind } from '../types';
+import type { PackageManifestKind } from '../types';
 import { operatorHubPackageFilter } from '../utils/packagemanifests';
 import { useMarketplacePackageManifests } from './useMarketplacePackageManifests';
 import { usePackageManifests } from './usePackageManifests';

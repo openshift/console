@@ -1,4 +1,4 @@
-import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
+import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 
 export const defaultCatalogCategories: CatalogCategory[] = [
   {

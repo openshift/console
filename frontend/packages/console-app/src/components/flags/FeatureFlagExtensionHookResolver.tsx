@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FeatureFlagHandler, SetFeatureFlag } from '@console/dynamic-plugin-sdk/src';
+import type { FeatureFlagHandler, SetFeatureFlag } from '@console/dynamic-plugin-sdk/src';
 
 type FeatureFlagExtensionHookResolverProps = {
   handler: FeatureFlagHandler;

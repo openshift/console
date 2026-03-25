@@ -1,12 +1,12 @@
 import type { ReactNode, FC } from 'react';
 import { useContext } from 'react';
-import { ModalVariant } from '@patternfly/react-core';
+import type { ModalVariant } from '@patternfly/react-core';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
-import { useTelemetry } from '@console/shared/src';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { TourActions } from './const';
 import { TourContext } from './tour-context';
 import TourStepComponent from './TourStepComponent';
-import { StepContentType } from './type';
+import type { StepContentType } from './type';
 
 type StepComponentProps = {
   heading: string;

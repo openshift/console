@@ -1,6 +1,6 @@
 import type { ReactElement, FC } from 'react';
 import { List } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import TopologyGroupResourceItem from './TopologyGroupResourceItem';
 
 type TopologyGroupResourceListProps = {

@@ -5,14 +5,7 @@ import * as _ from 'lodash';
 /* eslint-disable import/named */
 import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import {
-  Routes,
-  Route,
-  useParams,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { Routes, Route, useParams, Navigate, useLocation, useNavigate } from 'react-router';
 import {
   HorizontalNavTab,
   isHorizontalNavTab,
@@ -37,12 +30,17 @@ import {
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 
 export const editYamlComponent = (props) => (
-  <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
+  <AsyncComponent
+    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
+    obj={props.obj}
+    create={false}
+  />
 );
 export const viewYamlComponent = (props) => (
   <AsyncComponent
     loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
     obj={props.obj}
+    create={false}
     readOnly={true}
   />
 );
@@ -235,7 +233,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
 };
 NavBar.displayName = 'NavBar';
 
-export const HorizontalNav = memo((props: HorizontalNavProps) => {
+export const HorizontalNav = memo<HorizontalNavProps>((props) => {
   const params = useParams();
 
   const renderContent = (routes: JSX.Element[]) => {
@@ -271,14 +269,22 @@ export const HorizontalNav = memo((props: HorizontalNavProps) => {
     }
 
     return (
-      <StatusBox skeleton={skeletonDetails} {...obj} EmptyMsg={EmptyMsg} label={label}>
+      <StatusBox
+        skeleton={skeletonDetails}
+        data={obj?.data}
+        loaded={obj?.loaded}
+        loadError={obj?.loadError}
+        EmptyMsg={EmptyMsg}
+        label={label}
+      >
         {content}
       </StatusBox>
     );
   };
 
   const componentProps = {
-    ..._.pick(props, ['filters', 'selected', 'loaded']),
+    ..._.pick(props, ['filters', 'selected']),
+    loaded: props.obj?.loaded,
     obj: _.get(props.obj, 'data'),
   };
   const extraResources = _.reduce(
@@ -417,7 +423,7 @@ export type HorizontalNavProps = Omit<HorizontalNavFacadeProps, 'pages' | 'resou
   contextId?: string;
   pages: Page[];
   label?: string;
-  obj?: { data: K8sResourceCommon; loaded: boolean };
+  obj?: { data: K8sResourceCommon; loaded: boolean; loadError?: any };
   pagesFor?: (obj: K8sResourceKind) => Page[];
   resourceKeys?: string[];
   hideNav?: boolean;

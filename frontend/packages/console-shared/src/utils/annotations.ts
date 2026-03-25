@@ -1,4 +1,4 @@
-import { ObjectMetadata } from '@console/internal/module/k8s';
+import type { ObjectMetadata } from '@console/internal/module/k8s';
 
 export const parseJSONAnnotation = <T = any>(
   annotations: ObjectMetadata['annotations'],

@@ -1,6 +1,6 @@
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { BindableServicesModel } from './models';
-import { BindableServiceGVK, BindableServicesKind } from './types';
+import type { BindableServiceGVK, BindableServicesKind } from './types';
 
 type BindableServicesData = {
   bindableServices: BindableServiceGVK[];

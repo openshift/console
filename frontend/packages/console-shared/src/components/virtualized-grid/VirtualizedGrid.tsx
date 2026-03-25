@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useMemo, useEffect } from 'react';
-import { WindowScroller, AutoSizer, Size, CellMeasurerCache } from 'react-virtualized';
-import { VirtualizedGridProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { Size } from 'react-virtualized';
+import { WindowScroller, AutoSizer, CellMeasurerCache } from 'react-virtualized';
+import type { VirtualizedGridProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { WithScrollContainer } from '@console/internal/components/utils/dom-utils';
 import Cell from './Cell';
 import {
@@ -14,7 +15,7 @@ import {
 } from './const';
 import Grid from './Grid';
 import GroupByFilterGrid from './GroupByFilterGrid';
-import { Item, GroupedItems, GridChildrenProps } from './types';
+import type { Item, GroupedItems, GridChildrenProps } from './types';
 import { CellMeasurementContext } from './utils';
 
 const VirtualizedGrid: FC<VirtualizedGridProps> = ({

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type {
   GitImportFormData,
   DeployImageFormData,
   UploadJarFormData,

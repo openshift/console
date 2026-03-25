@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { useDeepCompareMemoize } from '@console/shared';
-import { DisplayFilters } from '../topology-types';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { DisplayFilters } from '../topology-types';
 import { FilterContext } from './FilterProvider';
 
 const useDisplayFilters = (): DisplayFilters => {

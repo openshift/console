@@ -1,28 +1,32 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ValidatedOptions, AlertVariant } from '@patternfly/react-core';
-import { Formik, FormikProps } from 'formik';
+import type { FormikProps } from 'formik';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
-import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
+import { AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { RouteModel } from '@console/internal/models';
-import { RouteKind } from '@console/internal/module/k8s';
+import type { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared';
+import type { RootState } from '@console/internal/redux';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { useToast } from '@console/shared/src/components/toast';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { startBuild as startShipwrightBuild } from '@console/shipwright-plugin/src/api';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
-import {
-  Build as ShipwrightBuildKind,
-  ClusterBuildStrategy as ShipwrightClusterBuildStrategy,
-} from '@console/shipwright-plugin/src/types';
+import type { Build as ShipwrightBuildKind } from '@console/shipwright-plugin/src/types';
+import { ClusterBuildStrategy as ShipwrightClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
-import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import { normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { PipelineType } from '../pipeline-section/import-types';
 import { usePacInfo } from '../pipeline-section/pipeline/pac-hook';
 import {
@@ -36,15 +40,8 @@ import {
   getTelemetryImport,
   handleRedirect,
 } from './import-submit-utils';
-import {
-  GitImportFormData,
-  FirehoseList,
-  ImportData,
-  Resources,
-  BaseFormData,
-  ImportTypes,
-  BuildOptions,
-} from './import-types';
+import type { GitImportFormData, ImportData, BaseFormData } from './import-types';
+import { Resources, ImportTypes, BuildOptions } from './import-types';
 import { validationSchema } from './import-validation-utils';
 import { useDefaultBuildOption } from './section/useDefaultBuildOption';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
@@ -55,10 +52,15 @@ export interface ImportFormProps {
   namespace: string;
   importData: ImportData;
   contextualSource?: string;
-  imageStreams?: FirehoseList;
-  projects?: {
+  imageStreams?: {
+    data: K8sResourceKind | K8sResourceKind[];
     loaded: boolean;
-    data: [];
+    loadError?: any;
+  };
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
   };
 }
 
@@ -75,6 +77,8 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
   projects,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const fireTelemetryEvent = useTelemetry();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
@@ -153,7 +157,11 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
 
   const initialVals = useUpdateKnScalingDefaultValues(initialValues);
   const builderImages: NormalizedBuilderImages =
-    imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
+    imageStreams &&
+    imageStreams.loaded &&
+    normalizeBuilderImages(
+      Array.isArray(imageStreams.data) ? imageStreams.data : [imageStreams.data],
+    );
 
   const handleSubmit = (values: GitImportFormData, actions) => {
     const imageStream = builderImages && builderImages[values.image.selected]?.obj;
@@ -242,7 +250,13 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
 
         fireTelemetryEvent('Git Import', getTelemetryImport(values));
 
-        handleRedirect(projectName, perspective, perspectiveExtensions, redirectSearchParams);
+        handleRedirect(
+          projectName,
+          perspective,
+          perspectiveExtensions,
+          navigate,
+          redirectSearchParams,
+        );
       })
       .catch((err) => {
         // eslint-disable-next-line no-console
@@ -271,7 +285,7 @@ const ImportForm: FC<ImportFormProps & StateProps> = ({
       <Formik
         initialValues={initialVals}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={handleCancel}
         validationSchema={validationSchema(t)}
       >
         {renderForm}

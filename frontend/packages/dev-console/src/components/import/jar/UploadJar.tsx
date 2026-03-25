@@ -1,17 +1,22 @@
-import type { FunctionComponent } from 'react';
-import { Formik, FormikHelpers } from 'formik';
+import type { FC } from 'react';
+import { useCallback } from 'react';
+import type { FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResultsObject, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared/src';
+import { useNavigate } from 'react-router';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
-import { BuilderImage } from '../../../utils/imagestream-utils';
+import type { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
 import { filterDeployedResources, handleRedirect } from '../import-submit-utils';
-import { BaseFormData, Resources, UploadJarFormData } from '../import-types';
+import type { BaseFormData, UploadJarFormData } from '../import-types';
+import { Resources } from '../import-types';
 import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
 import { validationSchema } from '../upload-jar-validation-utils';
 import UploadJarForm from './UploadJarForm';
@@ -25,13 +30,15 @@ type UploadJarProps = {
   contextualSource?: string;
 };
 
-const UploadJar: FunctionComponent<UploadJarProps> = ({
+const UploadJar: FC<UploadJarProps> = ({
   namespace,
   projects,
   builderImage,
   forApplication,
   contextualSource,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const postFormCallback = useResourceConnectionHandler();
   const toastCallback = useUploadJarFormToast();
   const { t } = useTranslation();
@@ -86,6 +93,7 @@ const UploadJar: FunctionComponent<UploadJarProps> = ({
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({
             selectId: filterDeployedResources(resp)[0]?.metadata?.uid,
           }),
@@ -100,7 +108,7 @@ const UploadJar: FunctionComponent<UploadJarProps> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

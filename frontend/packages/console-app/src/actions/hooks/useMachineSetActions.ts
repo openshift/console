@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { ConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { ConfigureMachineAutoscalerModal } from '@console/internal/components/modals/configure-machine-autoscaler-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { MachineSetModel } from '@console/internal/models';
-import { MachineSetKind } from '@console/internal/module/k8s';
+import type { MachineSetKind } from '@console/internal/module/k8s';
 import { MachineSetActionCreator } from './types';
 
 /**

@@ -1,7 +1,7 @@
-import { K8sModel } from '../api/common-types';
-import { Fetch } from '../api/internal-types';
-import { Extension, CodeRef, ResolvedExtension } from '../types';
-import {
+import type { K8sModel } from '../api/common-types';
+import type { Fetch } from '../api/internal-types';
+import type { Extension, CodeRef, ResolvedExtension } from '../types';
+import type {
   K8sResourceCommon,
   PrometheusResponse,
   ResourcesObject,
@@ -11,7 +11,7 @@ import {
   FirehoseResource,
   FirehoseResult,
 } from './console-types';
-import {
+import type {
   CardSpan,
   GetOperatorsWithStatuses,
   K8sActivityProps,

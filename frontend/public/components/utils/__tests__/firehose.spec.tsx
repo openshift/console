@@ -1368,8 +1368,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       });
     });
 
-    // FIXME crashs
-    xit('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (Firehose first)', async () => {
+    it('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (Firehose first)', async () => {
       // Without a name the k8sGet API is called, but it returns a list anyway.
       k8sGetMock.mockReturnValue(Promise.resolve(podList));
 
@@ -1484,8 +1483,7 @@ describe('Firehose together with useK8sWatchResources', () => {
       });
     });
 
-    // FIXME crashs
-    xit('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (useK8sWatchResources first)', async () => {
+    it('should return an array for useK8sWatchResources isList=true even when Firehose isList=false is called without a name (useK8sWatchResources first)', async () => {
       // Without a name the k8sGet API is called, but it returns a list anyway.
       k8sGetMock.mockReturnValue(Promise.resolve(podList));
 

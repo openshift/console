@@ -1,7 +1,7 @@
-import { Dispatch } from 'redux';
-import { K8sModel } from '../../../api/common-types';
-import { SDKStoreState } from '../../../app/redux-types';
-import { WatchK8sResource } from '../../../extensions/console-types';
+import type { Dispatch } from 'redux';
+import type { K8sModel } from '../../../api/common-types';
+import type { SDKStoreState } from '../../../app/redux-types';
+import type { WatchK8sResource } from '../../../extensions/console-types';
 
 /**
  * @deprecated this needs to be removed once we internalize all k8s redux state

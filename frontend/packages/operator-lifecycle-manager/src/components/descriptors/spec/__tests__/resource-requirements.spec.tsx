@@ -1,28 +1,28 @@
 import { screen, waitFor, fireEvent } from '@testing-library/react';
-import { Map as ImmutableMap } from 'immutable';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import * as modal from '@console/internal/components/factory/modal';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testResourceInstance, testModel } from '../../../../../mocks';
-import {
-  ResourceRequirementsModal,
-  ResourceRequirementsModalProps,
-  ResourceRequirementsModalLink,
-} from '../resource-requirements';
+import type { ResourceRequirementsModalProps } from '../resource-requirements';
+import { ResourceRequirementsModal, ResourceRequirementsModalLink } from '../resource-requirements';
+
+const useK8sModelMock = jest.fn();
+const useOverlayMock = jest.fn();
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource'),
   k8sUpdate: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ...jest.requireActual('@console/internal/components/factory/modal'),
-  createModalLauncher: jest.fn(),
+jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
+  useK8sModel: (...args) => useK8sModelMock(...args),
+}));
+
+jest.mock('@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay', () => ({
+  useOverlay: (...args) => useOverlayMock(...args),
 }));
 
 const k8sUpdateMock = k8sResourceModule.k8sUpdate as jest.Mock;
-const createModalLauncherMock = modal.createModalLauncher as jest.Mock;
 
 describe('ResourceRequirementsModal', () => {
   const title = 'TestResource Resource Requests';
@@ -94,6 +94,7 @@ describe('ResourceRequirementsModal', () => {
 
 describe('ResourceRequirementsModalLink', () => {
   let obj: K8sResourceKind;
+  let launchModalMock: jest.Mock;
 
   beforeEach(() => {
     obj = {
@@ -106,23 +107,17 @@ describe('ResourceRequirementsModalLink', () => {
         },
       },
     };
+
+    launchModalMock = jest.fn();
+    useK8sModelMock.mockReturnValue([testModel, false]);
+    useOverlayMock.mockReturnValue(launchModalMock);
+
     jest.clearAllMocks();
   });
 
   it('should render button link with resource requests', () => {
     renderWithProviders(
       <ResourceRequirementsModalLink obj={obj} type="requests" path="resources" />,
-      {
-        initialState: {
-          k8s: ImmutableMap({
-            RESOURCES: ImmutableMap({
-              models: ImmutableMap({
-                'testapp.coreos.com~v1alpha1~TestResource': testModel,
-              }),
-            }),
-          }),
-        },
-      },
     );
 
     const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.requests;
@@ -132,20 +127,7 @@ describe('ResourceRequirementsModalLink', () => {
   });
 
   it('should render button link with resource limits', () => {
-    renderWithProviders(
-      <ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />,
-      {
-        initialState: {
-          k8s: ImmutableMap({
-            RESOURCES: ImmutableMap({
-              models: ImmutableMap({
-                'testapp.coreos.com~v1alpha1~TestResource': testModel,
-              }),
-            }),
-          }),
-        },
-      },
-    );
+    renderWithProviders(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
 
     const { memory, cpu, 'ephemeral-storage': storage } = obj.spec.resources.limits;
     expect(
@@ -165,17 +147,6 @@ describe('ResourceRequirementsModalLink', () => {
     };
     renderWithProviders(
       <ResourceRequirementsModalLink obj={objWithoutResources} type="limits" path="resources" />,
-      {
-        initialState: {
-          k8s: ImmutableMap({
-            RESOURCES: ImmutableMap({
-              models: ImmutableMap({
-                'testapp.coreos.com~v1alpha1~TestResource': testModel,
-              }),
-            }),
-          }),
-        },
-      },
     );
 
     expect(
@@ -186,38 +157,22 @@ describe('ResourceRequirementsModalLink', () => {
   });
 
   it('should open resource requirements modal when button is clicked', async () => {
-    const modalSpy = jest.fn();
-    createModalLauncherMock.mockReturnValue(modalSpy);
-
-    renderWithProviders(
-      <ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />,
-      {
-        initialState: {
-          k8s: ImmutableMap({
-            RESOURCES: ImmutableMap({
-              models: ImmutableMap({
-                'testapp.coreos.com~v1alpha1~TestResource': testModel,
-              }),
-            }),
-          }),
-        },
-      },
-    );
+    renderWithProviders(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
 
     fireEvent.click(screen.getByRole('button'));
 
     await waitFor(() => {
-      expect(modalSpy).toHaveBeenCalled();
+      expect(launchModalMock).toHaveBeenCalled();
     });
 
-    const modalArgs = modalSpy.mock.calls[0][0];
-    expect(modalArgs.title).toEqual(`${obj.kind} Resource Limits`);
-    expect(modalArgs.description).toEqual(
+    const [, modalProps] = launchModalMock.mock.calls[0];
+    expect(modalProps.title).toEqual(`${obj.kind} Resource Limits`);
+    expect(modalProps.description).toEqual(
       'Define the resource limits for this TestResource instance.',
     );
-    expect(modalArgs.obj).toEqual(obj);
-    expect(modalArgs.model).toEqual(testModel);
-    expect(modalArgs.type).toEqual('limits');
-    expect(modalArgs.path).toEqual('resources');
+    expect(modalProps.obj).toEqual(obj);
+    expect(modalProps.model).toEqual(testModel);
+    expect(modalProps.type).toEqual('limits');
+    expect(modalProps.path).toEqual('resources');
   });
 });

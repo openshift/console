@@ -7,24 +7,24 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router';
 import {
   ConsoleDataView,
   initialFiltersDefault,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { ResourceFilters } from '@console/app/src/components/data-view/types';
+import type { ResourceFilters } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
-import { HelmRelease } from '../../types/helm-types';
+import type { HelmRelease } from '../../types/helm-types';
 import {
   fetchHelmReleases,
   HelmReleaseStatusLabels,

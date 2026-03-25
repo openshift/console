@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
@@ -21,12 +22,12 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   ClusterServiceVersionKind,
@@ -37,7 +38,11 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterChannelModal, clusterMoreUpdatesModal, clusterUpdateModal } from '../modals';
+import {
+  LazyClusterChannelModalOverlay,
+  LazyClusterMoreUpdatesModalOverlay,
+  LazyClusterUpdateModalOverlay,
+} from '../modals';
 import { GlobalConfigPage } from './global-config';
 import {
   ClusterAutoscalerModel,
@@ -88,8 +93,6 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
 import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
-import { Firehose } from '../utils/firehose';
-import type { FirehoseResource } from '../utils/types';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
@@ -107,7 +110,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants';
 
 import {
@@ -167,6 +170,7 @@ const calculatePercentage = (numerator: number, denominator: number): number =>
 
 export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const label = cv.spec.channel || t('public~Not configured');
   return canUpgrade ? (
     <Button
@@ -175,7 +179,7 @@ export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
       type="button"
       isInline
       data-test-id="current-channel-update-link"
-      onClick={() => clusterChannelModal({ cv })}
+      onClick={() => launchModal(LazyClusterChannelModalOverlay, { cv: cv as ClusterVersionKind })}
       variant="link"
     >
       {label}
@@ -224,6 +228,7 @@ export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
 };
 
 export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
+  const launchModal = useOverlay();
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
     group: MachineConfigPoolModel.apiGroup,
@@ -246,7 +251,7 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
       <Button
         variant="primary"
         type="button"
-        onClick={() => clusterUpdateModal({ cv })}
+        onClick={() => launchModal(LazyClusterUpdateModalOverlay, { cv })}
         data-test-id="cv-update-button"
       >
         {t('public~Select a version')}
@@ -586,6 +591,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
   const newestVersionIsBlocked =
     clusterUpgradeableFalse && minorVersionIsNewer && !isClusterExternallyManaged();
   const { t } = useTranslation();
+  const launchModal = useOverlay();
 
   return (
     <div className="co-cluster-settings__updates-graph" data-test="cv-updates-graph">
@@ -606,7 +612,7 @@ export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
               <Button
                 variant="secondary"
                 className="co-channel-more-versions"
-                onClick={() => clusterMoreUpdatesModal({ cv })}
+                onClick={() => launchModal(LazyClusterMoreUpdatesModalOverlay, { cv })}
                 data-test="cv-more-updates-button"
               >
                 {t('public~+ More')}
@@ -880,7 +886,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   obj: cv,
   autoscalers,
 }) => {
-  const { removeQueryArgument } = useQueryParamsMutator();
+  const { getQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
@@ -899,15 +905,27 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const desiredVersion = getDesiredClusterVersion(cv);
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
   const workerMachineConfigPool = getMCPByName(machineConfigPools, NodeTypes.worker);
-  if (new URLSearchParams(window.location.search).has('showVersions')) {
-    clusterUpdateModal({ cv })
-      .then(() => removeQueryArgument('showVersions'))
-      .catch(_.noop);
-  } else if (new URLSearchParams(window.location.search).has('showChannels')) {
-    clusterChannelModal({ cv })
-      .then(() => removeQueryArgument('showChannels'))
-      .catch(_.noop);
-  }
+  const launchModal = useOverlay();
+  const modalOpenedRef = useRef(false);
+
+  // Check URL params once to avoid re-reading on every cv change
+  const hasShowVersions = useMemo(() => !!getQueryArgument('showVersions'), [getQueryArgument]);
+  const hasShowChannels = useMemo(() => !!getQueryArgument('showChannels'), [getQueryArgument]);
+
+  useEffect(() => {
+    if (modalOpenedRef.current) {
+      return;
+    }
+    if (hasShowVersions) {
+      launchModal(LazyClusterUpdateModalOverlay, { cv });
+      removeQueryArgument('showVersions');
+      modalOpenedRef.current = true;
+    } else if (hasShowChannels) {
+      launchModal(LazyClusterChannelModalOverlay, { cv });
+      removeQueryArgument('showChannels');
+      modalOpenedRef.current = true;
+    }
+  }, [launchModal, cv, removeQueryArgument, hasShowVersions, hasShowChannels]);
 
   return (
     <>
@@ -1168,23 +1186,24 @@ export const ClusterSettingsPage: FC = () => {
   const { t } = useTranslation();
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('public~Cluster Settings');
-  const resources: FirehoseResource[] = [
-    {
-      kind: clusterVersionReference,
-      name: 'version',
-      isList: false,
-      prop: 'obj',
-    },
-  ];
-  if (hasClusterAutoscaler) {
-    resources.push({
-      kind: clusterAutoscalerReference,
-      isList: true,
-      prop: 'autoscalers',
-      optional: true,
-    });
-  }
-  const resourceKeys = _.map(resources, 'prop');
+
+  const [objData, objLoaded, objLoadError] = useK8sWatchResource<ClusterVersionKind>({
+    kind: clusterVersionReference,
+    name: 'version',
+  });
+
+  const [autoscalersData, autoscalersLoaded, autoscalersLoadError] = useK8sWatchResource<
+    K8sResourceKind[]
+  >(
+    hasClusterAutoscaler
+      ? {
+          kind: clusterAutoscalerReference,
+          isList: true,
+        }
+      : null,
+  );
+
+  const resourceKeys = hasClusterAutoscaler ? ['obj', 'autoscalers'] : ['obj'];
   const pages = [
     {
       href: '',
@@ -1209,12 +1228,25 @@ export const ClusterSettingsPage: FC = () => {
     telemetryPrefix: 'Cluster Settings',
     titlePrefix: title,
   };
+
+  const loaded = hasClusterAutoscaler ? objLoaded && autoscalersLoaded : objLoaded;
+  const loadError = objLoadError || autoscalersLoadError;
+
+  const horizontalNavProps = {
+    pages,
+    resourceKeys,
+    obj: { data: objData, loaded: objLoaded },
+    ...(hasClusterAutoscaler && {
+      autoscalers: { data: autoscalersData, loaded: autoscalersLoaded },
+    }),
+    loaded,
+    loadError,
+  };
+
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
-      <Firehose resources={resources}>
-        <HorizontalNav pages={pages} resourceKeys={resourceKeys} />
-      </Firehose>
+      <HorizontalNav {...horizontalNavProps} />
     </PageTitleContext.Provider>
   );
 };

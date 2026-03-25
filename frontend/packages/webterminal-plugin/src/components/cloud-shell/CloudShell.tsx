@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_DEVWORKSPACE } from '../../const';
 import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';

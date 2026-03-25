@@ -1,3 +1,4 @@
+import type { DragObjectWithType, ComponentFactory } from '@patternfly/react-topology';
 import {
   ModelKind,
   withPanZoom,
@@ -5,8 +6,6 @@ import {
   withTargetDrag,
   withSelection,
   withDndDrop,
-  DragObjectWithType,
-  ComponentFactory,
 } from '@patternfly/react-topology';
 import { contextMenuActions, graphActionContext, groupActionContext } from '../../../actions';
 import { withCreateConnector } from '../../../behavior/withCreateConnector';
@@ -19,8 +18,8 @@ import {
 } from '../../../const';
 import { createConnection } from '../../../utils/createConnection';
 import { withEditReviewAccess } from '../../../utils/withEditReviewAccess';
+import type { NodeComponentProps } from './componentUtils';
 import {
-  NodeComponentProps,
   graphDropTargetSpec,
   nodeDragSourceSpec,
   nodeDropTargetSpec,

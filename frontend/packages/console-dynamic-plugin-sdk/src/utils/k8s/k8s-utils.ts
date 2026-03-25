@@ -1,11 +1,12 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
-import { Options } from '../../api/internal-types';
-import { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
+import type { K8sModel, MatchExpression, MatchLabels, Selector } from '../../api/common-types';
+import type { Options } from '../../api/internal-types';
+import type { QueryParams, K8sResourceKindReference } from '../../extensions/console-types';
 import { k8sBasePath } from './k8s';
 import { getReferenceForModel } from './k8s-ref';
-import { WSFactory, WSOptions } from './ws-factory';
+import type { WSOptions } from './ws-factory';
+import { WSFactory } from './ws-factory';
 // eslint-disable-next-line
 const staticModels = require('@console/internal/models');
 

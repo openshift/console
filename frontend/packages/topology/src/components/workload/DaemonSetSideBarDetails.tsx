@@ -1,11 +1,12 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
 import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
-import { DaemonSetKind } from '@console/internal/module/k8s';
-import { PodRing, usePodsWatcher } from '@console/shared';
+import type { DaemonSetKind } from '@console/internal/module/k8s';
+import { PodRing } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getResource } from '../../utils';
 
 type DaemonSetOverviewDetailsProps = {

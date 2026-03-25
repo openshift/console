@@ -1,14 +1,15 @@
 import type { FC } from 'react';
 import { useReducer, useCallback } from 'react';
 import * as _ from 'lodash';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import type { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import ActivityCard from './ActivityCard';
 import DetailsCard from './DetailsCard';
 import InventoryCard from './InventoryCard';
-import { NodeDashboardContext, HealthCheck } from './NodeDashboardContext';
+import type { HealthCheck } from './NodeDashboardContext';
+import { NodeDashboardContext } from './NodeDashboardContext';
 import StatusCard from './StatusCard';
 import UtilizationCard from './UtilizationCard';
 

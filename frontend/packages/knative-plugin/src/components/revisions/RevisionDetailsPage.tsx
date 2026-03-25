@@ -1,16 +1,13 @@
 import type { ComponentProps, FC } from 'react';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-  ActionMenu,
-} from '@console/shared';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenuVariant, ActionServiceProvider, ActionMenu } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: FC<ComponentProps<typeof DetailsPage>> = (props) => {

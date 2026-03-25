@@ -3,7 +3,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { RepositoryModel } from '../../../models/pipelines';
-import { GitData, GitReadableTypes } from '../import-types';
+import type { GitData } from '../import-types';
+import { GitReadableTypes } from '../import-types';
 
 interface WebhookToastContentProps {
   repositoryName: string;

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Form } from '@patternfly/react-core';
 import ClusterConfigurationField from './ClusterConfigurationField';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationFormProps = {
   items: ResolvedClusterConfigurationItem[];

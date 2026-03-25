@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 
 import { Card, CardHeader, CardTitle, CardFooter, Divider } from '@patternfly/react-core';
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
@@ -173,7 +173,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ models }) => {
 
 const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
-export const ActivityCard: FC<{}> = memo(() => {
+export const ActivityCard = memo(() => {
   const { t } = useTranslation();
 
   return (

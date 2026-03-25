@@ -4,7 +4,7 @@ import {
   helpTourText,
   userPreferencesTourText,
 } from '@console/app/src/components/guided-tour/GuidedTourText';
-import { TourDataType } from '@console/app/src/components/tour';
+import type { TourDataType } from '@console/app/src/components/tour';
 import GuidedTourIntroBanner from './GuidedTourIntroBanner';
 import GuidedTourIntroBannerDark from './GuidedTourIntroBannerDark';
 import {

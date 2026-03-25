@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { UserRoleBinding, RoleBinding } from './project-access-form-utils-types';
+import type { UserRoleBinding, RoleBinding } from './project-access-form-utils-types';
 
 export const defaultAccessRoles = {
   admin: 'Admin',

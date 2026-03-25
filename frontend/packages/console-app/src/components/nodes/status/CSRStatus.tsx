@@ -11,13 +11,12 @@ import {
 } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   CertificateSigningRequestKind,
   IsNodeStatusActive,
   NodePopoverContentProps,
-  PopoverStatus,
-  StatusIconAndText,
 } from '@console/dynamic-plugin-sdk';
+import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { CertificateSigningRequestModel } from '@console/internal/models';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';

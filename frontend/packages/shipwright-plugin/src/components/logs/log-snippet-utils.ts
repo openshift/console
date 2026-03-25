@@ -1,7 +1,7 @@
 import i18next from 'i18next';
-import { K8sResourceCondition } from '@console/internal/module/k8s';
-import { TaskRunStatus } from '../../types';
-import { CombinedErrorDetails } from './log-snippet-types';
+import type { K8sResourceCondition } from '@console/internal/module/k8s';
+import type { TaskRunStatus } from '../../types';
+import type { CombinedErrorDetails } from './log-snippet-types';
 
 const joinConditions = (conditions: K8sResourceCondition[]) =>
   conditions.map((condition) => condition.message).join('\n') ||

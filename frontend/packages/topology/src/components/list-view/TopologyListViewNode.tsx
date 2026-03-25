@@ -14,7 +14,7 @@ import { css } from '@patternfly/react-styles';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { modelFor } from '@console/internal/module/k8s';
 import {

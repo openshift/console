@@ -1,9 +1,9 @@
-import { Model } from '@patternfly/react-topology';
-import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { Alerts } from '@console/internal/components/monitoring/types';
-import { TopologyResourcesObject, TrafficData } from '../topology-types';
+import type { Model } from '@patternfly/react-topology';
+import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import type { Alerts } from '@console/internal/components/monitoring/types';
+import type { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { baseDataModelGetter } from './data-transformer';
-import { ExtensibleModel } from './ModelContext';
+import type { ExtensibleModel } from './ModelContext';
 
 export const updateTopologyDataModel = (
   dataModelContext: ExtensibleModel,

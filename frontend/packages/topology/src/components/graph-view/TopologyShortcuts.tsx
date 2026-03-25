@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { Shortcut, ShortcutTable } from '@console/shared';
 import { TopologyViewType } from '../../topology-types';
 

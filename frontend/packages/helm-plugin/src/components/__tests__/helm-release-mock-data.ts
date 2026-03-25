@@ -1,6 +1,6 @@
-import { FirehoseResourcesResult } from '@console/internal/components/utils/types';
-import { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
+import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';
+import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
+import type { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 export const mockHelmReleases: HelmRelease[] = [

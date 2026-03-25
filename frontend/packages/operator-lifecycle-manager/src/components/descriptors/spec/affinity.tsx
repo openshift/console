@@ -11,7 +11,7 @@ import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-ci
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   NodeAffinity as NodeAffinityType,
   MatchExpression,
   PodAffinity as PodAffinityType,

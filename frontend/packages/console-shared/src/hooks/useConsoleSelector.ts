@@ -1,4 +1,5 @@
-import { TypedUseSelectorHook, useSelector } from 'react-redux';
+import type { TypedUseSelectorHook } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '@console/internal/redux';
 
 // TODO: When upgrading to react-redux v9, use the built-in `withTypes` method.

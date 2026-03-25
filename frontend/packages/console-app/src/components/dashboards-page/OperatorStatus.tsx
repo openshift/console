@@ -1,8 +1,9 @@
 import type { FC } from 'react';
-import { OperatorRowProps } from '@console/dynamic-plugin-sdk';
+import type { OperatorRowProps } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { ClusterOperatorModel } from '@console/internal/models';
-import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import type { ClusterOperator } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 
 const ClusterOperatorStatusRow: FC<OperatorRowProps<ClusterOperator>> = ({ operatorStatus }) => (

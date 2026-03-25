@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { MachineSetKind } from '@console/internal/module/k8s';
+import type { MachineSetKind } from '@console/internal/module/k8s';
 import { getUID } from '@console/shared/src';
 
 export const findMachineSet = (machineSets: MachineSetKind[], uid: string) =>

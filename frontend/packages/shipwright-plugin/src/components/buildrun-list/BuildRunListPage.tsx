@@ -1,9 +1,10 @@
 import type { ComponentProps, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
+import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { BuildRun, ComputedBuildRunStatus } from '../../types';
+import type { BuildRun } from '../../types';
+import { ComputedBuildRunStatus } from '../../types';
 import { useBuildRunModel } from '../../utils';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import { BuildRunTable } from './BuildRunTable';

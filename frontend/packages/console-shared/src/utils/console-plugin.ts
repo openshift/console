@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import type { K8sResourceKind, Patch } from '@console/internal/module/k8s';
 
 export const getPluginPatch = (
   console: K8sResourceKind,

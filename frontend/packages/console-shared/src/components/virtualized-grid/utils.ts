@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { CellMeasurerCache } from 'react-virtualized';
-import { GroupedItems, CellItem } from './types';
+import type { CellMeasurerCache } from 'react-virtualized';
+import type { GroupedItems, CellItem } from './types';
 
 /**
  *

@@ -1,14 +1,10 @@
 import type { FC } from 'react';
 import { useState, useCallback, useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import {
-  AdapterDataType,
-  BuildAdapter,
-  isBuildAdapter,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import { BuildConfigData } from '@console/shared';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { AdapterDataType, BuildAdapter } from '@console/dynamic-plugin-sdk/src';
+import { isBuildAdapter, useResolvedExtensions } from '@console/dynamic-plugin-sdk/src';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { BuildOverview } from './BuildOverview';
 import ResolveAdapter from './ResolveAdapter';

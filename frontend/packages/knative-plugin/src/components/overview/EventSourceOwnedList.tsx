@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 
 type EventSourceOwnedListProps = {
   source: K8sResourceKind;

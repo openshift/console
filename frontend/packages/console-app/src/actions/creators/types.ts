@@ -1,5 +1,5 @@
-import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 
 export type ResourceActionCreator = (
   kind: K8sModel,

@@ -1,6 +1,6 @@
-import { ExtensionK8sKindVersionModel } from '../api/common-types';
-import { Extension, CodeRef } from '../types';
-import { K8sResourceCommon } from './console-types';
+import type { ExtensionK8sKindVersionModel } from '../api/common-types';
+import type { Extension, CodeRef } from '../types';
+import type { K8sResourceCommon } from './console-types';
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceCommon> = {
   filters?: any;

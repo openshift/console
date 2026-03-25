@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ClusterConfigurationFieldType } from '@console/dynamic-plugin-sdk/src';
 import ClusterConfigurationCustomField from './ClusterConfigurationCustomField';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
 const componentForFieldType = {
   // WIP:

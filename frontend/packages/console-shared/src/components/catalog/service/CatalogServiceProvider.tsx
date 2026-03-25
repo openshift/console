@@ -1,7 +1,7 @@
 import type { ReactNode, FC } from 'react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
-import {
+import type {
   CatalogCategory,
   CatalogExtensionHookOptions,
   CatalogItem,
@@ -9,7 +9,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { IncompleteDataError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
-import { CatalogService } from '../utils';
+import type { CatalogService } from '../utils';
 import {
   keywordCompare,
   applyCatalogItemMetadata,

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { RoutesOverviewListItem } from '../../types';
+import type { RoutesOverviewListItem } from '../../types';
 import './KSRouteSplitListItem.scss';
 
 type KSRouteSplitListItemProps = {

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
-import { ActionContext } from '../api/internal-types';
-import { Extension, CodeRef } from '../types';
-import { AccessReviewResourceAttributes } from './console-types';
+import type { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
+import type { ActionContext } from '../api/internal-types';
+import type { Extension, CodeRef } from '../types';
+import type { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
 export type ActionProvider = Extension<

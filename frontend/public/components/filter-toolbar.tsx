@@ -1,8 +1,8 @@
 import type { FC, Ref, MouseEvent, ChangeEvent, ReactText } from 'react';
 import { useState, useMemo, useCallback, useEffect, Fragment } from 'react';
 import * as _ from 'lodash';
-import { useLocation } from 'react-router-dom-v5-compat';
-import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import {
   Badge,
   Button,
@@ -31,13 +31,14 @@ import {
   RowSearchFilter,
 } from '@console/dynamic-plugin-sdk';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTranslation } from 'react-i18next';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
-import { createColumnManagementModal } from './modals';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { LazyColumnManagementModalOverlay } from './modals';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { TextFilter } from './factory/text-filter';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import useRowFilterFix from './useRowFilterFix';
@@ -85,8 +86,9 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
   rowSearchFilters = [],
 }) => {
   const { setOrRemoveQueryArgument } = useQueryParamsMutator();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const location = useLocation();
+  const launchModal = useOverlay();
 
   const { t } = useTranslation();
 
@@ -442,7 +444,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                     }}
                     categoryName={translatedNameFilterTitle}
                   >
-                    <div className="pf-v6-c-input-group co-filter-group">
+                    <div className="pf-v6-c-input-group">
                       {showSearchFiltersDropdown && (
                         <ConsoleSelect
                           alwaysShowTitle
@@ -505,7 +507,7 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
                   icon={<ColumnsIcon />}
                   variant="plain"
                   onClick={() =>
-                    createColumnManagementModal({
+                    launchModal(LazyColumnManagementModalOverlay, {
                       columnLayout,
                     })
                   }

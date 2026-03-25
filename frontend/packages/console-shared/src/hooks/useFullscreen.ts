@@ -1,4 +1,5 @@
-import { useRef, useState, useCallback, RefObject } from 'react';
+import type { RefObject } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { useEventListener } from '@console/shared/src/hooks/useEventListener';
 
 /**

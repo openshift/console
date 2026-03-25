@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { FormHelperText, Title } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
 import { usePreferredRoutingOptions } from '../../user-preferences/usePreferredRoutingOptions';

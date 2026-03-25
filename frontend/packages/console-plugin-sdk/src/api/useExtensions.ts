@@ -1,32 +1,18 @@
-import { useRef, useCallback, useEffect } from 'react';
-import * as _ from 'lodash';
-import type {
-  Extension,
-  ExtensionTypeGuard,
-  LoadedExtension,
-} from '@console/dynamic-plugin-sdk/src/types';
-import { useForceRender } from '@console/shared/src/hooks/useForceRender';
+import { useExtensions as useExtensionsSDK } from '@openshift/dynamic-plugin-sdk';
+import { useSortedExtensions } from '../utils/useSortedExtensions';
 import { useTranslatedExtensions } from '../utils/useTranslatedExtensions';
-import { subscribeToExtensions } from './pluginSubscriptionService';
 
 /**
- * React hook for consuming Console extensions.
+ * React hook for consuming Console extensions which are currently in use.
  *
- * This hook takes extension type guard(s) as its argument(s) and returns a list
- * of extension instances, narrowed by the given type guard(s), which are currently
- * in use.
+ * An extension is in use when the associated plugin is currently enabled and its
+ * feature flag requirements (if any) are met according to current feature flags.
  *
- * An extension is considered to be in use when
+ * This hook re-renders the component whenever the list of matching extensions changes.
  *
- * - it is an always-on extension, i.e. not gated by any feature flags
- * - all feature flags referenced by its `flags` object are resolved to the right
- *   values
+ * The hook's result is guaranteed to be referentially stable across re-renders.
  *
- * When the list of matching extensions changes, the React component is re-rendered
- * with the hook returning an up-to-date list of extensions.
- *
- * Example usage:
- *
+ * @example
  * ```ts
  * const Example = () => {
  *   const navItemExtensions = useExtensions<NavItem>(isNavItem);
@@ -34,57 +20,16 @@ import { subscribeToExtensions } from './pluginSubscriptionService';
  * };
  * ```
  *
- * The hook's result is guaranteed to be referentially stable across re-renders.
+ * @returns List of matching extensions which are currently in use.
  *
- * @param typeGuards Type guard(s) used to narrow the extension instances.
- *
- * @returns List of extension instances which are currently in use, narrowed by the
- * given type guard(s).
+ * @see {@link useTranslatedExtensions}
+ * @see {@link useSortedExtensions}
  */
-export const useExtensions = <E extends Extension>(
-  ...typeGuards: ExtensionTypeGuard<E>[]
-): LoadedExtension<E>[] => {
-  if (typeGuards.length === 0) {
-    throw new Error('You must pass at least one type guard to useExtensions');
-  }
+// TODO: consider exposing hook via Console plugin SDK and move ^^ doc to exported symbol
+export const useExtensions: typeof useExtensionsSDK = (predicate) => {
+  const extensions = useExtensionsSDK(predicate);
+  const sortedExtensions = useSortedExtensions(extensions);
+  const translatedExtensions = useTranslatedExtensions(sortedExtensions);
 
-  const forceRender = useForceRender();
-
-  const isMountedRef = useRef(true);
-  const unsubscribeRef = useRef<VoidFunction>(null);
-  const extensionsInUseRef = useRef<LoadedExtension<E>[]>([]);
-  const latestTypeGuardsRef = useRef<ExtensionTypeGuard<E>[]>(typeGuards);
-
-  const trySubscribe = useCallback(() => {
-    if (unsubscribeRef.current === null) {
-      unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
-        extensionsInUseRef.current = extensions;
-        isMountedRef.current && forceRender();
-      }, ...latestTypeGuardsRef.current);
-    }
-  }, [forceRender]);
-
-  const tryUnsubscribe = useCallback(() => {
-    if (unsubscribeRef.current !== null) {
-      unsubscribeRef.current();
-      unsubscribeRef.current = null;
-    }
-  }, []);
-
-  if (!_.isEqual(latestTypeGuardsRef.current, typeGuards)) {
-    latestTypeGuardsRef.current = typeGuards;
-    tryUnsubscribe();
-  }
-
-  trySubscribe();
-
-  useEffect(
-    () => () => {
-      isMountedRef.current = false;
-      tryUnsubscribe();
-    },
-    [tryUnsubscribe],
-  );
-
-  return useTranslatedExtensions<E>(extensionsInUseRef.current);
+  return translatedExtensions;
 };

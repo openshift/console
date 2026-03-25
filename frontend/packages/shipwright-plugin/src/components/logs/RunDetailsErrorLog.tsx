@@ -6,7 +6,7 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CombinedErrorDetails } from './log-snippet-types';
+import type { CombinedErrorDetails } from './log-snippet-types';
 import LogSnippetBlock from './LogSnippetBlock';
 
 type RunDetailErrorLogProps = {

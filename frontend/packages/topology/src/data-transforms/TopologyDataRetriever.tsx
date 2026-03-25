@@ -2,11 +2,12 @@ import type { FC } from 'react';
 import { useContext, useState, useMemo, useEffect } from 'react';
 import { observer } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDebounceCallback } from '@console/shared';
-import { TopologyResourcesObject, TrafficData } from '../topology-types';
-import { ModelContext, ExtensibleModel } from './ModelContext';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import type { TopologyResourcesObject, TrafficData } from '../topology-types';
+import type { ExtensibleModel } from './ModelContext';
+import { ModelContext } from './ModelContext';
 import { updateTopologyDataModel } from './updateTopologyDataModel';
 import { useMonitoringAlerts } from './useMonitoringAlerts';
 

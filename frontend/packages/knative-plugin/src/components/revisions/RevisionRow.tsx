@@ -1,13 +1,15 @@
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ClampedText, LazyActionMenu } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, ServiceModel } from '../../models';
-import { RevisionKind, ConditionTypes } from '../../types';
+import type { RevisionKind } from '../../types';
+import { ConditionTypes } from '../../types';
 import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { tableColumnClasses } from './revision-table';
 

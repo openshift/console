@@ -15,7 +15,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Dependencies:
 
-1. [node.js](https://nodejs.org/) >= 22 & [yarn classic](https://classic.yarnpkg.com/en/docs/install) >= 1.20
+1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
 2. [go](https://golang.org/) >= 1.22+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
@@ -407,20 +407,19 @@ yarn add <package@version>
 Update existing frontend dependencies:
 
 ```
-yarn upgrade <package@version>
+yarn up <package@version>
 ```
 
-To upgrade yarn itself, download a new yarn release from
-<https://github.com/yarnpkg/yarn/releases>, replace the release in
-`frontend/.yarn/releases` with the new version, and update `yarn-path` in
-`frontend/.yarnrc`.
+To upgrade yarn itself, run `yarn set version <version>` in `frontend` directory. This will update the yarn
+release file in `frontend/.yarn/releases` and the `yarnPath` in `frontend/.yarnrc.yml`, as well as the
+`packageManager` field in `frontend/package.json`.
 
 ##### @patternfly
 
 Note that when upgrading @patternfly packages, we've seen in the past that it can cause the JavaScript heap to run out of memory, or the bundle being too large if multiple versions of the same @patternfly package is pulled in. To increase efficiency, run the following after updating packages:
 
 ```
-yarn run dedupe-deps --scopes @patternfly
+yarn dedupe --strategy highest
 ```
 
 Please note that PatternFly releases do not strictly follow semantic versioning. Therefore, it's important

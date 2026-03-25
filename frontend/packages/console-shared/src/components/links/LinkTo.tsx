@@ -1,4 +1,5 @@
-import { Link, LinkProps } from 'react-router-dom-v5-compat';
+import type { LinkProps } from 'react-router';
+import { Link } from 'react-router';
 
 /**
  * A helper which creates a `Link` component that **only**
@@ -6,7 +7,7 @@ import { Link, LinkProps } from 'react-router-dom-v5-compat';
  *
  * This is needed to bypass PatternFly components
  * forcing the `to` prop to pass as `href`, which breaks
- * `react-router-dom` routing and causes a hard reload.
+ * `react-router` routing and causes a hard reload.
  *
  * To use: pass the desired `href` and any additional props
  * into the parameters of `LinkTo` to create a new component.

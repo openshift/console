@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useCanClusterUpgrade } from '@console/shared';
+import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 
 import { ClusterSetupGettingStartedCard } from '../cluster-setup-getting-started-card';
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';

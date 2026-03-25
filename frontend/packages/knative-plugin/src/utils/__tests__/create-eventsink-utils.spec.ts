@@ -1,5 +1,5 @@
 import { kafkaSinkMockFormData } from '../../components/add/event-sinks/__mocks__/event-kafka-sink-data';
-import { EventSinkFormData } from '../../components/add/import-types';
+import type { EventSinkFormData } from '../../components/add/import-types';
 import { getKafkaSinkResource, sanitizeKafkaSinkResource } from '../create-eventsink-utils';
 
 describe('create-eventsink-utils', () => {

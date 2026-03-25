@@ -1,4 +1,4 @@
-import { MachineSetKind } from '@console/internal/module/k8s';
+import type { MachineSetKind } from '@console/internal/module/k8s';
 
 // How to find the instance type varies by provider
 // Amazon: obj.spec?.template?.spec?.providerSpec?.value?.instanceType

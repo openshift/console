@@ -1,14 +1,14 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { RowFilter } from '@console/dynamic-plugin-sdk';
+import { useParams } from 'react-router';
+import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
-import { FirehoseResourcesResult } from '@console/internal/components/utils';
+import type { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Priority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
-import { Feature, ImageManifestVuln, Vulnerability } from '../types';
+import type { Feature, ImageManifestVuln, Vulnerability } from '../types';
 import { getVulnerabilityType, VulnerabilitiesType } from './image-vulnerability-utils';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 

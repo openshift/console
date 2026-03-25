@@ -1,5 +1,5 @@
-import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';

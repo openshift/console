@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
@@ -8,22 +8,18 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageCreate,
   ListPageHeader,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
-import {
-  referenceForModel,
-  VolumeSnapshotClassKind,
-  Selector,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import type { VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';

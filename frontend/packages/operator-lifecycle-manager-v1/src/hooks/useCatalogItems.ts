@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   getConsoleRequestHeaders,
@@ -7,7 +7,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { ONE_SECOND } from '@console/shared/src/constants/time';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
-import { OLMCatalogItem } from '../types';
+import type { OLMCatalogItem } from '../types';
 import { normalizeCatalogItem } from '../utils/catalog-item';
 
 export type OLMCatalogItemData = {

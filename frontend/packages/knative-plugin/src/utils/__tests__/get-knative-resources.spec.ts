@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { FirehoseResource } from '@console/internal/components/utils';
+import type { FirehoseResource } from '@console/internal/components/utils';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   knativeServiceObj,

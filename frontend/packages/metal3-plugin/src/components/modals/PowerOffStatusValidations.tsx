@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s';
+import type { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import {
   NODE_STATUS_STARTING_MAINTENANCE,

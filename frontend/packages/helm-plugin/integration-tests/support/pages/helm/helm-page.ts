@@ -12,7 +12,7 @@ export const helmPage = {
   search: (name: string) => {
     cy.get(helmPO.filters).within(() => cy.get('.pf-v6-c-menu-toggle').first().click());
     cy.get('.pf-v6-c-menu__list-item').contains('Name').click();
-    cy.get('[aria-label="Name filter"]').clear().type(name);
+    cy.get('[aria-label="Filter by name"]').clear().type(name);
   },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),

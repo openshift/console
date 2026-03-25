@@ -21,7 +21,6 @@ export const adminNavigationMenuPO = {
 };
 
 export const createSourceSecret = {
-  form: 'form.co-create-secret-form.modal-content',
   secretName: '#secret-name',
   authenticationType: '#dropdown-selectbox',
   basicAuthentication: {

@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom-v5-compat';
-import { Alert as AlertType } from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { Alert as AlertType } from '@console/dynamic-plugin-sdk';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortMonitoringAlerts } from '@console/shared';

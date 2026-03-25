@@ -1,45 +1,45 @@
 import type { FC } from 'react';
 import { memo, useRef, useState, useCallback, useEffect } from 'react';
-import {
-  Visualization,
-  VisualizationSurface,
+import type {
   GraphElement,
-  isNode,
   BaseEdge,
-  VisualizationProvider,
   Model,
   GraphModel,
   NodeModel,
+  SelectionEventListener,
+  Node,
+  Rect,
+} from '@patternfly/react-topology';
+import {
+  Visualization,
+  VisualizationSurface,
+  isNode,
+  VisualizationProvider,
   BOTTOM_LAYER,
   GROUPS_LAYER,
   DEFAULT_LAYER,
   TOP_LAYER,
-  SelectionEventListener,
   SELECTION_EVENT,
   NODE_POSITIONED_EVENT,
   GRAPH_POSITION_CHANGE_EVENT,
-  Node,
-  Rect,
 } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { action } from 'mobx';
 import { connect } from 'react-redux';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import {
-  isTopologyComponentFactory,
-  TopologyComponentFactory,
-} from '@console/dynamic-plugin-sdk/src/extensions/topology';
-import { RootState } from '@console/internal/redux';
-import {
-  useQueryParams,
-  withUserSettingsCompatibility,
-  WithUserSettingsCompatibilityProps,
-} from '@console/shared';
+import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
+import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
+import type { RootState } from '@console/internal/redux';
+import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
 import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
-import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
+import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
+import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
-import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
+import type { ShowGroupingHintEventListener } from '../../topology-types';
+import { SHOW_GROUPING_HINT_EVENT } from '../../topology-types';
 import { componentFactory } from './components';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
@@ -82,7 +82,7 @@ interface TopologyGraphViewProps {
   dragHint?: string;
 }
 
-const TopologyGraphView: FC<TopologyGraphViewProps> = memo(
+const TopologyGraphView = memo<TopologyGraphViewProps>(
   ({ visualizationReady, visualization, controlsDisabled, selectedId, dragHint }) => {
     if (!visualizationReady) {
       return null;
@@ -130,7 +130,7 @@ interface TopologyProps {
 }
 
 const Topology: FC<
-  TopologyProps & StateProps & DispatchProps & WithUserSettingsCompatibilityProps<object>
+  TopologyProps & StateProps & DispatchProps & WithUserPreferenceProps<object>
 > = ({
   model,
   application,
@@ -354,13 +354,16 @@ const Topology: FC<
   }, [selectedId, visualization]);
 
   return (
-    <TopologyGraphView
-      visualizationReady={visualizationReady}
-      visualization={visualization}
-      controlsDisabled={!model?.nodes.length}
-      dragHint={dragHint}
-      selectedId={selectedId}
-    />
+    <>
+      <SyncPubSubModalLauncher />
+      <TopologyGraphView
+        visualizationReady={visualizationReady}
+        visualization={visualization}
+        controlsDisabled={!model?.nodes.length}
+        dragHint={dragHint}
+        selectedId={selectedId}
+      />
+    </>
   );
 };
 
@@ -381,12 +384,8 @@ export default withFallback(
     TopologyStateToProps,
     TopologyDispatchToProps,
   )(
-    withUserSettingsCompatibility<
-      TopologyProps & WithUserSettingsCompatibilityProps<object>,
-      object
-    >(
-      TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
-      TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
+    withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
+      TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY,
       {},
     )(memo(Topology)),
   ),

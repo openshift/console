@@ -1,12 +1,12 @@
 import type { ReactNode, FC } from 'react';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
-import { FormikProps } from 'formik';
-import { JSONSchema7 } from 'json-schema';
+import type { FormikProps } from 'formik';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import {
   InputField,
   FormFooter,
@@ -18,8 +18,9 @@ import {
   FlexForm,
 } from '@console/shared';
 import { getJSONSchemaOrder, prune } from '@console/shared/src/components/dynamic-form/utils';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { HelmActionType, HelmChart, HelmActionConfigType } from '../../../types/helm-types';
+import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import type { HelmChart, HelmActionConfigType } from '../../../types/helm-types';
+import { HelmActionType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
 import { useHelmReadmeModalLauncher } from './HelmReadmeModal';
@@ -72,7 +73,7 @@ const HelmInstallUpgradeForm: FC<
   providerName,
 }) => {
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
@@ -87,7 +88,7 @@ const HelmInstallUpgradeForm: FC<
 
   const uiSchema = useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.installUgradeForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'helm.installUgradeForm.editor.lastView';
 
   const formEditor = formData && formSchema && (
     <DynamicFormField
@@ -184,7 +185,7 @@ const HelmInstallUpgradeForm: FC<
               name="editorType"
               formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
               yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-              lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               prune={prune}
               noMargin
             />

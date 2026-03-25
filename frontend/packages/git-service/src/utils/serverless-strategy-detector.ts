@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import { BaseService } from '../services/base-service';
+import type { BaseService } from '../services/base-service';
 
 type FuncData = {
   values: {

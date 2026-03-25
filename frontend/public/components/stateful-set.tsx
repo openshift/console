@@ -74,7 +74,7 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
 );
 
 const StatefulSetsList: FC<StatefulSetsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useWorkloadColumns();
+  const { columns, resetAllColumnWidths } = useWorkloadColumns<K8sResourceKind>(StatefulSetModel);
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -88,6 +88,8 @@ const StatefulSetsList: FC<StatefulSetsListProps> = ({ data, loaded, ...props })
           getWorkloadDataViewRows(dvData, dvColumns, StatefulSetModel)
         }
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

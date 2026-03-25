@@ -1,4 +1,4 @@
-import { K8sResourceConditionStatus } from './k8sResource';
+import type { K8sResourceConditionStatus } from './k8sResource';
 
 export const CONSOLE_PREFIX_CLUSTER_OPERATOR =
   '/k8s/cluster/config.openshift.io~v1~ClusterOperator';

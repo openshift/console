@@ -8,10 +8,12 @@ import {
   TextInputTypes,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, useField } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InputField, getFieldId, useFormikValidationFix } from '@console/shared';
+import { InputField, getFieldId } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../../const';
 import { sanitizeApplicationValue } from '../../utils/application-utils';
 import ApplicationDropdown from './ApplicationDropdown';
@@ -29,7 +31,8 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
 }) => {
   const { t } = useTranslation();
   const [applicationsAvailable, setApplicationsAvailable] = useState(true);
-  const availableApplications = useRef<string[]>([]);
+  // Initialize as undefined to detect the first load (even if empty)
+  const availableApplications = useRef<string[] | undefined>();
   const projectsAvailable = !noProjectsAvailable;
 
   const [selectedKey, { touched, error }] = useField(
@@ -55,14 +58,18 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
 
   const handleOnLoad = (applicationList: { [key: string]: string }) => {
     const noApplicationsAvailable = _.isEmpty(applicationList);
-    setApplicationsAvailable(!noApplicationsAvailable);
-    availableApplications.current = _.keys(applicationList);
-    if (noApplicationsAvailable) {
-      setFieldValue(selectedKey.name, '');
-      setFieldValue(
-        nameField.name,
-        (selectedKey.value !== UNASSIGNED_KEY && nameField.value) ?? '',
-      );
+    const newKeys = _.keys(applicationList);
+    // Only update state if the available applications actually changed
+    if (!_.isEqual(newKeys, availableApplications.current)) {
+      availableApplications.current = newKeys;
+      setApplicationsAvailable(!noApplicationsAvailable);
+      if (noApplicationsAvailable) {
+        setFieldValue(selectedKey.name, '');
+        setFieldValue(
+          nameField.name,
+          (selectedKey.value !== UNASSIGNED_KEY && nameField.value) ?? '',
+        );
+      }
     }
   };
 
@@ -78,7 +85,9 @@ const ApplicationSelector: FC<ApplicationSelectorProps> = ({
   ];
 
   const handleAppChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setApplicationExists(availableApplications.current.includes(event.target.value.trim()));
+    setApplicationExists(
+      availableApplications.current?.includes(event.target.value.trim()) ?? false,
+    );
   };
 
   const handleAppBlur = (event: FocusEvent<HTMLInputElement>) => {

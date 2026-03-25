@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
-import { AppResources } from '../../edit-application/edit-application-types';
+import type { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';

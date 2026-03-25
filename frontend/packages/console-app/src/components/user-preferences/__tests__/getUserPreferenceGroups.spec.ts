@@ -1,4 +1,4 @@
-import { UserPreferenceTabGroup } from '../types';
+import type { UserPreferenceTabGroup } from '../types';
 import { getUserPreferenceGroups } from '../utils/getUserPreferenceGroups';
 import {
   mockUserPreferenceItems,

@@ -1,11 +1,6 @@
 import type { ReactNode, MouseEventHandler, FC } from 'react';
-import {
-  useSize,
-  useHover,
-  WithDndDragProps,
-  useCombineRefs,
-  createSvgIdUrl,
-} from '@patternfly/react-topology';
+import type { WithDndDragProps } from '@patternfly/react-topology';
+import { useSize, useHover, useCombineRefs, createSvgIdUrl } from '@patternfly/react-topology';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import SvgCircledIcon from './SvgCircledIcon';

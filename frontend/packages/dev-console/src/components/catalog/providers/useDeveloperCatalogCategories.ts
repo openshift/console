@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
+import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { defaultCatalogCategories } from '@console/shared/src/utils/default-categories';
 
 export const useDeveloperCatalogCategories = (): CatalogCategory[] =>

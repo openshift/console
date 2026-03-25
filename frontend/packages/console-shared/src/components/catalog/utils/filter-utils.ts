@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { sortCatalogItems } from './catalog-utils';
-import { CatalogFilter, CatalogFilterCounts, CatalogFilters, CatalogSortOrder } from './types';
+import type { CatalogFilter, CatalogFilterCounts, CatalogFilters } from './types';
+import { CatalogSortOrder } from './types';
 
 export const filterByGroup = (
   items: CatalogItem[],

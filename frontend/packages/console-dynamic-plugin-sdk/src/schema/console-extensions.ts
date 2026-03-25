@@ -1,19 +1,18 @@
-import { SupportedActionExtensions } from '../extensions/actions';
-import { AddAction, AddActionGroup } from '../extensions/add-actions';
-import { SupportedCatalogExtensions } from '../extensions/catalog';
-import {
+import type { SupportedActionExtensions } from '../extensions/actions';
+import type { AddAction, AddActionGroup } from '../extensions/add-actions';
+import type { SupportedCatalogExtensions } from '../extensions/catalog';
+import type {
   ClusterOverviewInventoryItem,
   ClusterOverviewUtilizationItem,
   ClusterOverviewMultilineUtilizationItem,
   CustomOverviewDetailItem,
-  OverviewDetailItem,
 } from '../extensions/cluster-overview';
-import { ClusterGlobalConfig } from '../extensions/cluster-settings';
-import { ContextProvider } from '../extensions/context-providers';
-import { CreateProjectModal } from '../extensions/create-project-modal';
-import { CreateResource } from '../extensions/create-resource';
-import { CustomExtension } from '../extensions/custom';
-import {
+import type { ClusterGlobalConfig } from '../extensions/cluster-settings';
+import type { ContextProvider } from '../extensions/context-providers';
+import type { CreateProjectModal } from '../extensions/create-project-modal';
+import type { CreateResource } from '../extensions/create-resource';
+import type { CustomExtension } from '../extensions/custom';
+import type {
   DashboardsTab,
   DashboardsCard,
   DashboardsOverviewHealthPrometheusSubsystem,
@@ -27,42 +26,41 @@ import {
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
 } from '../extensions/dashboards';
-import { DetailsItem } from '../extensions/details-item';
-import {
+import type { DetailsItem } from '../extensions/details-item';
+import type {
   FeatureFlag,
   ModelFeatureFlag,
   FeatureFlagHookProvider,
 } from '../extensions/feature-flags';
-import { FileUpload } from '../extensions/file-upload';
-import { HorizontalNavTab, NavTab } from '../extensions/horizontal-nav-tabs';
-import { ImportEnvironment } from '../extensions/import-environments';
-import {
+import type { FileUpload } from '../extensions/file-upload';
+import type { HorizontalNavTab, NavTab } from '../extensions/horizontal-nav-tabs';
+import type { ImportEnvironment } from '../extensions/import-environments';
+import type {
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
   Separator,
   NavSection,
 } from '../extensions/navigation';
-import { AlertAction } from '../extensions/notification-alert';
-import {
+import type { AlertAction } from '../extensions/notification-alert';
+import type {
   StandaloneRoutePage,
   RoutePage,
   ResourceDetailsPage,
   ResourceListPage,
-  ResourceTabPage,
 } from '../extensions/pages';
-import { Perspective } from '../extensions/perspectives';
-import {
+import type { Perspective } from '../extensions/perspectives';
+import type {
   ProjectOverviewInventoryItem,
   ProjectOverviewUtilizationItem,
 } from '../extensions/project-overview';
-import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
-import { ReduxReducer } from '../extensions/redux';
-import { ModelMetadata } from '../extensions/resource-metadata';
-import { StorageClassProvisioner } from '../extensions/storage-class-provisioner';
-import { StorageProvider } from '../extensions/storage-provider';
-import { TelemetryListener } from '../extensions/telemetry';
-import {
+import type { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
+import type { ReduxReducer } from '../extensions/redux';
+import type { ModelMetadata } from '../extensions/resource-metadata';
+import type { StorageClassProvisioner } from '../extensions/storage-class-provisioner';
+import type { StorageProvider } from '../extensions/storage-provider';
+import type { TelemetryListener } from '../extensions/telemetry';
+import type {
   TopologyComponentFactory,
   TopologyCreateConnector,
   TopologyDataModelFactory,
@@ -70,9 +68,9 @@ import {
   TopologyDisplayFilters,
   TopologyRelationshipProvider,
 } from '../extensions/topology';
-import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
-import { UserPreferenceGroup, UserPreferenceItem } from '../extensions/user-preferences';
-import { YAMLTemplate } from '../extensions/yaml-templates';
+import type { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import type { UserPreferenceGroup, UserPreferenceItem } from '../extensions/user-preferences';
+import type { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -105,7 +103,6 @@ export type SupportedExtension =
   | SupportedTopologyDetailsExtensions
   | RoutePage
   | ResourceListPage
-  | ResourceTabPage
   | ResourceDetailsPage
   | DashboardsTab
   | DashboardsCard
@@ -135,7 +132,6 @@ export type SupportedExtension =
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem
   | ClusterOverviewMultilineUtilizationItem
-  | OverviewDetailItem
   | CustomOverviewDetailItem
   | ProjectOverviewUtilizationItem
   | ProjectOverviewInventoryItem

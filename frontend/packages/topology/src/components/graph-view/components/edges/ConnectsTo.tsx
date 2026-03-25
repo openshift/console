@@ -1,12 +1,11 @@
 import type { FC } from 'react';
-import {
+import type {
   WithSourceDragProps,
   WithTargetDragProps,
   WithContextMenuProps,
   Edge,
-  observer,
-  EdgeTerminalType,
 } from '@patternfly/react-topology';
+import { observer, EdgeTerminalType } from '@patternfly/react-topology';
 import BaseEdge from './BaseEdge';
 
 import './ConnectsTo.scss';

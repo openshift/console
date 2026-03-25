@@ -2,27 +2,26 @@ import type { ReactNode, FC } from 'react';
 import { useRef, useCallback } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import {
+import type {
   Node,
+  WithSelectionProps,
+  WithDndDropProps,
+  WithDragNodeProps,
+  WithContextMenuProps,
+} from '@patternfly/react-topology';
+import {
   useSize,
   useHover,
   DefaultNode,
   LabelBadge,
   observer,
-  WithSelectionProps,
-  WithDndDropProps,
-  WithDragNodeProps,
-  WithContextMenuProps,
   useAnchor,
 } from '@patternfly/react-topology';
-import {
-  truncateMiddle,
-  shouldTruncate,
-  TruncateOptions,
-} from '@console/internal/components/utils';
+import type { TruncateOptions } from '@console/internal/components/utils';
+import { truncateMiddle, shouldTruncate } from '@console/internal/components/utils';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import { useSearchFilter } from '../../../../filters';
-import { OdcNodeModel } from '../../../../topology-types';
+import type { OdcNodeModel } from '../../../../topology-types';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
 import GroupNodeAnchor from './GroupNodeAnchor';
 import ResourceKindsInfo from './ResourceKindsInfo';
@@ -51,6 +50,7 @@ type GroupNodeProps = {
   dropTarget?: boolean;
   dragging?: boolean;
   dragRegroupable?: boolean;
+  hover?: boolean;
 } & Partial<WithSelectionProps & WithDndDropProps & WithContextMenuProps & WithDragNodeProps>;
 
 const GroupNode: FC<GroupNodeProps> = ({

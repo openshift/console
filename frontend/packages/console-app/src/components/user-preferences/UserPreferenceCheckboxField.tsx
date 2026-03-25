@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { Checkbox, Skeleton } from '@patternfly/react-core';
-import {
+import type {
   UserPreferenceCheckboxField as CheckboxFieldType,
   UserPreferenceCheckboxFieldValue,
 } from '@console/dynamic-plugin-sdk/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
-import { UserPreferenceFieldProps } from './types';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import type { UserPreferenceFieldProps } from './types';
 
 import './UserPreferenceField.scss';
 
@@ -26,7 +26,7 @@ const UserPreferenceCheckboxField: FC<UserPreferenceCheckboxFieldProps> = ({
     currentUserPreferenceValue,
     setCurrentUserPreferenceValue,
     currentUserPreferenceValueLoaded,
-  ] = useUserSettings<UserPreferenceCheckboxFieldValue>(userSettingsKey);
+  ] = useUserPreference<UserPreferenceCheckboxFieldValue>(userSettingsKey);
   const fireTelemetryEvent = useTelemetry();
 
   const loaded: boolean = currentUserPreferenceValueLoaded;

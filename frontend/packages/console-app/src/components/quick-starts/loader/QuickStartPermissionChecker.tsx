@@ -1,5 +1,6 @@
-import { FC, useEffect } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
+import type { FC } from 'react';
+import { useEffect } from 'react';
+import type { QuickStart } from '@patternfly/quickstarts';
 import { useQuickStartPermission } from '../utils/useQuickStartPermission';
 
 type QuickStartPermissionCheckerProps = {

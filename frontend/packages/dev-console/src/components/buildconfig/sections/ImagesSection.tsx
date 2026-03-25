@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField, InputField } from '@console/shared';
-import { TriggersAndImageStreamFormData } from '../../deployments/utils/deployment-types';
+import type { TriggersAndImageStreamFormData } from '../../deployments/utils/deployment-types';
 import ImageStream from '../../import/image-search/ImageStream';
 import FormSection from '../../import/section/FormSection';
 import { BuildStrategyType } from '../types';

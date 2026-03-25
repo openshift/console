@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { K8sKind } from '@console/internal/module/k8s';
+import type { K8sKind } from '@console/internal/module/k8s';
 import { getEventSourceModelsWithAccess } from '../utils/create-eventsources-utils';
 import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
 

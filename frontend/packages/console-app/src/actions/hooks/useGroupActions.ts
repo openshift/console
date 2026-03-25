@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Action, getImpersonate } from '@console/dynamic-plugin-sdk';
+import { useNavigate } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import * as UIActions from '@console/internal/actions/ui';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { GroupModel } from '@console/internal/models';
-import { GroupKind } from '@console/internal/module/k8s';
+import type { GroupKind } from '@console/internal/module/k8s';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import AddGroupUsersModal from '../../components/modals/add-group-users-modal';

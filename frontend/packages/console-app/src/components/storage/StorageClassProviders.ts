@@ -1,4 +1,4 @@
-import { ProvisionerDetails } from 'packages/console-dynamic-plugin-sdk';
+import type { ProvisionerDetails } from 'packages/console-dynamic-plugin-sdk';
 
 type Parameters = ProvisionerDetails['parameters'];
 

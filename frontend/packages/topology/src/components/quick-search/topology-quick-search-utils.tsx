@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
 import { Content, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {

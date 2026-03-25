@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import * as lockfile from '@yarnpkg/lockfile';
+import { parseSyml } from '@yarnpkg/parsers';
 import { readFileSync } from 'fs';
 import { basename } from 'path';
 import chalk from 'chalk';
@@ -7,16 +7,11 @@ import * as semver from 'semver';
 
 console.log(`Checking ${chalk.yellow('yarn.lock')} for PatternFly module resolutions...`);
 
-const lockFile = lockfile.parse(readFileSync('yarn.lock', 'utf8'));
-
-if (lockFile.type !== 'success') {
-  console.error(`Failed to parse yarn.lock file: type is ${lockFile.type}`);
-  process.exit(1);
-}
+const lockFileContent = readFileSync('yarn.lock', 'utf8');
+const lockFile = parseSyml(lockFileContent);
 
 /** List of packages to check along with their required semver ranges */
 const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
-  { name: '@patternfly-5/patternfly', semver: '5.x' },
   { name: '@patternfly/patternfly', semver: '6.x' },
   { name: '@patternfly/quickstarts', semver: '6.x' },
   { name: '@patternfly/react-catalog-view-extension', semver: '6.x' },
@@ -40,13 +35,12 @@ const PKGS_TO_CHECK: Array<{ name: string; semver: string }> = [
 const SCOPES_TO_CHECK = new Set(PKGS_TO_CHECK.map((pkg) => pkg.name.split('/')[0]));
 
 /** Get the package name and version from a package key in yarn.lock */
-const parsePackageName = (resolutionKey: string): string => {
-  // Precondition: All package names are not substrings of other package names
-  // e.g., we cannot have both `my-package` and `my-package-extended` in PKGS_TO_CHECK
-  const pkgName = PKGS_TO_CHECK.find((pkg) => resolutionKey.startsWith(pkg.name));
+const parsePackageName = (resolutionKey: string): string | null => {
+  // e.g., `${@patternfly/react-core}@^6.0.0`
+  const pkgName = PKGS_TO_CHECK.find((pkg) => resolutionKey.startsWith(`${pkg.name}@`));
 
   // Ensure that all packages within SCOPES_TO_CHECK are checked
-  if (!pkgName) {
+  if (!pkgName && SCOPES_TO_CHECK.has(resolutionKey.split('/')[0])) {
     throw new Error(
       `Please update ${chalk.yellow(
         basename(__filename),
@@ -54,11 +48,11 @@ const parsePackageName = (resolutionKey: string): string => {
     );
   }
 
-  return pkgName.name;
+  return pkgName?.name ?? null;
 };
 
 /** Map of PatternFly packages to their resolved versions in yarn.lock */
-const patternflyModules = Object.entries(lockFile.object).reduce(
+const patternflyModules = Object.entries(lockFile).reduce(
   (acc, [resolutionKey, resolvedDependency]) => {
     if (SCOPES_TO_CHECK.has(resolutionKey.split('/')[0])) {
       const pkgName = parsePackageName(resolutionKey);

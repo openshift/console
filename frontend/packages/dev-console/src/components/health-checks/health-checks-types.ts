@@ -1,4 +1,4 @@
-import { NameValuePair } from '@console/shared';
+import type { NameValuePair } from '@console/shared';
 
 export enum HealthChecksProbeType {
   ReadinessProbe = 'readinessProbe',

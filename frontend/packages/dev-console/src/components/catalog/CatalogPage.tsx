@@ -1,15 +1,17 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import {
-  useQueryParams,
   CatalogQueryParams,
   CatalogServiceProvider,
   CatalogController,
-  isCatalogTypeEnabled,
+  ALL_NAMESPACES_KEY,
 } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 
@@ -17,10 +19,33 @@ const PageContents: FC = () => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
-  const { ns: namespace } = useParams();
+  const [activePerspective] = useActivePerspective();
+  const [namespace] = useActiveNamespace();
+  const isAllNamespaces = namespace === ALL_NAMESPACES_KEY;
+  const isDevPerspective = activePerspective === 'dev';
 
-  return namespace ? (
-    <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog" catalogType={catalogType}>
+  // Maintain existing behavior of the +Add page in the dev perspective.
+  const showCreateProjectListPage = isDevPerspective && isAllNamespaces;
+
+  if (!namespace) {
+    return null;
+  }
+
+  return showCreateProjectListPage ? (
+    <CreateProjectListPage title={t('devconsole~Software Catalog')}>
+      {(openProjectModal) => (
+        <Trans t={t} ns="devconsole">
+          Select a Project to view the software catalog
+          <CreateAProjectButton openProjectModal={openProjectModal} />.
+        </Trans>
+      )}
+    </CreateProjectListPage>
+  ) : (
+    <CatalogServiceProvider
+      namespace={isAllNamespaces ? '' : namespace}
+      catalogId="dev-catalog"
+      catalogType={catalogType}
+    >
       {(service) => (
         <CatalogController
           {...service}
@@ -32,15 +57,6 @@ const PageContents: FC = () => {
         />
       )}
     </CatalogServiceProvider>
-  ) : (
-    <CreateProjectListPage title={t('devconsole~Software Catalog')}>
-      {(openProjectModal) => (
-        <Trans t={t} ns="devconsole">
-          Select a Project to view the software catalog
-          <CreateAProjectButton openProjectModal={openProjectModal} />.
-        </Trans>
-      )}
-    </CreateProjectListPage>
   );
 };
 

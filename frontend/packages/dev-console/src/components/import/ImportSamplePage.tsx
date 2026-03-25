@@ -1,18 +1,18 @@
 import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { FirehoseResource, LoadingBox, history } from '@console/internal/components/utils';
+import { useParams, useNavigate } from 'react-router';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SAMPLE_APPLICATION_GROUP } from '../../const';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import {
   normalizeBuilderImages,
-  NormalizedBuilderImages,
   getSampleRepo,
   getSampleRef,
   getSampleContextDir,
@@ -22,18 +22,20 @@ import { PipelineType } from '../pipeline-section/import-types';
 import { defaultRepositoryFormValues } from '../pipeline-section/pipeline/utils';
 import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources } from './import-submit-utils';
-import { BaseFormData, BuildOptions, GitImportFormData } from './import-types';
+import type { BaseFormData, GitImportFormData } from './import-types';
+import { BuildOptions } from './import-types';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
 
 const ImportSamplePage: FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = useParams();
 
-  const imageStreamResource: FirehoseResource = useMemo(
+  const imageStreamResource = useMemo(
     () => ({
       kind: ImageStreamModel.kind,
-      prop: 'imageStreams',
       isList: false,
       name: imageStreamName,
       namespace: imageStreamNamespace,
@@ -118,7 +120,7 @@ const ImportSamplePage: FC = () => {
 
     return resourceActions
       .then(() => {
-        history.push(`/topology/ns/${namespace}`);
+        navigate(`/topology/ns/${namespace}`);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -132,7 +134,7 @@ const ImportSamplePage: FC = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={history.goBack}
+        onReset={handleCancel}
         validationSchema={validationSchema(t)}
       >
         {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}

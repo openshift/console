@@ -12,16 +12,18 @@ import {
   HelperTextItem,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
   BuilderImagesNamespace,
   getImageStreamTags,
 } from '../../../utils/imagestream-utils';
-import { ImageStreamState, ImageStreamAction, ImageStreamActions } from '../import-types';
+import type { ImageStreamState, ImageStreamAction } from '../import-types';
+import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 import ImageStreamDropdown from './ImageStreamDropdown';
 import ImageStreamNsDropdown from './ImageStreamNsDropdown';
@@ -49,14 +51,23 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
   }
 };
 
-const ImageStream: FC<{
+interface ImageStreamProps {
   disabled?: boolean;
   label?: string;
   required?: boolean;
   formContextField?: string;
   dataTest?: string;
   reloadCount?: number;
-}> = ({ disabled = false, label, required = false, formContextField, dataTest, reloadCount }) => {
+}
+
+const ImageStream: FC<ImageStreamProps> = ({
+  disabled = false,
+  label,
+  required = false,
+  formContextField,
+  dataTest,
+  reloadCount,
+}) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
   const [validated, setValidated] = useState<ValidatedOptions>(ValidatedOptions.default);
@@ -168,4 +179,4 @@ const ImageStream: FC<{
   );
 };
 
-export default memo(ImageStream);
+export default memo<ImageStreamProps>(ImageStream);

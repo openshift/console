@@ -7,7 +7,7 @@ import { chart_color_red_orange_400 as redorange400 } from '@patternfly/react-to
 import { chart_color_yellow_400 as yellow400 } from '@patternfly/react-tokens/dist/js/chart_color_yellow_400';
 /* eslint-enable @typescript-eslint/naming-convention */
 import { Map as ImmutableMap } from 'immutable';
-import { ImageManifestVuln } from './types';
+import type { ImageManifestVuln } from './types';
 
 export const ContainerSecurityFlag = 'SECURITY_LABELLER';
 

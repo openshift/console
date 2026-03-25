@@ -1,18 +1,18 @@
 import { Fragment } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import {
+import type {
   CatalogItem,
   CatalogItemDetailsDescription,
   CatalogItemDetailsProperty,
 } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import certifiedIcon from '../../../icons/certified.svg';
-import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
+import type { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';
 import HelmReadmeLoader from '../components/HelmReadmeLoader';
 import {

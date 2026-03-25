@@ -103,16 +103,16 @@ describe('Upload Jar Submit Utils', () => {
         Promise.resolve({ model, data, dryRun }),
       );
       instantiateBinaryBuildMock.mockImplementation(() => ({}));
+      createOrUpdateImageStreamMock.mockImplementation(() =>
+        Promise.resolve({ model: ImageStreamModel, data: {}, dryRun: false }),
+      );
     });
 
     afterAll(() => {
       jest.clearAllMocks();
     });
 
-    // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
-    // TODO: Refactor upload-jar-submit-utils to not be a big file so we can mock it again.
-    // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should call createDeployment when resource is Kubernetes', async () => {
+    it('should call createDeployment when resource is Kubernetes', async () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.Kubernetes;
 
@@ -129,10 +129,7 @@ describe('Upload Jar Submit Utils', () => {
       ]);
     });
 
-    // Jest 30 no longer supports cleanly mocking modules using jest.spyOn.
-    // TODO: Refactor upload-jar-submit-utils to not be a big file so we can mock it again.
-    // https://issues.redhat.com/browse/CONSOLE-4991
-    xit('should call createDeploymentConfig when resource is OpenShift', async () => {
+    it('should call createDeploymentConfig when resource is OpenShift', async () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.OpenShift;
 

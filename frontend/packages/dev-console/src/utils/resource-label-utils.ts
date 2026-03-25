@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
 import { ROUTE_DISABLED_ANNOTATION } from '@console/topology/src/const';
-import { ResourcesKinds, Resources } from '../components/import/import-types';
+import type { Resources } from '../components/import/import-types';
+import { ResourcesKinds } from '../components/import/import-types';
 
 export const getAppLabels = ({
   name,

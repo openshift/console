@@ -1,13 +1,16 @@
 import type { FC } from 'react';
+import { useState } from 'react';
+import { Modal, ModalVariant } from '@patternfly/react-core';
 import { Formik } from 'formik';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { limitsValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps, ModalWrapper } from '@console/internal/components/factory';
-import { K8sKind, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sPatch } from '@console/internal/module/k8s';
 import { getLimitsDataFromResource, getResourceLimitsData } from '@console/shared/src';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import ResourceLimitsModal from './ResourceLimitsModal';
 
 export type ResourceLimitsModalLauncherProps = {
@@ -62,12 +65,22 @@ const ResourceLimitsModalLauncher: FC<ResourceLimitsModalLauncherProps> = (props
 
 export const ResourceLimitsModalOverlay: OverlayComponent<ResourceLimitsModalLauncherProps> = (
   props,
-) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
-    <ResourceLimitsModalLauncher
-      {...props}
-      close={props.closeOverlay}
-      cancel={props.closeOverlay}
-    />
-  </ModalWrapper>
-);
+) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="resource-limits-modal-title"
+    >
+      <ResourceLimitsModalLauncher {...props} close={handleClose} cancel={handleClose} />
+    </Modal>
+  ) : null;
+};

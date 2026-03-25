@@ -1,4 +1,4 @@
-import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
+import type { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 
 export const deploymentHasCpuAndMemoryLimits = {
   kind: 'Deployment',

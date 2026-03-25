@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
 import { YellowExclamationTriangleIcon } from '../../status';
@@ -9,7 +10,7 @@ type QuotaSummaryProps = {
   used: { [key: string]: string };
 };
 
-const QuotaSummary = ({ hard, used }: QuotaSummaryProps): JSX.Element => {
+const QuotaSummary: FC<QuotaSummaryProps> = ({ hard, used }) => {
   const { t } = useTranslation();
   const resourcesAtQuota = Object.keys(hard || {}).reduce(
     (acc, resource) => (getUsedPercentage(hard[resource], used?.[resource]) >= 100 ? acc + 1 : acc),

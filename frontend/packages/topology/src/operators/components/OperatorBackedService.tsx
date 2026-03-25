@@ -1,26 +1,28 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
+import type {
   Node,
-  observer,
   WithSelectionProps,
   WithDndDropProps,
   WithDragNodeProps,
   DropTargetSpec,
   GraphElement,
+  WithContextMenuProps,
+} from '@patternfly/react-topology';
+import {
+  observer,
   CREATE_CONNECTOR_DROP_TYPE,
   isEdge,
   useDndDrop,
-  WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import type { NodeComponentProps } from '../../components/graph-view/components';
 import {
   canDropEdgeOnNode,
   highlightNode,
-  NodeComponentProps,
   nodesEdgeIsDragging,
 } from '../../components/graph-view/components';
 import { getKindStringAndAbbreviation } from '../../components/graph-view/components/nodes/nodeUtils';

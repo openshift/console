@@ -4,7 +4,7 @@ import { Alert, Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { safeJSToYAML, asyncYAMLToJS } from '../../utils/yaml';
 import { EditorType, EditorToggle } from './editor-toggle';
 import { useEditorType } from './useEditorType';
@@ -37,7 +37,7 @@ export const SyncedEditor: FC<SyncedEditorProps> = ({
   onChange = _.noop,
   prune,
   YAMLEditor,
-  lastViewUserSettingKey,
+  lastViewUserPreferenceKey,
   displayConversionError,
 }) => {
   const { formContext, yamlContext } = context;
@@ -50,7 +50,7 @@ export const SyncedEditor: FC<SyncedEditorProps> = ({
   );
   const [switchError, setSwitchError] = useState<string | undefined>();
   const [yamlWarning, setYAMLWarning] = useState<boolean>(false);
-  const [editorType, setEditorType, loaded] = useEditorType(lastViewUserSettingKey, initialType);
+  const [editorType, setEditorType, loaded] = useEditorType(lastViewUserPreferenceKey, initialType);
 
   const handleFormDataChange = (newFormData: K8sResourceKind = {}) => {
     if (!_.isEqual(newFormData, formData)) {
@@ -161,7 +161,7 @@ type YAMLEditorProps = {
 };
 
 type SyncedEditorProps = {
-  context: {
+  context?: {
     formContext: { [key: string]: any };
     yamlContext: { [key: string]: any };
   };
@@ -172,6 +172,6 @@ type SyncedEditorProps = {
   onChange?: (data: K8sResourceKind) => void;
   prune?: (data: K8sResourceKind) => any;
   YAMLEditor: ComponentType<YAMLEditorProps>;
-  lastViewUserSettingKey: string;
+  lastViewUserPreferenceKey: string;
   displayConversionError?: boolean;
 };

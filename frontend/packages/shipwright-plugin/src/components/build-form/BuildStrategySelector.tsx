@@ -1,15 +1,17 @@
 import type { FC } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { SingleDropdownField, SelectInputOption } from '@console/shared/src';
+import type { SelectInputOption } from '@console/shared/src';
+import { SingleDropdownField } from '@console/shared/src';
 import { BuildStrategyModel, ClusterBuildStrategyModel } from '../../models';
-import { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
+import type { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 
 type BuildStrategySelectorProps = {
   namespace: string;

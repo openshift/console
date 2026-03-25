@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
-import { K8sResourceCondition } from '@console/internal/module/k8s';
+import type { K8sResourceCondition } from '@console/internal/module/k8s';
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared/';
 import { getConditionOKCount } from '../../utils/condition-utils';
 

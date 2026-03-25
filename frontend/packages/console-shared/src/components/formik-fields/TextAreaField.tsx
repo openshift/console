@@ -7,7 +7,7 @@ import {
   TextArea,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { TextAreaProps } from './field-types';
+import type { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(

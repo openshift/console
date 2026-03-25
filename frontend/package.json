@@ -7,6 +7,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
+    "packages/*/integration-tests",
     "public",
     "integration-tests"
   ],
@@ -15,19 +16,18 @@
     "clean": "rm -rf ./public/dist",
     "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
-    "dedupe-deps": "yarn-deduplicate --strategy highest",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
     "coverage": "jest --coverage .",
-    "eslint": "eslint --max-warnings 0 --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
+    "eslint": "node ./node_modules/.bin/eslint --max-warnings 0 --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test-cypress-console": "cd packages/integration-tests-cypress && cypress open --env openshift=true",
-    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-console-headless": "cd packages/integration-tests-cypress && node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-olm": "cd packages/operator-lifecycle-manager/integration-tests-cypress && ../../../node_modules/.bin/cypress open --env openshift=true",
-    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron}",
+    "test-cypress-olm-headless": "cd packages/operator-lifecycle-manager/integration-tests-cypress && node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}",
     "test-cypress-dev-console": "cd packages/dev-console/integration-tests && yarn run test-cypress",
     "test-cypress-dev-console-headless": "cd packages/dev-console/integration-tests && yarn run test-cypress-headless",
     "test-cypress-dev-console-nightly": "cd packages/dev-console/integration-tests && yarn run test-cypress-nightly",
@@ -57,7 +57,7 @@
     "analyze": "ANALYZE_BUNDLE=true NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
-    "generate": "yarn generate-graphql && yarn build-plugin-sdk",
+    "generate": "yarn generate-graphql & yarn build-plugin-sdk",
     "generate-graphql": "graphql-codegen --config graphql-codegen.yml",
     "generate-plugin-sdk-docs": "yarn --cwd packages/console-dynamic-plugin-sdk generate-doc",
     "build-plugin-sdk": "yarn --cwd packages/console-dynamic-plugin-sdk build",
@@ -88,6 +88,8 @@
     },
     "testEnvironment": "jsdom",
     "transform": {
+      "get-local-plugins\\.js$": "./scripts/jest-transform-local-plugins.js",
+      "^.+\\.(gql|graphql)$": "./scripts/jest-transform-graphql.js",
       "^.+\\.(ts|tsx|js|jsx)$": [
         "@swc/jest",
         {
@@ -97,11 +99,10 @@
           },
           "minify": false
         }
-      ],
-      "^.+\\.(gql|graphql)$": "./scripts/jest-transform-graphql.js"
+      ]
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|parse-bitbucket-url|fuzzysearch|js-combinatorics)/.*)"
+      "<rootDir>/node_modules/(?!(@patternfly(-\\S+)?|d3(-\\S+)?|delaunator|robust-predicates|internmap|lodash-es|istextorbinary|@console|@novnc|@spice-project|@popperjs|i18next(-\\S+)?|@babel/runtime|jsonpath-plus|nanoid|@rjsf|git-url-parse|git-up|parse-url|protocols|sanitize-html|parse-bitbucket-url|fuzzysearch)/.*)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
@@ -116,7 +117,8 @@
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testEnvironmentOptions": {
-      "url": "http://localhost"
+      "url": "http://localhost",
+      "globalsCleanup": "on"
     },
     "setupFiles": [
       "./__mocks__/fetch.ts",
@@ -126,6 +128,7 @@
       "./__mocks__/mutationObserver.js",
       "./__mocks__/serverFlags.js",
       "./__mocks__/textEncoderDecoder.ts",
+      "./__mocks__/webpack.ts",
       "./__mocks__/websocket.js"
     ],
     "setupFilesAfterEnv": [
@@ -146,7 +149,8 @@
     ]
   },
   "dependencies": {
-    "@patternfly-5/patternfly": "npm:@patternfly/patternfly@5.4.2",
+    "@openshift/dynamic-plugin-sdk": "^8.0.0",
+    "@openshift/dynamic-plugin-sdk-webpack": "^5.1.0",
     "@patternfly/patternfly": "~6.4.0",
     "@patternfly/quickstarts": "~6.4.0",
     "@patternfly/react-catalog-view-extension": "~6.3.0",
@@ -154,7 +158,7 @@
     "@patternfly/react-code-editor": "~6.4.0",
     "@patternfly/react-component-groups": "~6.4.0",
     "@patternfly/react-core": "~6.4.0",
-    "@patternfly/react-data-view": "~6.3.0",
+    "@patternfly/react-data-view": "6.4.0-prerelease.12",
     "@patternfly/react-drag-drop": "~6.4.0",
     "@patternfly/react-icons": "~6.4.0",
     "@patternfly/react-log-viewer": "~6.3.0",
@@ -174,7 +178,6 @@
     "apollo-link-http": "^1.0.20",
     "apollo-link-ws": "^1.0.20",
     "chardet": "^2.1.0",
-    "d3": "^5.16.0",
     "dagre": "^0.8.5",
     "file-saver": "1.3.x",
     "formik": "^2.1.5",
@@ -182,12 +185,11 @@
     "gherkin-lint": "^4.1.3",
     "git-url-parse": "^11.4.0",
     "graphql": "^14.0.0",
-    "history": "^4.9.0",
-    "i18next": "^23.16.8",
-    "i18next-browser-languagedetector": "^6.0.1",
-    "i18next-conv": "12.1.1",
+    "i18next": "^25.8.18",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "i18next-conv": "16.0.0",
     "i18next-http-backend": "^1.0.21",
-    "i18next-v4-format-converter": "^1.0.3",
+    "i18next-v4-format-converter": "^1.1.1",
     "immutable": "3.x",
     "istextorbinary": "^9.5.0",
     "js-base64": "^3.7.7",
@@ -198,7 +200,6 @@
     "marked": "^15.0.6",
     "monaco-yaml": "^5.3.1",
     "murmurhash-js": "1.0.x",
-    "node-polyfill-webpack-plugin": "~4.0.0",
     "pluralize": "^8.0.0",
     "point-in-svg-path": "1.0.1",
     "popper.js": "^1.16.1",
@@ -208,14 +209,10 @@
     "react-dnd-html5-backend": "^11.1.3",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
-    "react-i18next": "~15.1.4",
+    "react-i18next": "~16.5.8",
     "react-linkify": "^0.2.2",
-    "react-modal": "^3.16.3",
     "react-redux": "8.1.3",
-    "react-router": "5.3.x",
-    "react-router-dom": "5.3.x",
-    "react-router-dom-v5-compat": "^6.11.2",
-    "react-router-hash-link": "^2.0.0",
+    "react-router": "~7.13.1",
     "react-svg": "^16.2.0",
     "react-tagsinput": "3.20.x",
     "react-virtualized": "9.x",
@@ -238,7 +235,7 @@
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
     "@graphql-codegen/typescript-operations": "^1.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
-    "@swc/core": "^1.15.5",
+    "@swc/core": "^1.15.18",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -255,13 +252,10 @@
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
     "@types/react-jsonschema-form": "^1.3.8",
-    "@types/react-router": "^5.1.20",
-    "@types/react-router-dom": "5.3.x",
     "@types/react-virtualized": "9.x",
     "@types/semver": "^6.0.0",
     "@types/showdown": "1.9.4",
-    "@types/yarnpkg__lockfile": "^1.1.9",
-    "@yarnpkg/lockfile": "^1.1.0",
+    "@yarnpkg/parsers": "^3.0.2",
     "axe-core": "^4.10.2",
     "babel-loader": "^9.2.1",
     "chalk": "2.4.x",
@@ -283,7 +277,7 @@
     "html-webpack-plugin": "5.6.5",
     "html-webpack-skip-assets-plugin": "^1.0.4",
     "husky": "^8.0.3",
-    "i18next-parser": "^9.3.0",
+    "i18next-parser": "^9.4.0",
     "i18next-pseudo": "^2.2.1",
     "jest": "^30.2.0",
     "jest-cli": "^30.2.0",
@@ -291,7 +285,6 @@
     "jest-junit": "^16.0.0",
     "jest-resolve": "^30.2.0",
     "lint-staged": "^10.2.2",
-    "node-fetch": "^2.3.0",
     "mini-css-extract-plugin": "^2.9.4",
     "minimist": "^1.2.8",
     "mocha-junit-reporter": "^1.23.3",
@@ -301,6 +294,8 @@
     "mock-socket": "^9.0.3",
     "monaco-editor": "^0.51.0",
     "monaco-editor-webpack-plugin": "^7.1.1",
+    "node-fetch": "^2.3.0",
+    "node-polyfill-webpack-plugin": "~4.0.0",
     "prettier": "2.0.5",
     "puppeteer-core": "^23.9.0",
     "react-refresh": "^0.10.0",
@@ -317,24 +312,26 @@
     "webpack": "^5.100.0",
     "webpack-bundle-analyzer": "^5.1.1",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.2",
-    "yarn-deduplicate": "^6.0.2"
+    "webpack-dev-server": "^5.2.2"
   },
   "engines": {
     "node": ">=22.x"
   },
   "resolutions": {
     "@types/lodash": "4.14.106",
-    "@types/react-router": "^5.1.20",
-    "@types/react-router-dom": "5.3.x",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.27.3",
     "glob-parent": "^5.1.2",
     "hosted-git-info": "^3.0.8",
     "lodash-es": "^4.17.23",
-    "postcss": "^8.2.13",
-    "async": "^3.2.5"
+    "postcss": "^8.2.13"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
-  }
+  },
+  "dependenciesMeta": {
+    "cypress": {
+      "built": true
+    }
+  },
+  "packageManager": "yarn@4.12.0"
 }

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { Alert } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 import { getResourceData, getWorkloadMonitoringAlerts } from '../resource-utils';
 

@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-import { Extension, CodeRef } from '../types';
-import { Humanize, TopConsumerPopoverProps } from './console-types';
+import type { Extension, CodeRef } from '../types';
+import type { Humanize, TopConsumerPopoverProps } from './console-types';
 
 /** Adds a new inventory item into project overview page. */
 export type ProjectOverviewInventoryItem = Extension<

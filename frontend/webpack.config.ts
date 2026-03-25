@@ -81,12 +81,7 @@ const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObj
 
 const config: Configuration = {
   entry: {
-    main: [
-      './public/components/app.tsx',
-      '/node_modules/@patternfly-5/patternfly/patternfly.scss',
-      '/node_modules/@patternfly-5/patternfly/patternfly-addons.scss',
-      '/node_modules/@patternfly-5/patternfly/patternfly-charts.scss',
-    ],
+    main: ['./public/components/app.tsx'],
   },
   cache: {
     type: 'filesystem',
@@ -128,7 +123,7 @@ const config: Configuration = {
         sideEffects: true,
       },
       {
-        test: path.resolve(__dirname, 'get-active-plugins.js'),
+        test: path.resolve(__dirname, 'get-local-plugins.js'),
         loader: 'val-loader',
         options: { pluginPackages },
       },
@@ -322,7 +317,7 @@ const config: Configuration = {
       ],
     }),
     extractCSS,
-    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : [new webpack.ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',

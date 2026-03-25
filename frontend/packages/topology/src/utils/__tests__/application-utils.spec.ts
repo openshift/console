@@ -1,4 +1,4 @@
-import { Model } from '@patternfly/react-topology';
+import type { Model } from '@patternfly/react-topology';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import {
@@ -32,7 +32,7 @@ import {
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { baseDataModelGetter } from '../../data-transforms/data-transformer';
 import { getWorkloadResources } from '../../data-transforms/transform-utils';
-import { OdcNodeModel, TopologyDataResources } from '../../topology-types';
+import type { OdcNodeModel, TopologyDataResources } from '../../topology-types';
 import { cleanUpWorkload } from '../application-utils';
 import { WORKLOAD_TYPES } from '../topology-utils';
 

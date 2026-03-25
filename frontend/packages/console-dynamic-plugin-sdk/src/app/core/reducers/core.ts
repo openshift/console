@@ -1,6 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
-import { AdmissionWebhookWarning, CoreState } from '../../redux-types';
-import { ActionType, CoreAction } from '../actions/core';
+import type { AdmissionWebhookWarning, CoreState } from '../../redux-types';
+import type { CoreAction } from '../actions/core';
+import { ActionType } from '../actions/core';
 
 /**
  * Reducer function for the core

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { DeploymentModel } from '@console/internal/models';
-import { ReplicaSetKind, referenceFor } from '@console/internal/module/k8s';
+import type { ReplicaSetKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { CommonActionCreator } from '../hooks/types';

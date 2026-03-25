@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { Alert } from '@console/dynamic-plugin-sdk';
-import { Alerts } from '@console/internal/components/monitoring/types';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import type { Alerts } from '@console/internal/components/monitoring/types';
 import {
   ReplicationControllerModel,
   ReplicaSetModel,
@@ -14,18 +14,17 @@ import {
   NodeModel,
   PodModel,
 } from '@console/internal/models';
-import {
+import type {
   K8sResourceKind,
   K8sResourceCommon,
-  LabelSelector,
   PodKind,
   CronJobKind,
   PodTemplate,
   RouteKind,
-  apiVersionForModel,
   K8sKind,
   JobKind,
 } from '@console/internal/module/k8s';
+import { LabelSelector, apiVersionForModel } from '@console/internal/module/k8s';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
@@ -37,7 +36,7 @@ import {
   DEPLOYMENT_PHASE,
   AllPodStatus,
 } from '../constants';
-import {
+import type {
   BuildConfigOverviewItem,
   OverviewItemAlerts,
   PodControllerOverviewItem,

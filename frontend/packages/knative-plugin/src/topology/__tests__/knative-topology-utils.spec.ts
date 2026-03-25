@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   SERVERLESS_FUNCTION_LABEL,
   SERVERLESS_FUNCTION_LABEL_DEPRECATED,

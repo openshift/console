@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 
 // TODO: Make following more generic (if ever needed)
 export type PersistentVolumeClaim = K8sResourceCommon & {

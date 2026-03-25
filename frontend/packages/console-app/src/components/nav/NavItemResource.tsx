@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { NavItem } from '@patternfly/react-core';
-import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
+import type { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
@@ -9,7 +9,8 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { NavLink, NavLinkProps } from './NavLink';
+import type { NavLinkProps } from './NavLink';
+import { NavLink } from './NavLink';
 import { navItemResourceIsActive } from './utils';
 
 export const NavItemResource: FC<NavItemResourceProps> = ({

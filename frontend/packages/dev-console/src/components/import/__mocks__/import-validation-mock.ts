@@ -1,7 +1,8 @@
 import { GitProvider } from '@console/git-service/src';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
-import { GitImportFormData, Resources } from '../import-types';
+import type { GitImportFormData } from '../import-types';
+import { Resources } from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const mockFormData: GitImportFormData = {

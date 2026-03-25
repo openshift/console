@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useVolumeSnapshotActions } from '@console/app/src/actions/hooks/useVolumeSnapshotActions';
-import { VolumeSnapshotKind, referenceFor } from '@console/internal/module/k8s';
+import type { VolumeSnapshotKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 

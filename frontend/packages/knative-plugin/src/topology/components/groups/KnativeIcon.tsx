@@ -47,4 +47,4 @@ const KnativeIcon: FC<KnativeIconProps> = ({ x, y, width, height }) => (
   </>
 );
 
-export default memo(KnativeIcon);
+export default memo<KnativeIconProps>(KnativeIcon);

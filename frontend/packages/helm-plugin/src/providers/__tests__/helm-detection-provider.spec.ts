@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { fetchK8s } from '@console/internal/graphql/client';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';

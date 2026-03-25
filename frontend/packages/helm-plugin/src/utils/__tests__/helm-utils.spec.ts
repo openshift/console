@@ -9,7 +9,8 @@ import {
   mockHelmChartRepositories,
   mockChartEntries1,
 } from '../../components/__tests__/helm-release-mock-data';
-import { HelmRelease, HelmReleaseStatus } from '../../types/helm-types';
+import type { HelmRelease } from '../../types/helm-types';
+import { HelmReleaseStatus } from '../../types/helm-types';
 import {
   SelectedReleaseStatuses,
   releaseStatusReducer,

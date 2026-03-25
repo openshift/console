@@ -1,6 +1,7 @@
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
-import { BaseFormData, Resources } from './import-types';
+import type { BaseFormData } from './import-types';
+import { Resources } from './import-types';
 
 export const getBaseInitialValues = (
   namespace: string,

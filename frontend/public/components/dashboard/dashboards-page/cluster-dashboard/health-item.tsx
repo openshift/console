@@ -39,7 +39,7 @@ import { ClusterDashboardContext } from './context';
 const OperatorRow: FC<
   OperatorRowProps & {
     LoadingComponent: () => JSX.Element;
-    Component: ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+    Component: ComponentType<OperatorRowProps> | LazyLoader<ComponentType<OperatorRowProps>>;
     key: string;
     isResolved: boolean;
   }
@@ -51,7 +51,7 @@ const OperatorRow: FC<
     <AsyncComponent
       key={operatorStatus.operators[0].metadata.uid}
       operatorStatus={operatorStatus}
-      loader={Component}
+      loader={Component as LazyLoader<ComponentType<OperatorRowProps>>}
       LoadingComponent={LoadingComponent}
     />
   );

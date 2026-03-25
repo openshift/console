@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { ImageOptionFormData } from '../sections/ImagesSection';
-import { BuildConfig, ImageReference } from '../types';
+import type { ImageOptionFormData } from '../sections/ImagesSection';
+import type { BuildConfig, ImageReference } from '../types';
 import { getInitialBuildConfigFormikValues } from './initial-data';
-import { BuildConfigFormikValues, BuildStrategyType } from './types';
+import type { BuildConfigFormikValues } from './types';
+import { BuildStrategyType } from './types';
 
 const convertBuildConfigNameToFormData = (
   buildConfig: BuildConfig,

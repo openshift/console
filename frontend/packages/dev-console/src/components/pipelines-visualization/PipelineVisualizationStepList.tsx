@@ -4,7 +4,7 @@ import { StatusIcon } from '@patternfly/react-topology/dist/esm/pipelines';
 import { useTranslation } from 'react-i18next';
 import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
 import { getRunStatusColor } from './reducer';
-import { StepStatus } from './types';
+import type { StepStatus } from './types';
 
 import './PipelineVisualizationStepList.scss';
 

@@ -1,15 +1,12 @@
 import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
-import {
-  DeployImageFormData,
-  Resources,
-} from '@console/dev-console/src/components/import/import-types';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
-import {
+import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
+import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import type {
   EventSourceSyncFormData,
-  SinkType,
   AddChannelFormData,
-  EventSources,
 } from '../../components/add/import-types';
+import { SinkType, EventSources } from '../../components/add/import-types';
 import { STRIMZI_KAFKA_APIGROUP } from '../../const';
 import { RevisionModel, ServiceModel } from '../../models';
 import { getChannelKind, getChannelData } from '../create-channel-utils';

@@ -1,12 +1,10 @@
-import { BaseNode, Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { BaseNode } from '@patternfly/react-topology';
 import { observable, makeObservable } from 'mobx';
-import { OdcBaseNodeInterface } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import {
-  K8sResourceKind,
-  K8sResourceKindReference,
-  referenceFor,
-} from '@console/internal/module/k8s';
-import { OdcNodeModel } from '../topology-types';
+import type { OdcBaseNodeInterface } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import type { OdcNodeModel } from '../topology-types';
 
 class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
   public resource?: K8sResourceKind | undefined = undefined;

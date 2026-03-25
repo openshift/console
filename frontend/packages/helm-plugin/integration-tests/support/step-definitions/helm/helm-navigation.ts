@@ -1,11 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import type { catalogTypes } from '@console/dev-console/integration-tests/support/constants';
 import {
   devNavigationMenu,
   addOptions,
   pageTitle,
   switchPerspective,
-  catalogTypes,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {

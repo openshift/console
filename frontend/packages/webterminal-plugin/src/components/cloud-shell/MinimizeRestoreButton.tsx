@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Tooltip, Button, ButtonProps } from '@patternfly/react-core';
+import type { ButtonProps } from '@patternfly/react-core';
+import { Tooltip, Button } from '@patternfly/react-core';
 import { OutlinedWindowMinimizeIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-minimize-icon';
 import { OutlinedWindowRestoreIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-window-restore-icon';
 

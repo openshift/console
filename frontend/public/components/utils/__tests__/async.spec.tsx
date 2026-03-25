@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 import { AsyncComponent } from '../../../components/utils/async';
 
@@ -9,10 +10,10 @@ jest.mock('../../../components/utils/status-box', () => ({
 
 describe('AsyncComponent', () => {
   // Mock components to be loaded
-  const Foo = (props: { className: string }) => (
+  const Foo = (props: { className?: string }) => (
     <div className={props.className}>Foo Component</div>
   );
-  const Bar = (props: { className: string }) => (
+  const Bar = (props: { className?: string }) => (
     <div className={props.className}>Bar Component</div>
   );
 
@@ -22,7 +23,7 @@ describe('AsyncComponent', () => {
 
   it('calls the given loader function', async () => {
     const loader = jest.fn(() => Promise.resolve(Foo));
-    render(<AsyncComponent loader={loader} />);
+    renderWithProviders(<AsyncComponent loader={loader} />);
     await waitFor(() => {
       expect(loader).toHaveBeenCalled();
     });
@@ -31,45 +32,81 @@ describe('AsyncComponent', () => {
   it('renders LoadingBox before loader promise resolves', () => {
     // Create a promise that never resolves to keep the component in a loading state
     const loader = () => new Promise<typeof Foo>(() => {});
-    render(<AsyncComponent loader={loader} />);
+    renderWithProviders(<AsyncComponent loader={loader} />);
 
     expect(screen.getByText('Loading...')).toBeVisible();
   });
 
-  it('continues to display LoadingBox if loader promise is rejected', async () => {
-    const loader = () => Promise.reject('epic fail');
-    render(<AsyncComponent loader={loader} />);
+  it('renders error boundary fallback when loader promise is rejected after retries', async () => {
+    jest.useFakeTimers();
+    // Suppress console.error for expected React error
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
+    const loader = jest.fn(() => Promise.reject(new Error('epic fail')));
+
+    // @ts-expect-error Testing rejection case
+    renderWithProviders(<AsyncComponent loader={loader} />);
+
+    // Initially shows loading
     expect(screen.getByText('Loading...')).toBeVisible();
 
-    // Wait a bit to allow retry logic to run
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    // Fast-forward through all 26 attempts (initial + 25 retries)
+    // Each iteration needs to flush promises and advance timers
+    for (let i = 0; i < 26; i++) {
+      await act(async () => {
+        jest.advanceTimersByTime(30000); // Advance past any backoff delay
+      });
+    }
 
-    // LoadingBox should still be displayed after rejection
-    expect(screen.getByText('Loading...')).toBeVisible();
+    // After all retries exhausted, the error boundary catches the error
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      expect(screen.getByText('epic fail')).toBeInTheDocument();
+      expect(screen.getByTestId('error-reload-page')).toBeInTheDocument();
+    });
+
+    consoleSpy.mockRestore();
+    jest.useRealTimers();
   });
 
   it('attempts to resolve the loader promise again after rejection with a backoff delay', async () => {
-    const loader = jest.fn(() => Promise.reject(null));
-    render(<AsyncComponent loader={loader} />);
+    jest.useFakeTimers();
+    // Suppress console.error for expected React error
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
+    const loader = jest.fn(() => Promise.reject(new Error('fail')));
+    // @ts-expect-error Testing rejection case
+    renderWithProviders(<AsyncComponent loader={loader} />);
+
+    // First attempt happens immediately
     await waitFor(() => expect(loader).toHaveBeenCalledTimes(1));
 
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    expect(loader).toHaveBeenCalledTimes(2);
+    // After 100ms (first backoff delay), second attempt
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(loader).toHaveBeenCalledTimes(2));
 
-    await new Promise((resolve) => setTimeout(resolve, 450));
-    expect(loader).toHaveBeenCalledTimes(3);
+    // After 200ms (second backoff delay), third attempt
+    await act(async () => {
+      jest.advanceTimersByTime(200);
+    });
+    await waitFor(() => expect(loader).toHaveBeenCalledTimes(3));
+
+    consoleSpy.mockRestore();
+    jest.useRealTimers();
   });
 
   it('does not retry if the loader resolves with a null or undefined component', async () => {
     jest.useFakeTimers();
     const loader = jest.fn(() => Promise.resolve(null));
-    render(<AsyncComponent loader={loader} />);
+    renderWithProviders(<AsyncComponent loader={loader} />);
 
     await waitFor(() => expect(loader).toHaveBeenCalledTimes(1));
 
-    jest.advanceTimersByTime(1000);
+    await act(async () => {
+      jest.advanceTimersByTime(1000);
+    });
 
     expect(loader).toHaveBeenCalledTimes(1);
     jest.useRealTimers();
@@ -77,7 +114,7 @@ describe('AsyncComponent', () => {
 
   it('renders component resolved from loader promise', async () => {
     const loader = () => Promise.resolve(Foo);
-    render(<AsyncComponent loader={loader} />);
+    renderWithProviders(<AsyncComponent loader={loader} />);
 
     await waitFor(() => {
       expect(screen.getByText('Foo Component')).toBeVisible();
@@ -88,7 +125,7 @@ describe('AsyncComponent', () => {
     const className = 'arbitrary-class-name';
     const loader = () => Promise.resolve(Foo);
 
-    render(<AsyncComponent loader={loader} className={className} />);
+    renderWithProviders(<AsyncComponent loader={loader} className={className} />);
 
     await waitFor(() => {
       const component = screen.getByText('Foo Component');
@@ -101,7 +138,7 @@ describe('AsyncComponent', () => {
     const loaderFoo = () => Promise.resolve(Foo);
     const loaderBar = () => Promise.resolve(Bar);
 
-    const { rerender } = render(<AsyncComponent loader={loaderFoo} />);
+    const { rerender } = renderWithProviders(<AsyncComponent loader={loaderFoo} />);
 
     // Wait for first component to load
     await waitFor(() => {

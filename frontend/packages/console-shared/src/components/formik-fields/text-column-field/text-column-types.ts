@@ -1,5 +1,5 @@
-import { ArrayHelpers } from 'formik';
-import { FieldProps } from '../field-types';
+import type { ArrayHelpers } from 'formik';
+import type { FieldProps } from '../field-types';
 
 export type OnChangeHandler = (newValue: string[]) => void;
 export type TextColumnFieldChildParameterProps = {

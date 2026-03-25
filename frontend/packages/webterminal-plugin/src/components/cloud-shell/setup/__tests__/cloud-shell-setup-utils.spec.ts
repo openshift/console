@@ -1,6 +1,6 @@
 import { CLOUD_SHELL_PROTECTED_NAMESPACE } from '../../cloud-shell-utils';
+import type { CloudShellSetupFormData } from '../cloud-shell-setup-utils';
 import {
-  CloudShellSetupFormData,
   cloudShellSetupValidationSchema,
   CREATE_NAMESPACE_KEY,
   getCloudShellTimeout,

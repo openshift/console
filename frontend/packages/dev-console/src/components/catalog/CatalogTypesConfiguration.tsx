@@ -4,18 +4,19 @@ import { FormHelperText, FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { CatalogItemType, isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { CatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
+import { isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
   patchConsoleOperatorConfig,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type Types = {
   state: 'Enabled' | 'Disabled';

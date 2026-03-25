@@ -1,10 +1,15 @@
 import type { FC } from 'react';
-import { useContext, useCallback, useEffect } from 'react';
-import { useFormikContext, FormikValues } from 'formik';
+import { useContext, useCallback, useEffect, useMemo } from 'react';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
-import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
+import { BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
@@ -31,6 +36,29 @@ const ImageStreamNsDropdown: FC<{
     [dispatch, fieldPrefix, initialIsi, setFieldValue],
   );
 
+  const watchedResources = useK8sWatchResources<{ projects: K8sResourceKind[] }>({
+    projects: {
+      isList: true,
+      kind: referenceForModel(ProjectModel),
+    },
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: watchedResources.projects.data,
+        loaded: watchedResources.projects.loaded,
+        loadError: watchedResources.projects.loadError,
+        kind: ProjectModel.kind,
+      },
+    ],
+    [
+      watchedResources.projects.data,
+      watchedResources.projects.loaded,
+      watchedResources.projects.loadError,
+    ],
+  );
+
   useEffect(() => {
     imageStream.namespace && onDropdownChange();
   }, [onDropdownChange, imageStream.namespace]);
@@ -42,7 +70,7 @@ const ImageStreamNsDropdown: FC<{
       title={imageStream.namespace || t('devconsole~Select Project')}
       fullWidth
       required
-      resources={getProjectResource()}
+      resources={resources}
       dataSelector={['metadata', 'name']}
       onChange={onDropdownChange}
       appendItems={{ openshift: BuilderImagesNamespace.Openshift }}

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { DataListCell } from '@patternfly/react-core';
-import { Node, observer } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { isValidUrl, labelForNodeKind } from '@console/shared';

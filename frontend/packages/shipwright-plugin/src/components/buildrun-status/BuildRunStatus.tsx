@@ -1,7 +1,9 @@
 import type { FC } from 'react';
 import i18next from 'i18next';
-import Status, { StatusProps } from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
-import { BuildRun, ComputedBuildRunStatus } from '../../types';
+import type { StatusProps } from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import Status from '@console/dynamic-plugin-sdk/src/app/components/status/Status';
+import type { BuildRun } from '../../types';
+import { ComputedBuildRunStatus } from '../../types';
 
 const getSucceededCondition = (buildRun: BuildRun) =>
   buildRun?.status?.conditions?.find((condition) => condition.type === 'Succeeded');

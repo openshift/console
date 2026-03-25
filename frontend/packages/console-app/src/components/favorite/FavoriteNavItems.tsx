@@ -4,9 +4,9 @@ import { NavExpandable, Button, FlexItem, Flex, Truncate } from '@patternfly/rea
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { FAVORITES_CONFIG_MAP_KEY, FAVORITES_LOCAL_STORAGE_KEY } from '../../consts';
-import { FavoritesType } from '../../types';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { FAVORITES_USER_PREFERENCE_KEY } from '../../consts';
+import type { FavoritesType } from '../../types';
 import { FavoriteNavItem } from './FavoriteNavItem';
 
 import './FavoriteNavItems.scss';
@@ -18,9 +18,8 @@ export const FavoriteNavItems: FC = () => {
   const [activeItem, setActiveItem] = useState('');
   const currentUrlPath = window.location.pathname;
 
-  const [favorites, setFavorites, loaded] = useUserSettingsCompatibility<FavoritesType>(
-    FAVORITES_CONFIG_MAP_KEY,
-    FAVORITES_LOCAL_STORAGE_KEY,
+  const [favorites, setFavorites, loaded] = useUserPreference<FavoritesType>(
+    FAVORITES_USER_PREFERENCE_KEY,
     undefined,
     true,
   );

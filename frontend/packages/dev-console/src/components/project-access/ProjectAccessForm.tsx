@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Form, TextInputTypes } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,8 +12,9 @@ import {
   NSDropdownField,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Roles, ignoreRoleBindingName } from './project-access-form-utils';
-import { UserRoleBinding } from './project-access-form-utils-types';
+import type { Roles } from './project-access-form-utils';
+import { ignoreRoleBindingName } from './project-access-form-utils';
+import type { UserRoleBinding } from './project-access-form-utils-types';
 import './ProjectAccessForm.scss';
 
 type ProjectAccessFormProps = FormikProps<FormikValues> & {
@@ -56,6 +57,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   roles,
   roleBindings,
   values,
+  initialValues,
   onCancel,
 }) => {
   const { t } = useTranslation();
@@ -65,7 +67,7 @@ const ProjectAccessForm: FC<ProjectAccessFormProps> = ({
   useEffect(() => {
     !_.isEqual(
       ignoreRoleBindingName(roleBindings.projectAccess),
-      ignoreRoleBindingName(values.projectAccess),
+      ignoreRoleBindingName(initialValues.projectAccess),
     )
       ? setIsStaleInfo(true)
       : setIsStaleInfo(false);

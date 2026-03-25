@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps } from '@console/internal/components/factory';
+import type { TableProps } from '@console/internal/components/factory';
+import { Table } from '@console/internal/components/factory';
 import getSubscriptionHeaders from './SubscriptionHeaders';
 import SubscriptionRow from './SubscriptionRow';
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { ExtensionHook, Action } from '@console/dynamic-plugin-sdk';
+import type { ExtensionHook, Action } from '@console/dynamic-plugin-sdk';
 
 type ActionsHookResolverProps = {
   scope: any;

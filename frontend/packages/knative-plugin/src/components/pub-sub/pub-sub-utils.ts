@@ -1,5 +1,6 @@
-import { FormikValues } from 'formik';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { FormikValues } from 'formik';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 
 export const RESOURCE_KEY_SEPERATOR = '#';
 

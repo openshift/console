@@ -129,6 +129,6 @@ export const create = (obj) => {
     `${obj.metadata.name}.${obj.kind.toLowerCase()}.json`,
   ].join('/');
   cy.writeFile(filename, JSON.stringify(obj));
-  cy.exec(`oc create -f ${filename}`);
+  cy.exec(`oc apply -f ${filename}`);
   cy.exec(`rm ${filename}`);
 };

@@ -1,13 +1,12 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useMemo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { K8sKind } from '../../module/k8s';
@@ -19,7 +18,6 @@ import { connectToPlural } from '../../kinds';
 export type AttachStorageFormProps = {
   kindObj: K8sKind;
   kindsInFlight: any;
-  history: History;
 };
 
 type StorageProviderMap = {
@@ -102,9 +100,7 @@ const AttachStorageInner: FC<AttachStorageFormProps> = (props) => {
         }
       />
       <PaneBody>
-        <ErrorBoundaryPage>
-          <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
-        </ErrorBoundaryPage>
+        <AsyncComponent loader={storageProvidersMap[activeProvider].Component} {...props} />
       </PaneBody>
     </>
   );

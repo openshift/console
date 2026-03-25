@@ -1,4 +1,5 @@
-import { Node, Point, Rect, Anchor } from '@patternfly/react-topology';
+import type { Node, Anchor } from '@patternfly/react-topology';
+import { Point, Rect } from '@patternfly/react-topology';
 import PubSubSourceAnchor from '../PubSubSourceAnchor';
 
 function createMockNode(bounds: Rect): Node {

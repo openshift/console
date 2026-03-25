@@ -1,4 +1,4 @@
-import { UserInfo } from '@console/internal/module/k8s';
+import type { UserInfo } from '@console/internal/module/k8s';
 
 export const user: UserInfo = {
   username: 'consoledeveloper',

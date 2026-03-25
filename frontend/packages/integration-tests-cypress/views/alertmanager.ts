@@ -1,7 +1,7 @@
 import { Base64 } from 'js-base64';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
-import {
+import type {
   AlertmanagerConfig,
   AlertmanagerReceiver,
 } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';

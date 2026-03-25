@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { KnEventCatalogMetaData } from './import-types';
+import type { KnEventCatalogMetaData } from './import-types';
 
 import './KnEventMetaDescription.scss';
 

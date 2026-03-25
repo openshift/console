@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
-import type * as webpack from 'webpack';
-import { DynamicModuleMap } from '../../utils/dynamic-module-parser';
+import type { LoaderDefinitionFunction } from 'webpack';
+import type { DynamicModuleMap } from '../../utils/dynamic-module-parser';
 
 export type DynamicModuleImportLoaderOptions = {
   dynamicModuleMaps: Record<string, DynamicModuleMap>;
@@ -8,9 +8,7 @@ export type DynamicModuleImportLoaderOptions = {
   skipTypeOnlyImports?: boolean;
 };
 
-export type DynamicModuleImportLoader = webpack.LoaderDefinitionFunction<
-  DynamicModuleImportLoaderOptions
->;
+export type DynamicModuleImportLoader = LoaderDefinitionFunction<DynamicModuleImportLoaderOptions>;
 
 const getImportInfo = (importDeclaration: ts.ImportDeclaration) => {
   const moduleSpecifier = (importDeclaration.moduleSpecifier as ts.StringLiteral).text;

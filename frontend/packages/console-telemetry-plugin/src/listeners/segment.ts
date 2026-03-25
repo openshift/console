@@ -2,11 +2,9 @@ import {
   TELEMETRY_DEBUG,
   getSegmentAnalytics,
 } from '@console/dynamic-plugin-sdk/src/api/segment-analytics';
-import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src/extensions/telemetry';
-import {
-  getClusterProperties,
-  TelemetryEventProperties,
-} from '@console/shared/src/hooks/useTelemetry';
+import type { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src/extensions/telemetry';
+import type { TelemetryEventProperties } from '@console/shared/src/hooks/useTelemetry';
+import { getClusterProperties } from '@console/shared/src/hooks/useTelemetry';
 
 const anonymousIP = {
   context: {

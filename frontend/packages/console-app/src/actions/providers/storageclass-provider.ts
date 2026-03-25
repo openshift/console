@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
@@ -10,7 +10,8 @@ import {
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { defaultClassAnnotation } from '@console/internal/components/storage-class';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sResourceCommon, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 

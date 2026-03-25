@@ -16,16 +16,14 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, Link, useNavigate } from 'react-router';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
   documentationURLs,
   FieldLevelHelp,
-  Firehose,
   getDocumentationURL,
   getURLSearchParams,
-  history,
   isManaged,
   ConsoleEmptyState,
   NsDropdown,
@@ -33,7 +31,10 @@ import {
   resourcePathFromModel,
   StatusBox,
 } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   ConsoleOperatorConfigModel,
@@ -41,15 +42,14 @@ import {
   RoleBindingModel,
   RoleModel,
 } from '@console/internal/models';
+import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  K8sResourceCommon,
   apiVersionForModel,
   apiVersionForReference,
   k8sCreate,
   k8sGet,
   k8sListPartialMetadata,
   k8sPatch,
-  K8sResourceKind,
   kindForReference,
   referenceFor,
   referenceForModel,
@@ -62,13 +62,8 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
-import {
-  OperatorGroupKind,
-  PackageManifestKind,
-  SubscriptionKind,
-  InstallPlanApproval,
-  InstallModeType,
-} from '../../types';
+import type { OperatorGroupKind, PackageManifestKind, SubscriptionKind } from '../../types';
+import { InstallPlanApproval, InstallModeType } from '../../types';
 import { isCatalogSourceTrusted } from '../../utils';
 import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
@@ -115,6 +110,7 @@ const InputField: FC<InputFieldProps> = ({
             onChange={(_event, val) => {
               setValue(val);
             }}
+            required
           />
         </div>
       </fieldset>
@@ -125,6 +121,7 @@ const InputField: FC<InputFieldProps> = ({
 export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [activeNamespace] = useActiveNamespace();
   const { name: pkgName } = packageManifest?.metadata ?? {};
   const { provider, channels = [], packageName, catalogSource, catalogSourceNamespace } =
@@ -135,6 +132,7 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
   const [azureTenantId, setAzureTenantId] = useState('');
   const [azureClientId, setAzureClientId] = useState('');
   const [azureSubscriptionId, setAzureSubscriptionId] = useState('');
+  const [azureResourceGroup, setAzureResourceGroup] = useState('');
   const [gcpProjectNumber, setGcpProjectNumber] = useState('');
   const [gcpPoolId, setGcpPoolId] = useState('');
   const [gcpProviderId, setGcpProviderId] = useState('');
@@ -339,11 +337,11 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
 
   const navigateToInstallPage = useCallback(
     (csvName: string) => {
-      history.push(
+      navigate(
         `/operatorhub/install/${catalogNamespace}/${catalog}/${pkg}/${csvName}/to/${selectedTargetNamespace}`,
       );
     },
-    [catalog, catalogNamespace, pkg, selectedTargetNamespace],
+    [catalog, catalogNamespace, navigate, pkg, selectedTargetNamespace],
   );
 
   if (!supportsSingle && !supportsGlobal) {
@@ -512,6 +510,10 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
               name: 'SUBSCRIPTIONID',
               value: azureSubscriptionId,
             },
+            {
+              name: 'RESOURCEGROUP',
+              value: azureResourceGroup,
+            },
           ],
         };
         break;
@@ -590,7 +592,9 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
     !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) ||
     (tokenizedAuth === 'AWS' && _.isEmpty(roleARNText)) ||
     (tokenizedAuth === 'Azure' &&
-      [azureClientId, azureTenantId, azureSubscriptionId].some((v) => _.isEmpty(v))) ||
+      [azureClientId, azureTenantId, azureSubscriptionId, azureResourceGroup].some((v) =>
+        _.isEmpty(v),
+      )) ||
     (tokenizedAuth === 'GCP' &&
       [gcpProjectNumber, gcpPoolId, gcpProviderId, gcpServiceAcctEmail].some((v) => _.isEmpty(v)));
 
@@ -948,6 +952,16 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
                     value={azureSubscriptionId}
                     setValue={setAzureSubscriptionId}
                   />
+                  <InputField
+                    label={t('olm~Azure Resource Group')}
+                    helpText={t(
+                      'olm~The Azure Resource Group required for the operator to access cloud resources.',
+                    )}
+                    placeholder={t('olm~Azure Resource Group')}
+                    ariaLabel={t('olm~Azure Resource Group')}
+                    value={azureResourceGroup}
+                    setValue={setAzureResourceGroup}
+                  />
                 </div>
               )}
               {tokenizedAuth === 'GCP' && (
@@ -1179,7 +1193,7 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
               >
                 {t('olm~Install')}
               </Button>
-              <Button variant="secondary" onClick={() => navigate(-1)}>
+              <Button variant="secondary" onClick={handleCancel}>
                 {t('public~Cancel')}
               </Button>
             </ActionGroup>
@@ -1221,45 +1235,56 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
 };
 
 const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
-  <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
+  <StatusBox
+    data={props.packageManifest?.data?.[0]}
+    loaded={props.loaded}
+    loadError={props.loadError}
+  >
     <OperatorHubSubscribeForm {...props} />
   </StatusBox>
 );
 
-export const OperatorHubSubscribePage: FC = (props) => {
+export const OperatorHubSubscribePage: FC = () => {
+  const [activeNamespace] = useActiveNamespace();
+  const resources = useK8sWatchResources<{
+    operatorGroup: OperatorGroupKind[];
+    packageManifest: PackageManifestKind[];
+    subscription: SubscriptionKind[];
+  }>({
+    operatorGroup: {
+      isList: true,
+      kind: referenceForModel(OperatorGroupModel),
+    },
+    packageManifest: {
+      isList: true,
+      kind: referenceForModel(PackageManifestModel),
+      namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
+      fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
+      selector: {
+        matchLabels: {
+          catalog: new URLSearchParams(window.location.search).get('catalog'),
+        },
+      },
+    },
+    subscription: {
+      isList: true,
+      kind: referenceForModel(SubscriptionModel),
+    },
+  });
+
+  const resourceValues = Object.values(resources);
+  const loaded =
+    resourceValues.length === 0 || resourceValues.every((r) => r.loaded || r.loadError);
+  const loadError = resourceValues.find((r) => r.loadError)?.loadError;
+
   return (
-    <Firehose
-      resources={[
-        {
-          isList: true,
-          kind: referenceForModel(OperatorGroupModel),
-          prop: 'operatorGroup',
-        },
-        {
-          isList: true,
-          kind: referenceForModel(PackageManifestModel),
-          namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
-          fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
-          selector: {
-            matchLabels: {
-              catalog: new URLSearchParams(window.location.search).get('catalog'),
-            },
-          },
-          prop: 'packageManifest',
-        },
-        {
-          isList: true,
-          kind: referenceForModel(SubscriptionModel),
-          prop: 'subscription',
-        },
-      ]}
-    >
-      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <OperatorHubSubscribe
-        {...(props as any)}
-        targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null}
-      />
-    </Firehose>
+    <OperatorHubSubscribe
+      {...resources}
+      namespace={activeNamespace}
+      loaded={loaded}
+      loadError={loadError}
+      targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null}
+    />
   );
 };
 

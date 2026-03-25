@@ -1,5 +1,5 @@
-import { Edge, GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { Edge, GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { TYPE_CONNECTS_TO } from '../../const';
 import TopologyEdgeResourcesPanel from '../side-bar/TopologyEdgeResourcesPanel';
 

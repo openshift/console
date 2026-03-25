@@ -1,17 +1,16 @@
 import type { ReactNode, FC } from 'react';
-import { useContext } from 'react';
 import {
   Grid,
   GridItem,
+  Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import Modal from '@console/shared/src/components/modal/Modal';
-import { PopoverPlacement } from '@console/shared/src/components/popover/const';
+import { useTheme } from '@console/internal/components/ThemeProvider';
+import type { PopoverPlacement } from '@console/shared/src/components/popover/const';
 import Popover from '@console/shared/src/components/popover/Popover';
 import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
 import StepBadge from './steps/StepBadge';
@@ -58,7 +57,7 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   const header = <StepHeader>{heading}</StepHeader>;
   const footer = (
     <StepFooter
@@ -108,7 +107,6 @@ const TourStepComponent: FC<TourStepComponentProps> = ({
       id="guided-tour-modal"
       data-test="guided-tour-modal"
       aria-label={t('console-app~guided tour {{step, number}}', { step })}
-      isFullScreen
     >
       <ModalBody>
         <Grid hasGutter>

@@ -1,5 +1,5 @@
-import { K8sModel } from '../api/common-types';
-import { Extension, CodeRef } from '../types';
+import type { K8sModel } from '../api/common-types';
+import type { Extension, CodeRef } from '../types';
 
 export type DetailsPageBreadCrumbsHook = (
   kind: K8sModel,

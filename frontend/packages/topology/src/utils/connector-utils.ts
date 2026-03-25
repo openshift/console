@@ -1,11 +1,11 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   k8sGet,
   k8sList,
   k8sPatch,
-  K8sResourceKind,
   modelFor,
   referenceFor,
   referenceForModel,

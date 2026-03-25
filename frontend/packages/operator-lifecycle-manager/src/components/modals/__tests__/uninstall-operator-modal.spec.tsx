@@ -6,7 +6,8 @@ import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testSubscription, dummyPackageManifest } from '../../../../mocks';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../../models';
-import { UninstallOperatorModal, UninstallOperatorModalProps } from '../uninstall-operator-modal';
+import type { UninstallOperatorModalProps } from '../uninstall-operator-modal';
+import { UninstallOperatorModal } from '../uninstall-operator-modal';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -20,6 +21,10 @@ jest.mock('@console/shared/src/hooks/useOperands', () => ({
   useOperands: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
+}));
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key.replace(/^[^~]+~/, ''), // Remove namespace prefix (e.g., "olm~")
@@ -29,8 +34,17 @@ jest.mock('react-i18next', () => ({
   Trans: () => null,
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: () => mockNavigate,
+}));
+
+const mockK8sKill = jest.fn();
+
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s', () => ({
   k8sGetResource: jest.fn(),
+  k8sKill: (...args) => mockK8sKill(...args),
 }));
 
 describe(UninstallOperatorModal.name, () => {
@@ -38,15 +52,13 @@ describe(UninstallOperatorModal.name, () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockK8sKill.mockResolvedValue({});
 
     uninstallOperatorModalProps = {
       subscription: {
         ..._.cloneDeep(testSubscription),
         status: { installedCSV: 'testapp.v1.0.0' },
       },
-      k8sKill: jest.fn().mockResolvedValue({}),
-      k8sGet: jest.fn().mockResolvedValue({}),
-      k8sPatch: jest.fn().mockResolvedValue({}),
       close: jest.fn(),
       cancel: jest.fn(),
     };
@@ -66,15 +78,17 @@ describe(UninstallOperatorModal.name, () => {
   it('deletes subscription when form is submitted', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(2);
+      expect(mockK8sKill).toHaveBeenCalledTimes(2);
     });
 
-    expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledWith(
+    expect(mockK8sKill).toHaveBeenCalledWith(
       SubscriptionModel,
       uninstallOperatorModalProps.subscription,
+      {},
       {},
       expect.objectContaining({
         kind: 'DeleteOptions',
@@ -87,13 +101,14 @@ describe(UninstallOperatorModal.name, () => {
   it('deletes ClusterServiceVersion when form is submitted', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(2);
+      expect(mockK8sKill).toHaveBeenCalledTimes(2);
     });
 
-    expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledWith(
+    expect(mockK8sKill).toHaveBeenCalledWith(
       ClusterServiceVersionModel,
       expect.objectContaining({
         metadata: expect.objectContaining({
@@ -101,6 +116,7 @@ describe(UninstallOperatorModal.name, () => {
           namespace: testSubscription.metadata.namespace,
         }),
       }),
+      {},
       {},
       expect.objectContaining({
         kind: 'DeleteOptions',
@@ -115,17 +131,19 @@ describe(UninstallOperatorModal.name, () => {
       <UninstallOperatorModal {...uninstallOperatorModalProps} subscription={testSubscription} />,
     );
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
-      expect(uninstallOperatorModalProps.k8sKill).toHaveBeenCalledTimes(1);
+      expect(mockK8sKill).toHaveBeenCalledTimes(1);
     });
   });
 
   it('calls close callback after successful form submission', async () => {
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
-    fireEvent.submit(screen.getByRole('form'));
+    const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
+    fireEvent.click(uninstallButton);
 
     await waitFor(() => {
       expect(uninstallOperatorModalProps.close).toHaveBeenCalledTimes(1);

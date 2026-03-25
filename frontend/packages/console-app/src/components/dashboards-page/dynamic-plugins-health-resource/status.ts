@@ -1,4 +1,5 @@
-import { HealthState, SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import type { SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import { HealthState } from '@console/dynamic-plugin-sdk';
 import { pluginStore } from '@console/internal/plugins';
 
 export const getDynamicPluginHealthState = (): SubsystemHealth => {

@@ -1,6 +1,7 @@
-import { Model } from '@patternfly/react-topology';
+import type { Model } from '@patternfly/react-topology';
 import { isExpanded } from '@console/topology/src/filters';
-import { DisplayFilters, TopologyDisplayFilterType } from '@console/topology/src/topology-types';
+import type { DisplayFilters } from '@console/topology/src/topology-types';
+import { TopologyDisplayFilterType } from '@console/topology/src/topology-types';
 import { TYPE_KNATIVE_SERVICE } from './const';
 
 export const EXPAND_KNATIVE_SERVICES_FILTER_ID = 'knativeServices';

@@ -1,7 +1,7 @@
 import type { CSSProperties, FC } from 'react';
 import { useContext } from 'react';
 import { CellMeasurer } from 'react-virtualized';
-import { RenderCell, RenderHeader, GridChildrenProps, Item, CellItem } from './types';
+import type { RenderCell, RenderHeader, GridChildrenProps, Item, CellItem } from './types';
 import { CellMeasurementContext } from './utils';
 
 type CellProps = {

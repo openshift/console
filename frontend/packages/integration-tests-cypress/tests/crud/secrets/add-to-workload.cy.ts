@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { DeploymentKind } from '@console/internal/module/k8s';
+import type { DeploymentKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../../support';
 import { modal } from '../../../views/modal';
 import { secrets } from '../../../views/secret';

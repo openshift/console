@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { NavItem } from '@patternfly/react-core';
-import { NavLink } from 'react-router-dom';
-import { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
+import { NavLink } from 'react-router';
+import type { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 
 export const FavoriteNavItem: FC<FavoriteNavItemProps> = ({
   className,

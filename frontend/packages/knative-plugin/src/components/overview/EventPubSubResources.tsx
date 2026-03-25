@@ -3,13 +3,14 @@ import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import type { OverviewItem } from '@console/shared';
 import { EventingSubscriptionModel, EventingTriggerModel, EventingBrokerModel } from '../../models';
-import { Subscriber } from '../../topology/topology-types';
+import type { Subscriber } from '../../topology/topology-types';
 import PubSubSubscribers from './EventPubSubSubscribers';
 import EventTriggerFilterList from './EventTriggerFilterList';
-import { FilterTableRowProps } from './FilterTable';
+import type { FilterTableRowProps } from './FilterTable';
 
 type PubSubResourceOverviewListProps = {
   items: K8sResourceKind[];

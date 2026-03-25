@@ -8,17 +8,18 @@ import {
   Stack,
   StackItem,
   TextInput,
-  ModalBody as PfModalBody,
-  ModalFooter as PfModalFooter,
+  ModalBody,
   Button,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ModalComponentProps } from '@console/internal/components/factory';
-import { ErrorMessage } from '@console/internal/components/utils/button-bar';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
 import { CephClusterModel } from '../../models';
@@ -58,9 +59,18 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
   const cephClusterHealthy = cephCluster?.status?.ceph?.health === 'HEALTH_OK';
 
   return (
-    <Modal isOpen onClose={closeOverlay} variant={ModalVariant.small}>
-      <ModalHeader title={t('metal3-plugin~Start Maintenance')} />
-      <PfModalBody>
+    <Modal
+      isOpen
+      onClose={closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="start-node-maintenance-modal-title"
+    >
+      <ModalHeader
+        title={t('metal3-plugin~Start Maintenance')}
+        data-test-id="modal-title"
+        labelId="start-node-maintenance-modal-title"
+      />
+      <ModalBody>
         <Stack hasGutter>
           <StackItem>
             {t(
@@ -97,16 +107,22 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
             </StackItem>
           )}
         </Stack>
-      </PfModalBody>
-      <PfModalFooter>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
-        <Button variant="primary" onClick={submit} isLoading={inProgress} isDisabled={!loaded}>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          variant="primary"
+          onClick={submit}
+          isLoading={inProgress}
+          isDisabled={!loaded}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
           {t('metal3-plugin~Start Maintenance')}
         </Button>
-        <Button variant="secondary" onClick={closeOverlay}>
+        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('metal3-plugin~Cancel')}
         </Button>
-      </PfModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

@@ -1,9 +1,9 @@
-import { IBuild } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/Build';
+import type { IBuild } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/Build';
 import * as _ from 'lodash';
 import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
-import { Build, BuildRun } from '../../types';
+import type { Build, BuildRun } from '../../types';
 import { getInitialBuildFormikValues } from './initial-data';
-import { BuildFormikValues } from './types';
+import type { BuildFormikValues } from './types';
 
 // utils to convert yaml to formData
 const convertBuildNameToFormData = (build: Build, values: BuildFormikValues) => {

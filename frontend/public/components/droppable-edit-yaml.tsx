@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { ResourceYAMLEditorProps } from '@console/dynamic-plugin-sdk';
 import { isText } from 'istextorbinary';
 
-import { EditYAML } from './edit-yaml';
+import { EditYAML, EditYAMLProps } from './edit-yaml';
 import {
   DropEvent,
   DropzoneErrorCode,
@@ -63,7 +63,7 @@ const useDropErrorMessage = (): ((errorCode: DropzoneErrorCode, fileName: string
   );
 };
 
-export const DroppableEditYAML: FC<DroppableEditYAMLProps> = ({
+export const DroppableEditYAML: FC<DroppableEditYAMLProps & EditYAMLProps> = ({
   allowMultiple,
   initialResource,
   create = false,

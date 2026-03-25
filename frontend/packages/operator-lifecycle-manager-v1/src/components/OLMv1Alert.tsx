@@ -9,7 +9,7 @@ const OLMv1Alert = () => {
       variant="info"
       title={t('Operator Lifecycle Management version 1')}
       actionLinks={
-        <ExternalLink href={`${window.SERVER_FLAGS.documentationBaseURL}/html/operators/olm-v1`}>
+        <ExternalLink href={`${window.SERVER_FLAGS.documentationBaseURL}/html/extensions/index`}>
           {t('Learn more about OLMv1')}
         </ExternalLink>
       }

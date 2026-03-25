@@ -1,7 +1,8 @@
-import { K8sResourceCommon, LabelSelector } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
+import { LabelSelector } from '@console/internal/module/k8s';
 import { OLMAnnotation } from '../components/operator-hub';
 import { NON_STANDALONE_ANNOTATION_VALUE } from '../const';
-import { CSVDescription, PackageManifestKind } from '../types';
+import type { CSVDescription, PackageManifestKind } from '../types';
 
 const OperatingSystemLabelPrefix = 'operatorframework.io/os.';
 const ArchitectureLabelPrefix = 'operatorframework.io/arch.';

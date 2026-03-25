@@ -1,19 +1,16 @@
 import type { ReactNode, FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import {
+import type {
   Node,
-  observer,
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
-  useAnchor,
   WithDragNodeProps,
-  AnchorEnd,
-  RectAnchor,
 } from '@patternfly/react-topology';
+import { observer, useAnchor, AnchorEnd, RectAnchor } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
 import { getTopologyResourceObject } from '@console/topology/src/utils';

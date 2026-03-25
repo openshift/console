@@ -5,6 +5,9 @@
   "typescript.preferences.autoImportFileExcludePatterns": [
     "./packages/console-shared/src/index.ts"
   ],
+  "jest.jestCommandLine": "yarn test",
+  "jest.useJest30": true,
+  "jest.runMode": "deferred", // Too many unit tests to run the entire suite automatically
   "[javascript][javascriptreact][typescript][typescriptreact]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": "never",

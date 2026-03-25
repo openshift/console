@@ -1,5 +1,5 @@
 import { serverlessInitialValues } from '@console/dev-console/src/components/import/__mocks__/serverless-mock';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const ksvcData: K8sResourceKind = {
   kind: 'Service',

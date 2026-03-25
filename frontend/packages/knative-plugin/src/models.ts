@@ -1,6 +1,6 @@
 import { chart_color_red_orange_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_orange_300';
 import { chart_color_teal_400 as knativeServingColor } from '@patternfly/react-tokens/dist/js/chart_color_teal_400';
-import { K8sKind } from '@console/internal/module/k8s';
+import type { K8sKind } from '@console/internal/module/k8s';
 import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,

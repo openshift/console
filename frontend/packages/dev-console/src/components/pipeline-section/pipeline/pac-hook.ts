@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { ConfigMapKind, k8sList } from '@console/internal/module/k8s';
+import type { ConfigMapKind } from '@console/internal/module/k8s';
+import { k8sList } from '@console/internal/module/k8s';
 import { RepositoryModel } from '../../../models/pipelines';
 
 export const PAC_INFO = 'pipelines-as-code-info';

@@ -1,4 +1,4 @@
-import { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 
 export const useQuickStartPermission = (quickStart: QuickStart): [boolean, boolean] => {

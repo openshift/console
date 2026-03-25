@@ -1,10 +1,8 @@
 import type { ComponentProps, FC } from 'react';
 import { useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
-  GraphComponent as BaseGraphComponent,
-  WithContextMenuProps,
-} from '@patternfly/react-topology';
+import type { WithContextMenuProps } from '@patternfly/react-topology';
+import { GraphComponent as BaseGraphComponent } from '@patternfly/react-topology';
 
 type GraphComponentProps = ComponentProps<typeof BaseGraphComponent> & {
   dragInProgress?: boolean;

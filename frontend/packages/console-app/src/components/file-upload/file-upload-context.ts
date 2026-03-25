@@ -2,7 +2,9 @@ import { createContext, useState, useMemo, useCallback } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FileUpload, isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { useNavigate } from 'react-router';
+import type { FileUpload } from '@console/dynamic-plugin-sdk';
+import { isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useToast } from '@console/shared/src/components/toast';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
@@ -26,6 +28,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
+  const navigate = useNavigate();
   const [file, setFile] = useState<File>(undefined);
   const fileExtensions = useMemo(
     () =>
@@ -45,7 +48,10 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
         const requiredFileExtension = getRequiredFileUploadExtension(fileUploadExtensions, f.name);
         if (requiredFileExtension) {
           setFile(f);
-          requiredFileExtension.properties.handler(f, namespace);
+          const path = requiredFileExtension.properties.handler(f, namespace);
+          if (path) {
+            navigate(path);
+          }
         } else {
           toastContext.addToast({
             variant: AlertVariant.warning,
@@ -63,7 +69,7 @@ export const useValuesFileUploadContext = (): FileUploadContextType => {
         }
       }
     },
-    [setFile, fileExtensions, t, namespace, toastContext, fileUploadExtensions],
+    [setFile, fileExtensions, t, namespace, toastContext, fileUploadExtensions, navigate],
   );
 
   return {

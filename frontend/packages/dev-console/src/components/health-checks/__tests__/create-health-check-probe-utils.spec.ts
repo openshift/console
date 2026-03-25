@@ -8,7 +8,7 @@ import {
   getProbesData,
   convertResourceDataToFormData,
 } from '../create-health-checks-probe-utils';
-import { HealthCheckProbeData } from '../health-checks-types';
+import type { HealthCheckProbeData } from '../health-checks-types';
 import {
   healthChecksData,
   healthChecksInputData,

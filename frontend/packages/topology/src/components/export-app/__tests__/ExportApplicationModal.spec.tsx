@@ -2,7 +2,7 @@ import { act, screen, fireEvent } from '@testing-library/react';
 import * as _ from 'lodash';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import * as useToastModule from '@console/shared/src/components/toast/useToast';
-import * as useUserSettingsModule from '@console/shared/src/hooks/useUserSettings';
+import * as useUserPreferenceModule from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
 import { ExportModel } from '../../../models';
@@ -22,9 +22,9 @@ jest.mock('@console/shared/src/components/toast/useToast', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  ...jest.requireActual('@console/shared/src/hooks/useUserSettings'),
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useUserPreference'),
+  useUserPreference: jest.fn(),
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
@@ -33,15 +33,20 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource', () => ({
   k8sKill: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useTelemetry'),
+  useTelemetry: jest.fn(() => jest.fn()),
+}));
+
 const spyUseToast = useToastModule.default as jest.Mock;
-const spyUseUserSettings = useUserSettingsModule.useUserSettings as jest.Mock;
+const spyUseUserPreference = useUserPreferenceModule.useUserPreference as jest.Mock;
 const spyk8sCreate = k8sResourceModule.k8sCreate as jest.Mock;
 const spyk8sKill = k8sResourceModule.k8sKill as jest.Mock;
 
 describe('ExportApplicationModal', () => {
   beforeEach(() => {
     spyUseToast.mockReturnValue({ addToast: (v: any) => ({ v }) });
-    spyUseUserSettings.mockReturnValue([{}, jest.fn(), false]);
+    spyUseUserPreference.mockReturnValue([{}, jest.fn(), false]);
   });
 
   afterEach(() => {

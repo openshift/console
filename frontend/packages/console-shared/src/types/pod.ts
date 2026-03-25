@@ -1,9 +1,9 @@
-import {
+import type {
   ExtPodKind,
   PodControllerOverviewItem,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { FirehoseResult } from '@console/internal/components/utils/types';
-import { DeploymentKind, PodKind } from '@console/internal/module/k8s';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
+import type { DeploymentKind, PodKind } from '@console/internal/module/k8s';
 
 export type {
   PodRCData,

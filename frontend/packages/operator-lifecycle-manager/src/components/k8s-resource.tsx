@@ -3,19 +3,11 @@ import { useMemo } from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import {
-  MultiListPage,
-  Table,
-  TableData,
-  Flatten,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
-import {
-  ResourceLink,
-  ConsoleEmptyState,
-  FirehoseResource,
-} from '@console/internal/components/utils';
+import { useParams } from 'react-router';
+import type { Flatten, RowFunctionArgs } from '@console/internal/components/factory';
+import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
+import type { FirehoseResource } from '@console/internal/components/utils';
+import { ResourceLink, ConsoleEmptyState } from '@console/internal/components/utils';
 import {
   ConfigMapModel,
   DeploymentModel,
@@ -25,17 +17,16 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
+import type { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
-  K8sResourceKind,
   kindForReference,
   modelFor,
   referenceForGroupVersionKind,
-  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { RouteParams } from '@console/shared/src/types';
-import { CRDDescription, ProvidedAPI } from '../types';
+import type { RouteParams } from '@console/shared/src/types';
+import type { CRDDescription, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';
 

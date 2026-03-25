@@ -1,13 +1,19 @@
-import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
-import { JSONSchema7 } from 'json-schema';
-import { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
+import type { ReactNode, ReactElement, CSSProperties } from 'react';
+import type { Language } from '@patternfly/react-code-editor';
+import type {
+  ValidatedOptions,
+  TextInputTypes,
+  gridItemSpanValueShape,
+} from '@patternfly/react-core';
+import type { JSONSchema7 } from 'json-schema';
+import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
 export interface FieldProps {
   name: string;
   required?: boolean;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   isReadOnly?: boolean;
   className?: string;
   isDisabled?: boolean;
@@ -26,14 +32,14 @@ export interface BaseInputFieldProps extends FieldProps {
   onChange?: (event) => void;
   onBlur?: (event) => void;
   autoComplete?: string;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
-  helpTextInvalid?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
+  helpTextInvalid?: ReactNode;
 }
 
 export interface GroupInputProps extends BaseInputFieldProps {
-  beforeInput?: React.ReactNode;
-  afterInput?: React.ReactNode;
+  beforeInput?: ReactNode;
+  afterInput?: ReactNode;
   groupTextType?: GroupTextType;
 }
 
@@ -43,8 +49,8 @@ export interface TextAreaProps extends FieldProps {
   onBlur?: (event) => void;
   rows?: number;
   resizeOrientation?: 'vertical' | 'horizontal' | 'both';
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export enum GroupTextType {
@@ -56,8 +62,8 @@ export interface CheckboxFieldProps extends FieldProps {
   formLabel?: string;
   value?: string;
   onChange?: (val: boolean) => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface SearchInputFieldProps extends BaseInputFieldProps {
@@ -72,8 +78,8 @@ export interface DropdownFieldProps extends FieldProps {
   disabled?: ConsoleSelectProps['disabled'];
   autocompleteFilter?: ConsoleSelectProps['autocompleteFilter'];
   onChange?: (value: string) => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export type FormSelectFieldOption<T = any> = {
@@ -87,23 +93,23 @@ export interface FormSelectFieldProps extends FieldProps {
   isDisabled?: boolean;
   options: FormSelectFieldOption[];
   onChange?: (selectedValue: any) => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface EnvironmentFieldProps extends FieldProps {
   obj: K8sResourceKind;
   envs?: (NameValuePair | NameValueFromPair)[];
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface ResourceLimitFieldProps extends FieldProps {
   unitName: string;
   unitOptions: object;
   fullWidth?: boolean;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface MultiColumnFieldProps extends FieldProps {
@@ -112,29 +118,29 @@ export interface MultiColumnFieldProps extends FieldProps {
   emptyMessage?: string;
   headers: ({ name: string; required: boolean } | string)[];
   complexFields?: boolean[];
-  children?: React.ReactNode;
+  children?: ReactNode;
   spans?: gridItemSpanValueShape[];
-  rowRenderer?: (row: RowRendererProps) => React.ReactNode;
+  rowRenderer?: (row: RowRendererProps) => ReactNode;
   disableDeleteRow?: boolean;
   tooltipDeleteRow?: string;
   disableAddRow?: boolean;
   hideAddRow?: boolean;
   tooltipAddRow?: string;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface CodeEditorFieldProps extends FieldProps {
   model?: K8sKind;
   minHeight?: string;
-  language?: string;
+  language?: keyof typeof Language;
   schema?: JSONSchema7;
   showSamples: boolean;
   showShortcuts?: boolean;
   isMinimapVisible?: boolean;
   onSave?: () => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: string;
+  helpText?: string;
 }
 
 export interface NameValuePair {
@@ -162,30 +168,30 @@ export interface SecretKeyRef {
 }
 
 export interface RadioButtonFieldProps extends FieldProps {
-  value: React.ReactText;
-  description?: React.ReactNode;
-  onChange?: (value: React.ReactText) => void;
+  value: string | number;
+  description?: ReactNode;
+  onChange?: (value: string | number) => void;
   isChecked?: boolean;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface RadioGroupFieldProps extends FieldProps {
   isInline?: boolean;
-  labelIcon?: React.ReactElement;
+  labelIcon?: ReactElement;
   options: RadioGroupOption[];
-  onChange?: (value: React.ReactText) => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  onChange?: (value: string) => void;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface RadioGroupOption {
-  value: React.ReactText;
-  label: React.ReactNode;
+  value: string;
+  label: ReactNode;
   isDisabled?: boolean;
   isChecked?: boolean;
-  children?: React.ReactNode;
-  activeChildren?: React.ReactElement;
+  children?: ReactNode;
+  activeChildren?: ReactElement;
 }
 
 export interface SelectInputOption {
@@ -203,8 +209,8 @@ export interface SelectInputFieldProps extends FieldProps {
   toggleOnSelection?: boolean;
   placeholderText?: string;
   onChange?: (selection: string) => void;
-  label?: React.ReactNode;
-  helpText?: React.ReactNode;
+  label?: ReactNode;
+  helpText?: ReactNode;
 }
 
 export interface SingleDropdownFieldProps extends SelectInputFieldProps {

@@ -1,18 +1,18 @@
-import { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
-import { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
-import { IBuildStrategy as IBuildStrategyV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildStrategy';
-import { IClusterBuildStrategy as IClusterBuildStrategyV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/ClusterBuildStrategy';
-import { IBuild as IBuildV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/Build';
-import { IBuildRun as IBuildRunV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildRun';
-import { IBuildStrategy as IBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildStrategy';
-import { IClusterBuildStrategy as IClusterBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/ClusterBuildStrategy';
-import {
+import type { IBuild as IBuildV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/Build';
+import type { IBuildRun as IBuildRunV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildRun';
+import type { IBuildStrategy as IBuildStrategyV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/BuildStrategy';
+import type { IClusterBuildStrategy as IClusterBuildStrategyV1Alpha1 } from '@kubernetes-models/shipwright/shipwright.io/v1alpha1/ClusterBuildStrategy';
+import type { IBuild as IBuildV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/Build';
+import type { IBuildRun as IBuildRunV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildRun';
+import type { IBuildStrategy as IBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/BuildStrategy';
+import type { IClusterBuildStrategy as IClusterBuildStrategyV1Beta1 } from '@kubernetes-models/shipwright/shipwright.io/v1beta1/ClusterBuildStrategy';
+import type {
   TektonResource,
   TektonResultsRun,
   TektonTaskSpec,
 } from '@console/dev-console/src/types/coreTekton';
 import type { PipelineTaskParam, PipelineTaskRef } from '@console/dev-console/src/types/pipeline';
-import {
+import type {
   K8sResourceCommon,
   K8sResourceCondition,
   PersistentVolumeClaimKind,

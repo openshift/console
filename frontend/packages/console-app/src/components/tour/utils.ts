@@ -1,11 +1,11 @@
-import { FeatureState } from '@console/internal/reducers/features';
-import { Step } from './type';
+import type { FlagsObject } from '@console/internal/reducers/features';
+import type { Step } from './type';
 
 /**
  * filter utils
  */
 
-export const filterTourBasedonPermissionAndFlag = (steps: Step[], flags: FeatureState): Step[] =>
+export const filterTourBasedonPermissionAndFlag = (steps: Step[], flags: FlagsObject): Step[] =>
   steps.reduce((acc: Step[], step: Step) => {
     const { flags: stepFlags, access, selector } = step;
     if (stepFlags && flags && stepFlags.filter((flag) => !flags[flag]).length > 0) return acc;

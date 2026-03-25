@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
-import { PageHeader, PageHeaderLinkProps } from '@patternfly/react-component-groups';
+import type { FC, ReactNode } from 'react';
+import type { PageHeaderLinkProps } from '@patternfly/react-component-groups';
+import { PageHeader } from '@patternfly/react-component-groups';
 import { ActionList, ActionListGroup, ActionListItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { FavoriteButton } from '@console/app/src/components/favorite/FavoriteButton';
@@ -8,10 +9,8 @@ import { Breadcrumbs } from '@console/shared/src/components/breadcrumbs/Breadcru
 
 import './PageHeading.scss';
 
-interface PageHeadingLinkProps extends Omit<PageHeaderLinkProps, 'label'> {
+interface PageHeadingLinkProps extends PageHeaderLinkProps {
   'data-test'?: string;
-  /** Title for the link */
-  label: ReactNode | string;
 }
 
 export type PageHeadingProps = {
@@ -45,7 +44,7 @@ export type PageHeadingProps = {
 /**
  * A standard page heading component that is used in the console.
  */
-export const PageHeading = ({
+export const PageHeading: FC<PageHeadingProps> = ({
   'data-test': dataTest = 'page-heading',
   badge,
   breadcrumbs,
@@ -57,7 +56,7 @@ export const PageHeading = ({
   title,
   primaryAction,
   linkProps,
-}: PageHeadingProps) => {
+}) => {
   const [perspective] = useActivePerspective();
   const isAdminPerspective = perspective === 'admin';
   const showFavoriteButton = isAdminPerspective && !hideFavoriteButton;
@@ -68,8 +67,8 @@ export const PageHeading = ({
         breadcrumbs={breadcrumbs && <Breadcrumbs breadcrumbs={breadcrumbs} />}
         title={title}
         actionMenu={
-          <ActionList className="co-actions" data-test-id="details-actions">
-            {showFavoriteButton || primaryAction ? (
+          showFavoriteButton || primaryAction ? (
+            <ActionList className="co-actions" data-test-id="details-actions">
               <ActionListGroup>
                 {showFavoriteButton && (
                   <ActionListItem>
@@ -78,8 +77,8 @@ export const PageHeading = ({
                 )}
                 {primaryAction}
               </ActionListGroup>
-            ) : null}
-          </ActionList>
+            </ActionList>
+          ) : null
         }
         icon={icon}
         label={badge}

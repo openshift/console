@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -8,7 +9,8 @@ import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventChannelKind, ChannelConditionTypes } from '../../../types';
+import type { EventChannelKind } from '../../../types';
+import { ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionStats } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 

@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
-import { Page } from '@console/internal/components/utils';
-import { isCatalogTypeEnabled, MenuActions, MultiTabListPage } from '@console/shared';
+import type { Page } from '@console/internal/components/utils';
+import type { MenuActions } from '@console/shared';
+import { isCatalogTypeEnabled, MultiTabListPage } from '@console/shared';
 import { EVENT_SOURCE_CATALOG_TYPE_ID } from '../../const';
 import { EventingBrokerModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';

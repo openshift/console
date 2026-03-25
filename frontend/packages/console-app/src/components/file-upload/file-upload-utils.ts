@@ -1,4 +1,4 @@
-import { ResolvedExtension, FileUpload } from '@console/dynamic-plugin-sdk';
+import type { ResolvedExtension, FileUpload } from '@console/dynamic-plugin-sdk';
 
 export const getFileType = (fileName: string): string => {
   if (fileName.lastIndexOf('.') === -1) {

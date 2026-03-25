@@ -1,17 +1,12 @@
 import type { FC, MouseEvent, Ref } from 'react';
 import { useState } from 'react';
-import {
-  Button,
-  Select,
-  SelectList,
-  SelectOption,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Button, Select, SelectList, SelectOption, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { getTitleForNodeKind } from '@console/shared';
-import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
+import type { DisplayFilters } from '../topology-types';
+import { TopologyDisplayFilterType } from '../topology-types';
 import './KindFilterDropdown.scss';
 
 type KindFilterDropdownProps = {

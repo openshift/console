@@ -1,4 +1,4 @@
-import { Extension } from '../types';
+import type { Extension } from '../types';
 
 export type ImageEnvironment = {
   /** Environment variable key */

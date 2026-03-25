@@ -1,4 +1,4 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 
 export const eventSourceCatalogItems: CatalogItem[] = [
   {

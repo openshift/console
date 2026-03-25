@@ -1,4 +1,4 @@
-import {
+import type {
   DeploymentKind,
   HorizontalPodAutoscalerKind,
   K8sResourceKind,

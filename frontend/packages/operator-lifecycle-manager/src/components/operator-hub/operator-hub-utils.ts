@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {
+import type {
   CloudCredentialKind,
   InfrastructureKind,
   AuthenticationKind,
@@ -8,7 +8,7 @@ import {
 } from '@console/internal/module/k8s';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { DefaultCatalogSource, DefaultClusterCatalog, OperatorSource } from '../../const';
-import { PackageManifestKind } from '../../types';
+import type { PackageManifestKind } from '../../types';
 import {
   CapabilityLevel,
   InfrastructureFeature,
@@ -222,9 +222,11 @@ export const getInfrastructureFeatures: AnnotationParser<
     onError,
   });
   const azureTokenAuthIsSupported =
-    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] !== 'false';
+    clusterIsAzureWIF && annotations[OLMAnnotation.TokenAuthAzure] === 'true';
   const awsTokenAuthIsSupported =
-    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] !== 'false';
+    clusterIsAWSSTS && annotations[OLMAnnotation.TokenAuthAWS] === 'true';
+  const gcpTokenAuthIsSupported =
+    clusterIsGCPWIF && annotations[OLMAnnotation.TokenAuthGCP] === 'true';
   return [...parsedInfrastructureFeatures, ...Object.keys(annotations ?? {})].reduce(
     (supportedFeatures, key) => {
       const feature = infrastructureFeatureMap[key];
@@ -249,7 +251,7 @@ export const getInfrastructureFeatures: AnnotationParser<
         return tokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
       const resolveTokenAuthGCPFeature = () => {
-        return clusterIsGCPWIF ? includeFeature() : excludeFeature();
+        return gcpTokenAuthIsSupported ? includeFeature() : excludeFeature();
       };
 
       switch (feature) {

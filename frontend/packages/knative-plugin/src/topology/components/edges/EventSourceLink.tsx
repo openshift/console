@@ -1,11 +1,6 @@
 import type { FC } from 'react';
-import {
-  Edge,
-  EdgeTerminalType,
-  observer,
-  WithSourceDragProps,
-  WithTargetDragProps,
-} from '@patternfly/react-topology';
+import type { Edge, WithSourceDragProps, WithTargetDragProps } from '@patternfly/react-topology';
+import { EdgeTerminalType, observer } from '@patternfly/react-topology';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
 
 type EventSourceLinkProps = {

@@ -1,5 +1,5 @@
-import { GridCellProps } from 'react-virtualized';
-import { VirtualizedGridItem } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { GridCellProps } from 'react-virtualized';
+import type { VirtualizedGridItem } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export {
   VirtualizedGridItem as Item,

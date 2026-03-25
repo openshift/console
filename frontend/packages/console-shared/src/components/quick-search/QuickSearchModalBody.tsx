@@ -1,15 +1,15 @@
 import type { ReactNode, FC, FormEvent } from 'react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ModalBody, ModalHeader } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useNavigate } from 'react-router';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import { CatalogType } from '../catalog';
+import type { CatalogType } from '../catalog';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
-import { DetailsRendererFunction } from './QuickSearchDetails';
-import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
+import type { DetailsRendererFunction } from './QuickSearchDetails';
+import type { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
 interface QuickSearchModalBodyProps {

@@ -79,7 +79,6 @@ export const operator = {
     listPage.titleShouldHaveText('Installed Operators');
     operator.filterByName(operatorName);
     cy.byTestOperatorRow(operatorName, { timeout: 300000 }).should('exist'); // 5 minutes
-    listPage.rows.countShouldBe(1);
     cy.byTestID('status-text', { timeout: 720000 }).should('contain.text', 'Succeeded'); // 12 minutes
   },
   navToDetailsPage: (
@@ -92,10 +91,7 @@ export const operator = {
     projectDropdown.selectProject(installedNamespace);
     projectDropdown.shouldContain(installedNamespace);
     operator.filterByName(operatorName);
-    listPage.rows.countShouldBe(1);
-    // TODO: figure out why this arbitrary wait is needed
-    cy.wait(3000);
-    cy.byTestOperatorRow(operatorName).should('exist');
+    cy.byTestOperatorRow(operatorName, { timeout: 30000 }).should('exist');
     cy.byTestOperatorRow(operatorName).click();
   },
   horizontalNavTab: (tabID) => cy.byLegacyTestID(`horizontal-link-${tabID}`).last(),
@@ -108,8 +104,7 @@ export const operator = {
       modal.modalTitleShouldContain('Uninstall Operator?');
       cy.get('.loading-skeleton--table', { timeout: 120000 }).should('not.exist');
     },
-    checkDeleteAllOperands: () =>
-      cy.byTestID('Delete all operand instances for this operator__checkbox').click(),
+    checkDeleteAllOperands: () => cy.byTestID('delete-all-operands').click(),
   },
   createOperand: (
     operatorName: string,

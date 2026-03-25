@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { RouteLinkAndCopy } from '@console/shared/src/components/utils/routes';
 
 interface ImportToastContentProps {

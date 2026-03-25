@@ -17,12 +17,8 @@ import {
   ResourceLink,
 } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
-import {
-  referenceForModel,
-  K8sResourceKind,
-  MachineKind,
-  NodeKind,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   getName,
   getMachineNode,
@@ -57,7 +53,7 @@ import {
   isDetached,
 } from '../../selectors';
 import { getHostStatus } from '../../status/host-status';
-import { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';

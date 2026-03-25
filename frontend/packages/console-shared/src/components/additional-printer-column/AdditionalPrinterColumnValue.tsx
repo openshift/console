@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { JSONPath } from 'jsonpath-plus';
-import { CRDAdditionalPrinterColumn, K8sResourceKind } from '@console/internal/module/k8s';
+import type { CRDAdditionalPrinterColumn, K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DASH } from '../../constants';
 

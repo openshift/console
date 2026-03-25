@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   FormGroup,
   Alert,
@@ -7,14 +7,18 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getFieldId, ResourceDropdownField } from '@console/shared';
-import { getDynamicChannelResourceList } from '../../../../utils/fetch-dynamic-eventsources-utils';
-import { knativeEventingResourcesBroker } from '../../../../utils/get-knative-resources';
+import { EventingBrokerModel } from '../../../../models';
+import { useChannelModels } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 
 export interface SourceResourcesProps {
@@ -29,16 +33,74 @@ const SourceResources: FC<SourceResourcesProps> = ({ namespace, isMoveSink }) =>
     FormikValues
   >();
 
-  const resourcesData = [
-    ...getDynamicChannelResourceList(namespace),
-    ...knativeEventingResourcesBroker(namespace),
-  ];
+  // Get dynamic channel models
+  const { loaded: channelsLoaded, eventSourceChannels: channels } = useChannelModels();
+
+  const watchSpec = useMemo(() => {
+    const spec: Record<string, WatchK8sResource> = {
+      brokers: {
+        isList: true,
+        kind: referenceForModel(EventingBrokerModel),
+        namespace,
+        optional: true,
+      },
+    };
+
+    // Add dynamic channels when loaded
+    if (channelsLoaded && channels.length > 0) {
+      channels.forEach((model) => {
+        const ref = referenceForModel(model);
+        spec[ref] = {
+          isList: true,
+          kind: ref,
+          namespace,
+          optional: true,
+        };
+      });
+    }
+
+    return spec;
+  }, [namespace, channelsLoaded, channels]);
+
+  const watchedResources = useK8sWatchResources<Record<string, K8sResourceKind[]>>(watchSpec);
+
+  // Transform watched resources to expected format
+  const resourcesData = useMemo(() => {
+    const result = [];
+
+    // Add broker resources
+    if (watchedResources.brokers) {
+      result.push({
+        data: watchedResources.brokers.data,
+        loaded: watchedResources.brokers.loaded,
+        loadError: watchedResources.brokers.loadError,
+        kind: EventingBrokerModel.kind,
+      });
+    }
+
+    // Add dynamic channel resources
+    if (channelsLoaded && channels.length > 0) {
+      channels.forEach((model) => {
+        const ref = referenceForModel(model);
+        if (watchedResources[ref]) {
+          result.push({
+            data: watchedResources[ref].data,
+            loaded: watchedResources[ref].loaded,
+            loadError: watchedResources[ref].loadError,
+            kind: model.kind,
+          });
+        }
+      });
+    }
+
+    return result;
+  }, [watchedResources, channelsLoaded, channels]);
 
   const autocompleteFilter = (strText: string, item: ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);
   const fieldId = getFieldId('source-name', 'dropdown');
   const onChange = useCallback(
-    (selectedValue, valueObj) => {
+    (_selectedValue, valueObj) => {
       const modelData = valueObj?.props?.model;
       const name = valueObj?.props?.name;
       if (name && modelData) {

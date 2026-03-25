@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const DefaultResourceSideBar: FC<{ resource: K8sResourceKind }> = ({ resource }) => {
   return (

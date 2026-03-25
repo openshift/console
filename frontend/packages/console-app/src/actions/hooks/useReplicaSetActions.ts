@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { rollbackModal } from '@console/internal/components/modals';
+import { LazyRollbackModalOverlay } from '@console/internal/components/modals';
 import { DeploymentModel } from '@console/internal/models';
-import { ReplicaSetKind, K8sModel } from '@console/internal/module/k8s';
+import type { ReplicaSetKind, K8sModel } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { ReplicaSetActionCreator } from './types';
 
@@ -22,6 +23,7 @@ export const useReplicaSetActions = (
   filterActions?: ReplicaSetActionCreator[],
 ): Action[] => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
 
   const factory = useMemo(
@@ -30,8 +32,7 @@ export const useReplicaSetActions = (
         id: 'rollback-deployment',
         label: t('console-app~Rollback'),
         cta: () =>
-          rollbackModal({
-            resourceKind: kind,
+          launchModal(LazyRollbackModalOverlay, {
             resource,
           }),
         accessReview: {
@@ -43,7 +44,7 @@ export const useReplicaSetActions = (
         },
       }),
     }),
-    [t, kind, resource],
+    [t, resource, launchModal],
   );
 
   const actions = useMemo<Action[]>(() => {

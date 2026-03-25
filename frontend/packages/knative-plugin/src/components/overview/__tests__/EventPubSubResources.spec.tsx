@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 import {
   EventSubscriptionObj,
   EventIMCObj,

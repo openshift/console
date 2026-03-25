@@ -1,9 +1,5 @@
-import {
-  ResolvedExtension,
-  useResolvedExtensions,
-  AddAction,
-  isAddAction,
-} from '@console/dynamic-plugin-sdk';
+import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, isAddAction } from '@console/dynamic-plugin-sdk';
 
 interface AddPage {
   disabledActions?: string[];

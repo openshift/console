@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { nameRegex } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';

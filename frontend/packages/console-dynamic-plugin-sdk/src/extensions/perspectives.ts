@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, CodeRef } from '../types';
+import type { ExtensionK8sModel } from '../api/common-types';
+import type { Extension, CodeRef } from '../types';
 
 // Align type with React.lazy
 type LazyComponent = { default: ComponentType };

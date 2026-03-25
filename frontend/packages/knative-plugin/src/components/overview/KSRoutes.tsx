@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import KSRoutesOverviewListItem from './KSRoutesOverviewListItem';
 
 type KSRoutesProps = {

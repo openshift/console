@@ -3,15 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import {
-  K8sPodControllerKind,
-  referenceForModel,
-  PodKind,
-  getResourceDescription,
-} from '@console/internal/module/k8s';
+import type { K8sPodControllerKind, PodKind } from '@console/internal/module/k8s';
+import { referenceForModel, getResourceDescription } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityRequirement from './AvailabilityRequirement';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
 
 export const PodDisruptionBudgetField: FC<PodDisruptionBudgetFieldProps> = ({ obj }) => {

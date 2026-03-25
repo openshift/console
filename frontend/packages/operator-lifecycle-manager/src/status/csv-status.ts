@@ -1,9 +1,8 @@
 import i18n from '@console/internal/i18n';
 import { getName } from '@console/shared/src/selectors/common';
 import { operatorNamespaceFor } from '../components/operator-group';
+import type { ClusterServiceVersionKind, SubscriptionKind } from '../types';
 import {
-  ClusterServiceVersionKind,
-  SubscriptionKind,
   SubscriptionState,
   ClusterServiceVersionPhase,
   ClusterServiceVersionStatus,

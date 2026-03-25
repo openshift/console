@@ -2,7 +2,8 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Alert, Button, AlertActionCloseButton } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -32,7 +33,7 @@ type SyncedEditorFieldProps = {
   name: string;
   formContext: EditorContext<SanitizeToForm>;
   yamlContext: EditorContext<SanitizeToYAML>;
-  lastViewUserSettingKey: string;
+  lastViewUserPreferenceKey: string;
   prune?: (data: any) => any;
   noMargin?: boolean;
 };
@@ -43,7 +44,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   yamlContext,
   prune,
   noMargin = false,
-  lastViewUserSettingKey,
+  lastViewUserPreferenceKey,
 }) => {
   const { t } = useTranslation();
   const [field] = useField(name);
@@ -61,7 +62,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     !(type === EditorType.Form ? formContext?.isDisabled : yamlContext?.isDisabled);
 
   const [editorType, setEditorType, resourceLoaded] = useEditorType(
-    lastViewUserSettingKey,
+    lastViewUserPreferenceKey,
     field.value as EditorType,
     isEditorTypeEnabled,
   );

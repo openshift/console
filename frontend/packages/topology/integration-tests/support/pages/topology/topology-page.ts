@@ -1,7 +1,7 @@
+import type { nodeActions } from '@console/dev-console/integration-tests/support/constants';
 import {
   devNavigationMenu,
   displayOptions,
-  nodeActions,
   sideBarTabs,
 } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';

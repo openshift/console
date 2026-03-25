@@ -1,16 +1,13 @@
 import type { FC, ComponentProps } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
+import type {
   Edge,
   WithRemoveConnectorProps,
-  observer,
-  useSelection,
   WithContextMenuProps,
-  DefaultEdge,
-  EdgeTerminalType,
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
+import { observer, useSelection, DefaultEdge, EdgeTerminalType } from '@patternfly/react-topology';
 import { useAccessReviewAllowed } from '@console/dynamic-plugin-sdk';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';

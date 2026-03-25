@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { cleanup, fireEvent, render, screen, RenderResult, waitFor } from '@testing-library/react';
+import type { RenderResult } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';

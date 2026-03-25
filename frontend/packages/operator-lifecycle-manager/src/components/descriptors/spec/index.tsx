@@ -11,23 +11,26 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { LabelListProps } from '@console/internal/components/utils';
 import {
   LoadingInline,
   ResourceLink,
   Selector,
   DetailsItem,
   LabelList,
-  LabelListProps,
 } from '@console/internal/components/utils';
-import { k8sPatch, k8sUpdate, Selector as SelectorType } from '@console/internal/module/k8s';
+import type { Selector as SelectorType } from '@console/internal/module/k8s';
+import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DASH } from '@console/shared/src/constants/ui';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
-import { CapabilityProps, SpecCapability, Error } from '../types';
+import type { CapabilityProps, Error } from '../types';
+import { SpecCapability } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { useConfigureSizeModal } from './configure-size';
-import { configureUpdateStrategyModal } from './configure-update-strategy';
-import { EndpointList, EndpointListProps } from './endpoint';
+import { useConfigureUpdateStrategyModal } from './configure-update-strategy';
+import type { EndpointListProps } from './endpoint';
+import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 
 import './index.scss';
@@ -287,19 +290,19 @@ const UpdateStrategy: FC<SpecCapabilityProps> = ({
   value,
 }) => {
   const { t } = useTranslation();
+  const launchUpdateStrategyModal = useConfigureUpdateStrategyModal({
+    kindObj: model,
+    resource: obj,
+    specDescriptor: descriptor,
+    specValue: value,
+  });
+
   return (
     <DetailsItem
       description={description}
       label={label}
       obj={obj}
-      onEdit={() =>
-        configureUpdateStrategyModal({
-          kindObj: model,
-          resource: obj,
-          specDescriptor: descriptor,
-          specValue: value,
-        })
-      }
+      onEdit={launchUpdateStrategyModal}
       path={fullPath}
     >
       {value?.type ?? t('public~None')}

@@ -1,8 +1,17 @@
-import { render } from '@testing-library/react';
-import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
-import { mockChannelCRDData } from '../../../../../utils/__mocks__/dynamic-channels-crd-mock';
-import { fetchChannelsCrd } from '../../../../../utils/fetch-dynamic-eventsources-utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import SinkResources from '../SinkResources';
+
+// Mock PatternFly topology to prevent console warnings during tests
+jest.mock('@patternfly/react-topology', () => ({}));
+
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(),
+}));
+
+jest.mock('../../../../../utils/fetch-dynamic-eventsources-utils', () => ({
+  useChannelModels: jest.fn(() => ({ loaded: true, eventSourceChannels: [] })),
+}));
 
 jest.mock('@console/shared', () => ({
   ResourceDropdownField: 'ResourceDropdownField',
@@ -15,23 +24,20 @@ jest.mock('formik', () => ({
     initialValues: {
       formData: { sink: { name: 'test' } },
     },
+    setFieldValue: jest.fn(),
+    setFieldTouched: jest.fn(),
+    validateForm: jest.fn(),
   })),
 }));
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
-  consoleFetch: jest.fn(),
-}));
-
-const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
-
 describe('SinkResources', () => {
   beforeEach(() => {
-    consoleFetchMock.mockImplementation(() =>
-      Promise.resolve({
-        json: () => mockChannelCRDData,
-      }),
-    );
+    (useK8sWatchResources as jest.Mock).mockReturnValue({
+      services: { data: [], loaded: true, loadError: null },
+      ksservices: { data: [], loaded: true, loadError: null },
+      brokers: { data: [], loaded: true, loadError: null },
+      kafkasinks: { data: [], loaded: true, loadError: null },
+    });
   });
 
   afterEach(() => {
@@ -39,14 +45,13 @@ describe('SinkResources', () => {
   });
 
   it('should be able to sink to k8s service', () => {
-    const { container } = render(<SinkResources isMoveSink namespace="test" />);
+    const { container } = renderWithProviders(<SinkResources isMoveSink namespace="test" />);
     const resourceDropdownField = container.querySelector('ResourceDropdownField');
     expect(resourceDropdownField).toBeInTheDocument();
   });
 
   it('should be able to sink to knative service, broker, k8s service and channels', async () => {
-    await fetchChannelsCrd();
-    const { container } = render(<SinkResources isMoveSink namespace="test" />);
+    const { container } = renderWithProviders(<SinkResources isMoveSink namespace="test" />);
     const resourceDropdownField = container.querySelector('ResourceDropdownField');
     expect(resourceDropdownField).toBeInTheDocument();
   });

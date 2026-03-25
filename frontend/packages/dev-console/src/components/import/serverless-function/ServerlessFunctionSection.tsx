@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
+import type { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
 import { getGitService } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { Loading } from '@console/internal/components/utils';
-import {
-  getRuntimeImage,
-  notSupportedRuntime,
-  SupportedRuntime,
-} from '../../../utils/serverless-functions';
+import type { SupportedRuntime } from '../../../utils/serverless-functions';
+import { getRuntimeImage, notSupportedRuntime } from '../../../utils/serverless-functions';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
 import { Resources } from '../import-types';
 import { useResourceType } from '../section/useResourceType';

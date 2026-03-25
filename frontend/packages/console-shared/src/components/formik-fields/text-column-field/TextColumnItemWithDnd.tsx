@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import withDragDropContext from '@console/internal/components/utils/drag-drop-context';
-import { TextColumnItemProps, ItemTypes, DragItem } from './text-column-types';
+import type { TextColumnItemProps, DragItem } from './text-column-types';
+import { ItemTypes } from './text-column-types';
 import TextColumnItemContent from './TextColumnItemContent';
 
 const TextColumnItemWithDnd: FC<TextColumnItemProps> = (props) => {

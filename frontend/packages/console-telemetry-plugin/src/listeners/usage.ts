@@ -1,4 +1,4 @@
-import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
+import type { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src';
 import { consoleFetch } from '@console/dynamic-plugin-sdk/src/lib-core';
 
 /**

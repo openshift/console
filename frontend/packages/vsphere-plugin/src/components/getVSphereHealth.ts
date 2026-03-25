@@ -1,13 +1,13 @@
 import { toInteger } from 'lodash';
-import {
-  HealthState,
+import { HealthState } from '@console/dynamic-plugin-sdk';
+import type {
+  ConsoleTFunction,
   PrometheusHealthPopupProps,
   PrometheusResult,
   PrometheusValue,
   SubsystemHealth,
 } from '@console/dynamic-plugin-sdk';
-import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
-import { ConfigMap } from '../resources';
+import type { ConfigMap } from '../resources';
 
 const getPrometheusMetricValue = (
   prometheusResult: PrometheusResult[],

@@ -2,19 +2,15 @@ import type { FC } from 'react';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import {
-  Table,
-  TableProps,
-  TableData,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import type { TableProps, RowFunctionArgs } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { BuildRun } from '../../types';
+import type { BuildRun } from '../../types';
 import BuildRunDuration, {
   getBuildRunDurationInSeconds,
 } from '../buildrun-duration/BuildRunDuration';

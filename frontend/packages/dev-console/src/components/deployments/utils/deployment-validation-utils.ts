@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import i18n from '@console/internal/i18n';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { DeploymentStrategyType, LifecycleAction } from '../deployment-strategy/utils/types';
-import {
+import type {
   DeploymentStrategy,
   EditDeploymentData,
   EditDeploymentFormData,

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Form } from '@patternfly/react-core';
-import { ResolvedUserPreferenceItem } from './types';
+import type { ResolvedUserPreferenceItem } from './types';
 import UserPreferenceField from './UserPreferenceField';
 
 import './UserPreferenceForm.scss';

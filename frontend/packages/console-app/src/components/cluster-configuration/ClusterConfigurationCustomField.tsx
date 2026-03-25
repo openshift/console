@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 // import { UserPreferenceCustomField as CustomFieldType } from '@console/dynamic-plugin-sdk/src';
 import { ClusterConfigurationCustomField } from '@console/dynamic-plugin-sdk/src';
-import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationCustomFieldProps = {
   item: ResolvedClusterConfigurationItem;

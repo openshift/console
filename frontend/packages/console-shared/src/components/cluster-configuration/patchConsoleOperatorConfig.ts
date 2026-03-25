@@ -1,6 +1,7 @@
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
-import { K8sResourceKind, resourceURL } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { resourceURL } from '@console/internal/module/k8s';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '../../constants/resource';
 
 /**

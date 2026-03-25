@@ -1,10 +1,10 @@
 import { useMemo, useEffect } from 'react';
-import { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import { getReduxIdPayload } from '../../../app/k8s/reducers/k8sSelector';
 import type { SDKDispatch, SDKStoreState } from '../../../app/redux-types';
-import { UseK8sWatchResource } from '../../../extensions/console-types';
+import type { UseK8sWatchResource } from '../../../extensions/console-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { useK8sModel } from './useK8sModel';

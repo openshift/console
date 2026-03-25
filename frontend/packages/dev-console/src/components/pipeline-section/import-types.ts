@@ -1,4 +1,4 @@
-import { PipelineKind } from '../../types/pipeline';
+import type { PipelineKind } from '../../types/pipeline';
 
 export enum PipelineType {
   PAC = 'pac',

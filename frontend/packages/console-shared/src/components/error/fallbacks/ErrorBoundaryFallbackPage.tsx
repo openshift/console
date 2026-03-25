@@ -8,8 +8,12 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
+import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDetailsModal';
+
+const reloadPage = () => {
+  window.location.reload();
+};
 
 /**
  * Standard fallback catch -- expected to take up the whole page.
@@ -26,7 +30,7 @@ const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
         <ActionList>
           <ActionListGroup>
             <ActionListItem>
-              <Button variant="primary" onClick={() => window.location.reload()}>
+              <Button variant="primary" data-test="error-reload-page" onClick={reloadPage}>
                 {t('console-shared~Reload page')}
               </Button>
             </ActionListItem>

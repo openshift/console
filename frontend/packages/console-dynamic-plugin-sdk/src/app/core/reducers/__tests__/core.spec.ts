@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import { AdmissionWebhookWarning, CoreState } from '../../../redux-types';
+import type { AdmissionWebhookWarning, CoreState } from '../../../redux-types';
 import { setUser, beginImpersonate, endImpersonate } from '../../actions/core';
 import { coreReducer } from '../core';
 import reducerTest from './utils/reducerTest';

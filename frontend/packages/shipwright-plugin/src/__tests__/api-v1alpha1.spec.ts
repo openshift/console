@@ -1,7 +1,7 @@
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { startBuild, canRerunBuildRun, rerunBuildRun } from '../api';
 import { BuildRunModelV1Alpha1 } from '../models';
-import { Build, BuildRun } from '../types';
+import type { Build, BuildRun } from '../types';
 import {
   incompleteBuild,
   incompleteBuildRun,

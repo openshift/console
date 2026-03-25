@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState, useRef, useCallback } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
-import { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStartsLoaderProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { useQuickStarts } from '../utils/useQuickStarts';
 import { QuickStartPermissionChecker } from './QuickStartPermissionChecker';
 

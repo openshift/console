@@ -1,5 +1,5 @@
-import { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
-import { NameValueFromPair, NameValuePair } from '@console/shared';
+import type { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
+import type { NameValueFromPair, NameValuePair } from '@console/shared';
 
 export { BuildConfigModel } from '@console/internal/models';
 export { BuildStrategyType } from '@console/internal/components/utils/build-utils';

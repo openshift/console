@@ -5,7 +5,7 @@ import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/
 import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-full-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
-import { ColoredIconProps } from '@console/dynamic-plugin-sdk';
+import type { ColoredIconProps } from '@console/dynamic-plugin-sdk';
 
 export {
   GreenCheckCircleIcon,

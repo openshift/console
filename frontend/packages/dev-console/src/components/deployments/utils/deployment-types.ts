@@ -1,6 +1,6 @@
-import { FormikValues } from 'formik';
-import { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
-import { ImageStreamImageData, ProjectData } from '../../import/import-types';
+import type { FormikValues } from 'formik';
+import type { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
+import type { ImageStreamImageData, ProjectData } from '../../import/import-types';
 
 export interface LifecycleHookData {
   failurePolicy: string;

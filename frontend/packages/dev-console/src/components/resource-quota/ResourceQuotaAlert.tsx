@@ -2,11 +2,14 @@ import type { FC } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '@console/internal/models';
-import { AppliedClusterResourceQuotaKind, ResourceQuotaKind } from '@console/internal/module/k8s';
+import type {
+  AppliedClusterResourceQuotaKind,
+  ResourceQuotaKind,
+} from '@console/internal/module/k8s';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { checkQuotaLimit } from '@console/topology/src/components/utils/checkResourceQuota';
 

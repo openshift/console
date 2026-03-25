@@ -1,12 +1,14 @@
 import type { FC } from 'react';
 import { useRef, useContext, useCallback, useEffect } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, getIn } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImageStreamTagModel } from '@console/internal/models';
-import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import type { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import { k8sGet } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {

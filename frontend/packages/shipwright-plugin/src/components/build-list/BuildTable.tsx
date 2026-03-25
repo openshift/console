@@ -5,12 +5,8 @@ import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
-import {
-  Table,
-  TableProps,
-  TableData,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import type { TableProps, RowFunctionArgs } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu, {
@@ -19,7 +15,7 @@ import LazyActionMenu, {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
-import { Build, BuildRun } from '../../types';
+import type { Build, BuildRun } from '../../types';
 import { isBuildRunNewerThen, isV1Alpha1Resource } from '../../utils';
 import BuildRunDuration, { getBuildRunDuration } from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus, { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';

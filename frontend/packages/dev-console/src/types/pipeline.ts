@@ -1,12 +1,12 @@
-import { RunStatus } from '@patternfly/react-topology';
-import {
+import type { RunStatus } from '@patternfly/react-topology';
+import type {
   K8sResourceCommon,
   K8sResourceCondition,
   K8sResourceKind,
   ObjectMetadata,
 } from '@console/internal/module/k8s';
 import type { PLRTaskRunStep } from '@console/shipwright-plugin/src/types';
-import {
+import type {
   TektonParam,
   TektonResource,
   TektonResourceGroup,

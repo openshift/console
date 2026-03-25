@@ -1,15 +1,17 @@
 import * as _ from 'lodash';
 import type { ComponentProps, ReactNode, FC } from 'react';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { action } from 'typesafe-actions';
 import { ActionType, getOLSCodeBlock } from '@console/internal/reducers/ols';
 import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { FLAGS, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
@@ -30,15 +32,15 @@ import {
   K8sResourceKind,
 } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { connectToFlags, WithFlagsProps } from '../reducers/connectToFlags';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { LazyManagedResourceSaveModalOverlay } from './modals';
 import ReplaceCodeModal from './modals/replace-code-modal';
 import { checkAccess } from './utils/rbac';
-import { Firehose } from './utils/firehose';
 import { Loading } from './utils/status-box';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourceObjPath, resourceListPathFromModel } from './utils/resource-link';
-import { FirehoseResult } from './utils/types';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   referenceForModel,
   k8sCreate,
@@ -59,14 +61,13 @@ import { definitionFor } from '../module/k8s/swagger';
 import { ImportYAMLResults } from './import-yaml-results';
 import { EditYamlSettingsModal, useEditYamlSettings } from './modals/edit-yaml-settings-modal';
 import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { CompressIcon } from '@patternfly/react-icons/dist/js/icons/compress-icon';
-import { ExpandIcon } from '@patternfly/react-icons/dist/js/icons/expand-icon';
+import { CompressIcon } from '@patternfly/react-icons/dist/esm/icons/compress-icon';
+import { ExpandIcon } from '@patternfly/react-icons/dist/esm/icons/expand-icon';
 import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { RootState } from '@console/internal/redux';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from './modals/error-modal';
-import type { CodeEditorProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const generateObjToLoad = (
   templateExtensions: Parameters<typeof getYAMLTemplates>[0],
@@ -90,15 +91,13 @@ const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']) as Map<string, K8sModel>,
 });
 
-type EditYAMLProps = {
+export interface EditYAMLProps {
   /** The sample object to load into the editor */
   sampleObj?: ReturnType<typeof generateObjToLoad>;
   /** Whether to allow multiple YAML documents in the editor */
   allowMultiple?: boolean;
   /** Whether this is a create operation */
   create: boolean;
-  /** List of YAML samples to display */
-  yamlSamplesList?: FirehoseResult;
   /** Custom CSS class for the editor */
   customClass?: string;
   /** Callback function to handle changes in the YAML content */
@@ -118,7 +117,7 @@ type EditYAMLProps = {
   /** URL to redirect to after saving */
   redirectURL?: string;
   /** Function to clear the file upload state */
-  clearFileUpload: () => void;
+  clearFileUpload?: () => void;
   /** Callback function to save the YAML content */
   onSave?: (yaml: string) => void;
   /** Whether this is a redirect from code import */
@@ -137,7 +136,7 @@ type EditYAMLProps = {
   onCancel?: () => void;
   /** The file upload content */
   fileUpload?: string;
-};
+}
 
 type EditYAMLInnerProps = ReturnType<typeof stateToProps> & EditYAMLProps;
 
@@ -145,7 +144,6 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const {
     allowMultiple,
     create,
-    yamlSamplesList,
     customClass,
     onChange = () => null,
     models,
@@ -154,12 +152,32 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     genericYAML = false,
     children: customAlerts,
     redirectURL,
-    clearFileUpload,
+    clearFileUpload = _.noop,
     onSave,
     isCodeImportRedirect,
   } = props;
 
   const navigate = useNavigate();
+  const hasYAMLSampleFlag = useFlag(FLAGS.CONSOLE_YAML_SAMPLE);
+
+  const watchResources = useMemo(
+    () =>
+      hasYAMLSampleFlag
+        ? {
+            yamlSamplesList: {
+              kind: referenceForModel(ConsoleYAMLSampleModel),
+              isList: true,
+            },
+          }
+        : {},
+    [hasYAMLSampleFlag],
+  );
+
+  const resources = useK8sWatchResources<{
+    yamlSamplesList?: K8sResourceCommon[];
+  }>(watchResources);
+
+  const yamlSamplesList = resources.yamlSamplesList;
   const fireTelemetryEvent = useTelemetry();
   const postFormSubmissionCallback = useResourceConnectionHandler<K8sResourceCommon>();
   const [errors, setErrors] = useState<string[]>(null);
@@ -188,10 +206,10 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const [callbackCommand, setCallbackCommand] = useState('');
   const [showReplaceCodeModal, setShowReplaceCodeModal] = useState(false);
   const [olsCode, setOLSCode] = useState('');
-  const olsCodeBlock = useSelector(getOLSCodeBlock);
+  const olsCodeBlock = useConsoleSelector(getOLSCodeBlock);
 
   const closeOLS = () => action(ActionType.CloseOLS);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const monacoRef = useRef<CodeEditorRef>();
   const editor = useRef();
@@ -200,7 +218,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const { t } = useTranslation();
 
   const getEditor = (): editor.IStandaloneCodeEditor | undefined =>
-    'editor' in monacoRef?.current ? monacoRef.current.editor : undefined;
+    monacoRef?.current && 'editor' in monacoRef.current ? monacoRef.current.editor : undefined;
 
   const getModel = useCallback(
     (obj) => {
@@ -980,24 +998,4 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-export const EditYAML_ = connect(stateToProps)(EditYAMLInner);
-
-export const EditYAML = connectToFlags<WithFlagsProps & EditYAMLProps>(FLAGS.CONSOLE_YAML_SAMPLE)(
-  ({ flags, ...props }) => {
-    const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
-      ? [
-          {
-            kind: referenceForModel(ConsoleYAMLSampleModel),
-            isList: true,
-            prop: 'yamlSamplesList',
-          },
-        ]
-      : [];
-
-    return (
-      <Firehose resources={resources}>
-        <EditYAML_ {...props} />
-      </Firehose>
-    );
-  },
-);
+export const EditYAML = connect(stateToProps)(EditYAMLInner);

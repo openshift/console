@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Edge, EdgeTerminalType } from '@patternfly/react-topology';
+import type { Edge } from '@patternfly/react-topology';
+import { EdgeTerminalType } from '@patternfly/react-topology';
 import BaseEdge from './BaseEdge';
 import './TrafficConnector.scss';
 

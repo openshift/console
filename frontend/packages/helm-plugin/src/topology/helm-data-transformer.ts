@@ -1,7 +1,8 @@
-import { Model, NodeModel } from '@patternfly/react-topology';
+import type { Model, NodeModel } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { SecretModel } from '@console/internal/models';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/shared';
 import {
   addToTopologyDataModel,
@@ -12,8 +13,8 @@ import {
   mergeGroups,
   WorkloadModelProps,
 } from '@console/topology/src/data-transforms/transform-utils';
-import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
-import { HelmReleaseResourcesMap } from '../types/helm-types';
+import type { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
+import type { HelmReleaseResourcesMap } from '../types/helm-types';
 import { fetchHelmReleases, loadHelmManifestResources } from '../utils/helm-utils';
 import {
   HELM_GROUP_HEIGHT,

@@ -14,7 +14,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { PVCStatusComponent } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeOptions,
@@ -30,7 +30,6 @@ import { ListDropdown } from '@console/internal/components/utils/list-dropdown';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import { history } from '@console/internal/components/utils/router';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import {
   PersistentVolumeClaimModel,
@@ -39,22 +38,24 @@ import {
   StorageClassModel,
   NamespaceModel,
 } from '@console/internal/models';
-import {
-  referenceForModel,
-  k8sCreate,
-  referenceFor,
+import type {
   VolumeSnapshotClassKind,
   StorageClassResourceKind,
   PersistentVolumeClaimKind,
   VolumeSnapshotKind,
-  apiVersionForModel,
   ListKind,
+} from '@console/internal/module/k8s';
+import {
+  referenceForModel,
+  k8sCreate,
+  referenceFor,
+  apiVersionForModel,
 } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getName, getNamespace, getAnnotations } from '@console/shared/src/selectors/common';
 import './_create-volume-snapshot.scss';
 
@@ -160,6 +161,8 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler<VolumeSnapshotKind>();
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [selectedPVCName, setSelectedPVCName] = useState(pvcName);
   const [pvcObj, setPVCObj] = useState<PersistentVolumeClaimKind | null>(null);
   const [snapshotName, setSnapshotName] = useState(`${pvcName || 'pvc'}-snapshot`);
@@ -241,7 +244,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
 
     handlePromise(k8sCreate(VolumeSnapshotModel, snapshotTemplate))
       .then((resource) => {
-        history.push(resourceObjPath(resource, referenceFor(resource)));
+        navigate(resourceObjPath(resource, referenceFor(resource)));
       })
       .catch(() => {});
   };
@@ -337,7 +340,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
                 >
                   {t('console-app~Create')}
                 </Button>
-                <Button type="button" variant="secondary" onClick={history.goBack}>
+                <Button type="button" variant="secondary" onClick={handleCancel}>
                   {t('console-app~Cancel')}
                 </Button>
               </ActionGroup>

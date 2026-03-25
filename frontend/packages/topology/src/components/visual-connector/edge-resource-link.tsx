@@ -1,4 +1,5 @@
-import { GraphElement, isEdge } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
+import { isEdge } from '@patternfly/react-topology';
 import { getResource } from '../../utils';
 
 export const getEdgeResourceLink = (element: GraphElement) => {

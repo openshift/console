@@ -1,8 +1,9 @@
 import { useMemo, useCallback } from 'react';
-import { NavExtension, isNavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { NavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { isNavExtension } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { usePerspectives } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 export const useNavExtensionsForPerspective = (
   perspective: string,

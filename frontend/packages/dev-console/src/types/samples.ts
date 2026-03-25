@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 
 /**
  * ConsoleSample is an extension to customizing OpenShift web console by adding samples.

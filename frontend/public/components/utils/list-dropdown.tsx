@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants';
 import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceName } from './resource-icon';
 import { flagPending } from '../../reducers/features';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
@@ -19,6 +19,7 @@ import {
   K8sResourceCommon,
   K8sModel,
   K8sResourceKind,
+  WatchK8sResource,
 } from '@console/dynamic-plugin-sdk/src';
 
 const getKey = (key, keyKind) => {
@@ -52,7 +53,11 @@ export interface ListDropdownProps {
   loadError?: boolean;
 }
 
-const ListDropdown_: FC<ListDropdownProps> = ({
+interface ListDropdownInternalProps extends Omit<ListDropdownProps, 'resources'> {
+  resources?: Record<string, ListDropdownResource>;
+}
+
+const ListDropdown_: FC<ListDropdownInternalProps> = ({
   desc,
   placeholder,
   loaded,
@@ -197,13 +202,45 @@ const ListDropdown_: FC<ListDropdownProps> = ({
 };
 
 export const ListDropdown: FC<ListDropdownProps> = (props) => {
-  const resources = _.map(props.resources, (resource) =>
-    _.assign({ isList: true, prop: resource.kind }, resource),
+  const watchResources = useMemo(() => {
+    if (!props.resources || props.resources.length === 0) {
+      return {};
+    }
+    return props.resources.reduce((acc, resource) => {
+      // Use prop as key if provided, otherwise fallback to kind (matches original Firehose behavior)
+      const key = resource.prop || resource.kind;
+      acc[key] = {
+        kind: resource.kind,
+        isList: true,
+        namespace: resource.namespace,
+        selector: resource.selector,
+        fieldSelector: resource.fieldSelector,
+        limit: resource.limit,
+        namespaced: resource.namespaced,
+        optional: resource.optional,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [props.resources]);
+
+  const watchedResources = useK8sWatchResources<Record<string, K8sResourceCommon[]>>(
+    watchResources,
   );
+
+  const loaded = useMemo(() => {
+    const resourceValues = Object.values(watchedResources);
+    if (resourceValues.length === 0) {
+      return true;
+    }
+    return resourceValues.every((r) => r.loaded || r.loadError);
+  }, [watchedResources]);
+
+  const loadError = useMemo(() => {
+    return Object.values(watchedResources).some((r) => r.loadError);
+  }, [watchedResources]);
+
   return (
-    <Firehose resources={resources}>
-      <ListDropdown_ {...props} />
-    </Firehose>
+    <ListDropdown_ {...props} resources={watchedResources} loaded={loaded} loadError={loadError} />
   );
 };
 
@@ -228,6 +265,11 @@ export const NsDropdown: FC<ListDropdownProps> = (props) => {
   const createProjectModal = useCreateProjectModal();
   const [selectedKey, setSelectedKey] = useState(props.selectedKey);
   const [model, canCreate] = useProjectOrNamespaceModel();
+
+  // Sync internal state with prop changes
+  useEffect(() => {
+    setSelectedKey(props.selectedKey);
+  }, [props.selectedKey]);
 
   const actionItems =
     model && canCreate

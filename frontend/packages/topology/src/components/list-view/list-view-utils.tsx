@@ -1,4 +1,5 @@
-import { isNode, Node, GraphElement } from '@patternfly/react-topology';
+import type { Node, GraphElement } from '@patternfly/react-topology';
+import { isNode } from '@patternfly/react-topology';
 import { labelForNodeKind } from '@console/shared';
 import { getResourceKind } from '../../utils/topology-utils';
 

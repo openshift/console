@@ -1,5 +1,5 @@
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { getSchemaAtPath } from '@console/shared';
 import {
@@ -13,7 +13,8 @@ import {
   COMMON_COMPATIBLE_CAPABILITIES,
   CAPABILITY_SORT_ORDER,
 } from './const';
-import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
+import type { Descriptor, SpecCapability, StatusCapability } from './types';
+import { CommonCapability } from './types';
 
 export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
   const propertySchema = getSchemaAtPath(schema, `${descriptorType}.${descriptor.path}`);

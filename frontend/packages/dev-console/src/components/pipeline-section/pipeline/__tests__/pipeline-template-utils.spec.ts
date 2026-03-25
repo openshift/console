@@ -1,5 +1,5 @@
-import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
-import { PipelineData } from '@console/dev-console/src/components/pipeline-section/import-types';
+import type { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
+import type { PipelineData } from '@console/dev-console/src/components/pipeline-section/import-types';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import {
   PIPELINE_RUNTIME_LABEL,
@@ -7,7 +7,7 @@ import {
   PIPELINE_STRATEGY_LABEL,
 } from '../../../../const';
 import { PipelineModel } from '../../../../models/pipelines';
-import { PipelineKind } from '../../../../types/pipeline';
+import type { PipelineKind } from '../../../../types/pipeline';
 import {
   createPipelineForImportFlow,
   isDockerPipeline,
@@ -19,6 +19,7 @@ import {
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),
   k8sUpdate: jest.fn(),
+  referenceForModel: jest.fn((model) => model?.kind || 'UnknownModel'),
 }));
 
 const getDefaultLabel = (name: string) => ({

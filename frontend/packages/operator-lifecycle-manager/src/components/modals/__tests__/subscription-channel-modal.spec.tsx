@@ -3,11 +3,13 @@ import * as _ from 'lodash';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testSubscription, testPackageManifest } from '../../../../mocks';
 import { SubscriptionModel } from '../../../models';
-import { SubscriptionKind, PackageManifestKind } from '../../../types';
-import {
-  SubscriptionChannelModal,
-  SubscriptionChannelModalProps,
-} from '../subscription-channel-modal';
+import type { SubscriptionKind, PackageManifestKind } from '../../../types';
+import type { SubscriptionChannelModalProps } from '../subscription-channel-modal';
+import { SubscriptionChannelModal } from '../subscription-channel-modal';
+
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
+}));
 
 describe('SubscriptionChannelModal', () => {
   let subscriptionChannelModalProps: SubscriptionChannelModalProps;
@@ -86,10 +88,8 @@ describe('SubscriptionChannelModal', () => {
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
     fireEvent.click(nightlyRadio);
 
-    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(k8sUpdate).toHaveBeenCalledTimes(1);
@@ -111,10 +111,8 @@ describe('SubscriptionChannelModal', () => {
     const nightlyRadio = screen.getByRole('radio', { name: /nightly/i });
     fireEvent.click(nightlyRadio);
 
-    const form = screen.getByRole('button', { name: 'Save' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(close).toHaveBeenCalledTimes(1);

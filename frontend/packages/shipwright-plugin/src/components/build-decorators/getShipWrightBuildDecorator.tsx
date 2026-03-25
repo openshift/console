@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import ShipwrightBuildDecorator from './ShipwrightBuildDecorator';
 
 export const getShipWrightBuildDecorator = (

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
+import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import {
-  QuickStartContextValues,
   getDefaultQuickStartState,
   QuickStartStatus,
   QuickStartTaskStatus,
@@ -12,7 +12,7 @@ import useInlineExecuteCommandShowdownExtension from '@console/shared/src/compon
 import MarkdownExecuteSnippet from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
 import useMultilineExecuteCommandShowdownExtension from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
 export { QuickStartContext, QuickStartContextProvider } from '@patternfly/quickstarts';
@@ -46,9 +46,9 @@ const ACTIVE_QUICK_START_ID_KEY = `${QUICK_START_KEY}.active`;
 const ALL_QUICK_START_STATE_KEY = `${QUICK_START_KEY}.allStates`;
 
 const useActiveQuickStartId = () =>
-  useUserSettings<string>(ACTIVE_QUICK_START_ID_KEY, getInitialState()?.activeQuickStartId ?? '');
+  useUserPreference<string>(ACTIVE_QUICK_START_ID_KEY, getInitialState()?.activeQuickStartId ?? '');
 const useAllQuickStartStates = () =>
-  useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
+  useUserPreference(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const { i18n } = useTranslation();

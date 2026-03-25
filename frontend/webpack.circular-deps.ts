@@ -1,7 +1,7 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import type * as webpack from 'webpack';
+import type { Configuration, Compiler } from 'webpack';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
@@ -76,7 +76,7 @@ const getCycleEntries = (cycles: DetectedCycle[]): string => {
 export class CircularDependencyPreset {
   constructor(private readonly options: PresetOptions) {}
 
-  apply(plugins: webpack.Configuration['plugins']) {
+  apply(plugins: Configuration['plugins']) {
     const cycles: DetectedCycle[] = [];
 
     plugins.push(
@@ -88,7 +88,7 @@ export class CircularDependencyPreset {
       }),
       {
         // Ad-hoc plugin to handle detected module cycle information
-        apply: (compiler: webpack.Compiler) => {
+        apply: (compiler: Compiler) => {
           compiler.hooks.emit.tap(HandleCyclesPluginName, (compilation) => {
             if (cycles.length === 0) {
               return;

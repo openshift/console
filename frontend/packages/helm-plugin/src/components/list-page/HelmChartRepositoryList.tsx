@@ -2,9 +2,9 @@ import type { FC } from 'react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDataView';
-import { TableProps } from '@console/internal/components/factory';
+import type { TableProps } from '@console/internal/components/factory';
 import { LoadingBox } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getDataViewRows } from './HelmChartRepositoryRow';
 import { useRepositoriesColumns } from './RepositoriesHeader';
 

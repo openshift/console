@@ -1,5 +1,5 @@
 import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { API_GROUP, API_VERSION_LATEST } from './const';
 
 export const ClusterBuildStrategyModelV1Alpha1: K8sModel = {

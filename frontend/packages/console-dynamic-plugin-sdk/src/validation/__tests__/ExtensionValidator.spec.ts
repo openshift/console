@@ -1,19 +1,17 @@
-import type * as webpack from 'webpack';
+import type { Compilation, Module } from 'webpack';
 import type { Extension } from '../../types';
 import { collectCodeRefData, findWebpackModules, ExtensionValidator } from '../ExtensionValidator';
-import { ValidationResult } from '../ValidationResult';
+import type { ValidationResult } from '../ValidationResult';
 
-const getWebpackCompilationMocks = (
-  webpackModules: {}[],
-): [webpack.Compilation, jest.Mock<any>] => {
+const getWebpackCompilationMocks = (webpackModules: {}[]): [Compilation, jest.Mock<any>] => {
   const getProvidedExports = jest.fn();
 
-  const compilation = {} as webpack.Compilation;
+  const compilation = {} as Compilation;
   compilation.modules = new Set();
   compilation.moduleGraph = { getProvidedExports } as any;
 
   webpackModules.forEach((m) => {
-    compilation.modules.add(m as webpack.Module);
+    compilation.modules.add(m as Module);
   });
 
   return [compilation, getProvidedExports];

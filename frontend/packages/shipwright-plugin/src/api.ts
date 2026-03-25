@@ -1,7 +1,7 @@
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL, BUILDRUN_TO_RESOURCE_MAP_LABEL } from './const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from './models';
-import { Build, BuildRun } from './types';
+import type { Build, BuildRun } from './types';
 import { isV1Alpha1Resource } from './utils';
 
 /** Create a new BuildRun for a given Build to start it. */

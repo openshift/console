@@ -1,7 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import { Alert, AlertGroup, AlertActionCloseButton, AlertActionLink } from '@patternfly/react-core';
-import ToastContext, { ToastOptions, ToastContextType } from './ToastContext';
+import type { ToastOptions, ToastContextType } from './ToastContext';
+import ToastContext from './ToastContext';
 
 interface ToastProviderProps {
   children?: ReactNode;

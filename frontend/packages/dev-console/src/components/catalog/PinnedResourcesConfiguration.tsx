@@ -3,38 +3,42 @@ import { useState, useMemo, memo, useEffect } from 'react';
 import { FormHelperText, FormSection, Icon, Tooltip } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
+import { Set as ImmutableSet } from 'immutable';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import {
+import type {
   DiscoveryResources,
   ExtensionK8sModel,
   K8sKind,
   K8sModel,
-  ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { ResourceIcon } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  K8sResourceKind,
   modelFor,
   referenceForGroupVersionKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
-import { YellowExclamationTriangleIcon, useTelemetry } from '@console/shared';
+import type { RootState } from '@console/internal/redux';
+import { YellowExclamationTriangleIcon } from '@console/shared';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
   patchConsoleOperatorConfig,
 } from '@console/shared/src/components/cluster-configuration';
-import {
+import type {
   Perspective,
   PerspectivePinnedResource,
+} from '@console/shared/src/hooks/usePerspectives';
+import {
   PerspectiveVisibilityState,
   usePerspectives,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import './PinnedResourcesConfiguration.scss';
 
 // skip duplicate resources.
@@ -122,7 +126,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
 
   type ItemProps = { title?: string; model?: K8sKind };
 
-  const Item: FC<ItemProps> = memo(({ model }) => (
+  const Item = memo<ItemProps>(({ model }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-item">
         <span className="co-resource-icon--fixed-width">
@@ -145,7 +149,7 @@ const PinnedResourcesConfiguration: FC<PinnedResourcesConfigurationProps> = ({
     </div>
   ));
 
-  const InvalidItem: FC<ItemProps> = memo(({ title }) => (
+  const InvalidItem = memo<ItemProps>(({ title }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <span className="co-resource-icon--fixed-width">
         <Tooltip position="top" content={t('devconsole~Resource not found')}>

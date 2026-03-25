@@ -12,7 +12,7 @@ import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-ve
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { useTranslation } from 'react-i18next';
 import InputField from '../InputField';
-import {
+import type {
   TextColumnItemProps,
   TextColumnFieldChildParameterProps,
   MergeNewValueUtil,

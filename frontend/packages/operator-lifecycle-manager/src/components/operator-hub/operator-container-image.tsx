@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useCurrentChannel } from '../../hooks/useCurrentChannel';
-import { PackageManifestKind } from '../../types';
+import type { PackageManifestKind } from '../../types';
 
 export const OperatorContainerImage: FC<OperatorContainerImageProps> = ({ packageManifest }) => {
   const currentChannel = useCurrentChannel(packageManifest);

@@ -1,4 +1,4 @@
-import { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
+import type { Action, ActionGroup } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 export const mockActions: Action[] = [
@@ -63,7 +63,6 @@ export const mockActionGroups: LoadedExtension<ActionGroup>[] = [
       required: [],
       disallowed: [],
     },
-    pluginID: '@console/helm-plugin',
     pluginName: '@console/helm-plugin',
     uid: '@console/helm-plugin[15]',
   },
@@ -78,7 +77,6 @@ export const mockActionGroups: LoadedExtension<ActionGroup>[] = [
       required: [],
       disallowed: [],
     },
-    pluginID: '@console/helm-plugin',
     pluginName: '@console/helm-plugin',
     uid: '@console/helm-plugin[16]',
   },
@@ -93,7 +91,6 @@ export const mockActionGroups: LoadedExtension<ActionGroup>[] = [
       required: [],
       disallowed: [],
     },
-    pluginID: '@console/helm-plugin',
     pluginName: '@console/helm-plugin',
     uid: '@console/helm-plugin[17]',
   },

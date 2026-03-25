@@ -1,7 +1,8 @@
-import dynamicModuleImportLoader, {
+import type {
   DynamicModuleImportLoader,
   DynamicModuleImportLoaderOptions,
 } from '../dynamic-module-import-loader';
+import dynamicModuleImportLoader from '../dynamic-module-import-loader';
 
 type LoaderThisType = ThisParameterType<DynamicModuleImportLoader>;
 

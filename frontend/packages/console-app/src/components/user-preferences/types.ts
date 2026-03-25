@@ -1,9 +1,9 @@
-import {
+import type {
   ResolvedExtension,
   UserPreferenceGroup,
   UserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 
 export type ResolvedUserPreferenceGroup = UserPreferenceGroup['properties'];
 

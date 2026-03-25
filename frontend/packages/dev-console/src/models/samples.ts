@@ -1,4 +1,4 @@
-import { K8sModel } from '@console/internal/module/k8s';
+import type { K8sModel } from '@console/internal/module/k8s';
 
 export const ConsoleSampleModel: K8sModel = {
   kind: 'ConsoleSample',

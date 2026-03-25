@@ -1,4 +1,5 @@
-import { referenceForGroupVersionKind, WatchK8sResources } from '@console/internal/module/k8s';
+import type { WatchK8sResources } from '@console/internal/module/k8s';
+import { referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
 
 export const getBindableServiceResources = (namespace: string): WatchK8sResources<any> => {

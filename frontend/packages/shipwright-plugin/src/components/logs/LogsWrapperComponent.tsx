@@ -1,15 +1,15 @@
 import type { FC } from 'react';
 import { useRef, useState, useCallback } from 'react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
-import { CompressIcon, DownloadIcon, ExpandIcon } from '@patternfly/react-icons/dist/js/icons';
+import { CompressIcon, DownloadIcon, ExpandIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PodKind, WatchK8sResource } from '@console/internal/module/k8s';
+import type { PodKind, WatchK8sResource } from '@console/internal/module/k8s';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { TaskRunKind } from '../../types';
+import type { TaskRunKind } from '../../types';
 import { MultiStreamLogs } from './MultiStreamLogs';
 import { TektonTaskRunLog } from './TektonTaskRunLog';
 
@@ -43,7 +43,9 @@ const LogsWrapperComponent: FC<LogsWrapperComponentProps> = ({
   }
 
   const downloadLogs = () => {
-    if (!currentLogGetterRef.current) return;
+    if (!currentLogGetterRef.current) {
+      return;
+    }
     const logString = currentLogGetterRef.current();
     const blob = new Blob([logString], {
       type: 'text/plain;charset=utf-8',

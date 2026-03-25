@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { useResolvedExtensions, AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useAddActionExtensions } from '../useAddActionExtensions';
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
@@ -19,7 +20,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 1',
       href: '/action1',
     },
-    pluginID: 'plugin1',
     pluginName: 'Plugin 1',
     uid: '1234-1',
   };
@@ -31,7 +31,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 2',
       href: '/action2',
     },
-    pluginID: 'plugin2',
     pluginName: 'Plugin 2',
     uid: '1234-2',
   };
@@ -43,7 +42,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 3',
       href: '/action3',
     },
-    pluginID: 'plugin3',
     pluginName: 'Plugin 3',
     uid: '1234-3',
   };
@@ -56,7 +54,6 @@ describe('useAddActionExtensions', () => {
       description: 'A description for action 4',
       callback: jest.fn(),
     },
-    pluginID: 'plugin3',
     pluginName: 'Plugin 3',
     uid: '1234-3',
   };

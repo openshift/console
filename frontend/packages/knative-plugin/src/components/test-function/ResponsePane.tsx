@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
-import { FormikProps, FormikValues } from 'formik/dist/types';
+import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse, Loading } from '@console/internal/components/utils';
 import { CodeEditorField } from '@console/shared/src/components';

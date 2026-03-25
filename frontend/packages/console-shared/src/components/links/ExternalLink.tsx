@@ -1,9 +1,7 @@
-import type { ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
-  ExternalLinkButton,
-  ExternalLinkButtonProps,
-} from '@console/shared/src/components/links/ExternalLinkButton';
+import type { ExternalLinkButtonProps } from '@console/shared/src/components/links/ExternalLinkButton';
+import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 
 type ExternalLinkProps = ExternalLinkButtonProps & {
   /** The URL to link to */
@@ -26,7 +24,7 @@ type ExternalLinkProps = ExternalLinkButtonProps & {
  * This component overrides the default PatternFly `display` value. If that's
  * not what you want, use `ExternalLinkButton`.
  */
-export const ExternalLink = ({
+export const ExternalLink: FC<ExternalLinkProps> = ({
   children,
   href,
   text,
@@ -35,7 +33,7 @@ export const ExternalLink = ({
   displayBlock = false,
   className,
   ...props
-}: ExternalLinkProps) => (
+}) => (
   <ExternalLinkButton
     className={css(
       // We specfically need to set display block instead setting isInline={false}

@@ -1,7 +1,7 @@
 import { BuildStrategyType } from '@console/dev-console/src/components/buildconfig/types';
 import { GitProvider } from '@console/git-service/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { BuildFormikValues } from './types';
+import type { BuildFormikValues } from './types';
 
 export const getInitialBuildFormikValues = (namespace?: string): BuildFormikValues => {
   return {

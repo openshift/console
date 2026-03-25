@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
@@ -8,7 +8,8 @@ import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import BuilderSection from './builder/BuilderSection';
 import GitSection from './git/GitSection';
-import { BuildOptions, GitImportFormData, SourceToImageFormProps } from './import-types';
+import type { GitImportFormData, SourceToImageFormProps } from './import-types';
+import { BuildOptions } from './import-types';
 import NamespaceSection from './NamespaceSection';
 import { BuildSection } from './section/build-section/BuildSection';
 import { DeploySection } from './section/deploy-section/DeploySection';

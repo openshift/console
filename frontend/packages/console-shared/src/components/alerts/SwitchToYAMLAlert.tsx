@@ -9,7 +9,7 @@ const SwitchToYAMLAlert: FC<{ onClose?: () => void }> = ({ onClose }) => {
       actionClose={onClose && <AlertActionCloseButton onClose={onClose} />}
       isInline
       title={t(
-        'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+        'console-shared~Some fields might not be displayed in this form. Select YAML view to edit all fields.',
       )}
       variant="info"
       data-test="info-alert"

@@ -1,21 +1,25 @@
 import type { FC } from 'react';
 import { useMemo, useEffect } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy, getGitService } from '@console/git-service/src';
 import { LoadingBox } from '@console/internal/components/utils';
 import { getStrategyType } from '@console/internal/components/utils/build-utils';
-import { EnvironmentField, useDebounceCallback, useFlag } from '@console/shared/src';
+import { EnvironmentField } from '@console/shared/src';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../../../const';
 import {
   isPreferredStrategyAvailable,
   useClusterBuildStrategy,
 } from '../../../../utils/shipwright-build-hook';
-import { AppResources } from '../../../edit-application/edit-application-types';
+import type { AppResources } from '../../../edit-application/edit-application-types';
 import BuildConfigSection from '../../advanced/BuildConfigSection';
 import { useBuilderImageEnvironments } from '../../builder/builderImageHooks';
-import { BuildOptions, GitImportFormData } from '../../import-types';
+import type { GitImportFormData } from '../../import-types';
+import { BuildOptions } from '../../import-types';
 import FormSection from '../FormSection';
 import { BuildOption } from './BuildOptions';
 import { BuildStrategySelector } from './BuildStrategySelector';

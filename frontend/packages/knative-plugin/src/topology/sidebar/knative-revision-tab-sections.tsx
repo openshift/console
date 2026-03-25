@@ -1,5 +1,5 @@
-import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import ConfigurationsOverviewList from '../../components/overview/ConfigurationsOverviewList';

@@ -1,10 +1,10 @@
-import { K8sModel } from '../../api/common-types';
-import {
+import type { K8sModel } from '../../api/common-types';
+import type {
   GetAPIVersionForModel,
   GetGroupVersionKindForResource,
   GetGroupVersionKindForModel,
 } from '../../api/k8s-types';
-import { K8sGroupVersionKind, K8sResourceKindReference } from '../../extensions/console-types';
+import type { K8sGroupVersionKind, K8sResourceKindReference } from '../../extensions/console-types';
 
 /**
  * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind

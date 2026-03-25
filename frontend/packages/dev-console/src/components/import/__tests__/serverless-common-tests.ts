@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash';
-import { GitImportFormData, DeployImageFormData, Resources } from '../import-types';
+import type { GitImportFormData, DeployImageFormData } from '../import-types';
+import { Resources } from '../import-types';
 
 export const serverlessCommonTests = (
   mockFormData: GitImportFormData | DeployImageFormData,

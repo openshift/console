@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { Badge } from '@patternfly/react-core';
-import { K8sKind, kindToAbbr } from '@console/internal/module/k8s';
+import type { K8sKind } from '@console/internal/module/k8s';
+import { kindToAbbr } from '@console/internal/module/k8s';
 import './EmptyStateResourceBadge.scss';
 
 type EmptyStateResourceBadgeProps = {

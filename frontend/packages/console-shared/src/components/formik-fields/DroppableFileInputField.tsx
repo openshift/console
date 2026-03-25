@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { FormikValues, useField, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { DroppableFileInput } from '@console/internal/components/utils/file-input';
-import { DroppableFileInputFieldProps } from './field-types';
+import type { DroppableFileInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const DroppableFileInputField: FC<DroppableFileInputFieldProps> = ({

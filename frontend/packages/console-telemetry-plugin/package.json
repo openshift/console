@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "An OpenShift Console plugin for capturing events in segment.",
   "private": true,
-  "scripts": {},
   "consolePlugin": {
     "displayName": "Telemetry Plugin",
     "description": "An OpenShift Console plugin for capturing events in segment.",

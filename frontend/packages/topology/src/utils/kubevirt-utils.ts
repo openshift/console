@@ -1,6 +1,6 @@
-import { PodKind } from '@console/internal/module/k8s';
+import type { PodKind } from '@console/internal/module/k8s';
 import { getNamespace, getOwnerReferences, getUID } from '@console/shared';
-import { VMIKind } from './kubevirt-types';
+import type { VMIKind } from './kubevirt-types';
 
 const isPodReady = (pod: PodKind): boolean =>
   pod?.status?.phase === 'Running' && pod?.status?.containerStatuses?.every((s) => s.ready);

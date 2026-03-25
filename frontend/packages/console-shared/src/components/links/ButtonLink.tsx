@@ -1,6 +1,7 @@
 import type { FC } from 'react';
-import { Button, ButtonProps } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import type { ButtonProps } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { useNavigate } from 'react-router';
 
 type ButtonLinkProps = Omit<ButtonProps, 'component' | 'href'> & {
   /** Equivalent to the `to` prop of the `react-router` `Link` component. */

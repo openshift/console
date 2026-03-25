@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GetModifyApplicationAction } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { GetModifyApplicationAction } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useEditApplicationModalLauncher } from '../components/modals/EditApplicationModal';
 
 export const useGetModifyApplicationAction: GetModifyApplicationAction = (

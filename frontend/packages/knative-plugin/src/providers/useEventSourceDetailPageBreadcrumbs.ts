@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { K8sKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import type { K8sKind } from '@console/internal/module/k8s';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { CamelKameletBindingModel } from '../models';
 import { getEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
 import { serverlessTab } from '../utils/serverless-tab-utils';

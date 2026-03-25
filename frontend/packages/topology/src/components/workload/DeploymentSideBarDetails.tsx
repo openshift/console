@@ -4,9 +4,9 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { DeploymentDetailsList } from '@console/internal/components/deployment';
 import {
   LoadingInline,
@@ -14,7 +14,7 @@ import {
   WorkloadPausedAlert,
 } from '@console/internal/components/utils';
 import { DeploymentModel } from '@console/internal/models';
-import { DeploymentKind } from '@console/internal/module/k8s';
+import type { DeploymentKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { getResource } from '../../utils';
 

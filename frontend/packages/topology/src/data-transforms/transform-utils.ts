@@ -1,4 +1,4 @@
-import { Model, NodeModel } from '@patternfly/react-topology';
+import type { Model, NodeModel } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import {
@@ -7,11 +7,11 @@ import {
   RUNTIME_ICON_LABEL,
   RUNTIME_LABEL,
 } from '@console/dev-console/src/const';
-import {
+import type {
   WatchK8sResources,
   WatchK8sResults,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import {
+import type {
   GetTopologyEdgeItems,
   GetTopologyGroupItems,
   GetTopologyNodeItem,
@@ -20,12 +20,12 @@ import {
   OverviewItem,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { Alerts } from '@console/internal/components/monitoring/types';
+import type { Alerts } from '@console/internal/components/monitoring/types';
 import { BuildConfigModel, HorizontalPodAutoscalerModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   apiVersionForReference,
   isGroupVersionKind,
-  K8sResourceKind,
   kindForReference,
   referenceFor,
 } from '@console/internal/module/k8s';
@@ -46,13 +46,14 @@ import {
   GROUP_HEIGHT,
   GROUP_PADDING,
 } from '../const';
-import {
+import type {
   TopologyDataObject,
   TopologyDataModelDepicted,
   OdcNodeModel,
   TopologyResourcesObject,
 } from '../topology-types';
-import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
+import type { ConnectsToData } from '../utils/connector-utils';
+import { edgesFromAnnotations } from '../utils/connector-utils';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
 
 export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
@@ -370,7 +371,10 @@ export const getWorkloadResources: GetWorkloadResources = (
   );
 };
 
-export const getBaseWatchedResources = (namespace: string): WatchK8sResources<any> => {
+export const getBaseWatchedResources = (namespace?: string): WatchK8sResources<any> => {
+  if (!namespace) {
+    return {};
+  }
   return {
     deploymentConfigs: {
       isList: true,

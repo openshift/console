@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { redirect } from 'react-router-dom-v5-compat';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { redirect } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useK8sModel, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { BuildConfig } from '@console/internal/components/build-config';
+import type { BuildConfig } from '@console/internal/components/build-config';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { BuildConfigModel } from '@console/internal/models';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { cloneBuild, startBuild } from '@console/internal/module/k8s/builds';
 import { BuildConfigActionCreator } from '../hooks/types';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';

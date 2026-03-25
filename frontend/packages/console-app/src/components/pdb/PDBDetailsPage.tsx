@@ -7,11 +7,12 @@ import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
-import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 
 const PodDisruptionBudgetDetails: FC<PodDisruptionBudgetDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();

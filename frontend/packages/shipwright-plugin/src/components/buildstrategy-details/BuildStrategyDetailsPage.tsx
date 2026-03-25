@@ -1,7 +1,9 @@
 import type { FC } from 'react';
 import { DetailsForKind } from '@console/internal/components/default-resource';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { Page, navFactory } from '@console/internal/components/utils';
+import type { DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPage } from '@console/internal/components/factory';
+import type { Page } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
 import { useShipwrightBreadcrumbsFor } from '../../utils';
 
 const BuildStrategyPage: FC<DetailsPageProps> = (props) => {

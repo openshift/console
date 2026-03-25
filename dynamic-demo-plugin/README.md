@@ -3,8 +3,12 @@
 This project emulates a standalone repository hosting a sample
 [dynamic plugin](/frontend/packages/console-dynamic-plugin-sdk/README.md) for OpenShift Console.
 
-It is meant to serve as a reference for Console plugin developers and for testing dynamic plugin
-capabilities via end-to-end tests.
+The purpose of the demo plugin is to exercise various Console plugin APIs which allows Console
+developers to detect plugin related issues through end-to-end or manual testing.
+
+If you're new to dynamic plugins, we suggest to clone the [Console plugin template][console-plugin-template]
+repo and follow its instructions on setting up a local plugin development environment. Refer to
+Console [plugins README][console-plugins-readme] for details on plugin development.
 
 ## Local development
 
@@ -242,3 +246,6 @@ add the message from `console-extensions.json` to your message catalog.
 
 Running `yarn i18n` updates the JSON files in the `locales` folder of the
 dynamic plugin when adding or changing messages.
+
+[console-plugin-template]: https://github.com/openshift/console-plugin-template
+[console-plugins-readme]: ../frontend/packages/console-dynamic-plugin-sdk/README.md

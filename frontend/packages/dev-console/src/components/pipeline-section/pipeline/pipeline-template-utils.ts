@@ -1,9 +1,9 @@
-import { FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { compare, gte, parse, SemVer } from 'semver';
+import type { SemVer } from 'semver';
+import { compare, gte, parse } from 'semver';
 import { k8sGet, k8sList, k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getActiveUserName } from '@console/internal/actions/ui';
-import { errorModal } from '@console/internal/components/modals/error-modal';
 import {
   ClusterServiceVersionModel,
   RouteModel,
@@ -12,22 +12,15 @@ import {
   ServiceModel,
   StorageClassModel,
 } from '@console/internal/models';
-import {
-  apiVersionForModel,
-  k8sCreate,
-  K8sResourceCommon,
-  K8sResourceKind,
-  k8sUpdate,
-  RouteKind,
-} from '@console/internal/module/k8s';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionPhase,
-} from '@console/operator-lifecycle-manager/src/types';
-import {
+import type { K8sResourceCommon, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
+import { apiVersionForModel, k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
+import { ClusterServiceVersionPhase } from '@console/operator-lifecycle-manager/src/types';
+import type {
   NameValueFromPair,
   NameValuePair,
 } from '@console/shared/src/components/formik-fields/field-types';
+import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { TektonResourceLabel } from '@console/shipwright-plugin/src/components/logs/TektonTaskRunLog';
 import {
@@ -45,8 +38,8 @@ import {
   EventListenerModel,
   TriggerTemplateModel,
 } from '../../../models/pipelines';
-import { TektonParam, TektonResource, TektonWorkspace } from '../../../types/coreTekton';
-import {
+import type { TektonParam, TektonResource, TektonWorkspace } from '../../../types/coreTekton';
+import type {
   PipelineKind,
   PipelineRunEmbeddedResourceParam,
   PipelineRunKind,
@@ -55,11 +48,11 @@ import {
   VolumeTypeClaim,
   VolumeTypeConfigMaps,
   VolumeTypePVC,
-  VolumeTypes,
   VolumeTypeSecret,
 } from '../../../types/pipeline';
-import { PipelineData } from '../import-types';
-import {
+import { VolumeTypes } from '../../../types/pipeline';
+import type { PipelineData } from '../import-types';
+import type {
   TriggerBindingKind,
   TriggerTemplateKind,
   TriggerTemplateKindParam,
@@ -928,7 +921,7 @@ export const exposeRoute = async (elName: string, ns: string, iteration = 0) => 
     );
     await k8sCreate(RouteModel, route, { ns });
   } catch (e) {
-    errorModal({
+    launchErrorModal({
       title: 'Error Exposing Route',
       error: e.message || 'Unknown error exposing the Webhook route',
     });

@@ -1,26 +1,24 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
-import { ModalCallback } from '@console/internal/components/modals/types';
+import type { ModalCallback } from '@console/internal/components/modals/types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { HelmChartRepositoryModel } from '../../../models';
-import {
-  HelmChartMetaData,
-  HelmChart,
-  HelmActionType,
-  HelmChartEntries,
-} from '../../../types/helm-types';
+import type { HelmChartMetaData, HelmChart, HelmChartEntries } from '../../../types/helm-types';
+import { HelmActionType } from '../../../types/helm-types';
 import {
   getChartURL,
   getChartVersions,
@@ -43,7 +41,7 @@ export type HelmChartVersionDropdownProps = {
   providerName?: string;
 };
 
-const HelmChartVersionDropdown: FunctionComponent<HelmChartVersionDropdownProps> = ({
+const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   chartVersion,
   chartName,
   helmAction,

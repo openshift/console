@@ -1,4 +1,4 @@
-import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
+import type { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
 import { taskRunSnippetMessage } from '../log-snippet-utils';
 import { LogSnippetTaskData } from './log-snippet-test-data';
 

@@ -4,16 +4,18 @@ import { Pagination } from '@patternfly/react-core';
 import {
   DataView,
   DataViewTable,
-  DataViewTd,
-  DataViewTh,
   DataViewToolbar,
   useDataViewPagination,
 } from '@patternfly/react-data-view';
+import type {
+  DataViewTd,
+  DataViewTh,
+} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import { InnerScrollContainer, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils';
-import { HelmRelease } from '../../../types/helm-types';
+import type { HelmRelease } from '../../../types/helm-types';
 import {
   useRevisionListColumns,
   getColumnIndexById,

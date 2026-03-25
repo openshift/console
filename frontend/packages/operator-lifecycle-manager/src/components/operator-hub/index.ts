@@ -1,11 +1,11 @@
-import {
+import type {
   InfrastructureKind,
   CloudCredentialKind,
   AuthenticationKind,
   K8sResourceKind,
   ObjectMetadata,
 } from '@console/internal/module/k8s';
-import { PackageManifestKind, SubscriptionKind } from '../../types';
+import type { PackageManifestKind, SubscriptionKind } from '../../types';
 
 export enum InstalledState {
   Installed = 'Installed',

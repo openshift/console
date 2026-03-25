@@ -1,4 +1,5 @@
-import { useState, MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   AlertVariant,
@@ -9,12 +10,12 @@ import {
   ModalHeader,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ListInput } from '@console/internal/components/utils/list-input';
 import { GroupModel } from '@console/internal/models';
-import { GroupKind } from '@console/internal/module/k8s';
-import { ModalComponentProps } from 'public/components/factory/modal';
+import type { GroupKind } from '@console/internal/module/k8s';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 type AddGroupUsersModalProps = {
   group: GroupKind;
@@ -90,9 +91,6 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
         )}
       </ModalBody>
       <ModalFooter>
-        <Button variant="secondary" onClick={closeOverlay} type="button">
-          {t('public~Cancel')}
-        </Button>
         <Button
           type="submit"
           variant="primary"
@@ -101,6 +99,9 @@ const AddGroupUsersModal: OverlayComponent<AddGroupUsersModalProps> = ({ group, 
           onClick={onSubmit}
         >
           {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={closeOverlay} type="button">
+          {t('public~Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

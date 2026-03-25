@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { GitProvider } from '@console/git-service';
-import { RepositoryFormValues } from '../../import/import-types';
+import type { RepositoryFormValues } from '../../import/import-types';
 
 type PermissionsSectionProps = {
   formContextField?: string;

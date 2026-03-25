@@ -1,24 +1,17 @@
-import { Component as ReactComponent, ComponentClass, ComponentType, FC } from 'react';
+import type { ComponentClass, ComponentType, FC } from 'react';
+import { Component as ReactComponent } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import {
-  K8sResourceKind,
-  GroupVersionKind,
-  referenceForModel,
-  referenceForGroupVersionKind,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
+import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
-import {
-  OperatorGroupKind,
-  SubscriptionKind,
-  InstallModeType,
-  PackageManifestKind,
-} from '../types';
+import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';
+import { InstallModeType } from '../types';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.targetNamespaces']; // FIXME magic string

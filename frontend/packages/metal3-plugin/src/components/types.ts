@@ -1,10 +1,10 @@
-import {
+import type {
   K8sResourceKind,
   MachineKind,
   MachineSetKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
+import type { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
 
 export type StatusProps = {
   status: string;

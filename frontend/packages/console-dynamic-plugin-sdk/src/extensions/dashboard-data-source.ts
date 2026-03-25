@@ -1,4 +1,4 @@
-import { Extension, CodeRef } from '../types';
+import type { Extension, CodeRef } from '../types';
 
 export type DataSource = Extension<
   'console.dashboards/datasource',

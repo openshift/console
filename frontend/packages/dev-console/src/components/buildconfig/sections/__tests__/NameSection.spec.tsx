@@ -1,8 +1,10 @@
 import type { FC, ReactNode } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { Formik, FormikConfig } from 'formik';
-import userEvent from '../../__tests__/user-event';
-import NameSection, { NameSectionFormData } from '../NameSection';
+import userEvent from '@testing-library/user-event';
+import type { FormikConfig } from 'formik';
+import { Formik } from 'formik';
+import type { NameSectionFormData } from '../NameSection';
+import NameSection from '../NameSection';
 
 interface WrapperProps extends FormikConfig<NameSectionFormData> {
   children?: ReactNode;
@@ -84,6 +86,7 @@ describe('NameSection', () => {
   });
 
   it('should update formik data', async () => {
+    const user = userEvent.setup();
     const initialValues: NameSectionFormData = { formData: { name: '' } };
     const onSubmit = jest.fn();
 
@@ -98,7 +101,7 @@ describe('NameSection', () => {
     expect(nameInput.value).toEqual('');
     expect(nameInput.disabled).toBeFalsy();
 
-    userEvent.type(nameInput, 'changed name');
+    await user.type(nameInput, 'changed name');
 
     await waitFor(() => {
       expect(screen.getAllByRole('textbox')[0].getAttribute('value')).toEqual('changed name');
@@ -109,12 +112,12 @@ describe('NameSection', () => {
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
 
     const expectedFormData: NameSectionFormData = { formData: { name: 'changed name' } };
     expect(onSubmit).toHaveBeenLastCalledWith(expectedFormData, expect.anything());
-  });
+  }, 30000); // userEvent.type is slow
 });

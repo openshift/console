@@ -1,11 +1,8 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import {
-  DetailsResourceLink,
-  isDetailsResourceLink,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsResourceLink } from '@console/dynamic-plugin-sdk';
+import { isDetailsResourceLink, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 
 export const useDetailsResourceLink = (element: GraphElement): ReactNode => {
   const [resurceLinkExtension, resolved] = useResolvedExtensions<DetailsResourceLink>(

@@ -1,10 +1,11 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 import * as _ from 'lodash';
-import { K8sModel } from '../../../api/common-types';
+import type { K8sModel } from '../../../api/common-types';
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { getNamespacedResources, allModels } from '../../../utils/k8s/k8s-utils';
-import { K8sState } from '../../redux-types';
-import { ActionType, K8sAction } from '../actions/k8s';
+import type { K8sState } from '../../redux-types';
+import type { K8sAction } from '../actions/k8s';
+import { ActionType } from '../actions/k8s';
 import { getK8sDataById } from './k8sSelector';
 
 const getQN: (obj) => string = (obj) => {

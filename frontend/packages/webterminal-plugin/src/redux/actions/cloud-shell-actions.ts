@@ -1,4 +1,5 @@
-import { action, ActionType } from 'typesafe-actions';
+import type { ActionType } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
 
 export enum Actions {
   SetCloudShellExpanded = 'setCloudShellExpanded',

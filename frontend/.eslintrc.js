@@ -40,7 +40,6 @@ module.exports = {
     'no-multiple-empty-lines': [2, { max: 2, maxEOF: 0 }],
     eqeqeq: [2, 'allow-null'],
     'guard-for-in': 2,
-    'import/no-unresolved': ['error'],
     'import/no-duplicates': ['error'],
     'max-nested-callbacks': [1, 4],
     'no-alert': 2,

@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { getMachineNode } from '@console/shared/src/selectors/machine';
 import { findNodeMaintenance, getHostMachine } from '../../../selectors';
-import { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import DetailsCard from './DetailsCard';
 import EventsCard from './EventsCard';

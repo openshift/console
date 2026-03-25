@@ -1,4 +1,4 @@
-import { K8sVerb } from './common-types';
+import type { K8sVerb } from './common-types';
 
 export const K8S_VERB_CREATE: K8sVerb = 'create';
 export const K8S_VERB_DELETE: K8sVerb = 'delete';

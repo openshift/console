@@ -1,23 +1,23 @@
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import * as UIActions from '@console/internal/actions/ui';
-import { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants';
 
 export const useUtilizationDuration: UseUtilizationDuration = (
   adjustDuration?: (duration: number) => number,
 ) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const duration =
-    useSelector<RootState, number>(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ??
+    useConsoleSelector<number>(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ??
     DEFAULT_DURATION;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const endDate = useSelector<RootState, Date>(
+  const endDate = useConsoleSelector<Date>(
     ({ UI }) => UI.getIn(['utilizationDuration', 'endDate']) ?? new Date(),
   );
   const selectedKey =
-    useSelector<RootState, string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
+    useConsoleSelector<string>(({ UI }) => UI.getIn(['utilizationDuration', 'selectedKey'])) ??
     DEFAULT_DURATION_KEY;
   const startDate = new Date(endDate.getTime() - duration);
   const updateEndDate = useCallback(

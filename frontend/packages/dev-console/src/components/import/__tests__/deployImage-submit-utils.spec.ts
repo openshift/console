@@ -14,7 +14,8 @@ import {
   mockImageStreamData,
 } from '../__mocks__/deployImage-validation-mock';
 import * as submitUtils from '../deployImage-submit-utils';
-import { DeployImageFormData, Resources } from '../import-types';
+import type { DeployImageFormData } from '../import-types';
+import { Resources } from '../import-types';
 import {
   dataWithoutPorts,
   dataWithPorts,

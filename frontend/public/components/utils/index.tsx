@@ -18,7 +18,6 @@ export * from './button-bar';
 export * from './number-spinner';
 export * from './cloud-provider';
 export * from './documentation';
-export * from './router';
 export * from './router-hooks';
 export * from './link';
 export * from './alerts';

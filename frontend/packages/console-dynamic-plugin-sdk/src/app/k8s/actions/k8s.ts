@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
-import { ActionType as Action, action } from 'typesafe-actions';
-import { DiscoveryResources, K8sModel } from '../../../api/common-types';
-import { FilterValue, K8sResourceKind } from '../../../extensions/console-types';
+import type { ActionType as Action } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { DiscoveryResources, K8sModel } from '../../../api/common-types';
+import type { FilterValue, K8sResourceKind } from '../../../extensions/console-types';
 import { getReferenceForModel } from '../../../utils/k8s/k8s-ref';
 import { k8sList, k8sGet } from '../../../utils/k8s/k8s-resource';
 import { k8sWatch } from '../../../utils/k8s/k8s-utils';
-import { WSFactory } from '../../../utils/k8s/ws-factory';
+import type { WSFactory } from '../../../utils/k8s/ws-factory';
 import { getImpersonate } from '../../core/reducers/coreSelectors';
 
 export enum ActionType {

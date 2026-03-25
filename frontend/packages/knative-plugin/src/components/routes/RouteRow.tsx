@@ -1,13 +1,14 @@
 import type { FC } from 'react';
 import { Fragment } from 'react';
 import { css } from '@patternfly/react-styles';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { RevisionModel, RouteModel } from '../../models';
-import { RouteKind } from '../../types';
+import type { RouteKind } from '../../types';
 import { getConditionString } from '../../utils/condition-utils';
 import { tableColumnClasses } from './route-table';
 

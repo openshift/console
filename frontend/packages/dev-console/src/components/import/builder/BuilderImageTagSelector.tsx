@@ -1,18 +1,16 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src';
 import { ResourceName } from '@console/internal/components/utils';
 import { ImageStreamTagModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
-import {
-  BuilderImage,
-  getTagDataWithDisplayName,
-  getPorts,
-} from '../../../utils/imagestream-utils';
+import type { BuilderImage } from '../../../utils/imagestream-utils';
+import { getTagDataWithDisplayName, getPorts } from '../../../utils/imagestream-utils';
 import { useSafeK8s } from '../../../utils/safe-k8s-hook';
 import BuilderImageEnvironments from './BuilderImageEnvironments';
 import ImageStreamInfo from './ImageStreamInfo';

@@ -1,19 +1,26 @@
-import { ValidatedOptions } from '@patternfly/react-core';
-import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type { ComponentType } from 'react';
+import type { ValidatedOptions } from '@patternfly/react-core';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
-import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
+import type { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import type { LazyLoader } from '@console/internal/components/utils/async';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind, ContainerPort, SecretKind } from '@console/internal/module/k8s';
-import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
-import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
-import { PipelineData } from '../pipeline-section/import-types';
+import type { K8sResourceKind, ContainerPort, SecretKind } from '@console/internal/module/k8s';
+import type { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
+import type { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import type { HealthCheckFormProbe } from '../health-checks/health-checks-types';
+import type { PipelineData } from '../pipeline-section/import-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: FirehoseList | WatchK8sResultsObject<K8sResourceKind[]>;
+  projects?:
+    | {
+        data: K8sResourceKind[];
+        loaded: boolean;
+        loadError?: any;
+      }
+    | WatchK8sResultsObject<K8sResourceKind[]>;
 }
 export type ImageStreamPayload = boolean | K8sResourceKind;
 
@@ -38,29 +45,32 @@ export interface ImageStreamContextProps {
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: {
-    data: [];
+    data: K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
   };
 }
 
 export interface GitImportFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: [];
+  imageStreams?: {
+    data: K8sResourceKind | K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
+  };
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
   };
 }
 export interface DevfileImportFormProps {
   builderImages?: NormalizedBuilderImages;
   projects?: {
-    data: [];
+    data: K8sResourceKind[];
     loaded: boolean;
+    loadError?: any;
   };
-}
-
-export interface FirehoseList {
-  data?: K8sResourceKind[];
-  [key: string]: any;
 }
 
 export interface DeployImageFormData {
@@ -349,7 +359,7 @@ export interface ImportData {
   type: ImportTypes;
   title: string;
   buildStrategy: string;
-  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps>;
+  loader: LazyLoader<ComponentType<GitImportFormProps> | ComponentType<SourceToImageFormProps>>;
 }
 
 export enum TerminationType {

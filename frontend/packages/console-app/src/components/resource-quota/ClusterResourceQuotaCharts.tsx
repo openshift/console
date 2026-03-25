@@ -1,6 +1,7 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DonutChart } from '@console/internal/components/graphs/donut';
-import { ClusterResourceQuotaKind } from '@console/internal/module/k8s';
+import type { ClusterResourceQuotaKind } from '@console/internal/module/k8s';
 import { getLabelAndUsage } from './utils';
 
 import './resource-quota.scss';
@@ -9,9 +10,9 @@ type ClusterResourceQuotaChartsProps = {
   clusterResourceQuota: ClusterResourceQuotaKind;
 };
 
-const ClusterResourceQuotaCharts = ({
+const ClusterResourceQuotaCharts: FC<ClusterResourceQuotaChartsProps> = ({
   clusterResourceQuota,
-}: ClusterResourceQuotaChartsProps): JSX.Element => {
+}) => {
   const { t } = useTranslation();
   const charts = Object.keys(clusterResourceQuota.status?.total?.hard ?? {}).map((resourceName) => {
     const clusterHard = clusterResourceQuota.status?.total?.hard?.[resourceName];

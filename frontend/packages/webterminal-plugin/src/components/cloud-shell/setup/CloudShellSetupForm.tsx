@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FlexForm, FormFooter, FormBody } from '@console/shared';

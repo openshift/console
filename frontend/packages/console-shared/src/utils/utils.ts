@@ -1,8 +1,9 @@
 import i18next from 'i18next';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import { startCase, toPath } from 'lodash';
-import { FirehoseResult } from '@console/internal/components/utils/types';
-import { K8sKind, K8sResourceKind, modelFor } from '@console/internal/module/k8s';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { modelFor } from '@console/internal/module/k8s';
 import { getUID } from '../selectors/common';
 
 export type EntityMap<A> = { [propertyName: string]: A };

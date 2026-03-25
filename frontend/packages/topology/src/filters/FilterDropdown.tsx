@@ -1,5 +1,6 @@
 import type { FC, MouseEvent, Ref } from 'react';
 import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Switch,
   Divider,
@@ -8,11 +9,11 @@ import {
   SelectList,
   SelectOption,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
+import type { DisplayFilters } from '../topology-types';
+import { TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID } from './const';
 
 import './FilterDropdown.scss';

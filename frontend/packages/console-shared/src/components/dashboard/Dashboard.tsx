@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { PageSection } from '@patternfly/react-core';
-import { OverviewProps } from '@console/dynamic-plugin-sdk';
+import type { OverviewProps } from '@console/dynamic-plugin-sdk';
 import './dashboard.scss';
 
 const Dashboard: FC<OverviewProps> = ({ className, children }) => (

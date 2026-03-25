@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 export const useOverviewMetrics = () => {
-  return useSelector((state: RootState) => state.UI.getIn(['overview', 'metrics']));
+  return useConsoleSelector((state) => state.UI.getIn(['overview', 'metrics']));
 };

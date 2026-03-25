@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { BuildRun } from '../../types';
+import type { BuildRun } from '../../types';
 import { isV1Alpha1Resource } from '../../utils';
 import BuildSpecSection from '../build-details/BuildSpecSection';
 import BuildRunSection from './BuildRunSection';

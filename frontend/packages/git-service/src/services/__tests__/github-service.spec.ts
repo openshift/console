@@ -1,12 +1,6 @@
 import * as nock from 'nock';
-import {
-  GitSource,
-  BranchList,
-  RepoFileList,
-  BuildType,
-  RepoLanguageList,
-  RepoStatus,
-} from '../../types';
+import type { GitSource, BranchList, RepoFileList, BuildType, RepoLanguageList } from '../../types';
+import { RepoStatus } from '../../types';
 import { DockerFileParser } from '../../utils';
 import { GithubService } from '../github-service';
 

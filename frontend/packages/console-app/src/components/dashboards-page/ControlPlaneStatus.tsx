@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
+import type { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
 import {
   HealthState,
   healthStateMapping,

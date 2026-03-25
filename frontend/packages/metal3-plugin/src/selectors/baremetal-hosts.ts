@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { MachineKind } from '@console/internal/module/k8s';
+import type { MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src/selectors/common';
 import {
   HOST_POWER_STATUS_POWERED_ON,
@@ -8,7 +8,7 @@ import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_STATUS_UNMANAGED,
 } from '../constants';
-import {
+import type {
   BareMetalHostDisk,
   BareMetalHostNIC,
   BareMetalHostCPU,

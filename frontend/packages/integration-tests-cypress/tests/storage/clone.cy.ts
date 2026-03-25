@@ -19,7 +19,9 @@ const deletePVCClone = (pvcName: string) => {
   listPage.rows.shouldNotExist(pvcName);
 };
 
-if (Cypress.env('BRIDGE_AWS')) {
+// Normalize env check: CI env vars are strings, so "false" would be truthy without explicit comparison.
+const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+if (isAws) {
   describe('Clone Tests', () => {
     before(() => {
       cy.login();

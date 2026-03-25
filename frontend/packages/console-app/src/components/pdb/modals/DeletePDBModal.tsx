@@ -1,83 +1,104 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Form } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { k8sKill } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { PodDisruptionBudgetModel } from '../../../models';
-import { PodDisruptionBudgetKind } from '../types';
+import type { PodDisruptionBudgetKind } from '../types';
 
 const DeletePDBModal: FC<DeletePDBModalProps> = ({ close, pdb, workloadName }) => {
-  const [submitError, setSubmitError] = useState<string>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const pdbName = pdb.metadata.name;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    k8sKill(PodDisruptionBudgetModel, pdb)
+  const handleSubmit = () => {
+    const promise = k8sKill(PodDisruptionBudgetModel, pdb)
       .then(() => {
         close();
       })
       .catch((error) => {
-        setSubmitError(
+        const message =
           error?.message ||
-            t('console-app~Unknown error removing PodDisruptionBudget {{pdbName}}.', {
-              pdbName,
-            }),
-        );
+          t('console-app~Unknown error removing PodDisruptionBudget {{pdbName}}.', {
+            pdbName,
+          });
+        return Promise.reject(new Error(message));
       });
+    return handlePromise(promise);
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <ModalTitle>
-        <ExclamationTriangleIcon color={warningColor.value} />{' '}
-        {t('console-app~Remove PodDisruptionBudget?')}
-      </ModalTitle>
-      <ModalBody>
-        {pdbName ? (
-          <>
-            <p>
-              <Trans t={t} ns="console-app">
-                Are you sure you want to remove the PodDisruptionBudget <b>{{ pdbName }}</b> from{' '}
-                <b>{{ workloadName }}</b>?
-              </Trans>
-            </p>
-            <p>{t('console-app~The PodDisruptionBudget will be deleted.')}</p>
-          </>
-        ) : (
-          !submitError && <LoadingInline />
-        )}
-      </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={submitError}
-        inProgress={isSubmitting}
-        submitText={t('console-app~Remove')}
-        submitDanger
-        submitDisabled={!!submitError}
-        cancel={close}
+    <>
+      <ModalHeader
+        title={t('console-app~Remove PodDisruptionBudget?')}
+        titleIconVariant="warning"
+        labelId="delete-pdb-modal-title"
       />
-    </Form>
+      <ModalBody>
+        <Form
+          id="delete-pdb-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          {pdbName ? (
+            <>
+              <p>
+                <Trans t={t} ns="console-app">
+                  Are you sure you want to remove the PodDisruptionBudget <b>{{ pdbName }}</b> from{' '}
+                  <b>{{ workloadName }}</b>?
+                </Trans>
+              </p>
+              <p>{t('console-app~The PodDisruptionBudget will be deleted.')}</p>
+            </>
+          ) : (
+            !errorMessage && <LoadingInline />
+          )}
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="danger"
+          form="delete-pdb-form"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+        >
+          {t('console-app~Remove')}
+        </Button>
+        <Button variant="link" onClick={close}>
+          {t('console-app~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const DeletePDBModalOverlay: OverlayComponent<DeletePDBModalProps> = (props) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
-    <DeletePDBModal {...props} close={props.closeOverlay} />
-  </ModalWrapper>
-);
+export const DeletePDBModalOverlay: OverlayComponent<DeletePDBModalProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="delete-pdb-modal-title"
+    >
+      <DeletePDBModal {...props} close={handleClose} />
+    </Modal>
+  ) : null;
+};
 
 export type DeletePDBModalProps = ModalComponentProps & {
   pdb: PodDisruptionBudgetKind;

@@ -1,7 +1,7 @@
 import type { ReactNode, FC } from 'react';
 import { useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
+import type { OverviewGridCard, OverviewGridProps } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 
 import './dashboard.scss';

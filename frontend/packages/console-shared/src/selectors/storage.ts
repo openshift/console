@@ -1,4 +1,4 @@
-import { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 
 export const getRequestedPVCSize = (pvc: K8sResourceKind): string =>
   pvc?.spec?.resources?.requests?.storage;

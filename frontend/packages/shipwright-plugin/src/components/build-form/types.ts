@@ -1,8 +1,8 @@
-import { GitSectionFormData } from '@console/dev-console/src/components/import/git/GitSection';
-import { GitData } from '@console/dev-console/src/components/import/import-types';
-import { NameValueFromPair, NameValuePair } from '@console/shared/src';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
+import type { GitSectionFormData } from '@console/dev-console/src/components/import/git/GitSection';
+import type { GitData } from '@console/dev-console/src/components/import/import-types';
+import type { NameValueFromPair, NameValuePair } from '@console/shared/src';
+import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import type { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 
 export type BuildFormikValues = {
   editorType: EditorType;

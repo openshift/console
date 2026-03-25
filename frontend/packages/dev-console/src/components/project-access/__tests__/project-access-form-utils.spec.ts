@@ -1,5 +1,5 @@
 import { ignoreRoleBindingName } from '../project-access-form-utils';
-import { UserRoleBinding } from '../project-access-form-utils-types';
+import type { UserRoleBinding } from '../project-access-form-utils-types';
 
 describe('Project access form utils', () => {
   it('should ignore the role binding name from the role binding obj', async () => {

@@ -1,21 +1,23 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import type { K8sResourceKind } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
 import {
-  K8sResourceKind,
   modelFor,
   referenceFor,
   k8sCreate,
   getGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared';
+import type { RootState } from '@console/internal/redux';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
@@ -33,12 +35,12 @@ import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
-import {
+import type {
   EventSourceSyncFormData,
-  SinkType,
   KnEventCatalogMetaData,
   EventSourceFormData,
 } from './import-types';
+import { SinkType } from './import-types';
 import KnEventMetaDescription from './KnEventMetaDescription';
 
 interface EventSourceProps {
@@ -64,6 +66,8 @@ export const EventSource: FC<Props> = ({
   sourceKind = '',
   kameletSource,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
@@ -161,7 +165,7 @@ export const EventSource: FC<Props> = ({
 
     return eventSrcRequest
       .then(() => {
-        handleRedirect(projectName, perspective, perpectiveExtension);
+        handleRedirect(projectName, perspective, perpectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -172,7 +176,7 @@ export const EventSource: FC<Props> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSourceValidationSchema(t)}

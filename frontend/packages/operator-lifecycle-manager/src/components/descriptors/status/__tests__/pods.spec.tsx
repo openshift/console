@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { SpecCapability, Descriptor } from '../../types';
+import type { Descriptor } from '../../types';
+import { SpecCapability } from '../../types';
 import { PodStatusChart } from '../pods';
 
 describe(PodStatusChart.displayName, () => {

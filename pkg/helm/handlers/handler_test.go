@@ -201,6 +201,12 @@ func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *ac
 	}
 }
 
+func fakeInstallChartFromURL(mockedSecret *kv1.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
+		return mockedSecret, err
+	}
+}
+
 func TestHelmHandlers_HandleHelmList(t *testing.T) {
 	tests := []struct {
 		name             string
@@ -1036,6 +1042,59 @@ func TestHelmHandlers_HandleHelmUnInstallAsync(t *testing.T) {
 			handlers.installChartAsync = fakeInstallChartAsync(&tt.installedSecret, tt.error)
 
 			request := httptest.NewRequest("", "/foo", strings.NewReader("{}"))
+			response := httptest.NewRecorder()
+
+			handlers.HandleHelmInstallAsync(&auth.User{}, response, request)
+			if response.Code != tt.httpStatusCode {
+				t.Errorf("response code should be %v but got %v", tt.httpStatusCode, response.Code)
+			}
+			if response.Header().Get("Content-Type") != "application/json" {
+				t.Errorf("content type should be application/json but got %s", response.Header().Get("Content-Type"))
+			}
+			if response.Body.String() != tt.expectedResponse {
+				t.Errorf("response body not matching expected is %s and received is %s", tt.expectedResponse, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestHelmHandlers_HandleHelmInstallAsyncNoRepo(t *testing.T) {
+	tests := []struct {
+		name             string
+		requestBody      string
+		expectedResponse string
+		installedSecret  kv1.Secret
+		error
+		httpStatusCode int
+	}{
+		{
+			name:             "Invalid JSON request",
+			requestBody:      `{invalid}`,
+			expectedResponse: `{"error":"Failed to parse request: invalid character 'i' looking for beginning of object key string"}`,
+			httpStatusCode:   http.StatusBadGateway,
+		},
+		{
+			name:             "Error occurred during chart install from URL",
+			requestBody:      `{"name":"test-release","namespace":"default","chart_url":"http://ghcr.io/test/chart","noRepo":true}`,
+			expectedResponse: `{"error":"Failed to install helm chart: Chart path is invalid"}`,
+			error:            errors.New("Chart path is invalid"),
+			httpStatusCode:   http.StatusBadRequest,
+		},
+		{
+			name:             "Successful chart install from URL returns secret info",
+			requestBody:      `{"name":"test-release","namespace":"default","chart_url":"oci://ghcr.io/test/chart","noRepo":true}`,
+			installedSecret:  fakeSecret,
+			httpStatusCode:   http.StatusCreated,
+			expectedResponse: `{"metadata":{"name":"Test"}}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			handlers := fakeHelmHandler()
+			handlers.installChartFromURL = fakeInstallChartFromURL(&tt.installedSecret, tt.error)
+
+			request := httptest.NewRequest("POST", "/api/helm/release/async", strings.NewReader(tt.requestBody))
+			request.Header.Set("Content-Type", "application/json")
 			response := httptest.NewRecorder()
 
 			handlers.HandleHelmInstallAsync(&auth.User{}, response, request)

@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { FormSection } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
 import { getContainerNames } from '../../utils/deployment-utils';
 

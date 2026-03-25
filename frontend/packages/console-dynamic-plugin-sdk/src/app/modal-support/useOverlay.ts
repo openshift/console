@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { LaunchOverlay, OverlayContext } from './OverlayProvider';
+import type { LaunchOverlay } from './OverlayProvider';
+import { OverlayContext } from './OverlayProvider';
 
 type UseOverlayLauncher = () => LaunchOverlay;
 

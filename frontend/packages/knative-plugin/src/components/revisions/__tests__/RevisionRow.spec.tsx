@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
-import { RevisionKind } from '../../../types';
+import type { RevisionKind } from '../../../types';
 import RevisionRow from '../RevisionRow';
 
 jest.mock('@console/internal/components/factory', () => ({

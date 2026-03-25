@@ -9,7 +9,7 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
-import { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
+import type { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
 import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
 
 const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
+import type { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import {
   fetchOverviewMetrics,
   METRICS_FAILURE_CODES,
-  OverviewMetrics,
 } from '@console/internal/components/overview/metricUtils';
 import { METRICS_POLL_INTERVAL } from '@console/shared/src';
 

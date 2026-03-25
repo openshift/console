@@ -6,10 +6,10 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { HelmRelease } from '../../../types/helm-types';
+import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 
 interface HelmChartSummaryProps {

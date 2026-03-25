@@ -1,20 +1,21 @@
 import * as _ from 'lodash';
 import { getAPIVersionForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
+import type { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
 import { TRIGGERS_ANNOTATION } from '@console/shared';
 import { getTriggerAnnotation } from '../../../utils/resource-label-utils';
 import {
   checkIfTriggerExists,
   getResourcesType,
 } from '../../edit-application/edit-application-utils';
-import { ImageStreamImageData, Resources } from '../../import/import-types';
+import type { ImageStreamImageData } from '../../import/import-types';
+import { Resources } from '../../import/import-types';
 import {
   DeploymentStrategyType,
   FailurePolicyType,
   LifecycleAction,
 } from '../deployment-strategy/utils/types';
-import {
+import type {
   DeploymentStrategy,
   DeploymentStrategyData,
   EditDeploymentFormData,

@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
-import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import AddCardItem from '../AddCardItem';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';

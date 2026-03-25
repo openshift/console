@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const eventSinkKamelet: K8sResourceKind = {
   apiVersion: 'camel.apache.org/v1alpha1',

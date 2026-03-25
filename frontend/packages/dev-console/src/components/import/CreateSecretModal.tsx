@@ -1,10 +1,8 @@
 import { useCallback } from 'react';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  SecretFormWrapper,
-  SecretFormType,
-} from '@console/internal/components/secrets/create-secret';
+import type { SecretFormType } from '@console/internal/components/secrets/create-secret';
+import { SecretFormWrapper } from '@console/internal/components/secrets/create-secret';
 
 export interface CreateSecretModalProps {
   namespace: string;

@@ -1,4 +1,4 @@
-import { BaseService } from '../services/base-service';
+import type { BaseService } from '../services/base-service';
 import { RepoStatus } from '../types';
 import { ImportStrategy } from '../types/git';
 import { detectBuildTypes } from './build-tool-type-detector';

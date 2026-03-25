@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import * as _ from 'lodash';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
-import { OdcNodeModel } from '../../../../topology-types';
+import type { OdcNodeModel } from '../../../../topology-types';
 
 import './ResourceKindsInfo.scss';
 

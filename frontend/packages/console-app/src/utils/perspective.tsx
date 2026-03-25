@@ -1,5 +1,5 @@
 import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
-import { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared/src/constants/common';
 
 export const icon: ResolvedExtension<Perspective>['properties']['icon'] = { default: CogsIcon };

@@ -1,27 +1,27 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Alert, Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { getGitService, GitProvider } from '@console/git-service/src';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { DOC_URL_SERVERLESS_FUNCTIONS_GETTING_STARTED } from '@console/internal/components/utils/documentation';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
-import { useFlag } from '@console/shared/src';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,
   FUNC_PIPELINE_RUNTIME_LABEL,
   FLAG_OPENSHIFT_PIPELINE,
 } from '../../../const';
 import { PipelineModel } from '../../../models/pipelines';
-import { PipelineKind } from '../../../types/pipeline';
-import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import type { PipelineKind } from '../../../types/pipeline';
+import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 import { notSupportedRuntime } from '../../../utils/serverless-functions';
 import PipelineSection from '../../pipeline-section/pipeline/PipelineSection';
 import AdvancedSection from '../advanced/AdvancedSection';

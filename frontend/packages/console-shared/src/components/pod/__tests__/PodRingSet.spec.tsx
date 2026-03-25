@@ -1,9 +1,9 @@
 import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import * as usePodsWatcherModule from '../../../hooks/usePodsWatcher';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import { PodRCData } from '../../../types';
+import type { PodRCData } from '../../../types';
 import { samplePods } from '../../../utils/__tests__/test-resource-data';
 import PodRing from '../PodRing';
 import PodRingSet from '../PodRingSet';

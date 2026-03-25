@@ -1,5 +1,5 @@
-import { Edge } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { Edge } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import TopologyEdgeResourcesPanel from '@console/topology/src/components/side-bar/TopologyEdgeResourcesPanel';
 import {
   TYPE_EVENT_SINK_LINK,

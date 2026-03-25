@@ -6,7 +6,8 @@ import { topologyDataModel, dataModel, TEST_KINDS_MAP } from '../../__tests__/to
 import { TYPE_WORKLOAD } from '../../const';
 import { EXPAND_GROUPS_FILTER_ID, getFilterById } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../../filters/const';
-import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
+import type { DisplayFilters } from '../../topology-types';
+import { TopologyDisplayFilterType } from '../../topology-types';
 import { WORKLOAD_TYPES } from '../../utils/topology-utils';
 import { baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';

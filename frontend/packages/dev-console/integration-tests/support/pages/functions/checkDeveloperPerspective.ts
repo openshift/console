@@ -28,6 +28,17 @@ export const checkDeveloperPerspective = () => {
       cy.reload(true);
       cy.document().its('readyState').should('eq', 'complete');
       cy.log('perspective switcher menu refreshed');
+
+      // Verify the Developer perspective is now available after reload.
+      // The config pipeline (oc patch → operator reconcile → console rollout →
+      // SERVER_FLAGS.perspectives update) can have delays, so we use an explicit
+      // timeout to wait for the perspective option to appear in the switcher menu.
+      cy.byLegacyTestID('perspective-switcher-toggle').click();
+      cy.byLegacyTestID('perspective-switcher-menu-option', { timeout: 30000 })
+        .contains('Developer')
+        .should('exist');
+      cy.log('Developer perspective verified after reload');
+      cy.byLegacyTestID('perspective-switcher-toggle').click();
     });
   });
 };

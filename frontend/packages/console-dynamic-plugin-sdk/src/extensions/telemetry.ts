@@ -1,4 +1,4 @@
-import { Extension, CodeRef } from '../types';
+import type { Extension, CodeRef } from '../types';
 
 /** This component can be used to register a listener function receiving telemetry events.
     These events include user identification, page navigation, and other application specific events.

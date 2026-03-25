@@ -1,21 +1,17 @@
 import { safeLoad, dump } from 'js-yaml';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
-import {
-  k8sCreate,
-  k8sGet,
-  K8sModel,
-  k8sPatch,
-} from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { QueryParams } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { k8sCreate, k8sGet, k8sPatch } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import type { QueryParams } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sListResourceItems } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import {
   KUBE_CONTROLLER_MANAGER_NAME,
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
-import { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
-import { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
+import type { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
+import type { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
 import { encodeBase64, getErrorMessage } from './utils';
 
 export class PersistError extends Error {
@@ -507,7 +503,12 @@ const getPersistInfrastructureOp = async (
   if (values.network) {
     vCenterDomainCfg.topology.networks = [values.network];
   }
-  vCenterDomainCfg.topology.folder = values.folder;
+  // Folder is optional, so we need to handle the case where it's unset
+  if (values.folder) {
+    vCenterDomainCfg.topology.folder = values.folder;
+  } else {
+    delete vCenterDomainCfg.topology.folder;
+  }
 
   vCenterDomainCfg.topology.resourcePool = getInfrastructureResourcePoolPath(
     values,

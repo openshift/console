@@ -1,13 +1,11 @@
-import type { FC, ReactNode } from 'react';
-import { render, cleanup } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import * as Router from 'react-router-dom-v5-compat';
+import { cleanup } from '@testing-library/react';
+import * as Router from 'react-router';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import store from '@console/internal/redux';
-import { useUserSettings } from '@console/shared/src';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import BuildConfigFormPage from '../BuildConfigFormPage';
-import { BuildConfig } from '../types';
+import type { BuildConfig } from '../types';
 
 jest.mock('react-helmet-async', () => ({
   Helmet: () => null,
@@ -18,8 +16,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 // For internal used Dropdowns
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
-  useUserSettingsCompatibility: () => ['', () => {}],
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => ['', () => {}, true],
 }));
 
 jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
@@ -30,8 +28,8 @@ jest.mock('../sections/EditorField', () =>
   jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
 jest.mock(
@@ -41,23 +39,18 @@ jest.mock(
   }),
 );
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }));
 
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
-const useUserSettingsMock = useUserSettings as jest.Mock;
+const useUserPreferenceMock = useUserPreference as jest.Mock;
 const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
-interface WrapperProps {
-  children?: ReactNode;
-}
-
-const Wrapper: FC<WrapperProps> = ({ children }) => <Provider store={store}>{children}</Provider>;
-
 beforeEach(() => {
-  useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);
+  useUserPreferenceMock.mockReturnValue([undefined, jest.fn(), true]);
   usePreferredCreateEditMethodMock.mockReturnValue([[undefined, true]]);
 });
 
@@ -72,11 +65,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
     expect(renderResult.queryByText('Edit BuildConfig')).toBeFalsy();
     renderResult.getByTestId('loading-indicator');
@@ -104,11 +93,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
     renderResult.findByText('Edit BuildConfig');
     renderResult.findByText('Configure via:');
@@ -129,11 +114,7 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = render(
-      <Wrapper>
-        <BuildConfigFormPage />
-      </Wrapper>,
-    );
+    const renderResult = renderWithProviders(<BuildConfigFormPage />);
     renderResult.findByText('Error Loading');
     renderResult.findByText('Edit BuildConfig');
     renderResult.findByText('Something went wrong');

@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useProjectOrNamespaceModel } from '@console/internal/components/utils/list-dropdown';
 import { ProjectModel } from '@console/internal/models';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   Filter,
   Footer,
@@ -28,7 +28,7 @@ import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useC
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import {
-  PREFERRED_NAMESPACE_USER_SETTING_KEY,
+  PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
   usePreferredNamespace,
 } from './usePreferredNamespace';
 import './NamespaceDropdown.scss';
@@ -91,7 +91,7 @@ const NamespaceDropdown: FC = () => {
       onSubmit: (newProject) => {
         setPreferredNamespace(newProject?.metadata?.name || '');
         fireTelemetryEvent('User Preference Changed', {
-          property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+          property: PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
           value: newProject?.metadata?.name || '',
         });
       },
@@ -134,7 +134,7 @@ const NamespaceDropdown: FC = () => {
     selectedValue !== preferredNamespace && setPreferredNamespace(selectedValue);
     setDropdownOpen(false);
     fireTelemetryEvent('User Preference Changed', {
-      property: PREFERRED_NAMESPACE_USER_SETTING_KEY,
+      property: PREFERRED_NAMESPACE_USER_PREFERENCE_KEY,
       value: selectedValue,
     });
   };

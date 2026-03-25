@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getNodeMaintenanceProgressPercent } from '../node-maintenance';
 
 describe('getNodeMaintenanceProgressPercentage', () => {

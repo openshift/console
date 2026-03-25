@@ -1,20 +1,14 @@
 import type { FC, Ref, CSSProperties } from 'react';
 import { useState, useCallback, useEffect } from 'react';
-import {
-  FormGroup,
-  Select,
-  SelectOption,
-  SelectList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { FormGroup, Select, SelectOption, SelectList, MenuToggle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
   getAccessModeForProvisioner,
   getAccessModeOptions,
 } from '@console/internal/components/storage/shared';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: string) =>
   _.reduce(

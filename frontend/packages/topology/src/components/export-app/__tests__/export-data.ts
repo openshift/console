@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const mockExportData: K8sResourceKind = {
   apiVersion: 'primer.gitops.io/v1alpha1',

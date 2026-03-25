@@ -1,4 +1,8 @@
-import { K8sResourceCommon, K8sResourceCondition, Selector } from '@console/internal/module/k8s';
+import type {
+  K8sResourceCommon,
+  K8sResourceCondition,
+  Selector,
+} from '@console/internal/module/k8s';
 
 export type PDBCondition = {
   observedGeneration?: number;

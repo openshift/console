@@ -2,18 +2,22 @@ import type { ReactElement, FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
-import { ResolvedExtension, CatalogItemType, CatalogCategory } from '@console/dynamic-plugin-sdk';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import type {
+  ResolvedExtension,
+  CatalogItemType,
+  CatalogCategory,
+} from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { skeletonCatalog } from '@console/internal/components/utils/skeleton-catalog';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import OLMv1Alert from '@console/operator-lifecycle-manager-v1/src/components/OLMv1Alert';
 import { FLAG_OLMV1_ENABLED } from '@console/operator-lifecycle-manager-v1/src/const';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { useFlag } from '../../hooks/flag';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useFlag } from '../../hooks/useFlag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
 import CatalogView from './catalog-view/CatalogView';
@@ -21,14 +25,14 @@ import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
 import { getURLWithParams, useGetAllDisabledSubCatalogs } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
-import {
+import type {
   CatalogFilters,
-  CatalogQueryParams,
   CatalogService,
   CatalogStringMap,
   CatalogType,
   CatalogFilterGroupMap,
 } from './utils/types';
+import { CatalogQueryParams } from './utils/types';
 
 type CatalogControllerProps = CatalogService & {
   enableDetailsPanel?: boolean;

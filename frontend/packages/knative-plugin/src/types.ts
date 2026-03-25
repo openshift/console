@@ -1,4 +1,4 @@
-import { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/k8s';
 
 export type ConfigurationKind = K8sResourceKind;
 

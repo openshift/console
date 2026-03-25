@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Grid, GridItem, gridItemSpanValueShape } from '@patternfly/react-core';
+import type { gridItemSpanValueShape } from '@patternfly/react-core';
+import { Grid, GridItem } from '@patternfly/react-core';
 import './MultiColumnField.scss';
 
 export interface MultiColumnFieldHeaderProps {

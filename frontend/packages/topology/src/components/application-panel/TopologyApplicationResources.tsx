@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { getTitleForNodeKind } from '@console/shared';
-import { OdcNodeModel } from '../../topology-types';
+import type { OdcNodeModel } from '../../topology-types';
 import ApplicationGroupResource from './ApplicationGroupResource';
 
 import './TopologyApplicationResources.scss';

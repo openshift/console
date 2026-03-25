@@ -1,5 +1,6 @@
 import type { FC, Ref } from 'react';
 import { useState, useEffect } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   FormHelperText,
   FormSection,
@@ -7,11 +8,11 @@ import {
   SelectList,
   SelectOption,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CLUSTER_TELEMETRY_ANALYTICS, useTelemetry } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { CLUSTER_TELEMETRY_ANALYTICS } from '@console/shared/src';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
@@ -19,8 +20,8 @@ import {
   FormLayout,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type TelemetryConsoleConfig = K8sResourceKind & {
   metadata: {

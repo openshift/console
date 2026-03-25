@@ -1,13 +1,13 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { Formik } from 'formik';
-import * as _ from 'lodash';
+import type { FormikHelpers, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import {
   documentationURLs,
   getDocumentationURL,
-  history,
   isManaged,
   LoadingBox,
   StatusBox,
@@ -24,14 +24,16 @@ import {
   getRolesWithMultipleSubjects,
   getRolesToUpdate,
 } from './project-access-form-submit-utils';
-import { getUserRoleBindings, Roles } from './project-access-form-utils';
-import { Verb, UserRoleBinding } from './project-access-form-utils-types';
+import type { Roles } from './project-access-form-utils';
+import { getUserRoleBindings } from './project-access-form-utils';
+import { Verb } from './project-access-form-utils-types';
+import type { UserRoleBinding, RoleBinding } from './project-access-form-utils-types';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
 
 export interface ProjectAccessProps {
   namespace: string;
-  roleBindings?: { data: []; loaded: boolean; loadError: {} };
+  roleBindings?: { data: RoleBinding[]; loaded: boolean; loadError?: Error };
   roles: { data: Roles; loaded: boolean };
   fullFormView?: boolean;
 }
@@ -43,21 +45,32 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
   fullFormView,
 }) => {
   const { t } = useTranslation();
-  if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
-    return <LoadingBox />;
-  }
+  const navigate = useNavigate();
 
-  const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(
-    roleBindings.data,
-    Object.keys(roles.data),
-    namespace,
+  const userRoleBindings: UserRoleBinding[] = useMemo(
+    () =>
+      roleBindings?.loaded
+        ? getUserRoleBindings(roleBindings.data, Object.keys(roles.data), namespace)
+        : [],
+    [roleBindings, roles.data, namespace],
   );
+
+  const memoizedRoleBindings = useMemo(() => ({ projectAccess: userRoleBindings }), [
+    userRoleBindings,
+  ]);
 
   const rbacURL = getDocumentationURL(documentationURLs.usingRBAC);
 
-  const initialValues = {
-    projectAccess: roleBindings.loaded && userRoleBindings,
-  };
+  const initialValues = useMemo(
+    () => ({
+      projectAccess: roleBindings?.loaded && userRoleBindings,
+    }),
+    [roleBindings?.loaded, userRoleBindings],
+  );
+
+  if ((!roleBindings?.loaded && !roleBindings?.loadError) || !roles.loaded) {
+    return <LoadingBox />;
+  }
 
   const handleSubmit = (values, actions) => {
     let newRoles = getNewRoles(initialValues.projectAccess, values.projectAccess);
@@ -110,8 +123,9 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
       });
   };
 
-  const handleReset = (values, actions) => {
-    actions.resetForm({ status: { success: null }, values: initialValues });
+  const handleReset = (_values: FormikValues, actions: FormikHelpers<FormikValues>) => {
+    actions.setStatus({ success: null });
+    actions.setValues(initialValues);
   };
 
   const projectAccessForm = (
@@ -143,7 +157,7 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
           </>
         }
       />
-      {roleBindings.loadError ? (
+      {roleBindings?.loadError ? (
         <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
       ) : (
         <Formik
@@ -156,8 +170,8 @@ const ProjectAccess: FC<ProjectAccessProps> = ({
             <ProjectAccessForm
               {...formikProps}
               roles={roles.data}
-              roleBindings={initialValues}
-              onCancel={fullFormView ? history.goBack : null}
+              roleBindings={memoizedRoleBindings}
+              onCancel={fullFormView ? () => navigate(-1) : null}
             />
           )}
         </Formik>

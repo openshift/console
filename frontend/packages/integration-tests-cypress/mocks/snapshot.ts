@@ -1,4 +1,4 @@
-import { Patch } from '@console/internal/module/k8s';
+import type { Patch } from '@console/internal/module/k8s';
 
 export const testerDeployment = {
   apiVersion: 'apps/v1',

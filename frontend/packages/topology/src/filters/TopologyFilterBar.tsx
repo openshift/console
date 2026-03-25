@@ -11,20 +11,23 @@ import {
   ToolbarFilter,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
-import { Visualization, isNode } from '@patternfly/react-topology';
+import type { Visualization } from '@patternfly/react-topology';
+import { isNode } from '@patternfly/react-topology';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { PDBAlert } from '@console/app/src/components/pdb/PDBAlert';
 import { ResourceQuotaAlert } from '@console/dev-console/src/components/resource-quota/ResourceQuotaAlert';
-import { useQueryParamsMutator } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { requirementFromString } from '@console/internal/module/k8s/selector-requirement';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { useFlag, useQueryParams } from '@console/shared';
+import type { RootState } from '@console/internal/redux';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { ALLOW_EXPORT_APP } from '../const';

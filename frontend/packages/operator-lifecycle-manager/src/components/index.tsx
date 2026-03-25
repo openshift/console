@@ -1,29 +1,27 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import type { GroupVersionKind, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  GroupVersionKind,
   referenceForGroupVersionKind,
   resourceURL,
   referenceFor,
   referenceForModel,
-  K8sKind,
-  K8sResourceKind,
   apiVersionCompare,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
-import {
+import type {
   APIServiceDefinition,
   ClusterServiceVersionIcon,
   ClusterServiceVersionKind,
   CRDDescription,
-  InstallPlanApproval,
   InstallPlanKind,
   PackageManifestKind,
   ProvidedAPI,
   StepResource,
   SubscriptionKind,
 } from '../types';
+import { InstallPlanApproval } from '../types';
 import { getInternalObjects } from './operator-hub/operator-hub-utils';
 
 export const visibilityLabel = 'olm-visibility';

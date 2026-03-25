@@ -1,5 +1,5 @@
-import { QueryParams, SubsystemHealth } from '@console/dynamic-plugin-sdk';
-import { ConfigMap } from '../resources';
+import type { QueryParams, SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import type { ConfigMap } from '../resources';
 
 export type ConnectionFormFormikValues = {
   vcenter: string;

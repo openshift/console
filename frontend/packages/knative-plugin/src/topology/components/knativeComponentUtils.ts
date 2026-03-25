@@ -1,4 +1,4 @@
-import {
+import type {
   GraphElement,
   Graph,
   Edge,
@@ -6,21 +6,22 @@ import {
   DropTargetSpec,
   DragSourceSpec,
   DragObjectWithType,
-  CREATE_CONNECTOR_DROP_TYPE,
-  CREATE_CONNECTOR_OPERATION,
   DragSpecOperationType,
   DragEvent,
+} from '@patternfly/react-topology';
+import {
+  CREATE_CONNECTOR_DROP_TYPE,
+  CREATE_CONNECTOR_OPERATION,
   isGraph,
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
-import { errorModal } from '@console/internal/components/modals';
-import {
+import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
+import type {
   NodeComponentProps,
-  NODE_DRAG_TYPE,
-  EDGE_DRAG_TYPE,
   EdgeComponentProps,
   EditableDragOperationType,
 } from '@console/topology/src/components/graph-view';
+import { NODE_DRAG_TYPE, EDGE_DRAG_TYPE } from '@console/topology/src/components/graph-view';
 import { EventingBrokerModel } from '../../models';
 import {
   TYPE_EVENT_SOURCE_LINK,
@@ -188,10 +189,9 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
       canDropEventSourceSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
       createSinkConnection(edge.getSource(), dropResult).catch((error) => {
-        errorModal({
+        launchErrorModal({
           title: i18next.t('knative-plugin~Error moving event source sink'),
           error: error.message,
-          showIcon: true,
         });
       });
     }
@@ -222,10 +222,9 @@ export const eventSourceKafkaLinkDragSourceSpec = (): DragSourceSpec<
     edge.setEndPoint();
     if (monitor.didDrop() && dropResult) {
       createEventSourceKafkaConnection(edge.getSource(), dropResult).catch((error) => {
-        errorModal({
+        launchErrorModal({
           title: i18next.t('knative-plugin~Error moving event source kafka connector'),
           error: error?.message,
-          showIcon: true,
         });
       });
     }
@@ -260,10 +259,9 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
       canDropPubSubSinkOnNode(monitor.getOperation().type, edge, dropResult)
     ) {
       createSinkPubSubConnection(edge, dropResult).catch((error) => {
-        errorModal({
+        launchErrorModal({
           title: i18next.t('knative-plugin~Error while sink'),
           error: error.message,
-          showIcon: true,
         });
       });
     }

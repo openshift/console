@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useState, useCallback, Suspense } from 'react';
 import * as _ from 'lodash';
-import { UnknownProps } from '../common-types';
+import type { UnknownProps } from '../common-types';
 
 type CloseOverlay = () => void;
 type CloseOverlayContextValue = (id: string) => void;

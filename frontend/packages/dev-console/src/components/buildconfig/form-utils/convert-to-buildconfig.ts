@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { safeYAMLToJS, safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { ImageOptionFormData } from '../sections/ImagesSection';
-import { BuildConfig, BuildConfigTrigger, ImageReference } from '../types';
-import { BuildConfigFormikValues } from './types';
+import type { ImageOptionFormData } from '../sections/ImagesSection';
+import type { BuildConfig, BuildConfigTrigger, ImageReference } from '../types';
+import type { BuildConfigFormikValues } from './types';
 
 const deleteKeys = (object: Record<string, any>, ...keys: string[]) => {
   keys.forEach((key) => delete object[key]);

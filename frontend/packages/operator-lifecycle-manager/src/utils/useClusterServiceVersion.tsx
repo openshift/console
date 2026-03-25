@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind } from '../types';
+import type { ClusterServiceVersionKind } from '../types';
 import { isCopiedCSV } from './clusterserviceversions';
 
 const groupVersionKind = {

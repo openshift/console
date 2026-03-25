@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useRef, useEffect } from 'react';
-import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import type { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { LoadingInline } from '@console/internal/components/utils';
-import { TaskRunKind } from '../../types';
+import type { TaskRunKind } from '../../types';
 import { useTRTaskRunLog } from './useTektonResults';
 
 import './Logs.scss';

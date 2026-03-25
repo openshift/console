@@ -1,8 +1,8 @@
-import { PodControllerOverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { TopologyDataObject } from '@console/topology/src/topology-types';
-import { KnativeItem } from '../utils/get-knative-resources';
+import type { PodControllerOverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { TopologyDataObject } from '@console/topology/src/topology-types';
+import type { KnativeItem } from '../utils/get-knative-resources';
 
 export enum NodeType {
   EventSource = 'event-source',

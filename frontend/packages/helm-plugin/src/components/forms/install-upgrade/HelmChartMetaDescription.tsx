@@ -3,7 +3,7 @@ import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { HelmChart } from '../../../types/helm-types';
+import type { HelmChart } from '../../../types/helm-types';
 
 type HelmChartMetaDescriptionProps = {
   chart: HelmChart;

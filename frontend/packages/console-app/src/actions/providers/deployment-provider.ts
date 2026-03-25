@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useDeleteResourceAction } from '@console/dev-console/src/actions/context-menu';
-import { Action } from '@console/dynamic-plugin-sdk/src';
-import { DeploymentKind, referenceFor } from '@console/internal/module/k8s';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
+import type { DeploymentKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { useHPAActions } from '../creators/hpa-factory';

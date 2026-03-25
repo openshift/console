@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from './utils/resource-icon';
 import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
 import { DiscoveryResources } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   Button,
   Divider,
@@ -45,7 +45,7 @@ const ResourceListDropdown_: FC<ResourceListDropdownProps> = (props) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [clearItems, setClearItems] = useState(false);
-  const [recentSelected, setRecentSelected] = useUserSettings<string>(
+  const [recentSelected, setRecentSelected] = useUserPreference<string>(
     'console.search.recentlySearched',
     '[]',
     true,

@@ -2,12 +2,8 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, Stack, StackItem, ExpandableSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  IsNodeStatusActive,
-  NodePopoverContentProps,
-  StatusIconAndText,
-  YellowExclamationTriangleIcon,
-} from '@console/dynamic-plugin-sdk';
+import type { IsNodeStatusActive, NodePopoverContentProps } from '@console/dynamic-plugin-sdk';
+import { StatusIconAndText, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { makeNodeSchedulable } from '../../../k8s/requests/nodes';

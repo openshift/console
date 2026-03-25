@@ -11,40 +11,37 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link, LinkProps } from 'react-router-dom-v5-compat';
+import type { LinkProps } from 'react-router';
+import { useParams, Link } from 'react-router';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
-  Firehose,
-  FirehoseResult,
   LoadingInline,
   ResourceLink,
   resourcePathFromModel,
   useAccessReview,
 } from '@console/internal/components/utils';
-import {
-  k8sPatch,
-  referenceForModel,
-  referenceFor,
-  K8sResourceKind,
-} from '@console/internal/module/k8s';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sPatch, referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,
   PackageManifestModel,
   SubscriptionModel,
 } from '../models';
-import {
+import type {
   ClusterServiceVersionKind,
   SubscriptionKind,
   InstallPlanKind,
@@ -392,6 +389,11 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const { currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
+
+  const subscriptionLoadError = resources?.subscription?.loadError;
+  const csvLoadError = resources?.clusterServiceVersion?.loadError;
+  const loadError = subscriptionLoadError || (csvLoadError && !resources?.subscription?.data);
+
   let loading = true;
   let status = '';
   let installObj: ClusterServiceVersionKind | InstallPlanKind =
@@ -411,10 +413,13 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
     if (installPlan) {
       installObj = installPlan;
     }
+  } else if (loadError) {
+    loading = false;
   }
 
   const isStatusSucceeded = status === 'Succeeded';
   const isStatusFailed = status === 'Failed';
+  const hasLoadError = !!loadError;
   const isApprovalNeeded =
     installObj?.spec?.approval === 'Manual' && installObj?.spec?.approved === false;
 
@@ -427,7 +432,7 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
   };
 
   let indicator = <Spinner size="lg" />;
-  if (isStatusFailed) {
+  if (isStatusFailed || hasLoadError) {
     indicator = (
       <Icon size="lg">
         <RedExclamationCircleIcon />
@@ -450,7 +455,18 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
   }
 
   let installMessage = <InstallingMessage namespace={targetNamespace} obj={installObj} />;
-  if (isStatusFailed) {
+  if (hasLoadError) {
+    installMessage = (
+      <Alert
+        isInline
+        variant="danger"
+        title={t('olm~Failed to load installation status')}
+        className="pf-v6-u-mt-md"
+      >
+        {loadError instanceof Error ? loadError.message : String(loadError)}
+      </Alert>
+    );
+  } else if (isStatusFailed) {
     installMessage = (
       <InstallFailedMessage namespace={targetNamespace} obj={installObj} csvName={currentCSV} />
     );
@@ -515,46 +531,44 @@ const OperatorInstallStatus: FC<OperatorInstallPageProps> = ({ resources }) => {
 export const OperatorInstallStatusPage: FC<OperatorInstallPageProps> = () => {
   const { pkg, currentCSV, targetNamespace } = useParams<OperatorInstallStatusPageRouteParams>();
 
-  const installPageResources = [
-    {
+  const resources = useK8sWatchResources<{
+    clusterServiceVersion: ClusterServiceVersionKind;
+    subscription: SubscriptionKind;
+    installPlans: InstallPlanKind[];
+  }>({
+    clusterServiceVersion: {
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: true,
       isList: false,
       name: currentCSV,
       namespace: targetNamespace,
-      prop: 'clusterServiceVersion',
+      optional: true,
     },
-    {
+    subscription: {
       kind: referenceForModel(SubscriptionModel),
       namespaced: true,
       isList: false,
       name: pkg,
       namespace: targetNamespace,
       optional: true,
-      prop: 'subscription',
     },
-    {
+    installPlans: {
       kind: referenceForModel(InstallPlanModel),
-      prop: 'installPlans',
       namespaced: true,
       namespace: targetNamespace,
       isList: true,
       optional: true,
     },
-  ];
+  });
 
-  return (
-    <Firehose resources={installPageResources}>
-      <OperatorInstallStatus />
-    </Firehose>
-  );
+  return <OperatorInstallStatus resources={resources} />;
 };
 
 export type OperatorInstallPageProps = {
   resources?: {
-    clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
-    subscription: FirehoseResult<SubscriptionKind>;
-    installPlans: FirehoseResult<InstallPlanKind[]>;
+    clusterServiceVersion: WatchK8sResultsObject<ClusterServiceVersionKind>;
+    subscription: WatchK8sResultsObject<SubscriptionKind>;
+    installPlans: WatchK8sResultsObject<InstallPlanKind[]>;
   };
 };
 type InstallSuccededMessageProps = {

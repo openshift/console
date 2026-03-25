@@ -1,6 +1,6 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
+import type { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';

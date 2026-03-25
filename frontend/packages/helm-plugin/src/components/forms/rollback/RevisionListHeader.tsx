@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 import { useMemo } from 'react';
-import { DataViewTh } from '@patternfly/react-data-view';
-import { ThProps, SortByDirection } from '@patternfly/react-table';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { ThProps, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
 export const tableColumnInfo = [

@@ -1,12 +1,11 @@
 import type { ReactNode, FC } from 'react';
-import {
+import type {
   Edge,
-  EdgeTerminalType,
-  observer,
   WithContextMenuProps,
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
+import { EdgeTerminalType, observer } from '@patternfly/react-topology';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
 import { EventingBrokerModel } from '../../../models';

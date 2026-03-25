@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
-import type * as webpack from 'webpack';
-import { ConsolePluginBuildMetadata } from '../build-types';
+import type { Compilation, NormalModule, Module } from 'webpack';
+import type { ConsolePluginBuildMetadata } from '../build-types';
 import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
-import { Extension, EncodedCodeRef } from '../types';
+import type { Extension, EncodedCodeRef } from '../types';
 import { deepForOwn } from '../utils/object';
 import { BaseValidator } from './BaseValidator';
 
@@ -75,7 +75,7 @@ export const collectCodeRefData = (extensions: Extension[]) =>
   }, [] as ExtensionCodeRefData[]);
 
 export const findWebpackModules = (
-  compilation: webpack.Compilation,
+  compilation: Compilation,
   exposedModules: ConsolePluginBuildMetadata['exposedModules'],
   pluginBasePath?: string,
 ) => {
@@ -85,9 +85,9 @@ export const findWebpackModules = (
       pluginBasePath &&
       guessModuleFilePath(path.resolve(pluginBasePath, exposedModules[moduleName]));
 
-    acc[moduleName] = webpackModules.find((m: webpack.NormalModule) => {
+    acc[moduleName] = webpackModules.find((m: NormalModule) => {
       // @ts-expect-error rootModule is internal to webpack's ModuleConcatenationPlugin
-      const rootModule = m?.rootModule as webpack.NormalModule;
+      const rootModule = m?.rootModule as NormalModule;
 
       /* first strategy: check if the module name matches the rawRequest */
       const rawRequest = m?.rawRequest || rootModule?.rawRequest;
@@ -100,12 +100,12 @@ export const findWebpackModules = (
       return matchesRawRequest || matchesAbsolutePath;
     });
     return acc;
-  }, {} as { [moduleName: string]: webpack.Module });
+  }, {} as { [moduleName: string]: Module });
 };
 
 export class ExtensionValidator extends BaseValidator {
   validate(
-    compilation: webpack.Compilation,
+    compilation: Compilation,
     extensions: Extension[],
     exposedModules: ConsolePluginBuildMetadata['exposedModules'],
     pluginBasePath?: string,

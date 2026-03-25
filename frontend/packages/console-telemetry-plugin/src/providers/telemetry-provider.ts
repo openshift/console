@@ -1,5 +1,5 @@
 import { TELEMETRY_DISABLED } from '@console/dynamic-plugin-sdk/src/api/segment-analytics';
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 import { CLUSTER_TELEMETRY_ANALYTICS } from '@console/shared';
 import { FLAG_TELEMETRY_ENABLED, FLAG_TELEMETRY_USER_PREFERENCE } from '../const';
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { InProgressIcon } from '@patternfly/react-icons';
-import { StatusComponentProps } from '../../../extensions/console-types';
+import type { StatusComponentProps } from '../../../extensions/console-types';
 import GenericStatus from './GenericStatus';
 import { RedExclamationCircleIcon, GreenCheckCircleIcon, BlueInfoCircleIcon } from './icons';
 

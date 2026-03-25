@@ -1,10 +1,11 @@
 import i18n from 'i18next';
 import * as _ from 'lodash';
-import { GitProvider, getGitService } from '@console/git-service/src';
+import type { GitProvider } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src';
 import { coFetch } from '@console/internal/co-fetch';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { safeYAMLToJS, safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { Devfile, DevfileComponent } from './devfile-types';
+import type { Devfile, DevfileComponent } from './devfile-types';
 
 export const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
 

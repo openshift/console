@@ -1,4 +1,4 @@
-import { GetSegmentAnalytics } from '../extensions/console-types';
+import type { GetSegmentAnalytics } from '../extensions/console-types';
 
 // Segment API key. Must be present for telemetry to be enabled.
 const TELEMETRY_API_KEY =

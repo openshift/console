@@ -1,4 +1,4 @@
-import { Parameter } from '../views/storage/create-storage-class';
+import type { Parameter } from '../views/storage/create-storage-class';
 
 type ProvisionerAndParameters = {
   [provisionerName: string]: Parameter[];

@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getCheDecoratorData, getEditURL } from '../../../../../utils';
 import Decorator from './Decorator';
 

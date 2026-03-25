@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { FormSection } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared/src';
 import ImageStream from '../../../import/image-search/ImageStream';

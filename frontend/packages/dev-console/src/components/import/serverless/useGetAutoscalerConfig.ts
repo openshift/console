@@ -1,6 +1,6 @@
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import type { ConfigMapKind } from '@console/internal/module/k8s';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
 export const useGetAutoscalerConfig = () => {

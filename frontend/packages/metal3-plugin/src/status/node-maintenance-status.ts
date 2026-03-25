@@ -1,6 +1,6 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getDeletetionTimestamp } from '@console/shared/src/selectors';
-import { StatusProps } from '../components/types';
+import type { StatusProps } from '../components/types';
 import {
   NODE_STATUS_TITLE_KEYS,
   NODE_STATUS_UNDER_MAINTENANCE,

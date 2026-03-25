@@ -1,16 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk';
+import type { Action, K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  DeploymentConfigKind,
-  referenceFor,
-  K8sResourceKind,
-  K8sKind,
-} from '@console/internal/module/k8s';
+import type { DeploymentConfigKind, K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const retryRollout = (model: K8sKind, obj: K8sResourceKind) => {

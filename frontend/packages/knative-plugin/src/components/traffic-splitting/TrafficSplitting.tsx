@@ -1,9 +1,11 @@
 import type { FC } from 'react';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
+import type { FormikValues, FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import type { K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import { k8sPatch } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
-import { Traffic } from '../../types';
+import type { Traffic } from '../../types';
 import { getRevisionItems, trafficDataForPatch } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
 

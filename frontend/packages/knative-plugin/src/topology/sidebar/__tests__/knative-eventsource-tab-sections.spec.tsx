@@ -1,5 +1,5 @@
 import { OdcBaseNode } from '@console/topology/src/elements';
-import { OdcNodeModel } from '@console/topology/src/topology-types';
+import type { OdcNodeModel } from '@console/topology/src/topology-types';
 import {
   kameletBindingSinkRes,
   knSinkDeployment,

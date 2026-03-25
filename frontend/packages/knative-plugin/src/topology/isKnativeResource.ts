@@ -1,7 +1,7 @@
-import { Model } from '@patternfly/react-topology';
+import type { Model } from '@patternfly/react-topology';
 import { DeploymentModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { OdcNodeModel } from '@console/topology/src/topology-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { OdcNodeModel } from '@console/topology/src/topology-types';
 import { CAMEL_SOURCE_INTEGRATION } from '../const';
 import { EventingBrokerModel } from '../models';
 import { TYPE_EVENT_SINK, TYPE_EVENT_SOURCE, TYPE_EVENT_SOURCE_KAFKA } from './const';

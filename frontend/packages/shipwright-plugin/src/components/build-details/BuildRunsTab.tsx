@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { BUILDRUN_TO_BUILD_REFERENCE_LABEL } from '../../const';
-import { Build } from '../../types';
+import type { Build } from '../../types';
 import BuildRunListPage from '../buildrun-list/BuildRunListPage';
 
 const BuildRuns: FC<{ obj: Build }> = ({ obj: build }) => {

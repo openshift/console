@@ -1,15 +1,14 @@
 import type { ReactNode, FC } from 'react';
 import { useMemo } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
+import type {
   Node,
-  observer,
   WithSelectionProps,
   WithContextMenuProps,
   WithDndDropProps,
-  useDragNode,
 } from '@patternfly/react-topology';
-import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { observer, useDragNode } from '@patternfly/react-topology';
+import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { nodeDragSourceSpec, GroupNode } from '@console/topology/src/components/graph-view';

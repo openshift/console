@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import BuildDecorator from './BuildDecorator';
 import EditDecorator from './EditDecorator';
 import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';

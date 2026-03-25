@@ -9,7 +9,7 @@ import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { useTranslation } from 'react-i18next';
 import { Popper } from '../popper';
-import { PopoverPlacement } from './const';
+import type { PopoverPlacement } from './const';
 import './Popover.scss';
 
 type PopoverProps = {

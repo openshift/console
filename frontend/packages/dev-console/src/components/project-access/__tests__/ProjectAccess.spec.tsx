@@ -7,7 +7,6 @@ jest.mock('@console/internal/components/utils', () => ({
   StatusBox: () => 'StatusBox',
   documentationURLs: { usingRBAC: 'rbac-url' },
   getDocumentationURL: jest.fn(() => 'http://example.com/rbac'),
-  history: { goBack: jest.fn() },
   isManaged: jest.fn(() => false),
 }));
 
@@ -20,8 +19,9 @@ jest.mock('@patternfly/react-core', () => ({
   ContentVariants: { p: 'p' },
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   Link: () => 'Link',
+  useNavigate: () => jest.fn(),
 }));
 
 jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
@@ -94,7 +94,7 @@ describe('Project Access', () => {
       roleBindings: {
         data: [],
         loaded: false,
-        loadError: {},
+        loadError: undefined,
       },
       roles: {
         data: defaultAccessRoles,
@@ -111,7 +111,7 @@ describe('Project Access', () => {
   });
 
   it('should show the StatusBox when there is error loading the role bindings', () => {
-    projectAccessProps.roleBindings.loadError = { error: 'user has no access to role bindigs' };
+    projectAccessProps.roleBindings.loadError = new Error('user has no access to role bindigs');
     render(<ProjectAccess {...projectAccessProps} />);
 
     expect(screen.getByText(/StatusBox/)).toBeInTheDocument();

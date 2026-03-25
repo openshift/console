@@ -1,12 +1,12 @@
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { EnvironmentVariablesSectionFormData } from '../sections/EnvironmentVariablesSection';
-import { HooksSectionFormData } from '../sections/HooksSection';
-import { ImagesSectionFormData } from '../sections/ImagesSection';
-import { NameSectionFormData } from '../sections/NameSection';
-import { PolicySectionFormData } from '../sections/PolicySection';
-import { SecretsSectionFormData } from '../sections/SecretsSection';
-import { SourceSectionFormData } from '../sections/SourceSection';
-import { TriggersSectionFormData } from '../sections/TriggersSection';
+import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import type { EnvironmentVariablesSectionFormData } from '../sections/EnvironmentVariablesSection';
+import type { HooksSectionFormData } from '../sections/HooksSection';
+import type { ImagesSectionFormData } from '../sections/ImagesSection';
+import type { NameSectionFormData } from '../sections/NameSection';
+import type { PolicySectionFormData } from '../sections/PolicySection';
+import type { SecretsSectionFormData } from '../sections/SecretsSection';
+import type { SourceSectionFormData } from '../sections/SourceSection';
+import type { TriggersSectionFormData } from '../sections/TriggersSection';
 
 export { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 

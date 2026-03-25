@@ -3,7 +3,8 @@ import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLinkWithCopy } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { RouteModel } from '../../models';
 

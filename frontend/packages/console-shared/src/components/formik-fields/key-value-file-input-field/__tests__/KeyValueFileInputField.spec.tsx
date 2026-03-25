@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { screen, render, fireEvent, act, waitFor } from '@testing-library/react';
-import { Formik, FormikConfig, FormikErrors } from 'formik';
+import type { FormikConfig, FormikErrors } from 'formik';
+import { Formik } from 'formik';
 import KeyValueFileInputField from '../KeyValueFileInputField';
 
 const onSubmit = jest.fn();

@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Checkbox, Switch } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { WidgetProps } from '@rjsf/core';
+import type { WidgetProps } from '@rjsf/core';
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +11,11 @@ import { RadioGroup } from '@console/internal/components/radio';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ListDropdown } from '@console/internal/components/utils/list-dropdown';
 import { NumberSpinner } from '@console/internal/components/utils/number-spinner';
-import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
+import type { K8sKind, GroupVersionKind } from '@console/internal/module/k8s';
+import { ImagePullPolicy } from '@console/internal/module/k8s';
 import { selectorFromString } from '@console/internal/module/k8s/selector';
 import { JSON_SCHEMA_NUMBER_TYPES } from './const';
-import { DynamicFormFieldOptionsList } from './types';
+import type { DynamicFormFieldOptionsList } from './types';
 
 export const TextWidget: FC<WidgetProps> = (props) => {
   const {

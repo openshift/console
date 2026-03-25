@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { K8sModel } from '../../../api/common-types';
-import { OpenShiftReduxRootState } from './k8s-watch-types';
+import type { K8sModel } from '../../../api/common-types';
+import type { OpenShiftReduxRootState } from './k8s-watch-types';
 
 /**
  * Wait until internal models (CRDs) are loaded.

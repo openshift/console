@@ -1,4 +1,5 @@
-import { K8sResourceCondition, K8sResourceConditionStatus } from '@console/internal/module/k8s';
+import type { K8sResourceCondition } from '@console/internal/module/k8s';
+import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
 import { getConditionOKCount, getConditionString, getCondition } from '../condition-utils';
 
 const createCondition = (status: K8sResourceConditionStatus): K8sResourceCondition => ({

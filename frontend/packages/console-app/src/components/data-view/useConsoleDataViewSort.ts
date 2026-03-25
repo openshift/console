@@ -1,9 +1,10 @@
 import type { BaseSyntheticEvent } from 'react';
 import { useCallback, useState, useEffect } from 'react';
-import { SortByDirection, ISortBy } from '@patternfly/react-table';
+import type { ISortBy } from '@patternfly/react-table';
+import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
-import { useSearchParams } from 'react-router-dom-v5-compat';
-import { ConsoleDataViewColumn } from './types';
+import { useSearchParams } from 'react-router';
+import type { ConsoleDataViewColumn } from './types';
 
 export const getSortByDirection = (value: string): SortByDirection =>
   value === SortByDirection.desc.valueOf() ? SortByDirection.desc : SortByDirection.asc;

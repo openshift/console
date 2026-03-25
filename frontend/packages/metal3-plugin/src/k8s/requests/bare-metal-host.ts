@@ -1,19 +1,13 @@
 import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
-import {
-  k8sPatch,
-  k8sCreate,
-  MachineKind,
-  MachineSetKind,
-  k8sKill,
-  SecretKind,
-} from '@console/internal/module/k8s';
+import type { MachineKind, MachineSetKind, SecretKind } from '@console/internal/module/k8s';
+import { k8sPatch, k8sCreate, k8sKill } from '@console/internal/module/k8s';
 import { getAnnotations } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
+import type { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { BareMetalHostModel } from '../../models';
 import { getReplicas } from '../../selectors/machine-set';
-import { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types';
 import {
   buildBareMetalHostObject,
   buildBareMetalHostSecret,

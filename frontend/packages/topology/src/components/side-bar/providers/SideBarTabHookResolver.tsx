@@ -1,10 +1,11 @@
 import type { ReactNode, ReactElement, FC } from 'react';
 import { useMemo, Fragment } from 'react';
-import { GraphElement, isEdge } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
+import { isEdge } from '@patternfly/react-topology';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
-import { DetailsTab, DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { Tab } from '@console/internal/components/utils';
+import type { DetailsTab, DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { Tab } from '@console/internal/components/utils';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import { getResource } from '@console/topology/src/utils';
 import { DefaultResourceSideBar } from '../DefaultResourceSideBar';

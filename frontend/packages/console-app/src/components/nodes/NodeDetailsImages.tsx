@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 type NodeDetailsImagesProps = {

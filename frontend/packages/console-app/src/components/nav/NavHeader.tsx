@@ -1,17 +1,12 @@
 import type { FC, MouseEvent, Ref } from 'react';
 import { useMemo, lazy, useState, useCallback, Suspense } from 'react';
-import {
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-  Title,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
 import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
 import { t } from 'i18next';
-import { Perspective, useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
+import type { Perspective } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;

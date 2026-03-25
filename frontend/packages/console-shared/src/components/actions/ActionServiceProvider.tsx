@@ -1,18 +1,18 @@
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
-import {
+import type {
   Action,
   ActionGroup,
   ActionService,
   ActionServiceProviderProps,
-  isActionGroup,
   MenuOption,
 } from '@console/dynamic-plugin-sdk';
+import { isActionGroup } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useDeepCompareMemoize } from '../../hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '../../hooks/useDeepCompareMemoize';
 import ActionsLoader from './loader/ActionsLoader';
-import { ActionContext } from './types';
+import type { ActionContext } from './types';
 import { createMenuOptions } from './utils';
 
 const ActionServiceProvider: FC<ActionServiceProviderProps> = ({ context, children }) => {

@@ -1,8 +1,9 @@
 import type { FC } from 'react';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
 import FormSection from '../../../import/section/FormSection';
 import { lifecycleActionType } from '../utils/deployment-strategy-utils';

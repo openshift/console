@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { List, ListProps } from '@patternfly/react-core';
+import type { ListProps } from '@patternfly/react-core';
+import { List } from '@patternfly/react-core';
 
 import './DetailPropertyList.scss';
 

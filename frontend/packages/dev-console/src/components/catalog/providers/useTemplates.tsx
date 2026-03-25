@@ -1,15 +1,17 @@
 import { useState, useEffect, useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getTemplateIcon,
   getTemplateIconClass,
 } from '@console/internal/components/catalog/catalog-item-icon';
 import { TemplateModel } from '@console/internal/models';
-import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
-import { ANNOTATIONS, APIError } from '@console/shared';
+import type { PartialObjectMetadata } from '@console/internal/module/k8s';
+import { k8sListPartialMetadata } from '@console/internal/module/k8s';
+import type { APIError } from '@console/shared';
+import { ANNOTATIONS } from '@console/shared';
 
 const normalizeTemplates = (
   templates: PartialObjectMetadata[],

@@ -1,10 +1,10 @@
+import type { WatchK8sResult } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   useK8sWatchResource,
   getGroupVersionKindForModel,
-  WatchK8sResult,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { PackageManifestModel } from '../models';
-import { PackageManifestKind } from '../types';
+import type { PackageManifestKind } from '../types';
 
 export const useMarketplacePackageManifests = (
   namespace: string,

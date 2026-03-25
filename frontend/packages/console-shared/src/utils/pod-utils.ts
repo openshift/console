@@ -1,15 +1,15 @@
 import * as _ from 'lodash';
-import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils/rbac';
-import {
+import type {
   K8sResourceKind,
   K8sKind,
   SelfSubjectAccessReviewKind,
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
 import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
-import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
-import { ExtPodKind, PodRCData } from '../types/pod';
+import type { PodControllerOverviewItem, DeploymentStrategy } from '../types';
+import type { ExtPodKind, PodRCData } from '../types/pod';
 
 export const podStatus = Object.keys(podColor);
 

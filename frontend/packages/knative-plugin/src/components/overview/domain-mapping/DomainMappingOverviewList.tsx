@@ -6,7 +6,8 @@ import {
   ResourceLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '../../../models';
 
 export type DomainMappingOverviewListProps = {

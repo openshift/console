@@ -1,15 +1,16 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { useParams, useLocation } from 'react-router';
+import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { IMAGESTREAM_NAMESPACE, JAVA_IMAGESTREAM_NAME, QUERY_PROPERTIES } from '../../../const';
-import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { normalizeBuilderImages } from '../../../utils/imagestream-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import QueryFocusApplication from '../../QueryFocusApplication';
 import UploadJar from './UploadJar';
@@ -18,7 +19,7 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
 };
 
-const UploadJarPage: FunctionComponent = () => {
+const UploadJarPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();

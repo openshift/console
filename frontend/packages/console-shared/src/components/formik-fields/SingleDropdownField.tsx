@@ -1,5 +1,6 @@
 import type { FC, Ref } from 'react';
 import { useState } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   FormGroup,
   FormHelperText,
@@ -9,11 +10,11 @@ import {
   SelectList,
   SelectOption,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
-import { useField, useFormikContext, FormikValues } from 'formik';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
-import { SingleDropdownFieldProps } from './field-types';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
+import type { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const SingleDropdownField: FC<SingleDropdownFieldProps> = ({

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
 
 export const hasLabel = (obj: K8sResourceCommon, label: string): boolean =>
   _.has(obj, ['metadata', 'labels', label]);

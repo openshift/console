@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import EventType from '../components/eventing/EventType';
 import {
   EVENT_TYPE_NAME_PARAM,

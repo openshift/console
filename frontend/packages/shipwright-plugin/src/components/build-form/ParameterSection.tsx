@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { InputField, TextColumnField } from '@console/shared';
-import { BuildFormikValues, BuildParam, ModalParameter } from './types';
+import type { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
 export const paramIsRequired = (param: BuildParam): boolean => {
   return param.type === 'array' ? !param.defaults : !param.default;

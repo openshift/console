@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { DefaultCreateConnector } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 
 const CreateConnector: FC<CreateConnectorProps> = ({
   startPoint,

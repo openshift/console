@@ -2,18 +2,15 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleSampleModel } from '../models/samples';
-import {
-  ConsoleSample,
-  ConsoleSampleGitImportSourceRepository,
-  isContainerImportSource,
-  isGitImportSource,
-} from '../types/samples';
+import type { ConsoleSample, ConsoleSampleGitImportSourceRepository } from '../types/samples';
+import { isContainerImportSource, isGitImportSource } from '../types/samples';
 
 const LOCALIZATION_NAME_LABEL = 'console.openshift.io/name';
 const LOCALIZATION_LANGUAGE_LABEL = 'console.openshift.io/lang';
 const LOCALIZATION_COUNTRY_LABEL = 'console.openshift.io/country';
 
 export const createSampleLink = (sample: ConsoleSample, activeNamespace: string): string | null => {
+  const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
   if (isGitImportSource(sample.spec.source)) {
     const { gitImport } = sample.spec.source;
     const searchParams = new URLSearchParams();
@@ -26,7 +23,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
     if (gitImport.repository.contextDir) {
       searchParams.set('git.contextDir', gitImport.repository.contextDir);
     }
-    return `/import/ns/${activeNamespace}?${searchParams}`;
+    return `/import${namespacePath}?${searchParams}`;
   }
 
   if (isContainerImportSource(sample.spec.source)) {
@@ -34,7 +31,7 @@ export const createSampleLink = (sample: ConsoleSample, activeNamespace: string)
     const searchParams = new URLSearchParams();
     searchParams.set('sample', sample.metadata.name);
     searchParams.set('image', containerImport.image);
-    return `/deploy-image/ns/${activeNamespace}?${searchParams}`;
+    return `/deploy-image${namespacePath}?${searchParams}`;
   }
 
   // Unsupported source type, will be dropped.

@@ -1,4 +1,4 @@
-import { PodStatus } from '@console/internal/module/k8s';
+import type { PodStatus } from '@console/internal/module/k8s';
 import { getRenderContainers } from '../logs-utils';
 import { podData } from './logs-test-data';
 

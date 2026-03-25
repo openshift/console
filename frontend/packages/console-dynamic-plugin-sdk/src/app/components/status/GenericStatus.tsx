@@ -1,6 +1,6 @@
 import type { ReactNode, ComponentType, FC } from 'react';
 import { Children } from 'react';
-import { StatusComponentProps } from '../../../extensions/console-types';
+import type { StatusComponentProps } from '../../../extensions/console-types';
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
 

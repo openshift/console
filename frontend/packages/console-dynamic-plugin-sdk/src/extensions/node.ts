@@ -1,6 +1,11 @@
 import type { ComponentType } from 'react';
-import { Extension, CodeRef } from '../types';
-import { NodeKind, ResourcesObject, WatchK8sResources, WatchK8sResults } from './console-types';
+import type { Extension, CodeRef } from '../types';
+import type {
+  NodeKind,
+  ResourcesObject,
+  WatchK8sResources,
+  WatchK8sResults,
+} from './console-types';
 
 export type IsNodeStatusActive<T extends ResourcesObject> = (
   node: NodeKind,

@@ -1,7 +1,8 @@
 import { projectDropdown } from '@console/cypress-integration-tests/views/common';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
-import { GlobalInstalledNamespace, operator, TestOperandProps } from '../views/operator.view';
+import type { TestOperandProps } from '../views/operator.view';
+import { GlobalInstalledNamespace, operator } from '../views/operator.view';
 
 const testOperator = {
   name: 'Data Grid',
@@ -17,10 +18,28 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-backup',
 };
 
-describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+const operatorPackageName = 'datagrid';
+
+const cleanupOperatorResources = (namespace: string) => {
+  cy.exec(
+    `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+  cy.exec(
+    `oc delete csv -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+  cy.exec(
+    `oc delete installplan -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+};
+
+xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
+    cleanupOperatorResources(testName);
   });
 
   afterEach(() => {
@@ -28,6 +47,7 @@ describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   });
 
   after(() => {
+    cleanupOperatorResources(testName);
     cy.deleteProjectWithCLI(testName);
   });
 

@@ -9,7 +9,7 @@ import {
   MastheadBrand,
   PageToggleButton,
 } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { ReactSVG } from 'react-svg';
 import { MastheadToolbar } from './masthead-toolbar';
 import {
@@ -25,7 +25,7 @@ type MastheadProps = {
   onNavToggle: () => void;
 };
 
-export const Masthead = memo(({ isMastheadStacked, isNavOpen, onNavToggle }: MastheadProps) => {
+export const Masthead = memo<MastheadProps>(({ isMastheadStacked, isNavOpen, onNavToggle }) => {
   const { productName, staticLogo } = getBrandingDetails();
   const navigate = useNavigate();
 

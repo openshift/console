@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
@@ -9,7 +10,7 @@ import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { EnvironmentFieldProps } from './field-types';
+import type { EnvironmentFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const EnvironmentField: FC<EnvironmentFieldProps> = ({

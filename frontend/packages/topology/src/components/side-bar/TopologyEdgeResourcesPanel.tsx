@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
-import { Edge } from '@patternfly/react-topology';
+import type { Edge } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel, SecretModel } from '@console/internal/models';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import { getNamespaceDashboardKialiLink, getResource } from '../../utils/topology-utils';

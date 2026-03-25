@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ImportStrategy } from '@console/git-service/src';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { ClusterBuildStrategyModel } from '@console/shipwright-plugin/src/models';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 

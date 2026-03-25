@@ -1,7 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
-import { Node, observer } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { CpuCellComponent } from '@console/topology/src/components/list-view/cells/CpuCell';
 import { MemoryCellComponent } from '@console/topology/src/components/list-view/cells/MemoryCell';
 import { StatusCellResourceStatus } from '@console/topology/src/components/list-view/cells/StatusCell';

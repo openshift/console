@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import { TYPE_HELM_RELEASE } from '@console/helm-plugin/src/topology/components/const';
 import HelmReleaseListViewNode from '@console/helm-plugin/src/topology/listView/HelmReleaseListViewNode';
 import { knativeListViewNodeComponentFactory } from '@console/knative-plugin/src/topology/listView/knativeListViewComponentFactory';

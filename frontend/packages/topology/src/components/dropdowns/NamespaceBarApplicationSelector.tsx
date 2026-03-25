@@ -2,16 +2,15 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { getActiveNamespace, getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import {
   ALL_NAMESPACES_KEY,
   ALL_APPLICATIONS_KEY,
   UNASSIGNED_APPLICATIONS_KEY,
-  APPLICATION_USERSETTINGS_PREFIX,
-  APPLICATION_LOCAL_STORAGE_KEY,
+  APPLICATION_USER_PREFERENCE_PREFIX,
 } from '@console/shared';
 import ApplicationDropdown from './ApplicationDropdown';
 
@@ -74,8 +73,7 @@ const NamespaceBarApplicationSelector: FC<Props> = ({
       }}
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
-      userSettingsPrefix={APPLICATION_USERSETTINGS_PREFIX}
-      storageKey={APPLICATION_LOCAL_STORAGE_KEY}
+      userPreferencePrefix={APPLICATION_USER_PREFERENCE_PREFIX}
       disabled={disabled}
     />
   );

@@ -1,7 +1,7 @@
 import { pluralize } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import {
+import type {
   GetOperatorsWithStatuses,
   PrometheusHealthHandler,
   URLHealthHandler,
@@ -9,15 +9,14 @@ import {
   GetOperatorStatusPriority,
 } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
+import type { ClusterVersionKind, ClusterOperator } from '@console/internal/module/k8s';
 import {
-  ClusterVersionKind,
   ClusterUpdateStatus,
   getClusterUpdateStatus,
   getClusterOperatorStatus,
   OperatorStatus,
-  ClusterOperator,
 } from '@console/internal/module/k8s';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
 import {

@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export interface HelmRelease {
   name: string;
@@ -110,6 +110,7 @@ export interface HelmChartRepositoryType {
       url: string;
       ca?: { name: string };
       tlsClientConfig?: { name: string };
+      basicAuthConfig?: { name: string };
     };
     description?: string;
     disabled?: boolean;
@@ -125,6 +126,7 @@ export interface HelmChartRepositoryFormData {
   repoDescription?: string;
   ca?: string;
   tlsClientConfig?: string;
+  basicAuthConfig?: string;
   disabled?: boolean;
   metadata?: object;
 }
@@ -134,4 +136,11 @@ export interface HelmChartRepositoryData {
   yamlData: string;
   formData: HelmChartRepositoryFormData;
   formReloadCount?: number;
+}
+
+export interface HelmChartURLData {
+  name: string;
+  namespace: string;
+  chartURL: string;
+  version: number | string;
 }

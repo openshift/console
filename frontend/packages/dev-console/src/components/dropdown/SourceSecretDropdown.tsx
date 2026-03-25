@@ -2,10 +2,8 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { SecretModel } from '@console/internal/models';
-import {
-  ResourceDropdown,
-  ResourceDropdownProps,
-} from '@console/shared/src/components/dropdown/ResourceDropdown';
+import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
 interface SourceSecretDropdownProps
   extends Omit<ResourceDropdownProps, 'resources' | 'placeholder' | 'dataSelector'> {

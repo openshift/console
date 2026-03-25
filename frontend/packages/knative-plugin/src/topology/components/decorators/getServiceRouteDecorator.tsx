@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology/src/types';
+import type { Node } from '@patternfly/react-topology/src/types';
 import { ROUTE_DISABLED_ANNOTATION, ROUTE_URL_ANNOTATION } from '@console/topology/src/const';
 import { getResource } from '@console/topology/src/utils';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../../const';

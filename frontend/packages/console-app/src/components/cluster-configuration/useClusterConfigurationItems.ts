@@ -1,14 +1,18 @@
 import { useMemo, useState, useEffect } from 'react';
+import type { ClusterConfigurationItem } from '@console/dynamic-plugin-sdk/src';
 import {
   checkAccess,
-  ClusterConfigurationItem,
   isClusterConfigurationItem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
-const useClusterConfigurationItems = (): [ResolvedClusterConfigurationItem[], boolean, Error[]] => {
+const useClusterConfigurationItems = (): [
+  ResolvedClusterConfigurationItem[],
+  boolean,
+  unknown[],
+] => {
   const [resolvedExtensions, resolved, errors] = useResolvedExtensions<ClusterConfigurationItem>(
     isClusterConfigurationItem,
   );

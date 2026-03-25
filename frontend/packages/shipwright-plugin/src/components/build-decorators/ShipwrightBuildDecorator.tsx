@@ -3,15 +3,15 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
-import { Build, BuildRun } from '../../types';
+import type { Build, BuildRun } from '../../types';
 import { getLatestBuildRunStatusforDeployment, isV1Alpha1Resource } from '../../utils';
 
 type BuildRunDecoratorProps = {

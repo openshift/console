@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import uniqBy from 'lodash-es/uniqBy';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { CAMEL_K_OPERATOR_NS, GLOBAL_OPERATOR_NS } from '../const';
 import { CamelKameletModel } from '../models';
 

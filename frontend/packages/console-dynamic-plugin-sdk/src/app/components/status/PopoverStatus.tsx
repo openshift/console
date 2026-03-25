@@ -1,5 +1,6 @@
 import type { ReactNode, FC } from 'react';
-import { Button, Popover, PopoverPosition, PopoverProps } from '@patternfly/react-core';
+import type { PopoverProps } from '@patternfly/react-core';
+import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import './PopoverStatus.scss';
 
 type PopoverStatusProps = {

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Icon, IconSize } from '@patternfly/react-core';
+import type { IconSize } from '@patternfly/react-core';
+import { Icon } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,

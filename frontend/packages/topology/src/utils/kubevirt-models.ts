@@ -1,4 +1,4 @@
-import { K8sModel } from '@console/internal/module/k8s/types';
+import type { K8sModel } from '@console/internal/module/k8s/types';
 
 export const VirtualMachineInstanceModel: K8sModel = {
   label: 'Virtual Machine Instance',

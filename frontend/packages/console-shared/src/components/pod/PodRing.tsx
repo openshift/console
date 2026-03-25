@@ -6,10 +6,11 @@ import { AngleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-up-ico
 import { AutomationIcon } from '@patternfly/react-icons/dist/esm/icons/automation-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
-import { useRelatedHPA } from '../../hooks/hpa-hooks';
-import { ExtPodKind } from '../../types';
+import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { k8sPatch } from '@console/internal/module/k8s';
+import { useRelatedHPA } from '../../hooks/useRelatedHPA';
+import type { ExtPodKind } from '../../types';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
 import PodStatus from './PodStatus';
 import './PodRing.scss';

@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { LazyRestorePVCModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { VolumeSnapshotModel } from '@console/internal/models';
-import { VolumeSnapshotKind } from '@console/internal/module/k8s';
+import type { VolumeSnapshotKind } from '@console/internal/module/k8s';
 import { VolumeSnapshotActionCreator } from './types';
 
 /**

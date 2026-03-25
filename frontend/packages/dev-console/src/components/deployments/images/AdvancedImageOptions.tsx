@@ -1,11 +1,15 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { ExpandCollapse } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared/src';
 
 const AdvancedImageOptions: FC = () => {
@@ -27,6 +31,25 @@ const AdvancedImageOptions: FC = () => {
   const handleSave = (name: string) => {
     setFieldValue('formData.imagePullSecret', name);
   };
+
+  const [secretsData, secretsLoaded, secretsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    namespace,
+    kind: SecretModel.kind,
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: secretsData,
+        loaded: secretsLoaded,
+        loadError: secretsLoadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [secretsData, secretsLoaded, secretsLoadError],
+  );
+
   return (
     <ExpandCollapse
       textExpanded={t('devconsole~Hide advanced image options')}
@@ -39,14 +62,7 @@ const AdvancedImageOptions: FC = () => {
           'devconsole~Secret for authentication when pulling image from a secured registry.',
         )}
         placeholder={t('devconsole~Select Secret name')}
-        resources={[
-          {
-            isList: true,
-            namespace,
-            kind: SecretModel.kind,
-            prop: 'secrets',
-          },
-        ]}
+        resources={resources}
         resourceFilter={filterData}
         dataSelector={['metadata', 'name']}
         dataTest="secrets-dropdown"

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 
 export type OperatorBackedServiceKindMap = {
   [name: string]: ClusterServiceVersionKind;

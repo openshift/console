@@ -1,11 +1,13 @@
 import type { FC, ReactNode } from 'react';
 import { render, waitFor } from '@testing-library/react';
-import { Formik, FormikConfig } from 'formik';
+import userEvent from '@testing-library/user-event';
+import type { FormikConfig } from 'formik';
+import { Formik } from 'formik';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import userEvent from '../../__tests__/user-event';
 import { BuildConfigRunPolicy } from '../../types';
-import PolicySection, { PolicySectionFormData } from '../PolicySection';
+import type { PolicySectionFormData } from '../PolicySection';
+import PolicySection from '../PolicySection';
 
 interface WrapperProps extends FormikConfig<PolicySectionFormData> {
   children?: ReactNode;
@@ -51,6 +53,7 @@ describe('PolicySectionFormData', () => {
   });
 
   it('should submit the right value when switching to parallel', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -59,12 +62,12 @@ describe('PolicySectionFormData', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Serial'));
-    userEvent.click(renderResult.getByText('Parallel'));
+    await user.click(renderResult.getByText('Serial'));
+    await user.click(renderResult.getByText('Parallel'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
@@ -80,6 +83,7 @@ describe('PolicySectionFormData', () => {
   });
 
   it('should submit the right value when switching to serial latest only', async () => {
+    const user = userEvent.setup();
     const onSubmit = jest.fn();
 
     const renderResult = render(
@@ -88,12 +92,12 @@ describe('PolicySectionFormData', () => {
       </Wrapper>,
     );
 
-    userEvent.click(renderResult.getByText('Serial'));
-    userEvent.click(renderResult.getByText('Serial latest only'));
+    await user.click(renderResult.getByText('Serial'));
+    await user.click(renderResult.getByText('Serial latest only'));
 
     // Submit
     const submitButton = renderResult.getByRole('button', { name: 'Submit' });
-    userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });

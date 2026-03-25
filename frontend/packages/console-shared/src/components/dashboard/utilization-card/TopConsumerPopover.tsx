@@ -3,15 +3,17 @@ import type { FC, ReactNode, ReactText } from 'react';
 import { memo, useState, useCallback, useMemo } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import { LIMIT_STATE, Humanize } from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { Humanize } from '@console/dynamic-plugin-sdk';
+import { LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
-import { DataPoint } from '@console/internal/components/graphs';
+import type { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '../../..';
 import { useDashboardResources } from '../../../hooks/useDashboardResources';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
@@ -19,7 +21,7 @@ import Status from '../status-card/StatusPopup';
 
 import './top-consumer-popover.scss';
 
-const ConsumerPopover: FC<ConsumerPopoverProps> = memo(
+const ConsumerPopover = memo<ConsumerPopoverProps>(
   ({
     current,
     title,
@@ -113,7 +115,7 @@ export const LimitsBody: FC<LimitsBodyProps> = ({
   );
 };
 
-export const PopoverBody: FC<PopoverBodyProps> = memo(
+export const PopoverBody = memo<PopoverBodyProps>(
   ({ humanize, consumers, namespace, isOpen, description, children }) => {
     const { t } = useTranslation();
     const [currentConsumer, setCurrentConsumer] = useState(consumers[0]);

@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
-import {
+import type {
   EventListenerKind,
   TriggerTemplateKind,
 } from '@console/dev-console/src/components/pipeline-section/triggers';
@@ -10,7 +10,7 @@ import {
   EventListenerModel,
   TriggerTemplateModel,
 } from '@console/dev-console/src/models/pipelines';
-import { PipelineKind } from '@console/dev-console/src/types/pipeline';
+import type { PipelineKind } from '@console/dev-console/src/types/pipeline';
 import { checkAccess } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
@@ -26,15 +26,8 @@ import {
   CronJobModel,
   BuildModel,
 } from '@console/internal/models';
-import {
-  K8sModel,
-  k8sList,
-  k8sPatch,
-  k8sKill,
-  K8sResourceKind,
-  modelFor,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sList, k8sPatch, k8sKill, modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   CamelKameletBindingModel,
   EventingBrokerModel,

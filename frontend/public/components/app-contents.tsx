@@ -1,24 +1,16 @@
 import * as _ from 'lodash';
 import type { FC } from 'react';
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react';
-import {
-  Route,
-  Routes,
-  Navigate,
-  useParams,
-  useLocation,
-  matchRoutes,
-} from 'react-router-dom-v5-compat';
+import { Route, Routes, Navigate, useParams, useLocation, matchRoutes } from 'react-router';
 import { useActivePerspective, Perspective } from '@console/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   getPerspectiveVisitedKey,
   usePerspectives,
-} from '@console/shared/src/hooks/perspective-utils';
+} from '@console/shared/src/hooks/usePerspectives';
 import { ErrorBoundaryPage } from '@console/shared/src/components/error';
-import CatalogDefaultNamespaceRedirect from '@console/shared/src/components/catalog/CatalogDefaultNamespaceRedirect';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';
@@ -90,7 +82,7 @@ type DefaultPageProps = {
 const DefaultPage_: FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = usePerspectives();
-  const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
+  const [visited, setVisited, visitedLoaded] = useUserPreference<boolean>(
     getPerspectiveVisitedKey(activePerspective),
     false,
   );
@@ -264,9 +256,6 @@ const AppContents: FC = () => {
         }
       />
 
-      <Route path="/catalog" element={<CatalogDefaultNamespaceRedirect />} />
-      {/* TODO: Make Software Catalog work with all namespaces. https://issues.redhat.com/browse/CONSOLE-4827 */}
-      <Route path="/catalog/all-namespaces" element={<CatalogDefaultNamespaceRedirect />} />
       <Route
         path="/catalog/instantiate-template"
         element={
@@ -344,7 +333,6 @@ const AppContents: FC = () => {
         path="/k8s/ns/:ns/secrets/~new/:type"
         element={
           <AsyncComponent
-            kind="Secret"
             loader={() =>
               import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
                 (m) => m.CreateSecret,
@@ -357,7 +345,6 @@ const AppContents: FC = () => {
         path="/k8s/ns/:ns/configmaps/~new/form"
         element={
           <AsyncComponent
-            kind="ConfigMap"
             loader={() =>
               import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
                 (m) => m.ConfigMapPage,
@@ -370,7 +357,6 @@ const AppContents: FC = () => {
         path="/k8s/ns/:ns/configmaps/:name/form"
         element={
           <AsyncComponent
-            kind="ConfigMap"
             loader={() =>
               import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
                 (m) => m.ConfigMapPage,
@@ -409,7 +395,6 @@ const AppContents: FC = () => {
             loader={() =>
               import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
             }
-            kind="RoleBinding"
           />
         }
       />
@@ -420,7 +405,6 @@ const AppContents: FC = () => {
             loader={() =>
               import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
             }
-            kind="RoleBinding"
           />
         }
       />
@@ -485,7 +469,6 @@ const AppContents: FC = () => {
         path="/k8s/ns/:ns/persistentvolumeclaims/~new/form"
         element={
           <AsyncComponent
-            kind="PersistentVolumeClaim"
             loader={() =>
               import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(
                 (m) => m.CreatePVC,
@@ -714,7 +697,6 @@ const AppContents: FC = () => {
         path="/k8s/ns/:ns/:resourceRef/form"
         element={
           <AsyncComponent
-            kind="PodDisruptionBudgets"
             loader={() =>
               import(
                 '@console/app/src/components/pdb/PDBFormPage' /* webpackChunkName: "PDBFormPage" */

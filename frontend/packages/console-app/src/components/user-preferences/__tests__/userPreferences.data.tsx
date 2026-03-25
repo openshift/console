@@ -1,10 +1,10 @@
-import {
+import type {
   ResolvedExtension,
-  UserPreferenceFieldType,
   UserPreferenceGroup,
   UserPreferenceItem,
 } from '@console/dynamic-plugin-sdk';
-import { ResolvedUserPreferenceItem, ResolvedUserPreferenceGroup } from '../types';
+import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk';
+import type { ResolvedUserPreferenceItem, ResolvedUserPreferenceGroup } from '../types';
 
 export const userPreferenceItemWithCustomComponent: ResolvedUserPreferenceItem = {
   id: 'console.preferredNamespace',
@@ -97,7 +97,6 @@ export const mockUserPreferenceItemExtensions: ResolvedExtension<
   UserPreferenceItem
 >[] = mockUserPreferenceItems.map((userPreferenceItem) => ({
   type: 'console.user-preference/item',
-  pluginID: '',
   pluginName: '',
   uid: '',
   properties: userPreferenceItem,
@@ -107,7 +106,6 @@ export const mockUserPreferenceGroupExtensions: ResolvedExtension<
   UserPreferenceGroup
 >[] = mockUserPreferenceGroups.map((userPreferenceGroup) => ({
   type: 'console.user-preference/group',
-  pluginID: '',
   pluginName: '',
   uid: '',
   properties: userPreferenceGroup,

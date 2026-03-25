@@ -8,7 +8,7 @@ import {
   SyncAltIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { StatusComponentProps } from '../../../extensions/console-types';
+import type { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
@@ -40,6 +40,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
 
     case 'Pending':
+    case 'pending':
       return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
 
     case 'Planning':
@@ -81,6 +82,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'ErrImagePull':
     case 'Error':
     case 'Failed':
+    case 'failed':
     case 'Failure':
     case 'ImagePullBackOff':
     case 'InstallCheckFailed':
@@ -100,6 +102,7 @@ const Status: FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip,
     case 'Ready':
     case 'Up to date':
     case 'Loaded':
+    case 'loaded':
     case 'Provisioned as node':
     case 'Preferred':
     case 'Connected':

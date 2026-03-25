@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { fetchBindableServices } from './fetch-bindable-services-utils';
-import { BindableServiceGVK } from './types';
+import type { BindableServiceGVK } from './types';
 
 export type ServiceBindingContextType = {
   bindableServices: BindableServiceGVK[];

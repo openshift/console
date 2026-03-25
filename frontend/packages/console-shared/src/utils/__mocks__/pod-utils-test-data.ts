@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 
 export const deploymentConfig: K8sResourceKind = {
   kind: 'DeploymentConfig',

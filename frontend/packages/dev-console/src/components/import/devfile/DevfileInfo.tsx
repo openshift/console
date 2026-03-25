@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { DevfileSample } from './devfile-types';
+import type { DevfileSample } from './devfile-types';
 
 export type DevfileInfoProps = {
   devfileSample: DevfileSample;

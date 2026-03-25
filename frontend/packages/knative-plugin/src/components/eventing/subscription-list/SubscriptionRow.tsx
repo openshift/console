@@ -1,10 +1,12 @@
 import type { FC } from 'react';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventSubscriptionKind, SubscriptionConditionTypes } from '../../../types';
+import type { EventSubscriptionKind } from '../../../types';
+import { SubscriptionConditionTypes } from '../../../types';
 import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './subscription-table';
 

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useCurrentChannel } from '../../hooks/useCurrentChannel';
-import { PackageManifestKind } from '../../types';
+import type { PackageManifestKind } from '../../types';
 import { getSupportWorkflowUrl } from './operator-hub-utils';
 
 export const OperatorSupport: FC<OperatorSupportProps> = ({ packageManifest }) => {

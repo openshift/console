@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 // HotplugVolumeStatus represents the hotplug status of the volume
 export interface V1HotplugVolumeStatus {

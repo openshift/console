@@ -1,10 +1,10 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useState } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { k8sGetResource, k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { LoadError } from '@console/internal/components/utils/status-box';
 import { NamespaceModel } from '@console/internal/models';
@@ -13,11 +13,8 @@ import {
   createCloudShellResourceName,
   CLOUD_SHELL_PROTECTED_NAMESPACE,
 } from '../cloud-shell-utils';
-import {
-  CloudShellSetupFormData,
-  cloudShellSetupValidationSchema,
-  getCloudShellTimeout,
-} from './cloud-shell-setup-utils';
+import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
+import { cloudShellSetupValidationSchema, getCloudShellTimeout } from './cloud-shell-setup-utils';
 import CloudShellSetupForm from './CloudShellSetupForm';
 import './CloudShellSetup.scss';
 
@@ -28,7 +25,7 @@ type Props = {
   operatorNamespace: string;
 };
 
-const CloudShellAdminSetup: FunctionComponent<Props> = ({
+const CloudShellAdminSetup: FC<Props> = ({
   onSubmit,
   onCancel,
   workspaceModel,

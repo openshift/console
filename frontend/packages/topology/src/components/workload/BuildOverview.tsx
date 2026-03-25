@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Button, List, ListItem } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';
@@ -15,9 +15,11 @@ import {
 } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { BuildConfigModel } from '@console/internal/models';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
-import { LogSnippet, Status, BuildConfigOverviewItem } from '@console/shared';
+import type { BuildConfigOverviewItem } from '@console/shared';
+import { LogSnippet, Status } from '@console/shared';
 import './BuildOverview.scss';
 
 const MAX_VISIBLE = 3;

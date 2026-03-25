@@ -1,4 +1,5 @@
-import { Node, Graph, isGraph } from '@patternfly/react-topology';
+import type { Node, Graph } from '@patternfly/react-topology';
+import { isGraph } from '@patternfly/react-topology';
 import { ActionServiceProvider } from '@console/shared';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { createContextMenuItems } from '../../../actions/contextMenuActions';

@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { NavItemSeparator } from '@patternfly/react-core';
+import type { NavExtension } from '@console/dynamic-plugin-sdk';
 import {
   isNavSection,
   isSeparator,
-  NavExtension,
   isHrefNavItem,
   isResourceNSNavItem,
   isResourceNavItem,

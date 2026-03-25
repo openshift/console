@@ -1,11 +1,12 @@
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { EventingBrokerModel } from '../../../models';
 import { LABEL_PART_OF, EVENT_BROKER_APP, DEFAULT_BROKER_NAME } from '../const';
-import { AddBrokerFormYamlValues, BrokerFormData } from '../import-types';
+import type { AddBrokerFormYamlValues, BrokerFormData } from '../import-types';
 
 export const convertFormToBrokerYaml = (formData: BrokerFormData): K8sResourceKind => {
   const {

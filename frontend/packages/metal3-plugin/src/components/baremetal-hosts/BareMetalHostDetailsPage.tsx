@@ -2,18 +2,19 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import { navFactory, FirehoseResource } from '@console/internal/components/utils';
+import type { FirehoseResource } from '@console/internal/components/utils';
+import { navFactory } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
-import {
+import type {
   K8sResourceKind,
   MachineKind,
   MachineSetKind,
   NodeKind,
-  referenceForModel,
 } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getMachineNode, getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
@@ -22,7 +23,7 @@ import { findNodeMaintenance, getHostMachine } from '../../selectors';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
 import { getHostStatus } from '../../status/host-status';
-import { BareMetalHostKind } from '../../types/host';
+import type { BareMetalHostKind } from '../../types/host';
 import BareMetalHostDetails from './BareMetalHostDetails';
 import BareMetalHostDisks from './BareMetalHostDisks';
 import BareMetalHostNICs from './BareMetalHostNICs';

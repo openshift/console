@@ -1,11 +1,12 @@
 import type { FC } from 'react';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { CatalogType } from '../catalog';
-import QuickSearchDetails, { DetailsRendererFunction } from './QuickSearchDetails';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogType } from '../catalog';
+import type { DetailsRendererFunction } from './QuickSearchDetails';
+import QuickSearchDetails from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';
-import { CatalogLinkData } from './utils/quick-search-types';
+import type { CatalogLinkData } from './utils/quick-search-types';
 import './QuickSearchContent.scss';
 
 interface QuickSearchContentProps {

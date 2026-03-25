@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import { ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../models';
 
 export type ConfigurationsOverviewListItemProps = {

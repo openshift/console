@@ -1,4 +1,4 @@
-import { IconDefinition } from '@patternfly/react-icons/dist/esm/createIcon';
+import type { IconDefinition } from '@patternfly/react-icons/dist/esm/createIcon';
 
 const ICON_OPERATOR = 'icon-operator';
 export type CSVIcon = { base64data: string; mediatype: string };

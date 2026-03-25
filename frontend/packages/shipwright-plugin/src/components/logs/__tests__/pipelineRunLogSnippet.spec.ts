@@ -1,4 +1,4 @@
-import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
+import type { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
 import { getPLRLogSnippet } from '../pipelineRunLogSnippet';
 import { TektonResourceLabel } from '../TektonTaskRunLog';
 import { DataState, PipelineExampleNames, pipelineTestData } from './pipeline-data';

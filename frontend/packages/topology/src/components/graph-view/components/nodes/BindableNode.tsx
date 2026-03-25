@@ -1,15 +1,14 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import {
-  observer,
+import type {
   Node,
-  useDndDrop,
   WithContextMenuProps,
   WithDragNodeProps,
   WithSelectionProps,
   GraphElement,
 } from '@patternfly/react-topology';
-import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { observer, useDndDrop } from '@patternfly/react-topology';
+import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { getTopologyResourceObject } from '../../../../utils';

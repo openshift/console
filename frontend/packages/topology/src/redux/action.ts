@@ -1,6 +1,7 @@
-import { GraphModel } from '@patternfly/react-topology';
-import { action, ActionType } from 'typesafe-actions';
-import { RootState } from '@console/internal/redux';
+import type { GraphModel } from '@patternfly/react-topology';
+import type { ActionType } from 'typesafe-actions';
+import { action } from 'typesafe-actions';
+import type { RootState } from '@console/internal/redux';
 
 export enum Actions {
   topologyFilters = 'topologyFilters',

@@ -1,6 +1,6 @@
-import { ExtensionK8sModel } from '../api/common-types';
-import { Extension, CodeRef } from '../types';
-import { K8sResourceCommon } from './console-types';
+import type { ExtensionK8sModel } from '../api/common-types';
+import type { Extension, CodeRef } from '../types';
+import type { K8sResourceCommon } from './console-types';
 
 export type DetailsItemColumn = 'right' | 'left';
 

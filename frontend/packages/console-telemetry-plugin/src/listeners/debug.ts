@@ -1,5 +1,5 @@
 import { TELEMETRY_DEBUG } from '@console/dynamic-plugin-sdk/src/api/segment-analytics';
-import { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src/extensions/telemetry';
+import type { TelemetryEventListener } from '@console/dynamic-plugin-sdk/src/extensions/telemetry';
 
 export const eventListener: TelemetryEventListener = (eventType: string, properties?: any) => {
   if (TELEMETRY_DEBUG) {

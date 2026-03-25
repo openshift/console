@@ -3,9 +3,8 @@ import * as path from 'path';
 import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
 import { getTemplatePackage } from '../../utils/test-utils';
+import type { Package, PluginPackage } from '../plugin-resolver';
 import {
-  Package,
-  PluginPackage,
   isPluginPackage,
   readPackages,
   filterActivePluginPackages,

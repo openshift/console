@@ -1,12 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useBuilderImageEnvironments } from '../../../builder/builderImageHooks';
-import {
-  BuildData,
-  BuildOptions,
-  DetectedStrategyFormData,
-  GitImportFormData,
-} from '../../../import-types';
+import type { BuildData, DetectedStrategyFormData, GitImportFormData } from '../../../import-types';
+import { BuildOptions } from '../../../import-types';
 import { BuildSection } from '../BuildSection';
 
 jest.mock('react', () => ({
@@ -30,10 +27,16 @@ jest.mock('@console/internal/components/build', () => ({
   getStrategyType: jest.fn(() => 'source'),
 }));
 
+jest.mock('@console/shared/src/hooks/useDebounceCallback', () => ({
+  useDebounceCallback: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  useFlag: jest.fn(() => false),
+}));
+
 jest.mock('@console/shared/src', () => ({
   EnvironmentField: (props) => `EnvironmentField envs=${JSON.stringify(props.envs)}`,
-  useDebounceCallback: jest.fn(() => jest.fn()),
-  useFlag: jest.fn(() => false),
 }));
 
 jest.mock('@console/git-service/src', () => ({

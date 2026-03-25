@@ -1,18 +1,17 @@
 import type { FC } from 'react';
-import { useCallback } from 'react';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useCallback, useEffect } from 'react';
+import { Modal } from '@patternfly/react-core';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import {
-  createModalLauncher,
-  ModalComponentProps,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import PubSub from './PubSub';
+import { setPubSubModalLauncher } from './PubSubModalLauncher';
 
 type PubSubControllerProps = {
   source: K8sResourceKind;
   target?: K8sResourceKind;
+  onOverlayClose?: () => void;
 };
 
 const PubSubController: FC<PubSubControllerProps> = ({ source, ...props }) => (
@@ -21,17 +20,44 @@ const PubSubController: FC<PubSubControllerProps> = ({ source, ...props }) => (
 
 type Props = PubSubControllerProps & ModalComponentProps;
 
-const PubSubModalProvider: OverlayComponent<Props> = (props) => {
+export const PubSubModalOverlay: OverlayComponent<Props> = (props) => {
+  const handleOverlayDismiss = useCallback(() => {
+    // When dismissed via overlay (ESC, click outside), call onOverlayClose
+    // This allows promise settlement tracking in addPubSubConnectionModal
+    if (props.onOverlayClose) {
+      props.onOverlayClose();
+    }
+    props.closeOverlay();
+  }, [props]);
+
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal
+      isOpen
+      onClose={handleOverlayDismiss}
+      variant="small"
+      aria-labelledby="pub-sub-modal-title"
+    >
       <PubSubController cancel={props.closeOverlay} close={props.closeOverlay} {...props} />
-    </ModalWrapper>
+    </Modal>
   );
 };
 
 export const usePubSubModalLauncher = (props) => {
-  const launcher = useOverlay();
-  return useCallback(() => launcher<Props>(PubSubModalProvider, props), [launcher, props]);
+  const launchModal = useOverlay();
+  return useCallback(() => launchModal<Props>(PubSubModalOverlay, props), [launchModal, props]);
 };
 
-export const PubSubModalLauncher = createModalLauncher<Props>(PubSubController);
+/**
+ * Zero-render component that syncs the overlay launcher for non-React contexts.
+ * Must be rendered inside OverlayProvider (typically in Topology component).
+ */
+export const SyncPubSubModalLauncher: FC = () => {
+  const launchModal = useOverlay();
+
+  useEffect(() => {
+    setPubSubModalLauncher(launchModal);
+    return () => setPubSubModalLauncher(null);
+  }, [launchModal]);
+
+  return null;
+};

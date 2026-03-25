@@ -1,4 +1,4 @@
-import { Extension, CodeRef } from '../types';
+import type { Extension, CodeRef } from '../types';
 
 /** This extension can be used to contribute a new storage provider to select,
     when attaching storage and a provider specific component. */

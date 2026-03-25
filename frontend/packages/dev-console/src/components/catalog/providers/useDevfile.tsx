@@ -1,16 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   CatalogItem,
   CatalogItemDetailsDescription,
   CatalogItemDetailsProperty,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { APIError } from '@console/shared';
+import type { APIError } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { DevfileSample } from '../../import/devfile/devfile-types';
+import type { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
   const normalizedDevfileSamples = devfileSamples?.map((sample) => {

@@ -8,7 +8,6 @@
     "lint": "yarn --cwd ../.. eslint packages/webterminal-plugin",
     "test": "yarn --cwd ../.. test packages/webterminal-plugin"
   },
-  "dependencies": {},
   "consolePlugin": {
     "exposedModules": {
       "useWebTerminalProvider": "src/actions/providers/web-terminal-provider.ts",

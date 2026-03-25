@@ -1,6 +1,7 @@
 import type { FC, ReactElement, ComponentType } from 'react';
-import { useMemo, lazy, useEffect, useCallback } from 'react';
-import { createPath, Route, useLocation } from 'react-router-dom-v5-compat';
+import { useMemo, lazy, useEffect } from 'react';
+import type { RouteProps } from 'react-router';
+import { createPath, Route, useLocation } from 'react-router';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
@@ -56,45 +57,56 @@ const RoutePage: FC<RoutePageProps> = ({ extension, activePerspective, setActive
   );
 };
 
+/**
+ * Converts Console route page extension data to React Router v7 route components.
+ */
+export const mapExtensionToRoutes = (data: {
+  uid: string;
+  path: string | string[];
+  getElement: (currentPath: string) => RouteProps['element'];
+  exact?: boolean;
+}) => {
+  const { uid, path, getElement, exact } = data;
+  const routePaths = Array.isArray(path) ? path : [path];
+
+  return routePaths.map((currentPath) => (
+    <Route
+      key={`${uid}/${currentPath}`}
+      path={`${currentPath}${exact ? '' : '/*'}`}
+      element={getElement(currentPath)}
+    />
+  ));
+};
+
 export const usePluginRoutes: UsePluginRoutes = () => {
   const routePages = useExtensions<RoutePage>(isRoutePage);
   const [activePerspective, setActivePerspective] = useActivePerspective();
-  const getRoutesForExtension = useCallback(
-    (extension: LoadedRoutePageExtension): ReactElement[] => {
-      const paths = Array.isArray(extension.properties.path)
-        ? extension.properties.path
-        : [extension.properties.path];
-      return paths.map((path) => (
-        <Route
-          {...extension.properties}
-          path={`${path}${extension.properties.exact ? '' : '/*'}`}
-          key={path}
-          element={
-            <RoutePage
-              extension={extension}
-              activePerspective={activePerspective}
-              setActivePerspective={setActivePerspective}
-            />
-          }
-        />
-      ));
-    },
-    [activePerspective, setActivePerspective],
-  );
 
   return useMemo(
     () =>
       routePages.reduce(
         ([activeAcc, inactiveAcc], extension) => {
           const active = isRoutePageExtensionActive(extension, activePerspective);
-          const routes = getRoutesForExtension(extension);
+          const routes = mapExtensionToRoutes({
+            uid: extension.uid,
+            path: extension.properties.path,
+            exact: extension.properties.exact,
+            getElement: () => (
+              <RoutePage
+                extension={extension}
+                activePerspective={activePerspective}
+                setActivePerspective={setActivePerspective}
+              />
+            ),
+          });
+
           return active
             ? [[...activeAcc, ...routes], inactiveAcc]
             : [activeAcc, [...inactiveAcc, ...routes]];
         },
         [[], []],
       ),
-    [routePages, getRoutesForExtension, activePerspective],
+    [routePages, activePerspective, setActivePerspective],
   );
 };
 

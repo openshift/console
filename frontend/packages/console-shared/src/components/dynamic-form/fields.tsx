@@ -10,17 +10,16 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { FieldProps, UiSchema } from '@rjsf/core';
-import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
+import type { FieldProps, UiSchema } from '@rjsf/core';
+import type { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
+import SchemaField from '@rjsf/core/dist/cjs/components/fields/SchemaField';
 import { retrieveSchema, getUiOptions } from '@rjsf/core/dist/cjs/utils';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import {
-  ConsoleSelect,
-  ConsoleSelectProps,
-} from '@console/internal/components/utils/console-select';
+import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
+import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { LinkifyExternal } from '@console/internal/components/utils/link';
 import { SelectorInput } from '@console/internal/components/utils/selector-input';
 import {

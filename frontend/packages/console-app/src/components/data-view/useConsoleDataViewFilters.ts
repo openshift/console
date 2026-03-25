@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {
   exactMatch,
   fuzzyCaseInsensitive,
 } from '@console/internal/components/factory/table-filters';
 import { mapLabelsToStrings } from '@console/shared/src/utils/label-filter';
-import { ResourceFilters, ResourceMetadata } from './types';
+import type { ResourceFilters, ResourceMetadata } from './types';
 
 const getK8sResourceMetadata = (obj: K8sResourceCommon): ResourceMetadata => ({
   name: obj.metadata?.name,

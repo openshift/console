@@ -2,8 +2,8 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
-
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { NamespaceBarProps, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import {
@@ -18,17 +18,19 @@ import { k8sGet } from '@console/internal/module/k8s';
 import { setFlag } from '../actions/flags';
 import { NamespaceModel, ProjectModel } from '../models';
 import { flagPending } from '../reducers/features';
-import { Firehose } from './utils/firehose';
-import { FirehoseResult } from './utils/types';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import type {
+  WatchK8sResultsObject,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
-import type { RootState } from '../redux';
 import { setActiveApplication } from '../actions/ui';
 
 export type NamespaceBarDropdownsProps = {
   children: ReactNode;
   isDisabled: boolean;
-  namespace?: FirehoseResult;
+  namespace?: WatchK8sResultsObject<K8sResourceCommon[]>;
   onNamespaceChange: (namespace: string) => void;
   useProjects: boolean;
 };
@@ -44,16 +46,16 @@ export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
 }) => {
   const { removeQueryArgument } = useQueryParamsMutator();
   const createNamespaceOrProjectModal = useCreateNamespaceOrProjectModal();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const activePerspective = useActivePerspective()[0];
   const [activeNamespaceError, setActiveNamespaceError] = useState(false);
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   useEffect(() => {
-    if (namespace.loaded) {
+    if (namespace?.loaded) {
       dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(namespace.data)));
     }
-  }, [dispatch, namespace.data, namespace.loaded]);
+  }, [dispatch, namespace?.data, namespace?.loaded]);
 
   /* Check if the activeNamespace is present in the cluster */
   useEffect(() => {
@@ -121,9 +123,19 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   children,
   hideProjects = false,
 }) => {
-  const useProjects = useSelector<RootState, boolean>(({ k8s }) =>
+  const useProjects = useConsoleSelector<boolean>(({ k8s }) =>
     k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
   );
+
+  const [namespaces, loaded, loadError] = useK8sWatchResource(
+    hideProjects
+      ? null
+      : {
+          kind: getModel(useProjects).kind,
+          isList: true,
+        },
+  );
+
   return (
     <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
       {hideProjects ? (
@@ -131,20 +143,17 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
           {children}
         </div>
       ) : (
-        // Data from Firehose is not used directly by the NamespaceDropdown nor the children.
+        // Data from useK8sWatchResource is not used directly by the NamespaceDropdown nor the children.
         // Data is used to determine if the StartGuide should be shown.
         // See NamespaceBarDropdowns_  above.
-        <Firehose
-          resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}
+        <NamespaceBarDropdowns
+          useProjects={useProjects}
+          isDisabled={isDisabled}
+          onNamespaceChange={onNamespaceChange}
+          namespace={{ data: namespaces as K8sResourceCommon[], loaded, loadError }}
         >
-          <NamespaceBarDropdowns
-            useProjects={useProjects}
-            isDisabled={isDisabled}
-            onNamespaceChange={onNamespaceChange}
-          >
-            {children}
-          </NamespaceBarDropdowns>
-        </Firehose>
+          {children}
+        </NamespaceBarDropdowns>
       )}
     </div>
   );

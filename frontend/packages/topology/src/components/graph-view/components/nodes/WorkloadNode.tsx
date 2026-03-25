@@ -9,18 +9,18 @@ import {
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
-import { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import type { PodRCData } from '@console/shared';
 import {
   AllPodStatus,
   calculateRadius,
   getFiringAlerts,
   getPodStatus,
   getSeverityAlertType,
-  PodRCData,
-  useBuildConfigsWatcher,
-  usePodsWatcher,
 } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../../workload/resource-alert';
@@ -155,6 +155,8 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
   const [hover, hoverRef] = useHover();
+  // Keep hover active when context menu is open to prevent re-renders
+  const isHovering = hover || contextMenuOpen;
   const size = Math.min(width, height);
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
@@ -166,7 +168,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   const controller = useVisualizationController();
   const detailsLevel = controller.getGraph().getDetailsLevel();
   const iconImageUrl = getImageForIconClass(workloadData.builderImage) ?? workloadData.builderImage;
-  const showDetails = hover || contextMenuOpen || detailsLevel !== ScaleDetailsLevel.low;
+  const showDetails = isHovering || detailsLevel !== ScaleDetailsLevel.low;
   const nodeDecorators = showDetails
     ? getNodeDecorators(element, decorators, cx, cy, radius, decoratorRadius)
     : null;

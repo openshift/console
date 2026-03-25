@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { PlainList } from '@console/shared/src';
 import { useCurrentChannel } from '../../hooks/useCurrentChannel';
-import { PackageManifestKind } from '../../types';
+import type { PackageManifestKind } from '../../types';
 import { getValidSubscription } from './operator-hub-utils';
 import type { CSVAnnotations } from './index';
 

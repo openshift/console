@@ -1,24 +1,20 @@
 import type { FC } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { MultiListPage } from '@console/internal/components/factory';
-import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
+import type { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
-import {
-  MachineKind,
-  MachineSetKind,
-  NodeKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import type { MachineKind, MachineSetKind, NodeKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, createLookup, getNodeMachineName } from '@console/shared';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { getHostStatus } from '../../status/host-status';
-import { BareMetalHostKind } from '../../types';
-import { BareMetalHostBundle } from '../types';
+import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostBundle } from '../types';
 import BareMetalHostsTable from './BareMetalHostsTable';
 import { hostStatusFilter } from './table-filters';
 

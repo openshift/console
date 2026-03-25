@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PopoverProps } from '@patternfly/react-core';
+import type { PopoverProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ShortcutTable, Shortcut } from '../shortcuts';
 import { isMac } from '../shortcuts/Shortcut';

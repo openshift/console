@@ -3,11 +3,8 @@ import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import {
-  K8sResourceKind,
-  referenceForGroupVersionKind,
-  groupVersionFor,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForGroupVersionKind, groupVersionFor } from '@console/internal/module/k8s';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import EventSourceOwnedList from './EventSourceOwnedList';
 

@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-import { JSONSchema7Type } from 'json-schema';
-import { Extension, CodeRef } from '../types';
+import type { JSONSchema7Type } from 'json-schema';
+import type { Extension, CodeRef } from '../types';
 
 export enum UserPreferenceFieldType {
   dropdown = 'dropdown',

@@ -1,11 +1,11 @@
 import type { FC } from 'react';
+import type { Visualization } from '@patternfly/react-topology';
 import {
   TopologyControlBar as PfTopologyControlBar,
   observer,
   action,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
-  Visualization,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 

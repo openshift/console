@@ -2,16 +2,9 @@ import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import {
-  BranchList,
-  GitSource,
-  RepoFileList,
-  RepoLanguageList,
-  RepoMetadata,
-  RepoStatus,
-  SecretType,
-} from '../types';
-import { definitions } from '../types/generated/gitea';
+import type { BranchList, GitSource, RepoFileList, RepoLanguageList, RepoMetadata } from '../types';
+import { RepoStatus, SecretType } from '../types';
+import type { definitions } from '../types/generated/gitea';
 import { BaseService } from './base-service';
 
 export class GiteaService extends BaseService {

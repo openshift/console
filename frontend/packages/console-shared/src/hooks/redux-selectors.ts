@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 export const useActiveNamespace = (): string => {
-  return useSelector<RootState, string>(({ UI }) => UI.get('activeNamespace'));
+  return useConsoleSelector<string>(({ UI }) => UI.get('activeNamespace'));
 };

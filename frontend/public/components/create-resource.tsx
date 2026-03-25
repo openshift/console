@@ -1,7 +1,6 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
-import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { useParams } from 'react-router';
+import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { AsyncComponent } from './utils/async';
 
 const CreateResource: FC = () => {
@@ -9,9 +8,7 @@ const CreateResource: FC = () => {
   const createResourceExtension = useCreateResourceExtension(params.plural);
 
   return createResourceExtension ? (
-    <ErrorBoundaryPage>
-      <AsyncComponent loader={createResourceExtension.properties.component} namespace={params.ns} />
-    </ErrorBoundaryPage>
+    <AsyncComponent loader={createResourceExtension.properties.component} namespace={params.ns} />
   ) : (
     <AsyncComponent
       loader={() =>

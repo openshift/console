@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { StepContentType } from '../type';
+import type { StepContentType } from '../type';
 import './StepContent.scss';
 
 type StepContentProps = {

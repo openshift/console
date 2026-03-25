@@ -1,5 +1,5 @@
 import type { ComponentType, ReactElement, ReactNode, Ref, FC } from 'react';
-import {
+import type {
   Graph,
   Node,
   Model,
@@ -22,11 +22,11 @@ import {
   DragOperationWithType,
   ConnectorChoice,
 } from '@patternfly/react-topology';
-import PFPoint from '@patternfly/react-topology/dist/esm/geom/Point';
-import { Alerts, K8sKind, K8sVerb, PrometheusAlert } from '../api/common-types';
-import { ActionContext } from '../api/internal-types';
-import { Action } from './actions';
-import {
+import type PFPoint from '@patternfly/react-topology/dist/esm/geom/Point';
+import type { Alerts, K8sKind, K8sVerb, PrometheusAlert } from '../api/common-types';
+import type { ActionContext } from '../api/internal-types';
+import type { Action } from './actions';
+import type {
   K8sResourceCommon,
   K8sResourceKind,
   K8sResourceKindReference,

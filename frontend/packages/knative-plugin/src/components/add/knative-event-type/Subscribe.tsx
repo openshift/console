@@ -1,10 +1,13 @@
 import type { FC } from 'react';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
+import { useCallback } from 'react';
+import type { FormikValues, FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import { useLocation, useNavigate } from 'react-router';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared/src/utils';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { EVENT_TYPE_NAME_PARAM, EVENT_TYPE_NAMESPACE_PARAM } from '../../../const';
@@ -24,6 +27,7 @@ interface SubscribeProps {
 }
 
 const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: '' } } }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const {
     apiVersion: sourceApiVersion,
@@ -118,7 +122,7 @@ const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: ''
     return k8sCreate(getResourceModel(), sanitizeResourceName(values.formData))
       .then((resource) => {
         action.setStatus({ subscriberAvailable: true, error: '' });
-        history.push(`/topology/ns/${resource.metadata.namespace}`);
+        navigate(`/topology/ns/${resource.metadata.namespace}`);
       })
       .catch((err) => {
         const errMessage = err.message || t('knative-plugin~An error occurred. Please try again');
@@ -129,7 +133,7 @@ const Subscribe: FC<SubscribeProps> = ({ source, target = { metadata: { name: ''
       });
   };
 
-  const handleCancel = () => history.goBack();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
 
   return loaded ? (
     <Formik

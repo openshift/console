@@ -10,7 +10,7 @@ import {
   t_color_red_60 as red200,
 } from '@patternfly/react-tokens';
 import * as _ from 'lodash';
-import { PrometheusResponse } from '@console/internal/components/graphs';
+import type { PrometheusResponse } from '@console/internal/components/graphs';
 
 export const riskIcons = {
   low: AngleDoubleDownIcon,

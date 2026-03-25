@@ -129,6 +129,8 @@ export const verifyIDPFileFields = async ({
   fileName?: string;
   fileContent?: string;
 }) => {
+  const user = userEvent.setup();
+
   // Wait for the async component to load and find the filename input by its aria-label
   const filenameInput = await screen.findByLabelText(`${inputLabel} filename`);
   verifyFormElementBasics(filenameInput, 'text', '');
@@ -156,7 +158,7 @@ export const verifyIDPFileFields = async ({
   const file = new File([fileContent], fileName, { type: 'text/plain' });
 
   // Simulate user selecting a file
-  await userEvent.upload(fileInput, file);
+  await user.upload(fileInput, file);
 
   // Verify the file was properly selected and assigned to the input element
   expect(fileInput.files).toBeTruthy();

@@ -1,10 +1,11 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import TopologyApplicationResourceList from './TopologyApplicationList';
 
 const MAX_RESOURCES = 5;

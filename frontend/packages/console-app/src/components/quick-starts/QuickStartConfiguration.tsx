@@ -1,6 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
 import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
@@ -9,16 +9,16 @@ import {
   getGroupVersionKindForModel,
   ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
   patchConsoleOperatorConfig,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { QuickStartModel } from '../../models';
 import { getQuickStartNameRef, useQuickStarts } from './utils/useQuickStarts';
 

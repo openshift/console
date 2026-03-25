@@ -1,19 +1,18 @@
 import { useEffect, useCallback } from 'react';
-import {
-  useResolvedExtensions,
-  isTelemetryListener,
+import type {
   TelemetryListener,
   TelemetryEventListener,
   UserInfo,
 } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, isTelemetryListener } from '@console/dynamic-plugin-sdk';
 import type { UserKind } from '@console/internal/module/k8s/types';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
-  PREFERRED_TELEMETRY_USER_SETTING_KEY,
+  PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '../constants';
 import { useUser } from './useUser';
-import { useUserSettings } from './useUserSettings';
+import { useUserPreference } from './useUserPreference';
 
 export interface ClusterProperties {
   clusterId?: string;
@@ -74,8 +73,8 @@ export const useTelemetry = () => {
   // TODO use usePluginInfo() hook to tell whether all dynamic plugins have been processed
   // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
 
-  const [currentUserPreferenceTelemetryValue] = useUserSettings<USER_TELEMETRY_ANALYTICS>(
-    PREFERRED_TELEMETRY_USER_SETTING_KEY,
+  const [currentUserPreferenceTelemetryValue] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
+    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
     null,
     true,
   );

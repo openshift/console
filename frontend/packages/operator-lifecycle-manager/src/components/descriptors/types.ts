@@ -1,4 +1,4 @@
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export enum DescriptorType {
   spec = 'spec',

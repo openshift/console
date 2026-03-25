@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';
 import { EventingTriggerModel } from '../models';
 

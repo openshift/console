@@ -1,8 +1,9 @@
 import type { ReactNode, FC } from 'react';
 import { useContext, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
-import { Grid as GridComponent, GridCellProps } from 'react-virtualized';
-import { Params, GroupedItems, GridChildrenProps } from './types';
+import type { GridCellProps } from 'react-virtualized';
+import { Grid as GridComponent } from 'react-virtualized';
+import type { Params, GroupedItems, GridChildrenProps } from './types';
 import { getItemsAndRowCount, CellMeasurementContext } from './utils';
 import './Grid.scss';
 

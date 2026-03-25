@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { TextInput, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import BaseInputField from './BaseInputField';
-import { BaseInputFieldProps } from './field-types';
+import type { BaseInputFieldProps } from './field-types';
 
 import './InputField.scss';
 

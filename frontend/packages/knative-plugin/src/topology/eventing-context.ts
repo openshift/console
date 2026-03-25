@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { useEventSourceModels, useChannelModels } from '../utils/fetch-dynamic-eventsources-utils';
 
 type DynamicEsDataType = {

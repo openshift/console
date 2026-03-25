@@ -1,12 +1,12 @@
-import { useCallback, FormEvent } from 'react';
-import type { FC } from 'react';
+import { useCallback } from 'react';
+import type { FC, FormEvent } from 'react';
 import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
-import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { OLMV1_ENABLED_USER_PREFERENCE_KEY } from '../const';
 
 /**
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
@@ -15,8 +15,8 @@ import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
 export const OLMv1Switch: FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
-  const [olmv1Enabled, setOlmv1Enabled] = useUserSettings<boolean>(
-    OLMV1_ENABLED_USER_SETTING_KEY,
+  const [olmv1Enabled, setOlmv1Enabled] = useUserPreference<boolean>(
+    OLMV1_ENABLED_USER_PREFERENCE_KEY,
     techPreviewEnabled ?? false,
     true,
   );

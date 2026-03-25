@@ -1,19 +1,18 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useCallback } from 'react';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  createModalLauncher,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalTitle,
-} from '@console/internal/components/factory/modal';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   ConfigureUpdateStrategy,
   getNumberOrPercent,
 } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { K8sKind, k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import type { K8sKind, K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import { k8sPatch } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,
@@ -62,29 +61,52 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{title}</ModalTitle>
+    <>
+      <ModalHeader title={title} data-test-id="modal-title" labelId="update-strategy-modal-title" />
       <ModalBody>
-        <ConfigureUpdateStrategy
-          strategyType={strategyType}
-          maxUnavailable={maxUnavailable}
-          maxSurge={maxSurge}
-          onChangeStrategyType={setStrategyType}
-          onChangeMaxUnavailable={setMaxUnavailable}
-          onChangeMaxSurge={setMaxSurge}
-        />
+        <Form id="update-strategy-form" onSubmit={submit}>
+          <ConfigureUpdateStrategy
+            strategyType={strategyType}
+            maxUnavailable={maxUnavailable}
+            maxSurge={maxSurge}
+            onChangeStrategyType={setStrategyType}
+            onChangeMaxUnavailable={setMaxUnavailable}
+            onChangeMaxSurge={setMaxSurge}
+          />
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form="update-strategy-form"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const updateStrategyModal = createModalLauncher(UpdateStrategyModal);
+export const UpdateStrategyModalOverlay: OverlayComponent<UpdateStrategyModalProps> = (props) => {
+  return (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={props.closeOverlay}
+      aria-labelledby="update-strategy-modal-title"
+    >
+      <UpdateStrategyModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
+    </Modal>
+  );
+};
 
 UpdateStrategyModal.displayName = 'UpdateStrategyModal';
 
@@ -94,6 +116,4 @@ export type UpdateStrategyModalProps = {
   resource: K8sResourceKind;
   resourceKind: K8sKind;
   title: string;
-  cancel?: () => void;
-  close?: () => void;
-};
+} & ModalComponentProps;

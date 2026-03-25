@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { DeploymentKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import EditDeployment from './EditDeployment';
 import { getDefaultDeploymentConfig } from './utils/deployment-utils';

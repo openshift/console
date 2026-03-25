@@ -7,14 +7,10 @@ import {
   testPackageManifest,
   dummyPackageManifest,
 } from '../../../mocks';
-import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../../types';
-import {
-  requireOperatorGroup,
-  supports,
-  InstallModeSet,
-  installedFor,
-  subscriptionFor,
-} from '../operator-group';
+import type { OperatorGroupKind, SubscriptionKind } from '../../types';
+import { InstallModeType } from '../../types';
+import type { InstallModeSet } from '../operator-group';
+import { requireOperatorGroup, supports, installedFor, subscriptionFor } from '../operator-group';
 
 describe('requireOperatorGroup', () => {
   const SomeComponent = () => <div>Requires OperatorGroup</div>;

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { QueryWithDescription } from '../components/dashboard/utilization-card/UtilizationItem';
+import type { QueryWithDescription } from '../components/dashboard/utilization-card/UtilizationItem';
 
 export enum ProjectQueries {
   CPU_USAGE = 'CPU_USAGE',

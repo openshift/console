@@ -1,4 +1,4 @@
-import { K8sModel } from '../api/common-types';
+import type { K8sModel } from '../api/common-types';
 
 export const ProjectModel: K8sModel = {
   abbr: 'PR',

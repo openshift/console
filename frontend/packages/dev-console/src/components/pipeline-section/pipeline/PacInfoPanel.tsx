@@ -1,11 +1,10 @@
 import type { FC } from 'react';
 import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  ReadableResourcesNames,
-  Resources,
-} from '@console/dev-console/src/components/import/import-types';
+import type { Resources } from '@console/dev-console/src/components/import/import-types';
+import { ReadableResourcesNames } from '@console/dev-console/src/components/import/import-types';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import './PacSection.scss';

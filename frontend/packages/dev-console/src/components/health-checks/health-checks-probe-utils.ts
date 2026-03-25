@@ -1,5 +1,6 @@
-import { TFunction } from 'i18next';
-import { HealthChecksProbeType, RequestType, HealthCheckFormProbe } from './health-checks-types';
+import type { TFunction } from 'i18next';
+import type { HealthCheckFormProbe } from './health-checks-types';
+import { HealthChecksProbeType, RequestType } from './health-checks-types';
 
 export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
   switch (probe) {

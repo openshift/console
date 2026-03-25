@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sModel,

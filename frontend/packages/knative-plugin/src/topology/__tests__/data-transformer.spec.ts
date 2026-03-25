@@ -1,4 +1,4 @@
-import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
+import type { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -14,7 +14,7 @@ import {
   EXPAND_GROUPS_FILTER_ID,
   getFilterById,
 } from '@console/topology/src/filters';
-import {
+import type {
   OdcNodeModel,
   TopologyDataModelDepicted,
   TopologyDataResources,

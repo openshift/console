@@ -1,4 +1,5 @@
-import { SubscriptionKind, SubscriptionState } from './types';
+import type { SubscriptionKind } from './types';
+import { SubscriptionState } from './types';
 
 export const isCatalogSourceTrusted = (catalogSource: string): boolean =>
   catalogSource === 'redhat-operators';

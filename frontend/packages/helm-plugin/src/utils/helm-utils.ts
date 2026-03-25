@@ -1,23 +1,22 @@
 import * as fuzzy from 'fuzzysearch';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { Flatten } from '@console/internal/components/factory/list-page';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import type { Flatten } from '@console/internal/components/factory/list-page';
+import type { RowFilter } from '@console/internal/components/filter-toolbar';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { toTitleCase, WORKLOAD_TYPES } from '@console/shared';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../catalog/utils/const';
-import {
+import type {
   HelmRelease,
   HelmChart,
-  HelmReleaseStatus,
   HelmChartMetaData,
-  HelmActionType,
   HelmActionConfigType,
-  HelmActionOrigins,
   HelmChartEntries,
 } from '../types/helm-types';
+import { HelmReleaseStatus, HelmActionType, HelmActionOrigins } from '../types/helm-types';
 
 export const HelmReleaseStatusLabels = {
   [HelmReleaseStatus.Deployed]: 'Deployed',
@@ -346,3 +345,24 @@ export const isGoingToTopology = (resources: K8sResourceKind[]) =>
   !!resources.find((resource) =>
     WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
   );
+
+export const fetchChartFromURL = (chartURL: string): Promise<HelmChart> => {
+  return coFetchJSON(`/api/helm/chart?url=${encodeURIComponent(chartURL)}&noRepo=true`);
+};
+
+export const installChartFromURL = (
+  namespace: string,
+  releaseName: string,
+  chartURL: string,
+  chartVersion?: string,
+  values?: Record<string, unknown>,
+) => {
+  return coFetchJSON.post('/api/helm/release/async', {
+    namespace,
+    name: releaseName,
+    chart_url: chartURL, // eslint-disable-line @typescript-eslint/naming-convention
+    ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
+    ...(values ? { values } : {}),
+    noRepo: true,
+  });
+};

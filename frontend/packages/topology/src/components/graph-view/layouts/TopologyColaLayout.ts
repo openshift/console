@@ -1,11 +1,5 @@
-import {
-  ColaLayout,
-  ColaNode,
-  ColaGroup,
-  ColaLink,
-  Graph,
-  GraphModel,
-} from '@patternfly/react-topology';
+import type { ColaNode, ColaGroup, ColaLink, Graph, GraphModel } from '@patternfly/react-topology';
+import { ColaLayout } from '@patternfly/react-topology';
 import { layoutConstraints } from '@console/knative-plugin/src/topology/layouts/layoutConstraints';
 
 class TopologyColaLayout extends ColaLayout {

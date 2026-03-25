@@ -1,6 +1,7 @@
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel as knServiceModel, RevisionModel } from '../models';
-import { Traffic, RoutesOverviewListItem } from '../types';
+import type { Traffic, RoutesOverviewListItem } from '../types';
 
 export const filterTrafficBasedOnResource = (resource) => (tr: Traffic) =>
   referenceFor(resource) === referenceForModel(knServiceModel) ||

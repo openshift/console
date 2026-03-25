@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 import { useCallback, useState } from 'react';
 import type { FC } from 'react';
 import {
+  Button,
+  Form,
   FormGroup,
   FormHelperText,
   FormSection,
@@ -10,6 +12,10 @@ import {
   InputGroup,
   InputGroupItem,
   InputGroupText,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
   Radio,
   TextInput,
   Tooltip,
@@ -18,14 +24,9 @@ import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-  ModalComponentProps,
-} from '../factory/modal';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -52,7 +53,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   const { t } = useTranslation();
   const strategyIsNotRollingUpdate = strategyType !== 'RollingUpdate';
   return (
-    <div className="pf-v6-c-form pf-m-horizontal">
+    <>
       {showDescription && (
         <FormSection>
           {t('public~How should the pods be replaced when a new revision is created?')}
@@ -157,15 +158,15 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
         autoFocus={strategyType === 'Recreate'}
         data-test="recreate-update-strategy-radio"
       />
-    </div>
+    </>
   );
 };
 
-export const ConfigureUpdateStrategyModal = ({
+export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
   deployment,
   cancel,
   close,
-}: ConfigureUpdateStrategyModalProps) => {
+}) => {
   const [strategyType, setStrategyType] = useState(_.get(deployment.spec, 'strategy.type'));
   const [maxUnavailable, setMaxUnavailable] = useState(
     _.get(deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '25%'),
@@ -199,41 +200,62 @@ export const ConfigureUpdateStrategyModal = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('public~Edit update strategy')}</ModalTitle>
-      <ModalBody>
-        <ConfigureUpdateStrategy
-          strategyType={strategyType}
-          maxUnavailable={maxUnavailable}
-          maxSurge={maxSurge}
-          onChangeStrategyType={setStrategyType}
-          onChangeMaxUnavailable={setMaxUnavailable}
-          onChangeMaxSurge={setMaxSurge}
-          replicas={deployment.spec.replicas}
-        />
-      </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={cancel}
+    <>
+      <ModalHeader
+        title={t('public~Edit update strategy')}
+        labelId="configure-update-strategy-modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="configure-update-strategy-form" onSubmit={submit}>
+          <ConfigureUpdateStrategy
+            strategyType={strategyType}
+            maxUnavailable={maxUnavailable}
+            maxSurge={maxSurge}
+            onChangeStrategyType={setStrategyType}
+            onChangeMaxUnavailable={setMaxUnavailable}
+            onChangeMaxSurge={setMaxSurge}
+            replicas={deployment.spec.replicas}
+          />
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          form="configure-update-strategy-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const ConfigureUpdateStrategyModalOverlay: OverlayComponent<ConfigureUpdateStrategyModalProps> = (
   props,
 ) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <ConfigureUpdateStrategyModal
-        {...props}
-        cancel={props.closeOverlay}
-        close={props.closeOverlay}
-      />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="configure-update-strategy-modal-title"
+    >
+      <ConfigureUpdateStrategyModal {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
 };
 
 export type ConfigureUpdateStrategyProps = {

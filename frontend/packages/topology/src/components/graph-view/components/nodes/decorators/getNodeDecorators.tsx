@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
-import { Node, TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
-import { TopologyDecorator } from '../../../../../topology-types';
+import type { Node } from '@patternfly/react-topology/dist/esm/types';
+import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
+import type { TopologyDecorator } from '../../../../../topology-types';
 
 const getExtensionDecoratorForQuadrant = (
   location: string,

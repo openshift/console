@@ -1,6 +1,6 @@
-import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PipelineKind } from '../../types/pipeline';
+import type { FirehoseResult } from '@console/internal/components/utils';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { PipelineKind } from '../../types/pipeline';
 
 export interface AppResources {
   service?: FirehoseResult<K8sResourceKind>;

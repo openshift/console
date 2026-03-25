@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterRoleModel } from '@console/internal/models';
-import { K8sResourceCommon, WatchK8sResource } from '@console/internal/module/k8s';
-import { defaultAccessRoles, getAvailableAccessRoles, Roles } from './project-access-form-utils';
+import type { K8sResourceCommon, WatchK8sResource } from '@console/internal/module/k8s';
+import type { Roles } from './project-access-form-utils';
+import { defaultAccessRoles, getAvailableAccessRoles } from './project-access-form-utils';
 
 export type ClusterRoleKind = K8sResourceCommon & {
   rules: { [key: string]: string[] }[];

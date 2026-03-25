@@ -1,13 +1,14 @@
 import type { ReactNode, FC, FocusEvent, ChangeEvent } from 'react';
 import { useRef, useCallback, useMemo, useState, useEffect } from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
+import type { FormikErrors, FormikTouched } from 'formik';
+import { useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { RepoStatus, ImportStrategy, getGitService, GitProvider } from '@console/git-service';
-import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
+import type { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
@@ -16,18 +17,17 @@ import {
   ServerlessBuildStrategyType,
   ServiceModel as ksvcModel,
 } from '@console/knative-plugin';
-import { InputField, useFormikValidationFix, useDebounceCallback, useFlag } from '@console/shared';
+import { InputField } from '@console/shared';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isGitImportSource } from '../../../types/samples';
-import {
-  getSampleRepo,
-  getSampleRef,
-  getSampleContextDir,
-  NormalizedBuilderImages,
-} from '../../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import { getSample, getGitImportSample } from '../../../utils/samples';
 import { ApplicationFlowType } from '../../edit-application/edit-application-utils';
-import { GitData, DetectedStrategyFormData } from '../import-types';
+import type { GitData, DetectedStrategyFormData } from '../import-types';
 import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';

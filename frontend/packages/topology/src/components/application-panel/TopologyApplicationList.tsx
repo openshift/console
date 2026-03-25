@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 
 type TopologyApplicationResourceListProps = {
   resources: K8sResourceKind[];

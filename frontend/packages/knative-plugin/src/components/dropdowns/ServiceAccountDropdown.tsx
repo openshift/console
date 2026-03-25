@@ -1,12 +1,15 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceAccountModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { ResourceDropdownField } from '@console/shared';
-import { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import type { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
 interface ServiceAccountDropdownProps {
   name: string;
@@ -24,15 +27,26 @@ const ServiceAccountDropdown: FC<ServiceAccountDropdownProps & StateProps> = ({
 }) => {
   const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
-  const resources = [
-    {
-      isList: true,
-      kind: ServiceAccountModel.kind,
-      namespace,
-      prop: ServiceAccountModel.id,
-      optional: true,
-    },
-  ];
+
+  const [saData, saLoaded, saLoadError] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: ServiceAccountModel.kind,
+    namespace,
+    optional: true,
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: saData,
+        loaded: saLoaded,
+        loadError: saLoadError,
+        kind: ServiceAccountModel.kind,
+      },
+    ],
+    [saData, saLoaded, saLoadError],
+  );
+
   return (
     <ResourceDropdownField
       name={name}

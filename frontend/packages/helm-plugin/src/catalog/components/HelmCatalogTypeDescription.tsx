@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Trans } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ProjectHelmChartRepositoryModel } from '../../models';

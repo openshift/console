@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Action, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import { useNavigate } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { CommonActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 

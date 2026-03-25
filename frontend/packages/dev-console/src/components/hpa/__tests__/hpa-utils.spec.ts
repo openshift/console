@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
+import type { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import {
   getFormData,
   getRequestsWarning,

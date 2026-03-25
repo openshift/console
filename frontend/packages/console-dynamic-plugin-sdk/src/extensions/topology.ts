@@ -1,7 +1,7 @@
-import { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
-import { Extension, CodeRef } from '../types';
-import { WatchK8sResourcesGeneric } from './console-types';
-import {
+import type { TopologyQuadrant } from '@patternfly/react-topology/dist/esm/types';
+import type { Extension, CodeRef } from '../types';
+import type { WatchK8sResourcesGeneric } from './console-types';
+import type {
   CreateConnectionGetter,
   RelationshipProviderCreate,
   RelationshipProviderProvides,

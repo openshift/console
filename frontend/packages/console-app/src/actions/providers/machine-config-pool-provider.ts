@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { asAccessReview, togglePaused } from '@console/internal/components/utils';
 import { MachineConfigPoolModel } from '@console/internal/models';
-import { MachineConfigPoolKind, referenceFor } from '@console/internal/module/k8s';
+import type { MachineConfigPoolKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 

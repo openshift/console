@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
-import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
+import type { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 
 type HPAOverviewProps = {
   hpas?: HorizontalPodAutoscalerKind[];

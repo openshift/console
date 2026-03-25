@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { kindForReference, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { kindForReference } from '@console/internal/module/k8s';
 import { isValidUrl } from '@console/shared';
 import {
   EVENT_SOURCE_ICON,

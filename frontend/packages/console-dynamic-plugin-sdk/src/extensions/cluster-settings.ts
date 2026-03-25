@@ -1,5 +1,5 @@
-import { ExtensionK8sModel } from '../api/common-types';
-import { Extension } from '../types';
+import type { ExtensionK8sModel } from '../api/common-types';
+import type { Extension } from '../types';
 /** This extension identifies a resource used to manage the configuration of the cluster.
     A link to the resource will be added to the Administration - Cluster Settings - Configuration page. */
 export type ClusterGlobalConfig = Extension<

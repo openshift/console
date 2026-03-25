@@ -1,12 +1,14 @@
 import type { FC } from 'react';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu } from '@console/shared/src';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventBrokerKind, BrokerConditionTypes } from '../../../types';
+import type { EventBrokerKind } from '../../../types';
+import { BrokerConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 
 const BrokerRow: FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {

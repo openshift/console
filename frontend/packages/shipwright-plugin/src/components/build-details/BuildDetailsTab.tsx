@@ -3,7 +3,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { Build } from '../../types';
+import type { Build } from '../../types';
 import BuildSpecSection from './BuildSpecSection';
 import BuildStatusSection from './BuildStatusSection';
 

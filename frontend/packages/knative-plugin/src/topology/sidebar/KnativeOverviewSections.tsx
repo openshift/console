@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewItem, PodRing } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { OverviewItem } from '@console/shared';
+import { PodRing } from '@console/shared';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import DomainMappingOverviewList from '../../components/overview/domain-mapping/DomainMappingOverviewList';
 import { PubSubResourceOverviewList } from '../../components/overview/EventPubSubResources';
@@ -11,7 +12,7 @@ import ServerlessFunctionType from '../../components/overview/ServerlessFunction
 import { RevisionModel } from '../../models';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { isServerlessFunction } from '../knative-topology-utils';
-import { Subscriber } from '../topology-types';
+import type { Subscriber } from '../topology-types';
 
 type KnativeOverviewDetailsProps = {
   item?: OverviewItem;

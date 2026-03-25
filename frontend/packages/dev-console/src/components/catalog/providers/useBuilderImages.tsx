@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import {
+import type {
   ExtensionHook,
   CatalogItem,
   CatalogItemDetailsDescription,
@@ -18,7 +18,7 @@ import {
   isBuilder,
 } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 

@@ -1,7 +1,8 @@
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { SecretKind } from '@console/internal/module/k8s';
-import { GitSource, GitProvider, SecretType as GitSecretType } from '../types';
-import { BaseService } from './base-service';
+import type { SecretKind } from '@console/internal/module/k8s';
+import type { GitSource } from '../types';
+import { GitProvider, SecretType as GitSecretType } from '../types';
+import type { BaseService } from './base-service';
 import { BitbucketService } from './bitbucket-service';
 import { GiteaService } from './gitea-service';
 import { GithubService } from './github-service';

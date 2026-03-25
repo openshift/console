@@ -3,20 +3,17 @@ import { useState, useEffect } from 'react';
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
-import {
-  navFactory,
-  LoadingBox,
-  StatusBox,
-  FirehoseResult,
-} from '@console/internal/components/utils';
+import type { FirehoseResult } from '@console/internal/components/utils';
+import { navFactory, LoadingBox, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { K8sResourceKindReference, SecretKind } from '@console/internal/module/k8s';
+import type { K8sResourceKindReference, SecretKind } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
-import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
+import type { HelmRelease } from '../../types/helm-types';
+import { HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmRelease, HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
 import HelmReleaseNotes from './notes/HelmReleaseNotes';

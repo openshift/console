@@ -1,17 +1,18 @@
 import { useRef, useMemo, useEffect } from 'react';
-import { Map as ImmutableMap, Iterable as ImmutableIterable } from 'immutable';
+import type { Iterable as ImmutableIterable } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { K8sModel } from '../../../api/common-types';
+import type { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import type { SDKDispatch, SDKStoreState } from '../../../app/redux-types';
-import { UseK8sWatchResources } from '../../../extensions/console-types';
+import type { UseK8sWatchResources } from '../../../extensions/console-types';
 import {
   transformGroupVersionKindToReference,
   getReferenceForModel,
   getGroupVersionKindForReference,
 } from '../k8s-ref';
-import { GetIDAndDispatch, OpenShiftReduxRootState } from './k8s-watch-types';
+import type { GetIDAndDispatch, OpenShiftReduxRootState } from './k8s-watch-types';
 import { getIDAndDispatch, getReduxData, NoModelError } from './k8s-watcher';
 import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 import { getK8sModel } from './useK8sModel';

@@ -1,13 +1,16 @@
-import type { MouseEvent } from 'react';
+import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
-import { DataViewTd, DataViewTh } from '@patternfly/react-data-view';
-import { SortByDirection, ThProps } from '@patternfly/react-table';
+import type {
+  DataViewTd,
+  DataViewTh,
+} from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
+import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ActionMenu, Status, DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { HelmRelease } from '../../../types/helm-types';
+import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import './HelmReleaseHistoryRow.scss';
 
@@ -15,7 +18,7 @@ type HelmReleaseHistoryKebabProps = {
   obj: HelmRelease;
 };
 
-const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
+const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="helm-plugin">

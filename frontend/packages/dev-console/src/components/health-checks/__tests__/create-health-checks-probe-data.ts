@@ -1,4 +1,4 @@
-import { HealthChecksFormData } from '../../import/import-types';
+import type { HealthChecksFormData } from '../../import/import-types';
 import { healthChecksDefaultValues } from '../health-checks-probe-utils';
 import { RequestType } from '../health-checks-types';
 

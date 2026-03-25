@@ -2,7 +2,7 @@ import type { ComponentProps, FC } from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { ExternalLinkWithCopy } from '@console/internal/components/utils/link';
-import { RouteKind, RouteIngress } from '@console/internal/module/k8s';
+import type { RouteKind, RouteIngress } from '@console/internal/module/k8s';
 
 const getSubdomain = (route: RouteKind): string => {
   const hostname = _.get(route, 'spec.host', '');

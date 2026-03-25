@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom-v5-compat';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useNavigate, useParams } from 'react-router';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { DefaultPage } from '@console/internal/components/default-resource';
-import { Page } from '@console/internal/components/utils';
+import type { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
+import type { MenuAction, MenuActions } from '@console/shared';
+import { MultiTabListPage } from '@console/shared';
 import {
   useBuildModel,
   useBuildRunModel,

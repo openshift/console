@@ -11,22 +11,19 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { NumberSpinner } from '@console/internal/components/utils/number-spinner';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared';
-import {
-  LoadError,
-  SaveStatus,
-  SaveStatusProps,
-} from '@console/shared/src/components/cluster-configuration';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
+import { LoadError, SaveStatus } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { DevWorkspaceTemplateModel } from '../../../models';
 import { DEFAULT_NS_OPERATORS } from '../../const';
 import { updatedWebTerminalExec, updatedWebTerminalTooling } from '../../utils/customization-utils';
-import { CloudShellResource } from './cloud-shell-utils';
+import type { CloudShellResource } from './cloud-shell-utils';
 import { getCloudShellTimeout } from './setup/cloud-shell-setup-utils';
 import useCloudShellNamespace from './useCloudShellNamespace';
 

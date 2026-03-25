@@ -211,12 +211,12 @@ When('user clicks on {string} option from context menu', (actionItem: string) =>
 
 Then('user will see {string} modal', (modalName: string) => {
   app.waitForLoad();
-  cy.get('[aria-label="Modal"]').should('be.visible').should('contain', modalName);
+  cy.get('[role="dialog"]').should('be.visible').should('contain', modalName);
 });
 
 Then('user will see alert {string}', (alertName: string) => {
   app.waitForDocumentLoad();
-  cy.get('.modal-body-content').contains(alertName).should('be.visible');
+  cy.get('.pf-v6-c-modal-box__body').contains(alertName).should('be.visible');
   modal.cancel();
 });
 

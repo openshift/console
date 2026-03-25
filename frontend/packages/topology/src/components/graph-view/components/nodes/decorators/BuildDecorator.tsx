@@ -1,11 +1,12 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { Status, useBuildConfigsWatcher } from '@console/shared';
+import { Status } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';
 

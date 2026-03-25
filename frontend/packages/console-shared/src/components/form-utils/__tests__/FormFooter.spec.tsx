@@ -1,6 +1,6 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import { FormFooterProps } from '../form-utils-types';
+import type { FormFooterProps } from '../form-utils-types';
 import FormFooter from '../FormFooter';
 
 // Mock ResizeObserver

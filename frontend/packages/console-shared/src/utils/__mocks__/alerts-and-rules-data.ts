@@ -1,10 +1,6 @@
-import {
-  Alert,
-  AlertStates,
-  RuleStates,
-  PrometheusRulesResponse,
-} from '@console/dynamic-plugin-sdk';
-import { Alerts } from '@console/internal/components/monitoring/types';
+import type { Alert, PrometheusRulesResponse } from '@console/dynamic-plugin-sdk';
+import { AlertStates, RuleStates } from '@console/dynamic-plugin-sdk';
+import type { Alerts } from '@console/internal/components/monitoring/types';
 
 export const mockAlerts: Alerts = {
   loadError: null,

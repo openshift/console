@@ -1,6 +1,6 @@
 import { screen, configure } from '@testing-library/react';
-import { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
-import { K8sResourceKind, RowProps } from '@console/internal/module/k8s';
+import type { ConsoleDataViewColumn } from '@console/app/src/components/data-view/types';
+import type { K8sResourceKind, RowProps } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getDataViewRows, HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 

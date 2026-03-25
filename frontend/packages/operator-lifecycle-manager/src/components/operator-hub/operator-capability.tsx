@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useCurrentChannel } from '../../hooks/useCurrentChannel';
-import { PackageManifestKind } from '../../types';
+import type { PackageManifestKind } from '../../types';
 import { CapabilityLevel } from './operator-hub-item-details';
 
 export const OperatorCapability: FC<OperatorCapabilityProps> = ({ packageManifest }) => {

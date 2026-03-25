@@ -1,15 +1,16 @@
-import { Model, NodeShape } from '@patternfly/react-topology/dist/esm/types';
+import type { Model } from '@patternfly/react-topology/dist/esm/types';
+import { NodeShape } from '@patternfly/react-topology/dist/esm/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   getKameletSinkAndSourceBindings,
   isOperatorBackedKnResource,
   isOperatorBackedKnSinkService,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
 import { TYPE_APPLICATION_GROUP } from '../const';
 import { getTopologyNodeItem } from '../data-transforms/transform-utils';
-import { OdcNodeModel, TopologyDataResources } from '../topology-types';
+import type { OdcNodeModel, TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_HEIGHT,
   OPERATOR_GROUP_PADDING,

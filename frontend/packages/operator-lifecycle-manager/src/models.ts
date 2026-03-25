@@ -1,4 +1,4 @@
-import { K8sKind } from '@console/internal/module/k8s';
+import type { K8sKind } from '@console/internal/module/k8s';
 
 export const OperatorSourceModel: K8sKind = {
   kind: 'OperatorSource',

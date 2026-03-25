@@ -10,12 +10,13 @@ import {
   TextInputTypes,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { DropdownField, InputField, MultiColumnField } from '@console/shared/src';
-import { RowRendererProps } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldRow';
+import type { RowRendererProps } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldRow';
 import ConfigMapDropdown from './ConfigMapDropdown';
 import PVCDropdown from './PVCDropdown';
 import SecretDropdown from './SecretDropdown';

@@ -1,13 +1,15 @@
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { LazyActionMenu, ClampedText } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { ServiceModel } from '../../models';
-import { ServiceKind, ConditionTypes } from '../../types';
+import type { ServiceKind } from '../../types';
+import { ConditionTypes } from '../../types';
 import { getCondition } from '../../utils/condition-utils';
 import GetConditionsForStatus from '../functions/GetConditionsForStatus';
 import { tableColumnClasses } from './service-table';

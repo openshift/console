@@ -4,26 +4,21 @@ import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
-import {
-  MultiListPage,
-  Table,
-  TableData,
-  Flatten,
-  Filter,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import { useParams, Link } from 'react-router';
+import type { Flatten, Filter, RowFunctionArgs } from '@console/internal/components/factory';
+import { MultiListPage, Table, TableData } from '@console/internal/components/factory';
 import {
   ConsoleEmptyState,
   ResourceLink,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
-import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
+import type { MatchExpression } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
-import { PackageManifestKind, CatalogSourceKind } from '../types';
+import type { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';
 import { visibilityLabel, iconFor, defaultChannelFor } from './index';
 

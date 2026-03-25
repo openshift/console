@@ -1,22 +1,22 @@
-import type { ReactNode, FC } from 'react';
-import { isValidElement } from 'react';
+import type { ReactNode } from 'react';
+import { isValidElement, memo } from 'react';
 import { Card, SimpleList, Title } from '@patternfly/react-core';
-import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
-import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import type { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { isValidUrl } from '@console/shared';
 import AddCardItem from './AddCardItem';
 import './AddCard.scss';
 
-type AddCardProps = {
+interface AddCardProps {
   id: string;
   title: string;
   items: ResolvedExtension<AddAction>[];
   namespace: string;
   icon?: CodeRef<ReactNode> | string;
-};
+}
 
-const AddCard: FC<AddCardProps> = ({ id, title, items, namespace, icon }) => {
+const AddCard = memo<AddCardProps>(({ id, title, items, namespace, icon }) => {
   const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
@@ -46,12 +46,12 @@ const AddCard: FC<AddCardProps> = ({ id, title, items, namespace, icon }) => {
           {title}
         </Title>
       )}
-      <SimpleList>
+      <SimpleList isControlled={false}>
         {items.map((item) => (
           <AddCardItem key={item.properties.id} namespace={namespace} action={item} />
         ))}
       </SimpleList>
     </Card>
   ) : null;
-};
+});
 export default AddCard;

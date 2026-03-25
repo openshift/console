@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import FilterTable, { FilterTableRowProps } from './FilterTable';
+import type { FilterTableRowProps } from './FilterTable';
+import FilterTable from './FilterTable';
 
 type EventTriggerFilterListProps = {
   filters: FilterTableRowProps;

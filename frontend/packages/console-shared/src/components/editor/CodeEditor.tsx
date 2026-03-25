@@ -1,7 +1,8 @@
 import { forwardRef, useState, useCallback, useImperativeHandle, useMemo, useEffect } from 'react';
-import { EditorDidMount, Language } from '@patternfly/react-code-editor';
+import type { EditorDidMount } from '@patternfly/react-code-editor';
+import { Language } from '@patternfly/react-code-editor';
 import { getResizeObserver } from '@patternfly/react-core';
-import { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
+import type { CodeEditorRef, CodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { BasicCodeEditor } from './BasicCodeEditor';
 import { CodeEditorToolbar } from './CodeEditorToolbar';
 import { useShortcutPopover } from './ShortcutsPopover';

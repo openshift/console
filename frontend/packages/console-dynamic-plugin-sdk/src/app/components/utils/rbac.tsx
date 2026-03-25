@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import * as _ from 'lodash';
-import { K8sVerb } from '../../../api/common-types';
-import {
+import type { K8sVerb } from '../../../api/common-types';
+import type {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
 } from '../../../extensions/console-types';
 import { ProjectModel, SelfSubjectAccessReviewModel } from '../../../models';
 import { k8sCreate } from '../../../utils/k8s/k8s-resource';
 import { getImpersonate } from '../../core/reducers/coreSelectors';
-import { ImpersonateKind } from '../../redux-types';
+import type { ImpersonateKind } from '../../redux-types';
 import storeHandler from '../../storeHandler';
 
 /**

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import NodeDetailsConditions from './NodeDetailsConditions';
 import NodeDetailsImages from './NodeDetailsImages';
 import NodeDetailsOverview from './NodeDetailsOverview';

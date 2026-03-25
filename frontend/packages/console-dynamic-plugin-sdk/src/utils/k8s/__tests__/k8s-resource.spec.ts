@@ -1,4 +1,4 @@
-import { K8sModel } from '../../../api/common-types';
+import type { K8sModel } from '../../../api/common-types';
 import * as coFetchModule from '../../fetch/console-fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 

@@ -1,6 +1,5 @@
 import { screen, act } from '@testing-library/react';
-import * as ReactRouter from 'react-router-dom-v5-compat';
-import { useLocation } from 'react-router';
+import * as ReactRouter from 'react-router';
 
 import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { PodKind } from '../../module/k8s';
@@ -9,14 +8,9 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { ContainersDetailsPage, ContainerDetails, ContainerDetailsList } from '../container';
 
 // Mock router hooks
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
-}));
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
+  useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
 
@@ -29,28 +23,26 @@ jest.mock('../utils/scroll-to-top-on-mount', () => ({
   ScrollToTopOnMount: ({ children }: { children }) => children || null,
 }));
 
-jest.mock('../utils/firehose', () => ({
-  Firehose: jest.fn(({ children }) => children),
+jest.mock('../utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(() => [null, false, null]),
 }));
 
 const mockUseParams = ReactRouter.useParams as jest.Mock;
 const mockUseLocation = ReactRouter.useLocation as jest.Mock;
-const mockReactRouterUseLocation = useLocation as jest.Mock;
 const mockUseFavoritesOptions = require('@console/internal/components/useFavoritesOptions')
   .useFavoritesOptions as jest.Mock;
+const mockUseK8sWatchResource = require('../utils/k8s-watch-hook').useK8sWatchResource as jest.Mock;
 
 describe('ContainersDetailsPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseParams.mockReturnValue({ podName: 'test-name', ns: 'default' });
     mockUseLocation.mockReturnValue({ pathname: '/k8s/ns/default/pods/test-name/containers' });
-    mockReactRouterUseLocation.mockReturnValue({
-      pathname: '/k8s/ns/default/pods/test-name/containers',
-    });
     mockUseFavoritesOptions.mockReturnValue([[], jest.fn(), true]);
   });
 
   it('verifies loading state while container data is being fetched', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, false, null]);
     renderWithProviders(<ContainersDetailsPage />);
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();
@@ -58,14 +50,11 @@ describe('ContainersDetailsPage', () => {
 });
 
 describe('ContainerDetails', () => {
-  const obj = { data: { ...testPodInstance } };
+  const pod = { ...testPodInstance };
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseLocation.mockReturnValue({
-      pathname: '/k8s/ns/default/pods/test-name/containers/crash-app',
-    });
-    mockReactRouterUseLocation.mockReturnValue({
       pathname: '/k8s/ns/default/pods/test-name/containers/crash-app',
     });
     mockUseFavoritesOptions.mockReturnValue([[], jest.fn(), true]);
@@ -79,11 +68,12 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded />);
     });
 
     expect(screen.getByText('crash-app')).toBeVisible();
-    expect(screen.getByText('Waiting')).toBeVisible();
+    // Verify "Waiting" appears in both the page heading and details section
+    expect(screen.getAllByText('Waiting')).toHaveLength(2);
   });
 
   it('verifies the 404 error page when user tries to access non-existent container', async () => {
@@ -94,7 +84,7 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded />);
     });
 
     expect(screen.getByRole('heading', { name: '404: Page Not Found' })).toBeVisible();
@@ -110,7 +100,7 @@ describe('ContainerDetails', () => {
     });
 
     await act(async () => {
-      renderWithProviders(<ContainerDetails obj={obj} loaded={false} />);
+      renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
     });
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();

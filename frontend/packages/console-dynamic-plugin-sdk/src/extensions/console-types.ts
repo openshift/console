@@ -6,13 +6,18 @@ import type {
   SetStateAction,
   Dispatch,
 } from 'react';
-import { QuickStartContextValues } from '@patternfly/quickstarts';
-import { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
-import { ButtonProps } from '@patternfly/react-core';
-import { ICell, OnSelect, SortByDirection, TableGridBreakpoint } from '@patternfly/react-table';
-import { LocationDescriptor } from 'history';
+import type { QuickStartContextValues } from '@patternfly/quickstarts';
+import type { CodeEditorProps as PfCodeEditorProps } from '@patternfly/react-code-editor';
+import type { ButtonProps } from '@patternfly/react-core';
+import type {
+  ICell,
+  OnSelect,
+  SortByDirection,
+  TableGridBreakpoint,
+} from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import type { To } from 'react-router';
 import type {
   ExtensionK8sGroupKindModel,
   K8sModel,
@@ -25,7 +30,7 @@ import type {
   Selector,
 } from '../api/common-types';
 import type { Extension, ExtensionTypeGuard } from '../types';
-import { CustomDataSource } from './dashboard-data-source';
+import type { CustomDataSource } from './dashboard-data-source';
 
 export type OwnerReference = {
   name: string;
@@ -306,6 +311,7 @@ export type TableColumn<D> = ICell & {
   id: string;
   additional?: boolean;
   sort?: ((data: D[], sortDirection: SortByDirection) => D[]) | string;
+  resizableProps?: any;
 };
 
 export type RowProps<D, R extends any = {}> = {
@@ -774,7 +780,7 @@ export type UseAnnotationsModal = (resource: K8sResourceCommon) => () => void;
 
 export type UseDeleteModal = (
   resource: K8sResourceCommon,
-  redirectTo?: LocationDescriptor,
+  redirectTo?: To,
   message?: JSX.Element,
   btnText?: ReactNode,
   deleteAllResources?: () => Promise<K8sResourceKind[]>,
@@ -790,7 +796,7 @@ export type UseValuesForNamespaceContext = () => {
 
 export type UseActiveNamespace = () => [string, (ns: string) => void];
 
-export type UseUserSettings = <T>(
+export type UseUserPreference = <T>(
   key: string,
   defaultValue?: T,
   sync?: boolean,

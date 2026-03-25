@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
 import { useKameletsData } from '../hooks/useKameletsData';
 import { CamelKameletBindingModel } from '../models';

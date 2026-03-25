@@ -1,10 +1,11 @@
+import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { ActionMenu, Status, DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { HelmRelease } from '../../../types/helm-types';
+import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 import { tableColumnInfo } from './HelmReleaseHistoryHeader';
 
@@ -12,7 +13,7 @@ type HelmReleaseHistoryKebabProps = {
   obj: HelmRelease;
 };
 
-const HelmReleaseHistoryKebab = ({ obj }: HelmReleaseHistoryKebabProps) => {
+const HelmReleaseHistoryKebab: FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="helm-plugin">

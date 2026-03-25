@@ -1,4 +1,4 @@
-import { BuilderImage, NormalizedBuilderImages } from './imagestream-utils';
+import type { BuilderImage, NormalizedBuilderImages } from './imagestream-utils';
 
 export enum SupportedRuntime {
   Node = 'node',

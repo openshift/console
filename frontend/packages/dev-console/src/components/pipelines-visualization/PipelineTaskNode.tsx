@@ -1,38 +1,32 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
+import type { Node, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
 import {
   DEFAULT_LAYER,
   DEFAULT_WHEN_OFFSET,
   Layer,
-  Node,
   ScaleDetailsLevel,
   TaskNode,
   TOP_LAYER,
   useDetailsLevel,
   useHover,
   WhenDecorator,
-  WithContextMenuProps,
-  WithSelectionProps,
 } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models/pipelines';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import { createStepStatus, pipelineRunFilterReducer } from './reducer';
-import {
-  NodeType,
-  FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER,
-  TaskKind,
-  StepStatus,
-} from './types';
+import type { TaskKind, StepStatus } from './types';
+import { NodeType, FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER } from './types';
 import './PipelineTaskNode.scss';
 
 export const getTooltipContent = (statusReason: ComputedStatus): string => {
@@ -52,7 +46,7 @@ type PipelineTaskNodeProps = {
 } & WithContextMenuProps &
   WithSelectionProps;
 
-const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
+const PipelineTaskNode: FC<PipelineTaskNodeProps> = ({
   element,
   onContextMenu,
   contextMenuOpen,
@@ -216,4 +210,4 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default memo(observer(PipelineTaskNode));
+export default memo<PipelineTaskNodeProps>(observer(PipelineTaskNode));

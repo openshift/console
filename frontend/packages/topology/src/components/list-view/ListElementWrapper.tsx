@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
 import { useMemo } from 'react';
-import { Node, isNode } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { isNode } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
 import { labelForNodeKind } from '@console/shared';
 import { getResourceKind } from '../../utils/topology-utils';

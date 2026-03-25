@@ -1,8 +1,8 @@
 import type { FC, ReactElement } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TaskRunKind } from '@console/shipwright-plugin/src/types';
-import { PipelineKind, PipelineRunKind } from '../../types/pipeline';
+import type { TaskRunKind } from '@console/shipwright-plugin/src/types';
+import type { PipelineKind, PipelineRunKind } from '../../types/pipeline';
 import PipelineTopologyGraph from './PipelineTopologyGraph';
 import { dagreViewerComponentFactory, getGraphDataModel } from './utils';
 

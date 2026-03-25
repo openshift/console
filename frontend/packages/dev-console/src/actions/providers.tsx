@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { GraphElement, Node, isGraph } from '@patternfly/react-topology';
-import { K8sModel, Action, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
-import { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { GraphElement, Node } from '@patternfly/react-topology';
+import { isGraph } from '@patternfly/react-topology';
+import type { K8sModel, Action, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import type { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -12,17 +13,14 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
-import {
-  AccessReviewResourceAttributes,
-  K8sResourceKind,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import type { AccessReviewResourceAttributes, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import {
   isCatalogTypeEnabled,
-  useActiveNamespace,
-  useFlag,
   useIsSoftwareCatalogEnabled,
-} from '@console/shared';
+} from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { useJavaImageStreamEnabled } from '../components/import/jar/useJavaImageStreamEnabled';
@@ -36,7 +34,7 @@ import {
   ADD_TO_PROJECT,
 } from '../const';
 import { AddActions, disabledActionsFilter } from './add-resources';
-import { DeleteApplicationAction } from './context-menu';
+import { useDeleteApplicationAction } from './context-menu';
 import { EditImportApplication } from './creators';
 
 type TopologyActionProvider = (data: {
@@ -297,6 +295,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
   );
   const primaryResource = appData.resources?.[0]?.resource || {};
   const [kindObj, inFlight] = useK8sModel(referenceFor(primaryResource));
+  const deleteApplicationAction = useDeleteApplicationAction(appData, kindObj);
 
   return useMemo(() => {
     if (element.getType() === TYPE_APPLICATION_GROUP) {
@@ -307,7 +306,7 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
         ? `${referenceFor(sourceObj)}/${sourceObj?.metadata?.name}`
         : undefined;
       const actions = [
-        ...(connectorSource ? [] : [DeleteApplicationAction(appData, kindObj)]),
+        ...(connectorSource ? [] : [deleteApplicationAction]),
         AddActions.FromGit(namespace, application, sourceReference, path, !isImportResourceAccess),
         AddActions.ContainerImage(
           namespace,
@@ -354,13 +353,12 @@ export const useTopologyApplicationActionProvider: TopologyActionProvider = ({
     element,
     inFlight,
     connectorSource,
-    appData,
-    kindObj,
     namespace,
     application,
     isImportResourceAccess,
     isCatalogImageResourceAccess,
     isServerlessEnabled,
     isJavaImageStreamEnabled,
+    deleteApplicationAction,
   ]);
 };

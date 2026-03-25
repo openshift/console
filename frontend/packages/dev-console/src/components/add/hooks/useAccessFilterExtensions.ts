@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
-import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import {
-  AddAccessReviewResults,
-  useAddActionsAccessReviews,
-  AccessReviewStatus,
-} from './useAddActionsAccessReviews';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { AddAccessReviewResults } from './useAddActionsAccessReviews';
+import { useAddActionsAccessReviews, AccessReviewStatus } from './useAddActionsAccessReviews';
 
 export const useAccessFilterExtensions = (
   namespace: string,

@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from '@console/dev-console/src/const';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { useQueryParams } from './useQueryParams';
 

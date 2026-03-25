@@ -1,10 +1,12 @@
 import type { FC, ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import { Formik, FormikConfig } from 'formik';
+import userEvent from '@testing-library/user-event';
+import type { FormikConfig } from 'formik';
+import { Formik } from 'formik';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import userEvent from '../../__tests__/user-event';
-import SecretsSection, { SecretsSectionFormData } from '../SecretsSection';
+import type { SecretsSectionFormData } from '../SecretsSection';
+import SecretsSection from '../SecretsSection';
 
 // Skip Firehose fetching and render just the children
 jest.mock('@console/internal/components/utils/firehose', () => ({
@@ -51,7 +53,8 @@ describe('SecretsSection', () => {
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 
-  it('should render a secrets and mount point table after selecting add secret', () => {
+  it('should render a secrets and mount point table after selecting add secret', async () => {
+    const user = userEvent.setup();
     const initialValues: SecretsSectionFormData = {
       formData: {
         secrets: [],
@@ -69,7 +72,7 @@ describe('SecretsSection', () => {
     expect(renderResult.queryByText('Secret')).toBeFalsy();
     expect(renderResult.queryByText('Mount point')).toBeFalsy();
 
-    userEvent.click(renderResult.getByText('Add secret'));
+    await user.click(renderResult.getByText('Add secret'));
 
     // Now expecting that there is a table to select a secret
     renderResult.getByText('Secret');

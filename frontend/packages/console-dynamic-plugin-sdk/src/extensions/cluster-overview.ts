@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
-import { Extension, CodeRef } from '../types';
-import { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
+import type { Extension, CodeRef } from '../types';
+import type { Humanize, TopConsumerPopoverProps, QueryWithDescription } from './console-types';
 
 /** Adds a new inventory item into cluster overview page. */
 export type ClusterOverviewInventoryItem = Extension<
@@ -50,17 +50,6 @@ export type ClusterOverviewMultilineUtilizationItem = Extension<
   }
 >;
 
-/**
- * @deprecated use CustomOverviewDetailItem type instead
- */
-export type OverviewDetailItem = Extension<
-  'console.dashboards/overview/detail/item',
-  {
-    /** The value, based on the DetailItem component */
-    component: CodeRef<ComponentType>;
-  }
->;
-
 /** Adds an item to the Details card of Overview Dashboard */
 export type CustomOverviewDetailItem = Extension<
   'console.dashboards/custom/overview/detail/item',
@@ -91,9 +80,6 @@ export const isClusterOverviewMultilineUtilizationItem = (
   e: Extension,
 ): e is ClusterOverviewMultilineUtilizationItem =>
   e.type === 'console.cluster-overview/multiline-utilization-item';
-
-export const isOverviewDetailItem = (e: Extension): e is OverviewDetailItem =>
-  e.type === 'console.dashboards/overview/detail/item';
 
 export const isCustomOverviewDetailItem = (e: Extension): e is CustomOverviewDetailItem =>
   e.type === 'console.dashboards/custom/overview/detail/item';

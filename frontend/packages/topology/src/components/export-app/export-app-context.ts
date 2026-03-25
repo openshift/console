@@ -2,13 +2,14 @@ import { createContext, useState, useMemo, useCallback, useEffect } from 'react'
 import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { USERSETTINGS_PREFIX, useToast, useUserSettings } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { USER_PREFERENCE_PREFIX, useToast } from '@console/shared/src';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ExportModel } from '../../models';
-import { ExportAppUserSettings } from './types';
+import type { ExportAppUserSettings } from './types';
 
 export const ExportAppContext = createContext({});
 
@@ -18,9 +19,9 @@ export const useExportAppFormToast = () => {
   const toast = useToast();
   const { t } = useTranslation();
   const [currentToasts, setCurrentToasts] = useState<{ [key: string]: { toastId: string } }>({});
-  const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserSettings<
+  const [exportAppToast, setExportAppToast, exportAppToastLoaded] = useUserPreference<
     ExportAppUserSettings
-  >(`${USERSETTINGS_PREFIX}.exportApp`, {}, true);
+  >(`${USER_PREFERENCE_PREFIX}.exportApp`, {}, true);
 
   const exportAppWatchResources = useMemo<Record<string, WatchK8sResource>>(() => {
     if (!exportAppToastLoaded || _.isEmpty(exportAppToast)) return {};

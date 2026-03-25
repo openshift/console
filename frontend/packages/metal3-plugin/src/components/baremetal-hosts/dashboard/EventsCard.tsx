@@ -3,11 +3,11 @@ import { useContext } from 'react';
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { ResourceLink, resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
-import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
+import type { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
@@ -16,7 +16,7 @@ import ActivityBody, {
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
-import { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const matchesInvolvedObject = (

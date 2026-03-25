@@ -1,18 +1,18 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useContext, useCallback, useEffect } from 'react';
-import { DropEvent, FileUpload, TextInputTypes } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { DropEvent } from '@patternfly/react-core';
+import { FileUpload, TextInputTypes } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import {
-  FileUploadContext,
-  FileUploadContextType,
-} from '@console/app/src/components/file-upload/file-upload-context';
+import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';
+import { FileUploadContext } from '@console/app/src/components/file-upload/file-upload-context';
 import { InputField } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';
 
-const JarSection: FunctionComponent = () => {
+const JarSection: FC = () => {
   const { t } = useTranslation();
   const {
     values: {

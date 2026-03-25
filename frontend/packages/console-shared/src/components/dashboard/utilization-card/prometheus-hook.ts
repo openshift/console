@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
 } from '@console/internal/actions/dashboards';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
+import type { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboard-results';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';

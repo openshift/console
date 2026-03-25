@@ -26,7 +26,6 @@ import {
   GetNameCellProps,
   ActionsCellProps,
 } from './internal-types';
-import { UseUserSettings } from '../extensions/console-types';
 
 export * from './internal-console-api';
 export * from './internal-topology-api';
@@ -81,12 +80,6 @@ export const useUtilizationDuration: UseUtilizationDuration = require('@console/
 
 export const useDashboardResources: UseDashboardResources = require('@console/shared/src/hooks/useDashboardResources')
   .useDashboardResources;
-
-/**
- * @deprecated This hook is now exposed by core plugin SDK package.
- */
-export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
-  .useUserSettings;
 
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;

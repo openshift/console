@@ -1,9 +1,9 @@
 import type { ReactNode, ReactElement } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import { ExtensionHook } from '../api/common-types';
-import { CodeRef, Extension } from '../types';
-import { K8sResourceCommon } from './console-types';
-import { BuildConfigData } from './topology-types';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { ExtensionHook } from '../api/common-types';
+import type { CodeRef, Extension } from '../types';
+import type { K8sResourceCommon } from './console-types';
+import type { BuildConfigData } from './topology-types';
 
 /** DetailsTab contributes a tab for the topology details panel. */
 export type DetailsTab = Extension<

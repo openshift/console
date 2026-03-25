@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
 
 export type BareMetalHostNIC = {
   ip: string;

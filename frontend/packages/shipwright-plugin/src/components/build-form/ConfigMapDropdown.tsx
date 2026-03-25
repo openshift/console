@@ -4,11 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import { ConfigMapKind } from '@console/internal/module/k8s';
-import {
-  ResourceDropdown,
-  ResourceDropdownProps,
-} from '@console/shared/src/components/dropdown/ResourceDropdown';
+import type { ConfigMapKind } from '@console/internal/module/k8s';
+import type { ResourceDropdownProps } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import { ResourceDropdown } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
 type ConfigMapDropdownProps = Omit<
   ResourceDropdownProps,

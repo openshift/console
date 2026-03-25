@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Content } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { ConfigMapKind } from '@console/internal/module/k8s/types';
+import type { ConfigMapKind } from '@console/internal/module/k8s/types';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 
 type GithubSectionProps = {

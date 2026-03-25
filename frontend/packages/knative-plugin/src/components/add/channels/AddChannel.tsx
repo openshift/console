@@ -1,20 +1,23 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
-import { K8sResourceKind, k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared';
+import type { RootState } from '@console/internal/redux';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { getCatalogChannelData, getCreateChannelData } from '../../../utils/create-channel-utils';
 import { handleRedirect } from '../../../utils/create-eventsources-utils';
 import { addChannelValidationSchema } from '../eventSource-validation-utils';
-import { AddChannelFormData, ChannelListProps } from '../import-types';
+import type { AddChannelFormData, ChannelListProps } from '../import-types';
 import ChannelForm from './ChannelForm';
 
 interface ChannelProps {
@@ -31,6 +34,8 @@ interface StateProps {
 type Props = ChannelProps & StateProps;
 
 const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
   const initialFormData: AddChannelFormData = {
@@ -83,7 +88,7 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
   const handleSubmit = (values, actions) => {
     return createResources(values)
       .then(() => {
-        handleRedirect(values.formData.namespace, perspective, perspectiveExtension);
+        handleRedirect(values.formData.namespace, perspective, perspectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -94,7 +99,7 @@ const AddChannel: FC<Props> = ({ namespace, channels, activeApplication }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={addChannelValidationSchema(t)}

@@ -1,4 +1,5 @@
-import { BuildConfig, BuildConfigRunPolicy } from '../../types';
+import type { BuildConfig } from '../../types';
+import { BuildConfigRunPolicy } from '../../types';
 import { convertFormDataToBuildConfig } from '../convert-to-buildconfig';
 import { getInitialBuildConfigFormikValues } from '../initial-data';
 

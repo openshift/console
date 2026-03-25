@@ -4,7 +4,8 @@ import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
+import type { ExtensibleModel } from '../../data-transforms/ModelContext';
+import { ModelContext } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
 import { DroppableTopologyComponent } from './DroppableTopologyComponent';
 

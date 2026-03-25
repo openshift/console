@@ -1,18 +1,14 @@
 import * as _ from 'lodash';
+import type { NavigateFunction } from 'react-router';
 import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
-import { Perspective } from '@console/dynamic-plugin-sdk';
-import { checkAccess, history } from '@console/internal/components/utils';
-import {
-  K8sResourceKind,
-  referenceForModel,
-  referenceFor,
-  modelFor,
-  K8sKind,
-} from '@console/internal/module/k8s';
-import {
+import type { Perspective } from '@console/dynamic-plugin-sdk';
+import { checkAccess } from '@console/internal/components/utils';
+import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
+import type {
   Descriptor,
   SpecCapability,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
@@ -21,14 +17,13 @@ import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getEventSourceCatalogProviderData } from '../catalog/event-source-data';
-import {
-  EventSources,
+import type {
   EventSourceFormData,
   EventSourceSyncFormData,
-  SinkType,
   KnEventCatalogMetaData,
   YamlFormSyncData,
 } from '../components/add/import-types';
+import { EventSources, SinkType } from '../components/add/import-types';
 import { craftResourceKey } from '../components/pub-sub/pub-sub-utils';
 import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
 import { CamelKameletModel } from '../models';
@@ -346,10 +341,31 @@ export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
-  history.push(redirectURL);
+  if (!perspectiveData || !perspectiveData.properties?.importRedirectURL) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Unable to redirect: perspective data not found or importRedirectURL missing for perspective: ${perspective}`,
+    );
+    return;
+  }
+
+  try {
+    const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
+    if (!redirectURL) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Skipping navigation: importRedirectURL returned empty/undefined for perspective ${perspective}`,
+      );
+      return;
+    }
+    navigate(redirectURL);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to redirect for perspective ${perspective}:`, error);
+  }
 };
 
 export const sanitizeSourceToForm = (

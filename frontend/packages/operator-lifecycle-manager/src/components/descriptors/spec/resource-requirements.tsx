@@ -1,19 +1,25 @@
 import type { FC } from 'react';
-import { useState } from 'react';
-import { Button, Grid, GridItem } from '@patternfly/react-core';
+import { useState, useId } from 'react';
+import {
+  Button,
+  Form,
+  Grid,
+  GridItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import {
-  createModalLauncher,
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
-import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sUpdate, referenceFor } from '@console/internal/module/k8s';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
   const { t } = useTranslation();
@@ -85,12 +91,13 @@ export const ResourceRequirements: FC<ResourceRequirementsProps> = (props) => {
 export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps) => {
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const { obj, path, type, model, close } = props;
+  const { obj, path, type, model, close, cancel } = props;
   const [cpu, setCPU] = useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
   const [memory, setMemory] = useState<string>(_.get(obj.spec, `${path}.${type}.memory`, ''));
   const [storage, setStorage] = useState<string>(
     _.get(obj.spec, `${path}.${type}.ephemeral-storage`, ''),
   );
+  const formId = useId();
 
   const submit = (e) => {
     e.preventDefault();
@@ -107,76 +114,123 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
   };
 
   return (
-    <form onSubmit={(e) => submit(e)} className="modal-content">
-      <ModalTitle>{props.title}</ModalTitle>
+    <>
+      <ModalHeader title={props.title} data-test-id="modal-title" />
       <ModalBody>
-        <Grid hasGutter>
-          <GridItem>{props.description}</GridItem>
-          <ResourceRequirements
-            cpu={cpu}
-            memory={memory}
-            storage={storage}
-            onChangeCPU={setCPU}
-            onChangeMemory={setMemory}
-            onChangeStorage={setStorage}
-            path={path}
-          />
-        </Grid>
+        <Form id={formId} onSubmit={(e) => submit(e)}>
+          <Grid hasGutter>
+            <GridItem>{props.description}</GridItem>
+            <ResourceRequirements
+              cpu={cpu}
+              memory={memory}
+              storage={storage}
+              onChangeCPU={setCPU}
+              onChangeMemory={setMemory}
+              onChangeStorage={setStorage}
+              path={path}
+            />
+          </Grid>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={props.cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form={formId}
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button
+          variant="link"
+          onClick={cancel}
+          isDisabled={inProgress}
+          data-test-id="modal-cancel-action"
+        >
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-const stateToProps = ({ k8s }: RootState, { obj }) => ({
-  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
-});
+const ResourceRequirementsModalOverlay: OverlayComponent<ResourceRequirementsModalOverlayProps> = (
+  props,
+) => {
+  return (
+    <Modal variant={ModalVariant.small} isOpen onClose={props.closeOverlay}>
+      <ResourceRequirementsModal
+        {...props}
+        close={props.closeOverlay}
+        cancel={props.closeOverlay}
+      />
+    </Modal>
+  );
+};
 
-export const ResourceRequirementsModalLink = connect(stateToProps)(
-  (props: ResourceRequirementsModalLinkProps) => {
-    const { obj, type, path, model } = props;
-    const { t } = useTranslation();
-    const none = t('public~None');
-    const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
+export const ResourceRequirementsModalLink: FC<ResourceRequirementsModalLinkProps> = (props) => {
+  const { obj, type, path } = props;
+  const { t } = useTranslation();
+  const launchModal = useOverlay();
+  const [model, inFlight] = useK8sModel(referenceFor(obj));
+  const none = t('public~None');
+  const { cpu, memory, 'ephemeral-storage': storage } = _.get(obj.spec, `${path}.${type}`, {});
 
-    const onClick = () => {
-      const modal = createModalLauncher(ResourceRequirementsModal);
-      const description = t('olm~Define the resource {{type}} for this {{kind}} instance.', {
-        type,
-        kind: obj.kind,
-      });
-      const title = t('olm~{{kind}} Resource {{type}}', {
-        kind: obj.kind,
-        type: _.capitalize(type),
-      });
+  const onClick = () => {
+    if (!model) {
+      return;
+    }
 
-      return modal({ title, description, obj, model, type, path });
-    };
+    const description = t('olm~Define the resource {{type}} for this {{kind}} instance.', {
+      type,
+      kind: obj.kind,
+    });
+    const title = t('olm~{{kind}} Resource {{type}}', {
+      kind: obj.kind,
+      type: _.capitalize(type),
+    });
 
-    return (
-      <Button
-        icon={<PencilAltIcon />}
-        iconPosition="end"
-        type="button"
-        isInline
-        data-test-id="configure-modal-btn"
-        onClick={onClick}
-        variant="link"
-      >
-        {t('olm~CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
-          cpu: cpu || none,
-          memory: memory || none,
-          storage: storage || none,
-        })}
-      </Button>
-    );
-  },
-);
+    launchModal(ResourceRequirementsModalOverlay, {
+      title,
+      description,
+      obj,
+      model,
+      type,
+      path,
+    });
+  };
+
+  return (
+    <Button
+      icon={<PencilAltIcon />}
+      iconPosition="end"
+      type="button"
+      isInline
+      data-test-id="configure-modal-btn"
+      onClick={onClick}
+      isDisabled={inFlight || !model}
+      variant="link"
+    >
+      {t('olm~CPU: {{cpu}}, Memory: {{memory}}, Storage: {{storage}}', {
+        cpu: cpu || none,
+        memory: memory || none,
+        storage: storage || none,
+      })}
+    </Button>
+  );
+};
+
+type ResourceRequirementsModalOverlayProps = {
+  title: string;
+  description: string;
+  obj: K8sResourceKind;
+  model: K8sKind;
+  type: 'requests' | 'limits';
+  path: string;
+};
 
 export type ResourceRequirementsModalProps = {
   title: string;
@@ -201,7 +255,6 @@ export type ResourceRequirementsProps = {
 
 export type ResourceRequirementsModalLinkProps = {
   obj: K8sResourceKind;
-  model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
 };

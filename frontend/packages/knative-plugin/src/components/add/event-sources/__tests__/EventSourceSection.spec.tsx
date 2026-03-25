@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getDefaultEventingData } from '../../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../../import-types';

@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
-export const useLocation = (): string =>
-  useSelector(({ UI }: RootState) => UI.get('location') ?? '');
+export const useLocation = () => useConsoleSelector<string>(({ UI }) => UI.get('location') ?? '');

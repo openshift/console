@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import {
   ALL_NAMESPACES_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const useActiveColumns = <D = any>({
@@ -17,9 +16,8 @@ export const useActiveColumns = <D = any>({
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
 }): [TableColumn<D>[], boolean] => {
-  const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [tableColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -45,13 +43,13 @@ export const useActiveColumns = <D = any>({
     if (namespace && namespace !== ALL_NAMESPACES_KEY && !showNamespaceOverride) {
       activeColumns = activeColumns.filter((column) => column.id !== 'namespace');
     }
-    return [activeColumns, userSettingsLoaded];
+    return [activeColumns, columnPreferenceLoaded];
   }, [
     tableColumns,
     columnManagementID,
     columns,
     namespace,
     showNamespaceOverride,
-    userSettingsLoaded,
+    columnPreferenceLoaded,
   ]);
 };

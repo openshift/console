@@ -1,4 +1,3 @@
-export * from './withUserSettingsCompatibility';
-export * from './withUserSettings';
+export * from './withUserPreference';
 export * from './withActivePerspective';
 export * from './withTelemetry';

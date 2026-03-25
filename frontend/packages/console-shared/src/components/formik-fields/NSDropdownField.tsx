@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { NsDropdown } from '@console/internal/components/utils/list-dropdown';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
-import { DropdownFieldProps } from './field-types';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
+import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const NSDropdownField: FC<DropdownFieldProps> = ({

@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { PopoverHelpButton } from '../PopoverHelpButton';
 import TextField from './TextField';
-import { ConnectionFormFormikValues } from './types';
+import type { ConnectionFormFormikValues } from './types';
 
 import './VSphereConnectionForm.css';
 
@@ -141,7 +141,6 @@ export const VSphereConnectionForm = () => {
             }
           />
         }
-        isRequired
         fieldId="connection-folder"
       >
         <TextField name="folder" />

@@ -1,16 +1,18 @@
 import type { FC } from 'react';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
-import {
+import type {
   Action,
   ActionProvider,
+  ResourceActionProvider,
+  ExtensionK8sGroupModel,
+  ActionFilter,
+} from '@console/dynamic-plugin-sdk';
+import {
   isActionProvider,
   isResourceActionProvider,
-  ResourceActionProvider,
   useResolvedExtensions,
-  ExtensionK8sGroupModel,
   isActionFilter,
-  ActionFilter,
 } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import ActionsHookResolver from './ActionsHookResolver';

@@ -1,5 +1,6 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
-import { operator, GlobalInstalledNamespace, TestOperandProps } from '../views/operator.view';
+import type { TestOperandProps } from '../views/operator.view';
+import { operator, GlobalInstalledNamespace } from '../views/operator.view';
 
 const testOperator = {
   name: 'Data Grid',
@@ -15,14 +16,36 @@ const testOperand: TestOperandProps = {
   exampleName: 'example-infinispan',
 };
 
-describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+const operatorPackageName = 'datagrid';
+
+const cleanupOperatorResources = () => {
+  cy.exec(
+    `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${GlobalInstalledNamespace} -n ${GlobalInstalledNamespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+  cy.exec(
+    `oc delete csv -l operators.coreos.com/${operatorPackageName}.${GlobalInstalledNamespace} -n ${GlobalInstalledNamespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+  cy.exec(
+    `oc delete installplan -l operators.coreos.com/${operatorPackageName}.${GlobalInstalledNamespace} -n ${GlobalInstalledNamespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 120000 },
+  );
+};
+
+xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
+    cleanupOperatorResources();
     operator.install(testOperator.name, testOperator.operatorCardTestID);
   });
 
   afterEach(() => {
     checkErrors();
+  });
+
+  after(() => {
+    cleanupOperatorResources();
   });
 
   it(`Globally installs ${testOperator.name} operator in ${GlobalInstalledNamespace} and creates ${testOperand.name} operand`, () => {

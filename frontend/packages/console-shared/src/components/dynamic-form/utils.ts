@@ -1,10 +1,11 @@
-import { UiSchema } from '@rjsf/core';
+import type { UiSchema } from '@rjsf/core';
 import { getSchemaType, getUiOptions } from '@rjsf/core/dist/cjs/utils';
 import * as Immutable from 'immutable';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { THOUSAND, MILLION, BILLION } from './const';
-import { DynamicFormSchemaError, JSONSchemaType } from './types';
+import type { DynamicFormSchemaError } from './types';
+import { JSONSchemaType } from './types';
 
 const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
 

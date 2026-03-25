@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { HelmRelease } from '../../../types/helm-types';
+import type { HelmRelease } from '../../../types/helm-types';
 import HelmReleaseNotesEmptyState from './HelmReleaseNotesEmptyState';
 
 export interface HelmReleaseNotesProps {

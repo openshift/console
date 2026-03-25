@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC } from 'react';
 import { Menu, MenuContent, MenuGroup, MenuItem, MenuList, Divider } from '@patternfly/react-core';
-import { Action, GroupedMenuOption, MenuOption, MenuOptionType } from '@console/dynamic-plugin-sdk';
+import type { Action, GroupedMenuOption, MenuOption } from '@console/dynamic-plugin-sdk';
+import { MenuOptionType } from '@console/dynamic-plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '../../../utils/order-extensions';
 import { getMenuOptionType } from '../utils';
 import ActionMenuItem from './ActionMenuItem';

@@ -1,17 +1,13 @@
 import type { FC } from 'react';
 import { Children } from 'react';
-import {
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  gridItemSpanValueShape,
-} from '@patternfly/react-core';
-import { FieldArray, useFormikContext, FormikValues } from 'formik';
+import type { gridItemSpanValueShape } from '@patternfly/react-core';
+import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
+import type { FormikValues } from 'formik';
+import { FieldArray, useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { useFormikValidationFix } from '../../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../../hooks/useFormikValidationFix';
 import SecondaryStatus from '../../status/SecondaryStatus';
-import { MultiColumnFieldProps } from '../field-types';
+import type { MultiColumnFieldProps } from '../field-types';
 import { getSpans } from './multicolumn-field-utils';
 import MultiColumnFieldFooter from './MultiColumnFieldFooter';
 import MultiColumnFieldHeader from './MultiColumnFieldHeader';

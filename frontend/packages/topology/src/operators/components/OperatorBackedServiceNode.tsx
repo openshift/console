@@ -1,14 +1,14 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import {
-  observer,
+import type {
   Node,
   WithSelectionProps,
   WithDndDropProps,
   WithDragNodeProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { GroupNode } from '../../components/graph-view';
 

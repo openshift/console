@@ -1,4 +1,4 @@
-import {
+import type {
   K8sResourceKind,
   K8sKind,
   CustomResourceDefinitionKind,
@@ -7,14 +7,16 @@ import {
   InfrastructureKind,
 } from '@console/internal/module/k8s';
 import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
-import { OperatorHubItem } from './src/components/operator-hub';
-import {
+import type { OperatorHubItem } from './src/components/operator-hub';
+import type {
   OperatorGroupKind,
   PackageManifestKind,
   SubscriptionKind,
   InstallPlanKind,
   CatalogSourceKind,
   ClusterServiceVersionKind,
+} from './src/types';
+import {
   ClusterServiceVersionPhase,
   CSVConditionReason,
   InstallPlanApproval,

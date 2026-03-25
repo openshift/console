@@ -1,13 +1,13 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
-import { BuilderImage } from '../../../utils/imagestream-utils';
+import type { BuilderImage } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';
 import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
@@ -23,7 +23,7 @@ export type UploadJarFormProps = {
   builderImage?: BuilderImage;
 };
 
-const UploadJarForm: FunctionComponent<FormikProps<FormikValues> & UploadJarFormProps> = ({
+const UploadJarForm: FC<FormikProps<FormikValues> & UploadJarFormProps> = ({
   values,
   errors,
   handleSubmit,

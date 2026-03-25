@@ -1,16 +1,16 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import { GraphElement, observer } from '@patternfly/react-topology';
-import {
+import type { GraphElement } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
+import type {
   DetailsResourceAlert,
   DetailsResourceAlertContent,
-  isDetailsResourceAlert,
-  useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { USERSETTINGS_PREFIX } from '@console/shared';
+import { isDetailsResourceAlert, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { USER_PREFERENCE_PREFIX } from '@console/shared';
 import { useGetUserSettingConfigMap } from '@console/shared/src/hooks/useGetUserSettingConfigMap';
-import { useUserSettingsLocalStorage } from '@console/shared/src/hooks/useUserSettingsLocalStorage';
+import { useUserPreferenceLocalStorage } from '@console/shared/src/hooks/useUserPreferenceLocalStorage';
 import { deserializeData } from '@console/shared/src/utils/user-settings';
 
 const SIDEBAR_ALERTS = 'sideBarAlerts';
@@ -21,18 +21,18 @@ const ResolveResourceAlerts: FC<{
   element: GraphElement;
 }> = observer(function ResolveResourceAlerts({ id, useResourceAlertsContent, element }) {
   const [cfData, cfLoaded, cfLoadError] = useGetUserSettingConfigMap();
-  const [showAlert, setShowAlert] = useUserSettingsLocalStorage(
-    `${USERSETTINGS_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
+  const [showAlert, setShowAlert] = useUserPreferenceLocalStorage(
     `${element.getId()}`,
+    `${USER_PREFERENCE_PREFIX}/${SIDEBAR_ALERTS}/${id}`,
     deserializeData(
-      cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+      cfData?.data?.[`${USER_PREFERENCE_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
     ) || true,
   );
 
   useEffect(() => {
     if (cfData && cfLoaded && !cfLoadError) {
       const alertSetting = deserializeData(
-        cfData?.data?.[`${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
+        cfData?.data?.[`${USER_PREFERENCE_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`],
       );
       setShowAlert(alertSetting);
     }

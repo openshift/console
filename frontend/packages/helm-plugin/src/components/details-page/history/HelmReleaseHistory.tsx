@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { StatusBox } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { HelmRelease } from '../../../types/helm-types';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import type { HelmRelease } from '../../../types/helm-types';
 import { fetchHelmReleaseHistory } from '../../../utils/helm-utils';
 import HelmReleaseHistoryTable from './HelmReleaseHistoryTable';
 import {

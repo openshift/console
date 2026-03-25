@@ -1,8 +1,10 @@
 import type { FC } from 'react';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
+import type { FormikValues, FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { sinkTypeUriValidation } from '../add/eventSource-validation-utils';
 import { SinkType } from '../add/import-types';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';

@@ -11,8 +11,9 @@ import {
 import { RebootingIcon } from '@patternfly/react-icons/dist/esm/icons/rebooting-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import { Alert, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';
@@ -39,7 +40,7 @@ import {
   isHostScheduledForRestart,
 } from '../../../selectors';
 import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
-import { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types';
 import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from '../BareMetalHostStatus';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';

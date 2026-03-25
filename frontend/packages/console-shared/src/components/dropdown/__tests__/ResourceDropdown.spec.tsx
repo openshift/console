@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 import { ResourceDropdown } from '../ResourceDropdown';
 
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
+jest.mock('@console/shared/src/hooks/useUserPreference', () => {
   return {
-    useUserSettingsCompatibility: () => ['', () => {}],
+    useUserPreference: () => ['', () => {}, true],
   };
 });
 
@@ -199,6 +199,7 @@ describe('ResourceDropdown', () => {
   });
 
   it('should callback selected item from dropdown and change the title to selected item', async () => {
+    const user = userEvent.setup();
     const spy = jest.fn();
 
     const { rerender } = render(
@@ -229,7 +230,7 @@ describe('ResourceDropdown', () => {
 
     // Click the dropdown button to open it
     const dropdownButton = screen.getByRole('button');
-    await userEvent.click(dropdownButton);
+    await user.click(dropdownButton);
 
     // Wait for dropdown to open and find the menu item
     await waitFor(() => {
@@ -238,7 +239,7 @@ describe('ResourceDropdown', () => {
 
     // Find and click the third item (app-group-3)
     const menuItem = screen.getByRole('option', { name: /app-group-3/ });
-    await userEvent.click(menuItem);
+    await user.click(menuItem);
 
     // Verify the dropdown button text has changed
     await waitFor(() => {

@@ -3,6 +3,6 @@
 set -e
 
 pushd frontend
-yarn install
+yarn install --immutable
 yarn run build
 popd

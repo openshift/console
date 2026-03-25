@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
 import { Status, SuccessStatus } from '@console/shared';
 import { DefaultCapability, Invalid, K8sResourceLinkCapability, SecretCapability } from '../common';
-import { CapabilityProps, StatusCapability } from '../types';
+import type { CapabilityProps } from '../types';
+import { StatusCapability } from '../types';
 import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
-import { PodStatusChart, PodStatusChartProps } from './pods';
+import type { PodStatusChartProps } from './pods';
+import { PodStatusChart } from './pods';
 
 const PodStatuses: FC<StatusCapabilityProps<PodStatusChartProps['statuses']>> = ({
   description,

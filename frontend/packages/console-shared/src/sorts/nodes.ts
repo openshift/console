@@ -1,8 +1,8 @@
-import { SortByDirection } from '@patternfly/react-table';
+import type { SortByDirection } from '@patternfly/react-table';
 import { isCSRResource } from '@console/app/src/components/nodes/csr';
 import * as UIActions from '@console/internal/actions/ui';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
-import { NodeCertificateSigningRequestKind, NodeKind } from '@console/internal/module/k8s';
+import type { NodeCertificateSigningRequestKind, NodeKind } from '@console/internal/module/k8s';
 import { getNodeUptime, getNodeMachineName, getNodeRoles } from '../selectors/node';
 
 export const nodeMemory = (node: NodeKind): number => {

@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { createContext, useContext, useMemo } from 'react';
-import { PopoverPosition } from '@patternfly/react-core';
+import type { PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
+import type { TopConsumerPopoverProps } from '@console/dynamic-plugin-sdk';
 import {
   humanizeCpuCores,
   humanizeBinaryBytes,

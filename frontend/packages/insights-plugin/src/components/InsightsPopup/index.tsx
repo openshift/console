@@ -3,14 +3,14 @@ import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts/vi
 import { Stack, StackItem, Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
+import type { PrometheusHealthPopupProps } from '@console/dynamic-plugin-sdk';
 import { ErrorState } from '@console/internal/components/error';
 import {
   documentationURLs,
   getDocumentationURL,
   isManaged,
 } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import {

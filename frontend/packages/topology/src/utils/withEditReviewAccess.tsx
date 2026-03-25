@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { observer } from 'mobx-react';
-import {
+import type {
   WithEditReviewAccess,
   WithEditReviewAccessComponentProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';

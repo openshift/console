@@ -1,5 +1,5 @@
-import { K8sResourceCommon, K8sResourceKind, Toleration } from '@console/internal/module/k8s';
-import { PipelineRunKind } from '../../types/pipeline';
+import type { K8sResourceCommon, K8sResourceKind, Toleration } from '@console/internal/module/k8s';
+import type { PipelineRunKind } from '../../types/pipeline';
 
 export type TriggerBindingParam = {
   name: string;

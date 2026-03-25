@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useDeleteNamespaceModalLauncher } from '@console/internal/components/modals/delete-namespace-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { CommonActionCreator } from '../hooks/types';
 import { useCommonActions } from '../hooks/useCommonActions';
 

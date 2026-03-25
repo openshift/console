@@ -1,9 +1,9 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
-import type { DataViewTh } from '@patternfly/react-data-view';
+import type { QuickStart } from '@patternfly/quickstarts';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
-import { Map as ImmutableMap } from 'immutable';
-import {
+import type { Map as ImmutableMap } from 'immutable';
+import type {
   HealthState,
   K8sResourceCommon,
   LIMIT_STATE,
@@ -11,9 +11,10 @@ import {
   QueryParams,
   StatusGroupMapper,
   TopConsumerPopoverProps,
+  ColumnLayout,
+  RowProps,
 } from '../extensions/console-types';
-import type { ColumnLayout, RowProps } from '../extensions/console-types';
-import { Alert, K8sModel } from './common-types';
+import type { Alert, K8sModel } from './common-types';
 
 type WithClassNameProps<R = {}> = R & {
   className?: string;
@@ -321,6 +322,7 @@ export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   id: string;
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  resizableProps?: any;
 };
 
 export type ConsoleDataViewRow = any[];
@@ -353,6 +355,9 @@ export type ConsoleDataViewProps<
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   mock?: boolean;
+  isResizable?: boolean;
+  /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
+  resetAllColumnWidths?: () => void;
 };
 
 // ConsoleDataView helper types

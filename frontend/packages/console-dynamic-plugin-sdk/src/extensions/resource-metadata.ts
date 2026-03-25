@@ -1,5 +1,5 @@
-import { ExtensionK8sGroupModel } from '../api/common-types';
-import { Extension } from '../types';
+import type { ExtensionK8sGroupModel } from '../api/common-types';
+import type { Extension } from '../types';
 
 export enum ModelBadge {
   DEV = 'dev',

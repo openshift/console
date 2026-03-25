@@ -2,11 +2,11 @@ import type { FC } from 'react';
 import { useContext, useMemo, useCallback } from 'react';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s/types';
+import type { PodKind } from '@console/internal/module/k8s/types';
 import {
   InventoryItem,
   ResourceInventoryItem,

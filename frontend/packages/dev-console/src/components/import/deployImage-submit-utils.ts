@@ -6,13 +6,8 @@ import {
   ServiceModel,
   RouteModel,
 } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  K8sVerb,
-  k8sCreate,
-  k8sUpdate,
-  k8sWaitForUpdate,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate, k8sWaitForUpdate } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
@@ -30,9 +25,10 @@ import {
   getTriggerAnnotation,
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
-import { AppResources } from '../edit-application/edit-application-types';
+import type { AppResources } from '../edit-application/edit-application-types';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
-import { DeployImageFormData, Resources } from './import-types';
+import type { DeployImageFormData } from './import-types';
+import { Resources } from './import-types';
 
 const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;
 const WAIT_FOR_IMAGESTREAM_GENERATION = 2;

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { InfrastructureModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getInfrastructurePlatform } from '@console/shared/src/selectors/infrastructure';
 import { useMaintenanceCapability } from './hooks/useMaintenanceCapability';
 import { ProvisioningModel } from './models';

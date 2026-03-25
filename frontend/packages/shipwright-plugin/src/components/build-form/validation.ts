@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import i18n from '@console/internal/i18n';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { BuildFormikValues } from './types';
+import type { BuildFormikValues } from './types';
 
 const nameSchema = () => yup.string().required(i18n.t('shipwright-plugin~Required'));
 

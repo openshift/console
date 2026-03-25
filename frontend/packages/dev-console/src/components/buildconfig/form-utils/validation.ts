@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import i18n from '@console/internal/i18n';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { BuildConfigFormikValues } from './types';
+import type { BuildConfigFormikValues } from './types';
 
 const nameSchema = () => yup.string().required(i18n.t('devconsole~Required'));
 

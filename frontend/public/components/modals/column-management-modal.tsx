@@ -2,27 +2,30 @@ import type { FC, SyntheticEvent } from 'react';
 import { useState } from 'react';
 import {
   Alert,
+  Button,
   DataList,
   DataListCheck,
   DataListItem,
   DataListItemRow,
   DataListCell,
   DataListItemCells,
+  Form,
   Grid,
   GridItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ColumnLayout, ManagedColumn } from '@console/dynamic-plugin-sdk';
 
-import {
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
-import {
-  WithUserSettingsCompatibilityProps,
-  withUserSettingsCompatibility,
-} from '@console/shared/src/hoc/withUserSettingsCompatibility';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
+import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
+import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 export const MAX_VIEW_COLS = 9;
 
@@ -71,13 +74,13 @@ const NamespaceColumnHelpText: FC = () => {
 };
 
 export const ColumnManagementModal: FC<
-  ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>
+  ColumnManagementModalProps & WithUserPreferenceProps<object>
 > = ({ cancel, close, columnLayout, setUserSettingState: setTableColumns, noLimit }) => {
   const { t } = useTranslation();
   const defaultColumns = columnLayout.columns.filter((column) => column.id && !column.additional);
   const additionalColumns = columnLayout.columns.filter((column) => column.additional);
 
-  const [checkedColumns, setCheckedColumns] = useState(
+  const [checkedColumns, setCheckedColumns] = useState<Set<string>>(
     columnLayout.selectedColumns && columnLayout.selectedColumns.size !== 0
       ? new Set(columnLayout.selectedColumns)
       : new Set(defaultColumns.map((col) => col.id)),
@@ -115,96 +118,117 @@ export const ColumnManagementModal: FC<
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
+    <>
+      <ModalHeader
+        title={t('public~Manage columns')}
+        data-test-id="modal-title"
+        labelId="column-management-modal-title"
+      />
       <ModalBody>
-        {!noLimit ? (
-          <>
-            <div className="co-m-form-row">
+        <Form id="column-management-form" onSubmit={submit}>
+          {!noLimit ? (
+            <>
               <p>{t('public~Selected columns will appear in the table.')}</p>
-            </div>
-            <div className="co-m-form-row">
               <Alert
-                className="co-alert"
                 isInline
                 title={t('public~You can select up to {{MAX_VIEW_COLS}} columns', {
                   MAX_VIEW_COLS,
                 })}
                 variant="info"
               >
-                {!columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
+                {columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />}
               </Alert>
-            </div>
-          </>
-        ) : (
-          !columnLayout?.showNamespaceOverride && (
-            <div className="co-m-form-row">
-              <NamespaceColumnHelpText />
-            </div>
-          )
-        )}
-        <Grid hasGutter className="co-m-form-row">
-          <GridItem sm={6}>
-            <label>
-              {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
-            </label>
-            <DataList
-              aria-label={t('public~Default column list')}
-              id="defalt-column-management"
-              isCompact
-            >
-              {defaultColumns.map((defaultColumn) => (
-                <DataListRow
-                  key={defaultColumn.id}
-                  onChange={onColumnChange}
-                  disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
-                  column={defaultColumn}
-                  checkedColumns={checkedColumns}
-                />
-              ))}
-            </DataList>
-          </GridItem>
-          <GridItem sm={6}>
-            <label>{t('public~Additional columns')}</label>
-            <DataList
-              aria-label={t('public~Additional column list')}
-              id="additional-column-management"
-              isCompact
-            >
-              {additionalColumns.map((additionalColumn) => (
-                <DataListRow
-                  key={additionalColumn.id}
-                  onChange={onColumnChange}
-                  disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
-                  column={additionalColumn}
-                  checkedColumns={checkedColumns}
-                />
-              ))}
-            </DataList>
-          </GridItem>
-        </Grid>
+            </>
+          ) : (
+            columnLayout?.showNamespaceOverride && <NamespaceColumnHelpText />
+          )}
+          <Grid hasGutter>
+            <GridItem sm={6}>
+              <label>
+                {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
+              </label>
+              <DataList
+                aria-label={t('public~Default column list')}
+                id="default-column-management"
+                isCompact
+              >
+                {defaultColumns.map((defaultColumn) => (
+                  <DataListRow
+                    key={defaultColumn.id}
+                    onChange={onColumnChange}
+                    disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
+                    column={defaultColumn}
+                    checkedColumns={checkedColumns}
+                  />
+                ))}
+              </DataList>
+            </GridItem>
+            <GridItem sm={6}>
+              <label>{t('public~Additional columns')}</label>
+              <DataList
+                aria-label={t('public~Additional column list')}
+                id="additional-column-management"
+                isCompact
+              >
+                {additionalColumns.map((additionalColumn) => (
+                  <DataListRow
+                    key={additionalColumn.id}
+                    onChange={onColumnChange}
+                    disableUncheckedRow={!noLimit && areMaxColumnsDisplayed}
+                    column={additionalColumn}
+                    checkedColumns={checkedColumns}
+                  />
+                ))}
+              </DataList>
+            </GridItem>
+          </Grid>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        inProgress={false}
-        cancel={cancel}
-        submitText={t('public~Save')}
-        resetText={t('public~Restore default columns')}
-        reset={resetColumns}
-      />
-    </form>
+      <ModalFooterWithAlerts>
+        <Button
+          type="submit"
+          variant="primary"
+          form="column-management-form"
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+        <Button variant="link" onClick={resetColumns} type="button">
+          {t('public~Restore default columns')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const createColumnManagementModal = createModalLauncher<ColumnManagementModalProps>(
-  withUserSettingsCompatibility<
-    ColumnManagementModalProps & WithUserSettingsCompatibilityProps<object>,
-    object
-  >(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  )(ColumnManagementModal),
+const ColumnManagementModalWithSettings = withUserPreference<
+  ColumnManagementModalProps & WithUserPreferenceProps<object>,
+  object
+>(
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
+  undefined,
+  true,
+)(ColumnManagementModal);
+
+export const ColumnManagementModalOverlay: OverlayComponent<ColumnManagementModalProps> = (
+  props,
+) => (
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="column-management-modal-title"
+  >
+    <ColumnManagementModalWithSettings
+      {...props}
+      cancel={props.closeOverlay}
+      close={props.closeOverlay}
+    />
+  </Modal>
 );
 
 ColumnManagementModal.displayName = 'ColumnManagementModal';
@@ -216,9 +240,7 @@ type DataListRowProps = {
   checkedColumns: Set<string>;
 };
 
-export type ColumnManagementModalProps = {
-  cancel?: () => void;
-  close?: () => void;
+type ColumnManagementModalProps = {
   columnLayout: ColumnLayout;
   noLimit?: boolean;
-};
+} & ModalComponentProps;

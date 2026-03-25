@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { craftResourceKey, getResourceNameFromKey } from '../../pub-sub/pub-sub-utils';
 

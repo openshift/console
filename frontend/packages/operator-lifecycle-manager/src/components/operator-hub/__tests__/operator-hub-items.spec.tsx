@@ -1,4 +1,4 @@
-import { OperatorHubItem } from '../index';
+import type { OperatorHubItem } from '../index';
 import { determineCategories, orderAndSortByRelevance } from '../operator-hub-items';
 
 describe('determineCategories', () => {

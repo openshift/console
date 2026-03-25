@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import {
   TYPE_KNATIVE_SERVICE,
   TYPE_SINK_URI,

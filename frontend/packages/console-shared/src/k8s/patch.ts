@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Patch } from '@console/internal/module/k8s';
+import type { Patch } from '@console/internal/module/k8s';
 import { assureEndsWith } from '../utils';
 
 export const patchSafeValue = (value: string): string =>

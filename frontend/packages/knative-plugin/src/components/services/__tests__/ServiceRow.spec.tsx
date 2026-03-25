@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
-import { ServiceKind } from '../../../types';
+import type { ServiceKind } from '../../../types';
 import ServiceRow from '../ServiceRow';
 
 jest.mock('@console/internal/components/factory', () => ({

@@ -1,4 +1,4 @@
-import {
+import type {
   CloudShellComponent,
   CloudShellResource,
 } from '../components/cloud-shell/cloud-shell-utils';

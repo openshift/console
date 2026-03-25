@@ -9,12 +9,8 @@ import {
   WhenStatus,
   withPanZoom,
 } from '@patternfly/react-topology';
-import {
-  ComponentFactory,
-  EdgeModel,
-  GraphModel,
-  ModelKind,
-} from '@patternfly/react-topology/src/types';
+import type { ComponentFactory, EdgeModel, GraphModel } from '@patternfly/react-topology/src/types';
+import { ModelKind } from '@patternfly/react-topology/src/types';
 import * as _ from 'lodash';
 import { formatPrometheusDuration } from '@console/shared/src/utils/datetime';
 import {
@@ -23,16 +19,22 @@ import {
 } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
 import { pipelineRunStatus } from '@console/shipwright-plugin/src/components/logs/logs-utils';
 import { TektonResourceLabel } from '@console/shipwright-plugin/src/components/logs/TektonTaskRunLog';
-import { TaskRunKind, TaskRunStatus } from '@console/shipwright-plugin/src/types';
-import {
+import type { TaskRunKind, TaskRunStatus } from '@console/shipwright-plugin/src/types';
+import type {
   PipelineKind,
   PipelineRunKind,
   PipelineTask,
   PipelineTaskWithStatus,
 } from '../../types/pipeline';
 import CustomTaskNode from './CustomTaskNode';
-import { DAG, Vertex } from './dag';
+import type { Vertex } from './dag';
+import { DAG } from './dag';
 import PipelineTaskNode from './PipelineTaskNode';
+import type {
+  PipelineRunAfterNodeModelData,
+  PipelineMixedNodeModel,
+  NodeCreatorSetup,
+} from './types';
 import {
   NODE_HEIGHT,
   NODE_WIDTH,
@@ -43,9 +45,6 @@ import {
   PipelineLayout,
   DEFAULT_FINALLLY_GROUP_PADDING,
   DEFAULT_NODE_HEIGHT,
-  PipelineRunAfterNodeModelData,
-  PipelineMixedNodeModel,
-  NodeCreatorSetup,
 } from './types';
 
 export const conditions = {

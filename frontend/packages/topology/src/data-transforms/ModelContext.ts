@@ -1,9 +1,9 @@
 import { createContext } from 'react';
-import { Model } from '@patternfly/react-topology';
+import type { Model } from '@patternfly/react-topology';
 import { observable, computed, makeObservable } from 'mobx';
-import { WatchK8sResources } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
+import type { WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type {
   TopologyDataModelDepicted,
   TopologyDataModelGetter,
   TopologyDataModelReconciler,

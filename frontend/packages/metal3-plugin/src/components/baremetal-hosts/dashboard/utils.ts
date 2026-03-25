@@ -1,5 +1,5 @@
-import { MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import type { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
 import { getName } from '@console/shared/src/selectors/common';
 import { getNodeMachineName } from '@console/shared/src/selectors/node';
@@ -19,7 +19,7 @@ import {
   isDetached,
 } from '../../../selectors';
 import { getHostStatus } from '../../../status/host-status';
-import { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types';
 import { getHostFilterStatus } from '../table-filters';
 
 export { BareMetalHostModel } from '../../../models';

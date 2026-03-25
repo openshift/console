@@ -4,23 +4,23 @@ import { FormSection } from '@patternfly/react-core';
 import { DualListSelector } from '@patternfly/react-core/deprecated';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   getGroupVersionKindForModel,
-  K8sResourceCommon,
   ResourceIcon,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { ClusterRoleModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useTelemetry } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
   useConsoleOperatorConfig,
   patchConsoleOperatorConfig,
   LoadError,
   SaveStatus,
-  SaveStatusProps,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const defaultClusterRoleNames = ['admin', 'edit', 'view'];
 

@@ -1,6 +1,7 @@
 import type { ReactElement, FC } from 'react';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import TopologyGroupResourceList from './TopologyGroupResourceList';
 
 type TopologyGroupResourcesPanelProps = {

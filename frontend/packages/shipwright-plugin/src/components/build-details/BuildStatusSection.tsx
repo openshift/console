@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { DescriptionList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
-import { Build, BuildStatus } from '../../types';
+import type { Build, BuildStatus } from '../../types';
 
 type BuildStatusSectionProps = {
   obj: Build;

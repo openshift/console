@@ -8,21 +8,17 @@ import {
 import { checkAccess } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ConfigMapModel } from '@console/internal/models';
-import {
-  getGroupVersionKind,
-  modelFor,
-  isGroupVersionKind,
-  K8sResourceKind,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { getGroupVersionKind, modelFor, isGroupVersionKind } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import {
-  defaultChannels,
+import type {
   ChannelListProps,
   AddChannelFormData,
   YamlFormSyncData,
 } from '../components/add/import-types';
+import { defaultChannels } from '../components/add/import-types';
 import { EVENTING_IMC_KIND } from '../const';
 import { loadYamlData } from './create-eventsources-utils';
 import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';

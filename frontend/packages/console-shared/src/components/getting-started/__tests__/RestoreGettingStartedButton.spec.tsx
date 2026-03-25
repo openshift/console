@@ -15,7 +15,7 @@ describe('RestoreGettingStartedButton', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.SHOW, jest.fn(), true]);
 
     const { container } = renderWithProviders(
-      <RestoreGettingStartedButton userSettingsKey="test" />,
+      <RestoreGettingStartedButton userPreferenceKey="test" />,
     );
 
     expect(container.textContent).toBe('');
@@ -24,7 +24,7 @@ describe('RestoreGettingStartedButton', () => {
   it('should render button if getting started is hidden', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
-    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
+    renderWithProviders(<RestoreGettingStartedButton userPreferenceKey="test" />);
 
     expect(screen.getByText('Show getting started resources')).toBeVisible();
   });
@@ -37,7 +37,7 @@ describe('RestoreGettingStartedButton', () => {
       true,
     ]);
 
-    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
+    renderWithProviders(<RestoreGettingStartedButton userPreferenceKey="test" />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
@@ -52,7 +52,7 @@ describe('RestoreGettingStartedButton', () => {
       true,
     ]);
 
-    renderWithProviders(<RestoreGettingStartedButton userSettingsKey="test" />);
+    renderWithProviders(<RestoreGettingStartedButton userPreferenceKey="test" />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Close Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
@@ -67,7 +67,7 @@ describe('RestoreGettingStartedButton', () => {
     ]);
 
     const { container } = renderWithProviders(
-      <RestoreGettingStartedButton userSettingsKey="test" />,
+      <RestoreGettingStartedButton userPreferenceKey="test" />,
     );
 
     expect(container.textContent).toBe('');

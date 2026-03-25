@@ -7,12 +7,12 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
   ListPageCreate,
   ListPageHeader,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -23,7 +23,8 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
+import type { VolumeSnapshotContentKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';

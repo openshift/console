@@ -5,7 +5,7 @@ import { getName, getNamespace } from '@console/shared';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { BareMetalHostModel } from '../../../models';
 import { getHostPowerStatus } from '../../../selectors';
-import { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types';
 
 import './status-activity.scss';
 

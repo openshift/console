@@ -1,17 +1,28 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash';
-import { useState, useRef, useCallback, useEffect, useLayoutEffect, memo, Suspense } from 'react';
+import {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  memo,
+  Suspense,
+  useMemo,
+} from 'react';
 import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
 import { render } from 'react-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
-import * as Modal from 'react-modal';
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { useParams, useLocation, CompatRouter, Routes, Route } from 'react-router-dom-v5-compat';
-import store, { applyReduxExtensions, RootState } from '../redux';
+import { Provider } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
+import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
+import store, { applyReduxExtensions } from '../redux';
 import { useTranslation } from 'react-i18next';
-import { appInternalFetch } from '../co-fetch';
+import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
+import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
 import AppContents from './app-contents';
@@ -20,7 +31,6 @@ import { getBrandingDetails } from './utils/branding';
 import { ConsoleNotifier } from './console-notifier';
 import { NotificationDrawer } from './notification-drawer';
 import { Navigation } from '@console/app/src/components/nav';
-import { history } from './utils/router';
 import { AsyncComponent } from './utils/async';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import * as UIActions from '../actions/ui';
@@ -36,27 +46,26 @@ import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/Fe
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
   useResolvedExtensions,
-  ResolvedExtension,
   isContextProvider,
   isReduxReducer,
   isStandaloneRoutePage,
-  AppInitSDK,
   getUser,
   useActivePerspective,
   ReduxReducer,
   ContextProvider,
 } from '@console/dynamic-plugin-sdk';
-import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { addTestError } from '@console/shared/src/utils/test-errors';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
 import { init as initI18n } from '../i18n';
@@ -94,7 +103,7 @@ const EnhancedProvider: FC<{
 };
 
 const App: FC<{
-  contextProviderExtensions: ResolvedExtension<ContextProvider>[];
+  contextProviderExtensions: LoadedAndResolvedExtension<ContextProvider>[];
 }> = ({ contextProviderExtensions }) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -137,14 +146,6 @@ const App: FC<{
   useCSPViolationDetector();
   useNotificationPoller();
 
-  // Initialize react-modal app element for accessibility
-  useLayoutEffect(() => {
-    const appElement = document.getElementById('app-content');
-    if (appElement) {
-      Modal.setAppElement(appElement);
-    }
-  }, []);
-
   useEffect(() => {
     window.addEventListener('resize', onResize);
     return () => {
@@ -165,7 +166,7 @@ const App: FC<{
     setPrevParams(params);
   }, [location, params, prevLocation, prevParams]);
 
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // Handle feature refresh after impersonation changes
   useImpersonateRefreshFeatures();
@@ -237,8 +238,8 @@ const App: FC<{
     }
   };
 
-  const isNotificationDrawerExpanded = useSelector(
-    ({ UI }: RootState) => !!UI.getIn(['notifications', 'isExpanded']),
+  const isNotificationDrawerExpanded = useConsoleSelector(
+    ({ UI }) => !!UI.getIn(['notifications', 'isExpanded']),
   );
 
   const drawerRef = useRef<HTMLElement | null>(null);
@@ -304,7 +305,6 @@ const App: FC<{
             <Lightspeed />
           )}
         </CloudShellDrawer>
-        <div id="modal-container" role="dialog" aria-modal="true" aria-label={t('public~Modal')} />
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
@@ -317,6 +317,7 @@ const App: FC<{
       <DetectNamespace>
         <ModalProvider>
           <OverlayProvider>
+            <SyncModalLaunchers />
             <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
               {contextProviderExtensions.reduce(
                 (children, e) => (
@@ -355,35 +356,46 @@ render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
 const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
-  // Treat the authentication error page as a standalone route. There is no need to render the rest
-  // of the app if we know authentication has failed.
+
+  const standaloneRoutes = useMemo(
+    () =>
+      _.flatten(
+        standaloneRouteExtensions.map(({ uid, properties: { path, exact, component } }) =>
+          mapExtensionToRoutes({
+            uid,
+            path,
+            exact,
+            getElement: () => <AsyncComponent loader={component} />,
+          }),
+        ),
+      ),
+    [standaloneRouteExtensions],
+  );
+
   return (
-    <Router history={history}>
-      <CompatRouter>
-        <Routes>
-          <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
-          {standaloneRouteExtensions.map((e) => (
-            <Route
-              key={e.uid}
-              element={<AsyncComponent loader={e.properties.component} />}
-              path={`${e.properties.path}${e.properties.exact ? '' : '/*'}`}
-            />
-          ))}
-          <Route path="/*" element={<AppWithExtensions />} />
-        </Routes>
-      </CompatRouter>
-    </Router>
+    <BrowserRouter basename={window.SERVER_FLAGS.basePath}>
+      <Routes>
+        {/*
+          Treat the authentication error page as a standalone route.
+          There is no need to render the rest of the app if we know authentication has failed.
+        */}
+        <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
+        {standaloneRoutes}
+        <Route path="/*" element={<AppWithExtensions />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
-const CaptureTelemetry = memo(function CaptureTelemetry() {
+const CaptureTelemetry = memo(() => {
   const [perspective] = useActivePerspective();
   const fireTelemetryEvent = useTelemetry();
   const [debounceTime, setDebounceTime] = useState(5000);
   const [titleOnLoad, setTitleOnLoad] = useState('');
   // notify of identity change
-  const user = useSelector(getUser);
+  const user = useConsoleSelector(getUser);
   const telemetryTitle = getTelemetryTitle();
+  const location = useLocation();
 
   useEffect(() => {
     setTimeout(() => {
@@ -403,31 +415,19 @@ const CaptureTelemetry = memo(function CaptureTelemetry() {
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
   // Also because some pages update the URL as the user enters a search term.
-  const fireUrlChangeEvent = useDebounceCallback((location) => {
+  const fireUrlChangeEvent = useDebounceCallback((newLocation) => {
     fireTelemetryEvent('page', {
       perspective,
       title: getTelemetryTitle(),
-      ...withoutSensitiveInformations(location),
+      ...withoutSensitiveInformations(newLocation),
     });
   }, debounceTime);
   useEffect(() => {
     if (!titleOnLoad) {
       return;
     }
-    fireUrlChangeEvent(history.location);
-    let { pathname, search } = history.location;
-    const unlisten = history.listen((location) => {
-      const { pathname: nextPathname, search: nextSearch } = history.location;
-      if (pathname !== nextPathname || search !== nextSearch) {
-        pathname = nextPathname;
-        search = nextSearch;
-        fireUrlChangeEvent(location);
-      }
-    });
-    return () => {
-      unlisten();
-    };
-  }, [perspective, fireUrlChangeEvent, titleOnLoad]);
+    fireUrlChangeEvent(location);
+  }, [titleOnLoad, location, fireUrlChangeEvent]);
 
   return null;
 });
@@ -452,9 +452,6 @@ const updateSwaggerDefinitionContinual = () => {
   }, 5 * 60 * 1000);
 };
 
-const initPlugins = (storeInstance: typeof store) => {
-  return initConsolePlugins(pluginStore, storeInstance);
-};
 // Load cached API resources from localStorage to speed up page load.
 const initApiDiscovery = (storeInstance) => {
   getCachedResources()
@@ -473,11 +470,12 @@ graphQLReady.onReady(() => {
   const { productName } = getBrandingDetails();
   store.dispatch<any>(detectFeatures());
 
+  initApiDiscovery(store);
+
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
   // Used by GUI tests to check for unhandled exceptions
-  window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
     // ResizeObserver loop errors are non-actionable and can be ignored
     if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
@@ -486,14 +484,14 @@ graphQLReady.onReady(() => {
 
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
-    window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
+    addTestError(formattedMessage);
     // eslint-disable-next-line no-console
     console.error(formattedMessage, error || message);
   };
   window.onunhandledrejection = (promiseRejectionEvent) => {
     const { reason } = promiseRejectionEvent;
     const formattedMessage = `unhandled promise rejection: ${reason}`;
-    window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
+    addTestError(formattedMessage);
     // eslint-disable-next-line no-console
     console.error(formattedMessage, reason);
   };
@@ -530,24 +528,18 @@ graphQLReady.onReady(() => {
   render(
     <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
-            <AppInitSDK
-              configurations={{
-                appFetch: appInternalFetch,
-                apiDiscovery: initApiDiscovery,
-                initPlugins,
-              }}
-            >
+        <PluginStoreProvider store={pluginStore}>
+          <ThemeProvider>
+            <HelmetProvider>
+              <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
               <ToastProvider>
                 <PollConsoleUpdates />
                 <AdmissionWebhookWarningNotifications />
                 <AppRouter />
               </ToastProvider>
-            </AppInitSDK>
-          </HelmetProvider>
-        </ThemeProvider>
+            </HelmetProvider>
+          </ThemeProvider>
+        </PluginStoreProvider>
       </Provider>
     </Suspense>,
     document.getElementById('app'),

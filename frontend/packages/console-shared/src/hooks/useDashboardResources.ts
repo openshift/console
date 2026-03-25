@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { UseDashboardResources } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { UseDashboardResources } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import {
   stopWatchPrometheusQuery,
   stopWatchURL,

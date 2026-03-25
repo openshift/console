@@ -7,7 +7,7 @@ import {
   getAlertName,
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
-import { NotificationAlerts } from 'public/reducers/observe';
+import type { NotificationAlerts } from 'public/reducers/observe';
 
 export const useNamespacedNotificationAlertsPoller = (namespace: string) => {
   const { t } = useTranslation();

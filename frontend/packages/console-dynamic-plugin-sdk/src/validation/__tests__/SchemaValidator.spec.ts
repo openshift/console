@@ -1,10 +1,10 @@
-import * as Ajv from 'ajv';
+import type { Ajv, ErrorObject } from 'ajv';
 import { SchemaValidator } from '../SchemaValidator';
 
-const getAjvMocks = (): [Ajv.Ajv, jest.Mock<any>] => {
+const getAjvMocks = (): [Ajv, jest.Mock<any>] => {
   const validate = jest.fn();
 
-  const ajv = {} as Ajv.Ajv;
+  const ajv = {} as Ajv;
   ajv.validate = validate;
 
   return [ajv, validate];
@@ -31,7 +31,7 @@ describe('SchemaValidator', () => {
         ajv.errors = [
           { dataPath: '.x', message: 'test message for path x' },
           { dataPath: '.y', message: 'test message for path y' },
-        ] as Ajv.ErrorObject[];
+        ] as ErrorObject[];
         return false;
       });
 

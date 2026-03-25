@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { getGroupVersionKindForReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import {
-  K8sResourceKindReference,
-  kindForReference,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { kindForReference, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
-import { HelmChartRepositoryFormData, HelmChartRepositoryType } from '../../../types/helm-types';
+import type {
+  HelmChartRepositoryFormData,
+  HelmChartRepositoryType,
+} from '../../../types/helm-types';
 
 export const convertToForm = (resource: HelmChartRepositoryType) => {
   return {
@@ -16,6 +16,7 @@ export const convertToForm = (resource: HelmChartRepositoryType) => {
     ca: resource?.spec?.connectionConfig?.ca?.name ?? '',
     disabled: resource?.spec?.disabled ?? false,
     tlsClientConfig: resource?.spec?.connectionConfig?.tlsClientConfig?.name ?? '',
+    basicAuthConfig: resource?.spec?.connectionConfig?.basicAuthConfig?.name ?? '',
     repoDescription: resource?.spec?.description ?? '',
     repoUrl: resource?.spec?.connectionConfig?.url ?? '',
     metadata: _.omit(resource?.metadata, ['name', 'namespace']) ?? {},
@@ -25,12 +26,14 @@ export const convertToForm = (resource: HelmChartRepositoryType) => {
 export const convertToHelmChartRepository = (
   formValues: HelmChartRepositoryFormData,
   namespace: string,
+  existingRepo?: HelmChartRepositoryType,
 ): HelmChartRepositoryType => {
   const {
     repoName,
     ca,
     disabled,
     tlsClientConfig,
+    basicAuthConfig,
     repoDescription,
     repoUrl,
     metadata,
@@ -54,6 +57,11 @@ export const convertToHelmChartRepository = (
         url: repoUrl,
         ...(ca ? { ca: { name: ca } } : {}),
         ...(tlsClientConfig ? { tlsClientConfig: { name: tlsClientConfig } } : {}),
+        ...(basicAuthConfig &&
+        (scope === 'ProjectHelmChartRepository' ||
+          existingRepo?.kind === 'ProjectHelmChartRepository')
+          ? { basicAuthConfig: { name: basicAuthConfig } }
+          : {}),
       },
       ...(repoDescription ? { description: repoDescription } : {}),
       ...(disabled ? { disabled } : {}),

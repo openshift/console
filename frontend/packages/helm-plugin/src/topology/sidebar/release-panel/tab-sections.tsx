@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import { getResource } from '@console/topology/src/utils';

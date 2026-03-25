@@ -1,6 +1,7 @@
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin/src';
-import { AutoscaleWindowType } from '../import-types';
+import type { AutoscaleWindowType } from '../import-types';
 
 export const getAutoscaleWindow = (autoscaleValue: string): AutoscaleWindowType => {
   const windowRegEx = /^[0-9]+|[a-zA-Z]*/g;

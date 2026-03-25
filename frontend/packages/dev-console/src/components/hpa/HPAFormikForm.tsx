@@ -1,20 +1,21 @@
 import type { FC } from 'react';
-import { Formik, FormikHelpers, FormikProps } from 'formik';
+import { useCallback } from 'react';
+import type { FormikHelpers, FormikProps } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
+import { useNavigate } from 'react-router';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
-import {
+import type {
   HorizontalPodAutoscalerKind,
-  k8sCreate,
   K8sKind,
   K8sResourceKind,
-  k8sUpdate,
 } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { getFormData, getYAMLData, hasCustomMetrics, sanityForSubmit } from './hpa-utils';
 import HPAForm from './HPAForm';
-import { HPAFormValues } from './types';
+import type { HPAFormValues } from './types';
 import { hpaValidationSchema } from './validation-utils';
 
 type HPAFormikFormProps = {
@@ -23,6 +24,8 @@ type HPAFormikFormProps = {
 };
 
 const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const initialValues: HPAFormValues = {
     showCanUseYAMLMessage: true,
@@ -46,7 +49,7 @@ const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) 
     ) => Promise<HorizontalPodAutoscalerKind> = existingHPA ? k8sUpdate : k8sCreate;
     return method(HorizontalPodAutoscalerModel, hpa)
       .then(() => {
-        history.goBack();
+        navigate(-1);
       })
       .catch((error) => {
         helpers.setStatus({
@@ -59,7 +62,7 @@ const HPAFormikForm: FC<HPAFormikFormProps> = ({ existingHPA, targetResource }) 
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={hpaValidationSchema(t)}
     >
       {(props: FormikProps<HPAFormValues>) => (

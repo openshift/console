@@ -1,4 +1,5 @@
-import { CommandEntry, parse } from 'docker-file-parser';
+import type { CommandEntry } from 'docker-file-parser';
+import { parse } from 'docker-file-parser';
 
 export class DockerFileParser {
   content: string;

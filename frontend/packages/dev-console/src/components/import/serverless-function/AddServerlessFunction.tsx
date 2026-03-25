@@ -1,22 +1,24 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  useActivePerspective,
-  WatchK8sResults,
-  WatchK8sResultsObject,
-} from '@console/dynamic-plugin-sdk';
+import { useNavigate } from 'react-router';
+import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY, usePerspectives, useTelemetry } from '@console/shared/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
-import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { normalizeBuilderImages } from '../../../utils/imagestream-utils';
 import { defaultRepositoryFormValues } from '../../pipeline-section/pipeline/utils';
 import { getBaseInitialValues } from '../form-initial-values';
 import {
@@ -24,7 +26,8 @@ import {
   handleRedirect,
   filterDeployedResources,
 } from '../import-submit-utils';
-import { BaseFormData, BuildOptions, Resources } from '../import-types';
+import type { BaseFormData } from '../import-types';
+import { BuildOptions, Resources } from '../import-types';
 import { validationSchema } from '../import-validation-utils';
 import { useUpdateKnScalingDefaultValues } from '../serverless/useUpdateKnScalingDefaultValues';
 import AddServerlessFunctionForm from './AddServerlessFunctionForm';
@@ -40,6 +43,8 @@ type AddServerlessFunctionProps = {
 };
 
 const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forApplication }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const { t } = useTranslation();
   const postFormCallback = useResourceConnectionHandler();
   const [perspective] = useActivePerspective();
@@ -164,6 +169,7 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
           projectName,
           perspective,
           perspectiveExtensions,
+          navigate,
           new URLSearchParams({ selectId }),
         );
       })
@@ -177,7 +183,7 @@ const AddServerlessFunction: FC<AddServerlessFunctionProps> = ({ namespace, forA
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={validationSchema(t)}
     >
       {(formikProps) => (

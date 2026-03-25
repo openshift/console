@@ -1,8 +1,8 @@
 import type { FC, ComponentProps } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
-import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk';
+import type { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk';
 import { componentForFieldType } from './const';
-import { ResolvedUserPreferenceItem } from './types';
+import type { ResolvedUserPreferenceItem } from './types';
 
 type UserPreferenceFieldProps = { item: ResolvedUserPreferenceItem };
 

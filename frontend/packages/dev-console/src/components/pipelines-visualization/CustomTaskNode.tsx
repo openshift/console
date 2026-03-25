@@ -1,24 +1,22 @@
 import type { FC } from 'react';
 import { useRef, useMemo, memo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
+import QuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import { css } from '@patternfly/react-styles';
 import { t_color_gray_50 as customTaskColor } from '@patternfly/react-tokens';
-import { observer, Node, NodeModel, useHover, createSvgIdUrl } from '@patternfly/react-topology';
+import type { Node, NodeModel } from '@patternfly/react-topology';
+import { observer, useHover, createSvgIdUrl } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import {
-  K8sResourceKind,
-  WatchK8sResults,
-  getGroupVersionKindForModel,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
+import { Link } from 'react-router';
+import type { K8sResourceKind, WatchK8sResults } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { resourcePathFromModel, truncateMiddle } from '@console/internal/components/utils';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import { CustomRunModelV1Beta1 } from '../../models/pipelines';
-import { CustomRunKind, TaskKind } from '../../types/pipeline';
-import { TaskNodeModelData } from './types';
+import type { CustomRunKind, TaskKind } from '../../types/pipeline';
+import type { TaskNodeModelData } from './types';
 
 import './CustomTaskNode.scss';
 
@@ -184,4 +182,4 @@ const CustomTaskNode: FC<CustomTaskNodeProps> = ({ element, disableTooltip }) =>
   return taskComponent;
 };
 
-export default memo(observer(CustomTaskNode));
+export default memo<CustomTaskNodeProps>(observer(CustomTaskNode));

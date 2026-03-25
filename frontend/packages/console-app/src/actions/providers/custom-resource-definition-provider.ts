@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Action, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import {
-  CustomResourceDefinitionKind,
-  referenceFor,
-  referenceForCRD,
-} from '@console/internal/module/k8s';
+import { useNavigate } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
+import { referenceFor, referenceForCRD } from '@console/internal/module/k8s';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';
 
 const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>

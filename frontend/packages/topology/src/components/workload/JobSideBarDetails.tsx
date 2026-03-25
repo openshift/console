@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import {
   DetailsItem,
   ResourceSummary,
@@ -9,9 +9,9 @@ import {
   pluralize,
 } from '@console/internal/components/utils';
 import { JobModel } from '@console/internal/models';
-import { JobKind } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared/src';
+import type { JobKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getResource } from '../../utils';
 
 type JobSideBarDetailsProps = {

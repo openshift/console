@@ -5,7 +5,7 @@ import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { podColor, AllPodStatus } from '../../constants';
 import { useForceUpdate } from '../../hooks/useForceUpdate';
-import { ExtPodKind } from '../../types';
+import type { ExtPodKind } from '../../types';
 import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';
 
 import './PodStatus.scss';
@@ -176,4 +176,4 @@ const PodStatus: FC<PodStatusProps> = ({
   return chartDonut;
 };
 
-export default memo((props: PodStatusProps) => <PodStatus {...props} />);
+export default memo<PodStatusProps>((props) => <PodStatus {...props} />);

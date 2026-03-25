@@ -1,14 +1,14 @@
 import { screen, act } from '@testing-library/react';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import UserPreferenceCheckboxField from '../UserPreferenceCheckboxField';
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+const mockUserPreference = useUserPreference as jest.Mock;
 
 describe('UserPreferenceCheckboxField', () => {
   type UserPreferenceCheckboxFieldProps = React.ComponentProps<typeof UserPreferenceCheckboxField>;
@@ -26,7 +26,7 @@ describe('UserPreferenceCheckboxField', () => {
     setValue: jest.Mock = jest.fn(),
     loaded: boolean = true,
   ) => {
-    mockUserSettings.mockReturnValue([userPreference, setValue, loaded]);
+    mockUserPreference.mockReturnValue([userPreference, setValue, loaded]);
   };
 
   beforeEach(() => {

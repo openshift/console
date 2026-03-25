@@ -1,9 +1,9 @@
 import * as GitUrlParse from 'git-url-parse';
 import * as _ from 'lodash';
-import { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
+import type { NavigateFunction } from 'react-router';
+import type { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { history } from '@console/internal/components/utils';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
   ImageStreamModel,
@@ -16,19 +16,14 @@ import {
   ServiceAccountModel,
   RouteModel,
 } from '@console/internal/models';
-import {
-  k8sCreate,
-  k8sGet,
-  K8sResourceKind,
-  k8sUpdate,
-  K8sVerb,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
+import { k8sCreate, k8sGet, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { LimitsData } from '@console/shared/src/types';
+import type { LimitsData } from '@console/shared/src/types';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
@@ -40,7 +35,7 @@ import {
   RUNTIME_LABEL,
   RUNTIME_ICON_LABEL,
 } from '../../const';
-import { PipelineKind } from '../../types/pipeline';
+import type { PipelineKind } from '../../types/pipeline';
 import {
   getAppLabels,
   getPodLabels,
@@ -52,7 +47,7 @@ import {
   getRouteAnnotations,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
-import { AppResources } from '../edit-application/edit-application-types';
+import type { AppResources } from '../edit-application/edit-application-types';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { PipelineType } from '../pipeline-section/import-types';
 import {
@@ -65,18 +60,16 @@ import {
   updateServiceAccount,
 } from '../pipeline-section/pipeline/pipeline-template-utils';
 import { createRepositoryResources } from '../pipeline-section/pipeline/utils';
-import {
+import type {
   GitImportFormData,
   ProjectData,
-  GitReadableTypes,
-  Resources,
   DevfileSuggestedResources,
   UploadJarFormData,
   RouteData,
   ServerlessData,
   DeploymentData,
-  BuildOptions,
 } from './import-types';
+import { GitReadableTypes, Resources, BuildOptions } from './import-types';
 
 export const generateSecret = () => {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -1005,15 +998,16 @@ export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
+  navigate: NavigateFunction,
   searchParamOverrides?: URLSearchParams,
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
 
   if (searchParamOverrides) {
-    history.push(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
+    navigate(addSearchParamsToRelativeURL(redirectURL, searchParamOverrides));
   } else {
-    history.push(redirectURL);
+    navigate(redirectURL);
   }
 };
 

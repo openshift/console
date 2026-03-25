@@ -8,20 +8,23 @@ import {
   StackItem,
   Bullseye,
   Spinner,
-  Split,
-  SplitItem,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
 } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { Formik, useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { HealthState, SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import type { SubsystemHealth } from '@console/dynamic-plugin-sdk';
+import { HealthState } from '@console/dynamic-plugin-sdk';
 import { useConnectionForm } from '../hooks/use-connection-form';
 import { useConnectionModels } from '../hooks/use-connection-models';
 import { usePopupVisibility } from '../hooks/use-popup-visibility';
 import { PersistError, persist } from './persist';
-import { ConnectionFormFormikValues, VSphereConnectionProps } from './types';
+import type { ConnectionFormFormikValues, VSphereConnectionProps } from './types';
 import { getErrorMessage } from './utils';
 import { VSphereConnectionForm } from './VSphereConnectionForm';
 import { VSphereOperatorStatuses } from './VSphereOperatorStatuses';
@@ -35,23 +38,20 @@ const VSphereConnectionModalFooter: FC<VSphereConnectionModalFooterProps> = ({ o
   const { t } = useTranslation('vsphere-plugin');
   const { isSubmitting, isValid, submitForm, initialValues, values } = useFormikContext();
   return (
-    <Split hasGutter>
-      <SplitItem>
-        <Button
-          variant="primary"
-          isDisabled={isSubmitting || !isValid || isEqual(initialValues, values)}
-          onClick={submitForm}
-          isLoading={isSubmitting}
-        >
-          {isSubmitting ? t('Saving') : t('Save configuration')}
-        </Button>
-      </SplitItem>
-      <SplitItem>
-        <Button variant="link" onClick={onClose} isDisabled={isSubmitting}>
-          {t('Cancel')}
-        </Button>
-      </SplitItem>
-    </Split>
+    <ModalFooter>
+      <Button
+        type="submit"
+        variant="primary"
+        isDisabled={isSubmitting || !isValid || isEqual(initialValues, values)}
+        onClick={submitForm}
+        isLoading={isSubmitting}
+      >
+        {isSubmitting ? t('Saving') : t('Save configuration')}
+      </Button>
+      <Button type="button" variant="link" onClick={onClose} isDisabled={isSubmitting}>
+        {t('Cancel')}
+      </Button>
+    </ModalFooter>
   );
 };
 
@@ -121,7 +121,6 @@ const validationSchema = Yup.lazy((values: ConnectionFormFormikValues) =>
       )
       .matches(datastoreRegex, `Must match regex ${datastoreRegex}`),
     folder: Yup.string()
-      .required('Virtual Machine Folder is required.')
       .test('Correct prefix', `Must start with /${values.datacenter}/vm/`, (value: string) => {
         if (!value || !values.datacenter) {
           return true;
@@ -168,6 +167,7 @@ export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
   };
 
   let modalBody: ReactNode;
+  let modalFooter: ReactNode;
 
   if (loadError) {
     modalBody = (
@@ -177,27 +177,19 @@ export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
     );
   } else if (isLoaded) {
     modalBody = (
-      <Formik<ConnectionFormFormikValues>
-        initialValues={initValues}
-        onSubmit={onSave}
-        validationSchema={validationSchema}
-      >
-        <Stack hasGutter>
-          <StackItem>
-            <VSphereConnectionForm />
-          </StackItem>
-          <StackItem>
-            <VSphereOperatorStatuses />
-          </StackItem>
-          <StackItem>
-            <VSphereConnectionModalAlert error={error} health={health} />
-          </StackItem>
-          <StackItem>
-            <VSphereConnectionModalFooter onClose={onClose} />
-          </StackItem>
-        </Stack>
-      </Formik>
+      <Stack hasGutter>
+        <StackItem>
+          <VSphereConnectionForm />
+        </StackItem>
+        <StackItem>
+          <VSphereOperatorStatuses />
+        </StackItem>
+        <StackItem>
+          <VSphereConnectionModalAlert error={error} health={health} />
+        </StackItem>
+      </Stack>
     );
+    modalFooter = <VSphereConnectionModalFooter onClose={onClose} />;
   } else {
     modalBody = (
       <Bullseye>
@@ -206,18 +198,39 @@ export const VSphereConnectionModal: FC<VSphereConnectionProps> = ({
     );
   }
 
+  const renderModalContent = () => (
+    <>
+      <ModalHeader
+        title={t('vSphere connection configuration')}
+        labelId="vsphere-connection-modal-title"
+      />
+      <ModalBody>{modalBody}</ModalBody>
+      {modalFooter}
+    </>
+  );
+
+  const modalContent = isLoaded ? (
+    <Formik<ConnectionFormFormikValues>
+      initialValues={initValues}
+      onSubmit={onSave}
+      validationSchema={validationSchema}
+    >
+      {renderModalContent}
+    </Formik>
+  ) : (
+    renderModalContent()
+  );
+
   return (
     isModalOpen && (
       <Modal
         className="plugin-vsphere-modal"
         variant={ModalVariant.medium}
-        position="top"
-        title={t('vSphere connection configuration')}
         isOpen
-        showClose={!isLoaded}
-        onClose={!isLoaded ? onClose : undefined}
+        onClose={onClose}
+        aria-labelledby="vsphere-connection-modal-title"
       >
-        {modalBody}
+        {modalContent}
       </Modal>
     )
   );

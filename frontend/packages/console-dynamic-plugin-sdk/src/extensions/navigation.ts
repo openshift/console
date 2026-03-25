@@ -1,5 +1,5 @@
-import { ExtensionK8sModel } from '../api/common-types';
-import { Extension } from '../types';
+import type { ExtensionK8sModel } from '../api/common-types';
+import type { Extension } from '../types';
 
 type NavItemProperties = {
   /** A unique identifier for this item. */

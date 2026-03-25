@@ -1,21 +1,22 @@
 import { useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   AdapterDataType,
   K8sResourceCommon,
   PodsAdapterDataType,
 } from '@console/dynamic-plugin-sdk/src';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
-import { PodKind, podPhase, referenceForModel } from '@console/internal/module/k8s';
+import type { PodKind } from '@console/internal/module/k8s';
+import { podPhase, referenceForModel } from '@console/internal/module/k8s';
 import { AllPodStatus } from '@console/shared/src';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';
 import { RevisionModel } from '../../models';
-import { RevisionKind } from '../../types';
+import type { RevisionKind } from '../../types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE, TYPE_SINK_URI } from '../const';
 import { NodeType } from '../topology-types';

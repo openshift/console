@@ -12,14 +12,15 @@ import {
   ModalHeader,
   ModalVariant,
 } from '@patternfly/react-core';
-import { SimpleSelect, SimpleSelectOption } from '@patternfly/react-templates';
+import type { SimpleSelectOption } from '@patternfly/react-templates';
+import { SimpleSelect } from '@patternfly/react-templates';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils/details-item';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { CatalogSourceModel } from '../models';
-import { CatalogSourceKind } from '../types';
+import type { CatalogSourceKind } from '../types';
 
 const getPollIntervals = (selected: string): SimpleSelectOption[] => {
   const intervals = ['10m', '15m', '30m', '45m', '60m'];
@@ -142,7 +143,7 @@ export const RegistryPollIntervalDetailItem: FC<RegistryPollIntervalDetailItemPr
           </Button>
           <Button
             key="cancel"
-            variant="secondary"
+            variant="link"
             onClick={() => {
               setIsModalOpen(false);
             }}

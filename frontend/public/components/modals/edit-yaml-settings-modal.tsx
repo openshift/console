@@ -1,5 +1,5 @@
 import { CodeEditorControl } from '@patternfly/react-code-editor';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   Flex,
   FlexItem,
@@ -21,14 +21,10 @@ import {
 import { FC, ReactNode, ComponentProps, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  OVERRIDE_YAML_EDITOR_THEME_USER_SETTING_KEY,
-  OVERRIDE_YAML_EDITOR_THEME_LOCAL_STORAGE_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-  SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
-  CUSTOM_YAML_EDITOR_FONT_SIZE_USER_SETTING_KEY,
-  CUSTOM_YAML_EDITOR_FONT_SIZE_LOCAL_STORAGE_KEY,
+  OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY,
+  SHOW_YAML_EDITOR_TOOLTIPS_USER_PREFERENCE_KEY,
+  SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY,
+  CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
 import { SimpleSelect, SimpleSelectOption } from '@patternfly/react-templates';
 
@@ -58,7 +54,7 @@ interface ConfigModalItemProps {
   slot?: ReactNode;
 }
 
-const ConfigModalItem: React.FunctionComponent<ConfigModalItemProps> = ({
+const ConfigModalItem: React.FC<ConfigModalItemProps> = ({
   icon = <CogIcon />,
   description,
   title,
@@ -97,7 +93,7 @@ interface ConfigModalSwitchProps extends Omit<ConfigModalItemProps, 'slot'> {
   };
 }
 
-const ConfigModalSwitch: React.FunctionComponent<ConfigModalSwitchProps> = ({
+const ConfigModalSwitch: React.FC<ConfigModalSwitchProps> = ({
   icon = <CogIcon />,
   description,
   title,
@@ -138,9 +134,8 @@ type ThemeOption = 'default' | 'dark' | 'light';
 const ThemeConfigItem: FC = () => {
   const { t } = useTranslation('public');
 
-  const [theme, setTheme] = useUserSettingsCompatibility<ThemeOption>(
-    OVERRIDE_YAML_EDITOR_THEME_USER_SETTING_KEY,
-    OVERRIDE_YAML_EDITOR_THEME_LOCAL_STORAGE_KEY,
+  const [theme, setTheme] = useUserPreference<ThemeOption>(
+    OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY,
     'default',
     true,
   );
@@ -194,9 +189,8 @@ const ThemeConfigItem: FC = () => {
 const FontSizeConfigItem = () => {
   const { t } = useTranslation('public');
 
-  const [fontSize, setFontSize] = useUserSettingsCompatibility(
-    CUSTOM_YAML_EDITOR_FONT_SIZE_USER_SETTING_KEY,
-    CUSTOM_YAML_EDITOR_FONT_SIZE_LOCAL_STORAGE_KEY,
+  const [fontSize, setFontSize] = useUserPreference(
+    CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY,
     14,
     true,
   );
@@ -230,9 +224,8 @@ const FontSizeConfigItem = () => {
 
 const TooltipConfigItem = () => {
   const { t } = useTranslation('public');
-  const [showTooltips, setShowTooltips] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  const [showTooltips, setShowTooltips] = useUserPreference(
+    SHOW_YAML_EDITOR_TOOLTIPS_USER_PREFERENCE_KEY,
     true,
     true,
   );
@@ -250,9 +243,8 @@ const TooltipConfigItem = () => {
 
 const StickyScrollConfigItem = () => {
   const { t } = useTranslation('public');
-  const [stickyScrollEnabled, setStickyScrollEnabled] = useUserSettingsCompatibility(
-    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+  const [stickyScrollEnabled, setStickyScrollEnabled] = useUserPreference(
+    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY,
     true,
     true,
   );
@@ -318,27 +310,23 @@ export const EditYamlSettingsModal: FC<AppendToProps> = ({ appendTo }) => {
 
 /** Get all the YAML editor settings from user settings and local storage */
 export const useEditYamlSettings = () => {
-  const [theme] = useUserSettingsCompatibility<ThemeOption>(
-    OVERRIDE_YAML_EDITOR_THEME_USER_SETTING_KEY,
-    OVERRIDE_YAML_EDITOR_THEME_LOCAL_STORAGE_KEY,
+  const [theme] = useUserPreference<ThemeOption>(
+    OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY,
     'default',
     true,
   );
-  const [fontSize] = useUserSettingsCompatibility<number>(
-    CUSTOM_YAML_EDITOR_FONT_SIZE_USER_SETTING_KEY,
-    CUSTOM_YAML_EDITOR_FONT_SIZE_LOCAL_STORAGE_KEY,
+  const [fontSize] = useUserPreference<number>(
+    CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY,
     14,
     true,
   );
-  const [showTooltips] = useUserSettingsCompatibility<boolean>(
-    SHOW_YAML_EDITOR_TOOLTIPS_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_TOOLTIPS_LOCAL_STORAGE_KEY,
+  const [showTooltips] = useUserPreference<boolean>(
+    SHOW_YAML_EDITOR_TOOLTIPS_USER_PREFERENCE_KEY,
     true,
     true,
   );
-  const [stickyScrollEnabled] = useUserSettingsCompatibility<boolean>(
-    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_SETTING_KEY,
-    SHOW_YAML_EDITOR_STICKY_SCROLL_LOCAL_STORAGE_KEY,
+  const [stickyScrollEnabled] = useUserPreference<boolean>(
+    SHOW_YAML_EDITOR_STICKY_SCROLL_USER_PREFERENCE_KEY,
     true,
     true,
   );

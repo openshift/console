@@ -1,26 +1,27 @@
-import type { FunctionComponent } from 'react';
-import { useMemo } from 'react';
-import { Formik, FormikHelpers } from 'formik';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
+import type { FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
-import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import {
-  WatchK8sResults,
-  WatchK8sResultsObject,
-  useActivePerspective,
-} from '@console/dynamic-plugin-sdk';
-import { LoadingBox, history } from '@console/internal/components/utils';
+import type { WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, ServiceModel } from '@console/internal/models';
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
-import { BadgeType, getBadgeFromType, usePerspectives, useRelatedHPA } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sGet } from '@console/internal/module/k8s';
+import { BadgeType, getBadgeFromType } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 import {
   getInitialValuesKnatify,
   knatifyResources,
@@ -28,15 +29,18 @@ import {
 } from '../../utils/knatify-utils';
 import KnatifyForm from './KnatifyForm';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-type watchResource = {
-  [key: string]: K8sResourceKind[] | K8sResourceKind;
+type WatchedResources = {
+  projects: K8sResourceKind[];
+  imageStream: K8sResourceKind[];
+  workloadResource?: K8sResourceKind;
 };
 
-const CreateKnatifyPage: FunctionComponent = () => {
+const CreateKnatifyPage: FC = () => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const queryParams = new URLSearchParams(location.search);
   const kind = queryParams.get('kind');
   const appName = queryParams.get('name');
@@ -73,7 +77,7 @@ const CreateKnatifyPage: FunctionComponent = () => {
     [namespace, kind, appName],
   );
 
-  const resources: WatchK8sResults<watchResource> = useK8sWatchResources<watchResource>(
+  const resources: WatchK8sResults<WatchedResources> = useK8sWatchResources<WatchedResources>(
     watchedResources,
   );
 
@@ -107,7 +111,7 @@ const CreateKnatifyPage: FunctionComponent = () => {
       resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
-          handleRedirect(namespace, perspective, perspectiveExtensions);
+          handleRedirect(namespace, perspective, perspectiveExtensions, navigate);
         })
         .catch((err) => {
           helpers.setStatus({ submitError: err.message });
@@ -128,20 +132,15 @@ const CreateKnatifyPage: FunctionComponent = () => {
       {isResourceLoaded ? (
         <Formik
           initialValues={getInitialValuesKnatify(
-            getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind, hpa),
+            getKnatifyWorkloadData(resources.workloadResource?.data, hpa),
             namespace,
-            resources?.imageStream?.data as K8sResourceKind[],
+            resources.imageStream.data,
           )}
           validationSchema={deployValidationSchema(t)}
           onSubmit={handleSubmit}
-          onReset={history.goBack}
+          onReset={handleCancel}
         >
-          {(formikProps) => (
-            <KnatifyForm
-              {...formikProps}
-              projects={(resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>) ?? {}}
-            />
-          )}
+          {(formikProps) => <KnatifyForm {...formikProps} projects={resources.projects} />}
         </Formik>
       ) : (
         <LoadingBox />

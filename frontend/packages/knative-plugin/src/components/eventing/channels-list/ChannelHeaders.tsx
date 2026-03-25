@@ -1,5 +1,5 @@
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const ChannelHeaders = (t: TFunction) => () => {

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
 
 const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {

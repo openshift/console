@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { TFunction } from 'i18next';
-import {
+import type { TFunction } from 'i18next';
+import type {
   HealthState,
   K8sResourceCommon,
   PrometheusResponse,

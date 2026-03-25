@@ -5,14 +5,15 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PopoverStatus, NodeStatus } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils/units';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 import SecondaryStatus from '@console/shared/src/components/status/SecondaryStatus';
 import { Status } from '@console/shared/src/components/status/Status';
 import { PressureQueries, Condition } from '../../queries';
 import { nodeStatus } from '../../status/node';
-import { GetNodeStatusExtensions, useNodeStatusExtensions } from './useNodeStatusExtensions';
+import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
+import { useNodeStatusExtensions } from './useNodeStatusExtensions';
 
 const conditionDescriptionMap = Object.freeze({
   [Condition.DISK_PRESSURE]: 'available disk capacity is low',

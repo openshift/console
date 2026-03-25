@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { EVENT_SOURCE_SINK_BINDING_KIND, KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import EventSourceOwnedList from '../EventSourceOwnedList';

@@ -1,5 +1,5 @@
 import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src';
 
 const color = tektonGroupColor.value;
 

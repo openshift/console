@@ -1,13 +1,13 @@
 import type { FC } from 'react';
 import { css } from '@patternfly/react-styles';
-import {
+import type {
   Node,
-  observer,
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
   WithDragNodeProps,
 } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import GroupNode from '@console/topology/src/components/graph-view/components/groups/GroupNode';

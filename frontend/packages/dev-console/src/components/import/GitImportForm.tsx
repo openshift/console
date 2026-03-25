@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
@@ -11,7 +11,8 @@ import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import GitSection from './git/GitSection';
-import { BuildOptions, GitImportFormData, GitImportFormProps, ImportTypes } from './import-types';
+import type { GitImportFormData, GitImportFormProps } from './import-types';
+import { BuildOptions, ImportTypes } from './import-types';
 import ImportStrategySection from './ImportStrategySection';
 import NamespaceSection from './NamespaceSection';
 import SecureRoute from './route/SecureRoute';

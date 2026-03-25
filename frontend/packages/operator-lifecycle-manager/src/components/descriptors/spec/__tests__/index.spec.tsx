@@ -1,8 +1,10 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '../..';
+import type { DescriptorDetailsItemProps } from '../..';
+import { DescriptorDetailsItem } from '../..';
 import { testResourceInstance, testModel } from '../../../../../mocks';
-import { SpecCapability, Descriptor, DescriptorType } from '../../types';
+import type { Descriptor } from '../../types';
+import { SpecCapability, DescriptorType } from '../../types';
 
 // Mock modal hooks used by PodCount component
 jest.mock('../configure-size', () => ({

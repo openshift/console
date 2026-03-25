@@ -7,13 +7,11 @@ import {
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { StatusBox } from '..';
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
+  useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('react-router', () => ({
-  useLocation: jest.fn(),
-}));
 const useFavoritesOptionsMock = useFavoritesOptions as jest.Mock;
 jest.mock('@console/internal/components/useFavoritesOptions', () => ({
   useFavoritesOptions: jest.fn(),

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { DataPoint } from '@console/internal/components/graphs';
+import type { DataPoint } from '@console/internal/components/graphs';
 import { getType } from '@console/internal/components/utils/units';
 
 export { ByteDataTypes };

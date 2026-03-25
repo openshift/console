@@ -3,13 +3,14 @@ import { useMemo, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '@console/knative-plugin/src';
 import { MultiTypeaheadField } from '@console/shared';
-import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
+import type { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import {
   getAllOtherDomainMappingInUse,
   getOtherKsvcFromDomainMapping,

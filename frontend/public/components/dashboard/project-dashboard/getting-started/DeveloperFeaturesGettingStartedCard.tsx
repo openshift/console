@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 import {
   GettingStartedLink,
   GettingStartedCard,

@@ -1,14 +1,10 @@
 import type { FC } from 'react';
 import { memo } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import {
-  QuickSearchController,
-  QuickSearchProviders,
-  CatalogService,
-  CatalogServiceProvider,
-} from '@console/shared';
+import type { QuickSearchProviders, CatalogService } from '@console/shared';
+import { QuickSearchController, CatalogServiceProvider } from '@console/shared';
 import { useTransformedQuickStarts } from './topology-quick-search-utils';
 
 interface QuickSearchProps {
@@ -107,4 +103,4 @@ const TopologyQuickSearch: FC<QuickSearchProps> = ({ namespace, isOpen, setIsOpe
   );
 };
 
-export default memo(TopologyQuickSearch);
+export default memo<QuickSearchProps>(TopologyQuickSearch);

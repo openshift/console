@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService, ImportStrategy, GitProvider } from '@console/git-service/src';
 import { InputField } from '@console/shared/src';

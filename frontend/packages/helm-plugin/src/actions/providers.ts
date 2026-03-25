@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
-import { GraphElement, isGraph, Node } from '@patternfly/react-topology';
+import type { GraphElement, Node } from '@patternfly/react-topology';
+import { isGraph } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { SetFeatureFlag, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled, useActiveNamespace } from '@console/shared';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import { isCatalogTypeEnabled } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getResource } from '@console/topology/src/utils';
 import {
   FLAG_HELM_CHARTS_CATALOG_TYPE,
@@ -17,34 +21,35 @@ import { TYPE_HELM_RELEASE } from '../topology/components/const';
 import { HelmReleaseStatus } from '../types/helm-types';
 import { AddHelmChartAction } from './add-resources';
 import {
-  getHelmDeleteAction,
+  useHelmDeleteAction,
   getHelmRollbackAction,
   getHelmUpgradeAction,
   editChartRepository,
 } from './creators';
-import { HelmActionsScope } from './types';
+import type { HelmActionsScope } from './types';
 
 export const useHelmActionProvider = (scope: HelmActionsScope) => {
   const { t } = useTranslation();
+  const helmDeleteAction = useHelmDeleteAction(scope, t);
   const result = useMemo(() => {
     if (!scope) return [[], true, undefined];
     switch (scope?.release?.info?.status) {
       case HelmReleaseStatus.PendingInstall:
       case HelmReleaseStatus.PendingRollback:
       case HelmReleaseStatus.PendingUpgrade:
-        return [[getHelmDeleteAction(scope, t)], true, undefined];
+        return [[helmDeleteAction], true, undefined];
       default:
         return [
           [
             getHelmUpgradeAction(scope, t),
             ...(Number(scope.release.version) > 1 ? [getHelmRollbackAction(scope, t)] : []),
-            getHelmDeleteAction(scope, t),
+            helmDeleteAction,
           ],
           true,
           undefined,
         ];
     }
-  }, [scope, t]);
+  }, [scope, t, helmDeleteAction]);
   return result;
 };
 

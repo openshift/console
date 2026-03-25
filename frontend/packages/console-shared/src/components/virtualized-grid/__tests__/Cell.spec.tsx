@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
-import { GridCellProps } from 'react-virtualized';
+import type { GridCellProps } from 'react-virtualized';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import Cell from '../Cell';
-import { RenderHeader, RenderCell } from '../types';
+import type { RenderHeader, RenderCell } from '../types';
 
 // Mock CellMeasurer
 jest.mock('react-virtualized', () => ({

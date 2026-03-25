@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { getLimitsDataFromResource } from '@console/shared/src';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
-import { DevfileSuggestedResources } from '../import-types';
+import type { DevfileSuggestedResources } from '../import-types';
 import { createComponentName } from '../import-validation-utils';
-import { DevfileSample } from './devfile-types';
+import type { DevfileSample } from './devfile-types';
 import { convertURItoInlineYAML, prefixDotSlash, suffixSlash } from './devfile-utils';
 
 export const useDevfileServer = (

@@ -1,17 +1,16 @@
-import type { FC } from 'react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { RevisionModel } from '@console/knative-plugin/src/models';
+import type { PodRCData } from '@console/shared';
 import {
-  PodRCData,
   PodStatus,
   calculateRadius,
   getPodData,
   podDataInProgress,
   usePodRingLabel,
-  useRelatedHPA,
 } from '@console/shared';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 
 interface InnerPodStatusRadius {
   innerPodStatusOuterRadius: number;
@@ -47,7 +46,7 @@ export const podSetInnerRadius = (size: number, data?: PodRCData) => {
   return radius - innerStrokeWidth - podStatusInset;
 };
 
-const PodSet: FC<PodSetProps> = memo(function PodSet({ size, data, x = 0, y = 0, showPodCount }) {
+const PodSet = memo<PodSetProps>(({ size, data, x = 0, y = 0, showPodCount }) => {
   const { t } = useTranslation();
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,

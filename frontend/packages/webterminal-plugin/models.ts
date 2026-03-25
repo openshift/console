@@ -1,4 +1,4 @@
-import { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const DevWorkspaceTemplateModel: K8sKind = {
   apiGroup: 'workspace.devfile.io',

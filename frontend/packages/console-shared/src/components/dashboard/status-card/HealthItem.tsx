@@ -3,7 +3,7 @@ import { cloneElement, memo, Children } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { SecondaryStatus } from '../../status';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
@@ -16,7 +16,7 @@ const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {
   );
 };
 
-const HealthItem: FC<HealthItemProps> = memo(
+const HealthItem = memo<HealthItemProps>(
   ({
     className,
     state,

@@ -8,28 +8,29 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   Truncate,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useSearchParams } from 'react-router-dom-v5-compat';
-import { getQueryArgument } from '@console/internal/components/utils';
-import { history } from '@console/internal/components/utils/router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
-  Modal,
-  COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
-  COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
-  useUserSettingsCompatibility,
+  COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
 } from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { DefaultCatalogSource } from '../../const';
 import { SubscriptionModel } from '../../models';
 import { DeprecatedOperatorWarningBadge } from '../deprecated-operator-warnings/deprecated-operator-warnings';
-import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
+import { LazyCommunityOperatorWarningModalOverlay } from '../modals';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import {
   capabilityLevelSort,
@@ -42,7 +43,9 @@ import {
   sourceSort,
   validSubscriptionSort,
 } from './operator-hub-utils';
-import { InfrastructureFeature, OperatorHubItem, TokenizedAuthProvider } from './index';
+import { InfrastructureFeature } from './index';
+import type { OperatorHubItem, TokenizedAuthProvider } from './index';
+import '@console/shared/src/components/catalog/details/CatalogDetailsModal.scss';
 
 // Scoring and priority code no longer used and will be removed with Operator Hub catalog files cleanup effort
 const SCORE = {
@@ -405,13 +408,6 @@ export const keywordCompareWithScore = (
 // Flag to indicate this function uses scoring
 keywordCompareWithScore.useScoring = true;
 
-const setURLParams = (params: URLSearchParams): void => {
-  const url = new URL(window.location.href);
-  const searchParams = `?${params.toString()}${url.hash}`;
-
-  history.replace(`${url.pathname}${searchParams}`);
-};
-
 const getRedHatPriority = (item: OperatorHubItem): number => {
   // Check metadata.labels.provider
   const metadataProvider = _.get(item, 'obj.metadata.labels.provider', '');
@@ -572,11 +568,14 @@ const OperatorHubTile: FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
 export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { setQueryArgument, removeQueryArgument, getQueryArgument } = useQueryParamsMutator();
   const [detailsItem, setDetailsItem] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
-    boolean
-  >(userSettingsKey, storeKey, false);
+  const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserPreference<boolean>(
+    ignoreWarningPreferenceKey,
+    false,
+  );
   const [updateChannel, setUpdateChannel] = useState('');
   const [updateVersion, setUpdateVersion] = useState('');
   const [tokenizedAuth, setTokenizedAuth] = useState<TokenizedAuthProvider | undefined>(undefined);
@@ -747,10 +746,10 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
     }
   }, [filteredItems, searchParams]);
 
+  const launchModal = useOverlay();
+
   const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('details-item', item.uid);
-    setURLParams(params);
+    setQueryArgument('details-item', item.uid);
     setDetailsItem(item);
     setShowDetails(true);
 
@@ -760,11 +759,9 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   };
 
   const closeOverlay = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.delete('details-item');
-    params.delete('channel');
-    params.delete('version');
-    setURLParams(params);
+    removeQueryArgument('details-item');
+    removeQueryArgument('channel');
+    removeQueryArgument('version');
     setDetailsItem(null);
     setShowDetails(false);
     // reset version and channel state so that switching between operator cards does not carry over previous selections
@@ -775,13 +772,11 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
 
   const openOverlay = (item: OperatorHubItem) => {
     if (!ignoreOperatorWarning && item.catalogSource === DefaultCatalogSource.CommunityOperators) {
-      communityOperatorWarningModal({
+      launchModal(LazyCommunityOperatorWarningModalOverlay, {
         showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore),
       });
     } else {
-      const params = new URLSearchParams(window.location.search);
-      params.set('details-item', item.uid);
-      setURLParams(params);
+      setQueryArgument('details-item', item.uid);
       setDetailsItem(item);
       setShowDetails(true);
     }
@@ -810,10 +805,15 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
   const installLink =
     detailsItem && detailsItem.obj && `/operatorhub/subscribe?${installParamsURL}`;
 
-  const uninstallLink = () =>
-    detailsItem &&
-    detailsItem.subscription &&
-    `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+  const handleUninstallClick = useCallback(() => {
+    const link =
+      detailsItem &&
+      detailsItem.subscription &&
+      `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
+    if (link) {
+      navigate(link);
+    }
+  }, [navigate, detailsItem]);
 
   if (_.isEmpty(filteredItems)) {
     return (
@@ -1037,13 +1037,13 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
       />
       {detailsItem && (
         <Modal
-          className="co-catalog-page__overlay co-catalog-page__overlay--right"
+          className="ocs-modal co-catalog-page__overlay co-catalog-page__overlay--right"
           data-test-id="operator-modal-box"
           aria-labelledby="catalog-item-header"
           isOpen={!!detailsItem && showDetails}
           onClose={closeOverlay}
-          title={detailsItem.name}
-          header={
+        >
+          <ModalHeader>
             <>
               <CatalogItemHeader
                 className="co-catalog-page__overlay-header"
@@ -1079,7 +1079,7 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
                     className="co-catalog-page__overlay-action"
                     data-test-id="operator-uninstall-btn"
                     isDisabled={!detailsItem.installed}
-                    onClick={() => history.push(uninstallLink())}
+                    onClick={handleUninstallClick}
                     variant="secondary"
                   >
                     {t('olm~Uninstall')}
@@ -1087,15 +1087,16 @@ export const OperatorHubTileView: FC<OperatorHubTileViewProps> = (props) => {
                 )}
               </div>
             </>
-          }
-        >
-          <OperatorHubItemDetails
-            item={detailsItem}
-            updateChannel={updateChannel}
-            setUpdateChannel={setUpdateChannel}
-            updateVersion={updateVersion}
-            setUpdateVersion={setUpdateVersion}
-          />
+          </ModalHeader>
+          <ModalBody>
+            <OperatorHubItemDetails
+              item={detailsItem}
+              updateChannel={updateChannel}
+              setUpdateChannel={setUpdateChannel}
+              updateVersion={updateVersion}
+              setUpdateVersion={setUpdateVersion}
+            />
+          </ModalBody>
         </Modal>
       )}
     </>

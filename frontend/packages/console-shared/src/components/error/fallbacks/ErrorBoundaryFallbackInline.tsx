@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Alert, ButtonVariant, Split, SplitItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
+import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { ErrorDetailsModal } from '@console/shared/src/components/modals/ErrorDetailsModal';
 
 /**

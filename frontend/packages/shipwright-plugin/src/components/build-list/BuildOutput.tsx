@@ -3,7 +3,7 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib
 import { ExternalLinkWithCopy, ResourceLink } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { BUILD_OUTPUT_IMAGESTREAM_URL, BUILD_OUTPUT_QUAY_URL } from '../../const';
-import { BuildSpec } from '../../types';
+import type { BuildSpec } from '../../types';
 
 type BuildOutputProps = {
   buildSpec: BuildSpec;

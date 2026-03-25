@@ -1,6 +1,7 @@
 import type { FC, KeyboardEvent } from 'react';
 import { useState, useMemo } from 'react';
-import { MultiTypeaheadSelect, MultiTypeaheadSelectOption } from '@patternfly/react-templates';
+import type { MultiTypeaheadSelectOption } from '@patternfly/react-templates';
+import { MultiTypeaheadSelect } from '@patternfly/react-templates';
 import { useTranslation } from 'react-i18next';
 
 export const MultiSelectDropdown: FC<MultiSelectDropdownProps> = ({

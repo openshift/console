@@ -1,14 +1,14 @@
 import type { ReactNode, FC } from 'react';
-import {
+import type {
   Node,
-  observer,
   WithSelectionProps,
   WithDndDropProps,
   WithContextMenuProps,
   WithDragNodeProps,
   Edge,
 } from '@patternfly/react-topology';
-import { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import { observer } from '@patternfly/react-topology';
+import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceIcon } from '../../../utils/icons';

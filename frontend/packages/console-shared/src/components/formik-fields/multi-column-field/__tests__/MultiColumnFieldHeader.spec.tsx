@@ -1,7 +1,8 @@
-import { gridItemSpanValueShape } from '@patternfly/react-core';
+import type { gridItemSpanValueShape } from '@patternfly/react-core';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../test-utils/unit-test-utils';
-import MultiColumnFieldHeader, { MultiColumnFieldHeaderProps } from '../MultiColumnFieldHeader';
+import type { MultiColumnFieldHeaderProps } from '../MultiColumnFieldHeader';
+import MultiColumnFieldHeader from '../MultiColumnFieldHeader';
 
 describe('MultiColumnFieldHeader', () => {
   it('should render required label when prop is of type Object[] with property required set to true', () => {

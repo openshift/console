@@ -1,5 +1,6 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FC, Ref } from 'react';
+import type { MenuToggleElement, SelectProps } from '@patternfly/react-core';
 import {
   Alert,
   EmptyState,
@@ -9,26 +10,25 @@ import {
   Flex,
   FlexItem,
   MenuToggle,
-  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
   Switch,
   Banner,
-  SelectProps,
 } from '@patternfly/react-core';
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
 import { coFetch } from '@console/internal/co-fetch';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
-import { modelFor, NodeKind, resourceURL } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
+import { modelFor, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 
@@ -205,13 +205,13 @@ const NodeLogs: FC<NodeLogsProps> = ({ obj: node }) => {
   const [content, setContent] = useState('');
   const [trimmedContent, setTrimmedContent] = useState('');
   const [lineCount, setLineCount] = useState(0);
-  const [isWrapLines, setWrapLines] = useUserSettings<boolean>(
-    LOG_WRAP_LINES_USERSETTINGS_KEY,
+  const [isWrapLines, setWrapLines] = useUserPreference<boolean>(
+    LOG_WRAP_LINES_USER_PREFERENCE_KEY,
     false,
     true,
   );
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
 
   const isJournal = path === 'journal';
 

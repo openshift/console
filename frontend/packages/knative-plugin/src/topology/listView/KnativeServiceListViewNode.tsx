@@ -1,5 +1,6 @@
 import type { ReactNode, FC } from 'react';
-import { Node, observer } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
 import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import { getResource, getResourceKind } from '@console/topology/src/utils';

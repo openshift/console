@@ -2,12 +2,23 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  TextInput,
+} from '@patternfly/react-core';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { K8sResourceKind } from '../../module/k8s';
 import { AlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-config';
 import { patchAlertmanagerConfig } from '../monitoring/alertmanager/alertmanager-utils';
-import { Form, FormGroup, TextInput } from '@patternfly/react-core';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const updateAlertRoutingProperty = (
   config: any,
@@ -61,10 +72,13 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
   };
 
   return (
-    <Form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">{t('public~Edit routing configuration')}</ModalTitle>
+    <>
+      <ModalHeader
+        title={t('public~Edit routing configuration')}
+        labelId="alert-routing-modal-title"
+      />
       <ModalBody>
-        <div className="pf-v6-c-form">
+        <Form id="alert-routing-form" onSubmit={submit}>
           <FormGroup label={t('public~Group by')} fieldId="group-by">
             <TextInput
               id="group-by"
@@ -109,26 +123,47 @@ export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
               data-test-id="input-repeat-interval"
             />
           </FormGroup>
-        </div>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        inProgress={inProgress}
-        errorMessage={errorMessage}
-        cancel={cancel}
-        submitText={t('public~Save')}
-        cancelText={t('public~Cancel')}
-      />
-    </Form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          form="alert-routing-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const createAlertRoutingModal = createModalLauncher<AlertRoutingModalProps>(
-  AlertRoutingModal,
-);
+export const AlertRoutingModalOverlay: OverlayComponent<AlertRoutingModalProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
 
-export type AlertRoutingModalProps = {
-  cancel: () => void;
-  close: () => void;
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="alert-routing-modal-title"
+    >
+      <AlertRoutingModal {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
+};
+
+type AlertRoutingModalProps = {
   config: AlertmanagerConfig;
   secret: K8sResourceKind;
-};
+} & ModalComponentProps;

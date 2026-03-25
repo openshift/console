@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { LaunchModal, ModalContext } from './ModalProvider';
+import type { LaunchModal } from './ModalProvider';
+import { ModalContext } from './ModalProvider';
 
 type UseModalLauncher = () => LaunchModal;
 

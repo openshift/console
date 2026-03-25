@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { pluralize } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
-import { OperatorRowProps } from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { OperatorRowProps } from '@console/dynamic-plugin-sdk';
 import {
   resourcePathFromModel,
   resourcePath,
@@ -9,7 +9,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind } from '../../types';
+import type { ClusterServiceVersionKind } from '../../types';
 
 import './csv-status.scss';
 

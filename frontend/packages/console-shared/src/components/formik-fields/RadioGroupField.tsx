@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useField } from 'formik';
-import { RadioGroupFieldProps } from './field-types';
+import type { RadioGroupFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 import RadioButtonField from './RadioButtonField';
 

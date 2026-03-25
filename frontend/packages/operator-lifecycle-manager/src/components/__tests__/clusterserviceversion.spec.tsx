@@ -12,14 +12,12 @@ import {
 } from '../../../mocks';
 import { ClusterServiceVersionPhase } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
-import {
-  ClusterServiceVersionTableRow,
+import type {
   ClusterServiceVersionTableRowProps,
-  CRDCard,
   CRDCardProps,
-  CSVSubscription,
   CSVSubscriptionProps,
 } from '../clusterserviceversion';
+import { ClusterServiceVersionTableRow, CRDCard, CSVSubscription } from '../clusterserviceversion';
 
 // Mock hooks
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
@@ -40,10 +38,10 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useParams: jest.fn(() => ({})),
+  useLocation: jest.fn(() => ({ pathname: '/', search: '', hash: '', state: null })),
 }));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({

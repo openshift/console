@@ -1,10 +1,7 @@
 import type { ReactElement } from 'react';
-import {
-  Modifiers,
+import type {
   Edge,
   GraphElement,
-  isEdge,
-  isNode,
   Node,
   Graph,
   DragSourceSpec,
@@ -12,18 +9,23 @@ import {
   DropTargetSpec,
   DropTargetMonitor,
   DragSpecOperationType,
+  DragEvent,
+  DragOperationWithType,
+} from '@patternfly/react-topology';
+import {
+  Modifiers,
+  isEdge,
+  isNode,
   CREATE_CONNECTOR_DROP_TYPE,
   CREATE_CONNECTOR_OPERATION,
   isGraph,
   withDndDrop,
-  DragEvent,
-  DragOperationWithType,
 } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import { action } from 'mobx';
-import { errorModal } from '@console/internal/components/modals';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ActionContext } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { ActionContext } from '@console/shared';
+import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { createConnection, moveNodeToGroup } from '../../../utils';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import withTopologyContextMenu from './withTopologyContextMenu';
@@ -136,6 +138,7 @@ const nodeDragSourceSpec = (
     if (!monitor.isCancelled() && monitor.getOperation()?.type === REGROUP_OPERATION) {
       if (monitor.didDrop() && dropResult && props && props.element.getParent() !== dropResult) {
         const controller = props.element.getController();
+
         await moveNodeToGroup(
           props.element as Node,
           isNode(dropResult) ? (dropResult as Node) : null,
@@ -308,8 +311,9 @@ const edgeDragSourceSpec = (
     ) {
       const title =
         failureTitle !== undefined ? failureTitle : i18next.t('topology~Error moving connection');
+
       callback(edge.getSource(), dropResult, edge.getTarget()).catch((error) => {
-        errorModal({ title, error: error.message, showIcon: true });
+        launchErrorModal({ title, error: error.message });
       });
     }
   },
@@ -346,7 +350,10 @@ const createVisualConnector = (source: Node, target: Node | Graph): ReactElement
   }
 
   createConnection(source, target, null).catch((error) => {
-    errorModal({ title: i18next.t('topology~Error creating connection'), error: error.message });
+    launchErrorModal({
+      title: i18next.t('topology~Error creating connection'),
+      error: error.message,
+    });
   });
 
   return null;

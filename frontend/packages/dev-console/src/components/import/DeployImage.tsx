@@ -1,12 +1,14 @@
 import type { FC } from 'react';
-import { Formik, FormikHelpers } from 'formik';
+import { useCallback } from 'react';
+import type { FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { ImportStrategy } from '@console/git-service/src/types';
-import { history } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
@@ -15,12 +17,17 @@ import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 import { filterDeployedResources } from './import-submit-utils';
-import { DeployImageFormData, FirehoseList, Resources } from './import-types';
+import type { DeployImageFormData } from './import-types';
+import { Resources } from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface DeployImageProps {
   namespace: string;
-  projects?: FirehoseList;
+  projects?: {
+    data: K8sResourceKind[];
+    loaded: boolean;
+    loadError?: any;
+  };
   contextualSource?: string;
 }
 
@@ -33,6 +40,8 @@ type Props = DeployImageProps & StateProps;
 const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contextualSource }) => {
   const postFormCallback = useResourceConnectionHandler();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const initialValues: DeployImageFormData = {
     project: {
       name: namespace || '',
@@ -181,7 +190,7 @@ const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contex
       .then((res) => {
         const selectId = filterDeployedResources(res)[0]?.metadata?.uid;
 
-        history.push(`/topology/ns/${projectName}${selectId ? `?selectId=${selectId}` : ''}`);
+        navigate(`/topology/ns/${projectName}${selectId ? `?selectId=${selectId}` : ''}`);
       })
       .catch((err) => {
         helpers.setStatus({ submitError: err.message });
@@ -192,7 +201,7 @@ const DeployImage: FC<Props> = ({ namespace, projects, activeApplication, contex
     <Formik
       initialValues={initialVals}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validationSchema={deployValidationSchema(t)}
     >
       {(formikProps) => <DeployImageForm {...formikProps} projects={projects} />}

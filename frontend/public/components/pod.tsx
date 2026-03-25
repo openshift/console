@@ -23,7 +23,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { FC, ReactElement } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import {
   ContainerSpec,
   ContainerState,
@@ -456,7 +456,7 @@ const EnvironmentPage = (props: {
 }) => (
   <AsyncComponent
     loader={() => import('./environment').then((c) => c.EnvironmentPage)}
-    {...(props as Record<string, unknown>)}
+    {...props}
   />
 );
 

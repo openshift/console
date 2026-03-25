@@ -1,25 +1,16 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  HelperText,
-  HelperTextItem,
-  FormGroup,
-  Form,
-} from '@patternfly/react-core';
+import { useNavigate } from 'react-router';
+import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';
 import { NumberSpinner } from '../utils/number-spinner';
 import { resourcePathFromModel } from '../utils/resource-link';
 import { K8sResourceKind } from '../../module/k8s';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({
   machineSet,
@@ -116,7 +107,7 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
         description={t('public~This will automatically scale machine set {{ name }}.', { name })}
       />
       <ModalBody>
-        <Form>
+        <Form id="configure-machine-autoscaler-form">
           <FormGroup label={t('public~Minimum replicas:')} fieldId="min-replicas" isRequired>
             <NumberSpinner
               value={minReplicas}
@@ -134,21 +125,22 @@ export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineA
               required
             />
           </FormGroup>
-          {errorMessage && (
-            <HelperText isLiveRegion className="pf-v6-u-mt-md">
-              <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
-            </HelperText>
-          )}
         </Form>
       </ModalBody>
-      <ModalFooter>
-        <Button variant="secondary" onClick={closeOverlay || cancelProp} type="button">
-          {t('public~Cancel')}
-        </Button>
-        <Button variant="primary" isLoading={inProgress} onClick={submit}>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          onClick={submit}
+          form="configure-machine-autoscaler-form"
+        >
           {t('public~Create')}
         </Button>
-      </ModalFooter>
+        <Button variant="link" onClick={closeOverlay || cancelProp} type="button">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

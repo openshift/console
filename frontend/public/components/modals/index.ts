@@ -11,16 +11,6 @@ export const configureJobParallelismModal = (props) =>
     m.configureJobParallelismModal(props),
   );
 
-/** @deprecated use `useWarningModal` instead */
-export const confirmModal = (props) =>
-  import('./confirm-modal' /* webpackChunkName: "confirm-modal" */).then((m) =>
-    m.confirmModal(props),
-  );
-
-/** @deprecated Use useErrorModalLauncher hook instead */
-export const errorModal = (props) =>
-  import('./error-modal' /* webpackChunkName: "error-modal" */).then((m) => m.errorModal(props));
-
 // Lazy-loaded OverlayComponent for Configure Namespace Pull Secret Modal
 export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   import(
@@ -30,20 +20,19 @@ export const LazyConfigureNamespacePullSecretModalOverlay = lazy(() =>
   })),
 );
 
-export const labelsModalLauncher = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
-    m.labelsModalLauncher(props),
-  );
+// Lazy-loaded OverlayComponent for Labels Modal
+export const LazyLabelsModalOverlay = lazy(() =>
+  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) => ({
+    default: m.LabelsModalOverlay,
+  })),
+);
 
-export const podSelectorModal = (props) =>
-  import('./labels-modal' /* webpackChunkName: "labels-modal" */).then((m) =>
-    m.podSelectorModal(props),
-  );
-
-export const rollbackModal = (props) =>
-  import('./rollback-modal' /* webpackChunkName: "rollback-modal" */).then((m) =>
-    m.rollbackModal(props),
-  );
+// Lazy-loaded OverlayComponent for Rollback Modal
+export const LazyRollbackModalOverlay = lazy(() =>
+  import('./rollback-modal' /* webpackChunkName: "rollback-modal" */).then((m) => ({
+    default: m.RollbackModalOverlay,
+  })),
+);
 
 // Lazy-loaded OverlayComponent for Configure Update Strategy Modal
 export const LazyConfigureUpdateStrategyModalOverlay = lazy(() =>
@@ -54,8 +43,12 @@ export const LazyConfigureUpdateStrategyModalOverlay = lazy(() =>
   })),
 );
 
-export const annotationsModalLauncher = (props) =>
-  import('./tags' /* webpackChunkName: "tags" */).then((m) => m.annotationsModalLauncher(props));
+// Lazy-loaded OverlayComponent for Annotations Modal
+export const LazyAnnotationsModalOverlay = lazy(() =>
+  import('./tags' /* webpackChunkName: "tags" */).then((m) => ({
+    default: m.AnnotationsModalOverlay,
+  })),
+);
 
 // Lazy-loaded OverlayComponent for Delete Modal
 export const LazyDeleteModalOverlay = lazy(() =>
@@ -71,28 +64,42 @@ export const LazyDeletePVCModalOverlay = lazy(() =>
   })),
 );
 
-export const clusterChannelModal = (props) =>
-  import('./cluster-channel-modal' /* webpackChunkName: "cluster-channel-modal" */).then((m) =>
-    m.clusterChannelModal(props),
-  );
+// Lazy-loaded OverlayComponent for Cluster Channel Modal
+export const LazyClusterChannelModalOverlay = lazy(() =>
+  import('./cluster-channel-modal' /* webpackChunkName: "cluster-channel-modal" */).then((m) => ({
+    default: m.ClusterChannelModalOverlay,
+  })),
+);
 
-export const clusterMoreUpdatesModal = (props) =>
-  import(
-    './cluster-more-updates-modal' /* webpackChunkName: "cluster-more-updates-modal" */
-  ).then((m) => m.clusterMoreUpdatesModal(props));
+// Lazy-loaded OverlayComponent for Cluster More Updates Modal
+export const LazyClusterMoreUpdatesModalOverlay = lazy(() =>
+  import('./cluster-more-updates-modal' /* webpackChunkName: "cluster-more-updates-modal" */).then(
+    (m) => ({
+      default: m.ClusterMoreUpdatesModalOverlay,
+    }),
+  ),
+);
 
-export const clusterUpdateModal = (props) =>
-  import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */).then((m) =>
-    m.clusterUpdateModal(props),
-  );
+// Lazy-loaded OverlayComponent for Cluster Update Modal
+export const LazyClusterUpdateModalOverlay = lazy(() =>
+  import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */).then((m) => ({
+    default: m.ClusterUpdateModalOverlay,
+  })),
+);
 
-export const taintsModal = (props) =>
-  import('./taints-modal' /* webpackChunkName: "taints-modal" */).then((m) => m.taintsModal(props));
+// Lazy-loaded OverlayComponent for Taints Modal
+export const LazyTaintsModalOverlay = lazy(() =>
+  import('./taints-modal' /* webpackChunkName: "taints-modal" */).then((m) => ({
+    default: m.TaintsModalOverlay,
+  })),
+);
 
-export const tolerationsModal = (props) =>
-  import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */).then((m) =>
-    m.tolerationsModal(props),
-  );
+// Lazy-loaded OverlayComponent for Tolerations Modal
+export const LazyTolerationsModalOverlay = lazy(() =>
+  import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */).then((m) => ({
+    default: m.TolerationsModalOverlay,
+  })),
+);
 
 // Lazy-loaded OverlayComponent for Expand PVC Modal
 export const LazyExpandPVCModalOverlay = lazy(() =>
@@ -117,15 +124,21 @@ export const LazyConfigureClusterUpstreamModalOverlay = lazy(() =>
   })),
 );
 
-export const createAlertRoutingModal = (props) =>
-  import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) =>
-    m.createAlertRoutingModal(props),
-  );
+// Lazy-loaded OverlayComponent for Alert Routing Modal
+export const LazyAlertRoutingModalOverlay = lazy(() =>
+  import('./alert-routing-modal' /* webpackChunkName: "alert-routing-modal" */).then((m) => ({
+    default: m.AlertRoutingModalOverlay,
+  })),
+);
 
-export const createColumnManagementModal = (props) =>
-  import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then((m) =>
-    m.createColumnManagementModal(props),
-  );
+// Lazy-loaded OverlayComponent for Column Management Modal
+export const LazyColumnManagementModalOverlay = lazy(() =>
+  import('./column-management-modal' /* webpackChunkName: "column-management-modal" */).then(
+    (m) => ({
+      default: m.ColumnManagementModalOverlay,
+    }),
+  ),
+);
 
 // Lazy-loaded OverlayComponent for Restore PVC Modal
 export const LazyRestorePVCModalOverlay = lazy(() =>

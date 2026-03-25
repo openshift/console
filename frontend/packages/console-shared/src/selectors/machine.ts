@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import {
+import type {
   MachineAWSPlacement,
   MachineKind,
   MachineSetKind,

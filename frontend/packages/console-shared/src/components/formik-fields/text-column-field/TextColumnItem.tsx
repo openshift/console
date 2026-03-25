@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { TextColumnItemProps } from './text-column-types';
+import type { TextColumnItemProps } from './text-column-types';
 import TextColumnItemContent from './TextColumnItemContent';
 
 const TextColumnItem: FC<TextColumnItemProps> = (props) => {

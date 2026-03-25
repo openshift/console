@@ -1,4 +1,4 @@
-import { K8sKind, K8sModel } from '@console/internal/module/k8s';
+import type { K8sKind, K8sModel } from '@console/internal/module/k8s';
 
 export const HelmChartRepositoryModel: K8sKind = {
   apiGroup: 'helm.openshift.io',

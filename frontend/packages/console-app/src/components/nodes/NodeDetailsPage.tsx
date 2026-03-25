@@ -5,7 +5,8 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { PodsPage } from '@console/internal/components/pod-list';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
-import { K8sModel, NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sModel, NodeKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   ActionMenu,
   ActionMenuVariant,

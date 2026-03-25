@@ -18,11 +18,16 @@ describe('Source secrets', () => {
   });
 
   beforeEach(() => {
+    // ensure the test project is selected to avoid flakes
+    cy.visit(`/k8s/cluster/projects/${testName}`);
     cy.visit(`/k8s/ns/${testName}/secrets/`);
     secrets.clickCreateSecretDropdownButton('source');
   });
 
   afterEach(() => {
+    cy.exec(`oc delete secret -n ${testName} ${basicSourceSecretName} ${sshSourceSecretName}`, {
+      failOnNonZeroExit: false,
+    });
     checkErrors();
   });
 
@@ -32,11 +37,12 @@ describe('Source secrets', () => {
 
   it(`Creates, edits, and deletes a basic source secret`, () => {
     cy.log('Create secret');
-    cy.get('[data-test="page-heading"] h1').contains('Create source secret');
+    cy.byTestID('page-heading').contains('Create source secret');
     secrets.enterSecretName(basicSourceSecretName);
     cy.byTestID('secret-username').type(basicSourceSecretUsername);
     cy.byTestID('secret-password').type(basicSourceSecretPassword);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
     secrets.detailsPageIsLoaded(basicSourceSecretName);
 
     cy.log('Verify secret');
@@ -47,11 +53,16 @@ describe('Source secrets', () => {
 
     cy.log('Edit secret');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load and hydrate with current values
+    cy.byTestID('page-heading').contains('Edit source secret');
+    cy.byTestID('secret-username').should('have.value', basicSourceSecretUsername);
+    cy.byTestID('secret-password').should('have.value', basicSourceSecretPassword);
     cy.byTestID('secret-username').clear();
     cy.byTestID('secret-username').type(basicSourceSecretUsernameUpdated);
     cy.byTestID('secret-password').clear();
     cy.byTestID('secret-password').type(basicSourceSecretPasswordUpdated);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(basicSourceSecretName);
@@ -66,12 +77,13 @@ describe('Source secrets', () => {
 
   it(`Creates, edits, and deletes a SSH source secret`, () => {
     cy.log('Create secret');
-    cy.get('[data-test="page-heading"] h1').contains('Create source secret');
+    cy.byTestID('page-heading').contains('Create source secret');
     secrets.enterSecretName(sshSourceSecretName);
     cy.byTestID('console-select-auth-type-menu-toggle').click();
     cy.byTestDropDownMenu('kubernetes.io/ssh-auth').click();
     cy.byLegacyTestID('file-input-textarea').type(sshSourceSecretSSHKey);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
     secrets.detailsPageIsLoaded(sshSourceSecretName);
 
     cy.log('Verify secret');
@@ -81,9 +93,13 @@ describe('Source secrets', () => {
 
     cy.log('Edit secret');
     detailsPage.clickPageActionFromDropdown('Edit Secret');
+    // Wait for form to load and hydrate with current values
+    cy.byTestID('page-heading').contains('Edit source secret');
+    cy.byLegacyTestID('file-input-textarea').should('contain.value', sshSourceSecretSSHKey);
     cy.byLegacyTestID('file-input-textarea').clear();
     cy.byLegacyTestID('file-input-textarea').type(sshSourceSecretSSHKeUpdated);
     secrets.save();
+    cy.byTestID('loading-indicator').should('not.exist');
 
     cy.log('Verify edit');
     secrets.detailsPageIsLoaded(sshSourceSecretName);

@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 
 type TopologyEmptyStateProps = {
   setIsQuickSearchOpen: (isOpen: boolean) => void;
@@ -55,4 +55,4 @@ const TopologyEmptyState: FC<TopologyEmptyStateProps> = ({ setIsQuickSearchOpen 
   );
 };
 
-export default memo(TopologyEmptyState);
+export default memo<TopologyEmptyStateProps>(TopologyEmptyState);

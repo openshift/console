@@ -1,29 +1,30 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {
-  DynamicRemotePlugin,
+import type {
   EncodedExtension,
   WebpackSharedConfig,
   WebpackSharedObject,
 } from '@openshift/dynamic-plugin-sdk-webpack';
+import { DynamicRemotePlugin } from '@openshift/dynamic-plugin-sdk-webpack';
 import * as glob from 'glob';
 import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 import * as semver from 'semver';
-import type * as webpack from 'webpack';
-import { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
-import { extensionsFile } from '../constants';
+import type { Compiler, WebpackPluginInstance } from 'webpack';
+import type { ConsolePluginBuildMetadata, ConsolePluginPackageJSON } from '../build-types';
+import { extensionsFile, REMOTE_ENTRY_CALLBACK } from '../constants';
 import {
   sharedPluginModules,
   getSharedModuleMetadata,
 } from '../shared-modules/shared-modules-meta';
-import { DynamicModuleMap, getDynamicModuleMap } from '../utils/dynamic-module-parser';
+import type { DynamicModuleMap } from '../utils/dynamic-module-parser';
+import { getDynamicModuleMap } from '../utils/dynamic-module-parser';
 import { parseJSONC } from '../utils/jsonc';
 import { loadSchema } from '../utils/schema';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ValidationResult } from '../validation/ValidationResult';
-import { DynamicModuleImportLoaderOptions } from './loaders/dynamic-module-import-loader';
+import type { DynamicModuleImportLoaderOptions } from './loaders/dynamic-module-import-loader';
 
 const dynamicModuleImportLoader =
   '@openshift-console/dynamic-plugin-sdk-webpack/lib/webpack/loaders/dynamic-module-import-loader';
@@ -118,6 +119,23 @@ export const validateConsoleExtensionsFileSchema = (
 ) => {
   const schema = loadSchema('console-extensions.json');
   return new SchemaValidator(description).validate(schema, extensions);
+};
+
+const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
+  const pluginDeps = getPackageDependencies(pkg);
+  const warnings: string[] = [];
+
+  sharedPluginModules.forEach((moduleName) => {
+    const { deprecated } = getSharedModuleMetadata(moduleName);
+
+    if (deprecated && pluginDeps[moduleName]) {
+      warnings.push(
+        `shared modules: [DEPRECATION ALERT] '${moduleName}' is deprecated. ${deprecated}`,
+      );
+    }
+  });
+
+  return warnings;
 };
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
@@ -286,7 +304,7 @@ export type ConsoleRemotePluginOptions = Partial<{
  * @see {@link sharedPluginModules}
  * @see {@link getSharedModuleMetadata}
  */
-export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
+export class ConsoleRemotePlugin implements WebpackPluginInstance {
   private readonly adaptedOptions: Required<ConsoleRemotePluginOptions>;
 
   private readonly baseDir = process.cwd();
@@ -350,7 +368,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     );
   }
 
-  apply(compiler: webpack.Compiler) {
+  apply(compiler: Compiler) {
     const {
       pluginMetadata,
       extensions,
@@ -371,6 +389,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
     } = pluginMetadata;
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
+
     const publicPath = `/api/plugins/${name}/`;
 
     if (compiler.options.output.publicPath !== undefined) {
@@ -407,6 +426,7 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
         name,
         version,
         dependencies,
+        optionalDependencies,
         customProperties: _.merge({}, customProperties, {
           console: { displayName, description, disableStaticPlugins },
         }),
@@ -415,14 +435,12 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       extensions,
       sharedModules: { ...consoleProvidedSharedModules, ...sharedDynamicModules },
       entryCallbackSettings: {
-        name: 'loadPluginEntry',
-        pluginID: `${name}@${version}`,
+        name: REMOTE_ENTRY_CALLBACK,
       },
       entryScriptFilename:
         process.env.NODE_ENV === 'production'
           ? 'plugin-entry.[fullhash].min.js'
           : 'plugin-entry.js',
-      transformPluginManifest: (manifest) => ({ ...manifest, optionalDependencies }),
     }).apply(compiler);
 
     validateConsoleBuildMetadata(pluginMetadata).report();
@@ -455,6 +473,10 @@ export class ConsoleRemotePlugin implements webpack.WebpackPluginInstance {
       });
 
     compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
+      getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
+        compilation.warnings.push(new compiler.webpack.WebpackError(message));
+      });
+
       const modifiedModules: string[] = [];
 
       compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(

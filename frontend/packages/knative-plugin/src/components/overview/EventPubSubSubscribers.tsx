@@ -4,7 +4,7 @@ import { Grid, GridItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { Subscriber } from '../../topology/topology-types';
+import type { Subscriber } from '../../topology/topology-types';
 import EventPubSubExpandButton from './EventPubSubExpandButton';
 import FilterTable from './FilterTable';
 

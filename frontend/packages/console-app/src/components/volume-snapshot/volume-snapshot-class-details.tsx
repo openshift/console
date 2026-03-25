@@ -8,11 +8,13 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import type { DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPage } from '@console/internal/components/factory';
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
-import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import type { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';

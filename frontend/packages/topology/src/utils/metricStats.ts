@@ -1,6 +1,6 @@
-import { GetPodMetricStats } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { GetPodMetricStats } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const getPodMetricStats: GetPodMetricStats = (metrics, podData) => {
   const currentPods = podData.current ? podData.current.pods : podData.pods;

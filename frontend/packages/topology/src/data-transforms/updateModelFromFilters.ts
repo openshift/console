@@ -1,4 +1,5 @@
-import { createAggregateEdges, Model, NodeModel } from '@patternfly/react-topology';
+import type { Model, NodeModel } from '@patternfly/react-topology';
+import { createAggregateEdges } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { referenceFor } from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY, UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src';
@@ -9,7 +10,7 @@ import {
   isExpanded,
   showKind,
 } from '../filters';
-import { DisplayFilters, OdcNodeModel, TopologyApplyDisplayOptions } from '../topology-types';
+import type { DisplayFilters, OdcNodeModel, TopologyApplyDisplayOptions } from '../topology-types';
 import { getTopologyResourceObject } from '../utils/topology-utils';
 
 const getApplicationGroupForNode = (node: NodeModel, groups: NodeModel[]): NodeModel => {

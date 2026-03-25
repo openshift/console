@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_DEVWORKSPACE } from '../../const';
 import { checkTerminalAvailable } from './cloud-shell-utils';
 

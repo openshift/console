@@ -1,5 +1,5 @@
-import { Provider } from 'react';
-import { Extension, CodeRef } from '../types';
+import type { Provider } from 'react';
+import type { Extension, CodeRef } from '../types';
 
 /** Adds new React context provider to Console application root. */
 export type ContextProvider<T = any> = Extension<

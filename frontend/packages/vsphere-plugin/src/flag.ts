@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { k8sGet, useK8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { VSPHERE_FEATURE_FLAG, VSPHERE_PLATFORM } from './constants';
-import { Infrastructure } from './resources';
+import type { Infrastructure } from './resources';
 
 export const useVSphereFlagHandler = (setFeatureFlag: SetFeatureFlag) => {
   const [InfrastructureModel] = useK8sModel({

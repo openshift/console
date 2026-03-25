@@ -1,10 +1,11 @@
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import * as k8sModelsModule from '@console/internal/module/k8s/k8s-models';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
-import { EventSourceFormData, EventSources } from '../../components/add/import-types';
+import type { EventSourceFormData } from '../../components/add/import-types';
+import { EventSources } from '../../components/add/import-types';
 import {
   EVENT_SOURCE_CAMEL_KIND,
   KNATIVE_EVENT_SOURCE_APIGROUP,

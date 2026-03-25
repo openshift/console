@@ -1,6 +1,7 @@
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DonutChart } from '@console/internal/components/graphs/donut';
-import { AppliedClusterResourceQuotaKind } from '@console/internal/module/k8s';
+import type { AppliedClusterResourceQuotaKind } from '@console/internal/module/k8s';
 import { getUsedPercentage, getLabelAndUsage } from './utils';
 
 import './resource-quota.scss';
@@ -10,10 +11,10 @@ type AppliedClusterResourceQuotaChartsProps = {
   namespace: string;
 };
 
-const AppliedClusterResourceQuotaCharts = ({
+const AppliedClusterResourceQuotaCharts: FC<AppliedClusterResourceQuotaChartsProps> = ({
   appliedClusterResourceQuota,
   namespace,
-}: AppliedClusterResourceQuotaChartsProps): JSX.Element => {
+}) => {
   const { t } = useTranslation();
   const nsQuotas = appliedClusterResourceQuota.status?.namespaces?.find(
     (ns) => ns.namespace === namespace,

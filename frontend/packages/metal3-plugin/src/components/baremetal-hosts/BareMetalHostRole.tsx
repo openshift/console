@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { DASH, getNodeRoles, getMachineRole } from '@console/shared';
 
 type BareMetalHostRoleProps = {

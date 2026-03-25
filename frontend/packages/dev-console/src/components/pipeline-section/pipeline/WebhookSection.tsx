@@ -1,5 +1,5 @@
 import type { FC, ReactNode, ReactElement } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Content,
   TextInputTypes,
@@ -16,7 +16,8 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons/dist/esm/icons/help-icon';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
@@ -24,16 +25,13 @@ import { Trans, useTranslation } from 'react-i18next';
 import { generateSecret } from '@console/dev-console/src/components/import/import-submit-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { GitProvider } from '@console/git-service/src';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { ConfigMapKind } from '@console/internal/module/k8s/types';
-import {
-  RadioGroupField,
-  InputField,
-  ResourceDropdownField,
-  useActiveNamespace,
-} from '@console/shared/src';
+import type { ConfigMapKind, SecretKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { RadioGroupField, InputField, ResourceDropdownField } from '@console/shared/src';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PermissionsSection from './PermissionsSection';
 
 type WebhoookSectionProps = {
@@ -72,15 +70,32 @@ const WebhookSection: FC<WebhoookSectionProps> = ({ pac, formContextField }) => 
       setFieldValue(`${fieldPrefix}webhook.url`, ctlUrl);
     }
   }, [fieldPrefix, pac, setFieldValue]);
+
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
-  const resources: FirehoseResource[] = [
-    {
+
+  const watchedResources = useK8sWatchResources<{ secrets: SecretKind[] }>({
+    secrets: {
       isList: true,
-      kind: SecretModel.kind,
-      prop: SecretModel.id,
+      kind: referenceForModel(SecretModel),
       namespace,
     },
-  ];
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: watchedResources.secrets.data,
+        loaded: watchedResources.secrets.loaded,
+        loadError: watchedResources.secrets.loadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [
+      watchedResources.secrets.data,
+      watchedResources.secrets.loaded,
+      watchedResources.secrets.loadError,
+    ],
+  );
 
   const generateWebhookSecret = () => {
     setWebhookSecret(generateSecret());

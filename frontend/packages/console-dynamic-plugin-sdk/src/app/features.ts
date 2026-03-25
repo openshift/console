@@ -1,4 +1,4 @@
-import { Map as ImmutableMap } from 'immutable';
+import type { Map as ImmutableMap } from 'immutable';
 
 export type FeatureState = ImmutableMap<string, boolean>;
 

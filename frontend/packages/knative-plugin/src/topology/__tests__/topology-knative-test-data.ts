@@ -1,12 +1,7 @@
-import { FirehoseResult } from '@console/internal/components/utils';
-import {
-  DeploymentKind,
-  PodKind,
-  K8sResourceConditionStatus,
-  referenceForModel,
-  K8sResourceKind,
-} from '@console/internal/module/k8s';
-import { TopologyDataResources } from '@console/topology/src/topology-types';
+import type { FirehoseResult } from '@console/internal/components/utils';
+import type { DeploymentKind, PodKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceConditionStatus, referenceForModel } from '@console/internal/module/k8s';
+import type { TopologyDataResources } from '@console/topology/src/topology-types';
 import {
   SERVERLESS_FUNCTION_LABEL,
   EVENTING_IMC_KIND,
@@ -33,17 +28,18 @@ import {
   ConfigurationModel,
   KafkaSinkModel,
 } from '../../models';
-import {
+import type {
   RevisionKind,
-  ConditionTypes,
   RouteKind,
   ServiceKind as knativeServiceKind,
   EventSubscriptionKind,
   EventChannelKind,
   EventTriggerKind,
 } from '../../types';
+import { ConditionTypes } from '../../types';
 import { URI_KIND } from '../const';
-import { KnativeServiceOverviewItem, KnativeTopologyDataObject, NodeType } from '../topology-types';
+import type { KnativeServiceOverviewItem, KnativeTopologyDataObject } from '../topology-types';
+import { NodeType } from '../topology-types';
 
 export const sampleDeploymentsCamelConnector: FirehoseResult<DeploymentKind[]> = {
   loaded: true,

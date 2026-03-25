@@ -216,14 +216,16 @@
     }
   },
   {
-    "type": "console.page/resource/tab",
+    "type": "console.tab/horizontalNav",
     "properties": {
-      "href": "volumesnapshots",
       "model": {
         "version": "v1",
         "kind": "PersistentVolumeClaim"
       },
-      "name": "%console-app~VolumeSnapshots%",
+      "page": {
+        "name": "%console-app~VolumeSnapshots%",
+        "href": "volumesnapshots"
+      },
       "component": { "$codeRef": "volumeSnapshotPage.VolumeSnapshotPVCPage" }
     }
   },
@@ -2352,15 +2354,17 @@
     }
   },
   {
-    "type": "console.page/resource/tab",
+    "type": "console.tab/horizontalNav",
     "properties": {
-      "href": "plugin-manifest",
       "model": {
         "group": "console.openshift.io",
         "version": "v1",
         "kind": "ConsolePlugin"
       },
-      "name": "%console-app~Plugin manifest%",
+      "page": {
+        "name": "%console-app~Plugin manifest%",
+        "href": "plugin-manifest"
+      },
       "component": { "$codeRef": "ConsolePluginManifestPage.ConsolePluginManifestPage" }
     }
   },

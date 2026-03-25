@@ -2,19 +2,20 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8S_VERB_DELETE } from '@console/dynamic-plugin-sdk/src/api/constants';
-import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import type { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { k8sGet, k8sKill, k8sPatch } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
-import { DeleteOverlay } from '@console/internal/components/modals/delete-modal';
+import { DeleteModalOverlay } from '@console/internal/components/modals/delete-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { referenceFor } from '@console/internal/module/k8s';
-import { UninstallOperatorOverlay } from '../components/modals/uninstall-operator-modal';
+import { useUninstallOperatorModal } from '../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../models';
 
 const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any] => {
   const { t } = useTranslation();
-  const launcher = useOverlay();
+  const launchModal = useOverlay();
+
+  const uninstallOperatorModal = useUninstallOperatorModal(subscription, resource);
 
   const actions = useMemo(() => {
     if (!resource) {
@@ -27,7 +28,7 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
           id: 'delete-csv',
           label: t('public~Delete {{kind}}', { kind: ClusterServiceVersionModel.label }),
           cta: () =>
-            launcher(DeleteOverlay, {
+            launchModal(DeleteModalOverlay, {
               kind: ClusterServiceVersionModel,
               resource,
             }),
@@ -47,19 +48,11 @@ const useOperatorActions = ({ resource, subscription }): [Action[], boolean, any
       {
         id: 'uninstall-operator',
         label: t('olm~Uninstall Operator'),
-        cta: () =>
-          launcher(UninstallOperatorOverlay, {
-            k8sKill,
-            k8sGet,
-            k8sPatch,
-            subscription,
-            csv: resource,
-            blocking: true,
-          }),
+        cta: () => uninstallOperatorModal(),
         accessReview: asAccessReview(SubscriptionModel, subscription, K8S_VERB_DELETE),
       },
     ];
-  }, [resource, subscription, t, launcher]);
+  }, [resource, subscription, t, launchModal, uninstallOperatorModal]);
   return [actions, true, null];
 };
 

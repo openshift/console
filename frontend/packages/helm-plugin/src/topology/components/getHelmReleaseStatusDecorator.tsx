@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology/src/types';
+import type { Node } from '@patternfly/react-topology/src/types';
 import { TYPE_HELM_RELEASE } from './const';
 import HelmReleaseStatusDecorator from './HelmReleaseStatusDecorator';
 

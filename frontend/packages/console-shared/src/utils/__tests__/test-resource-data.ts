@@ -1,10 +1,6 @@
-import { FirehoseResult } from '@console/internal/components/utils';
-import {
-  DeploymentKind,
-  PodKind,
-  ImagePullPolicy,
-  K8sResourceKind,
-} from '@console/internal/module/k8s';
+import type { FirehoseResult } from '@console/internal/components/utils';
+import type { DeploymentKind, PodKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { ImagePullPolicy } from '@console/internal/module/k8s';
 
 export const sampleDeploymentConfigs: FirehoseResult = {
   loaded: true,

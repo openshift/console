@@ -3,7 +3,8 @@ import { Language } from '@patternfly/react-code-editor';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared';
-import GitSection, { GitSectionFormData } from '../../import/git/GitSection';
+import type { GitSectionFormData } from '../../import/git/GitSection';
+import GitSection from '../../import/git/GitSection';
 import FormSection from '../../import/section/FormSection';
 import EditorField from './EditorField';
 

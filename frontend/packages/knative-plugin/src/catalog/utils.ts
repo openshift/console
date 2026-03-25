@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const getEventSourceSupport = (item: K8sResourceKind) => {
   const supportLabel = item.metadata?.labels?.['camel.apache.org/kamelet.support.level'];

@@ -7,9 +7,10 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { useField, useFormikContext, FormikValues } from 'formik';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
-import { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
+import type { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const FormSelectField: FC<FormSelectFieldProps> = ({

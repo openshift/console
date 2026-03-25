@@ -1,17 +1,16 @@
 import { useState, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useNavigate } from 'react-router';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ModalComponentProps } from '@console/internal/components/factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ALL_NAMESPACES_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants/common';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace, formatNamespaceRoute } from '../../actions/ui';
 import {
@@ -41,12 +40,9 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
    * This is a workaround because modal launcher renders all modals outside of main app context.
    * This leads to namespace context not being available in modal so we access the redux store and use settings directly as a workaround.
    *  */
-  const dispatch = useDispatch();
-  const activeNamespace = useSelector((state: RootState) => getActiveNamespace(state));
-  const [, setLastNamespace] = useUserSettingsCompatibility<string>(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
+  const dispatch = useConsoleDispatch();
+  const activeNamespace = useConsoleSelector((state) => getActiveNamespace(state));
+  const [, setLastNamespace] = useUserPreference<string>(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -120,7 +116,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
         >
           {t('public~Delete')}
         </Button>
-        <Button variant="secondary" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
       </ModalFooter>

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { K8sModel } from '../../../../api/common-types';
+import type { K8sModel } from '../../../../api/common-types';
 import { k8sList } from '../../../../utils/k8s/k8s-resource';
 import * as sdkK8sActions from '../k8s';
 

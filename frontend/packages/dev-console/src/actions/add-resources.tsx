@@ -6,7 +6,7 @@ import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon'
 import { LaptopCodeIcon } from '@patternfly/react-icons/dist/esm/icons/laptop-code-icon';
 import { OsImageIcon } from '@patternfly/react-icons/dist/esm/icons/os-image-icon';
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { INCONTEXT_ACTIONS_CONNECTS_TO, QUERY_PROPERTIES } from '../const';

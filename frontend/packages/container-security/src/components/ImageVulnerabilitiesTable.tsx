@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { ConsoleEmptyState } from '@console/internal/components/utils';
-import { Feature, Vulnerability } from '../types';
+import type { Feature, Vulnerability } from '../types';
 import { getVulnerabilitySource, getVulnerabilityType } from './image-vulnerability-utils';
 import ImageVulnerabilityRow, {
   imageVulnerabilitiesTableColumnClasses,

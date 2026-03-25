@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
-import {
-  ImageEnvironment,
-  ImportEnvironment,
-  isImportEnvironment,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
+import type { ImageEnvironment, ImportEnvironment } from '@console/dynamic-plugin-sdk';
+import { isImportEnvironment, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 
 export const useBuilderImageEnvironments = (
   imageStreamName: string,

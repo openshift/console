@@ -1,4 +1,4 @@
-import { BaseService } from '../services/base-service';
+import type { BaseService } from '../services/base-service';
 import { isModernWebApp } from './build-tool-detector';
 
 type BuildTool = {

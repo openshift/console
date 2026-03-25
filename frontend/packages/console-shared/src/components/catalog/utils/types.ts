@@ -1,10 +1,10 @@
-import {
+import type {
   CatalogItem,
   CatalogItemAttribute,
   CatalogItemType,
   CatalogCategory,
 } from '@console/dynamic-plugin-sdk/src/extensions';
-import {
+import type {
   ResolvedCodeRefProperties,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';

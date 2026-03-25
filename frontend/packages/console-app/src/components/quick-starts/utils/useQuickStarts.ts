@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { QuickStart, getDisabledQuickStarts } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
+import { getDisabledQuickStarts } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
-import {
-  WatchK8sResult,
-  getGroupVersionKindForModel,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
+import type { WatchK8sResult } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { QuickStartModel } from '../../../models';
 

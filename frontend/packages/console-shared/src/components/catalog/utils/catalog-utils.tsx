@@ -1,16 +1,19 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import * as _ from 'lodash';
-import { CatalogItemType, isCatalogItemType } from '@console/dynamic-plugin-sdk';
-import {
+import type { NavigateFunction } from 'react-router';
+import type { CatalogItemType } from '@console/dynamic-plugin-sdk';
+import { isCatalogItemType } from '@console/dynamic-plugin-sdk';
+import type {
   CatalogItem,
   CatalogItemDetails,
   CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { history } from '@console/internal/components/utils/router';
 import catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { CatalogSortOrder, CatalogType, CatalogTypeCounts } from './types';
+import type { CatalogType, CatalogTypeCounts } from './types';
+import { CatalogSortOrder } from './types';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',
@@ -280,10 +283,16 @@ export const sortCatalogItems = (
   }
 };
 
-export const getIconProps = (item: CatalogItem) => {
+interface IconProps {
+  iconImg?: string | null;
+  iconClass?: string | null;
+  icon?: ReactNode;
+}
+
+export const getIconProps = (item: CatalogItem): IconProps => {
   const { icon } = item;
   if (!icon) {
-    return {};
+    return { iconImg: catalogImg, iconClass: null };
   }
   if (icon.url) {
     return { iconImg: icon.url, iconClass: null };
@@ -297,14 +306,18 @@ export const getIconProps = (item: CatalogItem) => {
   return { iconImg: catalogImg, iconClass: null };
 };
 
-export const setURLParams = (params: URLSearchParams) => {
+export const setURLParams = (params: URLSearchParams, navigate: NavigateFunction) => {
   const url = new URL(window.location.href);
   const searchParams = `?${params.toString()}${url.hash}`;
 
-  history.replace(`${url.pathname}${searchParams}`);
+  navigate(`${url.pathname}${searchParams}`, { replace: true });
 };
 
-export const updateURLParams = (paramName: string, value: string | string[]) => {
+export const updateURLParams = (
+  paramName: string,
+  value: string | string[],
+  navigate: NavigateFunction,
+) => {
   const params = new URLSearchParams(window.location.search);
 
   if (value) {
@@ -312,7 +325,7 @@ export const updateURLParams = (paramName: string, value: string | string[]) => 
   } else {
     params.delete(paramName);
   }
-  setURLParams(params);
+  setURLParams(params, navigate);
 };
 
 export const getURLWithParams = (paramName: string, value: string | string[]): string => {

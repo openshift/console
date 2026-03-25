@@ -1,5 +1,5 @@
 import type { SyntheticEvent } from 'react';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { keywordCompare } from '../../catalog';
 
 export const quickSearch = (items: CatalogItem[], query: string) => {

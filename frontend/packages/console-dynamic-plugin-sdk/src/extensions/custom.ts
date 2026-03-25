@@ -1,4 +1,4 @@
-import { Extension } from '../types';
+import type { Extension } from '../types';
 
 /**
  * Custom Console extension with arbitrary `type` and `properties`.

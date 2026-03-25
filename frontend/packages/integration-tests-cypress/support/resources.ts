@@ -1,5 +1,5 @@
 import { plural } from 'pluralize';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import type { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 export {};
 declare global {

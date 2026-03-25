@@ -1,4 +1,4 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   keywordCompare,
   calculateCatalogItemRelevanceScore,

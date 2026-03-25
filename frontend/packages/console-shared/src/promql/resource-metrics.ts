@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '../hooks/useK8sModel';
 
 export enum ResourceUtilizationQuery {

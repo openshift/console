@@ -2,14 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
-import {
-  Action,
-  K8sKind,
-  Patch,
-  useK8sModel,
-  useOverlay,
-} from '@console/dynamic-plugin-sdk/src/lib-core';
-import { DeleteOverlay } from '@console/internal/components/modals/delete-modal';
+import type { Action, K8sKind, Patch } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useK8sModel, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { DeleteModalOverlay } from '@console/internal/components/modals/delete-modal';
 import { asAccessReview } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
 import { k8sPatch, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -38,7 +33,7 @@ import {
   isHostScheduledForRestart,
 } from '../../selectors/baremetal-hosts';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
-import { BareMetalHostKind } from '../../types/host';
+import type { BareMetalHostKind } from '../../types/host';
 import { usePowerOffHostModalLauncher } from '../modals/PowerOffHostModal';
 import { useRestartHostModalLauncher } from '../modals/RestartHostModal';
 import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
@@ -46,7 +41,7 @@ import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal'
 
 const useDeleteAction = (kindObj: K8sKind, host, status) => {
   const { t } = useTranslation();
-  const launcher = useOverlay();
+  const launchModal = useOverlay();
   const hidden = ![
     HOST_STATUS_UNKNOWN,
     HOST_STATUS_READY,
@@ -60,14 +55,14 @@ const useDeleteAction = (kindObj: K8sKind, host, status) => {
         id: 'delete-host',
         label: t('metal3-plugin~Delete Bare Metal Host'),
         cta: () =>
-          launcher(DeleteOverlay, {
+          launchModal(DeleteModalOverlay, {
             kind: kindObj,
             resource: host,
           }),
         accessReview: asAccessReview(BareMetalHostModel, host, 'delete'),
       }),
     }),
-    [t, kindObj, host, launcher],
+    [t, kindObj, host, launchModal],
   );
   const action = useMemo<Action[]>(() => (!hidden ? [factory.delete()] : []), [factory, hidden]);
   return action;
@@ -130,18 +125,20 @@ export const useRemoveNodeMaintenanceAction = (
 ) => {
   const { t } = useTranslation();
   const hidden = !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance;
-  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal(nodeMaintenance);
+  const stopNodeMaintenanceModalLauncher = useStopNodeMaintenanceModal();
   const factory = useMemo(
     () => ({
       removeNodeMaintenance: () => ({
         id: 'remove-node-maintenance',
         label: t('metal3-plugin~Stop Maintenance'),
-        cta: stopNodeMaintenanceModalLauncher,
+        cta: () => stopNodeMaintenanceModalLauncher(nodeMaintenance),
         accessReview: host && asAccessReview(maintenanceModel, host, 'delete'),
       }),
     }),
+    // Missing stopNodeMaintenanceModalLauncher dependency - intentionally excluded to prevent
+    // infinite re-renders when used in action hooks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [host, t],
+    [host, t, nodeMaintenance],
   );
   const action = useMemo<Action[]>(() => (!hidden ? [factory.removeNodeMaintenance()] : []), [
     factory,

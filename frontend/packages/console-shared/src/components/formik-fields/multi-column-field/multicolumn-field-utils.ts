@@ -1,4 +1,4 @@
-import { gridItemSpanValueShape } from '@patternfly/react-core';
+import type { gridItemSpanValueShape } from '@patternfly/react-core';
 import * as _ from 'lodash';
 
 export const getSpans = (totalFieldCount: gridItemSpanValueShape): gridItemSpanValueShape[] => {

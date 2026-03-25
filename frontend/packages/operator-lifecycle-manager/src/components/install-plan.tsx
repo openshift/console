@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Alert,
   Button,
@@ -15,22 +15,16 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import { sortable } from '@patternfly/react-table';
+import { sortable, Table as PFTable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link, useNavigate } from 'react-router';
 import { getUser, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Conditions } from '@console/internal/components/conditions';
-import {
-  MultiListPage,
-  DetailsPage,
-  Table,
-  TableData,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { MultiListPage, DetailsPage, Table, TableData } from '@console/internal/components/factory';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   SectionHeading,
@@ -39,10 +33,10 @@ import {
   ResourceIcon,
   navFactory,
   ResourceSummary,
-  history,
   useAccessReview,
 } from '@console/internal/components/utils';
 import { authSvc } from '@console/internal/module/auth';
+import type { UserInfo } from '@console/internal/module/k8s';
 import {
   apiGroupForReference,
   referenceFor,
@@ -50,16 +44,15 @@ import {
   referenceForOwnerRef,
   k8sPatch,
   apiVersionForReference,
-  UserInfo,
 } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
 import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useFlag } from '@console/shared/src/hooks';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -67,8 +60,9 @@ import {
   OperatorGroupModel,
   CatalogSourceModel,
 } from '../models';
-import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
-import { installPlanPreviewModal } from './modals/installplan-preview-modal';
+import type { InstallPlanKind, Step } from '../types';
+import { InstallPlanApproval } from '../types';
+import { LazyInstallPlanPreviewModalOverlay } from './modals';
 import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
 
@@ -279,7 +273,7 @@ export const NeedInstallPlanPermissions: FC<NeedInstallPlanPermissionsProps> = (
   installPlan,
 }) => {
   const isOpenShift = useFlag(FLAGS.OPENSHIFT);
-  const user: UserInfo = useSelector<RootState, object>(getUser);
+  const user = useConsoleSelector<UserInfo>(getUser);
 
   const [username, setUsername] = useState(updateUser(isOpenShift, user));
 
@@ -409,12 +403,19 @@ export const InstallPlanDetails: FC<InstallPlanDetailsProps> = ({ obj }) => {
 
 export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideApprovalBlock }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const launchModal = useOverlay();
   const [needsApproval, setNeedsApproval] = useState(
     obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false,
   );
   const subscription = obj?.metadata?.ownerReferences.find(
     (ref) => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel),
+  );
+
+  const previewModal = useCallback(
+    (stepResource: Step['resource']) =>
+      launchModal(LazyInstallPlanPreviewModalOverlay, { stepResource }),
+    [launchModal],
   );
 
   const plan = obj?.status?.plan || [];
@@ -467,7 +468,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
                     variant="secondary"
                     isDisabled={false}
                     onClick={() =>
-                      history.push(
+                      navigate(
                         `/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
                           SubscriptionModel,
                         )}/${subscription.name}?showDelete=true`,
@@ -483,56 +484,51 @@ export const InstallPlanPreview: FC<InstallPlanPreviewProps> = ({ obj, hideAppro
         </PaneBody>
       )}
       {stepsByCSV.map((steps) => (
-        <div key={steps[0].resolving} className="co-m-pane__body">
+        <PaneBody key={steps[0].resolving}>
           <SectionHeading text={steps[0].resolving} />
-          <div className="co-table-container">
-            <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-              <thead className="pf-v6-c-table__thead">
-                <tr className="pf-v6-c-table__tr">
-                  <th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</th>
-                  <th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</th>
-                  <th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</th>
-                  <th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</th>
-                </tr>
-              </thead>
-              <tbody className="pf-v6-c-table__tbody">
-                {steps.map((step) => (
-                  <tr
-                    key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}
-                    className="pf-v6-c-table__tr"
-                  >
-                    <td className={componentsTableColumnClasses[0]}>
-                      {['Present', 'Created'].includes(step.status) ? (
-                        <ResourceLink
-                          kind={referenceForStepResource(step.resource)}
-                          namespace={obj.metadata.namespace}
-                          name={step.resource.name}
-                          title={step.resource.name}
-                        />
-                      ) : (
-                        <>
-                          <ResourceIcon kind={referenceForStepResource(step.resource)} />
-                          <Button
-                            type="button"
-                            onClick={() => installPlanPreviewModal({ stepResource: step.resource })}
-                            variant="link"
-                          >
-                            {step.resource.name}
-                          </Button>
-                        </>
-                      )}
-                    </td>
-                    <td className={componentsTableColumnClasses[1]}>{step.resource.kind}</td>
-                    <td className={componentsTableColumnClasses[2]}>{stepStatus(step.status)}</td>
-                    <td className={componentsTableColumnClasses[3]}>
-                      {apiVersionForReference(referenceForStepResource(step.resource))}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          <PFTable variant="compact" borders>
+            <Thead>
+              <Tr>
+                <Th className={componentsTableColumnClasses[0]}>{t('olm~Name')}</Th>
+                <Th className={componentsTableColumnClasses[1]}>{t('olm~Kind')}</Th>
+                <Th className={componentsTableColumnClasses[2]}>{t('olm~Status')}</Th>
+                <Th className={componentsTableColumnClasses[3]}>{t('olm~API version')}</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {steps.map((step) => (
+                <Tr key={`${referenceForStepResource(step.resource)}-${step.resource.name}`}>
+                  <Td className={componentsTableColumnClasses[0]}>
+                    {['Present', 'Created'].includes(step.status) ? (
+                      <ResourceLink
+                        kind={referenceForStepResource(step.resource)}
+                        namespace={obj.metadata.namespace}
+                        name={step.resource.name}
+                        title={step.resource.name}
+                      />
+                    ) : (
+                      <>
+                        <ResourceIcon kind={referenceForStepResource(step.resource)} />
+                        <Button
+                          type="button"
+                          onClick={() => previewModal(step.resource)}
+                          variant="link"
+                        >
+                          {step.resource.name}
+                        </Button>
+                      </>
+                    )}
+                  </Td>
+                  <Td className={componentsTableColumnClasses[1]}>{step.resource.kind}</Td>
+                  <Td className={componentsTableColumnClasses[2]}>{stepStatus(step.status)}</Td>
+                  <Td className={componentsTableColumnClasses[3]}>
+                    {apiVersionForReference(referenceForStepResource(step.resource))}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </PFTable>
+        </PaneBody>
       ))}
     </>
   ) : (

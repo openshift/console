@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventingSubscriptionModel } from '../../models';
-import { EventChannelKind } from '../../types';
+import type { EventChannelKind } from '../../types';
 import SubscriptionList from './subscription-list/SubscriptionList';
 
 type ChannelSubscriptionTabProps = {

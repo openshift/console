@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { K8sModel } from '../../../api/common-types';
-import { SDKStoreState } from '../../../app/redux-types';
-import {
+import type { K8sModel } from '../../../api/common-types';
+import type { SDKStoreState } from '../../../app/redux-types';
+import type {
   UseK8sModel,
   K8sResourceKindReference,
   K8sGroupVersionKind,

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 
 type DeploymentOverviewListProps = {

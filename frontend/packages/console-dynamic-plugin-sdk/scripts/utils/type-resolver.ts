@@ -110,13 +110,13 @@ const parseExtensionTypeInfo = (
   };
 };
 
+const getDuplicates = (arr: string[]) => Object.keys(_.pickBy(_.countBy(arr), (c) => c > 1));
+
 const validateExtensionTypes = (
   types: ExtensionTypeInfo[],
   errors: string[],
   warnings: string[],
 ) => {
-  const getDuplicates = (arr: string[]) => Object.keys(_.pickBy(_.countBy(arr), (c) => c > 1));
-
   getDuplicates(types.map((t) => t.name)).forEach((typeName) => {
     errors.push(`Extension type '${typeName}' has multiple declarations`);
   });

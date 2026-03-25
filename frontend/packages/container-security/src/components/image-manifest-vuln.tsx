@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import {
+  Alert,
   DescriptionList,
   EmptyState,
   EmptyStateVariant,
@@ -10,19 +11,19 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { DefaultList } from '@console/internal/components/default-resource';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
 import {
   MultiListPage,
   Table,
   TableData,
   DetailsPage,
   ListPage,
-  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { ContainerLink } from '@console/internal/components/pod';
 import {
@@ -31,17 +32,17 @@ import {
   SectionHeading,
   ResourceSummary,
   DetailsItem,
-  Firehose,
-  FirehoseResult,
   Loading,
 } from '@console/internal/components/utils';
-import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import type { PodKind, ContainerStatus } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
-import { ImageManifestVuln } from '../types';
+import type { ImageManifestVuln } from '../types';
 import ImageVulnerabilitiesList from './ImageVulnerabilitiesList';
 import ImageVulnerabilityToggleGroup from './ImageVulnerabilityToggleGroup';
 import { quayURLFor } from './summary';
@@ -317,6 +318,8 @@ const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].joi
 
 export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
   const { t } = useTranslation();
+  const { loaded, loadError } = props.imageManifestVuln;
+
   const vulnFor = (containerStatus: ContainerStatus) =>
     _.get(props.imageManifestVuln, 'data', []).find(
       (imv) =>
@@ -330,6 +333,28 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
     exists: (vuln: ImageManifestVuln) => JSX.Element,
     absent: () => JSX.Element,
   ) => (vuln !== undefined ? exists(vuln) : absent());
+
+  if (loadError) {
+    return (
+      <PaneBody>
+        <Alert
+          isInline
+          variant="danger"
+          title={t('container-security~Unable to load vulnerability data')}
+        >
+          {loadError instanceof Error ? loadError.message : String(loadError)}
+        </Alert>
+      </PaneBody>
+    );
+  }
+
+  if (!loaded) {
+    return (
+      <PaneBody>
+        <Loading />
+      </PaneBody>
+    );
+  }
 
   return (
     <PaneBody>
@@ -355,38 +380,32 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
                 {props.pod.spec.containers.find((c) => c.name === status.name).image}
               </Td>
               <Td>
-                {props.loaded ? (
-                  withVuln(
-                    vulnFor(status),
-                    (vuln) => (
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <ExclamationTriangleIcon
-                          color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
-                        />
-                        &nbsp;
-                        <ResourceLink
-                          kind={referenceForModel(ImageManifestVulnModel)}
-                          name={vuln.metadata.name}
-                          namespace={props.pod.metadata.namespace}
-                          displayName={`${totalFor(
-                            vulnPriority.findKey(
-                              ({ title }) => _.get(vuln.status, 'highestSeverity') === title,
-                            ),
-                          )(vuln)} ${vuln.status.highestSeverity}`}
-                          hideIcon
-                        />
-                      </span>
-                    ),
-                    () => (
-                      <span>
-                        <GreenCheckCircleIcon /> {t('container-security~No vulnerabilities found')}
-                      </span>
-                    ),
-                  )
-                ) : (
-                  <div>
-                    <Loading />
-                  </div>
+                {withVuln(
+                  vulnFor(status),
+                  (vuln) => (
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      <ExclamationTriangleIcon
+                        color={priorityFor(_.get(vuln.status, 'highestSeverity')).color.value}
+                      />
+                      &nbsp;
+                      <ResourceLink
+                        kind={referenceForModel(ImageManifestVulnModel)}
+                        name={vuln.metadata.name}
+                        namespace={props.pod.metadata.namespace}
+                        displayName={`${totalFor(
+                          vulnPriority.findKey(
+                            ({ title }) => _.get(vuln.status, 'highestSeverity') === title,
+                          ),
+                        )(vuln)} ${vuln.status.highestSeverity}`}
+                        hideIcon
+                      />
+                    </span>
+                  ),
+                  () => (
+                    <span>
+                      <GreenCheckCircleIcon /> {t('container-security~No vulnerabilities found')}
+                    </span>
+                  ),
                 )}
               </Td>
             </Tr>
@@ -399,30 +418,30 @@ export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (prop
 
 export const ImageManifestVulnPodTab: FC<ImageManifestVulnPodTabProps> = (props) => {
   const params = useParams();
+  const [imageManifestVuln, loaded, loadError] = useK8sWatchResource<ImageManifestVuln[]>({
+    isList: true,
+    kind: referenceForModel(ImageManifestVulnModel),
+    namespace: params.ns,
+    selector: {
+      matchLabels: { [podKey(props.obj)]: 'true' },
+    },
+  });
+
   return (
-    <Firehose
-      resources={[
-        {
-          isList: true,
-          kind: referenceForModel(ImageManifestVulnModel),
-          namespace: params.ns,
-          selector: {
-            matchLabels: { [podKey(props.obj)]: 'true' },
-          },
-          prop: 'imageManifestVuln',
-        },
-      ]}
-    >
-      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <ContainerVulnerabilities pod={props.obj} {...(props as any)} />
-    </Firehose>
+    <ContainerVulnerabilities
+      pod={props.obj}
+      imageManifestVuln={{ data: imageManifestVuln, loaded, loadError }}
+    />
   );
 };
 
 export type ContainerVulnerabilitiesProps = {
-  loaded: boolean;
   pod: PodKind;
-  imageManifestVuln: FirehoseResult<ImageManifestVuln[]>;
+  imageManifestVuln: {
+    data: ImageManifestVuln[];
+    loaded: boolean;
+    loadError?: unknown;
+  };
 };
 
 export type ImageManifestVulnPageProps = {

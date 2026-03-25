@@ -1,17 +1,18 @@
 import type { FC } from 'react';
 import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import {
   ResourceLink,
   resourcePath,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { OverviewItem, useFlag } from '@console/shared';
+import type { OverviewItem } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildModel, BuildModelV1Alpha1, BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';
-import { Build, BuildRun } from '../../types';
+import type { Build, BuildRun } from '../../types';
 import { byCreationTime, isV1Alpha1Resource } from '../../utils';
 import BuildRunItem from './BuildRunItem';
 import StartBuildButton from './StartBuildButton';

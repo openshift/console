@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { PipelineRunKind } from '@console/dev-console/src/types/pipeline';
-import {
+import type { PipelineRunKind } from '@console/dev-console/src/types/pipeline';
+import type {
   K8sResourceCommon,
   MatchExpression,
   MatchLabels,
@@ -9,7 +9,7 @@ import {
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { TaskRunKind } from '../../types';
+import type { TaskRunKind } from '../../types';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md

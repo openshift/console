@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { CardHeader, Content, ContentVariants, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { GettingStartedExpandableGrid, useUserSettings } from '@console/shared';
-import { FUNCTIONS_GETTING_STARTED_SECTION_USER_SETTING_KEY } from '../../const';
+import { GettingStartedExpandableGrid } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { FUNCTIONS_GETTING_STARTED_SECTION_USER_PREFERENCE_KEY } from '../../const';
 import { FunctionsDocsGettingStartedCard } from './FunctionsDocsGettingStartedCard';
 import { QuickStartGettingStartedCard } from './QuickStartGettingStartedCard';
 import { SampleGettingStartedCard } from './SamplesGettingStartedCard';
@@ -10,8 +11,8 @@ import { SampleGettingStartedCard } from './SamplesGettingStartedCard';
 export const GettingStartedSection: FC = () => {
   const { t } = useTranslation();
 
-  const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserSettings<boolean>(
-    FUNCTIONS_GETTING_STARTED_SECTION_USER_SETTING_KEY,
+  const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserPreference<boolean>(
+    FUNCTIONS_GETTING_STARTED_SECTION_USER_PREFERENCE_KEY,
     true,
   );
 

@@ -1,11 +1,11 @@
-import { FC, useContext } from 'react';
+import type { FC } from 'react';
 import { loader } from '@monaco-editor/react';
 import { CodeEditor } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
 import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
-import { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import './BasicCodeEditor.scss';
 
@@ -21,7 +21,7 @@ loader.config({ monaco });
  */
 export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
 
   return (
     <ErrorBoundaryInline>

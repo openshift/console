@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { SingleTypeaheadField, SelectInputOption } from '@console/shared';
-import { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
+import type { SelectInputOption } from '@console/shared';
+import { SingleTypeaheadField } from '@console/shared';
+import type { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 
 interface PortInputFieldProps {
   defaultPort: number;

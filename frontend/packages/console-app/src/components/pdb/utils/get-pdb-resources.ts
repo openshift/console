@@ -1,10 +1,6 @@
-import {
-  LabelSelector,
-  K8sPodControllerKind,
-  PodKind,
-  K8sResourceConditionStatus,
-} from '@console/internal/module/k8s';
-import { PDBCondition, PodDisruptionBudgetKind } from '../types';
+import type { K8sPodControllerKind, PodKind } from '@console/internal/module/k8s';
+import { LabelSelector, K8sResourceConditionStatus } from '@console/internal/module/k8s';
+import type { PDBCondition, PodDisruptionBudgetKind } from '../types';
 
 export const getPDBResource = (
   pdbResources: PodDisruptionBudgetKind[],

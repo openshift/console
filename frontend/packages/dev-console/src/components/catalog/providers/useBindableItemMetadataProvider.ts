@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   CatalogItem,
   CatalogItemMetadataProviderFunction,
   ExtensionHook,
@@ -8,7 +8,7 @@ import {
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BindableServicesModel } from '../../topology/bindable-services/models';
-import { BindableServicesKind } from '../../topology/bindable-services/types';
+import type { BindableServicesKind } from '../../topology/bindable-services/types';
 
 const useBindableItemMetadataProvider: ExtensionHook<CatalogItemMetadataProviderFunction> = () => {
   const [bindableKinds, loaded, error] = useK8sWatchResource<BindableServicesKind>({

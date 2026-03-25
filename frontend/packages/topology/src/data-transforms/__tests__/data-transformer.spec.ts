@@ -11,7 +11,7 @@ import {
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
 import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
-import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
+import type { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
 import { getEditURL, WORKLOAD_TYPES } from '../../utils/topology-utils';
 import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';

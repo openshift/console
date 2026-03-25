@@ -1,5 +1,5 @@
 import { coFetch } from '@console/internal/co-fetch';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import type { ConfigMapKind } from '@console/internal/module/k8s';
 import {
   createConfigMap,
   updateConfigMap,

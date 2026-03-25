@@ -1,4 +1,5 @@
-import { authenticationType, messages } from '../../constants';
+import type { authenticationType } from '../../constants';
+import { messages } from '../../constants';
 import { devFilePO, createSourceSecret, gitPO } from '../../pageObjects';
 
 export const devFilePage = {

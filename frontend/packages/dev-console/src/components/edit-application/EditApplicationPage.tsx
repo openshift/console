@@ -1,20 +1,21 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
-import { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { useParams, useLocation } from 'react-router';
+import type { WatchK8sResults, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { StatusBox } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';
 import { PipelineModel } from '../../models/pipelines';
-import { PipelineKind } from '../../types/pipeline';
+import type { PipelineKind } from '../../types/pipeline';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditApplicationComponent from './EditApplicationComponent';
 
@@ -22,7 +23,7 @@ type WatchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind | PipelineKind[];
 };
 
-const EditApplicationPage: FunctionComponent = () => {
+const EditApplicationPage: FC = () => {
   const { t } = useTranslation();
   const params = useParams();
   const location = useLocation();

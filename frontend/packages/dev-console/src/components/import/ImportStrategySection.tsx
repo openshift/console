@@ -10,10 +10,11 @@ import {
 } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import { UndoIcon } from '@patternfly/react-icons/dist/esm/icons/undo-icon';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import BuilderSection from './builder/BuilderSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';
 import DockerSection from './git/DockerSection';

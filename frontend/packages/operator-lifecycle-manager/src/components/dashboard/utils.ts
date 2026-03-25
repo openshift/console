@@ -1,17 +1,13 @@
 import * as _ from 'lodash';
-import { GetOperatorsWithStatuses, OperatorStatusPriority } from '@console/dynamic-plugin-sdk';
+import type { GetOperatorsWithStatuses, OperatorStatusPriority } from '@console/dynamic-plugin-sdk';
 import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
 import {
   HealthState,
   healthStateMapping,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { getSubscriptionStatus, getCSVStatus, subscriptionForCSV } from '../../status/csv-status';
-import {
-  ClusterServiceVersionKind,
-  SubscriptionKind,
-  SubscriptionState,
-  ClusterServiceVersionStatus,
-} from '../../types';
+import type { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
+import { SubscriptionState, ClusterServiceVersionStatus } from '../../types';
 
 const getOperatorStatus = (
   subscriptionStatus: { status: SubscriptionState; title?: string },

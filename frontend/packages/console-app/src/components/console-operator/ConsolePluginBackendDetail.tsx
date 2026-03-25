@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
+import type { DetailsItemComponentProps } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
 import {
   getGroupVersionKindForModel,
   ResourceLink,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ServiceModel } from '@console/internal/models';
-import { ConsolePluginKind } from '@console/internal/module/k8s';
+import type { ConsolePluginKind } from '@console/internal/module/k8s';
 import { DASH } from '@console/shared/src/constants';
 
 const ConsolePluginBackendDetail: FC<ConsolePluginBackendDetailProps> = ({

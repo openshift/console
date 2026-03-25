@@ -3,21 +3,23 @@ import useActivePerspective from '@console/dynamic-plugin-sdk/src/perspective/us
 import { DeploymentModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/__mocks__/k8s-data';
 import { ConfigMapModel } from '@console/internal/models';
 import { useModelFinder } from '@console/internal/module/k8s/k8s-models';
-import { usePerspectives } from '@console/shared/src';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { usePinnedResources } from '../usePinnedResources';
-import { useUserSettingsCompatibility } from '../useUserSettingsCompatibility';
+import { useUserPreference } from '../useUserPreference';
 
 const useActivePerspectiveMock = useActivePerspective as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
-const useUserSettingsCompatibilityMock = useUserSettingsCompatibility as jest.Mock;
+const useUserPreferenceMock = useUserPreference as jest.Mock;
 const useModelFinderMock = useModelFinder as jest.Mock;
 const setPinnedResourcesMock = jest.fn();
 
-jest.mock('@console/shared/src/hooks/perspective-utils', () => ({ usePerspectives: jest.fn() }));
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({ usePerspectives: jest.fn() }));
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
 }));
-jest.mock('../useUserSettingsCompatibility', () => ({ useUserSettingsCompatibility: jest.fn() }));
+jest.mock('../useUserPreference', () => ({
+  useUserPreference: jest.fn(),
+}));
 jest.mock('@console/internal/module/k8s/k8s-models', () => ({ useModelFinder: jest.fn() }));
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
@@ -56,14 +58,14 @@ describe('usePinnedResources', () => {
         return null;
       },
     });
-    useUserSettingsCompatibilityMock.mockClear();
+    useUserPreferenceMock.mockClear();
     setPinnedResourcesMock.mockClear();
   });
 
   it('should return default pins from extension if perspectives are not configured', async () => {
     window.SERVER_FLAGS.perspectives = '';
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+    useUserPreferenceMock.mockImplementation((configKey, defaultPins) => [
       defaultPins,
       setPinnedResourcesMock,
       true,
@@ -85,8 +87,8 @@ describe('usePinnedResources', () => {
   it('should return an empty array if user settings are not loaded yet', async () => {
     window.SERVER_FLAGS.perspectives =
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
-    // Mock user settings
-    useUserSettingsCompatibilityMock.mockReturnValue([null, setPinnedResourcesMock, false]);
+    // Mock user preference data
+    useUserPreferenceMock.mockReturnValue([null, setPinnedResourcesMock, false]);
 
     const { result } = renderHook(() => usePinnedResources());
 
@@ -100,7 +102,7 @@ describe('usePinnedResources', () => {
   it('should not return any pins if no pins are configured and no extension could be found', async () => {
     window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
     // Mock empty old data
-    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
     usePerspectivesMock.mockClear();
     usePerspectivesMock.mockReturnValue([]);
 
@@ -116,7 +118,7 @@ describe('usePinnedResources', () => {
   it('should not return any pins if no pins are configured and extension donot have default pins', async () => {
     window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
     // Mock empty old data
-    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
     usePerspectivesMock.mockClear();
     usePerspectivesMock.mockReturnValue([
       {
@@ -142,7 +144,7 @@ describe('usePinnedResources', () => {
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": []}]';
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+    useUserPreferenceMock.mockImplementation((configKey, defaultPins) => [
       defaultPins,
       setPinnedResourcesMock,
       true,
@@ -162,7 +164,7 @@ describe('usePinnedResources', () => {
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources": null}]';
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+    useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
       defaultPins,
       setPinnedResourcesMock,
       true,
@@ -185,7 +187,7 @@ describe('usePinnedResources', () => {
     window.SERVER_FLAGS.perspectives = '[{ "id" : "dev", "visibility": {"state" : "Enabled" }}]';
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+    useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
       defaultPins,
       setPinnedResourcesMock,
       true,
@@ -209,7 +211,7 @@ describe('usePinnedResources', () => {
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments", "group": "apps"}]}]';
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+    useUserPreferenceMock.mockImplementation((configKey, storageKey, defaultPins) => [
       defaultPins,
       setPinnedResourcesMock,
       true,
@@ -229,7 +231,7 @@ describe('usePinnedResources', () => {
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deployments"}]}]';
     // Mock user settings data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockReturnValue([
+    useUserPreferenceMock.mockReturnValue([
       { dev: ['ConfigMap', 'Secret', 'AnotherResource'] },
       setPinnedResourcesMock,
       true,
@@ -253,7 +255,7 @@ describe('usePinnedResources', () => {
       '[{ "id" : "dev", "visibility": {"state" : "Enabled" }, "pinnedResources" : [{"version" : "v1", "resource" : "deploymentss", "group" : "apps" },{"version" : "v1", "resource" : "configmaps", "group" : "" } ]}]';
     // Mock user settings data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    useUserPreferenceMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
 
     const { result } = renderHook(() => usePinnedResources());
 

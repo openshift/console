@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { PodDetailsList, PodResourceSummary } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s';
+import type { PodKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { getResource } from '../../utils';
 

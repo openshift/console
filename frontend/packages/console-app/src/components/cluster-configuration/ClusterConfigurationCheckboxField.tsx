@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { ClusterConfigurationCheckboxField } from '@console/dynamic-plugin-sdk/src';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationCheckboxFieldProps = {
   item: ResolvedClusterConfigurationItem;

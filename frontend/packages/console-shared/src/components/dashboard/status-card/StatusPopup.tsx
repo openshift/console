@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import {
+import type {
   StatusPopupSectionProps,
   StatusPopupItemProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/dashboard-types';

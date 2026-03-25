@@ -1,4 +1,5 @@
-import { Node, Point, AbstractAnchor, getRectAnchorPoint } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { Point, AbstractAnchor, getRectAnchorPoint } from '@patternfly/react-topology';
 
 class GroupNodeAnchor extends AbstractAnchor<Node> {
   protected readonly width: number;

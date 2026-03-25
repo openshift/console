@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Content, ContentVariants, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TourDataType } from '@console/app/src/components/tour';
+import type { TourDataType } from '@console/app/src/components/tour';
 import AdminGuidedTourBanner from '../tour/AdminGuidedTourBanner';
 import AdminGuidedTourBannerDark from '../tour/AdminGuidedTourBannerDark';
 import { finishTourText, helpTourText, userPreferencesTourText } from './GuidedTourText';

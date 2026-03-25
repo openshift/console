@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const mockNamespaces: K8sResourceKind[] = [
   { metadata: { name: 'ns-0' } },

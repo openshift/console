@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { CombinedErrorDetails } from './log-snippet-types';
+import type { CombinedErrorDetails } from './log-snippet-types';
 import LogSnippetFromPod from './LogSnippetFromPod';
 
 type LogSnippetBlockProps = {

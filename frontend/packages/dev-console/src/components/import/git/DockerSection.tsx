@@ -2,12 +2,13 @@ import type { FC } from 'react';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Icon, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DockerFileParser, getGitService, ImportStrategy } from '@console/git-service/src';
 import { InputField } from '@console/shared';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
-import { GitImportFormData } from '../import-types';
+import type { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';
 
 const DockerSection: FC = () => {

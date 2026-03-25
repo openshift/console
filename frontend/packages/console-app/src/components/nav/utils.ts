@@ -1,4 +1,5 @@
-import { NavExtension, isNavSection, K8sModel } from '@console/dynamic-plugin-sdk';
+import type { NavExtension, K8sModel } from '@console/dynamic-plugin-sdk';
+import { isNavSection } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { stripBasePath } from '@console/internal/components/utils/link';

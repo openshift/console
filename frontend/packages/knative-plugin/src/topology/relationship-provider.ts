@@ -1,4 +1,4 @@
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import { getResource } from '@console/topology/src/utils';
 import { TYPE_KNATIVE_SERVICE } from './const';
 

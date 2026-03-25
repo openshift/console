@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { DisplayFilters, TopologyViewType } from '../../topology-types';
+import type { DisplayFilters } from '../../topology-types';
+import { TopologyViewType } from '../../topology-types';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,

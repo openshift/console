@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { ReplicationControllerKind, referenceFor } from '@console/internal/module/k8s';
+import type { ReplicationControllerKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { CommonActionCreator, ReplicationControllerActionCreator } from '../hooks/types';

@@ -1,15 +1,11 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { ImportStrategy } from '@console/git-service/src';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  referenceFor,
-  referenceForModel,
-  ImagePullPolicy,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel, ImagePullPolicy } from '@console/internal/module/k8s';
 import {
   KNATIVE_AUTOSCALEWINDOW_ANNOTATION,
   KNATIVE_CONCURRENCYTARGET_ANNOTATION,
@@ -29,18 +25,12 @@ import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
 } from '../../const';
-import { PipelineKind } from '../../types/pipeline';
+import type { PipelineKind } from '../../types/pipeline';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
-import {
-  Resources,
-  DeploymentData,
-  GitReadableTypes,
-  ServerlessData,
-  BuildOptions,
-  BuildData,
-} from '../import/import-types';
+import type { DeploymentData, ServerlessData, BuildData } from '../import/import-types';
+import { Resources, GitReadableTypes, BuildOptions } from '../import/import-types';
 import {
   detectGitType,
   validationSchema as importValidationSchema,
@@ -50,7 +40,7 @@ import { validationSchema as jarValidationSchema } from '../import/upload-jar-va
 import { PipelineType } from '../pipeline-section/import-types';
 import { isDockerPipeline } from '../pipeline-section/pipeline/pipeline-template-utils';
 import { defaultRepositoryFormValues } from '../pipeline-section/pipeline/utils';
-import { AppResources } from './edit-application-types';
+import type { AppResources } from './edit-application-types';
 
 export enum ApplicationFlowType {
   Git = 'Import from Git',

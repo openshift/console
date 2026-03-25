@@ -1,7 +1,7 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import type { Humanize } from '@console/internal/components/utils';
 import {
-  Humanize,
   humanizeBinaryBytes,
   humanizeCpuCores,
   humanizeDecimalBytesPerSec,

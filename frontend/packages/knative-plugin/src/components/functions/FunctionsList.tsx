@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { EmptyState, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
-import { Table, TableProps } from '@console/internal/components/factory';
+import { useParams } from 'react-router';
+import type { TableProps } from '@console/internal/components/factory';
+import { Table } from '@console/internal/components/factory';
 import { ServerlessFunctionIcon } from '../../utils/icons';
 import ServiceHeader from '../services/ServiceHeader';
 import { CreateActionDropdown } from './CreateActionDropdown';

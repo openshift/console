@@ -1,7 +1,8 @@
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { OAuthModel } from '@console/internal/models';
-import { OAuthKind, referenceForModel } from '@console/internal/module/k8s';
+import type { OAuthKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 export const useCanEditIdentityProviders = () =>
   useAccessReview({

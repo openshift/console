@@ -1,5 +1,5 @@
-import { Node } from '@patternfly/react-topology';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { Node } from '@patternfly/react-topology';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { createTopologyResourceConnection, getResource } from './topology-utils';
 
 export const createConnection = (

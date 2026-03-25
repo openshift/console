@@ -2,38 +2,34 @@ import type { FC } from 'react';
 import { useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
-import {
-  GraphElement,
-  isGraph,
-  Model,
-  TopologyQuadrant,
-  Visualization,
-} from '@patternfly/react-topology';
-import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
+import type { GraphElement, Model, Visualization } from '@patternfly/react-topology';
+import { isGraph, TopologyQuadrant } from '@patternfly/react-topology';
+import type { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import {
-  FileUploadContextType,
-  FileUploadContext,
-} from '@console/app/src/components/file-upload/file-upload-context';
+import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';
+import { FileUploadContext } from '@console/app/src/components/file-upload/file-upload-context';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import {
-  isTopologyCreateConnector,
-  isTopologyDecoratorProvider,
-  isTopologyDisplayFilters,
+import type {
   TopologyCreateConnector,
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
   TopologyRelationshipProvider,
+} from '@console/dynamic-plugin-sdk/src/extensions/topology';
+import {
+  isTopologyCreateConnector,
+  isTopologyDecoratorProvider,
+  isTopologyDisplayFilters,
   isTopologyRelationshipProvider,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { LAST_TOPOLOGY_OVERVIEW_OPEN_STORAGE_KEY } from '../../const';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
@@ -47,12 +43,8 @@ import {
 import { FilterContext } from '../../filters/FilterProvider';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
-import {
-  GraphData,
-  TopologyDecorator,
-  TopologyDisplayFilterType,
-  TopologyViewType,
-} from '../../topology-types';
+import type { GraphData, TopologyDecorator } from '../../topology-types';
+import { TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyQuickSearch from '../quick-search/TopologyQuickSearch';

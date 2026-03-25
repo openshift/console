@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { FormGroup, Flex, FlexItem, Content } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { ConfigMapKind } from '@console/internal/module/k8s/types';
-import { RepositoryFormValues } from '../../import/import-types';
+import type { ConfigMapKind } from '@console/internal/module/k8s/types';
+import type { RepositoryFormValues } from '../../import/import-types';
 import GithubSection from './GithubSection';
 import WebhookSection from './WebhookSection';
 

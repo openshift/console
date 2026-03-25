@@ -1,9 +1,9 @@
 import type { ReactNode, FC } from 'react';
 import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
   SyncedEditorField,
@@ -18,7 +18,7 @@ import {
   sanitizeSinkToForm,
 } from '../../utils/create-eventsink-utils';
 import EventSinkSection from './event-sinks/EventSinkSection';
-import { EventSinkSyncFormData } from './import-types';
+import type { EventSinkSyncFormData } from './import-types';
 
 interface OwnProps {
   namespace: string;
@@ -40,7 +40,7 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   kameletSink,
 }) => {
   const { t } = useTranslation();
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.eventSinkForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.eventSinkForm.editor.lastView';
   const yamlEditor = <CodeEditorField name="yamlData" showSamples onSave={handleSubmit} />;
 
   const sanitizeToYaml = () =>
@@ -85,7 +85,7 @@ const EventSinkForm: FC<FormikProps<FormikValues> & OwnProps> = ({
               sanitizeSinkToForm(newFormData, values.formData, kameletSink),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
         />
       </FormBody>
       <FormFooter

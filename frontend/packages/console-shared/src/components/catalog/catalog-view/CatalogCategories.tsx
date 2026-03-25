@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom-v5-compat';
-import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
+import { Link } from 'react-router';
+import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
 import { isModifiedEvent } from '@console/shared/src/utils';
 import { getURLWithParams } from '../utils/catalog-utils';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';

@@ -1,22 +1,24 @@
 import type { ComponentType } from 'react';
+import type { GraphElement } from '@patternfly/react-topology';
 import {
-  GraphElement,
   withDragNode,
   withTargetDrag,
   withSelection,
   withDndDrop,
 } from '@patternfly/react-topology';
-import { ViewComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { ViewComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { contextMenuActions } from '@console/topology/src/actions';
 import { withCreateConnector } from '@console/topology/src/behavior';
-import {
+import type {
   NodeComponentProps,
+  EditableDragOperationType,
+} from '@console/topology/src/components/graph-view';
+import {
   withContextMenu,
   withNoDrop,
   nodeDragSourceSpec,
   createConnectorCallback,
   CreateConnector,
-  EditableDragOperationType,
   BaseEdge,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess } from '@console/topology/src/utils';

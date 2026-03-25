@@ -9,12 +9,12 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
+import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
 import { CopyToClipboard } from '@console/internal/components/utils/copy-to-clipboard';
 import { getReportBugLink } from '@console/internal/module/k8s/cluster-settings';
-import { ClusterVersionKind } from '@console/internal/module/k8s/types';
+import type { ClusterVersionKind } from '@console/internal/module/k8s/types';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 
 export const ErrorDetailsBlock: FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation('console-shared');
@@ -57,7 +57,11 @@ export const ErrorDetailsModal: FC<ErrorDetailsModalProps> = ({ buttonProps, ...
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} {...buttonProps}>
+      <Button
+        onClick={() => setOpen(true)}
+        data-test="error-details-modal-show-details"
+        {...buttonProps}
+      >
         {t('Show details')}
       </Button>
       <Modal variant={ModalVariant.large} isOpen={isOpen} onClose={() => setOpen(false)}>

@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
 import { t } from '../../../../../__mocks__/i18next';
-import { ExtPodKind } from '../../types';
+import type { ExtPodKind } from '../../types';
 import {
   deployment,
   deploymentConfig,

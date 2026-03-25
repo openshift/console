@@ -5,7 +5,7 @@ import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { receivedResources } from '@console/internal/actions/k8s';
 import { SDKReducers } from '../../../../app';
-import { WatchK8sResources } from '../../../../extensions/console-types';
+import type { WatchK8sResources } from '../../../../extensions/console-types';
 import { k8sList, k8sGet } from '../../k8s-resource';
 import { k8sWatch } from '../../k8s-utils';
 import { useK8sWatchResources } from '../useK8sWatchResources';

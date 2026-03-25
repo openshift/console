@@ -1,11 +1,11 @@
-import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import {
   addActionExtensions,
   addActionGroup,
   addActionsWithoutValidGroupId,
 } from '../../components/add/__tests__/add-page-test-data';
-import { AddGroup } from '../../components/types';
+import type { AddGroup } from '../../components/types';
 import { getAddGroups, resolvedHref, filterNamespaceScopedUrl } from '../add-page-utils';
 
 describe('getAddGroups', () => {

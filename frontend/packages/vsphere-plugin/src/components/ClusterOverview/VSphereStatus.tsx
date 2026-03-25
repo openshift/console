@@ -1,13 +1,13 @@
 import type { FC } from 'react';
 import { StackItem, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  HealthState,
+import type {
   PrometheusHealthPopupProps,
   PrometheusHealthHandler,
   ConsoleTFunction,
 } from '@console/dynamic-plugin-sdk';
-import { ConfigMap } from '../../resources';
+import { HealthState } from '@console/dynamic-plugin-sdk';
+import type { ConfigMap } from '../../resources';
 import { getVSphereHealth } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';
 import { VSphereOperatorStatuses } from '../VSphereOperatorStatuses';

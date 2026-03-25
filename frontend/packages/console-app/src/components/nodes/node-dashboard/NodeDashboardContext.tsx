@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { NodeKind } from '@console/internal/module/k8s';
-import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import type { NodeKind } from '@console/internal/module/k8s';
+import type { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 
 export const NodeDashboardContext = createContext<NodeDashboardContext>({
   setCPULimit: () => {},

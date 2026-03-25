@@ -1,11 +1,11 @@
 import type { ReactNode, ComponentType } from 'react';
 import { screen, cleanup } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PageContents as AddPage } from '../AddPage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
 }));
 

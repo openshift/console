@@ -9,7 +9,7 @@ import {
   hasPowerManagement,
   isDetached,
 } from '../../selectors';
-import { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types';
 
 type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;

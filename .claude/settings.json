@@ -96,12 +96,12 @@
     "ask": [
       "Bash(yarn install:*)",
       "Bash(yarn add:*)",
-      "Bash(yarn upgrade:*)",
+      "Bash(yarn up:*)",
       "Bash(npm install:*)",
       "Bash(npm i:*)",
       "Bash(go get:*)",
       "Bash(go mod:*)",
-      
+
       "Bash(oc delete:*)",
       "Bash(oc apply:*)",
       "Bash(oc create:*)",

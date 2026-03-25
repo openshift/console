@@ -1,4 +1,4 @@
-import { K8sResourceKind, PodPhase } from '@console/internal/module/k8s';
+import type { K8sResourceKind, PodPhase } from '@console/internal/module/k8s';
 
 export enum AllPodStatus {
   Running = 'Running',

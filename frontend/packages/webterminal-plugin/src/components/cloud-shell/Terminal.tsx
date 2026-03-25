@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useEffect, useCallback, useImperativeHandle } from 'react';
 import { FitAddon } from '@xterm/addon-fit';
-import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
+import type { ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
+import { Terminal as XTerminal } from '@xterm/xterm';
 
 import './Terminal.scss';
 

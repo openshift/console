@@ -1,4 +1,4 @@
-import { Location } from 'history';
+import { Location } from 'react-router';
 import { getBrandingDetails } from './branding';
 
 /**
@@ -18,6 +18,8 @@ export const withoutSensitiveInformations = (location: Location): Location => {
     state: location.state,
     hash: location.hash,
     key: location.key,
+    // eslint-disable-next-line camelcase
+    unstable_mask: undefined,
   };
 };
 

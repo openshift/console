@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk/src';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '../models';
 
 export const hideKnatifyAction = (resource: K8sResourceKind): boolean => {

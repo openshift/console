@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import {
+import type {
   Node,
-  observer,
   WithDndDropProps,
   WithSelectionProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import GroupNode from './GroupNode';
 
 type ApplicationGroupProps = {

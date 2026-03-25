@@ -1,12 +1,12 @@
-import {
+import type {
   K8sGroupVersionKind,
   K8sResourceCommon,
   Patch,
   QueryParams,
   Status,
 } from '../extensions/console-types';
-import { K8sModel } from './common-types';
-import { Options } from './internal-types';
+import type { K8sModel } from './common-types';
+import type { Options } from './internal-types';
 
 // K8s CRUD utility types to be exposed by dynamic plugin SDK.
 export type K8sGet = <R extends K8sResourceCommon>(options: {

@@ -1,14 +1,13 @@
 import { Tooltip } from '@patternfly/react-core';
 import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
 import { css } from '@patternfly/react-styles';
-import { useSelector } from 'react-redux';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
-import { TimestampProps } from '@console/dynamic-plugin-sdk';
-import { RootState } from '@console/internal/redux';
+import type { TimestampProps } from '@console/dynamic-plugin-sdk';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import * as dateTime from '../../utils/datetime';
 
 export const Timestamp = (props: TimestampProps) => {
-  const now = useSelector<RootState, string>(({ UI }) => UI.get('lastTick'));
+  const now = useConsoleSelector<string>(({ UI }) => UI.get('lastTick'));
 
   // Workaround for Date&Time values are not showing in supported languages onchange of language selector.
   const lang = getLastLanguage();

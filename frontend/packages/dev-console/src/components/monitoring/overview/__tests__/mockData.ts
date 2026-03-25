@@ -1,4 +1,4 @@
-import { PodKind } from '@console/internal/module/k8s';
+import type { PodKind } from '@console/internal/module/k8s';
 
 export const mockPods: PodKind[] = [
   {
@@ -99,7 +99,7 @@ export const mockPodEvents = {
       },
     ],
     filters: {},
-    loadError: '',
+    loadError: undefined,
     loaded: true,
     selected: null,
   },
@@ -255,7 +255,7 @@ export const mockPodEvents = {
       },
     ],
     filters: {},
-    loadError: '',
+    loadError: undefined,
     loaded: true,
     selected: null,
   },
@@ -319,7 +319,7 @@ export const mockResourceEvents = {
     },
   ],
   filters: {},
-  loadError: '',
+  loadError: undefined,
   loaded: true,
   selected: null,
 };

@@ -1,5 +1,5 @@
 import { convertToBaseValue } from '@console/internal/components/utils/units';
-import { VolumeSnapshotKind } from '@console/internal/module/k8s';
+import type { VolumeSnapshotKind } from '@console/internal/module/k8s';
 
 export const snapshotSize = (snapshot: VolumeSnapshotKind): number => {
   const size = snapshot?.status?.restoreSize;

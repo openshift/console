@@ -1,7 +1,7 @@
 import type { FC, ComponentProps } from 'react';
 import { ClipboardCopy, DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -13,19 +13,11 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
-import {
-  K8sKind,
-  K8sResourceKind,
-  referenceForModel,
-  RouteKind,
-} from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-  useTabbedTableBreadcrumbsFor,
-} from '@console/shared';
+import type { K8sKind, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../const';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 

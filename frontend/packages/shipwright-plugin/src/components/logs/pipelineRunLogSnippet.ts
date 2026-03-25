@@ -1,8 +1,8 @@
 import i18next from 'i18next';
-import { PipelineRunKind, PLRTaskRunData } from '@console/dev-console/src/types/pipeline';
-import { K8sResourceCondition } from '@console/internal/module/k8s/types';
-import { PLRTaskRunStep, TaskRunKind } from '../../types';
-import { CombinedErrorDetails } from './log-snippet-types';
+import type { PipelineRunKind, PLRTaskRunData } from '@console/dev-console/src/types/pipeline';
+import type { K8sResourceCondition } from '@console/internal/module/k8s/types';
+import type { PLRTaskRunStep, TaskRunKind } from '../../types';
+import type { CombinedErrorDetails } from './log-snippet-types';
 import { taskRunSnippetMessage } from './log-snippet-utils';
 import { pipelineRunStatus } from './logs-utils';
 

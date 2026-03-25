@@ -1,6 +1,6 @@
 import * as tsj from 'ts-json-schema-generator';
 import * as ts from 'typescript';
-import { ExtensionTypeInfo } from '../utils/type-resolver';
+import type { ExtensionTypeInfo } from '../utils/type-resolver';
 
 /**
  * Console extension types are declared as type aliases `type Foo = Extension<T, P>`.

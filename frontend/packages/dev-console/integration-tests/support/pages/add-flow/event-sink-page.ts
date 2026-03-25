@@ -1,4 +1,4 @@
-import { eventSourceCards } from '../../constants';
+import type { eventSourceCards } from '../../constants';
 import { catalogPO, eventSinkPO } from '../../pageObjects';
 
 export const eventSinkPage = {

@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import type { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { fetchK8s } from '@console/internal/graphql/client';
-import { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { FLAG_OPENSHIFT_HELM } from '../const';

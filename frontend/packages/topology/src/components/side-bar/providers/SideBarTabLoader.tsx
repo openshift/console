@@ -1,6 +1,6 @@
 import type { FC, ReactElement } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import { Tab } from '@console/internal/components/utils';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { Tab } from '@console/internal/components/utils';
 import SideBarTabHookResolver from './SideBarTabHookResolver';
 import { useDetailsTab } from './useDetailsTab';
 import { useDetailsTabSection } from './useDetailsTabSection';

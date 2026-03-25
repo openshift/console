@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Extension, CodeRef } from '../types';
-import { AccessReviewResourceAttributes } from './console-types';
+import type { Extension, CodeRef } from '../types';
+import type { AccessReviewResourceAttributes } from './console-types';
 
 /** This extension allows plugins to contribute an add action item to the add page of developer perspective.
     For example, a Serverless plugin can add a new action item for adding serverless functions

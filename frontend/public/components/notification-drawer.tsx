@@ -12,9 +12,9 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { useDispatch } from 'react-redux';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom-v5-compat';
-import type { DynamicPluginInfo } from '@console/plugin-sdk/src/store';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { Link, NavigateFunction, useNavigate } from 'react-router';
+import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import * as UIActions from '@console/internal/actions/ui';
 import { resourcePath } from '@console/internal/components/utils/resource-link';
@@ -56,7 +56,7 @@ import {
   NotificationDrawerListItemBody,
   NotificationDrawerListItemHeader,
 } from '@patternfly/react-core';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import {
   Alert,
   AlertAction,
@@ -78,7 +78,7 @@ import {
 import { LinkifyExternal } from './utils/link';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { NotificationTypes } from './utils/types';
 
 const AlertErrorState: FC<AlertErrorProps> = ({ errorText }) => {
@@ -148,7 +148,7 @@ export const getAlertActions = (
 const getUpdateNotificationEntries = (
   canUpgrade: boolean,
   cv: ClusterVersionKind,
-  pluginInfoEntries: DynamicPluginInfo[],
+  pluginInfoEntries: PluginInfoEntry[],
   itemOnClick: (location: string) => void,
 ): ReactNode[] => {
   if (!cv || !canUpgrade) {
@@ -214,9 +214,9 @@ const getUpdateNotificationEntries = (
       ...failedPlugins.map((plugin) => (
         <NotificationDrawerListItem
           variant={NotificationTypes.warning}
-          key={`${plugin.pluginName}-dynamic-plugin-fail`}
+          key={`${plugin.manifest.name}-dynamic-plugin-fail`}
           onClick={() => {
-            itemOnClick(resourcePath(referenceForModel(ConsolePluginModel), plugin.pluginName));
+            itemOnClick(resourcePath(referenceForModel(ConsolePluginModel), plugin.manifest.name));
           }}
         >
           <NotificationDrawerListItemHeader
@@ -225,7 +225,7 @@ const getUpdateNotificationEntries = (
           />
           <NotificationDrawerListItemBody>
             {i18next.t('public~Something went wrong with the {{pluginName}} plugin.', {
-              pluginName: plugin.pluginName,
+              pluginName: plugin.manifest.name,
             })}
           </NotificationDrawerListItemBody>
         </NotificationDrawerListItem>
@@ -244,10 +244,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
   const clusterID = getClusterID(useClusterVersion());
   const showServiceLevelNotification = useShowServiceLevelNotifications(clusterID);
   const pluginInfoEntries = usePluginInfo();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const clusterVersion: ClusterVersionKind = useClusterVersion();
   const [alerts, , loadError] = useNotificationAlerts();
-  const launchModal = useModal();
+  const launchModal = useOverlay();
   const alertIds = useMemo(() => alerts?.map((alert) => alert.rule.name) || [], [alerts]);
   const [alertActionExtensions] = useResolvedExtensions<AlertAction>(
     useCallback(

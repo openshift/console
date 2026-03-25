@@ -1,6 +1,6 @@
-import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind, Patch } from '@console/internal/module/k8s';
-import { Traffic } from '../types';
+import type { FirehoseResource } from '@console/internal/components/utils';
+import type { K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import type { Traffic } from '../types';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,

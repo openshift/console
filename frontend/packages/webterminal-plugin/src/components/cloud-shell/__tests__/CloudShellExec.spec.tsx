@@ -1,15 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { FLAGS } from '@console/shared';
 import { WorkspaceModel } from '../../../../models';
-import { InternalCloudShellExec, CloudShellExecProps } from '../CloudShellExec';
+import type { CloudShellExecProps } from '../CloudShellExec';
+import { InternalCloudShellExec } from '../CloudShellExec';
 
-jest.mock('@console/shared', () => {
-  const originalModule = jest.requireActual('@console/shared');
-  return {
-    ...originalModule,
-    useTelemetry: () => {},
-  };
-});
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: () => () => {},
+}));
 
 const workspace = 'test1';
 const namespace = 'namespace1';

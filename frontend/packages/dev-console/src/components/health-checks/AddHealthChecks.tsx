@@ -1,19 +1,20 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Form } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import {
   ContainerSelect,
   documentationURLs,
   getDocumentationURL,
-  history,
   isManaged,
   ResourceLink,
 } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
-import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -44,6 +45,7 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
 }) => {
   const viewOnly = useViewOnlyAccess(resource);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [currentKey, setCurrentKey] = useState(currentContainer);
   const containers = resource?.spec?.template?.spec?.containers;
   const healthCheckAdded = _.every(
@@ -72,8 +74,9 @@ const AddHealthChecks: FC<FormikProps<FormikValues> & AddHealthChecksProps> = ({
     setCurrentKey(containerName);
     setFieldValue('containerName', containerName);
     setFieldValue('healthChecks', getHealthChecksData(resource, containerIndex));
-    history.replace(
+    navigate(
       `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`,
+      { replace: true },
     );
   };
 

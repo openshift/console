@@ -1,6 +1,7 @@
 import { Range } from 'monaco-editor';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { configureMonacoYaml, SchemasSettings } from 'monaco-yaml';
+import type { SchemasSettings } from 'monaco-yaml';
+import { configureMonacoYaml } from 'monaco-yaml';
 import * as yaml from 'yaml-ast-parser';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';

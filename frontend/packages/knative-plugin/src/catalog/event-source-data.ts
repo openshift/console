@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import {
   EVENT_SOURCE_SINK_BINDING_KIND,
   EVENT_SOURCE_KAFKA_KIND,

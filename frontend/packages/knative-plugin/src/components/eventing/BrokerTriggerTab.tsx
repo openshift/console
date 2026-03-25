@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventingTriggerModel } from '../../models';
-import { EventBrokerKind } from '../../types';
+import type { EventBrokerKind } from '../../types';
 import TriggerList from './triggers-list/TriggerList';
 
 type BrokerTriggerTabProps = {

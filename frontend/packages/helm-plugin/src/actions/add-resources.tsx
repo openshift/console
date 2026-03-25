@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
 import { helmCatalogIconSVG } from '../utils/icons';
 
 export const AddHelmChartAction = (

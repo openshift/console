@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import { RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
-import { RouteKind } from '../../../types';
+import type { RouteKind } from '../../../types';
 import RouteRow from '../RouteRow';
 
 jest.mock('@console/internal/components/factory', () => ({

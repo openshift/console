@@ -1,4 +1,4 @@
-import { Build, BuildRun } from '../types';
+import type { Build, BuildRun } from '../types';
 
 export const incompleteBuild = {
   apiVersion: 'shipwright.io/v1alpha1',

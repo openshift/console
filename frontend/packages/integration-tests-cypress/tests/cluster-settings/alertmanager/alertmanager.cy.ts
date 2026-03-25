@@ -1,6 +1,6 @@
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
-import {
+import type {
   AlertmanagerConfig,
   AlertmanagerRoute,
 } from '@console/internal/components/monitoring/alertmanager/alertmanager-config';

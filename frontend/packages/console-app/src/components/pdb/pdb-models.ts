@@ -1,9 +1,10 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { Selector, k8sPatch, Patch } from '@console/internal/module/k8s';
+import type { Selector, Patch } from '@console/internal/module/k8s';
+import { k8sPatch } from '@console/internal/module/k8s';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { PodDisruptionBudgetModel } from '../../models';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 
 export const intOrString = (val: string | number): string | number => {
   if (val === '') {

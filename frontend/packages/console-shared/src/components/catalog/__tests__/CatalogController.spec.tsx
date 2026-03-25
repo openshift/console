@@ -4,8 +4,8 @@ import * as UseQueryParams from '@console/shared/src/hooks/useQueryParams';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import CatalogController from '../CatalogController';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useLocation: () => ({
     pathname: '/test-path',
     search: '',
@@ -37,7 +37,6 @@ describe('CatalogController', () => {
       description: null,
       catalogExtensions: [
         {
-          pluginID: '@console/helm-plugin',
           pluginName: '@console/helm-plugin',
           properties: {
             catalogDescription: 'Helm Catalog description',

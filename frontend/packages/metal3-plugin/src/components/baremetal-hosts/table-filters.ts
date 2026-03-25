@@ -1,6 +1,6 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { RowFilter } from '@console/dynamic-plugin-sdk';
+import type { RowFilter } from '@console/dynamic-plugin-sdk';
 import {
   HOST_REGISTERING_STATES,
   HOST_PROVISIONING_STATES,
@@ -13,7 +13,7 @@ import {
   HOST_STATUS_AVAILABLE,
   HOST_STATUS_UNMANAGED,
 } from '../../constants';
-import { BareMetalHostBundle } from '../types';
+import type { BareMetalHostBundle } from '../types';
 
 // NOTE(yaacov): hostStatesToFilterMap titles translation keys.
 // t('metal3-plugin~Registering')

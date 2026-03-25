@@ -1,5 +1,6 @@
 import type { FC, FormEvent, KeyboardEvent, Ref } from 'react';
 import { useState, useRef, useEffect } from 'react';
+import type { SelectOptionProps, MenuToggleElement } from '@patternfly/react-core';
 import {
   Label,
   LabelGroup,
@@ -10,20 +11,19 @@ import {
   Select,
   SelectOption,
   SelectList,
-  SelectOptionProps,
   MenuToggle,
-  MenuToggleElement,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
   Button,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
-import { MultiTypeaheadFieldProps } from './field-types';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
+import type { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({

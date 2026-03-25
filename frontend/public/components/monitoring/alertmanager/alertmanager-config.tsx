@@ -5,7 +5,7 @@ import { useMemo, memo, Suspense } from 'react';
 import * as _ from 'lodash';
 import { NavBar } from '@console/internal/components/utils/horizontal-nav';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import {
   Alert,
   Button,
@@ -30,12 +30,13 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { breadcrumbsForGlobalConfig } from '../../cluster-settings/global-config';
 
 import { K8sResourceKind } from '../../../module/k8s';
-import { createAlertRoutingModal } from '../../modals';
+import { LazyAlertRoutingModalOverlay } from '../../modals';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { Firehose } from '../../utils/firehose';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { Kebab } from '../../utils/kebab';
 import { SectionHeading } from '../../utils/headings';
 import { StatusBox } from '../../utils/status-box';
+import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -69,14 +70,15 @@ interface AlertRoutingProps {
   config: AlertmanagerConfig;
 }
 
-const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
+const AlertRouting: FC<AlertRoutingProps> = ({ secret, config }) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   return (
     <PaneBody>
       <SectionHeading text={t('public~Alert routing')}>
         <Button
-          onClick={() => createAlertRoutingModal({ config, secret })}
+          onClick={() => launchModal(LazyAlertRoutingModalOverlay, { config, secret })}
           variant="secondary"
           data-test="edit-alert-routing-btn"
         >
@@ -512,7 +514,7 @@ interface ReceiversProps {
   config: AlertmanagerConfig;
 }
 
-const Receivers = ({ secret, config }: ReceiversProps) => {
+const Receivers: FC<ReceiversProps> = ({ secret, config }) => {
   const receivers = _.get(config, 'receivers', []);
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
@@ -576,7 +578,7 @@ const AlertmanagerConfiguration: FC<AlertmanagerConfigurationProps> = ({ obj: se
   );
 };
 
-const AlertmanagerConfigWrapper: FC<AlertmanagerConfigWrapperProps> = memo(({ obj, ...props }) => {
+const AlertmanagerConfigWrapper = memo<AlertmanagerConfigWrapperProps>(({ obj, ...props }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -596,6 +598,13 @@ export const AlertmanagerConfig: FC = () => {
 
   const breadcrumbs = breadcrumbsForGlobalConfig('Alertmanager', configPath);
 
+  const [secret, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
+    kind: 'Secret',
+    name: 'alertmanager-main',
+    namespace: 'openshift-monitoring',
+    isList: false,
+  });
+
   return (
     <>
       <PageHeading breadcrumbs={breadcrumbs} title={t('public~Alertmanager')} />
@@ -611,19 +620,7 @@ export const AlertmanagerConfig: FC = () => {
           },
         ]}
       />
-      <Firehose
-        resources={[
-          {
-            kind: 'Secret',
-            name: 'alertmanager-main',
-            namespace: 'openshift-monitoring',
-            isList: false,
-            prop: 'obj',
-          },
-        ]}
-      >
-        <AlertmanagerConfigWrapper />
-      </Firehose>
+      <AlertmanagerConfigWrapper obj={{ data: secret, loaded, loadError }} />
     </>
   );
 };

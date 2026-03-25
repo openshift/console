@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import ProjectAccessPage from '../ProjectAccessPage';
 
-jest.mock('@console/internal/components/utils', () => ({
-  Firehose: (props) => props.children,
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(() => [[], true, null]),
 }));
 
 jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => ({
@@ -22,8 +22,8 @@ jest.mock('../hooks', () => ({
   })),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));

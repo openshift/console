@@ -2,11 +2,12 @@ import type { ReactElement } from 'react';
 import { createElement, useMemo, useEffect, useState } from 'react';
 import { ChartLabel } from '@patternfly/react-charts/victory';
 import { css } from '@patternfly/react-styles';
-import i18next, { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
-import {
+import type {
   K8sResourceKind,
   K8sKind,
   SelfSubjectAccessReviewKind,
@@ -14,7 +15,7 @@ import {
 } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin/src/models';
 import { AllPodStatus } from '../constants';
-import { ExtPodKind } from '../types';
+import type { ExtPodKind } from '../types';
 import { checkPodEditAccess, getPodStatus } from './pod-utils';
 
 import './pod-ring-text.scss';

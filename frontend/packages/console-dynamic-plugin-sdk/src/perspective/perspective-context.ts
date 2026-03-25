@@ -1,6 +1,6 @@
 import type { SetStateAction, Dispatch } from 'react';
 import { createContext } from 'react';
-import { PerspectiveType } from '../extensions';
+import type { PerspectiveType } from '../extensions';
 
 export type PerspectiveContextType = {
   activePerspective?: PerspectiveType;

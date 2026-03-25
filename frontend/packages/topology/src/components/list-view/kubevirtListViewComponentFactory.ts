@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import VMListViewNode from './VMListViewNode';
 
 const TYPE_VIRTUAL_MACHINE = 'virtual-machine';

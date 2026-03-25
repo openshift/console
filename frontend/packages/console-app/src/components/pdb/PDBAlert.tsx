@@ -2,12 +2,12 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { PodDisruptionBudgetModel } from '../../models';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 import { checkPodDisruptionBudgets } from './utils/get-pdb-resources';
 
 export interface PDBAlertProps {

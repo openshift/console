@@ -5,16 +5,12 @@ import {
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
 import * as _ from 'lodash';
-import { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
-import { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
+import type { CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
+import type { ResolvedCodeRefProperties } from '@console/dynamic-plugin-sdk/src/types';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';
-import {
-  CatalogFilter,
-  CatalogFilterCounts,
-  CatalogFilterItem,
-  CatalogFilters,
-} from '../utils/types';
+import type { CatalogFilter, CatalogFilterCounts, CatalogFilterItem } from '../utils/types';
+import { CatalogFilters } from '../utils/types';
 
 type CatalogFiltersProps = {
   activeFilters: CatalogFilters;

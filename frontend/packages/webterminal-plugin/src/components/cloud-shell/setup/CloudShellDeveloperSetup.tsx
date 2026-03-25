@@ -1,16 +1,17 @@
-import type { FunctionComponent } from 'react';
+import type { FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
 import { ProjectRequestModel } from '@console/internal/models';
-import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import type { K8sKind } from '@console/internal/module/k8s';
+import { k8sCreate } from '@console/internal/module/k8s';
+import type { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
+import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
 import {
-  CloudShellSetupFormData,
   CREATE_NAMESPACE_KEY,
   cloudShellSetupValidationSchema,
   getCloudShellTimeout,
@@ -30,7 +31,7 @@ type Props = StateProps & {
   operatorNamespace: string;
 };
 
-const CloudShellDeveloperSetup: FunctionComponent<Props> = ({
+const CloudShellDeveloperSetup: FC<Props> = ({
   activeNamespace,
   workspaceModel,
   operatorNamespace,

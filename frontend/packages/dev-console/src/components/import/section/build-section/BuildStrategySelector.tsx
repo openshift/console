@@ -1,12 +1,14 @@
 import type { FC } from 'react';
 import { useMemo, useEffect, useCallback } from 'react';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useClusterBuildStrategy } from '@console/dev-console/src/utils/shipwright-build-hook';
 import { ImportStrategy } from '@console/git-service/src';
 import { LoadingInline } from '@console/internal/components/utils';
-import { SingleDropdownField, SelectInputOption } from '@console/shared/src';
+import type { SelectInputOption } from '@console/shared/src';
+import { SingleDropdownField } from '@console/shared/src';
 import {
   ClusterBuildStrategy,
   ReadableClusterBuildStrategies,

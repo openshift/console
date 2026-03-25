@@ -1,4 +1,4 @@
-import { HelmRelease, HelmReleaseStatus } from '../types/helm-types';
+import type { HelmRelease, HelmReleaseStatus } from '../types/helm-types';
 
 type HelmActionObj = {
   name: string;
@@ -10,5 +10,5 @@ type HelmActionObj = {
 export type HelmActionsScope = {
   release: HelmRelease | HelmActionObj;
   actionOrigin?: string;
-  redirect?: boolean;
+  redirect?: string;
 };

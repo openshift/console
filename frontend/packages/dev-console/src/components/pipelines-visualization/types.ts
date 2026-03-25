@@ -1,10 +1,10 @@
-import { RunStatus, WhenStatus } from '@patternfly/react-topology';
-import { NodeModel } from '@patternfly/react-topology/src/types';
-import * as dagre from 'dagre';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions';
-import { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
-import { TektonTaskSpec } from '../../types/coreTekton';
-import { PipelineKind, PipelineRunKind, PipelineTask } from '../../types/pipeline';
+import type { RunStatus, WhenStatus } from '@patternfly/react-topology';
+import type { NodeModel } from '@patternfly/react-topology/src/types';
+import type { GraphLabel } from 'dagre';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { ComputedStatus } from '@console/shipwright-plugin/src/components/logs/log-snippet-types';
+import type { TektonTaskSpec } from '../../types/coreTekton';
+import type { PipelineKind, PipelineRunKind, PipelineTask } from '../../types/pipeline';
 
 export const NODE_WIDTH = 120;
 export const NODE_HEIGHT = 30;
@@ -26,7 +26,7 @@ export const GRAPH_MAX_HEIGHT_PERCENT = 45;
 export const FLAG_PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER =
   'PIPELINES_OPERATOR_VERSION_1_17_OR_NEWER';
 
-const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
+const DAGRE_SHARED_PROPS: GraphLabel = {
   nodesep: NODE_SEPARATION_VERTICAL,
   ranksep: NODE_SEPARATION_HORIZONTAL,
   edgesep: 50,
@@ -35,14 +35,14 @@ const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
   marginx: 20,
   marginy: 20,
 };
-export const DAGRE_VIEWER_PROPS: dagre.GraphLabel = {
+export const DAGRE_VIEWER_PROPS: GraphLabel = {
   ...DAGRE_SHARED_PROPS,
 };
-export const DAGRE_VIEWER_SPACED_PROPS: dagre.GraphLabel = {
+export const DAGRE_VIEWER_SPACED_PROPS: GraphLabel = {
   ...DAGRE_VIEWER_PROPS,
   ranksep: NODE_SEPARATION_HORIZONTAL + WHEN_EXPRESSION_SPACING,
 };
-export const DAGRE_BUILDER_PROPS: dagre.GraphLabel = {
+export const DAGRE_BUILDER_PROPS: GraphLabel = {
   ...DAGRE_SHARED_PROPS,
   ranksep: NODE_SEPARATION_HORIZONTAL + BUILDER_NODE_ADD_RADIUS * 2,
   nodesep: NODE_SEPARATION_VERTICAL + BUILDER_NODE_ADD_RADIUS,
@@ -50,7 +50,7 @@ export const DAGRE_BUILDER_PROPS: dagre.GraphLabel = {
   marginy: DAGRE_SHARED_PROPS.marginy + BUILDER_NODE_ADD_RADIUS * 2,
 };
 
-export const DAGRE_BUILDER_SPACED_PROPS: dagre.GraphLabel = {
+export const DAGRE_BUILDER_SPACED_PROPS: GraphLabel = {
   ...DAGRE_BUILDER_PROPS,
   ranksep: NODE_SEPARATION_HORIZONTAL + WHEN_EXPRESSION_SPACING + BUILDER_NODE_ADD_RADIUS * 2,
 };

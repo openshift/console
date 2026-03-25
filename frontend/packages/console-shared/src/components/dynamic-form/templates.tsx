@@ -3,14 +3,18 @@ import { useState, useEffect } from 'react';
 import { Button, Alert, Divider, FormHelperText } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { ArrayFieldTemplateProps, FieldTemplateProps, ObjectFieldTemplateProps } from '@rjsf/core';
+import type {
+  ArrayFieldTemplateProps,
+  FieldTemplateProps,
+  ObjectFieldTemplateProps,
+} from '@rjsf/core';
 import { getUiOptions, getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { JSON_SCHEMA_GROUP_TYPES } from './const';
 import { FieldSet, FormField } from './fields';
-import { UiSchemaOptionsWithDependency } from './types';
+import type { UiSchemaOptionsWithDependency } from './types';
 import { useSchemaLabel } from './utils';
 
 export const AtomicFieldTemplate: FC<FieldTemplateProps> = ({

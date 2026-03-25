@@ -5,9 +5,10 @@ import {
   k8sPatchResource,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { RoleBindingModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { generateSecret } from '../import/import-submit-utils';
-import { Verb, UserRoleBinding, RoleBinding, SubjectType } from './project-access-form-utils-types';
+import type { UserRoleBinding, RoleBinding, SubjectType } from './project-access-form-utils-types';
+import { Verb } from './project-access-form-utils-types';
 
 export const getRolesWithNameChange = (
   newRoles: UserRoleBinding[],

@@ -91,13 +91,13 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
           size: units.humanize(MAX_UPLOAD_SIZE, 'binaryBytes', true).string,
         });
       case DropzoneErrorCode.TooManyFiles:
-        return t('Too many files. Maximum one file can be uploaded.');
+        return t('Only one icon can be uploaded per resource.');
       case DropzoneErrorCode.FileInvalidType:
         return t(
           'Invalid file type. Supported formats are: .avif, .gif, .png, .apng, .svg, and .webp.',
         );
       default:
-        return t('An error occurred while uploading the file.');
+        return t('The file could not be uploaded. Try again.');
     }
   };
 
@@ -112,7 +112,7 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
       <ModalHeader
         title={t('Add custom icon')}
         description={t(
-          'Add a custom icon in the Topology view. An annotation will be added to the resource defining the icon.',
+          'Set a custom icon to display in the Topology view. An annotation will be added to the resource defining the icon.',
         )}
         descriptorId="co-import-custom-icon-modal-description"
         labelId="co-import-custom-icon-modal-title"
@@ -148,11 +148,11 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
           >
             <MultipleFileUploadMain
               titleIcon={<UploadIcon />}
-              titleText={t('Drag an icon here')}
+              titleText={t('Drag and drop an icon here')}
               titleTextSeparator={t('or')}
               browseButtonText={t('Upload')}
               infoText={t(
-                'Max file size is {{ size }}. Supported formats are: .avif, .gif, .png, .apng, .svg, and .webp.',
+                'Maximum file size is {{ size }}. Supported formats are: .avif, .gif, .png, .apng, .svg, and .webp.',
                 { size: units.humanize(MAX_UPLOAD_SIZE, 'binaryBytes', true).string },
               )}
             />
@@ -173,10 +173,10 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
               </InputGroupItem>
 
               <InputGroupItem>
-                <Tooltip content={t('Clear current custom icon')}>
+                <Tooltip content={t('Clear icon')}>
                   <Button
                     variant="control"
-                    aria-label={t('Clear current custom icon')}
+                    aria-label={t('Clear icon')}
                     onClick={() => {
                       setUrl('');
                       setUploadError(null);
@@ -201,7 +201,7 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
                     {validUrl && uploadError && getDraggedErrorMessage(uploadError)}
                     {!validUrl &&
                       t(
-                        'Please enter a valid URL for the icon. The URL should be less than {{ max }} characters.',
+                        'Enter a valid URL for the icon. The URL must be less than {{ max }} characters.',
                         { max: MAX_ANNOTATION_LENGTH },
                       )}
                   </HelperTextItem>
@@ -222,10 +222,10 @@ export const CustomIconModal: FC<CustomIconModalProps> = ({
             handleModalToggle();
           }}
         >
-          Confirm
+          {t('Save')}
         </Button>
         <Button key="cancel" variant="link" onClick={handleModalToggle}>
-          Cancel
+          {t('Cancel')}
         </Button>
       </ModalFooter>
     </Modal>

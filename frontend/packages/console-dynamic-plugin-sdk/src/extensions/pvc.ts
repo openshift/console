@@ -1,5 +1,5 @@
-import { Extension, CodeRef } from '../types';
-import { K8sResourceCommon } from './console-types';
+import type { Extension, CodeRef } from '../types';
+import type { K8sResourceCommon } from './console-types';
 
 /** This extension can be used to specify additional properties that will be used when creating PVC resources on the PVC list page. */
 export type PVCCreateProp = Extension<

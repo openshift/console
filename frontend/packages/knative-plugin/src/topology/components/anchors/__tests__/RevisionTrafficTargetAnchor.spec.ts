@@ -1,4 +1,5 @@
-import { Node, Point, Rect } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { Point, Rect } from '@patternfly/react-topology';
 import RevisionTrafficTargetAnchor from '../RevisionTrafficTargetAnchor';
 
 function createMockNode(bounds: Rect): Node {

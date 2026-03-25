@@ -1,10 +1,11 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
-import { Page } from '@console/internal/components/utils';
+import type { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuActions, MultiTabListPage } from '@console/shared';
+import type { MenuActions } from '@console/shared';
+import { MultiTabListPage } from '@console/shared';
 import { ServiceModel, RevisionModel, RouteModel } from '../../../models';
 import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';

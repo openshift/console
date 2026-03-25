@@ -1,4 +1,4 @@
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 
 export type ActionObject<T extends readonly PropertyKey[]> = {
   [K in T[number]]: Action;
@@ -76,4 +76,8 @@ export enum MachineSetActionCreator {
 export enum BuildConfigActionCreator {
   StartBuild = 'StartBuild',
   StartLastRun = 'StartLastRun',
+}
+
+export enum CronJobActionCreator {
+  StartJob = 'StartJob',
 }

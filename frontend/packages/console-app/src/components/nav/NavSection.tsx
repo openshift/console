@@ -2,13 +2,11 @@ import type { FC } from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import { NavExpandable, NavGroup, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import type { NavExtension, K8sModel, ResourceNavItem } from '@console/dynamic-plugin-sdk';
 import {
-  NavExtension,
   isHrefNavItem,
   isResourceNavItem,
   isSeparator,
-  K8sModel,
-  ResourceNavItem,
   isResourceNSNavItem,
 } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';

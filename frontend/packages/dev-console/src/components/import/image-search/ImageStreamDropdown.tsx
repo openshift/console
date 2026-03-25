@@ -1,11 +1,14 @@
 import type { FC } from 'react';
-import { useContext, useCallback, useEffect } from 'react';
-import { useFormikContext, FormikValues } from 'formik';
+import { useContext, useCallback, useEffect, useMemo, useRef } from 'react';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ImageStreamModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
-import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
@@ -16,8 +19,7 @@ const ImageStreamDropdown: FC<{
   className?: string;
 }> = ({ disabled = false, formContextField, reloadCount, className }) => {
   const { t } = useTranslation();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const imgCollection = {};
+  const imgCollection = useRef<Record<string, Record<string, K8sResourceKind>>>({});
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { imageStream, formType } = _.get(values, formContextField) || values;
@@ -28,10 +30,10 @@ const ImageStreamDropdown: FC<{
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
   const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const collectImageStreams = (namespace: string, resource: K8sResourceKind): void => {
-    if (!imgCollection[namespace]) {
-      imgCollection[namespace] = {};
+    if (!imgCollection.current[namespace]) {
+      imgCollection.current[namespace] = {};
     }
-    imgCollection[namespace][resource.metadata.name] = resource;
+    imgCollection.current[namespace][resource.metadata.name] = resource;
   };
   const getTitle = () => {
     return loading && !isStreamsAvailable
@@ -48,7 +50,7 @@ const ImageStreamDropdown: FC<{
         img === imageStream.image ? imageStream.tag : '',
       );
       formType !== 'edit' && setFieldValue(`${fieldPrefix}isi`, initialIsi);
-      const image = _.get(imgCollection, [imageStream.namespace, img], {});
+      const image = _.get(imgCollection.current, [imageStream.namespace, img], {});
       dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
     },
     [
@@ -59,7 +61,6 @@ const ImageStreamDropdown: FC<{
       imageStream.namespace,
       formType,
       initialIsi,
-      imgCollection,
       dispatch,
     ],
   );
@@ -83,6 +84,42 @@ const ImageStreamDropdown: FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageStream.image, isStreamsAvailable]);
 
+  const watchSpec = useMemo(
+    () =>
+      imageStream.namespace
+        ? {
+            imagestreams: {
+              isList: true,
+              kind: referenceForModel(ImageStreamModel),
+              namespace: imageStream.namespace,
+            },
+          }
+        : {},
+    [imageStream.namespace],
+  );
+
+  const watchedResources = useK8sWatchResources<{ imagestreams?: K8sResourceKind[] }>(watchSpec);
+
+  const resources = useMemo(
+    () =>
+      imageStream.namespace
+        ? [
+            {
+              data: watchedResources.imagestreams?.data,
+              loaded: watchedResources.imagestreams?.loaded,
+              loadError: watchedResources.imagestreams?.loadError,
+              kind: ImageStreamModel.kind,
+            },
+          ]
+        : [],
+    [
+      imageStream.namespace,
+      watchedResources.imagestreams?.data,
+      watchedResources.imagestreams?.loaded,
+      watchedResources.imagestreams?.loadError,
+    ],
+  );
+
   useEffect(() => {
     reloadCount && imageStream.image && onDropdownChange(imageStream.image);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,7 +129,7 @@ const ImageStreamDropdown: FC<{
     <ResourceDropdownField
       name={`${fieldPrefix}imageStream.image`}
       label={t('devconsole~Image Stream')}
-      resources={getImageStreamResource(imageStream.namespace)}
+      resources={resources}
       dataSelector={['metadata', 'name']}
       key={imageStream.namespace}
       fullWidth

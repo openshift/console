@@ -1,11 +1,11 @@
 import type { FC } from 'react';
 import { Alert, AlertActionCloseButton, Grid, GridItem } from '@patternfly/react-core';
-import { FormikProps } from 'formik';
+import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { LoadingInline, useAccessReview2 } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FlexForm,
   FormBody,
@@ -13,14 +13,14 @@ import {
   FormFooter,
   CodeEditorField,
   UNASSIGNED_APPLICATIONS_KEY,
-  useFormikValidationFix,
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { EventingBrokerModel } from '../../../models';
 import { LABEL_PART_OF } from '../const';
-import { AddBrokerFormYamlValues } from '../import-types';
+import type { AddBrokerFormYamlValues } from '../import-types';
 import { convertFormToBrokerYaml } from './add-broker-utils';
 
 interface AddBrokerFormProps {
@@ -51,7 +51,7 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
     verb: 'create',
   });
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.addBrokerForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.addBrokerForm.editor.lastView';
 
   const convertYamlToForm = (yamlBroker: K8sResourceKind) => {
     const appGroupName = yamlBroker.metadata?.labels?.[LABEL_PART_OF];
@@ -135,7 +135,7 @@ const AddBrokerForm: FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFormProp
         editor: yamlEditor,
         sanitizeTo: sanitizeToYaml,
       }}
-      lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+      lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
     />
   ) : (
     <Alert variant="custom" title={t('knative-plugin~Broker cannot be created')} isInline>

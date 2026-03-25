@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { StorageClass } from '@console/internal/components/storage-class-form';
+import type { StorageClass } from '@console/internal/components/storage-class-form';
 import { detailsPage } from '../details-page';
 import { modal } from '../modal';
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
-import {
+import type {
   DeployImageFormData,
   GitImportFormData,
   UploadJarFormData,
@@ -8,8 +8,8 @@ import {
 import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import { ImportStrategy } from '@console/git-service/src';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  K8sResourceKind,
   ImagePullPolicy,
   k8sGet,
   k8sCreate,
@@ -18,7 +18,8 @@ import {
 } from '@console/internal/module/k8s';
 import type { NameValuePair } from '@console/shared/src/components/formik-fields/field-types';
 import { ServiceModel, DomainMappingModel } from '../models';
-import { DomainMappingResponse, DomainMappingResponseAction } from '../types';
+import type { DomainMappingResponse } from '../types';
+import { DomainMappingResponseAction } from '../types';
 
 export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 export const getKnativeServiceDepResource = (

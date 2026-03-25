@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sPodControllerKind, K8sModel, referenceFor } from '@console/internal/module/k8s';
+import type { K8sPodControllerKind, K8sModel } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { LazyDeletePDBModalOverlay } from '../../components/pdb/modals';
-import { PodDisruptionBudgetKind } from '../../components/pdb/types';
+import type { PodDisruptionBudgetKind } from '../../components/pdb/types';
 import { getPDBResource } from '../../components/pdb/utils/get-pdb-resources';
 import { PodDisruptionBudgetModel } from '../../models';
 import { PDBActionCreator } from './types';

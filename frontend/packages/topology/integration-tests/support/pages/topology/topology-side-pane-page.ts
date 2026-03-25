@@ -1,4 +1,5 @@
-import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
+import type { nodeActions } from '@console/dev-console/integration-tests/support/constants';
+import { resources } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { topologyActions } from './topology-actions-page';

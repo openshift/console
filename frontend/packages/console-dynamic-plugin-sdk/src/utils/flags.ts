@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { FeatureSubStore } from '../app/features';
+import type { FeatureSubStore } from '../app/features';
 
 export type UseFlag = (flag: string) => boolean;
 

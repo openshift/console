@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { CommonActionCreator } from './types';
 import { useCommonActions } from './useCommonActions';
 

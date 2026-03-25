@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
 import { TopologyViewType } from '../topology-types';
 

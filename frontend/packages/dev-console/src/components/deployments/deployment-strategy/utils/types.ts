@@ -1,5 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Resources } from '../../../import/import-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { Resources } from '../../../import/import-types';
 
 export enum DeploymentStrategyType {
   recreateParams = 'Recreate',

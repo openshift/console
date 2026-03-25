@@ -7,13 +7,15 @@ import {
   DeploymentModel,
   DeploymentConfigModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
+import type { NameValuePair } from '@console/shared';
+import { getRandomChars, getResourceLimitsData } from '@console/shared';
 import { CUSTOM_ICON_ANNOTATION } from '../../const';
 import {
   getAppLabels,
@@ -25,14 +27,15 @@ import {
   mergeData,
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
-import { AppResources } from '../edit-application/edit-application-types';
+import type { AppResources } from '../edit-application/edit-application-types';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import {
   createOrUpdateImageStream,
   createProject,
   createWebhookSecret,
 } from './import-submit-utils';
-import { Resources, UploadJarFormData } from './import-types';
+import type { UploadJarFormData } from './import-types';
+import { Resources } from './import-types';
 
 export const createOrUpdateDeployment = (
   formData: UploadJarFormData,

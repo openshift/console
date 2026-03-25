@@ -1,4 +1,4 @@
-import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 
 export const doesHpaMatch = (workload: K8sResourceCommon) => (
   thisHPA: HorizontalPodAutoscalerKind,

@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { SelectInputOption } from '@console/shared';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { SelectInputOption } from '@console/shared';
 import { getBootstrapServers } from '../utils/create-eventsources-utils';
 import { kafkaBootStrapServerResourcesWatcher } from '../utils/get-knative-resources';
 

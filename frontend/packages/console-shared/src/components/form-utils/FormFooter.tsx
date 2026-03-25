@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { useScrollContainer } from '../../hooks/useScrollContainer';
 import { Shadows, useScrollShadows } from '../../hooks/useScrollShadows';
-import { FormFooterProps } from './form-utils-types';
+import type { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
 

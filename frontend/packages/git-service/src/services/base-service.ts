@@ -1,4 +1,4 @@
-import {
+import type {
   BranchList,
   BuildType,
   GitSource,

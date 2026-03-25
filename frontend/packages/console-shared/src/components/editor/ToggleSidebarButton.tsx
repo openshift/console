@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { CodeEditorControl, CodeEditorControlProps } from '@patternfly/react-code-editor';
+import type { CodeEditorControlProps } from '@patternfly/react-code-editor';
+import { CodeEditorControl } from '@patternfly/react-code-editor';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
 import { useTranslation } from 'react-i18next';
 

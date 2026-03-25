@@ -1,7 +1,7 @@
 import type { ReactElement, FC } from 'react';
 import { cloneElement } from 'react';
 import { css } from '@patternfly/react-styles';
-import { StatusComponentProps } from '../../../extensions/console-types';
+import type { StatusComponentProps } from '../../../extensions/console-types';
 import { DASH } from '../../constants';
 import CamelCaseWrap from '../utils/camel-case-wrap';
 

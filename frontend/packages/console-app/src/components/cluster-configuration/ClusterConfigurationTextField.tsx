@@ -10,7 +10,7 @@ import {
 import { ClusterConfigurationTextField } from '@console/dynamic-plugin-sdk/src';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration';
 import { useDebounceCallback } from './hooks';
-import { ResolvedClusterConfigurationItem } from './types';
+import type { ResolvedClusterConfigurationItem } from './types';
 
 type ClusterConfigurationTextFieldProps = {
   item: ResolvedClusterConfigurationItem;

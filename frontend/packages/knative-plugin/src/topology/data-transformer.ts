@@ -1,7 +1,7 @@
-import { Model } from '@patternfly/react-topology/dist/esm/types';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { Model } from '@patternfly/react-topology/dist/esm/types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
-import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
+import type { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
 import { CAMEL_SOURCE_INTEGRATION, EVENT_SOURCE_KAFKA_KIND } from '../const';
 import {
   getDynamicEventSourcesModelRefs,
@@ -20,7 +20,8 @@ import {
   getKnativeDynamicResources,
   getKameletSinkAndSourceBindings,
 } from './knative-topology-utils';
-import { KnativeUtil, NodeType } from './topology-types';
+import type { KnativeUtil } from './topology-types';
+import { NodeType } from './topology-types';
 
 const addKnativeTopologyData = (
   graphModel: Model,

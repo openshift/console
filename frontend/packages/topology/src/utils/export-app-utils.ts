@@ -1,4 +1,5 @@
-import { k8sCreate, k8sGet, k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sCreate, k8sGet, k8sKill } from '@console/internal/module/k8s';
 import { ExportModel } from '../models/gitops-primer';
 
 export const getExportAppData = (name: string, namespace: string) => {

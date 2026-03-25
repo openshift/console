@@ -17,10 +17,8 @@ import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
 } from '@console/topology/src/filters/const';
-import {
-  TopologyDataResources,
-  TopologyDisplayFilterType,
-} from '@console/topology/src/topology-types';
+import type { TopologyDataResources } from '@console/topology/src/topology-types';
+import { TopologyDisplayFilterType } from '@console/topology/src/topology-types';
 import { WORKLOAD_TYPES } from '@console/topology/src/utils/topology-utils';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from '../components/const';
 import {

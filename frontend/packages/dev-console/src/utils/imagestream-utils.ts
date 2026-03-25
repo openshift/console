@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import {
@@ -10,9 +10,13 @@ import {
   getMostRecentBuilderTag,
   getBuilderTagsSortedByVersion,
 } from '@console/internal/components/image-stream';
-import { FirehoseResource } from '@console/internal/components/utils';
+import type { FirehoseResource } from '@console/internal/components/utils';
 import { ProjectModel, ImageStreamModel } from '@console/internal/models';
-import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type {
+  ContainerPort,
+  K8sResourceKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
 
 export interface ImageTag {
   name: string;

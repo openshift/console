@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
+import type { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { canRerunBuildRun, rerunBuildRun } from '../api';
 import { BuildRunModel } from '../models';
-import { BuildRun } from '../types';
+import type { BuildRun } from '../types';
 
 const useBuildRunActions = (buildRun: BuildRun) => {
   const { t } = useTranslation();

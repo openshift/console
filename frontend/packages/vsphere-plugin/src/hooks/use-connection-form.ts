@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sModel, k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
-import { ConnectionFormFormikValues } from '../components/types';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
+import type { ConnectionFormFormikValues } from '../components/types';
 import { decodeBase64, getErrorMessage } from '../components/utils';
 import { VSPHERE_CREDS_SECRET_NAME, VSPHERE_CREDS_SECRET_NAMESPACE } from '../constants';
-import { Infrastructure, Secret } from '../resources';
+import type { Infrastructure, Secret } from '../resources';
 import { useConnectionModels } from './use-connection-models';
 
 export class LoadError extends Error {

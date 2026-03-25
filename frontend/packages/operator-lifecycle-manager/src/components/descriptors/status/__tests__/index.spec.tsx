@@ -1,8 +1,10 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '../..';
+import type { DescriptorDetailsItemProps } from '../..';
+import { DescriptorDetailsItem } from '../..';
 import { testModel, testResourceInstance } from '../../../../../mocks';
-import { Descriptor, StatusCapability, DescriptorType } from '../../types';
+import type { Descriptor } from '../../types';
+import { StatusCapability, DescriptorType } from '../../types';
 
 const OBJ = {
   ...testResourceInstance,

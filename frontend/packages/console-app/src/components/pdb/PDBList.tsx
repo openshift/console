@@ -7,8 +7,8 @@ import {
   getNameCellProps,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -19,7 +19,7 @@ import { DASH } from '@console/shared/src/constants/ui';
 import { PodDisruptionBudgetModel } from '../../models';
 import AvailabilityDisplay from './AvailabilityDisplay';
 import DisruptionsAllowed from './DisruptionsAllowed';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 
 export const tableColumnInfo = [
   { id: 'name' },

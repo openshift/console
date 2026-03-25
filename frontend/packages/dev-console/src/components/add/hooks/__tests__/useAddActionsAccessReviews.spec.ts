@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { checkAccess } from '@console/internal/components/utils';
-import {
+import type {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
 } from '@console/internal/module/k8s';

@@ -10,11 +10,12 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 import { PercentIcon } from '@patternfly/react-icons/dist/esm/icons/percent-icon';
-import { FormikErrors, useFormikContext } from 'formik';
+import type { FormikErrors } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
+import type { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
 import { getMetricByType } from './hpa-utils';
-import { HPAFormValues, SupportedMetricTypes } from './types';
+import type { HPAFormValues, SupportedMetricTypes } from './types';
 
 type HPAUtilizationFieldProps = {
   disabled?: boolean;

@@ -1,5 +1,5 @@
-import { history } from '@console/internal/components/utils/router';
+import type { FileUploadHandler } from '@console/dynamic-plugin-sdk';
 
-export const jarFileUploadHandler = (file: File, namespace: string) => {
-  history.push(`/upload-jar/ns/${namespace}`);
+export const jarFileUploadHandler: FileUploadHandler = (file, namespace) => {
+  return `/upload-jar/ns/${namespace}`;
 };

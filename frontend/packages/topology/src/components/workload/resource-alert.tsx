@@ -1,23 +1,20 @@
 import { AlertActionLink } from '@patternfly/react-core';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { DeploymentActionCreator, CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
 import { useDeploymentActions } from '@console/app/src/actions/hooks/useDeploymentActions';
-import { Action, DetailsResourceAlertContent, useAccessReview } from '@console/dynamic-plugin-sdk';
+import type { Action, DetailsResourceAlertContent } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import {
   DaemonSetModel,
   DeploymentConfigModel,
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import {
-  K8sResourceCondition,
-  modelFor,
-  referenceFor,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import type { K8sResourceCondition } from '@console/internal/module/k8s';
+import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { getResource } from '../../utils';

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import SideBarBody from './components/SideBarBody';
 import SideBarHeading from './components/SideBarHeading';
 

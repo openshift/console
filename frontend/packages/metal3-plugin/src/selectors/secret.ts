@@ -1,4 +1,4 @@
-import { SecretKind } from '@console/internal/module/k8s/types';
+import type { SecretKind } from '@console/internal/module/k8s/types';
 
 export const getSecretUsername = (secret: SecretKind): string =>
   secret && secret.data && atob(secret.data.username);

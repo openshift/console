@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ResourceLimitsModal from '../ResourceLimitsModal';
@@ -20,6 +20,7 @@ describe('ResourceLimitsModal Form', () => {
     jest.clearAllMocks();
     formProps = {
       ...formikFormProps,
+      isSubmitting: false,
       cancel: jest.fn(),
       resource: {
         apiVersion: 'apps/v1',
@@ -63,7 +64,7 @@ describe('ResourceLimitsModal Form', () => {
     renderWithProviders(<ResourceLimitsModal {...formProps} />);
 
     expect(screen.getByText('Edit resource limits')).toBeVisible();
-    expect(screen.getByRole('form', { name: 'Edit resource limits modal' })).toBeVisible();
+    expect(screen.getByRole('form')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
   });
@@ -78,7 +79,7 @@ describe('ResourceLimitsModal Form', () => {
   it('calls the handleSubmit function when the form is submitted', async () => {
     renderWithProviders(<ResourceLimitsModal {...formProps} />);
 
-    await fireEvent.submit(screen.getByRole('form', { name: 'Edit resource limits modal' }));
+    await fireEvent.submit(screen.getByRole('form'));
     expect(formProps.handleSubmit).toHaveBeenCalledTimes(1);
   });
 });

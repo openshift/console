@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { observer, GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { referenceFor } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import { getResource } from '../utils';

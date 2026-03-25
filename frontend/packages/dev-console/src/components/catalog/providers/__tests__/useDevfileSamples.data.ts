@@ -1,5 +1,5 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src';
-import { DevfileSample } from '../../../import/devfile/devfile-types';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src';
+import type { DevfileSample } from '../../../import/devfile/devfile-types';
 
 export const devfileSamples: DevfileSample[] = [
   {

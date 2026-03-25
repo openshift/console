@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { NormalizedBuilderImages } from '../../../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../../../utils/imagestream-utils';
 import BuilderImageSelector from '../BuilderImageSelector';
 
 jest.mock('@console/shared', () => ({

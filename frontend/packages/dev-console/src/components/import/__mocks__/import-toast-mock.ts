@@ -1,5 +1,5 @@
 import { DeploymentModel, RouteModel } from '@console/internal/models';
-import { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 type DeployedResource = K8sResourceKind & {
   spec: {

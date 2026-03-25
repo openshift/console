@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 
 type ResolveAdapterProps<D, T> = {
   resource: K8sResourceCommon;

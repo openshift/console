@@ -1,4 +1,4 @@
-import { TaskRunKind } from '../../../types';
+import type { TaskRunKind } from '../../../types';
 
 export const LogSnippetTaskData: TaskRunKind[] = [
   {

@@ -7,7 +7,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PodDisruptionBudgetModel } from '../../models';
 import PodDisruptionBudgetList from './PDBList';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 
 export const PodDisruptionBudgetsPage: FC<PodDisruptionBudgetsPageProps> = ({
   namespace,

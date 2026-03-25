@@ -1,13 +1,12 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import {
-  isNetworkAdapter,
-  useResolvedExtensions,
+import type { GraphElement } from '@patternfly/react-topology';
+import type {
   NetworkAdapter,
   K8sResourceCommon,
   DetailsTabSectionExtensionHook,
 } from '@console/dynamic-plugin-sdk';
+import { isNetworkAdapter, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';

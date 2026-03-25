@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { EnvironmentField, NameValueFromPair, NameValuePair } from '@console/shared/src';
+import type { NameValueFromPair, NameValuePair } from '@console/shared/src';
+import { EnvironmentField } from '@console/shared/src';
 import FormSection from '../../import/section/FormSection';
 
 export type EnvironmentVariablesSectionFormData = {

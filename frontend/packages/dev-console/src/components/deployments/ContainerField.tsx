@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';

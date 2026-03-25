@@ -14,28 +14,28 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { Status } from '@console/shared/src/components/status/Status';
 import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
 import {
   FLAGS,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
   REQUESTER_FILTER,
 } from '@console/shared/src/constants/common';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -345,15 +345,14 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
 
 export const NamespacesList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const columns = useNamespacesColumns();
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -422,7 +421,7 @@ export const NamespacesList = (props) => {
     return !filters.requester || filters.requester.includes(String(requesterType));
   }, []);
 
-  if (!userSettingsLoaded) {
+  if (!columnPreferenceLoaded) {
     return null;
   }
 
@@ -656,11 +655,8 @@ const getProjectDataViewRows = (
 };
 
 const ProjectLink = ({ project }) => {
-  const dispatch = useDispatch();
-  const [, setLastNamespace] = useUserSettingsCompatibility(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
+  const dispatch = useConsoleDispatch();
+  const [, setLastNamespace] = useUserPreference(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   const basePath = url.pathname;
@@ -719,11 +715,10 @@ export const ProjectsTable = (props) => {
 
 export const ProjectList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -731,7 +726,7 @@ export const ProjectList = (props) => {
   const showMetrics = isPrometheusAvailable && canGetNS;
   const showActions = true;
   const columns = useProjectsColumns({ showMetrics, showActions });
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -804,7 +799,7 @@ export const ProjectList = (props) => {
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS) || !userSettingsLoaded) {
+  if (flagPending(canGetNS) || !columnPreferenceLoaded) {
     return null;
   }
 

@@ -1,10 +1,6 @@
 import type { FC, ComponentType } from 'react';
-import {
-  GraphElement,
-  WithContextMenuProps,
-  withDragNode,
-  withSelection,
-} from '@patternfly/react-topology';
+import type { GraphElement, WithContextMenuProps } from '@patternfly/react-topology';
+import { withDragNode, withSelection } from '@patternfly/react-topology';
 import { contextMenuActions } from '../../actions';
 import {
   withContextMenu,

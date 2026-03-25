@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { setActiveApplication } from '@console/internal/actions/ui';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { QUERY_PROPERTIES } from '../const';
 

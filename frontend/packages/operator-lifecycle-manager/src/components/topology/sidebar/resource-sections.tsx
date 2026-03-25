@@ -1,16 +1,16 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { GraphElement } from '@patternfly/react-topology';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
+import type { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '@console/topology/src/operators/components/const';
 import { ClusterServiceVersionModel } from '../../../models';
-import { ClusterServiceVersionKind } from '../../../types';
+import type { ClusterServiceVersionKind } from '../../../types';
 import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
-import { OperatorGroupData } from './types';
+import type { OperatorGroupData } from './types';
 
 const ResourceSection: FC<{ item: TopologyDataObject<OperatorGroupData> }> = ({ item }) => {
   const { resource, data } = item;

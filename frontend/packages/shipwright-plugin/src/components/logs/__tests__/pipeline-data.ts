@@ -1,5 +1,5 @@
 import { preferredNameAnnotation } from '@console/dev-console/src/const';
-import {
+import type {
   PipelineKind,
   PipelineRunKind,
   PipelineSpec,
@@ -7,8 +7,8 @@ import {
   TaskKind,
   TaskKindAlpha,
 } from '@console/dev-console/src/types/pipeline';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { TaskRunKind } from '../../../types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { TaskRunKind } from '../../../types';
 import { TektonResourceLabel } from '../TektonTaskRunLog';
 
 export enum DataState {

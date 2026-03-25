@@ -1,18 +1,17 @@
-import { Node, Edge, GraphElement } from '@patternfly/react-topology';
+import type { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import * as GitUrlParse from 'git-url-parse';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import {
+import type {
   GetTopologyResourceObject,
   GetResource,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import {
+import type {
   K8sResourceKind,
   K8sResourceKindReference,
-  modelFor,
-  referenceFor,
   RouteKind,
 } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/shared/src/components/utils/routes';
 import OdcBaseNode from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';

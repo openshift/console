@@ -15,7 +15,7 @@ import {
   ClusterBuildStrategyModelV1Alpha1,
   BuildStrategyModelV1Alpha1,
 } from '../../models';
-import { Build, BuildRun, BuildSpec } from '../../types';
+import type { Build, BuildRun, BuildSpec } from '../../types';
 import { isV1Alpha1Resource } from '../../utils';
 import BuildOutput from '../build-list/BuildOutput';
 

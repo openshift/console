@@ -1,8 +1,9 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { Action } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, K8sKind, referenceFor } from '@console/internal/module/k8s';
-import { ResourceActionFactory } from './types';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import type { ResourceActionFactory } from './types';
 
 const healthChecksAdded = (resource: K8sResourceKind): boolean => {
   const containers = resource?.spec?.template?.spec?.containers;

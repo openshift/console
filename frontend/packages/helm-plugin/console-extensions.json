@@ -135,6 +135,17 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/helm/ns/:ns/url-chart"],
+      "component": { "$codeRef": "HelmURLChartInstallPage" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "helm-chart-repositories",

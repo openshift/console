@@ -12,13 +12,12 @@ import {
   getProbesData,
 } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
 import { ensurePortExists } from '@console/dev-console/src/components/import/deployImage-submit-utils';
-import {
-  DeployImageFormData,
-  Resources,
-} from '@console/dev-console/src/components/import/import-types';
+import type { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
 import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
-import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { getLimitsDataFromResource } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';

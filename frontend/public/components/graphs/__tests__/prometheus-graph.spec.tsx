@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -9,7 +9,6 @@ import {
   PrometheusGraph,
   PrometheusGraphLink,
 } from '@console/internal/components/graphs/prometheus-graph';
-import store from '@console/internal/redux';
 
 jest.mock('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective', () => ({
   default: jest.fn(),
@@ -51,19 +50,20 @@ describe('PrometheusGraph', () => {
 describe('PrometheusGraphLink', () => {
   beforeEach(() => {
     window.SERVER_FLAGS.prometheusBaseURL = 'prometheusBaseURL';
-    store.dispatch(UIActions.setActiveNamespace('default'));
     useActivePerspectiveMock.mockClear();
   });
 
   it('should not render a link when query is empty', () => {
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
 
-    renderWithProviders(
+    const { store } = renderWithProviders(
       <PrometheusGraphLink query="">
         <p>Test content</p>
       </PrometheusGraphLink>,
-      { store },
     );
+    act(() => {
+      store.dispatch(UIActions.setActiveNamespace('default'));
+    });
 
     expect(screen.getByText('Test content')).toBeVisible();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
@@ -87,12 +87,14 @@ describe('PrometheusGraphLink', () => {
       it(`should generate correct URL for ${description}`, () => {
         useActivePerspectiveMock.mockReturnValue([perspective, () => {}]);
 
-        renderWithProviders(
+        const { store } = renderWithProviders(
           <PrometheusGraphLink query={MOCK_PROMETHEUS_QUERY}>
             <p>{MOCK_CONTENT_TEXT}</p>
           </PrometheusGraphLink>,
-          { store },
         );
+        act(() => {
+          store.dispatch(UIActions.setActiveNamespace('default'));
+        });
 
         expect(screen.getByText(MOCK_CONTENT_TEXT)).toBeVisible();
         const link = screen.getByRole('link');
@@ -102,15 +104,17 @@ describe('PrometheusGraphLink', () => {
     });
 
     it('should not render link when query is empty regardless of permissions', () => {
-      store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
       useActivePerspectiveMock.mockReturnValue(['admin', () => {}]);
 
-      renderWithProviders(
+      const { store } = renderWithProviders(
         <PrometheusGraphLink query="">
           <p>Test content</p>
         </PrometheusGraphLink>,
-        { store },
       );
+      act(() => {
+        store.dispatch(UIActions.setActiveNamespace('default'));
+        store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
+      });
 
       expect(screen.getByText('Test content')).toBeVisible();
       expect(screen.queryByRole('link')).not.toBeInTheDocument();
@@ -118,15 +122,17 @@ describe('PrometheusGraphLink', () => {
   });
 
   it('should use ariaChartLinkLabel for accessibility', () => {
-    store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
 
-    renderWithProviders(
+    const { store } = renderWithProviders(
       <PrometheusGraphLink query={MOCK_PROMETHEUS_QUERY} ariaChartLinkLabel={MOCK_ARIA_LABEL}>
         <p>{MOCK_CONTENT_TEXT}</p>
       </PrometheusGraphLink>,
-      { store },
     );
+    act(() => {
+      store.dispatch(UIActions.setActiveNamespace('default'));
+      store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
+    });
 
     expect(screen.getByText(MOCK_CONTENT_TEXT)).toBeVisible();
     const link = screen.getByRole('link');
@@ -134,18 +140,20 @@ describe('PrometheusGraphLink', () => {
   });
 
   it('should render children content correctly', () => {
-    store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
 
-    renderWithProviders(
+    const { store } = renderWithProviders(
       <PrometheusGraphLink query="test">
         <div>
           <span>Chart data</span>
           <button>Action</button>
         </div>
       </PrometheusGraphLink>,
-      { store },
     );
+    act(() => {
+      store.dispatch(UIActions.setActiveNamespace('default'));
+      store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
+    });
 
     expect(screen.getByText('Chart data')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();

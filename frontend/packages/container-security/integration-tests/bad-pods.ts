@@ -1,5 +1,6 @@
-import { vulnPriority, Priority } from '../src/const';
-import { ImageManifestVuln } from '../src/types';
+import type { Priority } from '../src/const';
+import { vulnPriority } from '../src/const';
+import type { ImageManifestVuln } from '../src/types';
 
 export const fakeVulnFor = (priority: Priority): ImageManifestVuln => {
   return {

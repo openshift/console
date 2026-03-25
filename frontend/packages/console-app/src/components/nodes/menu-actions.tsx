@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { k8sUpdateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { CertificateSigningRequestModel } from '@console/internal/models';
-import {
+import type {
   CertificateSigningRequestKind,
   ExtensionHook,
   NodeKind,
-  referenceFor,
 } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { LazyConfigureUnschedulableModalOverlay } from './modals';

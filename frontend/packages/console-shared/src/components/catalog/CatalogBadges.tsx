@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Label, Tooltip } from '@patternfly/react-core';
-import { CatalogItemBadge } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { CatalogItemBadge } from '@console/dynamic-plugin-sdk/src/extensions';
 import './CatalogBadges.scss';
 
 type CatalogBadgesProps = {

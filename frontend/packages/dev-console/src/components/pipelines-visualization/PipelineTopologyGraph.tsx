@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { memo } from 'react';
 import { css } from '@patternfly/react-styles';
-import { ComponentFactory, Model } from '@patternfly/react-topology';
+import type { ComponentFactory, Model } from '@patternfly/react-topology';
 import PipelineVisualizationSurface from './PipelineVisualizationSurface';
 
 import './PipelineTopologyGraph.scss';
@@ -34,4 +34,4 @@ const PipelineTopologyGraph: FC<PipelineTopologyGraphProps> = ({
   );
 };
 
-export default memo(PipelineTopologyGraph);
+export default memo<PipelineTopologyGraphProps>(PipelineTopologyGraph);

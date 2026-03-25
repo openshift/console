@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import {
-  isDetailsItem,
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type {
   DetailsItem,
   DetailsItemColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
-import { ResolvedExtension, ExtensionTypeGuard } from '@console/dynamic-plugin-sdk/src/types';
+import { isDetailsItem } from '@console/dynamic-plugin-sdk/src/extensions/details-item';
+import type { ResolvedExtension, ExtensionTypeGuard } from '@console/dynamic-plugin-sdk/src/types';
 import { referenceFor, referenceForExtensionModel } from '@console/internal/module/k8s/k8s';
 
 /**

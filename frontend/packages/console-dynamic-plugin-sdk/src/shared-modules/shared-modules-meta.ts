@@ -16,12 +16,16 @@ type SharedModuleMetadata = Partial<{
    * @default false
    */
   allowFallback: boolean;
+
+  /** A message describing the deprecation, if the module is deprecated. */
+  deprecated: string | false;
 }>;
 
 /**
  * Modules shared between the Console application and its dynamic plugins.
  */
 export const sharedPluginModules = [
+  '@openshift/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk',
   '@openshift-console/dynamic-plugin-sdk-internal',
   '@patternfly/react-topology',
@@ -41,15 +45,16 @@ export type SharedModuleNames = typeof sharedPluginModules[number];
  * Metadata associated with the shared modules.
  */
 const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadata> = {
+  '@openshift/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk': {},
   '@openshift-console/dynamic-plugin-sdk-internal': {},
   '@patternfly/react-topology': {},
   react: {},
   'react-i18next': {},
   'react-redux': {},
-  'react-router': { singleton: false }, // fixes runtime error when both v5-compat and v5 are present
-  'react-router-dom': {},
-  'react-router-dom-v5-compat': {},
+  'react-router': {},
+  'react-router-dom': { deprecated: 'Use react-router instead.' },
+  'react-router-dom-v5-compat': { deprecated: 'Use react-router instead.' },
   redux: {},
   'redux-thunk': {},
 };
@@ -60,6 +65,10 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
 ): Required<SharedModuleMetadata> => {
-  const { singleton = true, allowFallback = false } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback };
+  const {
+    singleton = true,
+    allowFallback = false,
+    deprecated = false,
+  } = sharedPluginModulesMetadata[moduleName];
+  return { singleton, allowFallback, deprecated };
 };

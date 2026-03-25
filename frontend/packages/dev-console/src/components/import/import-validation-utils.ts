@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { GitProvider } from '@console/git-service/src';

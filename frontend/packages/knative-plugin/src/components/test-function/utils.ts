@@ -1,4 +1,4 @@
-import { FormikHelpers, FormikValues } from 'formik/dist/types';
+import type { FormikHelpers, FormikValues } from 'formik/dist/types';
 import { InvokeFormat } from './types';
 
 export const getcurrentLanguage = (contentType: string) => {

@@ -9,7 +9,7 @@ import { SecretValue } from '@console/internal/components/configmap-and-secret-d
 import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
-import { CapabilityProps, SpecCapability, StatusCapability } from './types';
+import type { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
 export const Invalid: FC<{ path: string }> = ({ path }) => {
   return (

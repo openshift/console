@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
@@ -8,7 +8,7 @@ import { hasSampleQueryParameter } from '../../utils/samples';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import ImageSearchSection from './image-search/ImageSearchSection';
-import { DeployImageFormProps } from './import-types';
+import type { DeployImageFormProps } from './import-types';
 import NamespaceSection from './NamespaceSection';
 import { DeploySection } from './section/deploy-section/DeploySection';
 import IconSection from './section/IconSection';

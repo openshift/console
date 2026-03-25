@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { ValidationErrorType, ValidationObject } from './types';
+import type { ValidationObject } from './types';
+import { ValidationErrorType } from './types';
 
 const alphanumericRegex = '[a-zA-Z0-9]';
 const alphanumericRegexWithDash = '[-a-zA-Z0-9]';

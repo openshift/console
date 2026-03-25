@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -10,14 +10,11 @@ import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import { togglePaused } from '@console/internal/components/utils/workload-pause';
 import { DeploymentConfigModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  referenceForModel,
-  k8sCreate,
-  K8sModel,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sModel } from '@console/internal/module/k8s';
+import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import { LazyResourceLimitsModalOverlay } from '../../components/modals/resource-limits';
-import { DeploymentActionCreator, ActionObject } from './types';
+import type { ActionObject } from './types';
+import { DeploymentActionCreator } from './types';
 
 const restartRollout = (model: K8sModel | undefined, obj: K8sResourceKind | undefined) => {
   if (!model || !obj) return Promise.reject(new Error('Model or resource is undefined'));

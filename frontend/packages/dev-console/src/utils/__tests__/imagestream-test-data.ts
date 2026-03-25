@@ -1,5 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ImageTag } from '../imagestream-utils';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { ImageTag } from '../imagestream-utils';
 
 export const ImageStreamTagData: ImageTag = {
   kind: 'ImageStreamTag',

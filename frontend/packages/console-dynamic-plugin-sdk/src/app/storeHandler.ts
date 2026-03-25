@@ -1,4 +1,4 @@
-import { Store } from 'redux';
+import type { Store } from 'redux';
 
 let store: Store;
 

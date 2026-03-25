@@ -1,22 +1,21 @@
 import type { FC } from 'react';
 import { useRef, useState, useCallback } from 'react';
+import type { Language } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
-import { FormikValues, useField, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
-import {
-  useResolvedExtensions,
-  isYAMLTemplate,
-  YAMLTemplate,
-  WatchK8sResource,
-} from '@console/dynamic-plugin-sdk';
+import type { YAMLTemplate, WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, isYAMLTemplate } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
 import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
-import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
+import { definitionFor, referenceForModel } from '@console/internal/module/k8s';
 import { ToggleSidebarButton } from '@console/shared/src/components/editor/ToggleSidebarButton';
 import { useResourceSidebarSamples } from '@console/shared/src/hooks/useResourceSidebarSamples';
-import { CodeEditorFieldProps } from './field-types';
+import type { CodeEditorFieldProps } from './field-types';
 
 import './CodeEditorField.scss';
 
@@ -86,14 +85,14 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
                 (c) => c.CodeEditor,
               )
             }
-            forwardRef={editorRef}
+            ref={editorRef}
             value={field.value}
             minHeight={minHeight ?? '200px'}
             onChange={(yaml: string) => setFieldValue(name, yaml)}
             onSave={onSave}
             showShortcuts={showShortcuts}
             isMinimapVisible={isMinimapVisible}
-            language={language}
+            language={language as Language}
             toolbarLinks={[
               hasSidebarContent && (
                 <ToggleSidebarButton

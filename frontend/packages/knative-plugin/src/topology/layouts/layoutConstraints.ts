@@ -1,10 +1,5 @@
-import {
-  ColaGroup,
-  ColaLink,
-  ColaNode,
-  getGroupPadding,
-  LayoutOptions,
-} from '@patternfly/react-topology';
+import type { ColaLink, ColaNode, LayoutOptions } from '@patternfly/react-topology';
+import { ColaGroup, getGroupPadding } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import {
   TYPE_EVENT_SOURCE_LINK,

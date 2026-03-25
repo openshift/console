@@ -1,4 +1,4 @@
-import { UserRoleBinding, RoleBinding } from '../project-access-form-utils-types';
+import type { UserRoleBinding, RoleBinding } from '../project-access-form-utils-types';
 
 export const mockProjectAccessData = {
   projectAccess: [

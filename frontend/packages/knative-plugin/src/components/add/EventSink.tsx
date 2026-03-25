@@ -1,20 +1,18 @@
 import type { FC } from 'react';
+import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { history } from '@console/internal/components/utils';
-import {
-  K8sResourceKind,
-  modelFor,
-  referenceFor,
-  getGroupVersionKind,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { modelFor, referenceFor, getGroupVersionKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { ALL_APPLICATIONS_KEY, usePerspectives } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { CamelKameletBindingModel, KafkaSinkModel } from '../../models';
@@ -29,7 +27,11 @@ import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSinkValidationSchema } from './eventSink-validation-utils';
 import EventSinkForm from './EventSinkForm';
-import { KnEventCatalogMetaData, EventSinkFormData, EventSinkSyncFormData } from './import-types';
+import type {
+  KnEventCatalogMetaData,
+  EventSinkFormData,
+  EventSinkSyncFormData,
+} from './import-types';
 import KnEventMetaDescription from './KnEventMetaDescription';
 
 interface EventSinkProps {
@@ -49,10 +51,12 @@ const EventSink: FC<EventSinkProps> = ({
   sinkKind = '',
   kameletSink,
 }) => {
+  const navigate = useNavigate();
+  const handleCancel = useCallback(() => navigate(-1), [navigate]);
   const perpectiveExtension = usePerspectives();
   const [perspective] = useActivePerspective();
   const { t } = useTranslation();
-  const application = useSelector(getActiveApplication);
+  const application = useConsoleSelector(getActiveApplication);
   const currentApp = selectedApplication || application;
 
   let sinkApiVersion = '';
@@ -149,7 +153,7 @@ const EventSink: FC<EventSinkProps> = ({
 
     return eventSinkRequest
       .then(() => {
-        handleRedirect(projectName, perspective, perpectiveExtension);
+        handleRedirect(projectName, perspective, perpectiveExtension, navigate);
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
@@ -160,7 +164,7 @@ const EventSink: FC<EventSinkProps> = ({
     <Formik
       initialValues={catalogInitialValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={handleCancel}
       validateOnBlur={false}
       validateOnChange={false}
       validationSchema={eventSinkValidationSchema(t)}

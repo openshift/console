@@ -1,7 +1,7 @@
 import type { FC, ReactNode, MouseEvent, CSSProperties, RefObject } from 'react';
 import * as _ from 'lodash';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   Divider,
   SelectGroup,
@@ -61,8 +61,6 @@ export type ConsoleSelectProps = {
   selectedKey?: string;
   /** Where to place spacers in the dropdown */
   spacerBefore?: Set<string>;
-  /** Key for storing bookmarks in user settings */
-  storageKey?: string;
   /** Style for the dropdown */
   style?: CSSProperties;
   /** Title displayed in the dropdown toggle. Will always be shown regardless of state */
@@ -70,7 +68,7 @@ export type ConsoleSelectProps = {
   /** Prefix for the title in the dropdown toggle */
   titlePrefix?: string;
   /** User settings id prefix for bookmarks */
-  userSettingsPrefix?: string;
+  userPreferencePrefix?: string;
   /** By default, the title prop is shown as the placeholder for when no item is selected. This prop forces the title to always be shown */
   alwaysShowTitle?: boolean;
   /** Whether to render the dropdown inline */
@@ -96,18 +94,6 @@ const ConsoleSelectItem: FC<{
   </SelectOption>
 );
 
-/** Returns true if the given `ref` is inside of the legacy modal container */
-const useInsideLegacyModal = (ref: RefObject<HTMLElement>) => {
-  const [insideLegacyModal, setInsideLegacyModal] = useState(false);
-
-  useEffect(() => {
-    const modal = ref.current?.closest('#modal-container');
-    setInsideLegacyModal(!!modal);
-  }, [ref]);
-
-  return insideLegacyModal;
-};
-
 /**
  * A Select is a dropdown that indicates state.
  *
@@ -130,12 +116,11 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
   menuClassName,
   onChange,
   spacerBefore = new Set(),
-  storageKey,
   style,
   title,
   alwaysShowTitle = false,
   titlePrefix,
-  userSettingsPrefix,
+  userPreferencePrefix,
   renderInline = false,
   ...props
 }) => {
@@ -147,19 +132,13 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Dropdown bookmark state and helpers */
   // Should be undefined so that we don't save undefined-xxx.
-  const bookmarkUserSettingsKey = userSettingsPrefix
-    ? `${userSettingsPrefix}.bookmarks`
+  const bookmarkUserPreferenceKey = userPreferencePrefix
+    ? `${userPreferencePrefix}.bookmarks`
     : undefined;
-  const bookmarkStorageKey = storageKey ? `${storageKey}-bookmarks` : undefined;
 
-  const enableBookmarks = !!bookmarkUserSettingsKey || !!bookmarkStorageKey;
+  const enableBookmarks = !!bookmarkUserPreferenceKey;
 
-  const [bookmarks, setBookmarks] = useUserSettingsCompatibility(
-    bookmarkUserSettingsKey,
-    bookmarkStorageKey,
-    {},
-    true,
-  );
+  const [bookmarks, setBookmarks] = useUserPreference(bookmarkUserPreferenceKey, {}, true);
 
   const onBookmark = useCallback(
     (key: string, isBookmarked: boolean) => {
@@ -173,8 +152,6 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
 
   /* Component refs */
   const dropdownWrapperRef = useRef<HTMLDivElement>(null);
-
-  const insideLegacyModal = useInsideLegacyModal(dropdownWrapperRef);
 
   /* Event handlers */
   const onClick = useCallback(
@@ -320,7 +297,7 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
         zIndex={9999}
         popperProps={{
           preventOverflow: menuClassName === 'prevent-overflow',
-          appendTo: renderInline || insideLegacyModal ? 'inline' : undefined,
+          appendTo: renderInline ? 'inline' : undefined,
         }}
         isScrollable
         style={style}

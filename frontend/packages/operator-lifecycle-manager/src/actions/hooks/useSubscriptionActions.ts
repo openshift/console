@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CommonActionCreator } from '@console/app/src/actions/hooks/types';
 import { useCommonActions } from '@console/app/src/actions/hooks/useCommonActions';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { asAccessReview } from '@console/internal/components/utils';
-import { referenceFor, k8sKill, k8sGet, k8sPatch } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useUninstallOperatorModal } from '../../components/modals/uninstall-operator-modal';
 import { ClusterServiceVersionModel } from '../../models';
-import { SubscriptionKind } from '../../types';
+import type { SubscriptionKind } from '../../types';
 import { SubscriptionActionCreator } from './types';
 
 /**
@@ -31,15 +31,11 @@ export const useSubscriptionActions = (
   const { t } = useTranslation();
   const [model] = useK8sModel(referenceFor(obj));
   const [commonActions] = useCommonActions(model, obj, [CommonActionCreator.Edit]);
-  const uninstallOperatorModal = useUninstallOperatorModal({
-    k8sKill,
-    k8sGet,
-    k8sPatch,
-    subscription: obj,
-  });
 
   const memoizedFilterActions = useDeepCompareMemoize(filterActions);
   const installedCSV = obj.status?.installedCSV;
+
+  const uninstallOperatorModal = useUninstallOperatorModal(obj);
 
   const factory = useMemo(
     () => ({
@@ -59,8 +55,7 @@ export const useSubscriptionActions = (
         };
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [installedCSV, model, obj, t],
+    [installedCSV, model, obj, t, uninstallOperatorModal],
   );
 
   // filter and initialize requested actions or construct list of all SubscriptionActions

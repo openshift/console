@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { Action } from '@console/dynamic-plugin-sdk/src';
+import { useNavigate } from 'react-router';
+import type { Action } from '@console/dynamic-plugin-sdk/src';
 import * as UIActions from '@console/internal/actions/ui';
 import { asAccessReview } from '@console/internal/components/utils';
 import { UserModel } from '@console/internal/models';
-import { referenceFor, UserKind } from '@console/internal/module/k8s';
+import type { UserKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useCommonResourceActions } from '../hooks/useCommonResourceActions';

@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import * as readPkg from 'read-pkg';
+import type { PackageJson } from 'read-pkg';
 import * as semver from 'semver';
 import {
   sharedPluginModules,
@@ -14,7 +14,7 @@ type GeneratedPackage = {
   /** Package output directory. */
   outDir: string;
   /** Package manifest. Note: `version` is updated via the publish script. */
-  manifest: readPkg.PackageJson;
+  manifest: PackageJson;
   /** Additional files or directories to copy to the package output directory. */
   filesToCopy: Record<string, string>;
 };
@@ -22,12 +22,12 @@ type GeneratedPackage = {
 type MissingDependencyCallback = (name: string) => void;
 
 type GetPackageDefinition = (
-  sdkPackage: readPkg.PackageJson,
-  rootPackage: readPkg.PackageJson,
+  sdkPackage: PackageJson,
+  rootPackage: PackageJson,
   missingDepCallback: MissingDependencyCallback,
 ) => GeneratedPackage;
 
-const commonManifestFields: Partial<readPkg.PackageJson> = {
+const commonManifestFields: Partial<PackageJson> = {
   license: 'Apache-2.0',
   homepage:
     'https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk',
@@ -71,35 +71,43 @@ const getReferencedAssets = (outDir: string) => {
 };
 
 const parseDeps = (
-  pkg: readPkg.PackageJson,
+  pkg: PackageJson,
   depNames: string[],
   missingDepCallback: MissingDependencyCallback,
 ) => {
   const srcDeps = { ...pkg.devDependencies, ...pkg.dependencies };
-  depNames.filter((name) => !srcDeps[name]).forEach(missingDepCallback);
+
+  depNames
+    // Console does not have an explicit react-router-dom(-v5-compat) dependency.
+    // react-router-dom(-v5-compat) shared module impl. delegates to react-router.
+    .filter((name) => name !== 'react-router-dom-v5-compat')
+    .filter((name) => name !== 'react-router-dom')
+    .filter((name) => !srcDeps[name])
+    .forEach(missingDepCallback);
+
   return _.pick(srcDeps, depNames);
 };
 
 const parseDepsAs = (
-  pkg: readPkg.PackageJson,
+  pkg: PackageJson,
   deps: { [depName: string]: string },
   missingDepCallback: MissingDependencyCallback,
 ) => _.mapKeys(parseDeps(pkg, Object.keys(deps), missingDepCallback), (value, key) => deps[key]);
 
-const parseSharedModuleDeps = (
-  pkg: readPkg.PackageJson,
-  missingDepCallback: MissingDependencyCallback,
-) =>
+const parseSharedModuleDeps = (pkg: PackageJson, missingDepCallback: MissingDependencyCallback) =>
   parseDeps(
     pkg,
     sharedPluginModules.filter(
-      (m) => !m.startsWith('@openshift-console/') && !getSharedModuleMetadata(m).allowFallback,
+      (m) =>
+        m !== '@openshift/dynamic-plugin-sdk' && // This is a direct SDK dependency as well as a shared module
+        !m.startsWith('@openshift-console/') &&
+        !getSharedModuleMetadata(m).allowFallback,
     ),
     missingDepCallback,
   );
 
 const getMinDepVersion = (
-  pkg: readPkg.PackageJson,
+  pkg: PackageJson,
   depName: string,
   missingDepCallback: MissingDependencyCallback,
 ) => {
@@ -120,8 +128,11 @@ export const getCorePackage: GetPackageDefinition = (
     main: 'lib/lib-core.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseDeps(rootPackage, ['immutable', 'reselect', 'typesafe-actions'], missingDepCallback),
+      ...parseDeps(
+        rootPackage,
+        ['@openshift/dynamic-plugin-sdk', 'immutable', 'reselect', 'typesafe-actions'],
+        missingDepCallback,
+      ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),
     },
     peerDependencies: {
@@ -153,8 +164,7 @@ export const getInternalPackage: GetPackageDefinition = (
     main: 'lib/lib-internal.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk'], missingDepCallback),
-      ...parseDeps(rootPackage, ['immutable'], missingDepCallback),
+      ...parseDeps(rootPackage, ['@openshift/dynamic-plugin-sdk', 'immutable'], missingDepCallback),
     },
   },
   filesToCopy: {
@@ -175,10 +185,19 @@ export const getWebpackPackage: GetPackageDefinition = (
     main: 'lib/lib-webpack.js',
     ...commonManifestFields,
     dependencies: {
-      ...parseDeps(sdkPackage, ['@openshift/dynamic-plugin-sdk-webpack'], missingDepCallback),
       ...parseDeps(
         rootPackage,
-        ['ajv', 'chalk', 'comment-json', 'find-up', 'glob', 'read-pkg', 'semver'],
+        [
+          '@openshift/dynamic-plugin-sdk',
+          '@openshift/dynamic-plugin-sdk-webpack',
+          'ajv',
+          'chalk',
+          'comment-json',
+          'find-up',
+          'glob',
+          'read-pkg',
+          'semver',
+        ],
         missingDepCallback,
       ),
       ...parseDepsAs(rootPackage, { 'lodash-es': 'lodash' }, missingDepCallback),

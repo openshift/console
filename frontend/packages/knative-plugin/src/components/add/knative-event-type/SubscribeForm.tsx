@@ -1,11 +1,11 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   CodeEditorField,
   FlexForm,
@@ -35,7 +35,7 @@ export interface SubscribeFormProps {
 
 type Props = FormikProps<FormikValues> & SubscribeFormProps;
 
-const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.addSubscriberForm.editor.lastView';
+const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.addSubscriberForm.editor.lastView';
 
 const SubscribeForm: FC<Props> = ({
   filterEnabled,
@@ -99,7 +99,7 @@ const SubscribeForm: FC<Props> = ({
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

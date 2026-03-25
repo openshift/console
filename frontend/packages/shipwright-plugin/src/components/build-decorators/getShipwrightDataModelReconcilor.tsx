@@ -1,5 +1,5 @@
-import { Model } from '@patternfly/react-topology';
-import { TopologyDataResources } from '@console/topology/src/topology-types';
+import type { Model } from '@patternfly/react-topology';
+import type { TopologyDataResources } from '@console/topology/src/topology-types';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 

@@ -1,5 +1,5 @@
-import { CodeRef, Extension } from '../types';
-import { StorageClass } from './console-types';
+import type { CodeRef, Extension } from '../types';
+import type { StorageClass } from './console-types';
 
 export type ProvisionerProps = {
   onParamChange: (id: string, paramName: string, checkbox: boolean) => void;

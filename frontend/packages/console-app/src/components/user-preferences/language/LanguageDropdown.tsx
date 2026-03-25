@@ -1,5 +1,6 @@
 import type { FC, Ref } from 'react';
 import { useState, useMemo, useEffect } from 'react';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Skeleton,
   Checkbox,
@@ -7,13 +8,15 @@ import {
   SelectList,
   SelectOption,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
 import { useLanguage } from './useLanguage';
-import { PREFERRED_LANGUAGE_USER_SETTING_KEY, usePreferredLanguage } from './usePreferredLanguage';
+import {
+  PREFERRED_LANGUAGE_USER_PREFERENCE_KEY,
+  usePreferredLanguage,
+} from './usePreferredLanguage';
 
 import './LanguageDropdown.scss';
 
@@ -39,7 +42,7 @@ const LanguageDropdown: FC = () => {
     if (selection !== preferredLanguage) {
       setPreferredLanguage(selection);
       fireTelemetryEvent('User Preference Changed', {
-        property: PREFERRED_LANGUAGE_USER_SETTING_KEY,
+        property: PREFERRED_LANGUAGE_USER_PREFERENCE_KEY,
         value: 'custom',
       });
     }
@@ -49,7 +52,7 @@ const LanguageDropdown: FC = () => {
   const onUsingDefault = (_event, checked: boolean) => {
     setIsUsingDefault(checked);
     fireTelemetryEvent('User Preference Changed', {
-      property: PREFERRED_LANGUAGE_USER_SETTING_KEY,
+      property: PREFERRED_LANGUAGE_USER_PREFERENCE_KEY,
       value: checked,
     });
     if (checked) {

@@ -1,15 +1,15 @@
 import type { FC } from 'react';
 import { useContext, useEffect } from 'react';
+import type { QuickStartContextValues } from '@patternfly/quickstarts';
 import {
   QuickStartCatalogPage as PfQuickStartCatalogPage,
   QuickStartContext,
-  QuickStartContextValues,
 } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
-import { getQueryArgument } from '@console/internal/components/utils/router';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { QuickStartsLoader } from './loader/QuickStartsLoader';
 import { QuickStartEmptyState } from './QuickStartEmptyState';
 

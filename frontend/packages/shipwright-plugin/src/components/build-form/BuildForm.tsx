@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
-import { FormikProps } from 'formik';
+import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import {
   CodeEditorField,
   FlexForm,
@@ -16,10 +16,10 @@ import { downloadYaml } from '@console/shared/src/components/editor/yaml-downloa
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { BuildModel } from '../../models';
-import { Build } from '../../types';
+import type { Build } from '../../types';
 import BuildFormEditor from './BuildFormEditor';
 import { convertBuildFormDataToYAML, convertBuildToFormData } from './form-utils';
-import { BuildFormikValues } from './types';
+import type { BuildFormikValues } from './types';
 
 type BuildFormProp = {
   heading: string;
@@ -27,7 +27,7 @@ type BuildFormProp = {
   handleCancel: () => void;
 } & FormikProps<BuildFormikValues>;
 
-const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'shipwright.buildForm.editor.lastView';
+const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'shipwright.buildForm.editor.lastView';
 
 const BuildForm: FC<BuildFormProp> = ({
   handleSubmit,
@@ -85,7 +85,7 @@ const BuildForm: FC<BuildFormProp> = ({
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

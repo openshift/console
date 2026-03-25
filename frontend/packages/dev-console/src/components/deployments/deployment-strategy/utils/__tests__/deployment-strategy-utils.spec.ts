@@ -4,7 +4,7 @@ import {
   getDeploymentStrategyItems,
   getDeploymentStrategyHelpText,
 } from '../deployment-strategy-utils';
-import { DeploymentStrategyType } from '../types';
+import type { DeploymentStrategyType } from '../types';
 
 describe('getDeploymentStrategyItems', () => {
   it('returns items for kubernetes resources', () => {

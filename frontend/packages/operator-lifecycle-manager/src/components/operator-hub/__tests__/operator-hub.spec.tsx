@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { operatorHubDetailsProps, itemWithLongDescription } from '../../../../mocks';
-import { OperatorHubItem } from '../index';
+import type { OperatorHubItem } from '../index';
 import { OperatorHubItemDetails } from '../operator-hub-item-details';
 import { getProviderValue, keywordCompare } from '../operator-hub-items';
 

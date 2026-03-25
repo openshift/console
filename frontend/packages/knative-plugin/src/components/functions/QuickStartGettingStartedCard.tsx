@@ -1,17 +1,11 @@
 import type { FC } from 'react';
-import {
-  AllQuickStartStates,
-  QuickStart,
-  QuickStartStatus,
-  getQuickStartStatus,
-} from '@patternfly/quickstarts';
+import type { AllQuickStartStates, QuickStart } from '@patternfly/quickstarts';
+import { QuickStartStatus, getQuickStartStatus } from '@patternfly/quickstarts';
 import { RouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import {
-  GettingStartedCard,
-  GettingStartedLink,
-} from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';
 
 interface QuickStartGettingStartedCardProps {

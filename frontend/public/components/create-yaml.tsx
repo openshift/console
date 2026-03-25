@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import {
@@ -10,8 +10,8 @@ import {
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
-import { Firehose } from './utils/firehose';
 import { LoadingBox } from './utils/status-box';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   K8sKind,
   apiVersionForModel,
@@ -22,7 +22,7 @@ import {
 import { ErrorPage404 } from './error';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 
-export const CreateYAMLInner = ({
+export const CreateYAMLInner: FC<CreateYAMLProps> = ({
   params,
   kindsInFlight,
   kindObj,
@@ -31,7 +31,7 @@ export const CreateYAMLInner = ({
   resourceObjPath,
   isCreate = true,
   template,
-}: CreateYAMLProps) => {
+}) => {
   const { t } = useTranslation();
   const namespace = params.ns || 'default';
   const [templateExtensions, resolvedTemplates] = useResolvedExtensions<YAMLTemplate>(
@@ -86,9 +86,13 @@ export const CreateYAMLInner = ({
     }
     return <ErrorPage404 />;
   }
-  const header = t('public~Create {{objLabel}}', {
-    objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
-  });
+  const header = isCreate
+    ? t('public~Create {{objLabel}}', {
+        objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
+      })
+    : t('public~Edit {{objLabel}}', {
+        objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
+      });
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
 
@@ -98,7 +102,6 @@ export const CreateYAMLInner = ({
       loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
       initialResource={initialResource}
       create={isCreate}
-      kind={kindObj.kind}
       header={header}
       hideHeader={hideHeader}
       resourceObjPath={resourceObjPath}
@@ -116,29 +119,27 @@ export const CreateYAML = (props) => {
 
 export const EditYAMLPage: FC<EditYAMLPageProps> = (props) => {
   const params = useParams();
-  const Wrapper = (wrapperProps) => (
+  const [obj, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
+    kind: props.kind,
+    name: params.name,
+    namespace: params.ns,
+  });
+
+  if (!loaded && !loadError) {
+    return <LoadingBox />;
+  }
+
+  if (loadError) {
+    return <ErrorPage404 />;
+  }
+
+  return (
     <AsyncComponent
       blame="EditYamlPage"
-      {...wrapperProps}
-      obj={wrapperProps.obj.data}
+      obj={obj}
       loader={() => import('./edit-yaml').then((c) => c.EditYAML)}
       create={false}
     />
-  );
-  return (
-    <Firehose
-      resources={[
-        {
-          kind: props.kind,
-          name: params.name,
-          namespace: params.ns,
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <Wrapper />
-    </Firehose>
   );
 };
 

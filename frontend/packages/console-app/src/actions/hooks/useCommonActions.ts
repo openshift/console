@@ -1,21 +1,22 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import {
-  annotationsModalLauncher,
+  LazyAnnotationsModalOverlay,
   LazyDeleteModalOverlay,
-  labelsModalLauncher,
-  podSelectorModal,
-  taintsModal,
-  tolerationsModal,
+  LazyLabelsModalOverlay,
+  LazyTaintsModalOverlay,
+  LazyTolerationsModalOverlay,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
-import { referenceFor, K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { CommonActionCreator, ActionObject } from './types';
+import type { K8sModel, K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
+import type { ActionObject } from './types';
+import { CommonActionCreator } from './types';
 
 /**
  * A React hook for retrieving common actions related to Kubernetes resources.
@@ -100,10 +101,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-labels',
         label: t('console-app~Edit labels'),
         cta: () =>
-          labelsModalLauncher({
+          launchModal(LazyLabelsModalOverlay, {
             kind,
             resource,
-            blocking: true,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -111,10 +111,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-annotations',
         label: t('console-app~Edit annotations'),
         cta: () =>
-          annotationsModalLauncher({
+          launchModal(LazyAnnotationsModalOverlay, {
             kind,
             resource,
-            blocking: true,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -129,25 +128,13 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
           'scale',
         ),
       }),
-      [CommonActionCreator.ModifyPodSelector]: (): Action => ({
-        id: 'edit-pod-selector',
-        label: t('console-app~Edit Pod selector'),
-        cta: () =>
-          podSelectorModal({
-            kind,
-            resource,
-            blocking: true,
-          }),
-        accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
-      }),
       [CommonActionCreator.ModifyTolerations]: (): Action => ({
         id: 'edit-toleration',
         label: t('console-app~Edit tolerations'),
         cta: () =>
-          tolerationsModal({
+          launchModal(LazyTolerationsModalOverlay, {
             resourceKind: kind,
             resource,
-            modalClassName: 'modal-lg',
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -155,9 +142,9 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          taintsModal({
+          launchModal(LazyTaintsModalOverlay, {
             resourceKind: kind,
-            resource,
+            resource: resource as NodeKind,
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -173,11 +160,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (labelsModalLauncher, annotationsModalLauncher, podSelectorModal,
-    // tolerationsModal, taintsModal, launchCountModal) to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal],
+    [kind, resource, t, message, actualEditPath, launchModal, launchCountModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

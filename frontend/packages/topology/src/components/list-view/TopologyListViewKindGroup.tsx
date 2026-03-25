@@ -7,7 +7,8 @@ import {
   DataListItemCells,
   DataListItemRow,
 } from '@patternfly/react-core';
-import { GraphElement, isNode, Node, observer } from '@patternfly/react-topology';
+import type { GraphElement, Node } from '@patternfly/react-topology';
+import { isNode, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getTitleForNodeKind } from '@console/shared';
 import ListElementWrapper from './ListElementWrapper';

@@ -5,13 +5,13 @@ import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
 import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   ActivityBodyProps,
   OngoingActivityBodyProps,
   RecentEventsBodyProps,
 } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
-import { EventKind } from '@console/internal/module/k8s';
+import type { EventKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import EventItem from './EventItem';

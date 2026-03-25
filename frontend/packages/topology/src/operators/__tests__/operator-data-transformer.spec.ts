@@ -1,4 +1,4 @@
-import { Model, NodeModel } from '@patternfly/react-topology';
+import type { Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
@@ -9,11 +9,8 @@ import { getWorkloadResources } from '../../data-transforms/transform-utils';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import { getFilterById } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_GROUPS_FILTER_ID } from '../../filters/const';
-import {
-  WorkloadData,
-  TopologyDataResources,
-  TopologyDisplayFilterType,
-} from '../../topology-types';
+import type { WorkloadData, TopologyDataResources } from '../../topology-types';
+import { TopologyDisplayFilterType } from '../../topology-types';
 import { WORKLOAD_TYPES } from '../../utils/topology-utils';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 import {

@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
-import { Node, observer } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
+import { observer } from '@patternfly/react-topology';
 import { getPodMetricStats, getTopologyResourceObject, useOverviewMetrics } from '../../utils';
 import { usePodsForVm } from '../../utils/usePodsForVM';
 import { CpuCellComponent, MemoryCellComponent } from './cells';

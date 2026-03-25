@@ -9,12 +9,16 @@ import { getGitService } from '@console/git-service/src/services/git-service';
 import { GitProvider } from '@console/git-service/src/types/git';
 import { SecretType } from '@console/internal/components/secrets/create-secret/types';
 import { SecretModel } from '@console/internal/models';
-import { ConfigMapKind, K8sResourceKind, SecretKind } from '@console/internal/module/k8s/types';
+import type {
+  ConfigMapKind,
+  K8sResourceKind,
+  SecretKind,
+} from '@console/internal/module/k8s/types';
 import { nameRegex } from '@console/shared/src/utils/yup-validations';
 import { PIPELINE_STRATEGY_LABEL } from '../../../const';
 import { RepositoryModel } from '../../../models/pipelines';
-import { PipelineKind } from '../../../types/pipeline';
-import { RepositoryFormValues } from '../../import/import-types';
+import type { PipelineKind } from '../../../types/pipeline';
+import type { RepositoryFormValues } from '../../import/import-types';
 import { detectGitType } from '../../import/import-validation-utils';
 import { gitUrlRegex } from '../../import/validation-schema';
 

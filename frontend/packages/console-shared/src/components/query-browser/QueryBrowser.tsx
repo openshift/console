@@ -10,6 +10,7 @@ import {
   ChartStack,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts/victory';
+import type { MenuToggleElement } from '@patternfly/react-core';
 import {
   Alert,
   Button,
@@ -21,7 +22,6 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   MenuToggle,
-  MenuToggleElement,
   InputGroup,
   TextInput,
   InputGroupItem,
@@ -30,17 +30,16 @@ import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
-import {
+import type {
   FormatSeriesTitle,
-  PrometheusEndpoint,
   PrometheusLabels,
   PrometheusResponse,
   PrometheusResult,
   PrometheusValue,
   QueryBrowserProps,
 } from '@console/dynamic-plugin-sdk';
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk';
 import {
   queryBrowserDeleteAllSeries,
   queryBrowserPatchQuery,
@@ -50,7 +49,7 @@ import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { getPrometheusURL } from '@console/internal/components/graphs/helpers';
 import { formatNumber } from '@console/internal/components/monitoring/format';
 import { useBoolean } from '@console/internal/components/monitoring/hooks/useBoolean';
-import { PrometheusAPIError } from '@console/internal/components/monitoring/types';
+import type { PrometheusAPIError } from '@console/internal/components/monitoring/types';
 import {
   dateFormatterNoYear,
   dateTimeFormatterWithSeconds,
@@ -61,7 +60,8 @@ import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { humanizeNumberSI } from '@console/internal/components/utils/units';
-import { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
@@ -102,7 +102,7 @@ const GraphEmptyState: FC<GraphEmptyStateProps> = ({ children, title }) => (
   </div>
 );
 
-const SpanControls: FC<SpanControlsProps> = memo(
+const SpanControls = memo<SpanControlsProps>(
   ({ defaultSpanText, onChange, span, hasReducedResolution }) => {
     const [isValid, setIsValid] = useState(true);
     const [text, setText] = useState(formatPrometheusDuration(span));
@@ -348,7 +348,7 @@ const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - spa
 
 const ONE_MINUTE = 60 * 1000;
 
-const Graph: FC<GraphProps> = memo(
+const Graph = memo<GraphProps>(
   ({
     allSeries,
     disabledSeries,
@@ -687,15 +687,15 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   units,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
-  const tickInterval = useSelector(
-    ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
+  const hideGraphs = useConsoleSelector<boolean>(({ observe }) => !!observe.get('hideGraphs'));
+  const tickInterval = useConsoleSelector<number>(
+    ({ observe }) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
-  const lastRequestTime = useSelector(({ observe }: RootState) =>
+  const lastRequestTime = useConsoleSelector<number>(({ observe }) =>
     observe.getIn(['queryBrowser', 'lastRequestTime']),
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan

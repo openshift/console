@@ -10,7 +10,7 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import { ResourceLink, DetailsItem } from '@console/internal/components/utils';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { BuildModel, BuildModelV1Alpha1 } from '../../models';
-import { BuildRun } from '../../types';
+import type { BuildRun } from '../../types';
 import { getBuildNameFromBuildRun, isV1Alpha1Resource } from '../../utils';
 import BuildRunDuration from '../buildrun-duration/BuildRunDuration';
 import BuildRunStatus from '../buildrun-status/BuildRunStatus';

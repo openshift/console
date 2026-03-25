@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
-import { rollbackModal } from '@console/internal/components/modals';
+import { LazyRollbackModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { ReplicationControllerKind, K8sModel } from '@console/internal/module/k8s';
+import type { ReplicationControllerKind, K8sModel } from '@console/internal/module/k8s';
 import { getOwnerNameByKind } from '@console/shared/src';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
-import { ReplicationControllerActionCreator, ActionObject } from './types';
+import type { ActionObject } from './types';
+import { ReplicationControllerActionCreator } from './types';
 
 const INACTIVE_STATUSES = ['New', 'Pending', 'Running'];
 
@@ -38,6 +40,7 @@ export const useReplicationControllerActions = <
   filterActions?: T,
 ): [ActionObject<T>, boolean] => {
   const { t } = useTranslation();
+  const launchModal = useOverlay();
   const openCancelRolloutConfirm = useWarningModal({
     title: t('console-app~Cancel rollout'),
     children: t('console-app~Are you sure you want to cancel this rollout?'),
@@ -74,8 +77,7 @@ export const useReplicationControllerActions = <
           obj?.metadata?.annotations?.['openshift.io/deployment.phase'] || '',
         ),
         cta: () =>
-          rollbackModal({
-            resourceKind: kind,
+          launchModal(LazyRollbackModalOverlay, {
             resource: obj,
           }),
         accessReview: {
@@ -95,7 +97,7 @@ export const useReplicationControllerActions = <
     }),
     // missing openCancelRolloutConfirm dependency, that causes max depth exceeded error
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, kind, obj],
+    [t, kind, obj, launchModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

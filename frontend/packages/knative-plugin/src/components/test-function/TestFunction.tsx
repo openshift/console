@@ -1,9 +1,11 @@
 import type { FC } from 'react';
-import { Formik, FormikValues, FormikHelpers } from 'formik';
+import type { FormikValues, FormikHelpers } from 'formik';
+import { Formik } from 'formik';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { ServiceKind } from '../../types';
+import type { ServiceKind } from '../../types';
 import TestFunctionModal from './TestFunctionModal';
-import { InvokeFormat, TestFunctionFormikValues } from './types';
+import type { TestFunctionFormikValues } from './types';
+import { InvokeFormat } from './types';
 import { generatePayload, parseResponse } from './utils';
 
 export interface TestFunctionProps {
@@ -13,8 +15,8 @@ export interface TestFunctionProps {
 }
 
 const TestFunction: FC<TestFunctionProps> = ({ service, cancel, close }) => {
-  const svcName = service.data.metadata.name;
-  const svcNamespace = service.data.metadata.namespace;
+  const svcName = service.metadata.name;
+  const svcNamespace = service.metadata.namespace;
   const initialValues: TestFunctionFormikValues = {
     request: {
       format: InvokeFormat.CloudEvent,

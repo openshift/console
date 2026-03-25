@@ -8,9 +8,8 @@ import { useEditorType } from '@console/shared/src/components/synced-editor/useE
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { HelmActionType } from '../../../types/helm-types';
-import HelmInstallUpgradeForm, {
-  HelmInstallUpgradeFormData,
-} from '../install-upgrade/HelmInstallUpgradeForm';
+import type { HelmInstallUpgradeFormData } from '../install-upgrade/HelmInstallUpgradeForm';
+import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
 
 // Mock the barrel import from @console/shared
 jest.mock('@console/shared', () => ({
@@ -52,12 +51,8 @@ const mockUseEditorType = useEditorType as jest.Mock;
 const mockUseField = useField as jest.Mock;
 
 // For internal used Dropdowns
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
-  useUserSettingsCompatibility: () => ['', () => {}],
-}));
-
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: () => ['', () => {}, true],
 }));
 
 jest.mock(

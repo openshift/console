@@ -7,7 +7,8 @@ import {
   Switch,
   MenuSearchInput,
 } from '@patternfly/react-core';
-import DropdownWithSwitchGroups, { DropdownWithSwitchGroup } from './DropdownWithSwitchGroups';
+import type { DropdownWithSwitchGroup } from './DropdownWithSwitchGroups';
+import DropdownWithSwitchGroups from './DropdownWithSwitchGroups';
 
 const DropdownWithSwitchMenu: FC<DropdownWithSwitchMenuProps> = ({
   menuRef,

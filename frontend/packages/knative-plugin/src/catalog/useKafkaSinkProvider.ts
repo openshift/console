@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem, ExtensionHook, useAccessReview } from '@console/dynamic-plugin-sdk';
+import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
+import { useAccessReview } from '@console/dynamic-plugin-sdk';
 import { KafkaSinkModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSinkCatalogProviderData } from './event-sink-data';

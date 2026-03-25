@@ -9,7 +9,10 @@ export const inject = (children: React.ReactNode, props: object) => {
     if (!_.isObject(c) || !isValidElement(c)) {
       return c;
     }
-    return cloneElement(c, safeProps);
+    // Only inject props that don't already exist on the child element
+    // This ensures that props passed directly to the child are not overridden
+    const propsToInject = _.omit(safeProps, Object.keys(c.props));
+    return cloneElement(c, propsToInject);
   });
 };
 

@@ -5,7 +5,7 @@ import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resou
 import { QuotaScopesInline } from '@console/internal/components/resource-quota';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { AppliedClusterResourceQuotaModel } from '@console/internal/models';
-import { AppliedClusterResourceQuotaKind } from '@console/internal/module/k8s';
+import type { AppliedClusterResourceQuotaKind } from '@console/internal/module/k8s';
 import QuotaSummary from './QuotaSummary';
 
 const AppliedClusterResourceQuotaItem: FC<AppliedClusterResourceQuotaItemProps> = ({

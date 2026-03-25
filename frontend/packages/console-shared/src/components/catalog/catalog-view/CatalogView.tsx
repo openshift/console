@@ -2,8 +2,9 @@ import type { ReactNode, FC } from 'react';
 import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
+import { useNavigate } from 'react-router';
+import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '../../../hooks/useQueryParams';
 import PaneBody from '../../layout/PaneBody';
@@ -29,16 +30,15 @@ import {
   getFilterGroupCounts,
   getFilterSearchParam,
 } from '../utils/filter-utils';
-import {
+import type {
   CatalogFilterCounts,
   CatalogFilterGroupMap,
   CatalogFilters as FiltersType,
-  CatalogQueryParams,
-  CatalogSortOrder,
   CatalogStringMap,
   CatalogType,
   CatalogTypeCounts,
 } from '../utils/types';
+import { CatalogQueryParams, CatalogSortOrder } from '../utils/types';
 import CatalogCategories from './CatalogCategories';
 import CatalogEmptyState from './CatalogEmptyState';
 import CatalogFilters from './CatalogFilters';
@@ -77,6 +77,7 @@ const CatalogView: FC<CatalogViewProps> = ({
   sortFilterGroups,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const queryParams = useQueryParams();
   const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? ALL_CATEGORY;
   const activeSearchKeyword = queryParams.get(CatalogQueryParams.KEYWORD) ?? '';
@@ -111,37 +112,49 @@ const CatalogView: FC<CatalogViewProps> = ({
   const clearFilters = useCallback(() => {
     const params = new URLSearchParams();
     catalogType && items.length > 0 && params.set('catalogType', catalogType);
-    setURLParams(params);
+    setURLParams(params, navigate);
 
     // Don't take focus if a modal was opened while the page was loading.
     if (!isModalOpen()) {
       catalogToolbarRef.current && catalogToolbarRef.current.focus({ preventScroll: true });
     }
-  }, [catalogType, items.length]);
+  }, [catalogType, items.length, navigate]);
 
-  const handleCategoryChange = (categoryId: string) => {
-    updateURLParams(CatalogQueryParams.CATEGORY, categoryId);
-  };
+  const handleCategoryChange = useCallback(
+    (categoryId: string) => {
+      updateURLParams(CatalogQueryParams.CATEGORY, categoryId, navigate);
+    },
+    [navigate],
+  );
 
   const handleFilterChange = useCallback(
     (filterType, id, value) => {
       const updatedFilters = _.set(activeFilters, [filterType, id, 'active'], value);
-      updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]));
+      updateURLParams(filterType, getFilterSearchParam(updatedFilters[filterType]), navigate);
     },
-    [activeFilters],
+    [activeFilters, navigate],
   );
 
-  const handleSearchKeywordChange = useCallback((searchKeyword) => {
-    updateURLParams(CatalogQueryParams.KEYWORD, searchKeyword);
-  }, []);
+  const handleSearchKeywordChange = useCallback(
+    (searchKeyword) => {
+      updateURLParams(CatalogQueryParams.KEYWORD, searchKeyword, navigate);
+    },
+    [navigate],
+  );
 
-  const handleGroupingChange = useCallback((grouping) => {
-    updateURLParams(CatalogQueryParams.GROUPING, grouping);
-  }, []);
+  const handleGroupingChange = useCallback(
+    (grouping) => {
+      updateURLParams(CatalogQueryParams.GROUPING, grouping, navigate);
+    },
+    [navigate],
+  );
 
-  const handleSortOrderChange = useCallback((order) => {
-    updateURLParams(CatalogQueryParams.SORT_ORDER, order);
-  }, []);
+  const handleSortOrderChange = useCallback(
+    (order) => {
+      updateURLParams(CatalogQueryParams.SORT_ORDER, order, navigate);
+    },
+    [navigate],
+  );
 
   const handleShowAllToggle = useCallback((groupName) => {
     setFilterGroupsShowAll((showAll) => {

@@ -1,7 +1,7 @@
 import type { FC, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { css } from '@patternfly/react-styles';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
@@ -24,9 +24,9 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { AsyncComponent } from './utils/async';
 import { ButtonBar } from './utils/button-bar';
-import { Firehose } from './utils/firehose';
-import type { FirehoseResult } from './utils/types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { NameValueEditorPair } from './utils/types';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { resourceObjPath } from './utils/resource-link';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
@@ -734,7 +734,7 @@ const mapDispatchToProps = (): DispatchProps => ({
 export type StorageClassFormProps = StateProps &
   DispatchProps & {
     resources?: {
-      [key: string]: FirehoseResult;
+      [key: string]: WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>;
     };
   } & {
     extensions?: [ResolvedExtension<StorageClassProvisioner>[], boolean, any[]];
@@ -782,14 +782,27 @@ export const ConnectedStorageClassForm = connect(
 });
 
 export const StorageClassForm = (props) => {
-  const resources = [
-    { kind: StorageClassModel.kind, isList: true, prop: 'sc' },
-    { kind: referenceForModel(CSIDriverModel), isList: true, prop: 'csi' },
-  ];
+  const watchedResources = useK8sWatchResources({
+    sc: { kind: StorageClassModel.kind, isList: true },
+    csi: { kind: referenceForModel(CSIDriverModel), isList: true },
+  });
+
   return (
-    <Firehose resources={resources}>
-      <ConnectedStorageClassForm {...props} />
-    </Firehose>
+    <ConnectedStorageClassForm
+      {...props}
+      resources={{
+        sc: {
+          data: watchedResources.sc.data,
+          loaded: watchedResources.sc.loaded,
+          loadError: watchedResources.sc.loadError,
+        },
+        csi: {
+          data: watchedResources.csi.data,
+          loaded: watchedResources.csi.loaded,
+          loadError: watchedResources.csi.loadError,
+        },
+      }}
+    />
   );
 };
 

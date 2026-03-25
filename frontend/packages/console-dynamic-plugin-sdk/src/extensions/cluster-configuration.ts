@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
-import { JSONSchema7Type } from 'json-schema';
-import { Extension, CodeRef } from '../types';
-import { AccessReviewResourceAttributes } from './console-types';
+import type { JSONSchema7Type } from 'json-schema';
+import type { Extension, CodeRef } from '../types';
+import type { AccessReviewResourceAttributes } from './console-types';
 
 export type Resource = {
   /** Resource API group and version */

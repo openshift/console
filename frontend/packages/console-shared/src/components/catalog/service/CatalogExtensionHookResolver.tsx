@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { CatalogExtensionHookOptions } from '@console/dynamic-plugin-sdk/src/extensions';
+import type { ExtensionHook } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import type { CatalogExtensionHookOptions } from '@console/dynamic-plugin-sdk/src/extensions';
 
 type CatalogExtensionHookResolverProps<T> = {
   id: string;

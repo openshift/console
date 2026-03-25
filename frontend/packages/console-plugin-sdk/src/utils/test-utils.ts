@@ -1,4 +1,4 @@
-import { Package } from '../codegen/plugin-resolver';
+import type { Package } from '../codegen/plugin-resolver';
 
 export const getTemplatePackage = ({
   name = 'test',

@@ -1,6 +1,7 @@
-import { Model, NodeModel, NodeShape } from '@patternfly/react-topology';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
+import type { Model, NodeModel } from '@patternfly/react-topology';
+import { NodeShape } from '@patternfly/react-topology';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getDefaultOperatorIcon,
   getImageForCSVIcon,
@@ -8,7 +9,10 @@ import {
 } from '@console/shared';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '@console/topology/src/const';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
-import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
+import type {
+  TopologyDataObject,
+  TopologyDataResources,
+} from '@console/topology/src/topology-types';
 import { TYPE_BINDABLE_NODE } from '../const';
 import { getBindableServicesList } from './fetch-bindable-services-utils';
 

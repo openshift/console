@@ -1,5 +1,4 @@
-import { FeatureState } from '@console/internal/reducers/features';
-import { Step } from '../type';
+import type { Step } from '../type';
 import { filterTourBasedonPermissionAndFlag } from '../utils';
 
 describe('guided-tour-utils', () => {
@@ -21,7 +20,7 @@ describe('guided-tour-utils', () => {
         content: 'content2',
       },
     ];
-    const result = filterTourBasedonPermissionAndFlag(steps, {} as FeatureState);
+    const result = filterTourBasedonPermissionAndFlag(steps, {});
     expect(result.length).toBe(1);
     expect(result[0].heading).toBe('heading2');
   });

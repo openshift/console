@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cellIsStickyProps } from '@console/app/src/components/data-view/ConsoleDataView';
-import { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
+import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
 
 export const tableColumnInfo = [
   { id: 'name' },

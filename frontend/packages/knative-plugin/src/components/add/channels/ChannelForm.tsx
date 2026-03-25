@@ -1,19 +1,20 @@
 import type { FC } from 'react';
 import { useCallback } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import { FormikProps, FormikValues, useFormikContext } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
   FlexForm,
-  useFormikValidationFix,
   FormBody,
   CodeEditorField,
   SyncedEditorField,
 } from '@console/shared';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {
   isDefaultChannel,
@@ -24,7 +25,7 @@ import {
   channelYamltoFormData,
   getCreateChannelData,
 } from '../../../utils/create-channel-utils';
-import { AddChannelFormData, ChannelListProps, YamlFormSyncData } from '../import-types';
+import type { AddChannelFormData, ChannelListProps, YamlFormSyncData } from '../import-types';
 import ChannelSelector from './form-fields/ChannelSelector';
 import FormViewSection from './sections/FormViewSection';
 
@@ -43,7 +44,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
   namespace,
   channels,
 }) => {
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.channelForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'knative.channelForm.editor.lastView';
   const {
     values,
     setFieldValue,
@@ -146,7 +147,7 @@ const ChannelForm: FC<FormikProps<FormikValues> & OwnProps> = ({
                     channelYamltoFormData(formData, values.formData),
                 }}
                 yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+                lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               />
             </>
           )}

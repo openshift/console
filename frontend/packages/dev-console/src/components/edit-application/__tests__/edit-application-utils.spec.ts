@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { BuildOptions, GitImportFormData, Resources } from '../../import/import-types';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import type { GitImportFormData } from '../../import/import-types';
+import { BuildOptions, Resources } from '../../import/import-types';
 import { PipelineType } from '../../pipeline-section/import-types';
 import {
   getResourcesType,

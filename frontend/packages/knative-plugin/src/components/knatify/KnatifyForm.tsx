@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import AdvancedSection from '@console/dev-console/src/components/import/advanced/AdvancedSection';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import ImageSearchSection from '@console/dev-console/src/components/import/image-search/ImageSearchSection';
-import { DeployImageFormProps } from '@console/dev-console/src/components/import/import-types';
+import type { DeployImageFormProps } from '@console/dev-console/src/components/import/import-types';
 import IconSection from '@console/dev-console/src/components/import/section/IconSection';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';

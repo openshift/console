@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynamic-plugin-sdk';
-import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
+import type { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynamic-plugin-sdk';
+import type { FirehoseResource } from '@console/internal/components/utils';
+import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
 import {
   CamelKameletModel,
@@ -20,7 +21,7 @@ import {
   KafkaSinkModel,
   KafkaConnectionModel,
 } from '../models';
-import { Traffic } from '../types';
+import type { Traffic } from '../types';
 import { fetchEventSourcesCrd, fetchChannelsCrd } from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {

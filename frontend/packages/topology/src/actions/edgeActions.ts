@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
-import { Edge, isNode, Node } from '@patternfly/react-topology';
+import type { Edge, Node } from '@patternfly/react-topology';
+import { isNode } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Action, K8sModel } from '@console/dynamic-plugin-sdk';
-import { errorModal } from '@console/internal/components/modals';
+import type { Action, K8sModel } from '@console/dynamic-plugin-sdk';
 import { asAccessReview } from '@console/internal/components/utils';
 import {
   TYPE_EVENT_SOURCE,
@@ -17,6 +17,7 @@ import {
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from '@console/knative-plugin/src/topology/const';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { useMoveConnectionModalLauncher } from '../components/modals/MoveConnectionModal';
 import { TYPE_CONNECTS_TO, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import { removeTopologyResourceConnection, getResource } from '../utils/topology-utils';
@@ -102,7 +103,12 @@ export const useDeleteConnectorAction = (
     confirmButtonVariant: ButtonVariant.danger,
     onConfirm: () => {
       return removeTopologyResourceConnection(element, resource).catch((err) => {
-        err && errorModal({ error: err.message });
+        if (err) {
+          launchErrorModal({
+            title: t('topology~Error deleting connector'),
+            error: err.message,
+          });
+        }
       });
     },
     ouiaId: 'TopologyDeleteConnectorConfirmation',

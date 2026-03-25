@@ -1,16 +1,11 @@
 import type { FC, Ref } from 'react';
 import { useState, useCallback } from 'react';
-import {
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { MenuToggle, Select, SelectList, SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DurationKeys, DURATION_VALUES } from '../../../constants/duration';
-import { useUtilizationDuration } from '../../../hooks';
+import { useUtilizationDuration } from '../../../hooks/useUtilizationDuration';
 
 export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> = ({
   adjustDuration,

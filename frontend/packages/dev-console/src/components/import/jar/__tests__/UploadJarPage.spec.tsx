@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJarPage from '../UploadJarPage';
 
@@ -37,8 +37,8 @@ jest.mock('../UploadJar', () => ({
   default: () => 'UploadJar',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -84,6 +84,7 @@ describe('UploadJarPage', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
   });
 

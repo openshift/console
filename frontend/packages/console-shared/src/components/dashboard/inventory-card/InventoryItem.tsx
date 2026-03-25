@@ -1,5 +1,5 @@
-import { FC, ComponentType, memo, useCallback, useState, useMemo } from 'react';
-import type { ReactNode } from 'react';
+import { memo, useCallback, useState, useMemo } from 'react';
+import type { ReactNode, FC, ComponentType } from 'react';
 import {
   Accordion,
   AccordionItem,
@@ -9,17 +9,14 @@ import {
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import {
-  useResolvedExtensions,
-  DashboardsInventoryItemGroup,
-  isDashboardsInventoryItemGroup,
-} from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { DashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, isDashboardsInventoryItemGroup } from '@console/dynamic-plugin-sdk';
 import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/dist/core/lib/types';
-import { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import InventoryItemNew, {
   InventoryItemStatus,
@@ -70,7 +67,7 @@ const getTop3Groups = (
   return groupIDs.sort((a, b) => groupStatuses.indexOf(a) - groupStatuses.indexOf(b)).slice(0, 3);
 };
 
-export const InventoryItem: FC<InventoryItemProps> = memo(
+export const InventoryItem = memo<InventoryItemProps>(
   ({
     isLoading,
     title,

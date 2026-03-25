@@ -1,9 +1,7 @@
 import { nodeStatus } from '@console/app/src/status/node';
-import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
-import { StatusProps } from '../components/types';
-import { isHostPoweredOn, hasPowerManagement, isDetached } from '../selectors';
-import { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
+import type { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { StatusProps } from '../components/types';
+import type { CertificateSigningRequestKind } from '../types';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 
 export const NODE_STATUS_SERVER_CSR = 'serverCSR';
@@ -29,25 +27,3 @@ export const bareMetalNodeStatus = ({
 }: BareMetalNodeStatusProps): StatusProps =>
   getCSRStatus(csr, node) ||
   getNodeMaintenanceStatus(nodeMaintenance) || { status: nodeStatus(node) };
-
-type BareMetalNodeSecondaryStatusProps = {
-  node: NodeKind;
-  host?: BareMetalHostKind;
-  nodeMaintenance?: K8sResourceKind;
-};
-
-export const baremetalNodeSecondaryStatus = ({
-  node,
-  host,
-  nodeMaintenance,
-}: BareMetalNodeSecondaryStatusProps): string[] => {
-  const states = [];
-  if (!nodeMaintenance && isNodeUnschedulable(node)) {
-    states.push('Scheduling disabled');
-  }
-  // show host power status only if there is actual host associated to node
-  if (host && hasPowerManagement(host) && !isHostPoweredOn(host) && !isDetached(host)) {
-    states.push('Host is powered off');
-  }
-  return states;
-};

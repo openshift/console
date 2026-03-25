@@ -1,7 +1,8 @@
 import type { ReactElement, FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { ResourceLink } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 
 type TopologyGroupResourceItemProps = {
   item: K8sResourceKind;

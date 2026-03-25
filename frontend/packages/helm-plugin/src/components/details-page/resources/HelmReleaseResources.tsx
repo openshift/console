@@ -1,15 +1,11 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { MultiListPage } from '@console/internal/components/factory';
-import { FirehoseResource } from '@console/internal/components/utils';
-import {
-  K8sResourceKind,
-  referenceFor,
-  modelFor,
-  referenceForModel,
-} from '@console/internal/module/k8s';
-import { HelmRelease } from '../../../types/helm-types';
+import type { FirehoseResource } from '@console/internal/components/utils';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, modelFor, referenceForModel } from '@console/internal/module/k8s';
+import type { HelmRelease } from '../../../types/helm-types';
 import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 

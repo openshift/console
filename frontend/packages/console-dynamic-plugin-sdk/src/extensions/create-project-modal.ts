@@ -1,6 +1,6 @@
-import { ModalComponent } from '../app/modal-support/ModalProvider';
-import { Extension, CodeRef } from '../types';
-import { K8sResourceCommon } from './console-types';
+import type { ModalComponent } from '../app/modal-support/ModalProvider';
+import type { Extension, CodeRef } from '../types';
+import type { K8sResourceCommon } from './console-types';
 
 export type CreateProjectModalProps = {
   onSubmit?: (project: K8sResourceCommon) => void;

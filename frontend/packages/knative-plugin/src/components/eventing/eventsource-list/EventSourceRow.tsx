@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { TableData } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -7,7 +8,8 @@ import LazyActionMenu, {
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
+import type { EventSourceKind } from '../../../types';
+import { EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 

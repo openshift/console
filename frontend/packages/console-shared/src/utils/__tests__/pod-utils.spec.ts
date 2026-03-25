@@ -1,7 +1,7 @@
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import { DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s/types';
-import { PodControllerOverviewItem } from '../../types';
+import type { K8sResourceKind } from '@console/internal/module/k8s/types';
+import type { PodControllerOverviewItem } from '../../types';
 import {
   deploymentConfig,
   notIdledDeploymentConfig,

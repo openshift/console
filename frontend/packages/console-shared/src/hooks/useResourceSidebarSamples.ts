@@ -3,15 +3,9 @@ import YAML from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';
-import {
-  AddAction,
-  isAddAction,
-  CatalogItemType,
-  isCatalogItemType,
-  isPerspective,
-  Perspective,
-} from '@console/dynamic-plugin-sdk';
-import { FirehoseResult } from '@console/internal/components/utils/types';
+import type { AddAction, CatalogItemType, Perspective } from '@console/dynamic-plugin-sdk';
+import { isAddAction, isCatalogItemType, isPerspective } from '@console/dynamic-plugin-sdk';
+import type { FirehoseResult } from '@console/internal/components/utils/types';
 import {
   BuildConfigModel,
   ClusterRoleModel,
@@ -20,13 +14,8 @@ import {
   ResourceQuotaModel,
   RoleModel,
 } from '@console/internal/models';
-import {
-  apiVersionForModel,
-  GroupVersionKind,
-  K8sKind,
-  K8sResourceKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import type { GroupVersionKind, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { defaultCatalogCategories } from '../utils/default-categories';
 

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { getLastTime } from '@console/internal/components/events';
 import { ResourceLink } from '@console/internal/components/utils';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
-import { referenceFor, EventKind } from '@console/internal/module/k8s';
+import type { EventKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import './MonitoringOverviewEvents.scss';
 

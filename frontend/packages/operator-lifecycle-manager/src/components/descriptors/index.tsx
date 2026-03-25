@@ -1,21 +1,19 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { DescriptionList, GridItem } from '@patternfly/react-core';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getSchemaAtPath } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
-import { Descriptor, DescriptorType } from './types';
-import {
-  DescriptorGroup,
-  groupDescriptorDetails,
-  useCalculatedDescriptorProperties,
-} from './utils';
+import type { Descriptor } from './types';
+import { DescriptorType } from './types';
+import type { DescriptorGroup } from './utils';
+import { groupDescriptorDetails, useCalculatedDescriptorProperties } from './utils';
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   ({ className, descriptor, model, obj, onError, schema, type }) => {

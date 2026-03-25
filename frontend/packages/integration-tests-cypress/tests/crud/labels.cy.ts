@@ -1,6 +1,6 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import type { ConfigMapKind } from '@console/internal/module/k8s';
 import { checkErrors, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
 import { labels } from '../../views/labels';

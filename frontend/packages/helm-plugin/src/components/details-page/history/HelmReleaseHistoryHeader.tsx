@@ -1,6 +1,6 @@
-import { TFunction } from 'i18next';
-import { TableColumn } from '@console/internal/module/k8s';
-import { HelmRelease } from '../../../types/helm-types';
+import type { TFunction } from 'i18next';
+import type { TableColumn } from '@console/internal/module/k8s';
+import type { HelmRelease } from '../../../types/helm-types';
 
 export const tableColumnInfo = [
   { id: 'revision' },

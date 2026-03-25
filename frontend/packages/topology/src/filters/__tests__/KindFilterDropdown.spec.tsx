@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
+import type { DisplayFilters } from '../../topology-types';
+import { TopologyDisplayFilterType } from '../../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../const';
 import KindFilterDropdown from '../KindFilterDropdown';
 
@@ -133,6 +134,7 @@ describe(KindFilterDropdown.displayName, () => {
   });
 
   it('should call onChange when a kind is selected', async () => {
+    const user = userEvent.setup();
     render(
       <KindFilterDropdown
         filters={dropdownFilter}
@@ -143,7 +145,7 @@ describe(KindFilterDropdown.displayName, () => {
     );
 
     const checkbox = screen.getByRole('checkbox', { name: /kind-a/i });
-    await userEvent.click(checkbox);
+    await user.click(checkbox);
 
     expect(onChange).toHaveBeenCalled();
   });

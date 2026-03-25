@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { css } from '@patternfly/react-styles';
-import { ActivityItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
+import type { ActivityItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export const ActivityProgress: FC<ActivityProgressProps> = ({ title, progress, children }) => (
   <>

@@ -1,5 +1,5 @@
-import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import type { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import type { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 
 export type AddGroup = {
   id: string;

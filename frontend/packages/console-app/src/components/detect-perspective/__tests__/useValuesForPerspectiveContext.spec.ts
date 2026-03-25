@@ -1,15 +1,18 @@
-import { useState } from 'react';
 import {
   acmPerspectiveExtension,
   mockPerspectiveExtensions,
 } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
-import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
+import {
+  usePerspectiveExtension,
+  usePerspectives,
+} from '@console/shared/src/hooks/usePerspectives';
+import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ACM_PERSPECTIVE_ID } from '../../../consts';
 import { usePreferredPerspective } from '../../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
-jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectiveExtension: jest.fn(),
   usePerspectives: jest.fn(),
 }));
@@ -26,23 +29,11 @@ jest.mock('../../user-preferences/perspective/usePreferredPerspective', () => ({
   usePreferredPerspective: jest.fn(),
 }));
 
-jest.mock('react', () => {
-  const reactModule = jest.requireActual('react');
-  return {
-    ...reactModule,
-    useState: jest.fn(),
-  };
-});
-
-jest.mock('react-router-dom-v5-compat', () => ({
-  useNavigate: jest.fn(),
-}));
-
-const useStateMock = useState as jest.Mock;
 const usePerspectiveExtensionMock = usePerspectiveExtension as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
 const useLastPerspectiveMock = useLastPerspective as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
+
 describe('useValuesForPerspectiveContext', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -53,8 +44,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['foo', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['', jest.fn()]);
-    const [perspective, ,] = useValuesForPerspectiveContext();
+    const { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    const [perspective] = result.current;
     expect(perspective).toBe('');
   });
 
@@ -63,8 +54,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), false]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['', jest.fn()]);
-    let [perspective, , loaded] = useValuesForPerspectiveContext();
+    let { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    let [perspective, , loaded] = result.current;
     expect(perspective).toBe('');
     expect(loaded).toBeFalsy();
 
@@ -74,8 +65,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), false]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['', jest.fn()]);
-    [perspective, , loaded] = useValuesForPerspectiveContext();
+    ({ result } = renderHookWithProviders(() => useValuesForPerspectiveContext()));
+    [perspective, , loaded] = result.current;
     expect(perspective).toBe('');
     expect(loaded).toBeFalsy();
   });
@@ -85,8 +76,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['admin', jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['', jest.fn()]);
-    const [perspective, ,] = useValuesForPerspectiveContext();
+    const { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    const [perspective] = result.current;
     expect(perspective).toEqual('admin');
   });
 
@@ -95,8 +86,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['', jest.fn()]);
-    const [perspective, ,] = useValuesForPerspectiveContext();
+    const { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    const [perspective] = result.current;
     expect(perspective).toEqual('dev');
   });
 
@@ -105,9 +96,9 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue(['dev', jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue(['admin', jest.fn()]);
-    const [perspective, ,] = useValuesForPerspectiveContext();
-    expect(perspective).toEqual('admin');
+    const { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    const [perspective] = result.current;
+    expect(perspective).toEqual('dev');
   });
 
   it(`should return ${ACM_PERSPECTIVE_ID} perspective if it exists and last viewed or preferred perspectives do not exist`, () => {
@@ -115,8 +106,8 @@ describe('useValuesForPerspectiveContext', () => {
     useLastPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     usePreferredPerspectiveMock.mockReturnValue([undefined, jest.fn(), true]);
     usePerspectiveExtensionMock.mockReturnValue(acmPerspectiveExtension);
-    useStateMock.mockReturnValue([ACM_PERSPECTIVE_ID, jest.fn()]);
-    const [perspective, ,] = useValuesForPerspectiveContext();
+    const { result } = renderHookWithProviders(() => useValuesForPerspectiveContext());
+    const [perspective] = result.current;
     expect(perspective).toEqual(ACM_PERSPECTIVE_ID);
   });
 });

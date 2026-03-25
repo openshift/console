@@ -1,5 +1,5 @@
-import { Reducer } from 'redux';
-import { Extension, CodeRef } from '../types';
+import type { Reducer } from 'redux';
+import type { Extension, CodeRef } from '../types';
 
 /** Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate. */
 export type ReduxReducer = Extension<

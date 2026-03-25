@@ -1,6 +1,7 @@
 import type { ReactNode, FC } from 'react';
 import { useRef, useState, useCallback, useEffect } from 'react';
-import PopperJS, { PopperOptions } from 'popper.js';
+import type { PopperOptions } from 'popper.js';
+import PopperJS from 'popper.js';
 import { useEventListener } from '../../hooks/useEventListener';
 import Portal from './Portal';
 

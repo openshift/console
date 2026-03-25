@@ -1,8 +1,10 @@
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { OLMAnnotation } from '../components/operator-hub';
 import { NON_STANDALONE_ANNOTATION_VALUE } from '../const';
 import { ClusterServiceVersionModel } from '../models';
-import { ClusterServiceVersionKind, ClusterServiceVersionPhase, SubscriptionKind } from '../types';
+import type { ClusterServiceVersionKind, SubscriptionKind } from '../types';
+import { ClusterServiceVersionPhase } from '../types';
 
 export const isCSV = (obj: K8sResourceKind): boolean =>
   Boolean(obj) && referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);

@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
 import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import {
   ColumnLayout,
   K8sResourceCommon,
+  WatchK8sResource,
+  WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { filterList } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -21,13 +23,8 @@ import { ErrorPage404 } from '../error';
 import { K8sKind } from '../../module/k8s/types';
 import { getReferenceForModel as referenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import { Firehose } from '../utils/firehose';
-import {
-  FirehoseResource,
-  FirehoseResourcesResult,
-  FirehoseResultObject,
-  FirehoseResult,
-} from '../utils/types';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import { FirehoseResource, FirehoseResourcesResult, FirehoseResultObject } from '../utils/types';
 import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
@@ -62,7 +59,12 @@ type ListPageWrapperProps<L = any, C = any> = {
   hideLabelFilter?: boolean;
   columnLayout?: ColumnLayout;
   name?: string;
+  /** @deprecated - use watchedResources instead */
   resources?: FirehoseResourcesResult;
+  /** Resources fetched via useK8sWatchResources */
+  watchedResources?: Record<string, WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>>;
+  loaded?: boolean;
+  loadError?: unknown;
   reduxIDs?: string[];
   textFilter?: string;
   nameFilterPlaceholder?: string;
@@ -90,10 +92,11 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     columnLayout,
     name,
     resources,
+    watchedResources,
     nameFilter,
     omitFilterToolbar,
   } = props;
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const memoizedIds = useDeepCompareMemoize(reduxIDs);
 
   useEffect(() => {
@@ -102,7 +105,10 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
-  const data = flatten ? flatten(resources) : [];
+  // TODO: Remove the resources prop and the fallback ?? resources after all components are migrated from Firehose to hooks.
+  // Use watchedResources (from useK8sWatchResources) if available, fallback to resources (from Firehose)
+  const resourceData = watchedResources ?? resources;
+  const data = flatten ? flatten(resourceData) : [];
   const Filter = (
     <FilterToolbar
       rowFilters={rowFilters}
@@ -151,6 +157,8 @@ export type FireManProps = {
   title?: string;
   autoFocus?: boolean;
   children?: ReactNode;
+  /** Pre-computed reduxIDs from parent - if provided, FireMan will use these instead of computing its own */
+  reduxIDs?: string[];
 };
 
 export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (props) => {
@@ -165,64 +173,75 @@ export const FireMan: FC<FireManProps & { filterList?: typeof filterList }> = (p
     helpAlert,
     badge,
     title,
+    reduxIDs: propsReduxIDs,
+    filterList: propsFilterList,
   } = props;
   const navigate = useNavigate();
 
-  const [reduxIDs, setReduxIDs] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expand] = useState();
 
+  // Compute reduxIDs synchronously to ensure they're available immediately for filtering
+  // If parent provides reduxIDs, use those; otherwise compute from resources
+  const computedReduxIDs = useMemo(
+    () =>
+      resources.map((r) =>
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name, r.limit),
+        ),
+      ),
+    [resources],
+  );
+
+  // Use parent-provided reduxIDs if available, otherwise use computed ones
+  const reduxIDs = propsReduxIDs ?? computedReduxIDs;
+
+  // Apply URL filters on mount - must happen after reduxIDs is computed
+  // Using useCallback to ensure applyFilterInternal has access to current reduxIDs
+  const applyFilterInternal = useCallback(
+    (filterName: string, options: any) => {
+      if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
+        return;
+      }
+      if (filterName.indexOf(storagePrefix) === 0) {
+        return;
+      }
+      reduxIDs.forEach((id) => propsFilterList(id, filterName, options));
+    },
+    [reduxIDs, propsFilterList],
+  );
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.forEach((v, k) => applyFilter(k, v));
+    params.forEach((v, k) => applyFilterInternal(k, v));
+  }, [applyFilterInternal]);
 
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-    setReduxIDs(reduxId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const updateURL = useCallback(
+    (filterName: string, options: any) => {
+      if (filterName !== textFilter) {
+        // TODO (ggreer): support complex filters (objects, not just strings)
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      if (options) {
+        params.set(filterName, options);
+      } else {
+        params.delete(filterName);
+      }
+      const url = new URL(window.location.href);
+      navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
+    },
+    [textFilter, navigate],
+  );
 
-  useEffect(() => {
-    const reduxId = resources.map((r) =>
-      makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-    );
-
-    if (_.isEqual(reduxId, reduxIDs)) {
-      return;
-    }
-
-    // reapply filters to the new list...
-    setReduxIDs(reduxId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources]);
-
-  const updateURL = (filterName: string, options: any) => {
-    if (filterName !== textFilter) {
-      // TODO (ggreer): support complex filters (objects, not just strings)
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    if (options) {
-      params.set(filterName, options);
-    } else {
-      params.delete(filterName);
-    }
-    const url = new URL(window.location.href);
-    navigate(`${url.pathname}?${params.toString()}${url.hash}`, { replace: true });
-  };
-
-  const applyFilter = (filterName: string, options: any) => {
-    // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
-    if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
-      return;
-    }
-    if (filterName.indexOf(storagePrefix) === 0) {
-      return;
-    }
-    reduxIDs.forEach((id) => props.filterList(id, filterName, options));
-    updateURL(filterName, options);
-  };
+  const applyFilter = useCallback(
+    (filterName: string, options: any) => {
+      applyFilterInternal(filterName, options);
+      updateURL(filterName, options);
+    },
+    [applyFilterInternal, updateURL],
+  );
 
   const runOrNavigate = (itemName: string) => {
     const action = _.isFunction(createProps.action) && createProps.action(itemName);
@@ -353,7 +372,7 @@ export const ListPage = withFallback<ListPageProps>((props) => {
     hideColumnManagement,
     columnLayout,
     omitFilterToolbar,
-    flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
+    flatten = (_resources) => (_resources[name || kind]?.data ?? []) as K8sResourceCommon[],
   } = props;
   const { t } = useTranslation();
   const params = useParams();
@@ -510,12 +529,75 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
   } = props;
 
   const { t } = useTranslation();
-  const resources = _.map(props.resources, (r) => ({
-    ...r,
-    isList: r.isList !== undefined ? r.isList : true,
-    namespace: r.namespaced ? namespace : r.namespace,
-    prop: r.prop || r.kind,
-  }));
+
+  // Build resources configuration for FireMan (needs prop for redux IDs)
+  const k8sResources = useMemo(
+    () =>
+      _.map(props.resources, (r) => ({
+        ...r,
+        isList: r.isList !== undefined ? r.isList : true,
+        namespace: r.namespaced ? namespace : r.namespace,
+        prop: r.prop || r.kind,
+      })),
+    [props.resources, namespace],
+  );
+
+  // Build watch resources configuration for useK8sWatchResources
+  const watchResources = useMemo(() => {
+    if (mock) {
+      return {};
+    }
+    return k8sResources.reduce((acc, r) => {
+      const key = r.prop || r.kind;
+      acc[key] = {
+        kind: r.kind,
+        name: r.name,
+        namespace: r.namespace,
+        isList: r.isList,
+        selector: r.selector,
+        fieldSelector: r.fieldSelector,
+        limit: r.limit,
+        namespaced: r.namespaced,
+        optional: r.optional,
+      };
+      return acc;
+    }, {} as Record<string, WatchK8sResource>);
+  }, [k8sResources, mock]);
+
+  const watchedResources = useK8sWatchResources<
+    Record<string, K8sResourceCommon | K8sResourceCommon[]>
+  >(watchResources);
+
+  // Aggregate individual resource loading states into a single boolean
+  const loaded = useMemo(() => {
+    const resourceValues = Object.values(watchedResources);
+    // If we expect resources but haven't received any yet, we're still loading
+    if (Object.keys(watchResources).length > 0 && resourceValues.length === 0) {
+      return false;
+    }
+    // No resources to watch means we're loaded
+    if (resourceValues.length === 0) {
+      return true;
+    }
+    // All resources must be loaded (those with errors are considered "loaded" for this purpose)
+    return resourceValues.every((r) => r.loaded || r.loadError);
+  }, [watchedResources, watchResources]);
+
+  const loadError = useMemo(
+    () => Object.values(watchedResources).find((r) => r.loadError)?.loadError,
+    [watchedResources],
+  );
+
+  const reduxIDs = useMemo(
+    () =>
+      k8sResources.map((r) =>
+        makeReduxID(
+          kindObj(r.kind),
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name, r.limit),
+        ),
+      ),
+    [k8sResources],
+  );
 
   return (
     <FireMan
@@ -527,32 +609,36 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
       filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
       helpAlert={helpAlert}
-      resources={mock ? [] : resources}
+      resources={mock ? [] : k8sResources}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
+      reduxIDs={mock ? [] : reduxIDs}
+      filterList={filterList}
     >
-      <Firehose resources={mock ? [] : resources}>
-        <ListPageWrapper
-          flatten={flatten}
-          kinds={_.map(resources, 'kind')}
-          label={label}
-          ListComponent={ListComponent}
-          textFilter={textFilter}
-          rowFilters={rowFilters}
-          staticFilters={staticFilters}
-          customData={customData}
-          hideLabelFilter={hideLabelFilter}
-          hideNameLabelFilters={hideNameLabelFilters}
-          hideColumnManagement={hideColumnManagement}
-          columnLayout={columnLayout}
-          nameFilterPlaceholder={nameFilterPlaceholder}
-          labelFilterPlaceholder={labelFilterPlaceholder}
-          nameFilter={nameFilter}
-          namespace={namespace}
-          omitFilterToolbar={omitFilterToolbar}
-        />
-      </Firehose>
+      <ListPageWrapper
+        flatten={flatten}
+        kinds={_.map(k8sResources, 'kind')}
+        label={label}
+        ListComponent={ListComponent}
+        textFilter={textFilter}
+        rowFilters={rowFilters}
+        staticFilters={staticFilters}
+        customData={customData}
+        hideLabelFilter={hideLabelFilter}
+        hideNameLabelFilters={hideNameLabelFilters}
+        hideColumnManagement={hideColumnManagement}
+        columnLayout={columnLayout}
+        nameFilterPlaceholder={nameFilterPlaceholder}
+        labelFilterPlaceholder={labelFilterPlaceholder}
+        nameFilter={nameFilter}
+        namespace={namespace}
+        omitFilterToolbar={omitFilterToolbar}
+        watchedResources={mock ? {} : watchedResources}
+        loaded={loaded}
+        loadError={loadError}
+        reduxIDs={mock ? [] : reduxIDs}
+      />
     </FireMan>
   );
 };

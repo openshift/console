@@ -9,14 +9,16 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
+import type { DetailsPageProps } from '@console/internal/components/factory';
+import { DetailsPage } from '@console/internal/components/factory';
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/units';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
-import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
+import type { VolumeSnapshotContentKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
 import { volumeSnapshotStatus } from '../../status';

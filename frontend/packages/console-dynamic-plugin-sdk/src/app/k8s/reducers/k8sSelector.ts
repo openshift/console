@@ -1,4 +1,4 @@
-import { K8sState } from '../../redux-types';
+import type { K8sState } from '../../redux-types';
 
 export const getReduxIdPayload = (state, reduxId) => state.k8s.get(reduxId);
 

@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { useFormikContext, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';

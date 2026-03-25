@@ -7,12 +7,12 @@ import {
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { history } from '@console/internal/components/utils/router';
+import { useNavigate } from 'react-router';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { isModifiedEvent } from '../../utils';
 import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
-import { CatalogType } from './utils/types';
+import type { CatalogType } from './utils/types';
 
 import './CatalogTile.scss';
 
@@ -25,6 +25,7 @@ type CatalogTileProps = {
 
 const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { uid, name, title, provider, description, type, typeLabel, badges } = item;
   const vendor = provider ? t('console-shared~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
@@ -46,7 +47,7 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
         if (onClick) {
           onClick(item);
         } else if (href) {
-          history.push(href);
+          navigate(href);
         }
       }}
       href={href}
@@ -63,4 +64,4 @@ const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }
   );
 };
 
-export default memo(CatalogTile);
+export default memo<CatalogTileProps>(CatalogTile);

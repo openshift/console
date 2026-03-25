@@ -3,7 +3,7 @@ import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { CertificationRequest } from 'pkijs';
 import { stringToArrayBuffer, fromBase64 } from 'pvutils';
-import {
+import type {
   NodeKind,
   CertificateSigningRequestKind,
   K8sResourceCommon,

@@ -1,11 +1,12 @@
 import type { FC } from 'react';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DescriptorType, StatusDescriptor } from '../types';
+import type { StatusDescriptor } from '../types';
+import { DescriptorType } from '../types';
 import { useCalculatedDescriptorProperties } from '../utils';
 
 // Determines if the descriptor points to an array value.

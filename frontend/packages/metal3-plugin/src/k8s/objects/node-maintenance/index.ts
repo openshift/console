@@ -1,4 +1,5 @@
-import { apiVersionForModel, K8sKind } from '@console/internal/module/k8s';
+import type { K8sKind } from '@console/internal/module/k8s';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 
 export const buildNodeMaintenance = ({
   generateName,

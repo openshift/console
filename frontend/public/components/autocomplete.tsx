@@ -1,7 +1,7 @@
 import type { ComponentProps, FC, SetStateAction, Dispatch, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
-import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/document-listener';
+import { useDocumentListener, KeyEventModes } from '@console/shared/src/hooks/useDocumentListener';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
 
 import { fuzzyCaseInsensitive } from './factory/table-filters';

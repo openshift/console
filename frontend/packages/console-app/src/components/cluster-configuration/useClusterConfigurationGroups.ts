@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
+import type { ClusterConfigurationGroup } from '@console/dynamic-plugin-sdk/src';
 import {
-  ClusterConfigurationGroup,
   isClusterConfigurationGroup,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src';
-import { ResolvedClusterConfigurationGroup } from './types';
+import type { ResolvedClusterConfigurationGroup } from './types';
 
 const useClusterConfigurationGroups = (): [
   ResolvedClusterConfigurationGroup[],
   boolean,
-  Error[],
+  unknown[],
 ] => {
   const [resolvedExtensions, resolved, errors] = useResolvedExtensions<ClusterConfigurationGroup>(
     isClusterConfigurationGroup,

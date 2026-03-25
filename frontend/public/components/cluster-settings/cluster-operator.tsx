@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import {
   Alert,
   DescriptionList,

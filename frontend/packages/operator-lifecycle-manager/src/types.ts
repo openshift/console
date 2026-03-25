@@ -1,11 +1,11 @@
-import {
+import type {
   K8sResourceCommon,
   K8sResourceCondition,
   K8sResourceKind,
   ObjectReference,
   Selector,
 } from '@console/internal/module/k8s';
-import { Descriptor } from './components/descriptors/types';
+import type { Descriptor } from './components/descriptors/types';
 
 export enum AppCatalog {
   rhOperators = 'rh-operators',

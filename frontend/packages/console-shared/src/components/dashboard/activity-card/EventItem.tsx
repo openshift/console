@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { memo } from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle, Icon } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -7,7 +6,8 @@ import { typeFilter, getLastTime } from '@console/internal/components/events';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
-import { EventKind, referenceFor } from '@console/internal/module/k8s';
+import type { EventKind } from '@console/internal/module/k8s';
+import { referenceFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '../../status';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
@@ -16,7 +16,7 @@ const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.isExpanded === nextProps.isExpanded &&
   prevProps.onToggle === nextProps.onToggle;
 
-const EventItem: FC<EventItemProps> = memo(({ event, isExpanded, onToggle }) => {
+const EventItem = memo<EventItemProps>(({ event, isExpanded, onToggle }) => {
   const { t } = useTranslation();
   const { involvedObject, message, metadata } = event;
   const lastTime = getLastTime(event);

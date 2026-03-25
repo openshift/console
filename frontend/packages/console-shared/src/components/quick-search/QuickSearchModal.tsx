@@ -2,9 +2,9 @@ import type { ReactNode, FC } from 'react';
 import { useRef, useEffect } from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { DetailsRendererFunction } from './QuickSearchDetails';
+import type { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchModalBody from './QuickSearchModalBody';
-import { QuickSearchData } from './utils/quick-search-types';
+import type { QuickSearchData } from './utils/quick-search-types';
 import './QuickSearchModal.scss';
 
 interface QuickSearchModalProps {

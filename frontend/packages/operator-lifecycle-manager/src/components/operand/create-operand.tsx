@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { useState, useMemo, useCallback } from 'react';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   StatusBox,
@@ -12,13 +12,8 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  kindForReference,
-  nameForModel,
-  CustomResourceDefinitionKind,
-  definitionFor,
-} from '@console/internal/module/k8s';
+import type { K8sResourceKind, CustomResourceDefinitionKind } from '@console/internal/module/k8s';
+import { kindForReference, nameForModel, definitionFor } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
@@ -26,16 +21,15 @@ import {
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
+import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { useClusterServiceVersion } from '../../utils/useClusterServiceVersion';
 import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
@@ -120,7 +114,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
     [formHelpText, t],
   );
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createOperandForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.createOperandForm.editor.lastView';
 
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
@@ -140,7 +134,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         onChangeEditorType={onChangeEditorType}
         prune={pruneFunc}
         YAMLEditor={OperandYAML}
-        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+        lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
       />
     </StatusBox>
   );
@@ -162,12 +156,10 @@ const CreateOperandPage: FC = () => {
       </DocumentTitle>
       <ModelStatusBox groupVersionKind={params.plural}>
         {createResourceExtension ? (
-          <ErrorBoundaryPage>
-            <AsyncComponent
-              loader={createResourceExtension.properties.component}
-              namespace={params.ns}
-            />
-          </ErrorBoundaryPage>
+          <AsyncComponent
+            loader={createResourceExtension.properties.component}
+            namespace={params.ns}
+          />
         ) : (
           <CreateOperand
             initialEditorType={EditorType.Form}

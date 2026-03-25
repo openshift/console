@@ -1,7 +1,8 @@
-import { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { history } from '@console/internal/components/utils';
+import type { SyntheticEvent } from 'react';
+import type { NavigateFunction } from 'react-router';
+import type { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
-import { AddGroup } from '../components/types';
+import type { AddGroup } from '../components/types';
 
 export const getAddGroups = (
   addActions: ResolvedExtension<AddAction>[],
@@ -35,12 +36,12 @@ export const getAddGroups = (
   return populatedActionGroups.filter((group) => group.items.length);
 };
 
-export const navigateTo = (e: React.SyntheticEvent, url: string) => {
-  history.push(url);
+export const navigateTo = (e: SyntheticEvent, url: string, navigate: NavigateFunction) => {
+  navigate(url);
   e.preventDefault();
 };
 
-export const resolvedHref = (href: string, namespace: string): string =>
+export const resolvedHref = (href: string, namespace: string): string | null =>
   href && namespace ? href.replace(/:namespace\b/g, namespace) : null;
 
 export const filterNamespaceScopedUrl = (

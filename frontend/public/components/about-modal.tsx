@@ -6,9 +6,9 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
@@ -39,7 +39,7 @@ const DynamicPlugins: FC = () => {
   useEffect(() => {
     const loadedPlugins = pluginInfoEntries.filter((plugin) => plugin.status === 'loaded');
     const sortedLoadedPlugins = loadedPlugins.sort((a, b) =>
-      a.metadata.name.localeCompare(b.metadata.name),
+      a.manifest.name.localeCompare(b.manifest.name),
     );
 
     setItems(
@@ -47,8 +47,8 @@ const DynamicPlugins: FC = () => {
         return (
           <Content
             component="li"
-            key={plugin.pluginID}
-          >{`${plugin.metadata.name} (${plugin.metadata.version})`}</Content>
+            key={`${plugin.manifest.name}-${plugin.manifest.version}`}
+          >{`${plugin.manifest.name} (${plugin.manifest.version})`}</Content>
         );
       }),
     );

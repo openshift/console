@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { NodeKind } from '@console/internal/module/k8s';
+import type { NodeKind } from '@console/internal/module/k8s';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getNodeRoles } from '@console/shared/src/selectors/node';
 

@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 
 export type ResourceTarget = 'inputs' | 'outputs';
 

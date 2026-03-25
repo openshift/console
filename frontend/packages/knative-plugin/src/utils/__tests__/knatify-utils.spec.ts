@@ -1,4 +1,4 @@
-import { K8sResourceKind } from 'public/module/k8s';
+import type { K8sResourceKind } from 'public/module/k8s';
 import {
   imageStreamsData,
   knatifyFormCommonInitialValues,

@@ -1,5 +1,5 @@
-import { Rule, PrometheusRulesResponse } from '../api/common-types';
-import { Extension, CodeRef } from '../types';
+import type { Rule, PrometheusRulesResponse } from '../api/common-types';
+import type { Extension, CodeRef } from '../types';
 
 type AlertingRulesFetch = (namespace?: string) => Promise<PrometheusRulesResponse>;
 

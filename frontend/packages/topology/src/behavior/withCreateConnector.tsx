@@ -1,12 +1,17 @@
-import type {
-  ComponentType,
-  ReactElement,
-  FunctionComponent,
-  ComponentProps,
-  ReactNode,
-} from 'react';
+import type { ComponentType, ReactElement, FC, ComponentProps, ReactNode } from 'react';
 import { isValidElement, useState, useRef, useMemo, useCallback } from 'react';
 import { css } from '@patternfly/react-styles';
+import type {
+  Graph,
+  GraphElement,
+  Node,
+  DragEvent,
+  DragObjectWithType,
+  DragOperationWithType,
+  DragSourceMonitor,
+  DragSourceSpec,
+  DragSpecOperationType,
+} from '@patternfly/react-topology';
 import {
   hullPath,
   DefaultCreateConnector,
@@ -15,18 +20,9 @@ import {
   ContextMenu,
   ContextMenuItem,
   AnchorEnd,
-  Graph,
-  GraphElement,
   isGraph,
   isNode,
   LabelPosition,
-  Node,
-  DragEvent,
-  DragObjectWithType,
-  DragOperationWithType,
-  DragSourceMonitor,
-  DragSourceSpec,
-  DragSpecOperationType,
   useDndDrag,
   TOP_LAYER,
   useCombineRefs,
@@ -34,7 +30,7 @@ import {
 } from '@patternfly/react-topology';
 import styles from '@patternfly/react-topology/dist/js/css/topology-components';
 import { observer } from 'mobx-react';
-import {
+import type {
   ElementProps,
   WithCreateConnectorProps,
 } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
@@ -107,7 +103,7 @@ const DEFAULT_HANDLE_ANGLE = Math.PI / 180;
 const DEFAULT_HANDLE_ANGLE_TOP = 1.5 * Math.PI;
 const DEFAULT_HANDLE_LENGTH = 32;
 
-const CreateConnectorWidget: FunctionComponent<CreateConnectorWidgetProps> = observer((props) => {
+const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) => {
   const {
     element,
     onKeepAlive,
@@ -277,9 +273,10 @@ export const withCreateConnector = <P extends WithCreateConnectorProps & Element
   contextMenuClass?: string,
   options?: CreateConnectorOptions,
 ) => (WrappedComponent: ComponentType<Partial<P>>) => {
-  const Component: FunctionComponent<
-    Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }
-  > = ({ children, ...props }) => {
+  const Component: FC<Omit<P, keyof WithCreateConnectorProps> & { children?: ReactNode }> = ({
+    children,
+    ...props
+  }) => {
     const [show, setShow] = useState(false);
     const [alive, setKeepAlive] = useState(false);
     const onShowCreateConnector = useCallback(() => setShow(true), []);

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { GraphElement, isEdge, isNode } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
+import { isEdge, isNode } from '@patternfly/react-topology';
 import {
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_EVENT_SOURCE_LINK,

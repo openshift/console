@@ -5,7 +5,7 @@ import ResourceQuotaCharts from '@console/app/src/components/resource-quota/Reso
 import { QuotaScopesInline } from '@console/internal/components/resource-quota';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { ResourceQuotaModel } from '@console/internal/models';
-import { ResourceQuotaKind } from '@console/internal/module/k8s';
+import type { ResourceQuotaKind } from '@console/internal/module/k8s';
 import QuotaSummary from './QuotaSummary';
 
 const ResourceQuotaItem: FC<ResourceQuotaItemProps> = ({ resourceQuota }) => {

@@ -1,4 +1,4 @@
-import { ClusterRoleKind } from '../hooks';
+import type { ClusterRoleKind } from '../hooks';
 
 export const clusterRolesMock: ClusterRoleKind[] = [
   {

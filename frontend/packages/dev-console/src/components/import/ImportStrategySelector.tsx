@@ -6,7 +6,8 @@ import { CubeIcon } from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import { GitAltIcon } from '@patternfly/react-icons/dist/esm/icons/git-alt-icon';
 import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import { FormikValues, useFormikContext } from 'formik';
+import type { FormikValues } from 'formik';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { GitProvider, ImportStrategy } from '@console/git-service/src';
@@ -16,7 +17,9 @@ import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const'
 import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
-import { getFieldId, useFlag, useFormikValidationFix } from '@console/shared/src';
+import { getFieldId } from '@console/shared/src';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 
 import './ImportStrategySelector.scss';
 

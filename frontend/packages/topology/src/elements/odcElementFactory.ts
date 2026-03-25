@@ -1,4 +1,5 @@
-import { ElementFactory, GraphElement, ModelKind, BaseGraph } from '@patternfly/react-topology';
+import type { ElementFactory, GraphElement } from '@patternfly/react-topology';
+import { ModelKind, BaseGraph } from '@patternfly/react-topology';
 import OdcBaseEdge from './OdcBaseEdge';
 import OdcBaseNode from './OdcBaseNode';
 

@@ -1,4 +1,5 @@
-import { getImageForCSVIcon, CSVIcon } from '../icon-utils';
+import type { CSVIcon } from '../icon-utils';
+import { getImageForCSVIcon } from '../icon-utils';
 
 const mockCSVIconObject: CSVIcon = {
   mediatype: 'image/svg+xml',

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DASH } from '@console/shared/src/constants/ui';
-import { PodDisruptionBudgetKind } from './types';
+import type { PodDisruptionBudgetKind } from './types';
 
 const AvailabilityDisplay: FC<AvailabilityDisplayProps> = ({ pdb }) => {
   const { t } = useTranslation();

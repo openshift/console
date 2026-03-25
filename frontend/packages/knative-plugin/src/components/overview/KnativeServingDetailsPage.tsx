@@ -1,10 +1,11 @@
 import type { ComponentProps, FC } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { K8sResourceKindReference, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { KnativeServingModel } from '../../models';
 
 const knativeServingReference: K8sResourceKindReference = referenceForModel(KnativeServingModel);

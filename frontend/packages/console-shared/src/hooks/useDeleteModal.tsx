@@ -1,36 +1,10 @@
 import { useCallback } from 'react';
-import { UseDeleteModal } from '@console/dynamic-plugin-sdk/src';
-import { ModalComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
-import { useModal } from '@console/dynamic-plugin-sdk/src/app/modal-support/useModal';
+import type { UseDeleteModal } from '@console/dynamic-plugin-sdk/src';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useK8sModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sModel';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import { ModalWrapper } from '@console/internal/components/factory/modal';
-import { DeleteModal, DeleteModalProps } from '@console/internal/components/modals/delete-modal';
-
-const DeleteModalComponent: ModalComponent<DeleteModalProps> = ({
-  btnText,
-  closeModal,
-  deleteAllResources,
-  kind,
-  message,
-  redirectTo,
-  resource,
-}) => {
-  return (
-    <ModalWrapper blocking onClose={closeModal}>
-      <DeleteModal
-        kind={kind}
-        resource={resource}
-        btnText={btnText}
-        cancel={closeModal}
-        close={closeModal}
-        deleteAllResources={deleteAllResources}
-        message={message}
-        redirectTo={redirectTo}
-      />
-    </ModalWrapper>
-  );
-};
+import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
+import type { DeleteModalProps } from '@console/internal/components/modals/delete-modal';
 
 export const useDeleteModal: UseDeleteModal = (
   resource,
@@ -39,14 +13,14 @@ export const useDeleteModal: UseDeleteModal = (
   btnText,
   deleteAllResources,
 ) => {
-  const launcher = useModal();
+  const launchModal = useOverlay();
   const groupVersionKind = getGroupVersionKindForResource(resource);
   const [kind] = useK8sModel(groupVersionKind);
   return useCallback(
     () =>
       resource &&
       kind &&
-      launcher<DeleteModalProps>(DeleteModalComponent, {
+      launchModal<DeleteModalProps>(LazyDeleteModalOverlay, {
         kind,
         resource,
         redirectTo,
@@ -54,6 +28,6 @@ export const useDeleteModal: UseDeleteModal = (
         btnText,
         deleteAllResources,
       }),
-    [resource, kind, launcher, btnText, deleteAllResources, message, redirectTo],
+    [resource, kind, launchModal, btnText, deleteAllResources, message, redirectTo],
   );
 };

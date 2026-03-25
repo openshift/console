@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import type { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getImageForIconClass,
   getImageStreamIcon,
 } from '@console/internal/components/catalog/catalog-item-icon';
 import { getMostRecentBuilderTag, isBuilder } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared';
 import { prettifyName } from '../../../utils/imagestream-utils';
 
@@ -32,7 +32,8 @@ const normalizeBuilderImages = (
     const description = tag?.annotations?.description ?? '';
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
-    const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
+    const namespacePath = activeNamespace ? `/ns/${activeNamespace}` : '';
+    const href = `/samples${namespacePath}/${name}/${imageStreamNS}`;
     const createLabel = t('devconsole~Create Builder Image Sample');
     const type = 'BuilderImage';
 

@@ -1,20 +1,19 @@
-import {
+import type {
   Edge,
   EdgeModel,
-  EdgeStyle,
   Model,
   Node,
   NodeModel,
-  NodeShape,
 } from '@patternfly/react-topology/dist/esm/types';
+import { EdgeStyle, NodeShape } from '@patternfly/react-topology/dist/esm/types';
 import i18next from 'i18next';
 import * as _ from 'lodash';
-import { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { OverviewItem } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel, ServiceModel } from '@console/internal/models';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  K8sResourceKind,
   apiVersionForModel,
   referenceFor,
   referenceForModel,
@@ -25,7 +24,7 @@ import {
   apiGroupForReference,
   groupVersionFor,
 } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import type { RootState } from '@console/internal/redux';
 import { getOwnedResources } from '@console/shared';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
@@ -36,7 +35,10 @@ import {
   WorkloadModelProps,
   getContextDirByName,
 } from '@console/topology/src/data-transforms/transform-utils';
-import { TopologyDataResources, TopologyDataObject } from '@console/topology/src/topology-types';
+import type {
+  TopologyDataResources,
+  TopologyDataObject,
+} from '@console/topology/src/topology-types';
 import {
   filterBasedOnActiveApplication,
   getTopologyResourceObject,
@@ -55,23 +57,21 @@ import {
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
-import { KnativeItem } from '../utils/get-knative-resources';
+import type { KnativeItem } from '../utils/get-knative-resources';
 import {
   KNATIVE_GROUP_NODE_HEIGHT,
   KNATIVE_GROUP_NODE_PADDING,
   KNATIVE_GROUP_NODE_WIDTH,
   URI_KIND,
 } from './const';
-import {
-  NodeType,
+import type {
   Subscriber,
-  EdgeType,
   PubsubNodes,
   KnativeUtil,
   KnativeServiceOverviewItem,
   KnativeTopologyDataObject,
-  KameletType,
 } from './topology-types';
+import { NodeType, EdgeType, KameletType } from './topology-types';
 
 export const getKnNodeModelProps = (type: string) => {
   switch (type) {

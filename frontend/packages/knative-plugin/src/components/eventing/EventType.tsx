@@ -1,10 +1,11 @@
 import type { FC } from 'react';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { RowFunctionArgs, Table, TableData } from '@console/internal/components/factory';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 const EventTypeHeaders = (t: TFunction) => () => {
   return [

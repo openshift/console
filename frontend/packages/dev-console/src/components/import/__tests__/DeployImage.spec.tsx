@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import DeployImage from '../DeployImage';
 import DeployImagePage from '../DeployImagePage';
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -62,16 +62,12 @@ jest.mock('../../QueryFocusApplication', () => ({
   },
 }));
 
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: () => [[], true, null],
+}));
+
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
-  Firehose: (props) => {
-    const mockProps = {
-      projects: { data: [], loaded: true },
-    };
-    return props.children && typeof props.children === 'function'
-      ? props.children(mockProps)
-      : 'Firehose Component';
-  },
   usePreventDataLossLock: jest.fn(),
 }));
 
@@ -95,6 +91,7 @@ describe('DeployImage Page Test', () => {
       state: null,
       hash: null,
       key: 'test',
+      unstable_mask: undefined,
     });
   });
 

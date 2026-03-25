@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserSettings } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { SyncMarkdownView } from '../markdown-view';
 
 jest.mock('showdown', () => ({
@@ -15,16 +15,16 @@ jest.mock('@console/shared/src/hooks/useResizeObserver', () => ({
   useResizeObserver: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
-  useUserSettings: jest.fn(),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  useUserPreference: jest.fn(),
 }));
 
-const mockUserSettings = useUserSettings as jest.Mock;
+const mockUserPreference = useUserPreference as jest.Mock;
 
 describe('SyncMarkdownView', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUserSettings.mockReturnValue(['light', jest.fn(), true]);
+    mockUserPreference.mockReturnValue(['light', jest.fn(), true]);
   });
 
   describe('Rendering Modes', () => {
@@ -104,7 +104,7 @@ describe('SyncMarkdownView', () => {
 
   describe('User Settings Integration', () => {
     it('responds to theme changes from user settings', () => {
-      mockUserSettings.mockReturnValue(['dark', jest.fn(), true]);
+      mockUserPreference.mockReturnValue(['dark', jest.fn(), true]);
 
       renderWithProviders(<SyncMarkdownView />);
 
@@ -112,7 +112,7 @@ describe('SyncMarkdownView', () => {
     });
 
     it('handles loading state from user settings', () => {
-      mockUserSettings.mockReturnValue(['light', jest.fn(), false]);
+      mockUserPreference.mockReturnValue(['light', jest.fn(), false]);
 
       renderWithProviders(<SyncMarkdownView />);
 

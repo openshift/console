@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { Form, FormGroup } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { FormFooter, FormHeader, FormBody } from '@console/shared';
-import { HelmRelease, HelmActionConfigType } from '../../../types/helm-types';
+import type { HelmRelease, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmReleaseHistoryTable from '../../details-page/history/HelmReleaseHistoryTable';
 

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +14,7 @@ import { downloadYaml } from '@console/shared/src/components/editor/yaml-downloa
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
-import { HelmChartRepositoryType } from '../../../types/helm-types';
+import type { HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryFormEditor';
 import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';
 
@@ -39,13 +39,14 @@ const CreateHelmChartRepositoryForm: FC<
 }) => {
   const { t } = useTranslation();
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
     'helm-plugin.createHelmChartRepository.editor.lastView';
 
   const formEditor = (
     <CreateHelmChartRepositoryFormEditor
       showScopeType={showScopeType}
       existingRepo={existingRepo}
+      namespace={namespace}
     />
   );
 
@@ -108,7 +109,7 @@ const CreateHelmChartRepositoryForm: FC<
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
-          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+          lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
           noMargin
         />
       </FormBody>

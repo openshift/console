@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormFooter, FlexForm, FormBody } from '@console/shared';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import AdvancedSection from '../import/advanced/AdvancedSection';
 import AppSection from '../import/app/AppSection';
 import BuilderImageTagSelector from '../import/builder/BuilderImageTagSelector';
@@ -12,13 +12,13 @@ import BuilderSection from '../import/builder/BuilderSection';
 import DockerSection from '../import/git/DockerSection';
 import GitSection from '../import/git/GitSection';
 import ImageSearchSection from '../import/image-search/ImageSearchSection';
-import { GitImportFormData } from '../import/import-types';
+import type { GitImportFormData } from '../import/import-types';
 import JarSection from '../import/jar/section/JarSection';
 import { BuildSection } from '../import/section/build-section/BuildSection';
 import FormSection from '../import/section/FormSection';
 import IconSection from '../import/section/IconSection';
 import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
-import { AppResources } from './edit-application-types';
+import type { AppResources } from './edit-application-types';
 import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
 
 export interface EditApplicationFormProps {

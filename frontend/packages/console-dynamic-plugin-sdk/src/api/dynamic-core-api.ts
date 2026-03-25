@@ -36,7 +36,7 @@ import {
   UsePrometheusPoll,
   UseQuickStartContext,
   UseResolvedExtensions,
-  UseUserSettings,
+  UseUserPreference,
   VirtualizedTableFC,
 } from '../extensions/console-types';
 import { StatusPopupSectionProps, StatusPopupItemProps } from '../extensions/dashboard-types';
@@ -159,12 +159,12 @@ export const TableData: FC<TableDataProps> = require('@console/internal/componen
  * @example
  * ```tsx
  *   // See implementation for more details on TableColumn type
- *   const [activeColumns, userSettingsLoaded] = useActiveColumns({
+ *   const [activeColumns, columnPreferenceLoaded] = useActiveColumns({
  *     columns,
  *     showNamespaceOverride: false,
  *     columnManagementID,
  *   });
- *   return userSettingsLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
+ *   return columnPreferenceLoaded ? <VirtualizedTable columns={activeColumns} {...otherProps} /> : null
  * ```
  */
 export const useActiveColumns: UseActiveColumns = require('@console/internal/components/factory/Table/active-columns-hook')
@@ -911,24 +911,32 @@ export const useActiveNamespace: UseActiveNamespace = require('@console/shared/s
   .useActiveNamespace;
 
 /**
- * Hook that provides a user setting value and a callback for setting the user setting value.
- * @returns A tuple containing the user setting value, a setter callback, and a loaded boolean.
+ * Hook that provides the value of a single user preference and a callback for updating it.
+ * @param key - The key identifying the user preference.
+ * @param defaultValue - (optional) The default value for the user preference.
+ * @param sync - (optional) If true, the hook will sync the value with the ConfigMap on each render.
+ * @returns A tuple containing the user preference value, a setter callback, and a loaded boolean.
  * @example
  * ```tsx
  * const Component: React.FC = (props) => {
- *    const [state, setState, loaded] = useUserSettings(
+ *    const [state, setState, loaded] = useUserPreference(
  *      'devconsole.addPage.showDetails',
  *      true,
  *      true,
  *    );
  *    return loaded ? (
- *       <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
+ *       <WrappedComponent {...props} userPreferenceState={state} setUserPreferenceState={setState} />
  *     ) : null;
  * };
  * ```
  */
-export const useUserSettings: UseUserSettings = require('@console/shared/src/hooks/useUserSettings')
-  .useUserSettings;
+export const useUserPreference: UseUserPreference = require('@console/shared/src/hooks/useUserPreference')
+  .useUserPreference;
+
+/**
+ * @deprecated This hook has been renamed to {@link useUserPreference} for consistency.
+ */
+export const useUserSettings: UseUserPreference = useUserPreference;
 
 /**
  * Hook that provides the current quick start context values. This allows plugins to interop with Console

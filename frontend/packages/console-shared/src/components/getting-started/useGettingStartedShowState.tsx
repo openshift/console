@@ -1,4 +1,4 @@
-import { useUserSettings } from '../../hooks/useUserSettings';
+import { useUserPreference } from '../../hooks/useUserPreference';
 
 export enum GettingStartedShowState {
   SHOW = 'show',
@@ -9,4 +9,4 @@ export enum GettingStartedShowState {
 export const useGettingStartedShowState = (
   key: string,
   defaultValue = GettingStartedShowState.SHOW,
-) => useUserSettings<GettingStartedShowState>(key, defaultValue, true);
+) => useUserPreference<GettingStartedShowState>(key, defaultValue, true);

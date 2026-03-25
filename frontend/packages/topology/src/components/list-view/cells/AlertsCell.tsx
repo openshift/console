@@ -1,20 +1,20 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
-import { Node } from '@patternfly/react-topology';
+import type { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { OverviewItemAlerts } from '@console/shared';
 import {
   Status as TooltipStatus,
-  useBuildConfigsWatcher,
   getBuildAlerts,
   getResourcePausedAlert,
-  usePodsWatcher,
-  useReplicationControllersWatcher,
   getReplicationControllerAlerts,
-  useIsMobile,
-  OverviewItemAlerts,
 } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import { useReplicationControllersWatcher } from '@console/shared/src/hooks/useReplicationControllersWatcher';
 import { getResource } from '../../../utils';
 import { useResourceQuotaAlert } from '../../workload/resource-alert';
 

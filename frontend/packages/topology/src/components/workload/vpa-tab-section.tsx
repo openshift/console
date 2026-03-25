@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { List, ListItem } from '@patternfly/react-core';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk';
+import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sResourceCommon } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
 import { getResource } from '../../utils';

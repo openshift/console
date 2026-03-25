@@ -152,7 +152,7 @@ Feature: Create the different workloads from Add page
         Examples:
                   | card_name | form_header               | workload_name |
                   | Httpd     | Create Sample application | httpd-sample  |
-                  | Basic Go  | Import from Git           | go-basic      |
+                  # | Basic Go  | Import from Git           | go-basic      | - OCPBUGS-77952 - flaky test
 
         @regression
         Scenario: Quick Starts page when no Quick Start has started: QS-03-TC02

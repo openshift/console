@@ -1,4 +1,4 @@
-import { QuickStart } from '@patternfly/quickstarts';
+import type { QuickStart } from '@patternfly/quickstarts';
 
 export const loadingQuickStarts: QuickStart[] = [];
 

@@ -3,7 +3,7 @@ import {
   knativeServiceObj,
   revisionObj,
 } from '../../topology/__tests__/topology-knative-test-data';
-import { RevisionKind, ServiceKind as knativeServiceKind, Traffic } from '../../types';
+import type { RevisionKind, ServiceKind as knativeServiceKind, Traffic } from '../../types';
 
 export const mockServiceData: knativeServiceKind = _.cloneDeep(knativeServiceObj);
 

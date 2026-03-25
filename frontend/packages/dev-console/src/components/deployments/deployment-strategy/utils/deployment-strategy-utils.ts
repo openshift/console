@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { Resources } from '../../../import/import-types';
 import { DeploymentStrategyType, LifecycleAction } from './types';
 

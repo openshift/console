@@ -1,14 +1,15 @@
 import type { FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { NavItem } from '@patternfly/react-core';
-import { HrefNavItem } from '@console/dynamic-plugin-sdk';
+import type { HrefNavItem } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useLocation } from '@console/shared/src/hooks/useLocation';
 import {
   formatNamespacedRouteForHref,
   formatNamespacedRouteForResource,
 } from '@console/shared/src/utils/namespace';
-import { NavLinkProps, NavLink } from './NavLink';
+import type { NavLinkProps } from './NavLink';
+import { NavLink } from './NavLink';
 import { navItemHrefIsActive, stripScopeFromPath } from './utils';
 
 export const NavItemHref: FC<NavItemHrefProps> = ({

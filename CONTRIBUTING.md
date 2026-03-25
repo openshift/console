@@ -20,7 +20,6 @@ This is a rough outline of what a contributor's workflow looks like:
 - Make sure the tests pass, and add any new tests as appropriate.
 - Submit a pull request to the original repository.
 
-
 ### Format of the Commit Message
 
 We follow a rough convention for commit messages that is designed to answer two

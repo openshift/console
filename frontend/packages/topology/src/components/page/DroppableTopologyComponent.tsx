@@ -1,15 +1,15 @@
 import { useContext } from 'react';
-import { Model } from '@patternfly/react-topology';
-import { DropTarget, DropTargetConnector } from 'react-dnd';
+import type { Model } from '@patternfly/react-topology';
+import type { DropTargetConnector } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
-import { DropTargetMonitor } from 'react-dnd/lib/interfaces';
-import {
-  FileUploadContextType,
-  FileUploadContext,
-} from '@console/app/src/components/file-upload/file-upload-context';
+import type { DropTargetMonitor } from 'react-dnd/lib/interfaces';
+import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';
+import { FileUploadContext } from '@console/app/src/components/file-upload/file-upload-context';
 import withDragDropContext from '@console/internal/components/utils/drag-drop-context';
-import { TopologyViewType } from '../../topology-types';
-import TopologyView, { TopologyViewProps } from './TopologyView';
+import type { TopologyViewType } from '../../topology-types';
+import type { TopologyViewProps } from './TopologyView';
+import TopologyView from './TopologyView';
 
 const boxTarget = {
   drop(props, monitor) {

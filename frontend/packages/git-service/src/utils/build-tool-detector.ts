@@ -1,4 +1,5 @@
-import { BuildTool, BuildTools, BuildType, WebAppDependencies } from '../types';
+import type { BuildTool, BuildType } from '../types';
+import { BuildTools, WebAppDependencies } from '../types';
 
 export function detectBuildTypes(files: string[]): BuildType[] {
   const buildTypes = BuildTools.map((t: BuildTool) => {

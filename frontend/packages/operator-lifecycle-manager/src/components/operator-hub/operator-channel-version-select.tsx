@@ -1,18 +1,12 @@
 import type { FC, Ref, MouseEvent, ChangeEvent } from 'react';
 import { useMemo, useState, useEffect } from 'react';
-import {
-  Alert,
-  MenuToggle,
-  MenuToggleElement,
-  Select,
-  SelectList,
-  SelectOption,
-} from '@patternfly/react-core';
+import type { MenuToggleElement } from '@patternfly/react-core';
+import { Alert, MenuToggle, Select, SelectList, SelectOption } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import { alphanumericCompare } from '@console/shared';
-import { PackageManifestKind } from '../../types';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import type { PackageManifestKind } from '../../types';
 import { DeprecatedOperatorWarningIcon } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 

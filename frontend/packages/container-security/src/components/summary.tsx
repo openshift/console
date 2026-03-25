@@ -4,14 +4,14 @@ import { Stack, StackItem, pluralize } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-import { ResourceHealthHandler, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import { Link } from 'react-router';
+import type { ResourceHealthHandler, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { vulnPriority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
-import { ImageManifestVuln, WatchImageVuln } from '../types';
+import type { ImageManifestVuln, WatchImageVuln } from '../types';
 
 export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
   imageManifestVuln,

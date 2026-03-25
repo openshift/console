@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import { GraphElement, withDragNode, withSelection } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
+import { withDragNode, withSelection } from '@patternfly/react-topology';
 import { contextMenuActions } from '@console/topology/src/actions';
 import { withCreateConnector } from '@console/topology/src/behavior';
 import {

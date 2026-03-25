@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { impersonateStateToProps, useAccessReview } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
-import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
+import type { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { startBuild } from '../../api';
 import { BuildRunModel } from '../../models';
-import { Build } from '../../types';
+import type { Build } from '../../types';
 
 type StateProps = {
   impersonate?: {

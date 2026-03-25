@@ -3,9 +3,9 @@ import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { CertificationRequest } from 'pkijs';
 import { stringToArrayBuffer, fromBase64 } from 'pvutils';
-import { NodeKind } from '@console/internal/module/k8s';
-import { CSRBundle } from '../components/types';
-import { CertificateSigningRequestKind } from '../types';
+import type { NodeKind } from '@console/internal/module/k8s';
+import type { CSRBundle } from '../components/types';
+import type { CertificateSigningRequestKind } from '../types';
 
 const getNodeCSRs = (
   csrs: CertificateSigningRequestKind[],

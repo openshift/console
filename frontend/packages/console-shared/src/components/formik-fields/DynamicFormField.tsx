@@ -1,7 +1,8 @@
 import type { ReactNode, FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { FormProps } from '@rjsf/core';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import type { FormProps } from '@rjsf/core';
+import type { FormikValues } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 
 type DynamicFormFieldProps = FormProps<any> & {

@@ -6,7 +6,7 @@ import {
   Map as ImmutableMap,
   OrderedMap as ImmutableOrderedMap,
 } from 'immutable';
-import { WatchK8sResource } from '../../../../extensions/console-types';
+import type { WatchK8sResource } from '../../../../extensions/console-types';
 import { getReduxData } from '../k8s-watcher';
 
 describe('getReduxData', () => {

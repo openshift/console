@@ -1,6 +1,6 @@
-import { Alert } from '@console/dynamic-plugin-sdk';
-import { HorizontalPodAutoscalerKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { DEPLOYMENT_STRATEGY } from '../constants';
+import type { Alert } from '@console/dynamic-plugin-sdk';
+import type { HorizontalPodAutoscalerKind, K8sResourceKind } from '@console/internal/module/k8s';
+import type { DEPLOYMENT_STRATEGY } from '../constants';
 
 export type APIError = {
   status?: string;

@@ -1,10 +1,9 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, Suspense } from 'react';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   actionsCellProps,
   cellIsStickyProps,
@@ -12,28 +11,31 @@ import {
   initialFiltersDefault,
   ConsoleDataView,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import {
+import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
 import {
+  filterVirtualMachineInstancesByNode,
+  useIsKubevirtPluginActive,
+  useWatchVirtualMachineInstances,
+} from '@console/app/src/components/nodes/NodeVmUtils';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import {
   getGroupVersionKindForResource,
-  K8sModel,
   ListPageBody,
   useAccessReview,
-  useFlag,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
-import {
-  K8sGroupVersionKind,
+import type {
   K8sResourceCommon,
-  K8sResourceKind,
   NodeCertificateSigningRequestKind,
   OwnerReference,
   RowProps,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
+import type { NodeMetrics } from '@console/internal/actions/ui';
+import { setNodeMetrics } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
@@ -51,27 +53,23 @@ import {
   ControlPlaneMachineSetModel,
   CertificateSigningRequestModel,
 } from '@console/internal/models';
-import {
+import type {
   NodeKind,
-  referenceForModel,
   CertificateSigningRequestKind,
-  referenceFor,
   Selector,
   MachineKind,
   MachineConfigPoolKind,
-  LabelSelector,
   MachineSetKind,
   ControlPlaneMachineSetKind,
 } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
+import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import {
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-} from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
   getNodeArchitecture,
@@ -92,21 +90,15 @@ import {
   nodeRoles as nodeRolesSort,
   sortWithCSRResource,
 } from '@console/shared/src/sorts/nodes';
-import { TableColumnsType } from '@console/shared/src/types/tableColumn';
+import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import NodeUptime from './node-dashboard/NodeUptime';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
 import ClientCSRStatus from './status/CSRStatus';
-import { GetNodeStatusExtensions, useNodeStatusExtensions } from './useNodeStatusExtensions';
-
-// TODO: Remove VMI retrieval and VMs count column if/when the plugin is able to add the VMs count column
-const VirtualMachineInstanceGroupVersionKind: K8sGroupVersionKind = {
-  group: 'kubevirt.io',
-  kind: 'VirtualMachineInstance',
-  version: 'v1',
-};
+import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
+import { useNodeStatusExtensions } from './useNodeStatusExtensions';
 
 const nodeColumnInfo = Object.freeze({
   name: {
@@ -593,7 +585,7 @@ const NodeList: FC<NodeListProps> = ({
 }) => {
   const { t } = useTranslation();
   const columns = useNodesColumns(vmsEnabled);
-  const nodeMetrics = useSelector<RootState, NodeMetrics>(({ UI }) => {
+  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
   const columnManagementID = referenceForModel(NodeModel);
@@ -860,12 +852,11 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 };
 
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const { t } = useTranslation();
 
-  const [selectedColumns, , userSettingsLoaded] = useUserSettingsCompatibility<TableColumnsType>(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
@@ -902,40 +893,22 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     CertificateSigningRequestKind[]
   >(CertificateSigningRequestModel);
 
-  const kubevirtFeature = useFlag('KUBEVIRT_DYNAMIC');
-  const isKubevirtPluginActive =
-    Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
-    window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin') &&
-    kubevirtFeature;
+  // TODO: Remove VMs count column if/when the plugin is able to add the VMs count column
+  const isKubevirtPluginActive = useIsKubevirtPluginActive();
 
-  const [vmis, vmisLoaded, vmisLoadError] = useK8sWatchResource<K8sResourceKind[]>(
-    isKubevirtPluginActive
-      ? {
-          isList: true,
-          groupVersionKind: VirtualMachineInstanceGroupVersionKind,
-        }
-      : undefined,
-  );
+  const [vmis, vmisLoaded, vmisLoadError] = useWatchVirtualMachineInstances();
 
   const vmsByNode = useMemo(() => {
     if (!isKubevirtPluginActive || !nodesLoaded || nodesLoadError || !vmisLoaded || vmisLoadError) {
       return undefined;
     }
 
-    const map = new Map<string, K8sResourceKind[]>(nodes.map((node) => [node.metadata.name, []]));
-    vmis.forEach((vmi) => {
-      const nodeName = vmi.status?.nodeName;
-      if (!nodeName) {
-        return;
-      }
-      const nodeVMs = map.get(nodeName);
-      if (nodeVMs) {
-        nodeVMs.push(vmi);
-      } else {
-        map.set(nodeName, [vmi]);
-      }
-    });
-    return map;
+    return new Map(
+      nodes.map((node) => [
+        node.metadata.name,
+        filterVirtualMachineInstancesByNode(vmis, node.metadata.name),
+      ]),
+    );
   }, [isKubevirtPluginActive, nodes, nodesLoadError, nodesLoaded, vmis, vmisLoadError, vmisLoaded]);
 
   useEffect(() => {
@@ -1003,7 +976,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   // Don't fail on machine load errors, instead we hide those columns and filters
   const loadError = nodesLoadError || csrsLoadError;
 
-  if (!userSettingsLoaded) {
+  if (!columnPreferenceLoaded) {
     return null;
   }
 

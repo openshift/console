@@ -1,9 +1,9 @@
 import type { ReactNode, FC } from 'react';
 import { useState, useMemo } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   ExtensionHook,
   CatalogItem,
   CatalogItemDetailsDescription,
@@ -17,7 +17,7 @@ import { getImageForCSVIcon } from '@console/shared';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
 import { GLOBAL_COPIED_CSV_NAMESPACE, GLOBAL_OPERATOR_NAMESPACES } from '../const';
 import { ClusterServiceVersionModel } from '../models';
-import { ProvidedAPI, ClusterServiceVersionKind } from '../types';
+import type { ProvidedAPI, ClusterServiceVersionKind } from '../types';
 
 type ExpandCollapseDescriptionProps = {
   children: ReactNode;

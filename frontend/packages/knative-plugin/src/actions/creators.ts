@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import type { Action } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview, resourceObjPath } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
-import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
 import { cleanUpWorkload } from '@console/topology/src/utils';
 import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';

@@ -1,4 +1,6 @@
-import { FC, SyntheticEvent, useEffect, useLayoutEffect, useState } from 'react';
+import type { FC, SyntheticEvent } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import type { DataListProps } from '@patternfly/react-core';
 import {
   DataList,
   DataListItem,
@@ -10,17 +12,17 @@ import {
   Label,
   Content,
   ContentVariants,
-  DataListProps,
 } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { Link, useNavigate } from 'react-router';
+import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import { CatalogType, getIconProps } from '../catalog';
-import { CatalogLinkData } from './utils/quick-search-types';
+import type { CatalogType } from '../catalog';
+import { getIconProps } from '../catalog';
+import type { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
 import './QuickSearchList.scss';

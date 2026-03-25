@@ -1,17 +1,7 @@
-import {
-  CREATE_CONNECTOR_DROP_TYPE,
-  DropTargetSpec,
-  GraphElement,
-  isEdge,
-  isNode,
-  Node,
-} from '@patternfly/react-topology';
-import {
-  canDropEdgeOnNode,
-  EDGE_DRAG_TYPE,
-  NodeComponentProps,
-  nodesEdgeIsDragging,
-} from '../components/graph-view';
+import type { DropTargetSpec, GraphElement, Node } from '@patternfly/react-topology';
+import { CREATE_CONNECTOR_DROP_TYPE, isEdge, isNode } from '@patternfly/react-topology';
+import type { NodeComponentProps } from '../components/graph-view';
+import { canDropEdgeOnNode, EDGE_DRAG_TYPE, nodesEdgeIsDragging } from '../components/graph-view';
 import { OdcBaseEdge, OdcBaseNode } from '../elements';
 
 export const getRelationshipProvider = (): DropTargetSpec<

@@ -1,15 +1,14 @@
 import type { FC } from 'react';
 import { useState, useCallback, useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
-import {
+import type { GraphElement } from '@patternfly/react-topology';
+import type {
   AdapterDataType,
-  isPodAdapter,
   PodsAdapterDataType,
   PodAdapter,
-  useResolvedExtensions,
   DetailsTabSectionExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { PodKind } from '@console/internal/module/k8s';
+import { isPodAdapter, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import type { PodKind } from '@console/internal/module/k8s';
 import { PodsOverviewContent } from '@console/shared/src/components/pod/PodsOverview';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import ResolveAdapter from './ResolveAdapter';

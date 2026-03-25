@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import type { GraphElement } from '@patternfly/react-topology';
 import { DeploymentConfigDeprecationAlert } from '@console/internal/components/deployment-config';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';

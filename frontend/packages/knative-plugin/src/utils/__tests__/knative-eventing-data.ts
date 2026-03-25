@@ -1,4 +1,4 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const subscriptionData: K8sResourceKind = {
   apiVersion: 'messaging.knative.dev/v1beta1',

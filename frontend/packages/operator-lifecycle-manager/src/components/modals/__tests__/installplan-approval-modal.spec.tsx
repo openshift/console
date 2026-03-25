@@ -5,21 +5,16 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { testSubscription, testInstallPlan } from '../../../../mocks';
 import { SubscriptionModel, InstallPlanModel } from '../../../models';
 import { InstallPlanApproval } from '../../../types';
-import {
-  InstallPlanApprovalModal,
-  InstallPlanApprovalModalProps,
-} from '../installplan-approval-modal';
+import type { InstallPlanApprovalModalProps } from '../installplan-approval-modal';
+import { InstallPlanApprovalModal } from '../installplan-approval-modal';
 
 jest.mock('@console/internal/module/k8s', () => ({
   ...jest.requireActual('@console/internal/module/k8s'),
   modelFor: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ...jest.requireActual('@console/internal/components/factory/modal'),
-  ModalTitle: jest.fn(({ children }) => children),
-  ModalBody: jest.fn(({ children }) => children),
-  ModalSubmitFooter: jest.fn(() => null),
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 const mockModelFor = modelFor as jest.Mock;

@@ -1,10 +1,13 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useField } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
+import type { SecretKind } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DropdownField,
   MultiColumnField,
@@ -12,7 +15,7 @@ import {
   CheckboxField,
 } from '@console/shared';
 import FormSection from '../../import/section/FormSection';
-import { ImageOptionType } from './ImagesSection';
+import type { ImageOptionType } from './ImagesSection';
 
 export type TriggersSectionFormData = {
   formData: {
@@ -42,14 +45,30 @@ const TriggersSection: FC<{ namespace: string }> = ({ namespace }) => {
   };
 
   const autocompleteFilter = (text: string, item: any): boolean => fuzzy(text, item?.props?.name);
-  const resources: FirehoseResource[] = [
-    {
+
+  const watchedResources = useK8sWatchResources<{ secrets: SecretKind[] }>({
+    secrets: {
       isList: true,
-      kind: SecretModel.kind,
-      prop: SecretModel.id,
+      kind: referenceForModel(SecretModel),
       namespace,
     },
-  ];
+  });
+
+  const resources = useMemo(
+    () => [
+      {
+        data: watchedResources.secrets.data,
+        loaded: watchedResources.secrets.loaded,
+        loadError: watchedResources.secrets.loadError,
+        kind: SecretModel.kind,
+      },
+    ],
+    [
+      watchedResources.secrets.data,
+      watchedResources.secrets.loaded,
+      watchedResources.secrets.loadError,
+    ],
+  );
 
   return (
     <FormSection title={t('devconsole~Triggers')} dataTest="section triggers">

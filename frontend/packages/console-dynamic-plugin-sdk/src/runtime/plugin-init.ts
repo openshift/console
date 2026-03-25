@@ -1,39 +1,129 @@
+import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
+import { consoleLogger } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import { Store } from 'redux';
 import {
   initSharedScope,
   getSharedScope,
+  monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
-import { RootState } from '@console/internal/redux';
-import { initSubscriptionService } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import { PluginStore } from '@console/plugin-sdk/src/store';
-import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loader';
+import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { addTestError } from '@console/shared/src/utils/test-errors';
+import { REMOTE_ENTRY_CALLBACK } from '../constants';
+import type { ErrorWithCause } from '../utils/error/custom-error';
+import { resolveURL } from '../utils/url';
 
-export const initConsolePlugins = _.once(
-  (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
-    // Initialize dynamic plugin infrastructure
-    initSubscriptionService(pluginStore, reduxStore);
-    registerPluginEntryCallback(pluginStore);
+/**
+ * Calls {@link PluginStore.loadPlugin} for the given plugin name, and
+ * checks if the plugin was loaded successfully.
+ *
+ * Our `PluginStore` is configured to automatically enable loaded plugins.
+ */
+const loadAndEnablePlugin = async (
+  pluginName: string,
+  pluginStore: PluginStore,
+  onError: (errorMessage: string, errorCause?: unknown) => void = _.noop,
+) => {
+  await pluginStore
+    .loadPlugin(
+      resolveURL(
+        `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`,
+        'plugin-manifest.json',
+      ),
+    )
+    .catch((err: ErrorWithCause) => {
+      // ErrorWithCause isn't the exact type but it's close enough for our use
+      onError(`[loadAndEnablePlugin] ${pluginName} loadPlugin failed: ${err.message}`, err.cause);
+    });
 
-    // Initialize webpack share scope object and start loading plugins
-    initSharedScope()
-      .then(() => {
-        pluginStore.getAllowedDynamicPluginNames().forEach((pluginName) => {
-          loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-            // eslint-disable-next-line no-console
-            console.error(..._.compact([errorMessage, errorCause]));
-            pluginStore.registerFailedDynamicPlugin(pluginName, errorMessage, errorCause);
-          });
+  const plugin = pluginStore.getPluginInfo().find((p) => p.manifest.name === pluginName);
+
+  if (plugin?.status === 'failed') {
+    onError(
+      `[loadAndEnablePlugin] ${pluginName} loading failed: ${plugin.errorMessage}`,
+      plugin.errorCause,
+    );
+  } else if (plugin?.status === 'loaded') {
+    const disablePlugins = (
+      plugin.manifest.customProperties?.console?.disableStaticPlugins ?? []
+    ).filter((name) => {
+      const pluginInfo = pluginStore.getPluginInfo().find((p) => p.manifest.name === name);
+
+      // Ensure dynamic plugins cannot disable other dynamic plugins
+      return pluginInfo?.manifest.registrationMethod === 'local';
+    });
+
+    if (disablePlugins.length > 0) {
+      pluginStore.disablePlugins(disablePlugins, `disableStaticPlugins in ${pluginName}`);
+    }
+  }
+};
+
+/**
+ * Registers a polyfill for the legacy plugin entry callback function.
+ *
+ * In previous versions of console (4.21 and older), `DynamicRemotePlugin` included
+ * the version in the plugin ID (e.g., "my-plugin@1.0.0"). Starting from 4.22,
+ * we aligned `ConsoleRemotePlugin` with `DynamicRemotePlugin`, so only the plugin name
+ * is used as the ID (e.g., "my-plugin").
+ *
+ * We also aligned the name of the global callback function used by `PluginLoader`
+ * to the default option used by `DynamicRemotePlugin` to reflect this change.
+ *
+ * Plugins built with the new callback function do not need this shim.
+ */
+const registerLegacyPluginEntryCallback = () => {
+  /** Used in @openshift-console/dynamic-plugin-sdk-webpack 1.0.0 - 4.21.x */
+  const previousConsoleCallbackName = 'loadPluginEntry';
+
+  window[previousConsoleCallbackName] = (pluginName: string, entryModule: any) => {
+    const patchedPluginName = pluginName.includes('@')
+      ? pluginName.slice(0, pluginName.lastIndexOf('@'))
+      : pluginName;
+
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[DEPRECATION WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
+    );
+
+    window[REMOTE_ENTRY_CALLBACK](patchedPluginName, entryModule);
+  };
+
+  // consoleLogger is suppressed in unit tests and in production
+  consoleLogger.info(
+    `Legacy plugin entry callback "${previousConsoleCallbackName}" has been registered.`,
+  );
+};
+
+/**
+ * Loads and enables all dynamic plugins listed in `dynamicPluginNames`.
+ *
+ * Precondition: Application {@link PluginStore} must be initialized.
+ */
+export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
+  // Initialize dynamic plugin infrastructure
+  registerLegacyPluginEntryCallback();
+
+  // Initialize webpack share scope object and start loading plugins
+  initSharedScope()
+    .then(() => {
+      monkeyPatchSharedScope();
+    })
+    .then(() => {
+      dynamicPluginNames.forEach((pluginName) => {
+        loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
+          // eslint-disable-next-line no-console
+          console.error(..._.compact([errorMessage, errorCause]));
+          addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
-
-        if (process.env.NODE_ENV !== 'production') {
-          // Expose webpack share scope object for debugging
-          window.webpackSharedScope = getSharedScope();
-        }
-      })
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error('Failed to initialize webpack share scope for dynamic plugins', err);
       });
-  },
-);
+
+      if (process.env.NODE_ENV !== 'production') {
+        // Expose webpack share scope object for debugging
+        window.webpackSharedScope = getSharedScope();
+      }
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to initialize webpack share scope for dynamic plugins', err);
+    });
+});

@@ -1,4 +1,4 @@
-import { ConsoleSample } from '../../types/samples';
+import type { ConsoleSample } from '../../types/samples';
 
 export const gitImportSample: ConsoleSample = {
   apiVersion: 'console.openshift.io/v1',

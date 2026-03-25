@@ -4,8 +4,8 @@ import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons/dist/esm/icons/flag-icon';
 import { FLAGS } from '@console/shared/src/constants/common';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 
 import {
   GettingStartedCard,

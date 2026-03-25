@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { ModalVariant } from '@patternfly/react-core';
+import type { ReactNode } from 'react';
+import type { ModalVariant } from '@patternfly/react-core';
 
 export type StepContentType = ReactNode | string;
 

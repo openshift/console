@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ProgressStatus, SuccessStatus, ErrorStatus, Status, InfoStatus } from '@console/shared';
 import {
   HOST_PROGRESS_STATES,
@@ -18,9 +18,9 @@ import {
 } from '../../constants';
 import { BareMetalHostModel } from '../../models';
 import { getHostErrorMessage } from '../../selectors';
-import { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
-import { StatusProps } from '../types';
+import type { StatusProps } from '../types';
 
 import './status.scss';
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { DocumentTitleProps } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 /**
  * A component to change the document title of the page.

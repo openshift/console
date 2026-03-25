@@ -1,4 +1,4 @@
-import { FormikProps, FormikValues } from 'formik';
+import type { FormikProps, FormikValues } from 'formik';
 
 export const formikFormProps: FormikProps<FormikValues> = {
   values: {},

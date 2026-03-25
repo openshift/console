@@ -2,12 +2,13 @@ import type { FC } from 'react';
 import { OutlinedCheckSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-check-square-icon';
 import { OutlinedSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-square-icon';
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getHostNICs } from '../../selectors';
-import { BareMetalHostNIC, BareMetalHostKind } from '../../types';
+import type { BareMetalHostNIC, BareMetalHostKind } from '../../types';
 
 const NICsTableHeader = (t: TFunction) => () => [
   { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },

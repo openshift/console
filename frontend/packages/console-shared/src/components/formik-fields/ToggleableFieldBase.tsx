@@ -1,7 +1,7 @@
 import type { ReactNode, FC } from 'react';
 import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { CheckboxFieldProps } from './field-types';
+import type { CheckboxFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 type ToggleableFieldBaseProps = CheckboxFieldProps & {

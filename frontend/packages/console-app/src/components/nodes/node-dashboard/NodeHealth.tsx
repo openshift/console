@@ -4,19 +4,19 @@ import { Gallery, GalleryItem, Alert, Stack, StackItem } from '@patternfly/react
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
+import type { WatchK8sResource, WatchK8sResult } from '@console/dynamic-plugin-sdk';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { MachineModel, MachineHealthCheckModel } from '@console/internal/models';
-import {
-  referenceForModel,
+import type {
   MachineKind,
   NodeKind,
   MachineHealthCheckKind,
   MachineHealthCondition,
 } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';

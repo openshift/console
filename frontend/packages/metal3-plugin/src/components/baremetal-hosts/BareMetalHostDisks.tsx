@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { sortable } from '@patternfly/react-table';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import type { RowFunctionArgs } from '@console/internal/components/factory';
+import { Table, TableData } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getHostStorage } from '../../selectors';
-import { BareMetalHostDisk, BareMetalHostKind } from '../../types';
+import type { BareMetalHostDisk, BareMetalHostKind } from '../../types';
 
 const DisksTableHeader = (t: TFunction) => () => [
   { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },
