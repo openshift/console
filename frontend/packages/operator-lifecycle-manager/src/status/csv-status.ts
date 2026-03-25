@@ -21,7 +21,8 @@ export const subscriptionForCSV = (
   csv: ClusterServiceVersionKind,
 ): SubscriptionKind => {
   const csvName = getName(csv);
-  const operatorNamespace = operatorNamespaceFor(csv);
+  const csvNamespace = csv?.metadata?.namespace;
+  const operatorNamespace = operatorNamespaceFor(csv) || csvNamespace;
   return (subscriptions ?? []).find((subscription) => {
     const subscriptionNamespace = subscription.metadata?.namespace || '';
     const installedCSV = subscription.status?.installedCSV || '';
