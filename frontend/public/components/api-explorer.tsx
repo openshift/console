@@ -824,7 +824,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
               titlePrefix={t('public~Verb')}
             />
           </FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
+          <FlexItem>
             <TextFilter
               defaultValue={filter}
               label={t('public~by subject')}
