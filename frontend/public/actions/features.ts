@@ -116,12 +116,13 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
   return fn;
 });
 
-export const detectFeatures = () => (dispatch: Dispatch) => {
-  [
-    detectOpenShift,
-    detectCanCreateProject,
-    detectClusterVersion,
-    detectUser,
-    ...ssarCheckActions,
-  ].forEach((detect) => detect(dispatch));
-};
+export const detectFeatures = () => (dispatch: Dispatch) =>
+  Promise.all(
+    [
+      detectOpenShift,
+      detectCanCreateProject,
+      detectClusterVersion,
+      detectUser,
+      ...ssarCheckActions,
+    ].map((detect) => detect(dispatch)),
+  );

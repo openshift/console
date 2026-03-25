@@ -252,14 +252,14 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
 
 export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
   setForceHTTP(true);
-  dispatch(detectFeatures());
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
   subsClient.close(false, true);
-  setForceHTTP(false);
+  setForceHTTP(true);
   dispatch(clearSSARFlags());
-  dispatch(detectFeatures());
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
 };
 export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
   // const url = new URL(window.location.href);

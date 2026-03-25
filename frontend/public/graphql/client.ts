@@ -12,7 +12,6 @@ import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/
 import { getConsoleRequestHeaders, coFetch } from '../co-fetch';
 
 let wssErrors = 0;
-// @ts-ignore TS6133 - forceHTTP is read inside the split() closure below
 let forceHTTP = false;
 
 export const setForceHTTP = (force: boolean) => {
