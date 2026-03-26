@@ -32,11 +32,12 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LoadingBox } from './utils/status-box';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -215,16 +216,22 @@ const getBuildStatus = (buildConfig: BuildConfig) => {
   return buildConfig?.latestBuild?.status?.phase || 'Unknown';
 };
 
-const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
+const useBuildConfigColumns = (): {
+  columns: TableColumn<BuildConfig>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(BuildConfigModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -232,6 +239,7 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -240,6 +248,7 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: t('public~Last run'),
         id: tableColumnInfo[2].id,
         sort: 'latestBuild.metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -248,6 +257,7 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: t('public~Last run status'),
         id: tableColumnInfo[3].id,
         sort: 'latestBuild.status.phase',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -256,6 +266,7 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: t('public~Last run time'),
         id: tableColumnInfo[4].id,
         sort: 'latestBuild.metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -264,6 +275,7 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: t('public~Last run duration'),
         id: tableColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.buildDuration)),
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -272,16 +284,17 @@ const useBuildConfigColumns = (): TableColumn<BuildConfig>[] => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useBuildConfigColumns();
+  const { columns, resetAllColumnWidths } = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
   const [builds, buildsLoaded, buildsLoadError] = useK8sWatchResource<K8sResourceKind[]>({
@@ -330,6 +343,8 @@ export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...p
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
