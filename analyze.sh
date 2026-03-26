@@ -8,20 +8,13 @@ ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
 cd frontend
 echo "Analyzing Webpack bundles..."
-yarn run analyze
+ANALYZE_RC=0
+yarn run analyze || ANALYZE_RC=$?
 if [ -d "$ARTIFACT_DIR" ]; then
   echo "Copying the Webpack Bundle Analyzer report to $ARTIFACT_DIR..."
   cp public/dist/report.html "${ARTIFACT_DIR}"
 fi
-
-MAX_BYTES=3879731 # ~3.7 MiB
-VENDORS_MAIN_BYTES=$(du -b `find public/dist -type f -name 'vendors~main-chunk*js'` | cut -f1)
-DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $VENDORS_MAIN_BYTES/1024/1024}")
-MAX_DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $MAX_BYTES/1024/1024}")
-
-echo "Main vendor bundle size: $DISPLAY_VALUE MiB"
-if (( VENDORS_MAIN_BYTES > MAX_BYTES )); then
-  echo "FAILURE: Main vendor bundle is larger than the $MAX_DISPLAY_VALUE MiB limit."
+if [ $ANALYZE_RC -ne 0 ]; then
   echo "If you haven't added a new dependency, an import might have accidentally pulled an existing dependency into the main vendor bundle."
   echo "If adding a large dependency, consider lazy loading the component with AsyncComponent."
   exit 1
