@@ -1558,6 +1558,8 @@
   "ConfigMap or Secret": "ConfigMap or Secret",
   "Select a resource": "Select a resource",
   "Select VolumeAttributesClass": "Select VolumeAttributesClass",
+  "Error loading VolumeAttributesClass": "Error loading VolumeAttributesClass",
+  "Unable to load VolumeAttributesClass resources": "Unable to load VolumeAttributesClass resources",
   "Defines mutable volume parameters like IOPS and throughput.": "Defines mutable volume parameters like IOPS and throughput.",
   "Secret referenced in the {{triggerProperty}} webhook trigger does not contain \"WebHookSecretKey\" key. Webhook trigger won’t work due to the invalid secret reference": "Secret referenced in the {{triggerProperty}} webhook trigger does not contain \"WebHookSecretKey\" key. Webhook trigger won’t work due to the invalid secret reference",
   "Copy URL with Secret": "Copy URL with Secret",

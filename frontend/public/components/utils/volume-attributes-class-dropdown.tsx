@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert } from '@patternfly/react-core';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { LoadingInline, ResourceName, ResourceIcon } from '.';
 import { css } from '@patternfly/react-styles';
@@ -75,12 +76,6 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
 
   useEffect(() => {
     if (loadError) {
-      setState((prevState) => ({
-        ...prevState,
-        title: (
-          <div className="cos-error-title">{t('public~Error loading {{desc}}', { desc })}</div>
-        ),
-      }));
       return;
     }
     if (!loaded) {
@@ -169,7 +164,11 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
 
   return (
     <>
-      {loaded && (
+      {loadError ? (
+        <Alert isInline variant="danger" title={t('public~Error loading VolumeAttributesClass')}>
+          {loadError.message || t('public~Unable to load VolumeAttributesClass resources')}
+        </Alert>
+      ) : loaded ? (
         <div>
           <label
             className={css(hideClassName, {
@@ -200,7 +199,7 @@ export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdow
             </p>
           )}
         </div>
-      )}
+      ) : null}
     </>
   );
 };

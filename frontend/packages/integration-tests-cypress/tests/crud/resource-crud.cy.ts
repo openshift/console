@@ -78,6 +78,10 @@ describe('Kubernetes resource CRUD operations', () => {
           kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
           namespaced: false,
         })
+        .set('storage.k8s.io~v1~VolumeAttributesClass', {
+          kind: 'storage.k8s.io~v1~VolumeAttributesClass',
+          namespaced: false,
+        })
     : OrderedMap<string, TestDefinition>();
 
   const k8sObjsWithSnapshots = k8sObjs.merge(snapshotObjs);
@@ -146,6 +150,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
     'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
     'StatefulSet',
+    'storage.k8s.io~v1~VolumeAttributesClass',
     'StorageClass',
     'user.openshift.io~v1~Group',
   ]);
