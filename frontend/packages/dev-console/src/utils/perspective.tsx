@@ -1,11 +1,12 @@
 import { CodeIcon } from '@patternfly/react-icons/dist/esm/icons/code-icon';
+import { shallowEqual } from 'react-redux';
 import type { Perspective, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { getFlagsObject, flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 export const usePerspectiveDetection = () => {
-  const flags = useConsoleSelector((state) => getFlagsObject(state));
+  const flags = useConsoleSelector((state) => getFlagsObject(state), shallowEqual);
   const canGetNS = flags.CAN_GET_NS;
   const loadingFlag = flagPending(canGetNS);
   const enablePerspective = !canGetNS;

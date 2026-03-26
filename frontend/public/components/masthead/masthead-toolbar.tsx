@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { shallowEqual } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNavigate } from 'react-router';
@@ -169,12 +170,15 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector((state) => ({
-    clusterID: state.UI.get('clusterID'),
-    alertCount: state.observe.getIn(['alertCount']),
-    canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-    impersonate: getImpersonate(state),
-  }));
+  const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
+    (state) => ({
+      clusterID: state.UI.get('clusterID'),
+      alertCount: state.observe.getIn(['alertCount']),
+      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      impersonate: getImpersonate(state),
+    }),
+    shallowEqual,
+  );
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();
