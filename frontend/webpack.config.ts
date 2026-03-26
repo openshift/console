@@ -270,6 +270,7 @@ const config: Configuration = {
     }),
     new CopyWebpackPlugin({
       patterns: [
+        { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
         { from: path.resolve(__dirname, './public/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/console-shared/locales'), to: 'locales' },
         { from: path.resolve(__dirname, './packages/console-app/locales'), to: 'locales' },
