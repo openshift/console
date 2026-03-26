@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus } from '@console/app/src/status/node';
-import { volumeSnapshotStatus } from '@console/app/src/status/snapshot';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 import { getNodeRoles } from '@console/shared/src/selectors/node';
 import { getLabelsAsString } from '@console/shared/src/utils/label-filter';
 import { Alert, Rule } from '@console/dynamic-plugin-sdk/src/api/common-types';
@@ -220,7 +220,7 @@ export const tableFilters = (isExactSearch: boolean): FilterMap => {
         return true;
       }
 
-      const status = volumeSnapshotStatus(snapshot);
+      const status = snapshotStatus(snapshot);
       return statuses.selected.includes(status) || !_.includes(statuses.all, status);
     },
     'node-disk-name': (name, disks) => matchFn(name.selected?.[0], disks?.path),
