@@ -98,6 +98,12 @@ export const ConsoleDataView: <
 export const cellIsStickyProps: CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
   .cellIsStickyProps;
 
+export const getNameColumnProps: (
+  hasRightBorder?: boolean,
+  withBulkSelect?: boolean,
+) => CellIsStickyProps = require('@console/app/src/components/data-view/ConsoleDataView')
+  .getNameColumnProps;
+
 export const getNameCellProps: GetNameCellProps = require('@console/app/src/components/data-view/ConsoleDataView')
   .getNameCellProps;
 

@@ -1,5 +1,6 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
+import type { OverflowMenuProps } from '@patternfly/react-core';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import type { Map as ImmutableMap } from 'immutable';
@@ -358,6 +359,25 @@ export type ConsoleDataViewProps<
   isResizable?: boolean;
   /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
   resetAllColumnWidths?: () => void;
+  /** Bulk select control to display in the toolbar (e.g., PatternFly BulkSelect component). */
+  bulkSelect?: ReactNode;
+  /** Bulk actions to display in the toolbar when items are selected. */
+  bulkActions?: ReactNode;
+  /** Selection configuration for enabling row selection. */
+  selection?: {
+    /** Set of selected item IDs. */
+    selectedItems: Set<string>;
+    /** Callback when a single row is selected/deselected. */
+    onSelect: (itemId: string, isSelecting: boolean) => void;
+    /** Callback when select all is toggled. Receives filtered items matching current filters. */
+    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
+    /** Function to extract unique ID from an item for selection tracking. */
+    getItemId: (item: TData) => string;
+    /** Callback to receive filtered selected items whenever filters or selection changes. */
+    onFilteredSelectionChange?: (filteredSelectedItems: TData[]) => void;
+  };
+  /** Breakpoint at which toolbar actions switch between horizontal and dropdown layout. Default is 'lg'. */
+  actionsBreakpoint?: OverflowMenuProps['breakpoint'];
 };
 
 // ConsoleDataView helper types
@@ -368,6 +388,7 @@ export type CellIsStickyProps = {
 
 export type GetNameCellProps = (
   name: string,
+  withBulkSelect?: boolean,
 ) => CellIsStickyProps & {
   hasRightBorder: true;
   'data-test': string;
