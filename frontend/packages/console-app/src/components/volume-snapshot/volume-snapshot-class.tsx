@@ -4,11 +4,12 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
   ListPageBody,
@@ -82,8 +83,14 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<VolumeSnapshotCl
   });
 };
 
-const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[] => {
+const useVolumeSnapshotClassColumns = (): {
+  columns: TableColumn<VolumeSnapshotClassKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    VolumeSnapshotClassModel,
+  );
 
   const columns: TableColumn<VolumeSnapshotClassKind>[] = useMemo(
     () => [
@@ -91,30 +98,33 @@ const useVolumeSnapshotClassColumns = (): TableColumn<VolumeSnapshotClassKind>[]
         title: t('console-app~Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
         title: t('console-app~Driver'),
         sort: 'driver',
         id: tableColumnInfo[1].id,
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('console-app~Deletion policy'),
         sort: 'deletionPolicy',
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: '',
         id: tableColumnInfo[3].id,
-        props: { ...cellIsStickyProps },
+        props: { ...actionsCellProps },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
 
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
@@ -123,7 +133,7 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const columns = useVolumeSnapshotClassColumns();
+  const { columns, resetAllColumnWidths } = useVolumeSnapshotClassColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
@@ -136,6 +146,8 @@ const VolumeSnapshotClassTable: FC<VolumeSnapshotClassTableProps> = ({
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

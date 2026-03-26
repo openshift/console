@@ -13,11 +13,13 @@ import {
 } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
@@ -111,8 +113,14 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<PersistentVolume
   });
 };
 
-const usePersistentVolumeColumns = (): TableColumn<PersistentVolumeKind>[] => {
+const usePersistentVolumeColumns = (): {
+  columns: TableColumn<PersistentVolumeKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    PersistentVolumeModel,
+  );
 
   const columns: TableColumn<PersistentVolumeKind>[] = useMemo(
     () => [
@@ -120,48 +128,57 @@ const usePersistentVolumeColumns = (): TableColumn<PersistentVolumeKind>[] => {
         title: t('public~Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
         title: t('public~Status'),
         sort: 'status.phase',
         id: tableColumnInfo[1].id,
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Claim'),
         sort: 'spec.claimRef.name',
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Capacity'),
         sort: 'pvStorage',
         id: tableColumnInfo[3].id,
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Labels'),
         sort: 'metadata.labels',
         id: tableColumnInfo[4].id,
-        props: { modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
+        props: {
+          modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[4].id)),
+        },
       },
       {
         title: t('public~Created'),
         sort: 'metadata.creationTimestamp',
         id: tableColumnInfo[5].id,
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: '',
         id: tableColumnInfo[6].id,
-        props: { ...cellIsStickyProps },
+        props: { ...actionsCellProps },
       },
     ],
-    [t],
+    [t, getResizableProps, getWidth],
   );
 
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
@@ -246,7 +263,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
 
 export const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
-  const columns = usePersistentVolumeColumns();
+  const { columns, resetAllColumnWidths } = usePersistentVolumeColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
 
   return (
@@ -259,6 +276,8 @@ export const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, load
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

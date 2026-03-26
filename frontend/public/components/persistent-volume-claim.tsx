@@ -20,12 +20,13 @@ import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataV
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
@@ -198,8 +199,14 @@ const getDataViewRowsCreator: (
   });
 };
 
-const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKind>[] => {
+const usePersistentVolumeClaimColumns = (): {
+  columns: TableColumn<PersistentVolumeClaimKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    PersistentVolumeClaimModel,
+  );
 
   const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
@@ -207,54 +214,61 @@ const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKin
         title: t('public~Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
         title: t('public~Namespace'),
         sort: 'metadata.namespace',
         id: tableColumnInfo[1].id,
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Status'),
         sort: 'status.phase',
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~PersistentVolume'),
         sort: 'spec.volumeName',
         id: tableColumnInfo[3].id,
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Capacity'),
         sort: 'pvcStorage',
         id: tableColumnInfo[4].id,
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Used'),
         sort: 'pvcUsed',
         id: tableColumnInfo[5].id,
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~StorageClass'),
         sort: 'spec.storageClassName',
         id: tableColumnInfo[6].id,
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: '',
         id: tableColumnInfo[7].id,
-        props: { ...cellIsStickyProps },
+        props: { ...actionsCellProps },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
 
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
@@ -515,7 +529,7 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const columns = usePersistentVolumeClaimColumns();
+  const { columns, resetAllColumnWidths } = usePersistentVolumeClaimColumns();
   const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
@@ -584,6 +598,8 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
