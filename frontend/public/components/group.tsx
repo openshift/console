@@ -26,10 +26,11 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { TableColumn, K8sResourceKind } from '@console/internal/module/k8s';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/shared/src/constants/ui';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'users' }, { id: 'created' }, { id: 'actions' }];
@@ -75,16 +76,22 @@ const getDataViewRows: GetDataViewRows<GroupKind> = (data, columns) => {
   });
 };
 
-const useGroupColumns = (): TableColumn<GroupKind>[] => {
+const useGroupColumns = (): {
+  columns: TableColumn<GroupKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(GroupModel);
+
+  const columns: TableColumn<GroupKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -92,6 +99,7 @@ const useGroupColumns = (): TableColumn<GroupKind>[] => {
         title: t('public~Users'),
         id: tableColumnInfo[1].id,
         sort: 'users.length',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -100,6 +108,7 @@ const useGroupColumns = (): TableColumn<GroupKind>[] => {
         title: t('public~Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -108,18 +117,20 @@ const useGroupColumns = (): TableColumn<GroupKind>[] => {
         title: '',
         id: tableColumnInfo[3].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation();
-  const columns = useGroupColumns();
+  const { columns, resetAllColumnWidths } = useGroupColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -131,6 +142,8 @@ export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => 
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

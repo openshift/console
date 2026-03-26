@@ -15,9 +15,10 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
   initialFiltersDefault,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { tableFilters } from '../factory/table-filters';
 import { SectionHeading } from '../utils/headings';
@@ -210,7 +211,7 @@ const useBindingsColumns = () => {
         id: bindingsTableColumnInfo[0].id,
         sort: 'metadata.name',
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -392,32 +393,41 @@ export const ClusterRoleBindingsDetailsPage = (props) => {
 
 const useRolesColumns = () => {
   const { t } = useTranslation();
-  return [
-    {
-      title: t('public~Name'),
-      id: tableColumnInfo[0].id,
-      sort: 'metadata.name',
-      props: {
-        ...cellIsStickyProps,
-        modifier: 'nowrap',
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleModel);
+
+  const columns = useMemo(
+    () => [
+      {
+        title: t('public~Name'),
+        id: tableColumnInfo[0].id,
+        sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: {
+          ...nameCellProps,
+          modifier: 'nowrap',
+        },
       },
-    },
-    {
-      title: t('public~Namespace'),
-      id: tableColumnInfo[1].id,
-      sort: 'metadata.namespace',
-      props: {
-        modifier: 'nowrap',
+      {
+        title: t('public~Namespace'),
+        id: tableColumnInfo[1].id,
+        sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
+        props: {
+          modifier: 'nowrap',
+        },
       },
-    },
-    {
-      title: '',
-      id: tableColumnInfo[2].id,
-      props: {
-        ...cellIsStickyProps,
+      {
+        title: '',
+        id: tableColumnInfo[2].id,
+        props: {
+          ...actionsCellProps,
+        },
       },
-    },
-  ];
+    ],
+    [t, getResizableProps],
+  );
+
+  return { columns, resetAllColumnWidths };
 };
 
 const useRoleFilterOptions = () => {
@@ -443,7 +453,7 @@ const useRoleFilterOptions = () => {
 const RolesList = (props) => {
   const { t } = useTranslation();
   const { data, loaded } = props;
-  const columns = useRolesColumns();
+  const { columns, resetAllColumnWidths } = useRolesColumns();
   const roleFilterOptions = useRoleFilterOptions();
 
   const initialFilters = useMemo(() => ({ ...initialFiltersDefault, 'role-kind': [] }), []);
@@ -480,6 +490,8 @@ const RolesList = (props) => {
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

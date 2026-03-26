@@ -22,7 +22,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ClusterRoleBindingModel } from '../../models';
+import { ClusterRoleBindingModel, RoleBindingModel } from '../../models';
 import {
   ClusterRoleBindingKind,
   getQN,
@@ -40,11 +40,12 @@ import {
   initialFiltersDefault,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { TableColumn } from '@console/internal/module/k8s';
 import { GetDataViewRows, ResourceFilters } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { tableFilters } from '../factory/table-filters';
 import { ButtonBar } from '../utils/button-bar';
 import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
@@ -96,16 +97,22 @@ const tableColumnInfo = [
   { id: 'actions' },
 ];
 
-const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
+const useRoleBindingsColumns = (): {
+  columns: TableColumn<BindingKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(RoleBindingModel);
+
+  const columns: TableColumn<BindingKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -113,6 +120,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
         title: t('public~Role ref'),
         id: tableColumnInfo[1].id,
         sort: 'roleRef.name',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -121,6 +129,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
         title: t('public~Subject kind'),
         id: tableColumnInfo[2].id,
         sort: 'subject.kind',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -129,6 +138,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
         title: t('public~Subject name'),
         id: tableColumnInfo[3].id,
         sort: 'subject.name',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -137,6 +147,7 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -145,12 +156,14 @@ const useRoleBindingsColumns = (): TableColumn<BindingKind>[] => {
         title: '',
         id: tableColumnInfo[5].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const BindingName: FC<BindingProps> = ({ binding }) => (
@@ -234,7 +247,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
 
 export const BindingsList: FC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation();
-  const columns = useRoleBindingsColumns();
+  const { columns, resetAllColumnWidths } = useRoleBindingsColumns();
 
   const hasCRBindings = props.data.some((binding) => !binding.metadata.namespace);
 
@@ -329,6 +342,8 @@ export const BindingsList: FC<BindingsListTableProps> = (props) => {
         matchesAdditionalFilters={matchesAdditionalFilters}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
