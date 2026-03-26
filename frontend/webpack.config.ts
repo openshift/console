@@ -3,6 +3,7 @@ import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as _ from 'lodash';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { WebpackSharedObject, WebpackSharedConfig } from '@openshift/dynamic-plugin-sdk-webpack';
@@ -24,7 +25,6 @@ interface Configuration extends webpack.Configuration {
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -288,31 +288,16 @@ const config: Configuration = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, './public/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/console-shared/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/console-app/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
         {
-          from: path.resolve(__dirname, './packages/operator-lifecycle-manager/locales'),
-          to: 'locales',
-        },
-        {
-          from: path.resolve(__dirname, './packages/operator-lifecycle-manager-v1/locales'),
-          to: 'locales',
-        },
-        { from: path.resolve(__dirname, './packages/dev-console/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/helm-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/git-service/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/vsphere-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/insights-plugin/locales'), to: 'locales' },
-        {
-          from: path.resolve(__dirname, './packages/console-telemetry-plugin/locales'),
-          to: 'locales',
+          from: './{packages/*,public}/locales',
+          // Flat locales directory structure: /static/locales/{en,fr,...}/{namespace}.json
+          to: ({ absoluteFilename }) => {
+            const segments = absoluteFilename.split(path.sep);
+            return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
+          },
+          context: path.resolve(__dirname),
+          filter: (p) => path.extname(p) === '.json',
         },
       ],
     }),
