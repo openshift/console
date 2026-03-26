@@ -28,10 +28,11 @@ import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from './utils/status-box';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -123,16 +124,22 @@ const SecretDetails: FC<{ obj: SecretKind }> = ({ obj }) => {
   );
 };
 
-const useSecretsColumns = (): TableColumn<any>[] => {
+const useSecretsColumns = (): {
+  columns: TableColumn<SecretKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(SecretModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -140,6 +147,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -148,6 +156,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
         title: t('public~Type'),
         id: tableColumnInfo[2].id,
         sort: 'type',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -156,6 +165,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
         title: t('public~Size'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -164,6 +174,7 @@ const useSecretsColumns = (): TableColumn<any>[] => {
         title: t('public~Created'),
         id: tableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -172,16 +183,17 @@ const useSecretsColumns = (): TableColumn<any>[] => {
         title: '',
         id: tableColumnInfo[5].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useSecretsColumns();
+  const { columns, resetAllColumnWidths } = useSecretsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -193,6 +205,8 @@ const SecretsList: FC<SecretsListProps> = ({ data, loaded, ...props }) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

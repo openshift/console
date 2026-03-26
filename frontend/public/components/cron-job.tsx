@@ -38,10 +38,11 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from './utils/status-box';
@@ -317,16 +318,22 @@ export const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => 
   );
 };
 
-const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
+const useCronJobsColumns = (): {
+  columns: TableColumn<CronJobKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  const columns: TableColumn<CronJobKind>[] = useMemo(() => {
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
+
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -334,6 +341,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -342,6 +350,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Schedule'),
         id: tableColumnInfo[2].id,
         sort: 'spec.schedule',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -350,6 +359,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Suspend'),
         id: tableColumnInfo[3].id,
         sort: 'spec.suspend',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -358,6 +368,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Concurrency policy'),
         id: tableColumnInfo[4].id,
         sort: 'spec.concurrencyPolicy',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -366,6 +377,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Starting deadline seconds'),
         id: tableColumnInfo[5].id,
         sort: 'spec.startingDeadlineSeconds',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -374,16 +386,17 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useCronJobsColumns();
+  const { columns, resetAllColumnWidths } = useCronJobsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -395,6 +408,8 @@ export const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) 
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
