@@ -32,10 +32,11 @@ import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { sortResourceByValue } from './factory/Table/sort';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -197,8 +198,12 @@ type MachineListProps = {
   hideColumnManagement?: boolean;
 };
 
-const useMachineColumns = (): TableColumn<MachineKind>[] => {
+const useMachineColumns = (): {
+  columns: TableColumn<MachineKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(MachineModel);
 
   const columns: TableColumn<MachineKind>[] = useMemo(() => {
     return [
@@ -206,8 +211,9 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -215,6 +221,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -223,6 +230,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Node'),
         id: tableColumnInfo[2].id,
         sort: 'status.nodeRef.name',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -231,6 +239,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Phase'),
         id: tableColumnInfo[3].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, getMachinePhase)),
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -239,6 +248,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Provider state'),
         id: tableColumnInfo[4].id,
         sort: 'status.providerStatus.instanceState',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -247,6 +257,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Region'),
         id: tableColumnInfo[5].id,
         sort: "metadata.labels['machine.openshift.io/region']",
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -255,6 +266,7 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: t('public~Availability zone'),
         id: tableColumnInfo[6].id,
         sort: "metadata.labels['machine.openshift.io/zone']",
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -263,16 +275,17 @@ const useMachineColumns = (): TableColumn<MachineKind>[] => {
         title: '',
         id: tableColumnInfo[7].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
-  const columns = useMachineColumns();
+  const { columns, resetAllColumnWidths } = useMachineColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -285,6 +298,8 @@ export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

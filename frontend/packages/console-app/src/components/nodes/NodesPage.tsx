@@ -6,16 +6,18 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import {
   filterVirtualMachineInstancesByNode,
   useIsKubevirtPluginActive,
@@ -159,16 +161,21 @@ const nodeColumnInfo = Object.freeze({
 
 const kind = 'Node';
 
-const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
+const useNodesColumns = (
+  vmsEnabled: boolean,
+): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
         id: nodeColumnInfo.name.id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(nodeColumnInfo.name.id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -176,6 +183,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Status'),
         id: nodeColumnInfo.status.id,
         sort: sortWithCSRResource(nodeReadiness, 'False'),
+        resizableProps: getResizableProps(nodeColumnInfo.status.id),
         props: {
           modifier: 'nowrap',
         },
@@ -184,6 +192,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Machine set'),
         id: nodeColumnInfo.machineOwner.id,
         sort: 'machineOwner.name',
+        resizableProps: getResizableProps(nodeColumnInfo.machineOwner.id),
         props: {
           modifier: 'nowrap',
         },
@@ -194,6 +203,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
               title: t('console-app~Virtual machines'),
               id: nodeColumnInfo.vms.id,
               sort: 'virtualMachines',
+              resizableProps: getResizableProps(nodeColumnInfo.vms.id),
               props: {
                 modifier: 'nowrap',
                 info: {
@@ -212,6 +222,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Pods'),
         id: nodeColumnInfo.pods.id,
         sort: sortWithCSRResource(nodePods, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.pods.id),
         props: {
           modifier: 'nowrap',
         },
@@ -220,6 +231,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Memory'),
         id: nodeColumnInfo.memory.id,
         sort: sortWithCSRResource(nodeMemory, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.memory.id),
         props: {
           modifier: 'nowrap',
         },
@@ -228,6 +240,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~CPU'),
         id: nodeColumnInfo.cpu.id,
         sort: sortWithCSRResource(nodeCPU, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.cpu.id),
         props: {
           modifier: 'nowrap',
         },
@@ -236,6 +249,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Roles'),
         id: nodeColumnInfo.role.id,
         sort: sortWithCSRResource(nodeRolesSort, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.role.id),
         props: {
           modifier: 'nowrap',
         },
@@ -245,6 +259,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Architecture'),
         id: nodeColumnInfo.architecture.id,
         sort: sortWithCSRResource(nodeArch, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.architecture.id),
         props: {
           modifier: 'nowrap',
         },
@@ -254,6 +269,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Filesystem'),
         id: nodeColumnInfo.filesystem.id,
         sort: sortWithCSRResource(nodeFS, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.filesystem.id),
         props: {
           modifier: 'nowrap',
         },
@@ -263,6 +279,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Created'),
         id: nodeColumnInfo.created.id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(nodeColumnInfo.created.id),
         props: {
           modifier: 'nowrap',
         },
@@ -272,6 +289,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Instance type'),
         id: nodeColumnInfo.instanceType.id,
         sort: sortWithCSRResource(nodeInstanceType, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.instanceType.id),
         props: {
           modifier: 'nowrap',
         },
@@ -281,6 +299,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Machine'),
         id: nodeColumnInfo.machine.id,
         sort: sortWithCSRResource(nodeMachine, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.machine.id),
         props: {
           modifier: 'nowrap',
         },
@@ -290,6 +309,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~MachineConfigPool'),
         id: nodeColumnInfo.machineConfigPool.id,
         sort: 'machineConfigPool.metadata.name',
+        resizableProps: getResizableProps(nodeColumnInfo.machineConfigPool.id),
         props: {
           modifier: 'nowrap',
         },
@@ -299,9 +319,10 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Labels'),
         id: nodeColumnInfo.labels.id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
           modifier: 'nowrap',
-          width: 15,
+          ...getLabelsColumnWidthStyleProp(getWidth(nodeColumnInfo.labels.id)),
         },
         additional: true,
       },
@@ -309,6 +330,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Zone'),
         id: nodeColumnInfo.zone.id,
         sort: sortWithCSRResource(nodeZone, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.zone.id),
         props: {
           modifier: 'nowrap',
         },
@@ -318,6 +340,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Uptime'),
         id: nodeColumnInfo.uptime.id,
         sort: sortWithCSRResource(nodeUptime, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.uptime.id),
         props: {
           modifier: 'nowrap',
         },
@@ -327,12 +350,13 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: '',
         id: nodeColumnInfo.actions.id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t, vmsEnabled]);
-  return columns;
+  }, [t, vmsEnabled, getWidth, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
@@ -584,7 +608,7 @@ const NodeList: FC<NodeListProps> = ({
   selectedColumns,
 }) => {
   const { t } = useTranslation();
-  const columns = useNodesColumns(vmsEnabled);
+  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
@@ -812,6 +836,8 @@ const NodeList: FC<NodeListProps> = ({
         hideNameLabelFilters={hideNameLabelFilters}
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

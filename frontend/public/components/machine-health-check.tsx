@@ -23,11 +23,12 @@ import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
@@ -66,16 +67,24 @@ const getDataViewRows: GetDataViewRows<MachineHealthCheckKind> = (data, columns)
   });
 };
 
-const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] => {
+const useMachineHealthCheckColumns = (): {
+  columns: TableColumn<MachineHealthCheckKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    MachineHealthCheckModel,
+  );
+
   const columns: TableColumn<MachineHealthCheckKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -83,6 +92,7 @@ const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] =
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -91,6 +101,7 @@ const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] =
         title: t('public~Created'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -99,12 +110,13 @@ const useMachineHealthCheckColumns = (): TableColumn<MachineHealthCheckKind>[] =
         title: '',
         id: tableColumnInfo[3].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
@@ -113,7 +125,7 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
   loadError,
   ...props
 }) => {
-  const columns = useMachineHealthCheckColumns();
+  const { columns, resetAllColumnWidths } = useMachineHealthCheckColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -126,6 +138,8 @@ const MachineHealthCheckList: FC<MachineHealthCheckListProps> = ({
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -8,11 +8,12 @@ import { DASH } from '@console/shared/src/constants';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { MachineAutoscalerModel } from '../models';
 import {
   groupVersionFor,
@@ -100,16 +101,24 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   });
 };
 
-const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
+const useMachineAutoscalerColumns = (): {
+  columns: TableColumn<K8sResourceKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    MachineAutoscalerModel,
+  );
+
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -117,6 +126,7 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -125,6 +135,7 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Scale target'),
         id: tableColumnInfo[2].id,
         sort: 'spec.scaleTargetRef.name',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -133,6 +144,7 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Min'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minReplicas',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -141,6 +153,7 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Max'),
         id: tableColumnInfo[4].id,
         sort: 'spec.maxReplicas',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -149,12 +162,13 @@ const useMachineAutoscalerColumns = (): TableColumn<K8sResourceKind>[] => {
         title: '',
         id: tableColumnInfo[5].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
@@ -163,7 +177,7 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
   loadError,
   ...props
 }) => {
-  const columns = useMachineAutoscalerColumns();
+  const { columns, resetAllColumnWidths } = useMachineAutoscalerColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -176,6 +190,8 @@ const MachineAutoscalerList: FC<MachineAutoscalerListProps> = ({
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
