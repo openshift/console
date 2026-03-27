@@ -1,19 +1,8 @@
 // Copyright The OpenTelemetry Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// SPDX-License-Identifier: Apache-2.0
 
-// Package httpconv provides OpenTelemetry semantic convetions for the net/http
-// package from the standard library.
+// Package httpconv provides OpenTelemetry HTTP semantic conventions for
+// tracing telemetry.
 package httpconv // import "go.opentelemetry.io/otel/semconv/v1.17.0/httpconv"
 
 import (
@@ -58,9 +47,10 @@ var (
 	}
 )
 
-// ClientResponse returns attributes for an HTTP response received by a client
-// from a server. It will return the following attributes if the related values
-// are defined in resp: "http.status.code", "http.response_content_length".
+// ClientResponse returns trace attributes for an HTTP response received by a
+// client from a server. It will return the following attributes if the related
+// values are defined in resp: "http.status.code",
+// "http.response_content_length".
 //
 // This does not add all OpenTelemetry required attributes for an HTTP event,
 // it assumes ClientRequest was used to create the span with a complete set of
@@ -72,8 +62,8 @@ func ClientResponse(resp *http.Response) []attribute.KeyValue {
 	return hc.ClientResponse(resp)
 }
 
-// ClientRequest returns attributes for an HTTP request made by a client. The
-// following attributes are always returned: "http.url", "http.flavor",
+// ClientRequest returns trace attributes for an HTTP request made by a client.
+// The following attributes are always returned: "http.url", "http.flavor",
 // "http.method", "net.peer.name". The following attributes are returned if the
 // related values are defined in req: "net.peer.port", "http.user_agent",
 // "http.request_content_length", "enduser.id".
@@ -87,7 +77,8 @@ func ClientStatus(code int) (codes.Code, string) {
 	return hc.ClientStatus(code)
 }
 
-// ServerRequest returns attributes for an HTTP request received by a server.
+// ServerRequest returns trace attributes for an HTTP request received by a
+// server.
 //
 // The server must be the primary server name if it is known. For example this
 // would be the ServerName directive
