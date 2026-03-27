@@ -10,14 +10,19 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.2 - TBD
+## 4.22.0-prerelease.2 - 2026-03-26
+
+> [!IMPORTANT]
+> This release includes breaking changes that impact all existing Console plugins.
+> Refer to [the release notes](https://github.com/openshift/console/blob/main/frontend/packages/console-dynamic-plugin-sdk/release-notes/4.22.md)
+> for details on how to adapt your plugins for Console 4.22.
 
 - **Breaking**: Changed `AlertAction` extension to use `LaunchOverlay` instead of `LaunchModal`. The `action` callback parameter is now typed as `LaunchOverlay`, which does not support the optional `id` parameter that `LaunchModal` had. Plugins implementing `console.alert-action` extensions must update their action callbacks accordingly. ([CONSOLE-4447])
 - **Breaking**: Removed support for `console.page/resource/tab` and `console.dashboards/overview/detail/item`
   extensions. Use `console.tab/horizontalNav` and `console.dashboards/custom/overview/detail/item` extensions
   instead ([CONSOLE-5093], [#16043])
-- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook, use `pluginName` instead ([CONSOLE-3769], [#15904])
-- **Breaking**: Removed `AppInitSDK` and `useReduxStore` in `app` directory ([CONSOLE-5063], [#16019])
+- **Breaking**: Removed `pluginID` from the result in `useResolvedExtensions` hook. Use `pluginName` instead ([CONSOLE-3769], [#15904])
+- **Breaking**: Removed `AppInitSDK` and `useReduxStore` in the `app` directory ([CONSOLE-5063], [#16019])
 - **Deprecated**: `useUserSettings` hook has been renamed to `useUserPreference` for consistency ([OCPBUGS-44612], [#16057])
 - **Type breaking**: Changed `useDeleteModal` hook's `redirectTo` parameter type from `LocationDescriptor` (from `history`) to `To` (from `react-router`) ([CONSOLE-4990], [#15959])
 - **Type breaking**: Changed `FileUploadHandler` return type from `void` to `To | void`. Handlers can now return a path (from `react-router`) for programmatic navigation instead of calling history methods directly ([CONSOLE-4990], [#15959])
@@ -25,10 +30,6 @@ table in [Console dynamic plugins README](./README.md).
   by Console: `CodeRef`, `EncodedCodeRef`, `LoadedExtension`, and `ResolvedExtension` ([CONSOLE-3769], [#15904])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
-
-> [!IMPORTANT]
-> This release includes breaking changes that impact all existing Console plugins.
-> Refer to upgrade-sdk.md for details on how to adapt your plugins for Console 4.22.
 
 - **Breaking**: Removed ability to load plugins that use legacy plugin manifest format ([CONSOLE-3769], [#15778])
 - **Breaking**: Removed `setPluginStore` function in `k8s-utils.ts` ([CONSOLE-3769], [#15778])
@@ -196,6 +197,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
+[CONSOLE-5063]: https://issues.redhat.com/browse/CONSOLE-5063
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
@@ -216,10 +218,8 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-52948]: https://issues.redhat.com/browse/OCPBUGS-52948
 [OCPBUGS-55368]: https://issues.redhat.com/browse/OCPBUGS-55368
 [OCPBUGS-56248]: https://issues.redhat.com/browse/OCPBUGS-56248
-[OCPBUGS-57755]: https://issues.redhat.com/browse/OCPBUGS-57755
 [OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
-[OCPBUGS-58375]: https://issues.redhat.com/browse/OCPBUGS-58375
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
