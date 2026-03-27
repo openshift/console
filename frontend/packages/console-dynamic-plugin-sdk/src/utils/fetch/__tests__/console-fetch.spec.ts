@@ -1,6 +1,30 @@
 import { RetryError } from '../../error/http-error';
 import { consoleFetch } from '../console-fetch';
-import { shouldLogout, validateStatus } from '../console-fetch-utils';
+import { shouldLogout, unescapeGoUnicode, validateStatus } from '../console-fetch-utils';
+
+describe('unescapeGoUnicode', () => {
+  it('should unescape 4-digit Go unicode escapes', () => {
+    expect(unescapeGoUnicode('\\ue00f')).toBe('\ue00f');
+    expect(unescapeGoUnicode('\\ue4c8')).toBe('\ue4c8');
+  });
+
+  it('should unescape 8-digit Go unicode escapes for supplementary plane characters', () => {
+    expect(unescapeGoUnicode('\\U0002ebf0')).toBe(String.fromCodePoint(0x2ebf0));
+    expect(unescapeGoUnicode('\\U0002ebf1')).toBe(String.fromCodePoint(0x2ebf1));
+  });
+
+  it('should unescape mixed content with normal text and escapes', () => {
+    const input = 'a啊阿沸犯跃kg\\ue00f\\ue010\\ue011\\ue4c8丙乩h妖哪匸与f去\\U0002ebf0\\U0002ebf1';
+    const expected = `a啊阿沸犯跃kg\ue00f\ue010\ue011\ue4c8丙乩h妖哪匸与f去${String.fromCodePoint(
+      0x2ebf0,
+    )}${String.fromCodePoint(0x2ebf1)}`;
+    expect(unescapeGoUnicode(input)).toBe(expected);
+  });
+
+  it('should not throw on out-of-range 8-digit escape sequences', () => {
+    expect(unescapeGoUnicode('\\UFFFFFFFF')).toBe('\\UFFFFFFFF');
+  });
+});
 
 describe('consoleFetch', () => {
   const json = async () => ({
