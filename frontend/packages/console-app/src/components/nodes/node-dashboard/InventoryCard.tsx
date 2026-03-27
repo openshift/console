@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import BareMetalInventoryItems from '@console/app/src/components/nodes/node-dashboard/BareMetalInventoryItems';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
@@ -25,8 +26,7 @@ import {
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useIsKubevirtPluginActive } from '../../../utils/kubevirt';
-import { useWatchVirtualMachineInstances, VirtualMachineModel } from '../NodeVmUtils';
+import { useWatchVirtualMachineInstances, VirtualMachineModel } from '../utils/NodeVmUtils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {

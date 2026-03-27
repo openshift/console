@@ -1,8 +1,13 @@
-import { renderHook } from '@testing-library/react';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type { K8sResourceCommon, K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import type { PodKind } from '@console/internal/module/k8s';
-import { useIsKubevirtPluginActive } from '../../../utils/kubevirt';
+import { FLAGS } from '@console/shared/src/constants/common';
+import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   filterVirtualMachineInstancesByNode,
   getCurrentPod,
@@ -12,16 +17,23 @@ import {
   VirtualMachineInstanceGroupVersionKind,
 } from '../NodeVmUtils';
 
-jest.mock('../../../utils/kubevirt', () => ({
+jest.mock('@console/app/src/utils/kubevirt', () => ({
   useIsKubevirtPluginActive: jest.fn(),
+}));
+
+jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
+  useFlag: jest.fn(),
 }));
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks', () => ({
   useK8sWatchResource: jest.fn(),
+  useK8sWatchResources: jest.fn(),
 }));
 
 const useIsKubevirtPluginActiveMock = useIsKubevirtPluginActive as jest.Mock;
+const useFlagMock = useFlag as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
+const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 
 describe('NodeVmUtils', () => {
   beforeEach(() => {
@@ -246,11 +258,16 @@ describe('NodeVmUtils', () => {
   });
 
   describe('useWatchVirtualMachineInstances', () => {
+    beforeEach(() => {
+      useFlagMock.mockImplementation((flag) => flag === FLAGS.CAN_LIST_NS);
+    });
+
     it('should not watch resources when kubevirt plugin is not active', () => {
       useIsKubevirtPluginActiveMock.mockReturnValue(false);
       useK8sWatchResourceMock.mockReturnValue([[], false, undefined]);
+      useK8sWatchResourcesMock.mockReturnValue({});
 
-      renderHook(() => useWatchVirtualMachineInstances('node-1'));
+      renderHookWithProviders(() => useWatchVirtualMachineInstances('node-1'));
 
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith(undefined);
     });
@@ -258,12 +275,14 @@ describe('NodeVmUtils', () => {
     it('should watch VMIs when kubevirt plugin is active', () => {
       useIsKubevirtPluginActiveMock.mockReturnValue(true);
       useK8sWatchResourceMock.mockReturnValue([[], false, undefined]);
+      useK8sWatchResourcesMock.mockReturnValue({});
 
-      renderHook(() => useWatchVirtualMachineInstances('node-1'));
+      renderHookWithProviders(() => useWatchVirtualMachineInstances('node-1'));
 
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
         isList: true,
         groupVersionKind: VirtualMachineInstanceGroupVersionKind,
+        namespaced: true,
       });
     });
 
@@ -283,7 +302,7 @@ describe('NodeVmUtils', () => {
 
       useK8sWatchResourceMock.mockReturnValue([vmis, true, undefined]);
 
-      const { result } = renderHook(() => useWatchVirtualMachineInstances('node-1'));
+      const { result } = renderHookWithProviders(() => useWatchVirtualMachineInstances('node-1'));
 
       expect(result.current[0]).toHaveLength(1);
       expect(result.current[0][0].metadata.name).toBe('vmi-1');
