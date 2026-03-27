@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, Suspense } from 'react';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
 import * as _ from 'lodash';
@@ -18,16 +19,13 @@ import type {
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import {
-  filterVirtualMachineInstancesByNode,
-  useIsKubevirtPluginActive,
-  useWatchVirtualMachineInstances,
-} from '@console/app/src/components/nodes/NodeVmUtils';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
+  useOverlay,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import type {
   K8sResourceCommon,
@@ -71,6 +69,7 @@ import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/const
 import { DASH } from '@console/shared/src/constants/ui';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
@@ -95,9 +94,16 @@ import {
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { nodeStatus } from '../../status';
 import { getNodeClientCSRs, isCSRResource } from './csr';
+import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
+import { getNodeGroups } from './NodeGroupUtils';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
+import {
+  filterVirtualMachineInstancesByNode,
+  useIsKubevirtPluginActive,
+  useWatchVirtualMachineInstances,
+} from './NodeVmUtils';
 import ClientCSRStatus from './status/CSRStatus';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
@@ -108,6 +114,9 @@ const nodeColumnInfo = Object.freeze({
   },
   status: {
     id: 'status',
+  },
+  groups: {
+    id: 'groups',
   },
   machineOwner: {
     id: 'machineOwner',
@@ -163,6 +172,7 @@ const kind = 'Node';
 
 const useNodesColumns = (
   vmsEnabled: boolean,
+  nodeMgmtV1Enabled: boolean,
 ): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
@@ -188,6 +198,19 @@ const useNodesColumns = (
           modifier: 'nowrap',
         },
       },
+      ...(nodeMgmtV1Enabled
+        ? [
+            {
+              title: t('console-app~Groups'),
+              id: nodeColumnInfo.groups.id,
+              sort: 'groups',
+              resizableProps: getResizableProps(nodeColumnInfo.groups.id),
+              props: {
+                modifier: 'nowrap',
+              },
+            },
+          ]
+        : []),
       {
         title: t('console-app~Machine set'),
         id: nodeColumnInfo.machineOwner.id,
@@ -354,7 +377,7 @@ const useNodesColumns = (
         },
       },
     ];
-  }, [t, vmsEnabled, getWidth, getResizableProps]);
+  }, [t, vmsEnabled, nodeMgmtV1Enabled, getWidth, getResizableProps]);
 
   return { columns, resetAllColumnWidths };
 };
@@ -403,7 +426,7 @@ const getNodeDataViewRows = (
     const pods = nodeMetrics?.pods?.[nodeName] ?? DASH;
     const architecture = node ? getNodeArchitecture(node) : '';
     const [machineName, machineNamespace] = node ? getNodeMachineNameAndNamespace(node) : ['', ''];
-    const { machineOwner, machineConfigPool, virtualMachines } = obj;
+    const { machineOwner, machineConfigPool, virtualMachines, groups } = obj;
     const instanceType = node?.metadata.labels?.['beta.kubernetes.io/instance-type'] || '';
     const labels = node ? getLabels(node) : csr ? getLabels(csr) : {};
     const zone = node?.metadata.labels?.['topology.kubernetes.io/zone'] || '';
@@ -435,6 +458,9 @@ const getNodeDataViewRows = (
             title="Discovered"
           />
         ),
+      },
+      [nodeColumnInfo.groups.id]: {
+        cell: groups || DASH,
       },
       [nodeColumnInfo.role.id]: {
         cell: node ? <NodeRoles node={node} /> : DASH,
@@ -592,6 +618,7 @@ type NodeListProps = {
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   selectedColumns?: TableColumnsType;
+  nodeMgmtV1Enabled?: boolean;
 };
 
 const NodeList: FC<NodeListProps> = ({
@@ -606,9 +633,10 @@ const NodeList: FC<NodeListProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   selectedColumns,
+  nodeMgmtV1Enabled = false,
 }) => {
   const { t } = useTranslation();
-  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled);
+  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, nodeMgmtV1Enabled);
   const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
@@ -847,6 +875,7 @@ type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
   machineOwner?: OwnerReference;
   machineConfigPool?: MachineConfigPoolKind;
   virtualMachines?: number;
+  groups?: string;
 };
 
 type NodeFilters = ResourceFilters & {
@@ -880,12 +909,20 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const dispatch = useConsoleDispatch();
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
+
+  const [canEdit, isEditLoading] = useAccessReview({
+    group: NodeModel.apiGroup || '',
+    resource: NodeModel.plural,
+    verb: 'patch',
+  });
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -987,6 +1024,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineOwner,
           machineConfigPool,
           virtualMachines: vmsByNode?.get(node.metadata.name)?.length,
+          groups: getNodeGroups(node).sort().join(', '),
         };
       }),
     ];
@@ -1008,7 +1046,16 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
 
   return (
     <>
-      <ListPageHeader title={t('public~Nodes')} />
+      <ListPageHeader title={t('public~Nodes')}>
+        {nodeMgmtV1Enabled && !isEditLoading && canEdit ? (
+          <Button
+            variant={ButtonVariant.secondary}
+            onClick={() => launchOverlay(GroupsEditorModal, {})}
+          >
+            {t('console-app~Edit groups')}
+          </Button>
+        ) : null}
+      </ListPageHeader>
       <ListPageBody>
         <NodeList
           data={data}
@@ -1019,6 +1066,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineConfigPools={machineConfigPools}
           vmsEnabled={isKubevirtPluginActive}
           selectedColumns={selectedColumns}
+          nodeMgmtV1Enabled={nodeMgmtV1Enabled}
         />
       </ListPageBody>
     </>

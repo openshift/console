@@ -78,7 +78,7 @@
         "label": "%olm-v1~Enable OLMv1 catalog%",
         "trueValue": true,
         "falseValue": false,
-        "defaultValue": false
+        "defaultValue": true
       }
     },
     "flags": {
