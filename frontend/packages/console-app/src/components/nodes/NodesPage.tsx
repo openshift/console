@@ -203,6 +203,8 @@ const useNodesColumns = (
             {
               title: t('console-app~Groups'),
               id: nodeColumnInfo.groups.id,
+              sort: 'groups',
+              resizableProps: getResizableProps(nodeColumnInfo.groups.id),
               props: {
                 modifier: 'nowrap',
               },
@@ -394,10 +396,6 @@ const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores 
   );
 };
 
-const GroupsCell: FC<{ node: NodeKind }> = ({ node }) => (
-  <>{getNodeGroups(node).sort().join(', ') || DASH}</>
-);
-
 const getNodeDataViewRows = (
   rowData: RowProps<NodeRowItem, GetNodeStatusExtensions>[],
   tableColumns: ConsoleDataViewColumn<NodeRowItem>[],
@@ -428,7 +426,7 @@ const getNodeDataViewRows = (
     const pods = nodeMetrics?.pods?.[nodeName] ?? DASH;
     const architecture = node ? getNodeArchitecture(node) : '';
     const [machineName, machineNamespace] = node ? getNodeMachineNameAndNamespace(node) : ['', ''];
-    const { machineOwner, machineConfigPool, virtualMachines } = obj;
+    const { machineOwner, machineConfigPool, virtualMachines, groups } = obj;
     const instanceType = node?.metadata.labels?.['beta.kubernetes.io/instance-type'] || '';
     const labels = node ? getLabels(node) : csr ? getLabels(csr) : {};
     const zone = node?.metadata.labels?.['topology.kubernetes.io/zone'] || '';
@@ -462,7 +460,7 @@ const getNodeDataViewRows = (
         ),
       },
       [nodeColumnInfo.groups.id]: {
-        cell: node ? <GroupsCell node={node} /> : DASH,
+        cell: groups || DASH,
       },
       [nodeColumnInfo.role.id]: {
         cell: node ? <NodeRoles node={node} /> : DASH,
@@ -877,6 +875,7 @@ type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
   machineOwner?: OwnerReference;
   machineConfigPool?: MachineConfigPoolKind;
   virtualMachines?: number;
+  groups?: string;
 };
 
 type NodeFilters = ResourceFilters & {
@@ -1025,6 +1024,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineOwner,
           machineConfigPool,
           virtualMachines: vmsByNode?.get(node.metadata.name)?.length,
+          groups: getNodeGroups(node).sort().join(', '),
         };
       }),
     ];
