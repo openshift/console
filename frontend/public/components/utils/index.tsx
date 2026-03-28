@@ -9,7 +9,6 @@ export * from './resource-log';
 export * from './horizontal-nav';
 export * from './details-page';
 export * from './inject';
-export * from './firehose';
 export * from './status-box';
 export * from './headings';
 export * from './units';

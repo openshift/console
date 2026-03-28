@@ -29,7 +29,7 @@ describe('HelmReleaseResources', () => {
     // mockHelmReleases[0] has an empty manifest, so no resources to watch
     renderWithProviders(<HelmReleaseResources {...helmReleaseResourcesProps} />);
 
-    // Verify useK8sWatchResources hook was called (confirms migration from Firehose to hooks)
+    // Verify useK8sWatchResources hook was called
     expect(mockUseK8sWatchResources).toHaveBeenCalled();
 
     // Verify empty state message is displayed (user-visible content)

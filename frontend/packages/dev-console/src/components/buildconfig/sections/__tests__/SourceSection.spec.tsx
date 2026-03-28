@@ -12,12 +12,6 @@ import { BuildStrategyType } from '../../types';
 import type { SourceSectionFormData } from '../SourceSection';
 import SourceSection from '../SourceSection';
 
-// Skip Firehose fetching and render just the children
-jest.mock('@console/internal/components/utils/firehose', () => ({
-  ...jest.requireActual('@console/internal/components/utils/firehose'),
-  Firehose: ({ children }) => children,
-}));
-
 // Skip network calls to any external git service
 jest.mock('@console/git-service', () => ({
   ...jest.requireActual('@console/git-service'),

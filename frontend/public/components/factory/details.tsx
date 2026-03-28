@@ -15,11 +15,11 @@ import {
   DetailPageBreadCrumbs,
 } from '@console/dynamic-plugin-sdk/src/extensions/breadcrumbs';
 import {
-  FirehoseResult,
   K8sResourceKindReference,
   K8sResourceKind,
   K8sResourceCommon,
   WatchK8sResource,
+  WatchK8sResultsObject,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
@@ -29,7 +29,6 @@ import {
   ConnectedPageHeadingProps,
   KebabOptionsCreator,
 } from '../utils/headings';
-import { FirehoseResource } from '../utils/types';
 import { K8sKind } from '../../module/k8s/types';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
@@ -71,7 +70,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   }, []);
 
   const allPages = pages.length ? pages : null;
-  const objResource = useMemo<FirehoseResource>(
+  const objResource = useMemo<WatchK8sResource & { prop: string }>(
     () => ({
       kind: props.kind,
       name: props.name,
@@ -94,6 +93,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       const key = r.prop || r.kind;
       acc[key] = {
         kind: r.kind,
+        groupVersionKind: r.groupVersionKind,
         name: r.name,
         namespace: r.namespace,
         isList: r.isList,
@@ -102,6 +102,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         limit: r.limit,
         namespaced: r.namespaced,
         optional: r.optional,
+        partialMetadata: r.partialMetadata,
       };
       return acc;
     }, {} as Record<string, WatchK8sResource>);
@@ -125,7 +126,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
       )}
 
       <ConnectedPageHeading
-        {...watchedResources}
         obj={objData}
         title={props.title || props.name}
         titleFunc={props.titleFunc}
@@ -146,9 +146,9 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         OverrideTitle={props.OverrideTitle}
         helpText={props.helpText}
         helpAlert={props.helpAlert}
+        {...watchedResources}
       />
       <HorizontalNav
-        {...watchedResources}
         obj={objData as { data: K8sResourceCommon; loaded: boolean }}
         pages={allPages}
         pagesFor={props.pagesFor}
@@ -157,13 +157,14 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         resourceKeys={resourceKeys}
         customData={props.customData}
         createRedirect={props.createRedirect}
+        {...watchedResources}
       />
     </PageTitleContext.Provider>
   );
 }, ErrorBoundaryFallbackPage);
 
 export type DetailsPageProps = {
-  obj?: FirehoseResult<K8sResourceKind>;
+  obj?: WatchK8sResultsObject<K8sResourceKind>;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: KebabAction[] | KebabOptionsCreator;
@@ -178,7 +179,7 @@ export type DetailsPageProps = {
   label?: string;
   name?: string;
   namespace?: string;
-  resources?: FirehoseResource[];
+  resources?: (WatchK8sResource & { prop?: string })[];
   breadcrumbsFor?: (
     obj: K8sResourceKind,
   ) => ({ name: string; path: string } | { name: string; path: Location })[];

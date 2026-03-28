@@ -1,8 +1,8 @@
-import type { FirehoseResult } from '@console/internal/components/utils';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { DeploymentKind, PodKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { ImagePullPolicy } from '@console/internal/module/k8s';
 
-export const sampleDeploymentConfigs: FirehoseResult = {
+export const sampleDeploymentConfigs: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -175,7 +175,7 @@ export const sampleDeploymentConfigs: FirehoseResult = {
     },
   ],
 };
-export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
+export const sampleDeployments: WatchK8sResultsObject<DeploymentKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -450,7 +450,7 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
   ],
 };
 
-export const samplePods: FirehoseResult<PodKind[]> = {
+export const samplePods: WatchK8sResultsObject<PodKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1258,7 +1258,7 @@ export const samplePods: FirehoseResult<PodKind[]> = {
   ],
 };
 
-export const sampleReplicationControllers: FirehoseResult = {
+export const sampleReplicationControllers: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1304,7 +1304,7 @@ export const sampleReplicationControllers: FirehoseResult = {
   ],
 };
 
-export const sampleReplicaSets: FirehoseResult = {
+export const sampleReplicaSets: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1394,7 +1394,7 @@ export const sampleReplicaSets: FirehoseResult = {
   ],
 };
 
-export const sampleServices: FirehoseResult = {
+export const sampleServices: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1511,7 +1511,7 @@ export const sampleServices: FirehoseResult = {
     },
   ],
 };
-export const sampleRoutes: FirehoseResult = {
+export const sampleRoutes: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1629,7 +1629,7 @@ export const sampleRoutes: FirehoseResult = {
   ],
 };
 
-export const sampleBuildConfigs: FirehoseResult = {
+export const sampleBuildConfigs: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1822,7 +1822,7 @@ export const sampleBuildConfigs: FirehoseResult = {
   ],
 };
 
-export const sampleBuilds: FirehoseResult = {
+export const sampleBuilds: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1919,7 +1919,7 @@ export const sampleBuilds: FirehoseResult = {
   ],
 };
 
-export const sampleDaemonSets: FirehoseResult = {
+export const sampleDaemonSets: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -1995,7 +1995,7 @@ export const sampleDaemonSets: FirehoseResult = {
   ],
 };
 
-export const sampleStatefulSets: FirehoseResult = {
+export const sampleStatefulSets: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -2139,7 +2139,7 @@ export const sampleStatefulSets: FirehoseResult = {
   ],
 };
 
-export const sampleJobs: FirehoseResult = {
+export const sampleJobs: WatchK8sResultsObject<K8sResourceKind[]> = {
   data: [
     {
       kind: 'Job',
@@ -2623,7 +2623,7 @@ export const sampleJobs: FirehoseResult = {
   loadError: '',
 };
 
-export const sampleCronJobs: FirehoseResult = {
+export const sampleCronJobs: WatchK8sResultsObject<K8sResourceKind[]> = {
   data: [
     {
       kind: 'CronJob',
@@ -2800,7 +2800,7 @@ export const sampleCronJobs: FirehoseResult = {
   loadError: '',
 };
 
-export const samplePipeline: FirehoseResult = {
+export const samplePipeline: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -2832,7 +2832,7 @@ export const samplePipeline: FirehoseResult = {
   ],
 };
 
-export const samplePipelineRun: FirehoseResult = {
+export const samplePipelineRun: WatchK8sResultsObject<K8sResourceKind[]> = {
   loaded: true,
   loadError: '',
   data: [
@@ -2909,7 +2909,7 @@ export const samplePipelineRun: FirehoseResult = {
   ],
 };
 
-export const sampleClusterServiceVersions: FirehoseResult = {
+export const sampleClusterServiceVersions: WatchK8sResultsObject<K8sResourceKind[]> = {
   data: [
     {
       apiVersion: 'operators.coreos.com/v1alpha1',

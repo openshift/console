@@ -4,9 +4,9 @@ import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useLocation } from 'react-router';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
-import type { FirehoseResult } from '@console/internal/components/utils';
 import { navFactory, LoadingBox, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
@@ -23,7 +23,7 @@ import HelmReleaseResources from './resources/HelmReleaseResources';
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
 interface HelmReleaseDetailsProps {
-  secrets?: FirehoseResult<SecretKind[]>;
+  secrets?: WatchK8sResultsObject<SecretKind[]>;
 }
 
 interface LoadedHelmReleaseDetailsProps extends HelmReleaseDetailsProps {
@@ -202,13 +202,13 @@ const HelmReleaseDetails: FC<HelmReleaseDetailsProps> = () => {
     data: helmReleaseData,
   };
 
-  const secretsFirehoseResult: FirehoseResult<SecretKind[]> = {
+  const secretsResult: WatchK8sResultsObject<SecretKind[]> = {
     loaded: secretLoaded,
     loadError: secretLoadError,
     data: secrets,
   };
 
-  return <LoadedHelmReleaseDetails helmRelease={helmRelease} secrets={secretsFirehoseResult} />;
+  return <LoadedHelmReleaseDetails helmRelease={helmRelease} secrets={secretsResult} />;
 };
 
 export default HelmReleaseDetails;

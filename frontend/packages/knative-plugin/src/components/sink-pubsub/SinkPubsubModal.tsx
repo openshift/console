@@ -5,14 +5,15 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
 export interface SinkPubsubModalProps {
   resourceName: string;
-  resourceDropdown: FirehoseResult[];
+  resourceDropdown: WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]>[];
   labelTitle: string;
   cancel?: () => void;
 }

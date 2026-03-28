@@ -3,13 +3,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { ConsoleSelectProps } from '@console/internal/components/utils/console-select';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
-import type { FirehoseResult } from '@console/internal/components/utils/types';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel, modelFor, referenceFor } from '@console/internal/module/k8s';
+
+/** Extended result type that includes optional kind for badge display fallback */
+type ResourceDropdownResult = WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]> & {
+  kind?: string;
+};
 
 type DropdownItemProps = {
   model: K8sKind;
@@ -57,7 +62,7 @@ export interface ResourceDropdownProps {
   transformLabel?: Function;
   loaded?: boolean;
   loadError?: unknown;
-  resources?: FirehoseResult[];
+  resources?: ResourceDropdownResult[];
   autoSelect?: boolean;
   resourceFilter?: (resource: K8sResourceKind) => boolean;
   onChange?: (

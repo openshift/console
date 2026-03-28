@@ -1,28 +1,3 @@
-import type {
-  K8sResourceKindReference,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import type { Selector } from '@console/dynamic-plugin-sdk/src/api/common-types';
-import type { K8sResourceKind } from '../../module/k8s/types';
-
-export type FirehoseResult<
-  R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceKind[]
-> = {
-  loaded: boolean;
-  loadError: string;
-  optional?: boolean;
-  data: R;
-  kind?: string;
-};
-
-export type FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
-
-export type FirehoseResourcesResult<
-  R extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] }
-> = {
-  [k in keyof R]: FirehoseResult<R[k]>;
-};
-
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
   loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor
@@ -46,19 +21,6 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1,
 }
-
-export type FirehoseResource = {
-  kind: K8sResourceKindReference;
-  name?: string;
-  namespace?: string;
-  isList?: boolean;
-  selector?: Selector;
-  prop: string;
-  namespaced?: boolean;
-  optional?: boolean;
-  limit?: number;
-  fieldSelector?: string;
-};
 
 export type HumanizeResult = {
   string: string;
