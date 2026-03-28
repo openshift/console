@@ -381,9 +381,21 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handler.InitPayload = resolver.InitPayload
 	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]interface{}{
+		headers := map[string]interface{}{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
-		})
+		}
+		if impUser := r.Header.Get("Impersonate-User"); impUser != "" {
+			headers["Impersonate-User"] = impUser
+		}
+		if consoleGroups := r.Header.Get("X-Console-Impersonate-Groups"); consoleGroups != "" {
+			groups := strings.Split(consoleGroups, ",")
+			groups = append(groups, "system:authenticated")
+			headers["Impersonate-Group"] = groups
+		} else if impGroups := r.Header.Values("Impersonate-Group"); len(impGroups) > 0 {
+			impGroups = append(impGroups, "system:authenticated")
+			headers["Impersonate-Group"] = impGroups
+		}
+		ctx := context.WithValue(context.Background(), resolver.HeadersKey, headers)
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
 
