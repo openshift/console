@@ -764,14 +764,16 @@ export const SubscriptionDetailsPage: FC<SubscriptionDetailsPageProps> = (props)
           prop: 'subscriptions',
         },
       ]}
-      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
-        <LazyActionMenu
-          context={{
-            [referenceFor(obj)]: obj,
-          }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) =>
+        obj ? (
+          <LazyActionMenu
+            context={{
+              [referenceFor(obj)]: obj,
+            }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        ) : null
+      }
     />
   );
 };
