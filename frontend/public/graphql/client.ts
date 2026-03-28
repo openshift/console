@@ -12,6 +12,11 @@ import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/
 import { getConsoleRequestHeaders, coFetch } from '../co-fetch';
 
 let wssErrors = 0;
+let forceHTTP = false;
+
+export const setForceHTTP = (force: boolean) => {
+  forceHTTP = force;
+};
 
 class GraphQLReady {
   private callback: VoidFunction;
@@ -68,7 +73,7 @@ const wsLink = new WebSocketLink(subsClient);
 
 // fallback to http connection if websocket connection was not successful
 // iOS does not allow wss with self signed certificate
-const link = split(() => wssErrors > 4, httpLink, wsLink);
+const link = split(() => wssErrors > 4 || forceHTTP, httpLink, wsLink);
 
 const client = new ApolloClient({
   link,
