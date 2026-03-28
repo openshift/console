@@ -23,10 +23,14 @@
       border: none;
     }
   }
-  &--dragging {
-    .oc-pinned-resource__unpin-button,
-    .oc-pinned-resource__drag-button {
-      opacity: 0;
-    }
+}
+
+.co-pinned-resource-item {
+  display: flex;
+  margin-bottom: var(--pf-t--global--spacer--sm);
+
+  .pf-v6-c-nav__link {
+    padding-block: 0;
+    padding-inline-end: 0;
   }
 }

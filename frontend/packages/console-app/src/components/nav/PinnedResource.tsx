@@ -1,56 +1,30 @@
-import type { FC, MouseEvent, ReactElement } from 'react';
-import { Button } from '@patternfly/react-core';
-import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
+import type { FC, MouseEvent } from 'react';
+import { Button, Flex, FlexItem, Truncate } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { css } from '@patternfly/react-styles';
-import { debounce } from 'lodash';
-import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/internal/module/k8s';
 import { modelFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import './PinnedResource.scss';
 import { NavItemResource } from './NavItemResource';
 import useConfirmNavUnpinModal from './useConfirmNavUnpinModal';
 
-type PinnedResourceProps = {
-  resourceRef?: string;
-  navResources?: string[];
-  onChange?: (pinnedResources: string[]) => void;
-  idx?: number;
-  draggable?: boolean;
-  onReorder?: (pinnedResources: string[]) => void;
-  onDrag?: (dragging: boolean) => void;
-};
+interface PinnedResourceProps {
+  resourceRef: string;
+  navResources: string[];
+  onChange: (pinnedResources: string[]) => void;
+  idx: number;
+}
 
-type DraggableButtonProps = {
-  dragRef?: (node) => void | null;
-};
-
-type RemoveButtonProps = {
-  resourceRef?: string;
-  navResources?: string[];
-  onChange?: (pinnedResources: string[]) => void;
-};
+interface RemoveButtonProps {
+  resourceRef: string;
+  navResources: string[];
+  onChange: (pinnedResources: string[]) => void;
+}
 
 export type DragItem = {
   idx: number;
   id: string;
   type: string;
-};
-
-const DraggableButton: FC<DraggableButtonProps> = ({ dragRef }) => {
-  const { t } = useTranslation();
-  return (
-    <Button
-      icon={<GripVerticalIcon className="oc-pinned-resource__drag-icon" />}
-      ref={dragRef}
-      className="oc-pinned-resource__drag-button"
-      variant="link"
-      type="button"
-      aria-label={t('console-app~Drag to reorder')}
-    />
-  );
 };
 
 const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
@@ -63,8 +37,7 @@ const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChan
   };
   return (
     <Button
-      icon={<MinusCircleIcon className="oc-pinned-resource__delete-icon" />}
-      className="oc-pinned-resource__unpin-button"
+      icon={<MinusCircleIcon />}
       variant="link"
       aria-label={t('console-app~Unpin')}
       onClick={(e) => unPin(e, resourceRef)}
@@ -72,52 +45,8 @@ const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChan
   );
 };
 
-const reorder = (list: string[], startIndex: number, destIndex: number) => {
-  const result = [...list];
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(destIndex, 0, removed);
-  return result;
-};
-
-const PinnedResource: FC<PinnedResourceProps> = ({
-  resourceRef,
-  onChange,
-  navResources,
-  idx,
-  draggable,
-  onReorder,
-  onDrag,
-}) => {
+const PinnedResource: FC<PinnedResourceProps> = ({ resourceRef, onChange, navResources }) => {
   const { t } = useTranslation();
-  const [, drag, preview] = useDrag({
-    item: { type: 'NavItem', id: `NavItem-${idx}`, idx },
-    end: (item, monitor) => {
-      const didDrop = monitor.didDrop();
-      if (!didDrop) {
-        onDrag(false);
-      }
-    },
-  });
-
-  const [{ isOver }, drop] = useDrop({
-    accept: 'NavItem',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-    hover: debounce((item: DragItem) => {
-      if (item.idx === idx) {
-        return;
-      }
-      onReorder(reorder(navResources, item.idx, idx));
-      // monitor item updated here to avoid expensive index searches.
-      item.idx = idx;
-      onDrag(true);
-    }, 10),
-    drop() {
-      onChange(navResources); // update user-settings when the resource is dropped
-      onDrag(false);
-    },
-  });
 
   const [model] = useK8sModel(resourceRef);
   if (!model) {
@@ -137,7 +66,6 @@ const PinnedResource: FC<PinnedResourceProps> = ({
   };
   const label = getLabelForResourceRef(resourceRef);
   const duplicates = navResources.filter((res) => getLabelForResourceRef(res) === label).length > 1;
-  const previewRef = draggable ? (node: ReactElement) => preview(drop(node)) : null;
   return (
     <NavItemResource
       key={`pinned-${resourceRef}`}
@@ -145,17 +73,26 @@ const PinnedResource: FC<PinnedResourceProps> = ({
       title={duplicates ? `${label}: ${apiGroup || 'core'}/${apiVersion}` : null}
       model={{ group: apiGroup, version: apiVersion, kind }}
       id={resourceRef}
-      dragRef={previewRef}
+      className="pf-v6-u-flex-grow-1"
+      listItem={false}
       dataAttributes={{
-        'data-test': draggable ? 'draggable-pinned-resource-item' : 'pinned-resource-item',
+        className: 'pf-v6-u-py-0 pf-v6-u-pr-0',
+        'data-test': 'draggable-pinned-resource-item',
       }}
-      className={css('oc-pinned-resource', {
-        'oc-pinned-resource--dragging': draggable && isOver,
-      })}
     >
-      {draggable ? <DraggableButton dragRef={drag} /> : null}
-      {label}
-      <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
+      <Flex
+        justifyContent={{ default: 'justifyContentSpaceBetween' }}
+        alignItems={{ default: 'alignItemsCenter' }}
+        flexWrap={{ default: 'nowrap' }}
+        style={{ width: '100%' }}
+      >
+        <FlexItem className="pf-v6-u-m-0">
+          <Truncate content={label} />
+        </FlexItem>
+        <FlexItem className="pf-v6-u-mr-xs">
+          <RemoveButton onChange={onChange} navResources={navResources} resourceRef={resourceRef} />
+        </FlexItem>
+      </Flex>
     </NavItemResource>
   );
 };
