@@ -127,7 +127,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       {!omitFilterToolbar && !_.isEmpty(data) && Filter}
       <Grid>
         <GridItem>
-          <ListComponent {...props} data={data} />
+          <ListComponent {...props} {...watchedResources} data={data} />
         </GridItem>
       </Grid>
     </div>
