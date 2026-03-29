@@ -1,6 +1,6 @@
 import { nodeStatus } from '@console/app/src/status/node';
-import { volumeSnapshotStatus } from '@console/app/src/status/snapshot';
 import { podPhaseFilterReducer } from '@console/internal/module/k8s';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 import type { StatusGroupMapper } from './InventoryItem';
 import { InventoryStatusGroup } from './status-group';
 
@@ -69,4 +69,4 @@ export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
 export const getPVStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'status');
 export const getVSStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, VS_STATUS_GROUP_MAPPING, volumeSnapshotStatus, 'status');
+  getStatusGroups(resources, VS_STATUS_GROUP_MAPPING, snapshotStatus, 'status');

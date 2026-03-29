@@ -19,6 +19,8 @@ import {
   ListPageHeader,
   ListPageCreateLink,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { sorts } from '@console/internal/components/factory/table';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/units';
@@ -44,8 +46,7 @@ import { FLAGS } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-import { snapshotSource } from '@console/shared/src/sorts/snapshot';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotSource, snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const kind = referenceForModel(VolumeSnapshotModel);
 
@@ -89,7 +90,7 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotKind, VolumeSnapshotRowData
         cell: <ResourceLink kind={NamespaceModel.kind} name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: <Status status={volumeSnapshotStatus(obj)} />,
+        cell: <Status status={snapshotStatus(obj)} />,
       },
       [tableColumnInfo[3].id]: {
         cell: sizeMetrics,
@@ -169,21 +170,24 @@ const useVolumeSnapshotColumns = (
         },
         {
           title: t('console-app~Status'),
-          sort: 'snapshotStatus',
+          sort: (data, direction) =>
+            data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
           id: tableColumnInfo[2].id,
           resizableProps: getResizableProps(tableColumnInfo[2].id),
           props: { modifier: 'nowrap' },
         },
         {
           title: t('console-app~Size'),
-          sort: 'volumeSnapshotSize',
+          sort: (data, direction) =>
+            data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSize)),
           id: tableColumnInfo[3].id,
           resizableProps: getResizableProps(tableColumnInfo[3].id),
           props: { modifier: 'nowrap' },
         },
         {
           title: t('console-app~Source'),
-          sort: 'volumeSnapshotSource',
+          sort: (data, direction) =>
+            data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSource)),
           id: tableColumnInfo[4].id,
           resizableProps: getResizableProps(tableColumnInfo[4].id),
           props: { modifier: 'nowrap' },
@@ -232,7 +236,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
 
   const { columns, resetAllColumnWidths } = useVolumeSnapshotColumns(customRowData);
 
-  const volumeSnapshotStatusFilterOptions = useMemo<DataViewFilterOption[]>(
+  const snapshotStatusFilterOptions = useMemo<DataViewFilterOption[]>(
     () => [
       {
         value: 'Ready',
@@ -262,17 +266,17 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
         filterId="status"
         title={t('console-app~Status')}
         placeholder={t('console-app~Filter by status')}
-        options={volumeSnapshotStatusFilterOptions}
+        options={snapshotStatusFilterOptions}
       />,
     ],
-    [t, volumeSnapshotStatusFilterOptions],
+    [t, snapshotStatusFilterOptions],
   );
 
   const matchesAdditionalFilters = useCallback(
     (resource: VolumeSnapshotKind, filters: VolumeSnapshotFilters) => {
       // Status filter
       if (filters.status.length > 0) {
-        const status = volumeSnapshotStatus(resource);
+        const status = snapshotStatus(resource);
         if (!filters.status.includes(status)) {
           return false;
         }
