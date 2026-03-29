@@ -113,7 +113,7 @@ Console.
 | Console Version | PatternFly Versions | Notes                                 |
 | --------------- | ------------------- | ------------------------------------- |
 | 4.22.x          | 6.x                 |                                       |
-| 4.19.x - 4.22.x | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
+| 4.19.x - 4.21.x | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
 | 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
 | 4.12.x - 4.14.x | 4.x                 |                                       |
 
