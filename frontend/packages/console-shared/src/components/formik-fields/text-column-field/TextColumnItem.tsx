@@ -3,6 +3,6 @@ import type { TextColumnItemProps } from './text-column-types';
 import TextColumnItemContent from './TextColumnItemContent';
 
 const TextColumnItem: FC<TextColumnItemProps> = (props) => {
-  return <TextColumnItemContent {...props} previewDropRef={null} dragRef={null} opacity={1} />;
+  return <TextColumnItemContent {...props} />;
 };
 export default TextColumnItem;

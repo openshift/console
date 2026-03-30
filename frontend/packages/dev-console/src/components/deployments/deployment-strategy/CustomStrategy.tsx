@@ -27,9 +27,8 @@ const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {
         addLabel={t('devconsole~Add another argument')}
         placeholder={t('devconsole~Add argument')}
         helpText={t(
-          'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0. Drag and drop to reorder arguments.',
+          'devconsole~Enter the command to run inside the container. The command is considered successful if its exit code is 0.',
         )}
-        dndEnabled
       />
       <EnvironmentField
         name="formData.deploymentStrategy.customParams.environment"
