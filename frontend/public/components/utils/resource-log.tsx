@@ -808,6 +808,24 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstRender, error, stale, hasTruncated, isFullscreen]);
 
+  // Workaround for upstream PF LogViewer bug: scrollIntoView({ inline: 'center' }) propagates
+  // to all scrollable ancestors, shifting the page layout when searching with wrap lines disabled.
+  // Reset scrollLeft on .pf-v6-c-drawer__main to prevent the page shift.
+  // https://github.com/patternfly/react-log-viewer/issues/106
+  useEffect(() => {
+    const drawerMain = fullscreenRef.current?.closest('.pf-v6-c-drawer__main');
+    if (!drawerMain) {
+      return;
+    }
+    const resetScroll = () => {
+      if (drawerMain.scrollLeft !== 0) {
+        drawerMain.scrollLeft = 0;
+      }
+    };
+    drawerMain.addEventListener('scroll', resetScroll);
+    return () => drawerMain.removeEventListener('scroll', resetScroll);
+  }, [fullscreenRef]);
+
   return (
     <div
       className={css('co-resource-log', { 'co-fullscreen pf-v6-u-p-sm': isFullscreen })}
