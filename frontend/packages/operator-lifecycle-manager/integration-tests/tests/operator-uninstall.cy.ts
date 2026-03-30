@@ -22,7 +22,7 @@ const alertExists = (titleText: string) => {
   cy.get('.co-alert').contains(titleText).should('exist');
 };
 
-xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
@@ -50,9 +50,9 @@ xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   });
 
   it(`installs ${testOperator.name} Operator and ${testOperand.name} Instance, then navigates to Operator details page`, () => {
-    cy.byTestSectionHeading('Provided APIs').should('exist');
-    cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
-    cy.byLegacyTestID('resource-summary').should('exist');
+    cy.byTestSectionHeading('Provided APIs', { timeout: 60000 }).should('exist');
+    cy.byTestSectionHeading('ClusterServiceVersion details', { timeout: 30000 }).should('exist');
+    cy.byLegacyTestID('resource-summary', { timeout: 30000 }).should('exist');
   });
 
   it(`attempts to uninstall the Operator, shows 'Cannot load Operands' alert`, () => {

@@ -328,7 +328,8 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
     );
   }, [horizontalTabExtensions, navTabExtensions, objReference, contextId]);
 
-  const pages: Page[] = [...(props.pages || props.pagesFor(props.obj?.data)), ...pluginPages];
+  const basePages = props.pages || (props.obj?.loaded ? props.pagesFor(props.obj.data) : []);
+  const pages: Page[] = [...basePages, ...pluginPages];
 
   const routes = pages.map((p) => {
     return (

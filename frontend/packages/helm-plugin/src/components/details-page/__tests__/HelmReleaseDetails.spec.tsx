@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import { screen } from '@testing-library/react';
+import * as k8sWatchHook from '@console/internal/components/utils/k8s-watch-hook';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { mockHelmReleases } from '../../__tests__/helm-release-mock-data';
 import type HelmReleaseDetails from '../HelmReleaseDetails';
@@ -7,6 +8,13 @@ import { LoadedHelmReleaseDetails } from '../HelmReleaseDetails';
 
 let helmReleaseDetailsProps: ComponentProps<typeof HelmReleaseDetails>;
 let loadedHelmReleaseDetailsProps: ComponentProps<typeof LoadedHelmReleaseDetails>;
+
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(() => ({})),
+  useK8sWatchResource: jest.fn(() => [null, true, null]),
+}));
+
+const mockUseK8sWatchResources = k8sWatchHook.useK8sWatchResources as jest.Mock;
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
@@ -28,6 +36,9 @@ jest.mock('@console/shared/src/hooks/useClusterVersion', () => ({
 
 describe('HelmReleaseDetails', () => {
   beforeEach(() => {
+    mockUseK8sWatchResources.mockClear();
+    mockUseK8sWatchResources.mockReturnValue({ obj: { data: null, loaded: true } });
+
     helmReleaseDetailsProps = {
       secrets: {
         data: [

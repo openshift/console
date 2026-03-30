@@ -19,6 +19,11 @@ const testOperand: TestOperandProps = {
 const operatorPackageName = 'datagrid';
 
 const cleanupOperatorResources = () => {
+  // Clean up operand instances first
+  cy.exec(
+    `oc delete infinispan.infinispan.org ${testOperand.exampleName} -n ${GlobalInstalledNamespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 60000 },
+  );
   cy.exec(
     `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${GlobalInstalledNamespace} -n ${GlobalInstalledNamespace} --ignore-not-found`,
     { failOnNonZeroExit: false, timeout: 120000 },
@@ -33,7 +38,7 @@ const cleanupOperatorResources = () => {
   );
 };
 
-xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     cleanupOperatorResources();
@@ -51,9 +56,9 @@ xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstal
   it(`Globally installs ${testOperator.name} operator in ${GlobalInstalledNamespace} and creates ${testOperand.name} operand`, () => {
     operator.installedSucceeded(testOperator.name);
     operator.navToDetailsPage(testOperator.name);
-    cy.byTestSectionHeading('Provided APIs').should('exist');
-    cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
-    cy.byLegacyTestID('resource-summary').should('exist');
+    cy.byTestSectionHeading('Provided APIs', { timeout: 60000 }).should('exist');
+    cy.byTestSectionHeading('ClusterServiceVersion details', { timeout: 30000 }).should('exist');
+    cy.byLegacyTestID('resource-summary', { timeout: 30000 }).should('exist');
 
     operator.createOperand(testOperator.name, testOperand);
     cy.byTestID(testOperand.exampleName).should('exist');

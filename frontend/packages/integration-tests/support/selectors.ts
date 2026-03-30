@@ -28,8 +28,14 @@ declare global {
         selector: string,
         options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
       ): Chainable<JQuery<HTMLElement>>;
-      byTestSectionHeading(selector: string): Chainable<JQuery<HTMLElement>>;
-      byTestOperandLink(selector: string): Chainable<JQuery<HTMLElement>>;
+      byTestSectionHeading(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<JQuery<HTMLElement>>;
+      byTestOperandLink(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
@@ -78,10 +84,16 @@ Cypress.Commands.add('byTestOperatorRow', (selector: string, options?: object) =
   cy.get(`[data-test-operator-row="${selector}"]`, options);
 });
 
-Cypress.Commands.add('byTestSectionHeading', (selector: string) => {
-  cy.get(`[data-test-section-heading="${selector}"]`);
-});
+Cypress.Commands.add(
+  'byTestSectionHeading',
+  (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
+    cy.get(`[data-test-section-heading="${selector}"]`, options);
+  },
+);
 
-Cypress.Commands.add('byTestOperandLink', (selector: string) => {
-  cy.get(`[data-test-operand-link="${selector}"]`);
-});
+Cypress.Commands.add(
+  'byTestOperandLink',
+  (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
+    cy.get(`[data-test-operand-link="${selector}"]`, options);
+  },
+);
