@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import type { DetailsTab, DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { Tab } from '@console/internal/components/utils';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import { getResource } from '@console/topology/src/utils';
 import { DefaultResourceSideBar } from '../DefaultResourceSideBar';
 import TopologyEdgeResourcesPanel from '../TopologyEdgeResourcesPanel';

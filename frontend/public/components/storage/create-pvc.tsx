@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router';
 
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { isObjectSC } from '@console/shared/src/utils';
+import { isObjectSC } from '@console/shared/src/utils/storage-utils';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

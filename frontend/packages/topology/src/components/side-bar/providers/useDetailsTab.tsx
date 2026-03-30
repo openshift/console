@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { DetailsTab } from '@console/dynamic-plugin-sdk';
 import { isDetailsTab } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 
 export const useDetailsTab = (): DetailsTab['properties'][] => {
   const extensions = useExtensions<DetailsTab>(isDetailsTab);

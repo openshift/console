@@ -16,7 +16,7 @@ import {
   ScaleDetailsLevel,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { calculateRadius } from '@console/shared';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { Decorator, BaseNode } from '@console/topology/src/components/graph-view';
 
 import './SinkUriNode.scss';

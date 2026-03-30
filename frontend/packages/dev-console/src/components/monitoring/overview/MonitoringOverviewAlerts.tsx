@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import type { Alert as AlertType } from '@console/dynamic-plugin-sdk';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
-import { sortMonitoringAlerts } from '@console/shared';
+import { sortMonitoringAlerts } from '@console/shared/src/utils/alert-utils';
 import { getAlertType } from './monitoring-overview-alerts-utils';
 import './MonitoringOverviewAlerts.scss';
 

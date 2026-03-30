@@ -2,15 +2,15 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { RevisionModel } from '@console/knative-plugin/src/models';
-import type { PodRCData } from '@console/shared';
+import { PodStatus } from '@console/shared';
+import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
+import type { PodRCData } from '@console/shared/src/types/pod';
+import { usePodRingLabel } from '@console/shared/src/utils/pod-ring-utils';
 import {
-  PodStatus,
   calculateRadius,
   getPodData,
   podDataInProgress,
-  usePodRingLabel,
-} from '@console/shared';
-import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
+} from '@console/shared/src/utils/pod-utils';
 
 interface InnerPodStatusRadius {
   innerPodStatusOuterRadius: number;

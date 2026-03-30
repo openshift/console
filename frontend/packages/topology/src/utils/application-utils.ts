@@ -38,7 +38,7 @@ import {
   fetchChannelsCrd,
   isDynamicEventResourceKind,
 } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
-import { getBuildConfigsForResource } from '@console/shared';
+import { getBuildConfigsForResource } from '@console/shared/src/utils/resource-utils';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
 

@@ -2,7 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useMemo } from 'react';
 import type { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import { getAddGroups } from '../../utils/add-page-utils';
 import type { AddGroup } from '../types';
 import AddCard from './AddCard';

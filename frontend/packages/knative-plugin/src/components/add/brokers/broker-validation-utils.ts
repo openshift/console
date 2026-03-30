@@ -4,8 +4,8 @@ import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
-import { nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { nameValidationSchema } from '@console/shared/src/utils/yup-validations';
 
 export const brokerValidationSchema = (t: TFunction) =>
   yup.object().shape({

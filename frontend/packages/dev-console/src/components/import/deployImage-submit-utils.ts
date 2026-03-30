@@ -13,7 +13,8 @@ import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
+import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { CUSTOM_ICON_ANNOTATION } from '../../const';
 import { RegistryType } from '../../utils/imagestream-utils';
 import {

@@ -7,7 +7,7 @@ interface AlertSeverityIconProps {
   fontSize?: number;
 }
 
-const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
+export const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
   severityAlertType,
   fontSize,
 }): ReactElement => {

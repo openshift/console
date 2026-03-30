@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import type { Node } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
 import { observer } from 'mobx-react';
-import { labelForNodeKind } from '@console/shared';
+import { labelForNodeKind } from '@console/shared/src/utils/utils';
 import { getResourceKind } from '../../utils/topology-utils';
 import { listViewNodeComponentFactory } from './listViewComponentFactory';
 

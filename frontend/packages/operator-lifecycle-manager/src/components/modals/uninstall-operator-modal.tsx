@@ -45,7 +45,10 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
+import {
+  getPatchForRemovingPlugins,
+  isPluginEnabled,
+} from '@console/shared/src/utils/console-plugin';
 import { DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { OperandLink } from '../operand/operand-link';

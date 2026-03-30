@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { isDetailsTabSection, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 
 export const useDetailsTabSection = (): [
   ResolvedExtension<DetailsTabSection>['properties'][],

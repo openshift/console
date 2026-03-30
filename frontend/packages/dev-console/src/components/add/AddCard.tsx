@@ -4,7 +4,7 @@ import { Card, SimpleList, Title } from '@patternfly/react-core';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { isValidUrl } from '@console/shared';
+import { isValidUrl } from '@console/shared/src/utils/utils';
 import AddCardItem from './AddCardItem';
 import './AddCard.scss';
 

@@ -30,7 +30,7 @@ import {
 } from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { alphanumericCompare } from '@console/shared/src/utils';
+import { alphanumericCompare } from '@console/shared/src/utils/utils';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';

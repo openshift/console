@@ -7,8 +7,9 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BuildConfigModel, BuildModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { useToast, getOwnedResources } from '@console/shared';
+import { useToast } from '@console/shared';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { getOwnedResources } from '@console/shared/src/utils/resource-utils';
 
 export const useUploadJarFormToast = () => {
   const toast = useToast();

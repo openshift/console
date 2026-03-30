@@ -9,7 +9,7 @@ import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '../../hooks/useRelatedHPA';
 import type { ExtPodKind } from '../../types';
-import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
+import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils/pod-ring-utils';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
 

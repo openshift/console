@@ -4,8 +4,9 @@ import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
-import { isValidUrl, nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { isValidUrl } from '@console/shared/src/utils/utils';
+import { nameValidationSchema } from '@console/shared/src/utils/yup-validations';
 import { EventSources, SinkType } from './import-types';
 
 export const sinkTypeUriValidation = (t: TFunction) =>

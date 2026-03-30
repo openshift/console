@@ -15,7 +15,7 @@ import {
   PRIVATE_KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
-import { getLimitsDataFromResource } from '@console/shared/src';
+import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
 import { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {

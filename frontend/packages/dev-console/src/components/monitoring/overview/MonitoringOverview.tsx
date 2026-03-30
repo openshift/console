@@ -19,7 +19,7 @@ import { sortEvents } from '@console/internal/components/events';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
-import { getFiringAlerts } from '@console/shared';
+import { getFiringAlerts } from '@console/shared/src/utils/alert-utils';
 import WorkloadGraphs from './MonitoringMetrics';
 import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';

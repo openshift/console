@@ -7,7 +7,8 @@ import type { Flatten } from '@console/internal/components/factory/list-page';
 import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { toTitleCase, WORKLOAD_TYPES } from '@console/shared';
+import { WORKLOAD_TYPES } from '@console/shared/src/utils/resource-utils';
+import { toTitleCase } from '@console/shared/src/utils/utils';
 import { CHART_NAME_ANNOTATION, PROVIDER_NAME_ANNOTATION } from '../catalog/utils/const';
 import type {
   HelmRelease,

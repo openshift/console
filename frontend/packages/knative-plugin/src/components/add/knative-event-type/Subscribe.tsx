@@ -8,7 +8,7 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared/src/utils';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { EVENT_TYPE_NAME_PARAM, EVENT_TYPE_NAMESPACE_PARAM } from '../../../const';
 import {

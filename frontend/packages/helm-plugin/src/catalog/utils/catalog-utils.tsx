@@ -9,8 +9,8 @@ import type {
 } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { toTitleCase } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { toTitleCase } from '@console/shared/src/utils/utils';
 import certifiedIcon from '../../../icons/certified.svg';
 import type { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';
