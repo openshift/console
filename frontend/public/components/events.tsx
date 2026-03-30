@@ -283,7 +283,9 @@ const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
             </div>
           </div>
         </div>
-        <div className="co-sysevent__message">{message}</div>
+        <div className="co-sysevent__message" tabIndex={0}>
+          {message}
+        </div>
       </div>
     </div>
   );
