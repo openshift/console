@@ -6,4 +6,3 @@ export * from './selectors';
 export * from './types';
 export * from './utils';
 export * from './sorts';
-export * from './hoc';
