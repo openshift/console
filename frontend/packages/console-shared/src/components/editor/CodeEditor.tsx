@@ -23,6 +23,7 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
     null,
   );
   const [usesValue] = useState<boolean>(value !== undefined);
+  const [mounted, setMounted] = useState(false);
 
   const shortcutPopover = useShortcutPopover(props.shortcutsPopoverProps);
 
@@ -47,6 +48,7 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
       }
       onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, onSave); // eslint-disable-line no-bitwise
       onEditorDidMount && onEditorDidMount(editor, monaco);
+      setMounted(true);
     },
     [onSave, usesValue, onEditorDidMount],
   );
@@ -103,7 +105,11 @@ export const CodeEditor = forwardRef<CodeEditorRef, CodeEditorProps>((props, ref
   }, [handleResize, minHeight, ToolbarLinks]);
 
   return (
-    <div style={{ minHeight }} className="ocs-yaml-editor">
+    <div
+      style={{ minHeight }}
+      className="ocs-yaml-editor"
+      data-test={mounted ? 'code-editor' : 'code-editor-mounting'}
+    >
       <BasicCodeEditor
         {...props}
         language={props.language ?? Language.yaml}
