@@ -91,10 +91,16 @@ export const operator = {
     projectDropdown.selectProject(installedNamespace);
     projectDropdown.shouldContain(installedNamespace);
     operator.filterByName(operatorName);
-    cy.byTestOperatorRow(operatorName, { timeout: 30000 }).should('exist');
+    // Filter input uses 250ms debounce (filter-toolbar.tsx). Clicking during debounce
+    // re-render causes the navigation event to be lost. Wait for debounce to complete.
+    cy.wait(300);
+    cy.byTestOperatorRow(operatorName, { timeout: 30000 }).should('exist').and('be.visible');
     cy.byTestOperatorRow(operatorName).click();
+    cy.url({ timeout: 30000 }).should('include', 'ClusterServiceVersion');
+    cy.byLegacyTestID('horizontal-link-Details', { timeout: 30000 }).should('exist');
   },
-  horizontalNavTab: (tabID) => cy.byLegacyTestID(`horizontal-link-${tabID}`).last(),
+  horizontalNavTab: (tabID: string, timeout = 60000) =>
+    cy.byLegacyTestID(`horizontal-link-${tabID}`, { timeout }).should('exist').last(),
   uninstallModal: {
     open: (operatorName: string, installedNamespace: string = GlobalInstalledNamespace) => {
       cy.log('open uninstall modal');
@@ -129,6 +135,8 @@ export const operator = {
     cy.get('[id="root_metadata_name"]').should('not.be.disabled').clear();
     cy.get('[id="root_metadata_name"]').type(exampleName);
     cy.get(submitButton).click();
+    // Wait for form submission to complete and redirect
+    cy.url({ timeout: 60000 }).should('not.contain', '~new');
   },
   operandShouldExist: (
     operatorName: string,

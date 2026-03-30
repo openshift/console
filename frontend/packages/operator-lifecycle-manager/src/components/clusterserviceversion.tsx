@@ -575,10 +575,12 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   data,
+  loaded,
   ...rest
 }) => {
   const { t } = useTranslation();
   const activeNamespace = useActiveNamespace();
+
   const nameHeader: Header = {
     title: t('olm~Name'),
     sortField: 'metadata.name',
@@ -703,6 +705,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     <div className="co-installed-operators">
       <Table
         data={filterOperators(data, allNamespaceActive)}
+        loaded={loaded}
         {...rest}
         aria-label={t('olm~Installed Operators')}
         Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
@@ -1343,12 +1346,14 @@ export const ClusterServiceVersionDetailsPage: FC = (props) => {
       kind={referenceForModel(ClusterServiceVersionModel)}
       name={params.name}
       pagesFor={pagesFor}
-      customActionMenu={[
-        <LazyActionMenu
-          context={{ 'operator-actions': { resource: csv, subscription } }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />,
-      ]}
+      customActionMenu={
+        csv && [
+          <LazyActionMenu
+            context={{ 'operator-actions': { resource: csv, subscription } }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />,
+        ]
+      }
       createRedirect
     />
   );

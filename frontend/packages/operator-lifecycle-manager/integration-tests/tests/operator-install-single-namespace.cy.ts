@@ -21,6 +21,11 @@ const testOperand: TestOperandProps = {
 const operatorPackageName = 'datagrid';
 
 const cleanupOperatorResources = (namespace: string) => {
+  // Clean up operand instances first
+  cy.exec(
+    `oc delete backup.infinispan.org ${testOperand.exampleName} -n ${namespace} --ignore-not-found`,
+    { failOnNonZeroExit: false, timeout: 60000 },
+  );
   cy.exec(
     `oc delete subscription -l operators.coreos.com/${operatorPackageName}.${namespace} -n ${namespace} --ignore-not-found`,
     { failOnNonZeroExit: false, timeout: 120000 },
@@ -35,7 +40,7 @@ const cleanupOperatorResources = (namespace: string) => {
   );
 };
 
-xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);
@@ -60,9 +65,9 @@ xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => 
     operator.installedSucceeded(testOperator.name, testName);
 
     operator.navToDetailsPage(testOperator.name, testOperator.installedNamespace);
-    cy.byTestSectionHeading('Provided APIs').should('exist');
-    cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
-    cy.byLegacyTestID('resource-summary').should('exist');
+    cy.byTestSectionHeading('Provided APIs', { timeout: 60000 }).should('exist');
+    cy.byTestSectionHeading('ClusterServiceVersion details', { timeout: 30000 }).should('exist');
+    cy.byLegacyTestID('resource-summary', { timeout: 30000 }).should('exist');
 
     // should not be installed Globally
     cy.log(

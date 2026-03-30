@@ -33,7 +33,7 @@ const defaultProps = {
 describe('Resource DetailsPage', () => {
   beforeEach(() => {
     mockUseK8sWatchResources.mockClear();
-    mockUseK8sWatchResources.mockReturnValue({ obj: { data: null, loaded: false } });
+    mockUseK8sWatchResources.mockReturnValue({ obj: { data: null, loaded: true } });
   });
 
   it('should verify the detail page basic information and navigation tabs', async () => {
@@ -68,8 +68,8 @@ describe('Resource DetailsPage', () => {
       },
     ];
     mockUseK8sWatchResources.mockReturnValue({
-      obj: { data: null, loaded: false },
-      configMap: { data: null, loaded: false },
+      obj: { data: null, loaded: true },
+      configMap: { data: null, loaded: true },
     });
 
     await act(async () => {
