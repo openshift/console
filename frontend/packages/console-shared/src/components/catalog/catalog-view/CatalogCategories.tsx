@@ -3,7 +3,7 @@ import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-ex
 import * as _ from 'lodash';
 import { Link } from 'react-router';
 import type { CatalogCategory } from '@console/dynamic-plugin-sdk/src';
-import { isModifiedEvent } from '@console/shared/src/utils';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { getURLWithParams } from '../utils/catalog-utils';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
 import { CatalogQueryParams } from '../utils/types';

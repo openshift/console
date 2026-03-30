@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
-import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
-import { SquareIcon } from '@patternfly/react-icons/dist/esm/icons/square-icon';
+import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKindReference } from '../module/k8s';

@@ -2,7 +2,7 @@ import type { FC, ComponentProps } from 'react';
 import { useMemo, useState, useCallback } from 'react';
 import type { PluginInfoEntry } from '@openshift/dynamic-plugin-sdk';
 import { Alert, Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import type { ISortBy, OnSort } from '@patternfly/react-table';
 import { SortByDirection, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';

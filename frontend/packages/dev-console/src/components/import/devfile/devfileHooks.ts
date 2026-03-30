@@ -3,7 +3,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { getLimitsDataFromResource } from '@console/shared/src';
+import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
 import type { DevfileSuggestedResources } from '../import-types';
 import { createComponentName } from '../import-validation-utils';

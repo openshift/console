@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import i18n from 'i18next';
-import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
+import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
 
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 import type { Humanize } from '../utils/types';

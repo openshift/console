@@ -1,6 +1,6 @@
 import type { FC, MouseEvent } from 'react';
 import { Button, Flex, FlexItem, Truncate } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { K8sModel } from '@console/internal/module/k8s';
 import { modelFor } from '@console/internal/module/k8s';

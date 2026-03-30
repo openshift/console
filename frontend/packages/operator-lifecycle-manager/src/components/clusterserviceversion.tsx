@@ -16,8 +16,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
@@ -72,7 +71,7 @@ import { RedExclamationCircleIcon } from '@console/shared/src/components/status/
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { isPluginEnabled } from '@console/shared/src/utils';
+import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {
   ClusterServiceVersionModel,

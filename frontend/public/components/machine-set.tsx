@@ -23,7 +23,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 

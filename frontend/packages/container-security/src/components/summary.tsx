@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import { Stack, StackItem, pluralize } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
+import { CatalogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';

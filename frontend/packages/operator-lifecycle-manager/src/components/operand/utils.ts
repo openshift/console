@@ -4,11 +4,11 @@ import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import i18n from '@console/internal/i18n';
 import { modelFor } from '@console/internal/module/k8s';
-import { getSchemaAtPath } from '@console/shared';
 import {
   getJSONSchemaOrder,
   stringPathToUISchemaPath,
 } from '@console/shared/src/components/dynamic-form/utils';
+import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import {
   REGEXP_K8S_RESOURCE_SUFFIX,
   REGEXP_FIELD_DEPENDENCY_PATH_VALUE,

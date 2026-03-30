@@ -1,7 +1,8 @@
 import type { Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { getImageForCSVIcon } from '@console/shared/src/utils/icon-utils';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_WORKLOAD } from '../../const';
 import { baseDataModelGetter } from '../../data-transforms/data-transformer';

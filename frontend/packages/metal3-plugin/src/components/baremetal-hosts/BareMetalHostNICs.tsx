@@ -1,6 +1,5 @@
 import type { FC } from 'react';
-import { OutlinedCheckSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-check-square-icon';
-import { OutlinedSquareIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-square-icon';
+import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';

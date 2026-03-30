@@ -13,7 +13,9 @@ import type {
   NodeKind,
 } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, createLookup, getNodeMachineName } from '@console/shared';
+import { getName } from '@console/shared/src/selectors/common';
+import { getNodeMachineName } from '@console/shared/src/selectors/node';
+import { createLookup } from '@console/shared/src/utils/utils';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
 import { getHostMachine, getNodeMaintenanceNodeName } from '../../selectors';

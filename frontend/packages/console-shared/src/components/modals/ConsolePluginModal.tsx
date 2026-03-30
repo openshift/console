@@ -20,7 +20,7 @@ import {
 } from '@console/shared/src/components/utils';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
+import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 export const ConsolePluginModal = (props: ConsolePluginModalProps) => {

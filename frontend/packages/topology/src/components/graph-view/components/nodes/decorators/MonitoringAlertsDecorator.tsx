@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
+import { AlertSeverityIcon } from '@console/shared/src/components/alerts/AlertSeverityIcon';
 import {
   getSeverityAlertType,
   getFiringAlerts,
-  AlertSeverityIcon,
   shouldHideMonitoringAlertDecorator,
-} from '@console/shared';
+} from '@console/shared/src/utils/alert-utils';
 import Decorator from './Decorator';
 
 type DispatchProps = {

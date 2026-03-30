@@ -8,8 +8,8 @@ import { LazyRollbackModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { DeploymentConfigModel } from '@console/internal/models';
 import type { ReplicationControllerKind, K8sModel } from '@console/internal/module/k8s';
-import { getOwnerNameByKind } from '@console/shared/src';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
+import { getOwnerNameByKind } from '@console/shared/src/utils/resource-utils';
 import type { ActionObject } from './types';
 import { ReplicationControllerActionCreator } from './types';
 

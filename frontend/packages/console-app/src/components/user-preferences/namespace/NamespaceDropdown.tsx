@@ -10,7 +10,7 @@ import {
   MenuContent,
   MenuList,
 } from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';

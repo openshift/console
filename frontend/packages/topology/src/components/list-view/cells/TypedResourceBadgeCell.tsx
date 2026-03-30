@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { isValidUrl } from '@console/shared';
+import { isValidUrl } from '@console/shared/src/utils/utils';
 
 interface TypedResourceBadgeCellProps {
   kind: string;

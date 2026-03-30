@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getServicesForResource } from '../utils';
+import { getServicesForResource } from '../utils/resource-utils';
 
 export const useServicesWatcher = (
   resource: K8sResourceKind,

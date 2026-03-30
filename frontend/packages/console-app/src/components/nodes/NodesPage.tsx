@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, Suspense } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {

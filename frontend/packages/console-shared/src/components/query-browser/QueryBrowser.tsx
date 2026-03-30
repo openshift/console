@@ -26,7 +26,7 @@ import {
   TextInput,
   InputGroupItem,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
+import { ChartLineIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';

@@ -27,7 +27,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { Button, Content, ContentVariants, Divider, Popover } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import * as _ from 'lodash';
 import { useEffect, useMemo, FC, ReactNode, Suspense, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

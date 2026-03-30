@@ -1,5 +1,5 @@
 import { FormHelperText, Button, ButtonVariant } from '@patternfly/react-core';
-import { LevelUpAltIcon } from '@patternfly/react-icons/dist/esm/icons/level-up-alt-icon';
+import { LevelUpAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 export interface SampleRepoProps {

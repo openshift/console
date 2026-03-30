@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { Patch } from '@console/internal/module/k8s';
-import { assureEndsWith } from '../utils';
+import { assureEndsWith } from '../utils/grammar';
 
 export const patchSafeValue = (value: string): string =>
   value.replace('~', '~0').replace('/', '~1');

@@ -9,8 +9,8 @@ import type {
   CatalogExtensionHookOptions,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { parseList, strConcat } from '@console/shared/src';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { parseList, strConcat } from '@console/shared/src/utils/utils';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';
 import type { CSVAnnotations, TokenizedAuthProvider } from '../components/operator-hub/index';

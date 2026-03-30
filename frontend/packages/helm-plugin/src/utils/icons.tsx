@@ -1,5 +1,5 @@
+import { RepositoryIcon } from '@patternfly/react-icons';
 import { createIcon } from '@patternfly/react-icons/dist/esm/createIcon';
-import { RepositoryIcon } from '@patternfly/react-icons/dist/esm/icons/repository-icon';
 
 /** This should be kept in sync with [helm.svg](../../../../public/imgs/logos/helm.svg) */
 export const HelmCatalogIcon = createIcon({

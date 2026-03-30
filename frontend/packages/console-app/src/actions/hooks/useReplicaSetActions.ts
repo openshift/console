@@ -6,7 +6,7 @@ import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s
 import { LazyRollbackModalOverlay } from '@console/internal/components/modals';
 import { DeploymentModel } from '@console/internal/models';
 import type { ReplicaSetKind, K8sModel } from '@console/internal/module/k8s';
-import { getOwnerNameByKind } from '@console/shared/src';
+import { getOwnerNameByKind } from '@console/shared/src/utils/resource-utils';
 import { ReplicaSetActionCreator } from './types';
 
 /**

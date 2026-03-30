@@ -7,8 +7,7 @@ import {
   EmptyStateVariant,
   Skeleton,
 } from '@patternfly/react-core';
-import { CubesIcon } from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
-import { WrenchIcon } from '@patternfly/react-icons/dist/esm/icons/wrench-icon';
+import { CubesIcon, WrenchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';

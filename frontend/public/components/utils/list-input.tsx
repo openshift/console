@@ -3,8 +3,7 @@ import { Component } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 /* eslint-disable-next-line */
 import { withTranslation, WithTranslation } from 'react-i18next';
 

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, List, ListItem } from '@patternfly/react-core';
-import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { SyncAltIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';

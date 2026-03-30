@@ -19,8 +19,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';

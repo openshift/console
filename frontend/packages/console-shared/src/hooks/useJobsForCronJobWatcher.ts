@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind, JobKind } from '@console/internal/module/k8s';
-import { getJobsForCronJob } from '../utils';
+import { getJobsForCronJob } from '../utils/resource-utils';
 
 export const useJobsForCronJobWatcher = (
   cronJob: K8sResourceKind,

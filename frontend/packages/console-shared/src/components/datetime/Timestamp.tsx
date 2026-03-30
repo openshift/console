@@ -1,5 +1,5 @@
 import { Tooltip } from '@patternfly/react-core';
-import { GlobeAmericasIcon } from '@patternfly/react-icons/dist/esm/icons/globe-americas-icon';
+import { GlobeAmericasIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { getLastLanguage } from '@console/app/src/components/user-preferences/language/getLastLanguage';
 import type { TimestampProps } from '@console/dynamic-plugin-sdk';

@@ -21,7 +21,7 @@ import {
   VirtualTableBody,
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
-import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
+import type { Scroll } from '@patternfly/react-virtualized-extension/dist/esm/components/Virtualized/types';
 import { useNavigate } from 'react-router';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';

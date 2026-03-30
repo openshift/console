@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { InProgressIcon } from '@patternfly/react-icons';
 import type { TFunction } from 'i18next';
 import { HealthState } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {

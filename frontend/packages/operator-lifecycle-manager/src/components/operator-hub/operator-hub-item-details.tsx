@@ -14,7 +14,7 @@ import {
   StackItem,
   AlertVariant,
 } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';

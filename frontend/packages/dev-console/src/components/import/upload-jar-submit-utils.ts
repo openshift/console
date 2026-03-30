@@ -14,8 +14,9 @@ import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import type { NameValuePair } from '@console/shared';
-import { getRandomChars, getResourceLimitsData } from '@console/shared';
+import type { NameValuePair } from '@console/shared/src/components/formik-fields/field-types';
+import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { CUSTOM_ICON_ANNOTATION } from '../../const';
 import {
   getAppLabels,

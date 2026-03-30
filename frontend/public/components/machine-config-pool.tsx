@@ -12,8 +12,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { PauseCircleIcon } from '@patternfly/react-icons/dist/esm/icons/pause-circle-icon';
-import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import { PauseCircleIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

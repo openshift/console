@@ -1,8 +1,7 @@
 import type { FC } from 'react';
 import { useState, useCallback } from 'react';
 import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';

@@ -16,7 +16,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   actionsCellProps,

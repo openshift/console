@@ -21,7 +21,7 @@ import {
   Pagination,
   Bullseye,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { FilterIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 

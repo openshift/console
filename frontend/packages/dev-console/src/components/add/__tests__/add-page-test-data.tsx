@@ -1,5 +1,4 @@
-import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon';
-import { SignOutAltIcon } from '@patternfly/react-icons/dist/esm/icons/sign-out-alt-icon';
+import { CatalogIcon, SignOutAltIcon } from '@patternfly/react-icons';
 import type { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { helmCatalogIconSVG } from '@console/helm-plugin/src/utils/icons';

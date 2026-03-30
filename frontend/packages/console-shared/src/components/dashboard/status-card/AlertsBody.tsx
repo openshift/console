@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Children } from 'react';
 import { EmptyState, EmptyStateVariant, EmptyStateBody } from '@patternfly/react-core';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+import { UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 

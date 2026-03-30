@@ -21,8 +21,7 @@ import {
   ToolbarToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { ColumnsIcon } from '@patternfly/react-icons/dist/esm/icons/columns-icon';
+import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import {
   RowFilterItem,
   ColumnLayout,

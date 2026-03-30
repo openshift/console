@@ -3,8 +3,7 @@ import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HashLink } from '@console/shared/src/components/links/HashLink';
 
-import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-
+import { SyncAltIcon } from '@patternfly/react-icons';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,

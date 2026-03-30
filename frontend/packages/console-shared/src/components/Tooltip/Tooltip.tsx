@@ -5,8 +5,8 @@
  * Remove this component once https://github.com/patternfly/patternfly-react/issues/5620 is fixed.
  */
 import type { ReactNode, FC } from 'react';
-import { TooltipArrow } from '@patternfly/react-core/dist/js/components/Tooltip/TooltipArrow';
-import { TooltipContent } from '@patternfly/react-core/dist/js/components/Tooltip/TooltipContent';
+import { TooltipArrow } from '@patternfly/react-core/dist/esm/components/Tooltip/TooltipArrow';
+import { TooltipContent } from '@patternfly/react-core/dist/esm/components/Tooltip/TooltipContent';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Tooltip/tooltip';
 import { Tippy } from '../popper/Tippy';

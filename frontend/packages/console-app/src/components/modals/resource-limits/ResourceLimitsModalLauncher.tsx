@@ -9,8 +9,11 @@ import { limitsValidationSchema } from '@console/dev-console/src/components/impo
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { getLimitsDataFromResource, getResourceLimitsData } from '@console/shared/src';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import {
+  getLimitsDataFromResource,
+  getResourceLimitsData,
+} from '@console/shared/src/utils/resource-utils';
 import ResourceLimitsModal from './ResourceLimitsModal';
 
 export type ResourceLimitsModalLauncherProps = {

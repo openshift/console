@@ -19,8 +19,7 @@ import {
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

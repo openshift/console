@@ -8,8 +8,7 @@ import {
   CardExpandableContent,
   Popover,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
+import { TimesIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { GettingStartedShowState } from './useGettingStartedShowState';
 

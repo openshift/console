@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ActionGroup } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { PullSecretCredentialEntry } from './PullSecretCredentialEntry';
 import { SecretStringData, SecretType, OnSecretChange } from './types';
 import {

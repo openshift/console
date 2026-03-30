@@ -6,10 +6,7 @@ import { shallowEqual } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNavigate } from 'react-router';
-import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
-import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
+import { BellIcon, EllipsisVIcon, ThIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   Dropdown,
   Divider,

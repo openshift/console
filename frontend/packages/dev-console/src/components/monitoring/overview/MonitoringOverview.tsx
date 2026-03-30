@@ -11,7 +11,7 @@ import {
   EmptyState,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { Alert } from '@console/dynamic-plugin-sdk';
@@ -19,7 +19,7 @@ import { sortEvents } from '@console/internal/components/events';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
-import { getFiringAlerts } from '@console/shared';
+import { getFiringAlerts } from '@console/shared/src/utils/alert-utils';
 import WorkloadGraphs from './MonitoringMetrics';
 import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';

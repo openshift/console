@@ -1,8 +1,7 @@
 import type { FC } from 'react';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ClipboardCheckIcon } from '@patternfly/react-icons/dist/esm/icons/clipboard-check-icon';
-
+import { ClipboardCheckIcon } from '@patternfly/react-icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 

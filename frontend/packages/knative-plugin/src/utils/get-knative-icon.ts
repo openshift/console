@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { kindForReference } from '@console/internal/module/k8s';
-import { isValidUrl } from '@console/shared';
+import { isValidUrl } from '@console/shared/src/utils/utils';
 import {
   EVENT_SOURCE_ICON,
   CAMEL_KAMELET_ICON,

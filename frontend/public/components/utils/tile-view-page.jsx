@@ -23,7 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { useDebounceCallback, getURLWithParams, VirtualizedGrid } from '@console/shared';
 import { Link, useSearchParams } from 'react-router';
-import { isModifiedEvent } from '@console/shared/src/utils';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import CatalogPage from '@console/shared/src/components/catalog/catalog-view/CatalogPage';
 import CatalogPageContent from '@console/shared/src/components/catalog/catalog-view/CatalogPageContent';

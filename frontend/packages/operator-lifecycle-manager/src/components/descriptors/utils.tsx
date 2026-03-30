@@ -1,7 +1,7 @@
 import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { getSchemaAtPath } from '@console/shared';
+import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
   DEPRECATED_CAPABILITIES,

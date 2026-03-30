@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
+import { StarIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import './SelectorCard.scss';
 

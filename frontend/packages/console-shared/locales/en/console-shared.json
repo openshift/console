@@ -307,8 +307,6 @@
   "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.": "An eviction is allowed if at least 25% of pods selected by \"selector\" will still be available after the eviction.",
   "{{label}} details": "{{label}} details",
   "Provisioned as node": "Provisioned as node",
-  "Select options": "Select options",
-  "Select input": "Select input",
   "Pod": "Pod",
   "Pods": "Pods",
   "Scaled to 0": "Scaled to 0",

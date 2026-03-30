@@ -1,6 +1,6 @@
 import type { Node, GraphElement } from '@patternfly/react-topology';
 import { isNode } from '@patternfly/react-topology';
-import { labelForNodeKind } from '@console/shared';
+import { labelForNodeKind } from '@console/shared/src/utils/utils';
 import { getResourceKind } from '../../utils/topology-utils';
 
 export const getChildKinds = (children: GraphElement[]) => {

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { AllQuickStartStates, QuickStart } from '@patternfly/quickstarts';
 import { QuickStartStatus, getQuickStartStatus } from '@patternfly/quickstarts';
-import { RouteIcon } from '@patternfly/react-icons/dist/esm/icons/route-icon';
+import { RouteIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import { useQuickStartContext } from '@console/shared/src/hooks/useQuickStartContext';

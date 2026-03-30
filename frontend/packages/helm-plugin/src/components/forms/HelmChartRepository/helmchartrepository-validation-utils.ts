@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next';
 import * as yup from 'yup';
-import { nameRegex } from '@console/shared/src';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { nameRegex } from '@console/shared/src/utils/yup-validations';
 import type { HelmChartRepositoryData } from '../../../types/helm-types';
 
 const urlRegex = /^https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/;

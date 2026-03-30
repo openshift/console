@@ -4,7 +4,7 @@ import type { MenuToggleElement } from '@patternfly/react-core';
 import { Button, Select, SelectList, SelectOption, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { getTitleForNodeKind } from '@console/shared';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import type { DisplayFilters } from '../topology-types';
 import { TopologyDisplayFilterType } from '../topology-types';
 import './KindFilterDropdown.scss';

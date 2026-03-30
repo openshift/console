@@ -68,7 +68,8 @@ jest.mock('@console/internal/models', () => ({
   DeploymentConfigModel: { kind: 'DeploymentConfig' },
 }));
 
-jest.mock('@patternfly/react-icons/dist/esm/icons/info-circle-icon', () => ({
+jest.mock('@patternfly/react-icons', () => ({
+  ...jest.requireActual('@patternfly/react-icons'),
   InfoCircleIcon: () => 'InfoCircleIcon',
 }));
 
