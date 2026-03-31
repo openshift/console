@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Language } from '@patternfly/react-code-editor';
 import { css } from '@patternfly/react-styles';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { isEmpty } from 'lodash';
@@ -93,14 +94,14 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
                 (c) => c.CodeEditor,
               )
             }
-            forwardRef={editorRef}
+            ref={editorRef}
             value={field.value}
             minHeight={minHeight ?? '200px'}
             onChange={(yaml: string) => setFieldValue(name, yaml)}
             onSave={onSave}
             showShortcuts={showShortcuts}
             isMinimapVisible={isMinimapVisible}
-            language={language}
+            language={language as Language}
             toolbarLinks={[
               hasSidebarContent && (
                 <ToggleSidebarButton

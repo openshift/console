@@ -343,7 +343,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/secrets/~new/:type"
         element={
           <AsyncComponent
-            kind="Secret"
             loader={() =>
               import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(
                 (m) => m.CreateSecret,
@@ -356,7 +355,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/configmaps/~new/form"
         element={
           <AsyncComponent
-            kind="ConfigMap"
             loader={() =>
               import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
                 (m) => m.ConfigMapPage,
@@ -369,7 +367,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/configmaps/:name/form"
         element={
           <AsyncComponent
-            kind="ConfigMap"
             loader={() =>
               import('./configmaps/ConfigMapPage' /* webpackChunkName: "configmap-page" */).then(
                 (m) => m.ConfigMapPage,
@@ -408,7 +405,6 @@ const AppContents: React.FC<{}> = () => {
             loader={() =>
               import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
             }
-            kind="RoleBinding"
           />
         }
       />
@@ -419,7 +415,6 @@ const AppContents: React.FC<{}> = () => {
             loader={() =>
               import('./RBAC' /* webpackChunkName: "rbac" */).then((m) => m.CreateRoleBinding)
             }
-            kind="RoleBinding"
           />
         }
       />
@@ -484,7 +479,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/persistentvolumeclaims/~new/form"
         element={
           <AsyncComponent
-            kind="PersistentVolumeClaim"
             loader={() =>
               import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(
                 (m) => m.CreatePVC,
@@ -713,7 +707,6 @@ const AppContents: React.FC<{}> = () => {
         path="/k8s/ns/:ns/:resourceRef/form"
         element={
           <AsyncComponent
-            kind="PodDisruptionBudgets"
             loader={() =>
               import(
                 '@console/app/src/components/pdb/PDBFormPage' /* webpackChunkName: "PDBFormPage" */
