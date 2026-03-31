@@ -1814,6 +1814,7 @@
   "Query result is a string, which cannot be graphed.": "Query result is a string, which cannot be graphed.",
   "The resulting dataset is too large to graph.": "The resulting dataset is too large to graph.",
   "Stacked": "Stacked",
+  "Unknown user": "Unknown user",
   "Just now": "Just now",
   "Disable": "Disable",
   "default": "default",

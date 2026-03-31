@@ -24,6 +24,24 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useUser', () => ({
+  useUser: jest.fn(() => ({
+    user: {},
+    userResource: {},
+    userResourceLoaded: true,
+    userResourceError: null,
+    username: 'testuser',
+    fullName: 'Test User',
+    displayName: 'Test User',
+  })),
+}));
+
+const mockUserResource = {};
+
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: () => [mockUserResource, true],
+}));
+
 const mockUserSettings = useUserSettings as jest.Mock;
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;

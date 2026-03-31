@@ -4,23 +4,37 @@ import {
   isTelemetryListener,
   TelemetryListener,
   TelemetryEventListener,
+  UserInfo,
 } from '@console/dynamic-plugin-sdk';
+import type { UserKind } from '@console/internal/module/k8s/types';
 import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_SETTING_KEY,
   USER_TELEMETRY_ANALYTICS,
 } from '../constants';
+import { useUser } from './useUser';
 import { useUserSettings } from './useUserSettings';
 
-let telemetryEvents: { eventType: string; event: Record<string, any> }[] = [];
-
-interface ClusterProperties {
+export interface ClusterProperties {
   clusterId?: string;
   clusterType?: string;
   consoleVersion?: string;
   organizationId?: string;
   accountMail?: string;
 }
+
+export type TelemetryEventProperties = {
+  user?: UserInfo;
+  userResource?: UserKind;
+} & ClusterProperties &
+  Record<string, any>;
+
+export interface TelemetryEvent {
+  eventType: string;
+  event: TelemetryEventProperties;
+}
+
+let telemetryEvents: TelemetryEvent[] = [];
 
 export const getClusterProperties = () => {
   const clusterProperties: ClusterProperties = {};
@@ -40,6 +54,18 @@ export const getClusterProperties = () => {
   return clusterProperties;
 };
 
+const clusterIsOptedInToTelemetry = () =>
+  window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN;
+
+const isOptedOutFromTelemetry = (currentUserPreferenceTelemetryValue: USER_TELEMETRY_ANALYTICS) =>
+  window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.DISABLED ||
+  (currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.DENY &&
+    (clusterIsOptedInToTelemetry() ||
+      window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT));
+
+const userIsOptedInToTelemetry = (currentUserPreferenceTelemetryValue: USER_TELEMETRY_ANALYTICS) =>
+  currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW;
+
 let clusterProperties = getClusterProperties();
 
 export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
@@ -54,50 +80,52 @@ export const useTelemetry = () => {
     true,
   );
 
+  // Use centralized user data instead of fetching directly
+  const { userResource, userResourceLoaded: userResourceIsLoaded } = useUser();
+
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
 
   React.useEffect(() => {
     if (
-      currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.ALLOW &&
-      window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN &&
-      telemetryEvents.length > 0
+      userIsOptedInToTelemetry(currentUserPreferenceTelemetryValue) &&
+      clusterIsOptedInToTelemetry() &&
+      telemetryEvents.length > 0 &&
+      userResourceIsLoaded
     ) {
       telemetryEvents.forEach(({ eventType, event }) => {
-        extensions.forEach((e) => e.properties.listener(eventType, event));
+        extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
       });
       telemetryEvents = [];
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUserPreferenceTelemetryValue]);
+  }, [currentUserPreferenceTelemetryValue, userResourceIsLoaded]);
 
   return React.useCallback<TelemetryEventListener>(
     (eventType, properties: Record<string, any>) => {
+      if (isOptedOutFromTelemetry(currentUserPreferenceTelemetryValue)) return;
+
       const event = {
         ...clusterProperties,
         ...properties,
         // This is required to ensure that the replayed events uses the right path.
         path: properties?.pathname,
       };
+
       if (
-        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.DISABLED ||
-        (currentUserPreferenceTelemetryValue === USER_TELEMETRY_ANALYTICS.DENY &&
-          (window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN ||
-            window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTOUT))
-      ) {
-        return;
-      }
-      if (
-        !currentUserPreferenceTelemetryValue &&
-        window.SERVER_FLAGS.telemetry?.STATE === CLUSTER_TELEMETRY_ANALYTICS.OPTIN
+        (clusterIsOptedInToTelemetry() && !currentUserPreferenceTelemetryValue) ||
+        !userResourceIsLoaded
       ) {
         telemetryEvents.push({ eventType, event });
+
         if (telemetryEvents.length > 10) {
           telemetryEvents.shift(); // Remove the first element
         }
+
         return;
       }
-      extensions.forEach((e) => e.properties.listener(eventType, event));
+
+      extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
     },
-    [extensions, currentUserPreferenceTelemetryValue],
+    [extensions, currentUserPreferenceTelemetryValue, userResource, userResourceIsLoaded],
   );
 };
