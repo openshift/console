@@ -4,10 +4,10 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { SyncMarkdownView } from '../markdown-view';
 
-jest.mock('showdown', () => ({
-  Converter: class {
-    makeHtml = (markdown) => markdown;
-    addExtension = (extension) => extension;
+jest.mock('marked', () => ({
+  marked: {
+    parse: (markdown) => markdown,
+    Renderer: class {},
   },
 }));
 
@@ -81,7 +81,7 @@ describe('SyncMarkdownView', () => {
 
     it('calls renderExtension with iframe document when extensions are provided', async () => {
       const renderExtension = jest.fn();
-      const extensions = [{ type: 'test-extension' }];
+      const extensions = [{ type: 'lang', regex: /test/, replace: (t: string) => t }];
 
       renderWithProviders(
         <SyncMarkdownView extensions={extensions} renderExtension={renderExtension} />,
@@ -92,7 +92,7 @@ describe('SyncMarkdownView', () => {
 
     it('calls renderExtension with document when in inline mode with extensions', () => {
       const renderExtension = jest.fn();
-      const extensions = [{ type: 'test-extension' }];
+      const extensions = [{ type: 'lang', regex: /test/, replace: (t: string) => t }];
 
       renderWithProviders(
         <SyncMarkdownView inline extensions={extensions} renderExtension={renderExtension} />,
