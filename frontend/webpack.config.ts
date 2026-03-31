@@ -92,6 +92,11 @@ const config: Configuration = {
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
   },
+  performance: {
+    // The maximum size of the entry point and generated files permitted by analyze.sh
+    maxEntrypointSize: 11207475, // ~10.69 MiB
+    maxAssetSize: 5945425, // ~5.67 MiB
+  },
   devServer: {
     hot: HOT_RELOAD !== 'false',
     webSocketServer: 'sockjs',
@@ -222,13 +227,7 @@ const config: Configuration = {
           test: /\/node_modules\//,
           priority: -10,
           enforce: true,
-          filename: (pathData) => {
-            // give a special name to initial chunk for analyze.sh
-            if ((pathData?.chunk as webpack.Chunk)?.isOnlyInitial()) {
-              return `vendors~main-chunk-[name]-[contenthash].min.js`;
-            }
-            return 'vendors~[name]-chunk-[contenthash].min.js';
-          },
+          filename: 'vendors~[name]-chunk-[contenthash].min.js',
         },
         'vendor-plugins-shared': {
           test(module: webpack.NormalModule) {
@@ -339,6 +338,12 @@ if (ANALYZE_BUNDLE === 'true') {
       openAnalyzer: false,
     }),
   );
+
+  // Only fail the build due to excess bundle size if running analyze.sh
+  // This way, the other tests (frontend, e2e) can still provide feedback in CI
+  if (config.performance) {
+    config.performance.hints = 'error';
+  }
 }
 
 /* Production settings */
