@@ -37,23 +37,27 @@ function generateReport {
 }
 trap "copyArtifacts; generateReport" EXIT
 
-while getopts p:s:h:l:n: flag
+while getopts p:s:h:l:n:t:i: flag
 do
   case "${flag}" in
     p) pkg=${OPTARG};;
     s) spec=${OPTARG};;
     h) headless=${OPTARG};;
     n) nightly=${OPTARG};;
+    t) split_total=${OPTARG};;
+    i) split_index=${OPTARG};;
   esac
 done
 
 if [ $# -eq 0 ]; then
     echo "Runs Cypress tests in Test Runner or headless mode"
-    echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true] [-n true/false]"
+    echo "Usage: test-cypress [-p] <package> [-s] <filemask> [-h true] [-n true/false] [-t] <split_total> [-i] <split_index>"
     echo "  '-p <package>' may be 'console, 'olm', 'devconsole'"
     echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/monitoring/*'. Used only in headless mode when '-p' is specified."
     echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
     echo "  '-n true' runs the 'nightly' suite, all specs from selected packages in headless mode"
+    echo "  '-t <split_total>' total number of parallel processes (requires cypress-split plugin)"
+    echo "  '-i <split_index>' index of current parallel process, 0-based (requires cypress-split plugin)"
     echo "Examples:"
     echo "  test-cypress.sh                                       // displays this help text"
     echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
@@ -66,6 +70,7 @@ if [ $# -eq 0 ]; then
     echo "  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode"
     echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
     echo "  test-cypress.sh -n true                               // runs the whole nightly suite"
+    echo "  test-cypress.sh -p console -h true -t 4 -i 0          // runs console tests in parallel (process 1 of 4)"
     trap EXIT
     exit;
 fi
@@ -86,8 +91,23 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   exit $err;
 fi
 
+# Export parallelization environment variables if set
+if [ -n "${split_total-}" ]; then
+  export SPLIT_TOTAL=$split_total
+fi
+
+if [ -n "${split_index-}" ]; then
+  export SPLIT_INDEX=$split_index
+fi
+
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
-  yarn run test-cypress-console-headless
+  # If parallelization is enabled, use parallel scripts for console package
+  if [ -n "${split_total-}" ] && [ -n "${split_index-}" ]; then
+    echo "Running console tests in parallel mode: shard $((SPLIT_INDEX + 1))/$SPLIT_TOTAL"
+    yarn run test-cypress-console-parallel
+  else
+    yarn run test-cypress-console-headless
+  fi
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
   yarn run test-cypress-webterminal-headless
@@ -104,7 +124,11 @@ if [ -n "${pkg-}" ]; then
     yarn_script="$yarn_script-$pkg"
 fi
 
-if [ -n "${nightly-}" ]; then
+# Check if parallelization is requested for console package
+if [ -n "${pkg-}" ] && [ "$pkg" == "console" ] && [ -n "${headless-}" ] && [ -n "${split_total-}" ] && [ -n "${split_index-}" ]; then
+  echo "Running console tests in parallel mode: shard $((SPLIT_INDEX + 1))/$SPLIT_TOTAL"
+  yarn_script="$yarn_script-parallel"
+elif [ -n "${nightly-}" ]; then
   yarn_script="$yarn_script-nightly"
 elif [ -n "${headless-}" ]; then
   yarn_script="$yarn_script-headless"

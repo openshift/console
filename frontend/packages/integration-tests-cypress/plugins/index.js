@@ -3,8 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const wp = require('@cypress/webpack-preprocessor');
+const cypressSplit = require('cypress-split');
 
 module.exports = (on, config) => {
+  // Enable cypress-split for test parallelization
+  cypressSplit(on, config);
   const options = {
     webpackOptions: {
       resolve: {
