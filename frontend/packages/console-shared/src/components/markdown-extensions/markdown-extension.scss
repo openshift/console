@@ -3,7 +3,7 @@
 
 
 .ocs-code-block__pre {
-  /* override the styles applied by showdown while parsing <pre /> */
+  /* override the default styles applied while parsing <pre /> */
   display: flex;
   border: none;
   border-radius: none;

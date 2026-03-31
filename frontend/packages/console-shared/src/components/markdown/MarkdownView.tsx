@@ -3,35 +3,43 @@ import type { ReactNode, FC } from 'react';
 import { useMemo, useRef, useCallback, useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
+import { Marked } from 'marked';
 import * as sanitizeHtml from 'sanitize-html';
-import type { ShowdownOptions, ShowdownExtension } from 'showdown';
-import { Converter } from 'showdown';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 
 import './MarkdownView.scss';
 
+export type MarkdownExtension = {
+  type: string;
+  regex: RegExp;
+  replace: (text: string, ...groups: string[]) => string;
+};
+
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
-const markdownConvert = (
-  markdown: string,
-  extensions: ShowdownExtension[],
-  options: ShowdownOptions = {},
-) => {
-  const converter = new Converter({
-    tables: true,
-    openLinksInNewWindow: true,
-    strikethrough: true,
-    emoji: true,
-  });
+const markedInstance = new Marked({
+  async: false,
+  gfm: true,
+  renderer: {
+    link({ href, title, text }) {
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
+    },
+  },
+});
 
-  for (const [key, value] of Object.entries(options)) {
-    converter.setOption(key, value);
+const markdownConvert = (markdown: string, extensions: MarkdownExtension[]) => {
+  let processed = markdown;
+  if (extensions) {
+    for (const ext of extensions) {
+      processed = processed.replace(ext.regex, ext.replace);
+    }
   }
 
-  extensions && converter.addExtension(extensions);
+  const html = markedInstance.parse(processed);
 
-  return sanitizeHtml(converter.makeHtml(markdown), {
+  return sanitizeHtml(html, {
     allowedTags: [
       'b',
       'i',
@@ -78,10 +86,9 @@ export type MarkdownProps = {
   emptyMsg: string;
   exactHeight?: boolean;
   truncateContent?: boolean;
-  extensions?: ShowdownExtension[];
+  extensions?: MarkdownExtension[];
   renderExtension?: (contentDocument: Document, rootSelector: string) => ReactNode;
   inline?: boolean;
-  options?: ShowdownOptions;
   theme?: string;
   updateThemeClass?: (htmlTagElement: HTMLElement, theme: string) => void;
 };
@@ -102,7 +109,6 @@ export const MarkdownView: FC<MarkdownProps> = ({
   renderExtension,
   exactHeight,
   inline,
-  options,
   theme,
   updateThemeClass,
 }) => {
@@ -114,8 +120,8 @@ export const MarkdownView: FC<MarkdownProps> = ({
           omission: '\u2026',
         })
       : content;
-    return markdownConvert(truncatedContent || emptyMsg, extensions, options);
-  }, [content, emptyMsg, extensions, options, truncateContent]);
+    return markdownConvert(truncatedContent || emptyMsg, extensions);
+  }, [content, emptyMsg, extensions, truncateContent]);
 
   const innerProps: InnerSyncMarkdownProps = {
     renderExtension: extensions?.length > 0 ? renderExtension : undefined,
@@ -190,11 +196,9 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = useCallback(
     _.debounce(() => {
-      if (frameRef.current?.contentWindow) {
-        setFrameHeight(
-          frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
-            (exactHeight ? 0 : 15),
-        );
+      const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
+      if (el) {
+        setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
       }
     }, 100),
     [exactHeight],
@@ -219,7 +223,9 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     '',
   );
 
-  const contents = `
+  const srcdoc = `<!DOCTYPE html>
+  <html>
+  <head>
   ${linkRefs}
   <style type="text/css">
   body {
@@ -243,22 +249,15 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
+  </head>
+  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>
+  </html>`;
 
-  // update the iframe's content
   useEffect(() => {
     if (frameRef.current?.contentDocument) {
-      const doc = frameRef.current.contentDocument;
-      doc.open();
-      doc.write(contents);
-      doc.close();
-
-      // adjust height for current content
-      const contentHeight = doc.body.scrollHeight;
-      setFrameHeight(contentHeight);
-      updateThemeClass(doc.documentElement, theme);
+      updateThemeClass(frameRef.current.contentDocument.documentElement, theme);
     }
-  }, [contents, theme, updateThemeClass]);
+  }, [theme, updateThemeClass, loaded]);
 
   return (
     <>
@@ -267,6 +266,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
         aria-label="Markdown content viewer"
         role="document"
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+        srcDoc={srcdoc}
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
         ref={frameRef}
         onLoad={onLoad}

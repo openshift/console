@@ -806,11 +806,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       }
       data-test="cluster-settings-alerts-not-upgradeable"
     >
-      <SyncMarkdownView
-        content={clusterUpgradeableFalseCondition.message}
-        inline
-        options={{ simplifiedAutoLink: true }}
-      />
+      <SyncMarkdownView content={clusterUpgradeableFalseCondition.message} inline />
     </Alert>
   );
 };

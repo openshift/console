@@ -8,9 +8,9 @@ import {
 } from '@patternfly/quickstarts';
 import Pseudo from 'i18next-pseudo/es';
 import { useTranslation } from 'react-i18next';
-import useInlineExecuteCommandShowdownExtension from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
+import useInlineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
 import MarkdownExecuteSnippet from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
-import useMultilineExecuteCommandShowdownExtension from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
+import useMultilineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
@@ -55,8 +55,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();
-  const inlineExecuteCommandShowdownExtension = useInlineExecuteCommandShowdownExtension();
-  const multilineExecuteCommandShowdownExtension = useMultilineExecuteCommandShowdownExtension();
+  const inlineExecuteCommandExtension = useInlineExecuteCommandExtension();
+  const multilineExecuteCommandExtension = useMultilineExecuteCommandExtension();
 
   const startQuickStart = useCallback(
     (quickStartId: string, totalTasks?: number) => {
@@ -229,7 +229,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
       show: false,
     },
     markdown: {
-      extensions: [inlineExecuteCommandShowdownExtension, multilineExecuteCommandShowdownExtension],
+      extensions: [inlineExecuteCommandExtension, multilineExecuteCommandExtension],
       renderExtension: (docContext: HTMLDocument, rootSelector: string) => (
         <>
           <MarkdownExecuteSnippet docContext={docContext} rootSelector={rootSelector} />
