@@ -227,7 +227,11 @@ export const ConsoleDataView = <
           pagination={
             <Pagination
               itemCount={filteredData.length}
-              titles={{ ofWord: t('public~of') }}
+              titles={{
+                ofWord: t('public~of'),
+                itemsPerPage: t('public~Items per page'),
+                perPageSuffix: t('public~per page'),
+              }}
               {...pagination}
             />
           }
