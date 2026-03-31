@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
   Button,
-  Alert,
   TextInput,
   FormGroup,
   FormHelperText,
@@ -10,12 +9,12 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Form,
 } from '@patternfly/react-core';
 import type { TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 export interface TextInputModalProps {
   title: string;
@@ -97,20 +96,9 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
               </FormHelperText>
             )}
           </FormGroup>
-          {errorMessage && (
-            <Alert
-              isInline
-              className="co-alert co-alert--scrollable"
-              variant="danger"
-              title={t('console-shared~An error occurred')}
-              data-test="alert-error"
-            >
-              <div className="co-pre-line">{errorMessage}</div>
-            </Alert>
-          )}
         </Form>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
         <Button
           key="confirm-action"
           type="submit"
@@ -125,13 +113,13 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
         <Button
           key="cancel-action"
           type="button"
-          variant="secondary"
+          variant="link"
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
           {cancelButtonText || t('console-shared~Cancel')}
         </Button>
-      </ModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

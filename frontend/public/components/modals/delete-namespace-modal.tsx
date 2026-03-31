@@ -19,12 +19,11 @@ import {
   ModalHeader,
   ModalVariant,
   ModalBody,
-  ModalFooter,
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
 import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ErrorMessage } from '../utils/button-bar';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
@@ -104,8 +103,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
           />
         </span>
       </ModalBody>
-      <ModalFooter>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
         <Button
           type="submit"
           variant="danger"
@@ -119,7 +117,7 @@ export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> =
         <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('public~Cancel')}
         </Button>
-      </ModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

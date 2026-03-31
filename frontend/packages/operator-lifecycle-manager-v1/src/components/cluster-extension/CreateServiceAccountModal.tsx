@@ -1,21 +1,19 @@
 import { useState } from 'react';
 import {
   Button,
-  Alert,
   Form,
   FormGroup,
   TextInput,
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { ServiceAccountModel } from '@console/internal/models';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export interface CreateServiceAccountModalProps {
   namespace: string;
@@ -109,25 +107,15 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
               type="text"
             />
           </FormGroup>
-          {errorMessage && (
-            <Alert
-              isInline
-              className="co-alert co-alert--scrollable"
-              variant="danger"
-              title={t('olm-v1~An error occurred')}
-              data-test="alert-error"
-            >
-              <div className="co-pre-line">{errorMessage}</div>
-            </Alert>
-          )}
         </Form>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
         <Button
           key="confirm-action"
           type="submit"
           variant="primary"
-          disabled={inProgress || !name}
+          isLoading={inProgress}
+          isDisabled={inProgress || !name}
           onClick={submit}
           data-test="confirm-action"
           id="confirm-action"
@@ -137,15 +125,14 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
         <Button
           key="cancel-action"
           type="button"
-          variant="secondary"
-          disabled={inProgress}
+          variant="link"
+          isDisabled={inProgress}
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
         >
           {t('olm-v1~Cancel')}
         </Button>
-        {inProgress && <LoadingInline />}
-      </ModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

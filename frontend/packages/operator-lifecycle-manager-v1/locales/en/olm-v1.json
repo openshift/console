@@ -50,7 +50,6 @@
   "Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.": "Create a ClusterExtension to add functionality to your cluster. Operator Lifecycle Manager v1 manages ClusterExtensions.",
   "An error occurred. Please try again.": "An error occurred. Please try again.",
   "Create ServiceAccount": "Create ServiceAccount",
-  "An error occurred": "An error occurred",
   "Select service account": "Select service account",
   "Cluster extensions (OLMv1)": "Cluster extensions (OLMv1)",
   "Operators (OLMv0)": "Operators (OLMv0)",
