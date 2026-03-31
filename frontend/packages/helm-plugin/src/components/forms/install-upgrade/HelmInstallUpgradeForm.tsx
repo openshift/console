@@ -6,7 +6,6 @@ import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { useTheme } from '@console/internal/components/ThemeProvider';
 import {
   InputField,
   FormFooter,
@@ -73,13 +72,9 @@ const HelmInstallUpgradeForm: FC<
   providerName,
 }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
-    readme: chartReadme,
-    theme,
-  });
+  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
     isSubmitting ||

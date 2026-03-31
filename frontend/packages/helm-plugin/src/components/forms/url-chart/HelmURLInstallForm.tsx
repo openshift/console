@@ -5,7 +5,6 @@ import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { useTheme } from '@console/internal/components/ThemeProvider';
 import {
   InputField,
   FormFooter,
@@ -40,13 +39,9 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   onBack,
 }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const { chartReadme, formData, formSchema } = values;
 
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
-    readme: chartReadme,
-    theme,
-  });
+  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
 
   const isSubmitDisabled = isSubmitting || !_.isEmpty(errors) || !!chartError;
 
