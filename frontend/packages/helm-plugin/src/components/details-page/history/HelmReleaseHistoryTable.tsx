@@ -147,7 +147,11 @@ const HelmReleaseHistoryTable: FC<HelmReleaseHistoryTableProps> = ({
                 page={pagination.page}
                 onSetPage={pagination.onSetPage}
                 onPerPageSelect={pagination.onPerPageSelect}
-                titles={{ ofWord: t('helm-plugin~of') }}
+                titles={{
+                  ofWord: t('helm-plugin~of'),
+                  itemsPerPage: t('helm-plugin~Items per page'),
+                  perPageSuffix: t('helm-plugin~per page'),
+                }}
                 isCompact
               />
             }

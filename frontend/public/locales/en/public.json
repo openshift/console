@@ -27,6 +27,8 @@
   "API resources": "API resources",
   "by kind": "by kind",
   "of": "of",
+  "Items per page": "Items per page",
+  "per page": "per page",
   "Kind": "Kind",
   "Group": "Group",
   "Namespaced": "Namespaced",
