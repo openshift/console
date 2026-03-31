@@ -335,6 +335,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", middleware.WithGZIPEncoding(middleware.WithSecurityHeaders(staticHandler)))
 
+	// Register robots.txt at the origin root so crawlers can find it at /robots.txt
+	// regardless of s.BaseURL.Path (e.g., /console/).
+	mux.Handle("/robots.txt", middleware.WithSecurityHeaders(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, path.Join(s.PublicDir, "robots.txt"))
+	})))
+
 	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
 			serverconfig.CustomLogosHandler(w, r, s.CustomLogoFiles, s.CustomFaviconFiles)
