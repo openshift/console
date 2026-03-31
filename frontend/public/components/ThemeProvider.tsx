@@ -5,7 +5,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 export const THEME_USER_PREFERENCE_KEY = 'console.theme';
 export const THEME_LOCAL_STORAGE_KEY = 'bridge/theme';
 const THEME_SYSTEM_DEFAULT = 'systemDefault';
-const THEME_DARK_CLASS = 'pf-v6-theme-dark';
+export const THEME_DARK_CLASS = 'pf-v6-theme-dark';
 export const THEME_DARK = 'dark';
 export const THEME_LIGHT = 'light';
 export const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -16,7 +16,7 @@ type Theme = {
   theme: PROCESSED_THEME;
 };
 
-export const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
+const updateThemeClass = (htmlTagElement: HTMLElement, theme: string): PROCESSED_THEME => {
   if (darkThemeMq.matches && theme === THEME_SYSTEM_DEFAULT) {
     theme = THEME_DARK;
   }

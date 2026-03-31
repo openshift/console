@@ -9,17 +9,16 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 type HelmReadmeModalProps = {
   readme: string;
-  theme?: string;
 };
 type Props = HelmReadmeModalProps & ModalComponentProps;
 
-const HelmReadmeModal: FC<Props> = ({ readme, theme }) => {
+const HelmReadmeModal: FC<Props> = ({ readme }) => {
   const { t } = useTranslation();
   return (
     <>
       <ModalHeader title={t('helm-plugin~README')} labelId="helm-readme-modal-title" />
       <ModalBody>
-        <SyncMarkdownView content={readme} theme={theme} />
+        <SyncMarkdownView content={readme} />
       </ModalBody>
     </>
   );
