@@ -9,6 +9,25 @@ import * as yamlEditor from '../../views/yaml-editor';
 const SEARCH_NAMESPACE = 'openshift-authentication-operator';
 const SEARCH_DEPLOYMENT_NAME = 'authentication-operator';
 
+const SINGLE_FILTER_GROUP_SELECTOR =
+  '.co-console-data-view-single-filter .pf-v6-c-toolbar__group.pf-m-filter-group';
+
+const verifySingleFilterCategoryHidden = (expectedToggles: number) => {
+  cy.get('[data-test="data-view-table"]').should('exist');
+  cy.get(SINGLE_FILTER_GROUP_SELECTOR)
+    .find('.pf-v6-c-menu-toggle')
+    .should('have.length', expectedToggles);
+
+  if (expectedToggles === 1) {
+    cy.get(SINGLE_FILTER_GROUP_SELECTOR).find('.pf-v6-c-menu-toggle').should('not.be.visible');
+  } else {
+    cy.get(SINGLE_FILTER_GROUP_SELECTOR)
+      .find('.pf-v6-c-menu-toggle')
+      .first()
+      .should('not.be.visible');
+  }
+};
+
 describe('Filtering and Searching', () => {
   let WORKLOAD_NAME;
   let WORKLOAD_LABEL;
@@ -104,5 +123,16 @@ describe('Filtering and Searching', () => {
       qs: { kind: 'Pod', q: 'app=name', name: WORKLOAD_NAME },
     });
     listPage.dvRows.countShouldBe(3);
+  });
+
+  it('ConsoleDataView filter toolbar should not display a filter select', () => {
+    cy.log('when a text filter is the only filter');
+    cy.visit('/settings/cluster/alertmanagerconfig?page=1&perPage=50');
+    verifySingleFilterCategoryHidden(1);
+
+    cy.log('when a select filter is the only filter');
+    cy.visit('/search/all-namespaces?page=1&perPage=50&kind=core~v1~Pod');
+    listPage.dvRows.shouldBeLoaded();
+    verifySingleFilterCategoryHidden(2);
   });
 });
