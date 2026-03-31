@@ -1,6 +1,7 @@
 import { checkErrors, testName } from '@console/cypress-integration-tests/support';
 
-describe('Interacting with Operators', () => {
+// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82506)
+xdescribe('Interacting with Operators', () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);

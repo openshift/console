@@ -1,4 +1,5 @@
-@web-terminal
+# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82510)
+@web-terminal @manual
 Feature: Web Terminal for Admin user
               As a user with admin rights, I should be able to use web terminal
 

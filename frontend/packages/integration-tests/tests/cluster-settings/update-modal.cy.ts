@@ -10,7 +10,8 @@ import { isLocalDevEnvironment } from '../../views/common';
 const CLUSTER_VERSION_ALIAS = 'clusterVersion';
 const WAIT_OPTIONS = { requestTimeout: 300000 };
 
-describe('Cluster Settings cluster update modal', () => {
+// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82504)
+xdescribe('Cluster Settings cluster update modal', () => {
   before(() => {
     cy.login();
     cy.initAdmin();
