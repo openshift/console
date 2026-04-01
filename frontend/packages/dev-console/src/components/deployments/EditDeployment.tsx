@@ -46,7 +46,7 @@ const EditDeployment: FC<EditDeploymentProps> = ({ heading, resource, namespace,
     const resourceType = getResourcesType(resource);
     if (values.editorType === EditorType.YAML) {
       try {
-        deploymentRes = safeLoad(values.yamlData);
+        deploymentRes = safeLoad(values.yamlData) as K8sResourceKind;
         if (!deploymentRes?.metadata?.namespace) {
           deploymentRes.metadata.namespace = namespace;
         }

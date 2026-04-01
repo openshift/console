@@ -167,7 +167,7 @@ export const useDefaultChannelConfiguration = (namespace: string): [string, bool
   );
   let defaultConfiguredChannel = EVENTING_IMC_KIND;
   if (configMap && defaultConfiguredChannelLoaded) {
-    const cfg = safeLoad(configMap.data?.['default-ch-config']);
+    const cfg = safeLoad(configMap.data?.['default-ch-config']) as Record<string, any>;
 
     defaultConfiguredChannel = _.hasIn(cfg?.namespaceDefaults, namespace)
       ? cfg?.namespaceDefaults[namespace].kind

@@ -44,7 +44,7 @@ export const getAlertmanagerConfig = (
 ): { config: AlertmanagerConfig; errorMessage?: string } => {
   const parsedAlertmanagerYAML = getAlertmanagerYAML(secret);
   try {
-    const config = safeLoad(parsedAlertmanagerYAML.yaml);
+    const config = safeLoad(parsedAlertmanagerYAML.yaml) as AlertmanagerConfig;
     return { config, errorMessage: parsedAlertmanagerYAML.errorMessage };
   } catch (e) {
     return { config: null, errorMessage: `Error loading alertmanager.yaml: ${e}` };
@@ -55,7 +55,7 @@ export const patchAlertmanagerConfig = (
   secret: K8sResourceKind,
   yaml: object | string,
 ): Promise<any> => {
-  const yamlString = _.isObject(yaml) ? safeDump(yaml) : yaml;
+  const yamlString = _.isObject(yaml) ? safeDump(yaml) : String(yaml);
   const yamlEncodedString = Base64.encode(yamlString);
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);
