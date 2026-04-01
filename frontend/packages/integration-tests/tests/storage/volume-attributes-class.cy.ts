@@ -6,7 +6,7 @@ import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 
 // These tests require AWS platform with EBS CSI driver for modifyVolume support
-const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+const isAws = String(Cypress.expose('BRIDGE_AWS')).toLowerCase() === 'true';
 
 if (isAws) {
   describe('VolumeAttributesClass E2E tests', () => {

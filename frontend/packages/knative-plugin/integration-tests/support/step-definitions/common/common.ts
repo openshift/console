@@ -46,7 +46,7 @@ Given('user is at administrator perspective', () => {
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 

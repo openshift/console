@@ -369,7 +369,7 @@ Then(
 );
 
 Given('user has created namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 
@@ -414,7 +414,7 @@ When('user clicks on the service binding name {string} at the sidebar', (binding
 
 Then('user will see {string} Status on Service binding details page', (status: string) => {
   cy.byTestID('resource-status').should('have.text', status);
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
+  cy.exec(`oc delete namespace ${Cypress.expose('NAMESPACE')}`, { failOnNonZeroExit: false });
 });
 
 Then('user will see service binding connection', () => {

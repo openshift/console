@@ -8,7 +8,7 @@ Given('user has installed Web Terminal Operator', () => {
 });
 
 Given('user has applied {string}', (yamlFileName: string) => {
-  cy.exec(`oc apply -f testData/quick-start/${yamlFileName} -n ${Cypress.env('NAMESPACE')} `, {
+  cy.exec(`oc apply -f testData/quick-start/${yamlFileName} -n ${Cypress.expose('NAMESPACE')} `, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);

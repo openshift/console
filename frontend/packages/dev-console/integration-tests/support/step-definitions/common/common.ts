@@ -8,10 +8,11 @@ import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperP
 
 Given('user has logged in as a basic user', () => {
   cy.logout();
-  const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
-  const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
-  const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
-  cy.login(idp, username, password);
+  const idp = Cypress.expose('BRIDGE_HTPASSWD_IDP') || 'test';
+  const username = Cypress.expose('BRIDGE_HTPASSWD_USERNAME') || 'test';
+  cy.env(['BRIDGE_HTPASSWD_PASSWORD']).then(({ BRIDGE_HTPASSWD_PASSWORD }) => {
+    cy.login(idp, username, BRIDGE_HTPASSWD_PASSWORD || 'test');
+  });
   app.waitForLoad();
 });
 
@@ -48,7 +49,7 @@ Given('user has created namespace starts with {string}', (projectName: string) =
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 
@@ -57,7 +58,7 @@ Given('user is at Monitoring page', () => {
 });
 
 Given('user is at namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);
 });
 

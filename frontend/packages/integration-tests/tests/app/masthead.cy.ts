@@ -56,7 +56,7 @@ describe('Masthead', () => {
           masthead.copyLoginCommand().should('be.visible').invoke('removeAttr', 'target');
           masthead.copyLoginCommand().click();
           if (isLocalDevEnvironment) {
-            cy.origin(Cypress.env('OAUTH_BASE_ADDRESS'), () => {
+            cy.origin(Cypress.expose('OAUTH_BASE_ADDRESS'), () => {
               // note required duplication in else below due to limitations of cy.origin
               cy.url().should('include', '/oauth/token/display');
               cy.get('body').should('include.text', 'Display Token');

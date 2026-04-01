@@ -55,7 +55,7 @@ Then('user sees the {string} perspective', (userPerspective: string) => {
 });
 
 Given('user has created project {string}', (projectName) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 
@@ -108,7 +108,7 @@ When('user clicks on Create with name {string} in Create Project modal', (projec
 });
 
 Given('user has created or selected namespace {string}', (projectName) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 

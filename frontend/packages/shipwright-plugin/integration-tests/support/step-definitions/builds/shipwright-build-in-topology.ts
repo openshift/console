@@ -7,28 +7,28 @@ import { buildPO, topologyPO } from '../../pageObjects';
 
 Given('user has created shipwright builds with resources', () => {
   let yamlFileName = `testData/builds/shipwrightBuildStrategies.yaml`;
-  cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc apply -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   });
 
   yamlFileName = `testData/workload/201-full-openshift-deployment-example.yaml`;
-  cy.exec(`oc create -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc create -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   });
 
   yamlFileName = `testData/workload/202-full-openshift-deploymentconfig-example.yaml`;
-  cy.exec(`oc create -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc create -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   });
 
   yamlFileName = `testData/workload/203-full-openshift-knative-service-example.yaml`;
-  cy.exec(`oc create -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc create -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   });
 });
 
 Given('user has created workload using yaml {string}', (yamlFileName: string) => {
-  cy.exec(`oc create -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc create -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);
@@ -36,7 +36,7 @@ Given('user has created workload using yaml {string}', (yamlFileName: string) =>
 });
 
 Then('user will delete the workload using yaml {string}', (yamlFileName: string) => {
-  cy.exec(`oc delete -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc delete -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);

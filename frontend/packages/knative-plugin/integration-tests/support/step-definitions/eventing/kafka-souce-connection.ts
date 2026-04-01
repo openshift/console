@@ -17,7 +17,7 @@ Given('user is at admin perspective', () => {
 
 Given('user has created Kafka Connection {string}', () => {
   const yamlFile = 'support/testData/createKafkaConnection.yaml';
-  cy.exec(`oc apply -f ${yamlFile} -n ${Cypress.env('NAMESPACE')} `, {
+  cy.exec(`oc apply -f ${yamlFile} -n ${Cypress.expose('NAMESPACE')} `, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);
@@ -26,7 +26,7 @@ Given('user has created Kafka Connection {string}', () => {
 
 Given('user has created Secret {string}', () => {
   const yamlFile = 'support/testData/createSecret.yaml';
-  cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f ${yamlFile}`, {
+  cy.exec(`oc apply -n ${Cypress.expose('NAMESPACE')} -f ${yamlFile}`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);

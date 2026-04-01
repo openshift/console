@@ -20,7 +20,7 @@ const deletePVCClone = (pvcName: string) => {
 };
 
 // Normalize env check: CI env vars are strings, so "false" would be truthy without explicit comparison.
-const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+const isAws = String(Cypress.expose('BRIDGE_AWS')).toLowerCase() === 'true';
 if (isAws) {
   describe('Clone Tests', () => {
     before(() => {

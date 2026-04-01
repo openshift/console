@@ -64,7 +64,7 @@ describe('Kubernetes resource CRUD operations', () => {
   // These resources are thoroughly tested in tests/storage/snapshot.cy.ts on AWS platforms.
   // Skip them here to avoid flaky failures on GCP and other platforms.
   // Normalize env check: CI env vars are strings, so "false" would be truthy without explicit comparison.
-  const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+  const isAws = String(Cypress.expose('BRIDGE_AWS')).toLowerCase() === 'true';
   const snapshotObjs = isAws
     ? OrderedMap<string, TestDefinition>()
         .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
@@ -106,7 +106,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
   const testObjs =
-    Cypress.env('openshift') === true
+    Cypress.expose('openshift') === true
       ? k8sObjsWithSnapshots.merge(openshiftObjs)
       : k8sObjsWithSnapshots;
   const testLabel = 'automated-test-name';
@@ -164,7 +164,7 @@ describe('Kubernetes resource CRUD operations', () => {
       skipYamlSaveTest,
     } = testObj;
     // Ex: to execute just the Pod crud tests, set environment var 'cypress_k8sTestResource=Pod' before running cypress
-    if (Cypress.env('k8sTestResource') && kind !== Cypress.env('k8sTestResource')) {
+    if (Cypress.expose('k8sTestResource') && kind !== Cypress.expose('k8sTestResource')) {
       return;
     }
     describe(kind, () => {

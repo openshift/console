@@ -7,12 +7,12 @@ When('user enters project name as {string} in Create Project modal', (projectNam
   const timestamp = d.getTime();
   projectNameSpace.enterProjectName(`${projectName}-${timestamp}-ns`);
   const finalName = `${projectName}-${timestamp}-ns`;
-  Cypress.env('NAMESPACE', finalName);
-  const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+  Cypress.expose('NAMESPACE', finalName);
+  const namespaces: string[] = Cypress.expose('NAMESPACES') || [];
   if (!namespaces.includes(finalName)) {
     namespaces.push(finalName);
   }
-  Cypress.env('NAMESPACES', namespaces);
+  Cypress.expose('NAMESPACES', namespaces);
 });
 
 When('user clicks Create button present in Create Project modal', () => {

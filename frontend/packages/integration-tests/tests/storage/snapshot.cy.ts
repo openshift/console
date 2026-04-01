@@ -11,7 +11,7 @@ const snapshotName = `${PVC.metadata.name}-snapshot`;
 
 // These tests are meant to be run on AWS as only AWS supports CSI storage classes(gp2-csi)
 // Normalize env check: CI env vars are strings, so "false" would be truthy without explicit comparison.
-const isAws = String(Cypress.env('BRIDGE_AWS')).toLowerCase() === 'true';
+const isAws = String(Cypress.expose('BRIDGE_AWS')).toLowerCase() === 'true';
 if (isAws) {
   describe('Snapshot Tests', () => {
     before(() => {

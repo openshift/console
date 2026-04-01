@@ -24,7 +24,7 @@ Then('user will see the terminal window opened in new tab', () => {
 });
 
 And('user does nothing with displayed terminal window 1 minutes', () => {
-  const terminalIdlingTimeout: number = Number(Cypress.env('TERMINAL_IDLING_TIMEOUT')) || 180000; // [workaround] changed to 180 seconds due to https://issues.redhat.com/browse/WTO-334
+  const terminalIdlingTimeout: number = Number(Cypress.expose('TERMINAL_IDLING_TIMEOUT')) || 180000; // [workaround] changed to 180 seconds due to https://issues.redhat.com/browse/WTO-334
   cy.wait(terminalIdlingTimeout);
   webTerminalPage.verifyInnactivityMessage(terminalIdlingTimeout);
 });
@@ -37,7 +37,7 @@ Then(
 );
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   cy.get(adminNavigationMenuPO.workloads.main).click();
   cy.get(devNavigationMenuPO.topology).click();
   projectNameSpace.selectOrCreateProject(`${projectName}`);
