@@ -1,5 +1,4 @@
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { CapabilityLevel } from '@console/operator-lifecycle-manager/src/components/operator-hub/operator-hub-item-details';
 import {
   getClusterCatalogSource,
@@ -9,6 +8,7 @@ import {
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import PlainList from '@console/shared/src/components/lists/PlainList';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import type { OLMCatalogItem, OLMCatalogItemData } from '../types';
 
 type NormalizeExtensionCatalogItem = (item: OLMCatalogItem) => CatalogItem<OLMCatalogItemData>;
@@ -97,7 +97,7 @@ export const normalizeCatalogItem: NormalizeExtensionCatalogItem = (item) => {
         { label: 'Created at', value: createdAt ? <Timestamp timestamp={createdAt} /> : '-' },
         { label: 'Support', value: support || '-' },
       ],
-      descriptions: [{ value: <SyncMarkdownView content={markdownDescription || description} /> }],
+      descriptions: [{ value: <MarkdownView content={markdownDescription || description} /> }],
     },
     displayName,
     ...(hasIcon && {

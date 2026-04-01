@@ -4,7 +4,7 @@ import { Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-c
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
 type HelmReadmeModalProps = {
@@ -18,7 +18,7 @@ const HelmReadmeModal: FC<Props> = ({ readme }) => {
     <>
       <ModalHeader title={t('helm-plugin~README')} labelId="helm-readme-modal-title" />
       <ModalBody>
-        <SyncMarkdownView content={readme} />
+        <MarkdownView content={readme} />
       </ModalBody>
     </>
   );

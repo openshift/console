@@ -56,9 +56,8 @@ jest.mock('../../utils/useClusterServiceVersionPath', () => ({
   useClusterServiceVersionPath: jest.fn(() => '/test-path'),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ...jest.requireActual('@console/internal/components/utils'),
-  AsyncComponent: ({ children }) => children || null,
+jest.mock('@console/shared/src/components/markdown/MarkdownView', () => ({
+  MarkdownView: jest.fn(() => '[MARKDOWN_VIEW]'),
 }));
 
 jest.mock('@console/internal/components/conditions', () => ({
