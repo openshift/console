@@ -31,6 +31,7 @@ const BaseNode: FC<BaseNodeProps> = ({
   kind,
   element,
   hoverRef,
+  tooltipTriggerRef,
   children,
   onShowCreateConnector,
   onContextMenu,
@@ -42,7 +43,7 @@ const BaseNode: FC<BaseNodeProps> = ({
 }) => {
   const [hoverChange, setHoverChange] = useState<boolean>(false);
   const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
-  const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
+  const nodeHoverRefs = useCombineRefs(tooltipTriggerRef, internalHoverRef, hoverRef);
   // Keep hover active when context menu is open to prevent re-renders
   const isHovering = hover || contextMenuOpen;
   const { width, height } = element.getDimensions();
