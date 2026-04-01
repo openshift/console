@@ -26,7 +26,6 @@ import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
@@ -49,6 +48,7 @@ import {
   modelFor,
 } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import type { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
@@ -1104,7 +1104,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                 icon={_.get(csv, 'spec.icon[0]')}
                 provider={_.get(csv, 'spec.provider')}
               />
-              <SyncMarkdownView content={providedAPI.description} />
+              <MarkdownView content={providedAPI.description} />
             </div>
           )}
         </GridItem>

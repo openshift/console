@@ -26,11 +26,11 @@ import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-v
 import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { DefaultCatalogSource } from '../../const';
 import { useCurrentCSVDescription } from '../../hooks/useCurrentCSVDescription';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import type { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
-import { MarkdownView } from '../clusterserviceversion';
 import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';

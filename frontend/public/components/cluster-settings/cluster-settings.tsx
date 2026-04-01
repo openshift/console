@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
@@ -806,7 +806,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       }
       data-test="cluster-settings-alerts-not-upgradeable"
     >
-      <SyncMarkdownView content={clusterUpgradeableFalseCondition.message} inline />
+      <MarkdownView content={clusterUpgradeableFalseCondition.message} inline />
     </Alert>
   );
 };

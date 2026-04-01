@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import type { HelmRelease } from '../../../types/helm-types';
 import HelmReleaseNotesEmptyState from './HelmReleaseNotesEmptyState';
 
@@ -12,7 +12,7 @@ const HelmReleaseNotes: FC<HelmReleaseNotesProps> = ({ customData }) => {
   const helmReleaseNotes = customData?.info?.notes ?? '';
   return helmReleaseNotes ? (
     <PaneBody>
-      <SyncMarkdownView content={helmReleaseNotes} />
+      <MarkdownView content={helmReleaseNotes} />
     </PaneBody>
   ) : (
     <HelmReleaseNotesEmptyState />

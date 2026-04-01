@@ -118,7 +118,7 @@ const RenderExtension: FC<RenderExtensionProps> = ({
   );
 };
 
-type InnerSyncMarkdownProps = Pick<MarkdownProps, 'renderExtension' | 'exactHeight'> & {
+type InnerSyncMarkdownProps = Pick<MarkdownViewProps, 'renderExtension' | 'exactHeight'> & {
   markup: string;
   isEmpty: boolean;
 };
@@ -235,7 +235,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   );
 };
 
-export type MarkdownProps = {
+export type MarkdownViewProps = {
   content?: string;
   emptyMsg?: string;
   exactHeight?: boolean;
@@ -245,7 +245,7 @@ export type MarkdownProps = {
   inline?: boolean;
 };
 
-export const MarkdownView: FC<MarkdownProps> = ({
+export const MarkdownView: FC<MarkdownViewProps> = ({
   truncateContent,
   content,
   emptyMsg: emptyMsgProp,

@@ -1,13 +1,11 @@
 import { screen } from '@testing-library/react';
-
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { SyncMarkdownView } from '../markdown-view';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+import { MarkdownView } from '../MarkdownView';
 
 jest.mock('marked', () => ({
-  marked: {
-    parse: (markdown) => markdown,
-    Renderer: class {},
+  Marked: class {
+    parse = (markdown) => markdown;
   },
 }));
 
@@ -21,7 +19,7 @@ jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
 
 const mockUserPreference = useUserPreference as jest.Mock;
 
-describe('SyncMarkdownView', () => {
+describe('MarkdownView', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUserPreference.mockReturnValue(['light', jest.fn(), true]);
@@ -29,7 +27,7 @@ describe('SyncMarkdownView', () => {
 
   describe('Rendering Modes', () => {
     it('renders iframe by default for embedded markdown content', () => {
-      renderWithProviders(<SyncMarkdownView />);
+      renderWithProviders(<MarkdownView />);
 
       const iframe = screen.getByRole('document', { name: 'Markdown content viewer' });
       expect(iframe).toBeVisible();
@@ -37,7 +35,7 @@ describe('SyncMarkdownView', () => {
     });
 
     it('iframe has proper accessibility attributes for security and usability', () => {
-      renderWithProviders(<SyncMarkdownView />);
+      renderWithProviders(<MarkdownView />);
 
       const iframe = screen.getByRole('document', { name: 'Markdown content viewer' });
       expect(iframe).toHaveAttribute(
@@ -53,7 +51,7 @@ describe('SyncMarkdownView', () => {
     });
 
     it('renders inline content when inline prop is true', () => {
-      renderWithProviders(<SyncMarkdownView inline />);
+      renderWithProviders(<MarkdownView inline />);
 
       expect(
         screen.queryByRole('document', { name: 'Markdown content viewer' }),
@@ -66,7 +64,7 @@ describe('SyncMarkdownView', () => {
     it('does not call renderExtension when no extensions are provided', () => {
       const renderExtension = jest.fn();
 
-      renderWithProviders(<SyncMarkdownView renderExtension={renderExtension} />);
+      renderWithProviders(<MarkdownView renderExtension={renderExtension} />);
 
       expect(renderExtension).not.toHaveBeenCalled();
     });
@@ -74,7 +72,7 @@ describe('SyncMarkdownView', () => {
     it('does not call renderExtension in inline mode without extensions', () => {
       const renderExtension = jest.fn();
 
-      renderWithProviders(<SyncMarkdownView inline renderExtension={renderExtension} />);
+      renderWithProviders(<MarkdownView inline renderExtension={renderExtension} />);
 
       expect(renderExtension).not.toHaveBeenCalled();
     });
@@ -84,7 +82,7 @@ describe('SyncMarkdownView', () => {
       const extensions = [{ type: 'lang', regex: /test/, replace: (t: string) => t }];
 
       renderWithProviders(
-        <SyncMarkdownView extensions={extensions} renderExtension={renderExtension} />,
+        <MarkdownView extensions={extensions} renderExtension={renderExtension} />,
       );
 
       expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeVisible();
@@ -95,7 +93,7 @@ describe('SyncMarkdownView', () => {
       const extensions = [{ type: 'lang', regex: /test/, replace: (t: string) => t }];
 
       renderWithProviders(
-        <SyncMarkdownView inline extensions={extensions} renderExtension={renderExtension} />,
+        <MarkdownView inline extensions={extensions} renderExtension={renderExtension} />,
       );
 
       expect(screen.getByText('Not available')).toBeVisible();
@@ -106,7 +104,7 @@ describe('SyncMarkdownView', () => {
     it('responds to theme changes from user settings', () => {
       mockUserPreference.mockReturnValue(['dark', jest.fn(), true]);
 
-      renderWithProviders(<SyncMarkdownView />);
+      renderWithProviders(<MarkdownView />);
 
       expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeVisible();
     });
@@ -114,7 +112,7 @@ describe('SyncMarkdownView', () => {
     it('handles loading state from user settings', () => {
       mockUserPreference.mockReturnValue(['light', jest.fn(), false]);
 
-      renderWithProviders(<SyncMarkdownView />);
+      renderWithProviders(<MarkdownView />);
 
       expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeVisible();
     });

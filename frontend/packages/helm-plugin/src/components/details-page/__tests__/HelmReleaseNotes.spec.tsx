@@ -15,11 +15,11 @@ jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
 const mockUserPreference = useUserPreference as jest.Mock;
 
 describe('HelmReleaseNotes', () => {
-  it('should render the SyncMarkdownView component when notes are available', () => {
+  it('should render the MarkdownView component when notes are available', () => {
     mockUserPreference.mockReturnValue(['light', jest.fn(), true]);
     renderWithProviders(<HelmReleaseNotes customData={mockHelmReleases[0]} />);
 
-    // Check if markdown content is rendered (SyncMarkdownView renders an iframe with proper accessibility)
+    // Check if markdown content is rendered (MarkdownView renders an iframe with proper accessibility)
     expect(screen.getByRole('document', { name: 'Markdown content viewer' })).toBeInTheDocument();
   });
 
