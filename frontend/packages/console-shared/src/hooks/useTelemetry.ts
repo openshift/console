@@ -14,7 +14,7 @@ import {
 import { useUser } from './useUser';
 import { useUserPreference } from './useUserPreference';
 
-export interface ClusterProperties {
+interface ClusterProperties {
   clusterId?: string;
   clusterType?: string;
   consoleVersion?: string;
