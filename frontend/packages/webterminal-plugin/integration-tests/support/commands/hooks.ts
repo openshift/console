@@ -8,7 +8,7 @@ before(() => {
 });
 
 after(() => {
-  const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+  const namespaces: string[] = Cypress.expose('NAMESPACES') || [];
   cy.log(`Deleting "${namespaces.join(' ')}" namespace`);
   cy.exec(`oc delete namespace ${namespaces.join(' ')}`, {
     failOnNonZeroExit: false,

@@ -143,7 +143,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     }
     case devNavigationMenu.Project: {
       cy.get(devNavigationMenuPO.project).click();
-      detailsPage.titleShouldContain(Cypress.env('NAMESPACE'));
+      detailsPage.titleShouldContain(Cypress.expose('NAMESPACE'));
       cy.testA11y('Projects Page in dev perspective');
       break;
     }
@@ -309,11 +309,11 @@ export const projectNameSpace = {
           cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
           projectNameSpace.enterProjectName(projectName);
           cy.byTestID('confirm-action').click();
-          const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+          const namespaces: string[] = Cypress.expose('NAMESPACES') || [];
           if (!namespaces.includes(projectName)) {
             namespaces.push(projectName);
           }
-          Cypress.env('NAMESPACES', namespaces);
+          Cypress.expose('NAMESPACES', namespaces);
           app.waitForLoad();
         } else {
           cy.get('[data-test="namespace-dropdown-menu"]')
@@ -327,11 +327,11 @@ export const projectNameSpace = {
               cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
               projectNameSpace.enterProjectName(projectName);
               cy.byTestID('confirm-action').click();
-              const namespaces: string[] = Cypress.env('NAMESPACES') || [];
+              const namespaces: string[] = Cypress.expose('NAMESPACES') || [];
               if (!namespaces.includes(projectName)) {
                 namespaces.push(projectName);
               }
-              Cypress.env('NAMESPACES', namespaces);
+              Cypress.expose('NAMESPACES', namespaces);
               app.waitForLoad();
             }
           });

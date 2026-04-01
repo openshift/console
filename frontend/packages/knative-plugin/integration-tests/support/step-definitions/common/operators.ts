@@ -38,13 +38,13 @@ When('user has created Knative Serving and Knative Eventing CR', () => {
   const servingYaml = 'support/testData/installation-yamls/createKnativeServing-CR.yaml';
   const eventingYaml = 'support/testData/installation-yamls/createKnativeEventing-CR.yaml';
 
-  cy.exec(`oc apply -f ${servingYaml} -n ${Cypress.env('NAMESPACE')} `, {
+  cy.exec(`oc apply -f ${servingYaml} -n ${Cypress.expose('NAMESPACE')} `, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);
   });
 
-  cy.exec(`oc apply -f ${eventingYaml} -n ${Cypress.env('NAMESPACE')} `, {
+  cy.exec(`oc apply -f ${eventingYaml} -n ${Cypress.expose('NAMESPACE')} `, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);

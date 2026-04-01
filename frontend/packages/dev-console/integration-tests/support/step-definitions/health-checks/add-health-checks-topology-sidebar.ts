@@ -32,9 +32,11 @@ When('user can see workload {string} in topology page', (name: string) => {
 When(
   'user will see all 3 Probes added on the Add Health Checks page for {string} {string}',
   (type: string, name: string) => {
-    cy.log(`/k8s/ns/${Cypress.env('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`);
+    cy.log(
+      `/k8s/ns/${Cypress.expose('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`,
+    );
     cy.visit(
-      `/k8s/ns/${Cypress.env('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`,
+      `/k8s/ns/${Cypress.expose('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`,
     );
     detailsPage.titleShouldContain('Edit health checks');
     cy.get('.odc-heath-check-probe__successText').should('have.length', 3);
@@ -48,7 +50,7 @@ Then(
   'user will see {string} added on the Add Health Checks page for {string} {string}',
   (probe: string, type: string, name: string) => {
     cy.visit(
-      `/k8s/ns/${Cypress.env('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`,
+      `/k8s/ns/${Cypress.expose('NAMESPACE')}/${type}/${name}/containers/${name}/health-checks`,
     );
     detailsPage.titleShouldContain('Edit health checks');
     cy.get('.odc-heath-check-probe__successText').contains(`${probe} added`).should('be.visible');

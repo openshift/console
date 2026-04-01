@@ -10,7 +10,7 @@ import { getEditorContent } from '../../views/yaml-editor';
 
 const PLUGIN_NAME = 'console-demo-plugin';
 const PLUGIN_PATH = '../../../dynamic-demo-plugin';
-const PLUGIN_PULL_SPEC = Cypress.env('PLUGIN_PULL_SPEC');
+const PLUGIN_PULL_SPEC = Cypress.expose('PLUGIN_PULL_SPEC');
 /* The update wait is the value to wait for the poll of /api/check-updates to return with the updated list of plugins
  after the plugin is enabled and loaded. This wait will be longer on ci than when debugging locally. */
 /*
@@ -80,7 +80,7 @@ const k8sAPINavTest = (apiID: string) => {
   cy.get('test-k8api-error').should('not.exist');
   cy.get(`test-k8s-${apiID}`).should('not.be.empty');
 };
-if (!Cypress.env('OPENSHIFT_CI') || Cypress.env('PLUGIN_PULL_SPEC')) {
+if (!Cypress.expose('OPENSHIFT_CI') || Cypress.expose('PLUGIN_PULL_SPEC')) {
   describe('Demo dynamic plugin test', () => {
     before(() => {
       cy.login();

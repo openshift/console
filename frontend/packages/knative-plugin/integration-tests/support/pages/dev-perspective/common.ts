@@ -10,10 +10,11 @@ export const userLoginPage = {
         cy.wait(4000);
       }
     });
-    const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
-    const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
-    const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
-    cy.login(idp, username, password);
+    const idp = Cypress.expose('BRIDGE_HTPASSWD_IDP') || 'test';
+    const username = Cypress.expose('BRIDGE_HTPASSWD_USERNAME') || 'test';
+    cy.env(['BRIDGE_HTPASSWD_PASSWORD']).then(({ BRIDGE_HTPASSWD_PASSWORD }) => {
+      cy.login(idp, username, BRIDGE_HTPASSWD_PASSWORD || 'test');
+    });
     app.waitForLoad();
   },
 };

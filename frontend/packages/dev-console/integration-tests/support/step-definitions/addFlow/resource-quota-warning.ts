@@ -30,7 +30,7 @@ Given('user has created workload with resource type deployment', () => {
 });
 
 Given('user has created two resource quotas using {string} file', (yamlLocation) => {
-  cy.exec(`oc apply -f ${yamlLocation} -n ${Cypress.env('NAMESPACE')}`);
+  cy.exec(`oc apply -f ${yamlLocation} -n ${Cypress.expose('NAMESPACE')}`);
   app.waitForDocumentLoad();
 });
 

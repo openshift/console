@@ -58,7 +58,7 @@ Then('user can see message in sink section as {string}', (message: string) => {
 });
 
 Given('user is at namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);
 });
 

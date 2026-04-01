@@ -157,7 +157,7 @@ const waitForPipelineTasks = (retries: number = 30) => {
 };
 
 const createShipwrightBuild = () => {
-  projectNameSpace.selectOrCreateProject(Cypress.env('NAMESPACE'));
+  projectNameSpace.selectOrCreateProject(Cypress.expose('NAMESPACE'));
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
       cy.get(operatorsPO.installOperators.search).clear().type(operators.ShipwrightOperator);

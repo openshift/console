@@ -30,7 +30,7 @@ Given('user is at administrator perspective', () => {
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 
@@ -108,7 +108,7 @@ When('user switches to the {string} tab', (tab: string) => {
 });
 
 When('user clicks on the link for the {string} of helm release', (resource: string) => {
-  topologySidePane.selectResource(resource, Cypress.env('NAMESPACE'), 'nodejs-release');
+  topologySidePane.selectResource(resource, Cypress.expose('NAMESPACE'), 'nodejs-release');
 });
 
 Given('user is at Add page', () => {

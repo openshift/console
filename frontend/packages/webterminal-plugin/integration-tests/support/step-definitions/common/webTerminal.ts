@@ -5,29 +5,38 @@ import { checkDeveloperPerspective } from '@console/dev-console/integration-test
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { webTerminalPage } from '@console/webterminal-plugin/integration-tests/support/step-definitions/pages/web-terminal/webTerminal-page';
 
-const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
-const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
-const password = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
-const kubeAdmUserName = Cypress.env('KUBEADMIN_NAME') || 'kubeadmin';
-const kubeAdmUserPass = Cypress.env('BRIDGE_KUBEADMIN_PASSWORD');
+const idp = Cypress.expose('BRIDGE_HTPASSWD_IDP') || 'test';
+const username = Cypress.expose('BRIDGE_HTPASSWD_USERNAME') || 'test';
+const kubeAdmUserName = Cypress.expose('KUBEADMIN_NAME') || 'kubeadmin';
 
 // create web terminal instance in dedicated namespace  under basic user and relogin as admin with oc client
 function installDevWsAndReconfigureIdlingTimeout(dedicatedNamespace: string) {
   // we need to create an active terminal session in background before test, also
   // we rewrite default idling timeout for the terminal (because 15 min - too long change it to 1 min)
-  try {
-    cy.exec(`oc login -u ${username}  -p ${password} --insecure-skip-tls-verify`);
-    cy.exec(`oc new-project  ${dedicatedNamespace}`);
-    cy.exec(`oc apply -f testData/yamls/web-terminal/web-terminal.yaml -n ${dedicatedNamespace}`);
-    cy.exec(`oc login -u ${kubeAdmUserName}  -p ${kubeAdmUserPass} --insecure-skip-tls-verify`);
-  } catch (err) {
-    // relogin as admin if something went wrong
-    cy.exec(`oc login -u ${kubeAdmUserName}  -p ${kubeAdmUserPass} --insecure-skip-tls-verify`);
-    throw err;
-  }
-  // override the default idling timeout from 15 minutes to 1 minute
-  cy.exec(
-    'oc apply -f testData/yamls/web-terminal/dev-ws-custom-idling-config.yaml -n openshift-operators',
+  cy.env(['BRIDGE_HTPASSWD_PASSWORD', 'BRIDGE_KUBEADMIN_PASSWORD']).then(
+    ({ BRIDGE_HTPASSWD_PASSWORD, BRIDGE_KUBEADMIN_PASSWORD }) => {
+      const password = BRIDGE_HTPASSWD_PASSWORD || 'test';
+      try {
+        cy.exec(`oc login -u ${username}  -p ${password} --insecure-skip-tls-verify`);
+        cy.exec(`oc new-project  ${dedicatedNamespace}`);
+        cy.exec(
+          `oc apply -f testData/yamls/web-terminal/web-terminal.yaml -n ${dedicatedNamespace}`,
+        );
+        cy.exec(
+          `oc login -u ${kubeAdmUserName}  -p ${BRIDGE_KUBEADMIN_PASSWORD} --insecure-skip-tls-verify`,
+        );
+      } catch (err) {
+        // relogin as admin if something went wrong
+        cy.exec(
+          `oc login -u ${kubeAdmUserName}  -p ${BRIDGE_KUBEADMIN_PASSWORD} --insecure-skip-tls-verify`,
+        );
+        throw err;
+      }
+      // override the default idling timeout from 15 minutes to 1 minute
+      cy.exec(
+        'oc apply -f testData/yamls/web-terminal/dev-ws-custom-idling-config.yaml -n openshift-operators',
+      );
+    },
   );
 }
 
@@ -68,9 +77,11 @@ Given('user has installed webTerminal in namespace {string}', (namespace: string
 
 And('user has logged in as basic user', () => {
   Cypress.session.clearAllSavedSessions();
-  cy.login(idp, username, password);
-  // sometimes guide tour is not closed properly without delay
-  cy.wait(1000);
+  cy.env(['BRIDGE_HTPASSWD_PASSWORD']).then(({ BRIDGE_HTPASSWD_PASSWORD }) => {
+    cy.login(idp, username, BRIDGE_HTPASSWD_PASSWORD || 'test');
+    // sometimes guide tour is not closed properly without delay
+    cy.wait(1000);
+  });
 });
 
 Given('user is at developer perspective', () => {
