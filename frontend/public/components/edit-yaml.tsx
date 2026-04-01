@@ -76,7 +76,7 @@ const generateObjToLoad = (
 ) => {
   const sampleObj: K8sResourceKind = safeLoad(
     yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]),
-  );
+  ) as K8sResourceKind;
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
@@ -336,7 +336,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
   const getResourceKindfromYAML = useCallback(
     (yaml) => {
       try {
-        const obj = safeLoad(yaml);
+        const obj = safeLoad(yaml) as Record<string, any>;
         return getModel(obj)?.kind;
       } catch (e) {
         return 'unknown';
@@ -378,7 +378,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
       return false;
     }
     try {
-      safeLoad(str);
+      safeLoad(str) as Record<string, any>;
       return true;
     } catch {
       return false;
@@ -595,7 +595,7 @@ const EditYAMLInner: FC<EditYAMLInnerProps> = (props) => {
     }
 
     try {
-      obj = safeLoad(editorMounted && getEditor()?.getValue());
+      obj = safeLoad(editorMounted && getEditor()?.getValue()) as Record<string, any>;
     } catch (e) {
       handleError(t('public~Error parsing YAML: {{e}}', { e }));
       return;
