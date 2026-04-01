@@ -58,7 +58,7 @@ jest.mock('../../utils/useClusterServiceVersionPath', () => ({
 
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
-  AsyncComponent: ({ children }) => children || null,
+  AsyncComponent: ({ content, emptyMsg }) => <span>{content || emptyMsg || null}</span>,
 }));
 
 jest.mock('@console/internal/components/conditions', () => ({
@@ -275,6 +275,21 @@ describe('CRDCard', () => {
     renderWithProviders(<CRDCard {...crdCardProps} canCreate={false} />);
 
     expect(screen.queryByRole('link', { name: 'Create instance' })).not.toBeInTheDocument();
+  });
+
+  it('renders crd description when provided', () => {
+    const crdWithDescription = { ...crd, description: 'This is a test CRD description' };
+    renderWithProviders(<CRDCard {...crdCardProps} crd={crdWithDescription} />);
+
+    expect(screen.getByText('This is a test CRD description')).toBeVisible();
+  });
+
+  it('renders "No description available" when crd description is missing', () => {
+    const crdWithoutDescription = { ...crd };
+    delete crdWithoutDescription.description;
+    renderWithProviders(<CRDCard {...crdCardProps} crd={crdWithoutDescription} />);
+
+    expect(screen.getByText('No description available')).toBeVisible();
   });
 });
 
