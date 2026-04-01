@@ -1734,6 +1734,7 @@
   "Exec command": "Exec command",
   "HTTP GET": "HTTP GET",
   "TCP socket (port)": "TCP socket (port)",
+  "gRPC": "gRPC",
   "Delete {{label}} subject?": "Delete {{label}} subject?",
   "Are you sure you want to delete subject {{name}} of type {{kind}}?": "Are you sure you want to delete subject {{name}} of type {{kind}}?",
   "Impersonate {{kind}} \"{{name}}\"": "Impersonate {{kind}} \"{{name}}\"",

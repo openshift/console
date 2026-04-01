@@ -6,6 +6,7 @@ import {
   ContainerLifecycleStage,
   ContainerProbe,
   ExecProbe,
+  GRPCProbe,
   Handler,
   HTTPGetProbe,
   TCPSocketProbe,
@@ -60,6 +61,22 @@ const parsers = {
       port: /^\d+$/.test(str) ? +str : str,
     };
   },
+
+  grpc: function (str: string) {
+    if (!str) {
+      return null;
+    }
+    const parts = str.split(':');
+    const port = parseInt(parts[0], 10);
+    if (isNaN(port)) {
+      return null;
+    }
+    const result: { port: number; service?: string } = { port };
+    if (parts[1]) {
+      result.service = parts[1];
+    }
+    return result;
+  },
 };
 
 const flatteners = {
@@ -97,6 +114,16 @@ const flatteners = {
     }
     return `${cmd.port}`;
   },
+
+  grpc: function (cmd: GRPCProbe): string {
+    if (!cmd || !cmd.port) {
+      return '';
+    }
+    if (cmd.service) {
+      return `${cmd.port} (${cmd.service})`;
+    }
+    return `${cmd.port}`;
+  },
 };
 
 function inferAction(obj: Handler) {
@@ -112,6 +139,10 @@ function inferAction(obj: Handler) {
     tcpSocket: {
       id: 'tcpSocket',
       label: i18next.t('public~TCP socket (port)'),
+    },
+    grpc: {
+      id: 'grpc',
+      label: i18next.t('public~gRPC'),
     },
   });
 

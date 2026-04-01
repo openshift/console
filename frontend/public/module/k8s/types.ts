@@ -85,10 +85,16 @@ export type TCPSocketProbe = {
   host?: string;
 };
 
+export type GRPCProbe = {
+  port: number;
+  service?: string;
+};
+
 export type Handler = {
   exec?: ExecProbe;
   httpGet?: HTTPGetProbe;
   tcpSocket?: TCPSocketProbe;
+  grpc?: GRPCProbe;
 };
 
 export type ContainerProbe = {
