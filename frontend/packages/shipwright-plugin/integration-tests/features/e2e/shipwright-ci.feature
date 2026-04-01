@@ -25,7 +25,6 @@ Feature: Shipwright build details page
               And user will see "Last run duration"
 
 
-                  
         @smoke
         Scenario Outline: Create a Build using Create Shipwright build form: SWB-04-TC01
             Given user is at Builds page

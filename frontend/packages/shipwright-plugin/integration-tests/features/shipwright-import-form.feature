@@ -1,4 +1,4 @@
-@shipwright @odc-7634
+@shipwright @ODC-7634
 Feature: Create Application from git form using Shipwright as build option
               As a user, I want to create the application, component or service from Add options using Shipwright as build option
 

@@ -49,7 +49,6 @@ Feature: Deployment form view
               And user clicks on the workload "<deployment_name>" to open the sidebar
               And user clicks Edit Deployment from the action menu
              Then user sees auto deploy option is checked
-              
 
         Examples:
                   | deployment_name | imagestream_id |

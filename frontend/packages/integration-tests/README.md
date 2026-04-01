@@ -12,7 +12,7 @@ cy.visit() or nav to page
 
 #### Directory Structure
 ```
-frontend/packages/integration-tests-cypress/
+frontend/packages/integration-tests/
 ├── support    <--- add commands to Cypress 'cy.' global, other support configurations
 │   ├── index.ts
 │   ├── nav.ts
@@ -40,4 +40,3 @@ frontend/packages/integration-tests-cypress/
 - [Debugging](https://docs.cypress.io/guides/guides/debugging.html#Using-debugger)
 - [Cypress.io docs](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html#Cypress-Can-Be-Simple-Sometimes)
 - [Cypress.io Recipes](https://docs.cypress.io/examples/examples/recipes.html#Fundamentals)
-

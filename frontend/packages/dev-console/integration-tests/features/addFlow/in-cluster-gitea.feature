@@ -7,8 +7,8 @@ Feature: Create Application from git form with repositories from In cluster Gite
               And user is at developer perspective
               And user has created or selected namespace "aut-addflow-gitea"
               And user is at Add page
-        
-        @regression @odc-7581
+
+        @regression @ODC-7581
         Scenario Outline: Add new gitea workload with new application for resource type "<resource_type>": A-06-TC01
             Given user is at Import from Git form
              When user enters Gitea Repo Name as "nodejs"
@@ -26,7 +26,7 @@ Feature: Create Application from git form with repositories from In cluster Gite
                   | import-git | Deployment    |
 
 
-        @regression @odc-7581
+        @regression @ODC-7581
         Scenario Outline: Create a workload from Docker file with "<resource_type>" as resource type: A-05-TC02
             Given user is at Import from Git form
              When user enters Gitea Repo Name as "dockerfile-node"

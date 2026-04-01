@@ -1,4 +1,4 @@
-@topology @ODC6771
+@topology @ODC-6771
 Feature: Update user in topology page if Quotas has been reached in a namespace
               If any resource reached resource quota limit, a warning alert will be displayed for the user in Topology page.
 

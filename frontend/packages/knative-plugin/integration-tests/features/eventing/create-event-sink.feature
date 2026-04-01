@@ -9,7 +9,7 @@ Feature: Create event sinks
               And user is at Add page
 
 
-        @regression @odc-6390
+        @regression @ODC-6390
         Scenario: Create event sink from Add page: KES-01-TC01
              When user clicks on Event Sink card
               And user clicks on "Log Sink" card
@@ -20,7 +20,7 @@ Feature: Create event sinks
              Then user will see "event-sink-test1" created in topology
 
 
-        @regression @odc-6390
+        @regression @ODC-6390
         Scenario: Create event sink from catalog page: KES-01-TC02
             Given user is at catalog page
              When user selects Types as Event Sinks
@@ -32,7 +32,7 @@ Feature: Create event sinks
              Then user will see "event-sink-test2" created in topology
 
 
-        @regression @odc-6390
+        @regression @ODC-6390
         Scenario: Create event sink with YAML view: KES-01-TC03
              When user clicks on Event Sink card
               And user clicks on "Log Sink" card
@@ -42,7 +42,7 @@ Feature: Create event sinks
              Then user will see "kamelet-log-sink" created in topology
 
 
-        @regression @odc-6390
+        @regression @ODC-6390
         Scenario: Create event sink from context menu: KES-01-TC04
             Given user is at Topology page
              When user right clicks in empty space of topology
@@ -55,7 +55,7 @@ Feature: Create event sinks
              Then user will see "event-sink-test3" created in topology
 
 
-        @regression @manual @odc-6390
+        @regression @manual @ODC-6390
         Scenario: Create event sink through drag and drop from Broker: KES-01-TC05
             Given user created broker "test-broker"
               And user is at Topology page
@@ -68,7 +68,7 @@ Feature: Create event sinks
              Then user will see "event-sink-test10" created in topology connected to broker "test-broker"
 
 
-        @regression @manual @odc-6390
+        @regression @manual @ODC-6390
         Scenario: Create event sink through drag and drop from Broker: KES-01-TC06
             Given user created channel "test-channel"
               And user is at Topology page

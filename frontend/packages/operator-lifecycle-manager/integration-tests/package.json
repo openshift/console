@@ -1,0 +1,10 @@
+{
+  "name": "@console/operator-lifecycle-manager-integration-tests",
+  "version": "0.0.0-fixed",
+  "description": "OLM Cypress tests",
+  "private": true,
+  "scripts": {
+    "test-cypress": "../../../node_modules/.bin/cypress open --env openshift=true",
+    "test-cypress-headless": "node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron} --headless"
+  }
+}
