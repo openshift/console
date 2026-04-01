@@ -147,9 +147,10 @@ export const ConnectedPageHeading = connectToModel(
             </ActionListItem>
           )}
 
-          {_.isFunction(customActionMenu)
-            ? customActionMenu(kindObj, data, extraResources)
-            : customActionMenu}
+          {hasData &&
+            (_.isFunction(customActionMenu)
+              ? customActionMenu(kindObj, data, extraResources)
+              : customActionMenu)}
         </>
       );
 
