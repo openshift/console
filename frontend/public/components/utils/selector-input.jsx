@@ -148,7 +148,6 @@ export class SelectorInput extends Component {
           className={css('co-label tag-item-content', this.props.labelClassName)}
           key={key}
           onClose={() => onRemove(key)}
-          isTruncated
           data-test={`label=${key}`}
         >
           {getTagDisplayValue(tag)}

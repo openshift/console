@@ -6,7 +6,9 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
   className,
   changeValueBy,
   min,
+  max,
   value,
+  'aria-label': ariaLabel,
   ...inputProps
 }) => {
   const { t } = useTranslation();
@@ -15,10 +17,12 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
     <div className="co-m-number-spinner">
       <NumberInput
         min={min}
+        max={max}
         value={value}
         onMinus={() => changeValueBy(-1)}
         onChange={inputProps.onChange}
         onPlus={() => changeValueBy(1)}
+        inputAriaLabel={ariaLabel}
         inputProps={{ ...inputProps }}
         className={className}
         minusBtnAriaLabel={t('public~Decrement')}
@@ -36,4 +40,5 @@ export type NumberSpinnerProps = {
   className?: string;
   changeValueBy: (operation: number) => void;
   min?: number;
+  max?: number;
 } & HTMLProps<HTMLInputElement>;
