@@ -37,7 +37,6 @@ import type { RowFunctionArgs, Flatten } from '@console/internal/components/fact
 import { DetailsPage, Table, TableData, MultiListPage } from '@console/internal/components/factory';
 import type { Page } from '@console/internal/components/utils';
 import {
-  AsyncComponent,
   DOC_URL_OPERATORFRAMEWORK_SDK,
   documentationURLs,
   getDocumentationURL,
@@ -66,6 +65,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
@@ -821,22 +821,6 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
         textFilter="cluster-service-version"
       />
     </>
-  );
-};
-
-export const MarkdownView = (props: {
-  content: string;
-  styles?: string;
-  exactHeight?: boolean;
-  truncateContent?: boolean;
-}) => {
-  return (
-    <AsyncComponent
-      loader={() =>
-        import('@console/internal/components/markdown-view').then((c) => c.SyncMarkdownView)
-      }
-      {...props}
-    />
   );
 };
 

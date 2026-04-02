@@ -5,9 +5,9 @@ import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
-import './showdown-extension.scss';
+import './markdown-extension.scss';
 
-const useMultilineExecuteCommandShowdownExtension = () => {
+const useMultilineExecuteCommandExtension = () => {
   const { t } = useTranslation();
   const showExecuteButton = useCloudShellAvailable();
   return useMemo(
@@ -59,4 +59,4 @@ const useMultilineExecuteCommandShowdownExtension = () => {
   );
 };
 
-export default useMultilineExecuteCommandShowdownExtension;
+export default useMultilineExecuteCommandExtension;

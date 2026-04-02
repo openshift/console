@@ -5,7 +5,7 @@ import type { OperatorHubItem } from '../index';
 import { OperatorHubItemDetails } from '../operator-hub-item-details';
 import { getProviderValue, keywordCompare } from '../operator-hub-items';
 
-jest.mock('../../clusterserviceversion', () => ({
+jest.mock('@console/shared/src/components/markdown/MarkdownView', () => ({
   MarkdownView: jest.fn(() => '[MARKDOWN_VIEW]'),
 }));
 

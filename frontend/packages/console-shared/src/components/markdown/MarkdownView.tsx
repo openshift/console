@@ -1,37 +1,46 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import type { ReactNode, FC } from 'react';
 import { useMemo, useRef, useCallback, useEffect, useState } from 'react';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
+import { Marked } from 'marked';
+import { useTranslation } from 'react-i18next';
 import * as sanitizeHtml from 'sanitize-html';
-import type { ShowdownOptions, ShowdownExtension } from 'showdown';
-import { Converter } from 'showdown';
+import { THEME_DARK, THEME_DARK_CLASS, useTheme } from '@console/internal/components/ThemeProvider';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 
 import './MarkdownView.scss';
 
+export type MarkdownExtension = {
+  type: string;
+  regex: RegExp;
+  replace: (text: string, ...groups: string[]) => string;
+};
+
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
-const markdownConvert = (
-  markdown: string,
-  extensions: ShowdownExtension[],
-  options: ShowdownOptions = {},
-) => {
-  const converter = new Converter({
-    tables: true,
-    openLinksInNewWindow: true,
-    strikethrough: true,
-    emoji: true,
-  });
+const markedInstance = new Marked({
+  async: false,
+  gfm: true,
+  renderer: {
+    link({ href, title, text }) {
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
+    },
+  },
+});
 
-  for (const [key, value] of Object.entries(options)) {
-    converter.setOption(key, value);
+const markdownConvert = (markdown: string, extensions: MarkdownExtension[]) => {
+  let processed = markdown;
+  if (extensions) {
+    for (const ext of extensions) {
+      processed = processed.replace(ext.regex, ext.replace);
+    }
   }
 
-  extensions && converter.addExtension(extensions);
+  const html = markedInstance.parse(processed);
 
-  return sanitizeHtml(converter.makeHtml(markdown), {
+  return sanitizeHtml(html, {
     allowedTags: [
       'b',
       'i',
@@ -73,61 +82,6 @@ const markdownConvert = (
   });
 };
 
-export type MarkdownProps = {
-  content?: string;
-  emptyMsg: string;
-  exactHeight?: boolean;
-  truncateContent?: boolean;
-  extensions?: ShowdownExtension[];
-  renderExtension?: (contentDocument: Document, rootSelector: string) => ReactNode;
-  inline?: boolean;
-  options?: ShowdownOptions;
-  theme?: string;
-  updateThemeClass?: (htmlTagElement: HTMLElement, theme: string) => void;
-};
-
-type InnerSyncMarkdownProps = Pick<
-  MarkdownProps,
-  'renderExtension' | 'exactHeight' | 'theme' | 'updateThemeClass'
-> & {
-  markup: string;
-  isEmpty: boolean;
-};
-
-export const MarkdownView: FC<MarkdownProps> = ({
-  truncateContent,
-  content,
-  emptyMsg,
-  extensions,
-  renderExtension,
-  exactHeight,
-  inline,
-  options,
-  theme,
-  updateThemeClass,
-}) => {
-  const markup = useMemo(() => {
-    const truncatedContent = truncateContent
-      ? _.truncate(content, {
-          length: 256,
-          separator: ' ',
-          omission: '\u2026',
-        })
-      : content;
-    return markdownConvert(truncatedContent || emptyMsg, extensions, options);
-  }, [content, emptyMsg, extensions, options, truncateContent]);
-
-  const innerProps: InnerSyncMarkdownProps = {
-    renderExtension: extensions?.length > 0 ? renderExtension : undefined,
-    exactHeight,
-    markup,
-    isEmpty: !content,
-    theme,
-    updateThemeClass,
-  };
-  return inline ? <InlineMarkdownView {...innerProps} /> : <IFrameMarkdownView {...innerProps} />;
-};
-
 type RenderExtensionProps = {
   renderExtension: (contentDocument: Document, rootSelector: string) => ReactNode;
   selector: string;
@@ -164,6 +118,11 @@ const RenderExtension: FC<RenderExtensionProps> = ({
   );
 };
 
+type InnerSyncMarkdownProps = Pick<MarkdownViewProps, 'renderExtension' | 'exactHeight'> & {
+  markup: string;
+  isEmpty: boolean;
+};
+
 const InlineMarkdownView: FC<InnerSyncMarkdownProps> = ({ markup, isEmpty, renderExtension }) => {
   const id = useMemo(() => _.uniqueId('markdown'), []);
   return (
@@ -180,21 +139,23 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   markup,
   isEmpty,
   renderExtension,
-  theme,
-  updateThemeClass,
 }) => {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [frameHeight, setFrameHeight] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
+  const { theme } = useTheme();
+
+  const themeClass = css({
+    [THEME_DARK_CLASS]: theme === THEME_DARK,
+  });
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateDimensions = useCallback(
     _.debounce(() => {
-      if (frameRef.current?.contentWindow) {
-        setFrameHeight(
-          frameRef.current.contentWindow.document.body.firstElementChild.scrollHeight +
-            (exactHeight ? 0 : 15),
-        );
+      const el = frameRef.current?.contentWindow?.document?.body?.firstElementChild;
+      if (el) {
+        setFrameHeight(el.scrollHeight + (exactHeight ? 0 : 15));
       }
     }, 100),
     [exactHeight],
@@ -208,18 +169,19 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   useResizeObserver(updateDimensions, frameRef.current);
 
   // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
-  const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
-    _.includes(l.href, 'app-bundle'),
+  const linkRefs = useMemo(
+    () =>
+      Array.from(document.getElementsByTagName('link'))
+        .filter((l) => _.includes(l.href, 'app-bundle'))
+        .map((link) => `<link rel="stylesheet" href="${link.href}">`)
+        .join('\n'),
+    [],
   );
 
-  const linkRefs = _.reduce(
-    filteredLinks,
-    (refs, link) => `${refs}
-    <link rel="stylesheet" href="${link.href}">`,
-    '',
-  );
-
-  const contents = `
+  const srcdoc = useMemo(
+    () => `<!DOCTYPE html>
+  <html ${themeClass ? `class="${themeClass}"` : ''}>
+  <head>
   ${linkRefs}
   <style type="text/css">
   body {
@@ -243,22 +205,11 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
     padding-top: 0;
   }
   </style>
-  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>`;
-
-  // update the iframe's content
-  useEffect(() => {
-    if (frameRef.current?.contentDocument) {
-      const doc = frameRef.current.contentDocument;
-      doc.open();
-      doc.write(contents);
-      doc.close();
-
-      // adjust height for current content
-      const contentHeight = doc.body.scrollHeight;
-      setFrameHeight(contentHeight);
-      updateThemeClass(doc.documentElement, theme);
-    }
-  }, [contents, theme, updateThemeClass]);
+  </head>
+  <body class="pf-v6-c-content co-iframe"><div style="overflow-y: auto;">${markup}</div></body>
+  </html>`,
+    [themeClass, linkRefs, isEmpty, markup],
+  );
 
   return (
     <>
@@ -267,6 +218,7 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
         aria-label="Markdown content viewer"
         role="document"
         sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+        srcDoc={srcdoc}
         style={{ border: '0px', display: 'block', width: '100%', height: frameHeight }}
         ref={frameRef}
         onLoad={onLoad}
@@ -281,4 +233,46 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
       )}
     </>
   );
+};
+
+export type MarkdownViewProps = {
+  content?: string;
+  emptyMsg?: string;
+  exactHeight?: boolean;
+  truncateContent?: boolean;
+  extensions?: MarkdownExtension[];
+  renderExtension?: (contentDocument: Document, rootSelector: string) => ReactNode;
+  inline?: boolean;
+};
+
+export const MarkdownView: FC<MarkdownViewProps> = ({
+  truncateContent,
+  content,
+  emptyMsg: emptyMsgProp,
+  extensions,
+  renderExtension,
+  exactHeight,
+  inline,
+}) => {
+  const { t } = useTranslation('console-shared');
+  const emptyMsg = emptyMsgProp || t('Not available');
+
+  const markup = useMemo(() => {
+    const truncatedContent = truncateContent
+      ? _.truncate(content, {
+          length: 256,
+          separator: ' ',
+          omission: '\u2026',
+        })
+      : content;
+    return markdownConvert(truncatedContent || emptyMsg, extensions);
+  }, [content, emptyMsg, extensions, truncateContent]);
+
+  const innerProps: InnerSyncMarkdownProps = {
+    renderExtension: extensions?.length > 0 ? renderExtension : undefined,
+    exactHeight,
+    markup,
+    isEmpty: !content,
+  };
+  return inline ? <InlineMarkdownView {...innerProps} /> : <IFrameMarkdownView {...innerProps} />;
 };

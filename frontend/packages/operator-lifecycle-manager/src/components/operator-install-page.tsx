@@ -17,7 +17,6 @@ import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ErrorModal } from '@console/internal/components/modals/error-modal';
 import {
   LoadingInline,
@@ -29,6 +28,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch, referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -211,7 +211,7 @@ const InitializationResourceRequiredMessage: FC<InitializationResourceRequiredMe
           <StatusIconAndText icon={<RedExclamationCircleIcon />} title={t('olm~Required')} />
         </ResourceStatus>
       </span>
-      <SyncMarkdownView content={description} />
+      <MarkdownView content={description} />
     </div>
   );
 };

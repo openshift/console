@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
-import './showdown-extension.scss';
+import './markdown-extension.scss';
 
-const useMultilineCopyClipboardShowdownExtension = () => {
+const useMultilineCopyClipboardExtension = () => {
   const { t } = useTranslation();
   return useMemo(
     () => ({
@@ -45,4 +45,4 @@ const useMultilineCopyClipboardShowdownExtension = () => {
   );
 };
 
-export default useMultilineCopyClipboardShowdownExtension;
+export default useMultilineCopyClipboardExtension;

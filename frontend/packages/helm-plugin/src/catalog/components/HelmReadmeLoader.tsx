@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 
 type HelmReadmeLoaderProps = {
   chartURL: string;
@@ -51,7 +51,7 @@ const HelmReadmeLoader: FC<HelmReadmeLoaderProps> = ({ chartURL, namespace, char
 
   if (!loaded) return <div className="loading-skeleton--table" />;
 
-  return <SyncMarkdownView content={readme} emptyMsg={t('helm-plugin~README not available')} />;
+  return <MarkdownView content={readme} emptyMsg={t('helm-plugin~README not available')} />;
 };
 
 export default HelmReadmeLoader;

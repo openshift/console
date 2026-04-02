@@ -13,7 +13,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
-import { SyncMarkdownView } from './markdown-view';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
@@ -46,7 +46,7 @@ export const CommandLineTools: FC<CommandLineToolsProps> = ({ obj }) => {
       <Fragment key={tool.metadata.uid}>
         {index > 0 && <Divider className="co-divider" />}
         <SecondaryHeading data-test-id={displayName}>{displayName}</SecondaryHeading>
-        <SyncMarkdownView content={tool.spec.description} exactHeight />
+        <MarkdownView content={tool.spec.description} exactHeight />
         {sortedLinks.length === 1 && (
           <p>
             <ExternalLink

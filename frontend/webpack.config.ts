@@ -94,8 +94,8 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size of the entry point and generated files permitted by analyze.sh
-    maxEntrypointSize: 11207475, // ~10.69 MiB
-    maxAssetSize: 5945425, // ~5.67 MiB
+    maxEntrypointSize: 10.5 * 1048576, // ~10.5 MiB
+    maxAssetSize: 5 * 1048576, // ~5 MiB
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',

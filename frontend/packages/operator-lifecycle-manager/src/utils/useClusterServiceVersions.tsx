@@ -9,10 +9,10 @@ import type {
   CatalogItemDetailsDescription,
   CatalogItemDetailsProperty,
 } from '@console/dynamic-plugin-sdk';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { getImageForCSVIcon } from '@console/shared/src/utils/icon-utils';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
 import { GLOBAL_COPIED_CSV_NAMESPACE, GLOBAL_OPERATOR_NAMESPACES } from '../const';
@@ -89,7 +89,7 @@ const normalizeClusterServiceVersions = (
 
       const operatorDescription = (
         <ExpandCollapseDescription>
-          <SyncMarkdownView content={markdownDescription} />
+          <MarkdownView content={markdownDescription} />
         </ExpandCollapseDescription>
       );
 
