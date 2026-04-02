@@ -9,8 +9,9 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import type { ConsoleDataViewTh } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type {
-  TableColumn,
+  DataViewManagedColumn,
   RowProps,
+  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
@@ -38,7 +39,7 @@ export const useConsoleDataViewData = <
   customRowData,
   isResizable = true,
 }: {
-  columns: TableColumn<TData>[];
+  columns: DataViewManagedColumn<TData>[];
   filteredData: TData[];
   filters: TFilters;
   getDataViewRows: GetDataViewRows<TData, TCustomRowData>;
@@ -89,13 +90,21 @@ export const useConsoleDataViewData = <
 
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(
     () =>
-      activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
+      activeColumns.map((column, index) => {
+        const { id, title } = column;
+        const { props, resizableProps } = column as TableColumn<TData>;
+        const sortFunction =
+          'sortFunction' in column && column.sortFunction !== undefined
+            ? column.sortFunction
+            : (column as TableColumn<TData>).sort;
+
         const headerProps: ThProps = {
           ...props,
           dataLabel: title,
+          sort: sortFunction,
         };
 
-        if (sort) {
+        if (sortFunction) {
           headerProps.sort = {
             columnIndex: index,
             sortBy: {
@@ -106,17 +115,23 @@ export const useConsoleDataViewData = <
           };
         }
 
-        return {
-          id,
-          title,
-          sortFunction: sort,
-          props: headerProps,
-          resizableProps: isResizable ? resizableProps : undefined,
-          cell: title ? (
+        const headerCell =
+          isDataViewConfigurableColumn(column as ConsoleDataViewTh) &&
+          (column as { cell?: ReactNode }).cell !== undefined ? (
+            (column as { cell: ReactNode }).cell
+          ) : title ? (
             <span>{title}</span>
           ) : (
             <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
-          ),
+          );
+
+        return {
+          id,
+          title,
+          sortFunction,
+          props: headerProps,
+          resizableProps: isResizable ? resizableProps : undefined,
+          cell: headerCell,
         };
       }),
     [activeColumns, t, isResizable],

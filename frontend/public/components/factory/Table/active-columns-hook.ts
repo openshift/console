@@ -5,17 +5,17 @@ import {
 } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { DataViewManagedColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
-export const useActiveColumns = <D = any>({
+export const useActiveColumns = <D = unknown>({
   columns,
   showNamespaceOverride,
   columnManagementID,
 }: {
-  columns: TableColumn<D>[];
+  columns: DataViewManagedColumn<D>[];
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
-}): [TableColumn<D>[], boolean] => {
+}): [DataViewManagedColumn<D>[], boolean] => {
   const [tableColumns, , columnPreferenceLoaded] = useUserPreference(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,

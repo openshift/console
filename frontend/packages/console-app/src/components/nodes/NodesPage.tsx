@@ -12,6 +12,7 @@ import {
   ConsoleDataView,
   nameCellProps,
   getLabelsColumnWidthStyleProp,
+  MODIFIER_NOWRAP,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
@@ -32,7 +33,6 @@ import type {
   NodeCertificateSigningRequestKind,
   OwnerReference,
   RowProps,
-  TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { NodeMetrics } from '@console/internal/actions/ui';
 import { setNodeMetrics } from '@console/internal/actions/ui';
@@ -173,7 +173,7 @@ const kind = 'Node';
 const useNodesColumns = (
   vmsEnabled: boolean,
   nodeMgmtV1Enabled: boolean,
-): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
+): { columns: ConsoleDataViewColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
   const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
 
@@ -182,20 +182,20 @@ const useNodesColumns = (
       {
         title: t('console-app~Name'),
         id: nodeColumnInfo.name.id,
-        sort: 'metadata.name',
+        sortFunction: 'metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.name.id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Status'),
         id: nodeColumnInfo.status.id,
-        sort: sortWithCSRResource(nodeReadiness, 'False'),
+        sortFunction: sortWithCSRResource(nodeReadiness, 'False'),
         resizableProps: getResizableProps(nodeColumnInfo.status.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       ...(nodeMgmtV1Enabled
@@ -203,10 +203,10 @@ const useNodesColumns = (
             {
               title: t('console-app~Groups'),
               id: nodeColumnInfo.groups.id,
-              sort: 'groups',
+              sortFunction: 'groups',
               resizableProps: getResizableProps(nodeColumnInfo.groups.id),
               props: {
-                modifier: 'nowrap',
+                modifier: MODIFIER_NOWRAP,
               },
             },
           ]
@@ -214,10 +214,10 @@ const useNodesColumns = (
       {
         title: t('console-app~Machine set'),
         id: nodeColumnInfo.machineOwner.id,
-        sort: 'machineOwner.name',
+        sortFunction: 'machineOwner.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineOwner.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       ...(vmsEnabled
@@ -225,10 +225,10 @@ const useNodesColumns = (
             {
               title: t('console-app~Virtual machines'),
               id: nodeColumnInfo.vms.id,
-              sort: 'virtualMachines',
+              sortFunction: 'virtualMachines',
               resizableProps: getResizableProps(nodeColumnInfo.vms.id),
               props: {
-                modifier: 'nowrap',
+                modifier: MODIFIER_NOWRAP,
                 info: {
                   tooltip: t(
                     'console-app~This count is based on your access permissions and might not include all virtual machines.',
@@ -244,107 +244,107 @@ const useNodesColumns = (
       {
         title: t('console-app~Pods'),
         id: nodeColumnInfo.pods.id,
-        sort: sortWithCSRResource(nodePods, 0),
+        sortFunction: sortWithCSRResource(nodePods, 0),
         resizableProps: getResizableProps(nodeColumnInfo.pods.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Memory'),
         id: nodeColumnInfo.memory.id,
-        sort: sortWithCSRResource(nodeMemory, 0),
+        sortFunction: sortWithCSRResource(nodeMemory, 0),
         resizableProps: getResizableProps(nodeColumnInfo.memory.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~CPU'),
         id: nodeColumnInfo.cpu.id,
-        sort: sortWithCSRResource(nodeCPU, 0),
+        sortFunction: sortWithCSRResource(nodeCPU, 0),
         resizableProps: getResizableProps(nodeColumnInfo.cpu.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Roles'),
         id: nodeColumnInfo.role.id,
-        sort: sortWithCSRResource(nodeRolesSort, ''),
+        sortFunction: sortWithCSRResource(nodeRolesSort, ''),
         resizableProps: getResizableProps(nodeColumnInfo.role.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Architecture'),
         id: nodeColumnInfo.architecture.id,
-        sort: sortWithCSRResource(nodeArch, ''),
+        sortFunction: sortWithCSRResource(nodeArch, ''),
         resizableProps: getResizableProps(nodeColumnInfo.architecture.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Filesystem'),
         id: nodeColumnInfo.filesystem.id,
-        sort: sortWithCSRResource(nodeFS, 0),
+        sortFunction: sortWithCSRResource(nodeFS, 0),
         resizableProps: getResizableProps(nodeColumnInfo.filesystem.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Created'),
         id: nodeColumnInfo.created.id,
-        sort: 'metadata.creationTimestamp',
+        sortFunction: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(nodeColumnInfo.created.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Instance type'),
         id: nodeColumnInfo.instanceType.id,
-        sort: sortWithCSRResource(nodeInstanceType, ''),
+        sortFunction: sortWithCSRResource(nodeInstanceType, ''),
         resizableProps: getResizableProps(nodeColumnInfo.instanceType.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Machine'),
         id: nodeColumnInfo.machine.id,
-        sort: sortWithCSRResource(nodeMachine, ''),
+        sortFunction: sortWithCSRResource(nodeMachine, ''),
         resizableProps: getResizableProps(nodeColumnInfo.machine.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~MachineConfigPool'),
         id: nodeColumnInfo.machineConfigPool.id,
-        sort: 'machineConfigPool.metadata.name',
+        sortFunction: 'machineConfigPool.metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.machineConfigPool.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Labels'),
         id: nodeColumnInfo.labels.id,
-        sort: 'metadata.labels',
+        sortFunction: 'metadata.labels',
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
           ...getLabelsColumnWidthStyleProp(getWidth(nodeColumnInfo.labels.id)),
         },
         additional: true,
@@ -352,20 +352,20 @@ const useNodesColumns = (
       {
         title: t('console-app~Zone'),
         id: nodeColumnInfo.zone.id,
-        sort: sortWithCSRResource(nodeZone, ''),
+        sortFunction: sortWithCSRResource(nodeZone, ''),
         resizableProps: getResizableProps(nodeColumnInfo.zone.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },
       {
         title: t('console-app~Uptime'),
         id: nodeColumnInfo.uptime.id,
-        sort: sortWithCSRResource(nodeUptime, ''),
+        sortFunction: sortWithCSRResource(nodeUptime, ''),
         resizableProps: getResizableProps(nodeColumnInfo.uptime.id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
         additional: true,
       },

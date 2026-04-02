@@ -13,6 +13,7 @@ import type {
   TopConsumerPopoverProps,
   ColumnLayout,
   RowProps,
+  TableColumn,
 } from '../extensions/console-types';
 import type { Alert, K8sModel } from './common-types';
 
@@ -323,7 +324,12 @@ export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
   resizableProps?: any;
+  /** When true, column is hidden by default in column management. */
+  additional?: boolean;
 };
+
+/** Columns for {@link useActiveColumns}: DataView headers or legacy {@link TableColumn}. */
+export type DataViewManagedColumn<D = any> = ConsoleDataViewColumn<D> | TableColumn<D>;
 
 export type ConsoleDataViewRow = any[];
 

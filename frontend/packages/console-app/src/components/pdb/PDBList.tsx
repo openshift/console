@@ -6,10 +6,13 @@ import {
   getNameCellProps,
   ConsoleDataView,
   nameCellProps,
+  MODIFIER_NOWRAP,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import type {
+  ConsoleDataViewColumn,
+  GetDataViewRows,
+} from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -76,7 +79,7 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
 };
 
 const usePDBColumns = (): {
-  columns: TableColumn<PodDisruptionBudgetKind>[];
+  columns: ConsoleDataViewColumn<PodDisruptionBudgetKind>[];
   resetAllColumnWidths: () => void;
 } => {
   const { t } = useTranslation();
@@ -89,56 +92,56 @@ const usePDBColumns = (): {
       {
         title: t('console-app~Name'),
         id: tableColumnInfo[0].id,
-        sort: 'metadata.name',
+        sortFunction: 'metadata.name',
         resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
           ...nameCellProps,
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Namespace'),
         id: tableColumnInfo[1].id,
-        sort: 'metadata.namespace',
+        sortFunction: 'metadata.namespace',
         resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Selector'),
         id: tableColumnInfo[2].id,
-        sort: 'spec.selector',
+        sortFunction: 'spec.selector',
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Availability'),
         id: tableColumnInfo[3].id,
-        sort: 'spec.minAvailable',
+        sortFunction: 'spec.minAvailable',
         resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Allowed disruptions'),
         id: tableColumnInfo[4].id,
-        sort: 'status.disruptionsAllowed',
+        sortFunction: 'status.disruptionsAllowed',
         resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
         title: t('console-app~Created'),
         id: tableColumnInfo[5].id,
-        sort: 'metadata.creationTimestamp',
+        sortFunction: 'metadata.creationTimestamp',
         resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
-          modifier: 'nowrap',
+          modifier: MODIFIER_NOWRAP,
         },
       },
       {
