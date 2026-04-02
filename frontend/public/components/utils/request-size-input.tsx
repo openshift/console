@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NumberSpinner } from './number-spinner';
 
 export const RequestSizeInput: FC<RequestSizeInputProps> = ({
+  ariaLabel,
   children,
   defaultRequestSizeUnit,
   defaultRequestSizeValue,
@@ -57,6 +58,7 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
           changeValueBy={changeValueBy}
           placeholder={placeholder}
           aria-describedby={describedBy}
+          aria-label={ariaLabel}
           name={inputName}
           id={inputID}
           data-test={testID}
@@ -86,6 +88,7 @@ export const RequestSizeInput: FC<RequestSizeInputProps> = ({
 };
 
 export type RequestSizeInputProps = {
+  ariaLabel?: string;
   placeholder?: string;
   name: string;
   onChange: Function;

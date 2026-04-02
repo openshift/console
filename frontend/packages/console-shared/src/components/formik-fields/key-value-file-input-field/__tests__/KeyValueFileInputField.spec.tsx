@@ -1,14 +1,23 @@
 import type { FC } from 'react';
-import { screen, render, fireEvent, act, waitFor } from '@testing-library/react';
-import type { FormikConfig, FormikErrors } from 'formik';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import type { FormikErrors } from 'formik';
 import { Formik } from 'formik';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import KeyValueFileInputField from '../KeyValueFileInputField';
 
+jest.mock('@patternfly/react-topology', () => ({}));
+
+type TestKeyValueFormValues = {
+  keyValueInput: { key: string; value: string }[];
+};
+
 const onSubmit = jest.fn();
-const TestKeyValueInputField: FC<FormikConfig<any> & { disableRemoveAction?: boolean }> = ({
-  initialValues,
-  disableRemoveAction,
-}) => (
+
+const TestKeyValueInputField: FC<{
+  initialValues: TestKeyValueFormValues;
+  disableRemoveAction?: boolean;
+}> = ({ initialValues, disableRemoveAction }) => (
   <Formik
     onSubmit={onSubmit}
     initialValues={initialValues}
@@ -23,97 +32,98 @@ const TestKeyValueInputField: FC<FormikConfig<any> & { disableRemoveAction?: boo
     }}
   >
     <KeyValueFileInputField
-      name={'keyValueInput'}
+      name="keyValueInput"
       disableRemoveAction={disableRemoveAction}
       entries={initialValues.keyValueInput}
     />
   </Formik>
 );
 
-test('should have validation error given input field is touched and error exists on form', async () => {
-  render(
-    <TestKeyValueInputField
-      onSubmit={onSubmit}
-      initialValues={{
-        keyValueInput: [{ key: '', value: 'test' }],
-      }}
-    />,
-  );
-
-  const KeyField = screen.getByTestId('key-0');
-  act(() => {
-    fireEvent.click(KeyField);
-    fireEvent.blur(KeyField);
+describe('KeyValueFileInputField', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  const validationErrors = await screen.findByText(`Required`);
-  expect(validationErrors.innerHTML).toContain('Required');
-});
+  it('shows validation error when key is empty and field is touched', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <TestKeyValueInputField
+        initialValues={{
+          keyValueInput: [{ key: '', value: 'test' }],
+        }}
+      />,
+    );
 
-test('should have remove key value pair button if there are more than one key value entries', async () => {
-  render(
-    <TestKeyValueInputField
-      onSubmit={onSubmit}
-      initialValues={{
-        keyValueInput: [
-          { key: 'key-one', value: 'value-one' },
-          { key: 'key-two', value: 'value-two' },
-        ],
-      }}
-    />,
-  );
+    const keyField = screen.getByRole('textbox', { name: 'Key' });
+    await user.click(keyField);
+    await user.tab();
 
-  expect(await screen.findAllByTestId('remove-key-value-button')).toHaveLength(2);
-});
-
-test('should not contain remove key value pair button if there is one entry', async () => {
-  render(
-    <TestKeyValueInputField
-      onSubmit={onSubmit}
-      disableRemoveAction
-      initialValues={{
-        keyValueInput: [{ key: 'key-three', value: 'value-three' }],
-      }}
-    />,
-  );
-
-  await waitFor(() => {
-    const removeButton = screen.queryByTestId('remove-key-value-button');
-    expect(removeButton).toBeNull();
+    expect(await screen.findByText('Required')).toBeVisible();
   });
-});
 
-test('should contain remove key value pair button if there is one entry and remove actions is set to false', async () => {
-  render(
-    <TestKeyValueInputField
-      onSubmit={onSubmit}
-      disableRemoveAction={false}
-      initialValues={{
-        keyValueInput: [{ key: 'key-three', value: 'value-three' }],
-      }}
-    />,
-  );
+  it('shows a remove control for each row when there is more than one entry', async () => {
+    renderWithProviders(
+      <TestKeyValueInputField
+        initialValues={{
+          keyValueInput: [
+            { key: 'key-one', value: 'value-one' },
+            { key: 'key-two', value: 'value-two' },
+          ],
+        }}
+      />,
+    );
 
-  await waitFor(() => {
-    const removeButton = screen.queryByTestId('remove-key-value-button');
-    expect(removeButton).not.toBeNull();
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: 'Remove key/value' })).toHaveLength(2);
+    });
   });
-});
 
-test('should add new entry on clicking Add key/value button', async () => {
-  render(
-    <TestKeyValueInputField
-      onSubmit={onSubmit}
-      initialValues={{
-        keyValueInput: [{ key: 'key-three', value: 'value-three' }],
-      }}
-    />,
-  );
-  const addKeyValueButton = screen.getByTestId('add-key-value-button');
-  fireEvent.click(addKeyValueButton);
+  it('does not show remove controls when disableRemoveAction is true', async () => {
+    renderWithProviders(
+      <TestKeyValueInputField
+        disableRemoveAction
+        initialValues={{
+          keyValueInput: [{ key: 'key-three', value: 'value-three' }],
+        }}
+      />,
+    );
 
-  await waitFor(() => {
-    const keyValuePair = screen.queryAllByTestId('key-value-pair');
-    expect(keyValuePair).toHaveLength(2);
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Remove key/value' })).not.toBeInTheDocument();
+    });
+  });
+
+  it('shows remove control for a single entry when disableRemoveAction is false', async () => {
+    renderWithProviders(
+      <TestKeyValueInputField
+        disableRemoveAction={false}
+        initialValues={{
+          keyValueInput: [{ key: 'key-three', value: 'value-three' }],
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Remove key/value' })).toBeVisible();
+    });
+  });
+
+  it('adds a new row when Add key/value is activated', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <TestKeyValueInputField
+        initialValues={{
+          keyValueInput: [{ key: 'key-three', value: 'value-three' }],
+        }}
+      />,
+    );
+
+    expect(screen.getAllByRole('textbox', { name: 'Key' })).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'Add key/value' }));
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('textbox', { name: 'Key' })).toHaveLength(2);
+    });
   });
 });
