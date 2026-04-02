@@ -90,8 +90,11 @@ export const useConsoleDataViewData = <
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(
     () =>
       activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
+        // Filter out custom Console props that aren't valid PatternFly ThProps
+        const { isActionCell, ...validThProps } = props || {};
+
         const headerProps: ThProps = {
-          ...props,
+          ...validThProps,
           dataLabel: title,
         };
 
