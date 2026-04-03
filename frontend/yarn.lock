@@ -3386,9 +3386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@openshift/dynamic-plugin-sdk@npm:8.0.0"
+"@openshift/dynamic-plugin-sdk@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "@openshift/dynamic-plugin-sdk@npm:8.2.0"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
@@ -3396,7 +3396,7 @@ __metadata:
     yup: "npm:^1.7.1"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/a5c7bc5198f75fcc9fad242ffb51e264e860218e7035b87204d429cc47fa566208cc3474af739d3e05a2adc1bfe41ae9e09d3afd93a5b8c0d29f1814ee9f3127
+  checksum: 10c0/a9e3e1a145014a13310acd4630c7a2b7a7545b6c089e1d41e99ceaec061c1a270051d44bd26ddd09ec61bb02533ecfab55663cedb41a20d63acf824067eb63ab
   languageName: node
   linkType: hard
 
@@ -4938,17 +4938,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^6.0.0":
-  version: 6.2.2
-  resolution: "@types/semver@npm:6.2.2"
-  checksum: 10c0/08c70b4ba72bde8e733a235a4fbfa94646cbbdddff30bf91b0f3f9ed8ce759fecc81b3b9d13b762d893923e2d683f6da8bdaa7bfbc6293cb7f119e8dc5ef6562
-  languageName: node
-  linkType: hard
-
-"@types/semver@npm:^7.3.12":
-  version: 7.3.13
-  resolution: "@types/semver@npm:7.3.13"
-  checksum: 10c0/73295bb1fee46f8c76c7a759feeae5a3022f5bedfdc17d16982092e4b33af17560234fb94861560c20992a702a1e1b9a173bb623a96f95f80892105f5e7d25e3
+"@types/semver@npm:^7.3.12, @types/semver@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@types/semver@npm:7.7.1"
+  checksum: 10c0/c938aef3bf79a73f0f3f6037c16e2e759ff40c54122ddf0b2583703393d8d3127130823facb880e694caa324eb6845628186aac1997ee8b31dc2d18fafe26268
   languageName: node
   linkType: hard
 
@@ -17323,7 +17316,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:^1.15.1"
     "@graphql-codegen/typescript-graphql-files-modules": "npm:^1.15.1"
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/dynamic-plugin-sdk": "npm:^8.2.0"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
     "@patternfly/patternfly": "npm:~6.4.0"
     "@patternfly/quickstarts": "npm:~6.4.0"
@@ -17363,7 +17356,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.7"
     "@types/react-jsonschema-form": "npm:^1.3.8"
     "@types/react-virtualized": "npm:9.x"
-    "@types/semver": "npm:^6.0.0"
+    "@types/semver": "npm:^7.7.1"
     "@xterm/addon-fit": "npm:0.10.0"
     "@xterm/xterm": "npm:^5.5.0"
     "@yarnpkg/parsers": "npm:^3.0.2"
@@ -17462,7 +17455,7 @@ __metadata:
     sanitize-html: "npm:^2.3.2"
     sass: "npm:^1.42.1"
     sass-loader: "npm:^10.1.1"
-    semver: "npm:6.x"
+    semver: "npm:^7.7.4"
     style-loader: "npm:^4.0.0"
     subscriptions-transport-ws: "npm:^0.9.16"
     thread-loader: "npm:^4.0.4"
@@ -19954,7 +19947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:6.x, semver@npm:^6.0.0, semver@npm:^6.1.0, semver@npm:^6.1.2, semver@npm:^6.3.0, semver@npm:^6.3.1":
+"semver@npm:^6.0.0, semver@npm:^6.1.0, semver@npm:^6.1.2, semver@npm:^6.3.0, semver@npm:^6.3.1":
   version: 6.3.1
   resolution: "semver@npm:6.3.1"
   bin:
@@ -19963,7 +19956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.4, semver@npm:^7.6.3, semver@npm:^7.7.1, semver@npm:^7.7.2, semver@npm:^7.7.3":
+"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.4, semver@npm:^7.6.3, semver@npm:^7.7.1, semver@npm:^7.7.2, semver@npm:^7.7.3, semver@npm:^7.7.4":
   version: 7.7.4
   resolution: "semver@npm:7.7.4"
   bin:

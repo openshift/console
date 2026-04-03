@@ -1,4 +1,4 @@
-import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
+import type { PluginStore, LocalPluginManifest } from '@openshift/dynamic-plugin-sdk';
 import { consoleLogger } from '@openshift/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
@@ -88,42 +88,50 @@ const registerLegacyPluginEntryCallback = () => {
     window[REMOTE_ENTRY_CALLBACK](patchedPluginName, entryModule);
   };
 
-  // consoleLogger is suppressed in unit tests and in production
   consoleLogger.info(
-    `Legacy plugin entry callback "${previousConsoleCallbackName}" has been registered.`,
+    `Legacy plugin entry callback ${previousConsoleCallbackName} has been registered`,
   );
 };
 
 /**
- * Loads and enables all dynamic plugins listed in `dynamicPluginNames`.
+ * Loads and enables all Console plugins.
  *
- * Precondition: Application {@link PluginStore} must be initialized.
+ * Precondition: {@link PluginStore} must be initialized.
  */
-export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
-  // Initialize dynamic plugin infrastructure
-  registerLegacyPluginEntryCallback();
+export const initConsolePlugins = _.once(
+  (pluginStore: PluginStore, localPlugins: LocalPluginManifest[]) => {
+    // Polyfill the legacy plugin entry callback function
+    registerLegacyPluginEntryCallback();
 
-  // Initialize webpack share scope object and start loading plugins
-  initSharedScope()
-    .then(() => {
-      monkeyPatchSharedScope();
-    })
-    .then(() => {
-      dynamicPluginNames.forEach((pluginName) => {
-        loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
-          // eslint-disable-next-line no-console
-          console.error(..._.compact([errorMessage, errorCause]));
-          addTestError(`${errorMessage}: ${String(errorCause)}`);
+    // Initialize webpack share scope object and start loading plugins
+    initSharedScope()
+      .then(() => {
+        // Patch webpack share scope object for backwards compatibility
+        monkeyPatchSharedScope();
+
+        if (process.env.NODE_ENV !== 'production') {
+          // Expose webpack share scope object for debugging
+          window.webpackSharedScope = getSharedScope();
+        }
+      })
+      .then(() => {
+        // Load all static (local) plugins
+        // TODO: consider awaiting load completion for local plugins before loading remote plugins
+        localPlugins.forEach((plugin) => pluginStore.loadPlugin(plugin));
+      })
+      .then(() => {
+        // Load all dynamic (remote) plugins
+        dynamicPluginNames.forEach((pluginName) => {
+          loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
+            // eslint-disable-next-line no-console
+            console.error(..._.compact([errorMessage, errorCause]));
+            addTestError(`${errorMessage}: ${String(errorCause)}`);
+          });
         });
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error('Error while loading Console plugins', err);
       });
-
-      if (process.env.NODE_ENV !== 'production') {
-        // Expose webpack share scope object for debugging
-        window.webpackSharedScope = getSharedScope();
-      }
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error('Failed to initialize webpack share scope for dynamic plugins', err);
-    });
-});
+  },
+);

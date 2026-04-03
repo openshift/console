@@ -38,9 +38,9 @@ describe('collectCodeRefData', () => {
     expect(collectCodeRefData(extensions)).toEqual([
       {
         index: 1,
-        propToCodeRefValue: {
-          qux: 'mod.a',
-          test: 'mod.b',
+        propToEncodedCodeRef: {
+          qux: { $codeRef: 'mod.a' },
+          test: { $codeRef: 'mod.b' },
         },
       },
     ]);

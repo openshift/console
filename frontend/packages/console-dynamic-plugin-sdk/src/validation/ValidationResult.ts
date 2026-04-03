@@ -33,15 +33,6 @@ class ValidationAssertions {
       this.result.assertThat(!!semver.validRange(obj), `${objPath} semver range is not valid`);
     }
   }
-
-  validRegistrationMethod(registrationMethod: any) {
-    if (typeof registrationMethod === 'string') {
-      this.result.assertThat(
-        ['callback'].includes(registrationMethod),
-        `registrationMethod must be one of: 'callback'`,
-      );
-    }
-  }
 }
 
 export class ValidationResult {
