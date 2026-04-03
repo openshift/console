@@ -13,6 +13,8 @@ import {
   ListPageHeader,
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { sorts } from '@console/internal/components/factory/table';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
@@ -28,7 +30,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';
 import { DASH } from '@console/shared/src/constants/ui';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const kind = referenceForModel(VolumeSnapshotContentModel);
 
@@ -57,7 +59,7 @@ const getDataViewRows: GetDataViewRows<VolumeSnapshotContentKind> = (data, colum
         props: getNameCellProps(name),
       },
       [tableColumnInfo[1].id]: {
-        cell: <Status status={volumeSnapshotStatus(obj)} />,
+        cell: <Status status={snapshotStatus(obj)} />,
       },
       [tableColumnInfo[2].id]: {
         cell: sizeMetrics,
@@ -113,13 +115,15 @@ const useVolumeSnapshotContentColumns = (): TableColumn<VolumeSnapshotContentKin
       },
       {
         title: t('console-app~Status'),
-        sort: 'snapshotStatus',
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
         id: tableColumnInfo[1].id,
         props: { modifier: 'nowrap' },
       },
       {
         title: t('console-app~Size'),
-        sort: 'volumeSnapshotSize',
+        sort: (data, direction) =>
+          data.sort(sortResourceByValue(direction, sorts.volumeSnapshotContentSize)),
         id: tableColumnInfo[2].id,
         props: { modifier: 'nowrap' },
       },

@@ -129,14 +129,6 @@ export const useConsoleDataViewData = <
       return filteredData;
     }
 
-    if (typeof sortColumn.props.sort === 'string') {
-      return filteredData.sort(
-        sortResourceByValue(sortDirection, (obj) =>
-          _.get(obj, (sortColumn.props.sort as unknown) as string, ''),
-        ),
-      );
-    }
-
     if (typeof sortColumn.sortFunction === 'string') {
       return filteredData.sort(
         sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sortFunction as string)),

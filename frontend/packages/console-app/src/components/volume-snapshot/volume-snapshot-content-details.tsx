@@ -19,7 +19,7 @@ import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const { editYaml, events } = navFactory;
 
@@ -41,7 +41,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <Status status={volumeSnapshotStatus(obj)} />
+                <Status status={snapshotStatus(obj)} />
               </DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
@@ -111,7 +111,7 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
     editYaml(),
     events(ResourceEventStream),
   ];
-  return <DetailsPage {...props} getResourceStatus={volumeSnapshotStatus} pages={pages} />;
+  return <DetailsPage {...props} getResourceStatus={snapshotStatus} pages={pages} />;
 };
 
 type DetailsProps = {
