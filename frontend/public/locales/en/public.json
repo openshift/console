@@ -1257,6 +1257,7 @@
   "Tech Preview": "Tech Preview",
   "Clear history": "Clear history",
   "Recently used": "Recently used",
+  "Showing {{visible}} of {{total}} resources. Type to filter.": "Showing {{visible}} of {{total}} resources. Type to filter.",
   "Clear input value": "Clear input value",
   "{{count}} resource reached quota_one": "{{count}} resource reached quota",
   "{{count}} resource reached quota_other": "{{count}} resource reached quotas",
