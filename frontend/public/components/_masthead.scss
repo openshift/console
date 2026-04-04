@@ -33,6 +33,10 @@
   align-items: center !important;
 }
 
+.co-masthead-logo > div {
+  display: flex; // Fixes off-center logo in glass theme. div targets the wrapper react-svg makes
+}
+
 .co-user-menu {
   max-width: 140px !important; // PF does not limit username length
   overflow-x: hidden;
