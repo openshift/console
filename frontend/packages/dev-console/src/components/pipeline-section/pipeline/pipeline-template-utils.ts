@@ -74,22 +74,14 @@ export interface ParamData {
  * for these breaking changes. (should be done moving from 0.10.x forward)
  */
 export const migratePipelineRun = (pipelineRun: PipelineRunKind): PipelineRunKind => {
-  let newPipelineRun = pipelineRun;
-
-  const serviceAccountPath = 'spec.serviceAccount';
-  if (_.has(newPipelineRun, serviceAccountPath)) {
-    // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
-    // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
-    const serviceAccountName = _.get(newPipelineRun, serviceAccountPath);
-    newPipelineRun = _.omit(newPipelineRun, [serviceAccountPath]);
-    newPipelineRun = _.merge(newPipelineRun, {
-      spec: {
-        serviceAccountName,
-      },
-    });
+  // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
+  // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
+  if (pipelineRun.spec.serviceAccount) {
+    pipelineRun.spec.serviceAccountName = pipelineRun.spec.serviceAccount;
+    delete pipelineRun.spec.serviceAccount;
   }
 
-  return newPipelineRun;
+  return pipelineRun;
 };
 
 export const getPipelineName = (pipeline?: PipelineKind, latestRun?: PipelineRunKind): string => {

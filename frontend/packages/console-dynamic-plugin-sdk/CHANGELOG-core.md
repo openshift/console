@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0-prerelease.3 - TBD
+
+- **Type-breaking**: Update `K8sResourceCommon`, `ObjectMetadata`, `OwnerReference` types to interfaces ([CONSOLE-5108], [#16097])
+
 ## 4.22.0-prerelease.2 - 2026-03-26
 
 > [!IMPORTANT]
@@ -199,6 +203,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
 [CONSOLE-5063]: https://issues.redhat.com/browse/CONSOLE-5063
 [CONSOLE-5093]: https://issues.redhat.com/browse/CONSOLE-5093
+[CONSOLE-5108]: https://issues.redhat.com/browse/CONSOLE-5108
 [OCPBUGS-19048]: https://issues.redhat.com/browse/OCPBUGS-19048
 [OCPBUGS-30077]: https://issues.redhat.com/browse/OCPBUGS-30077
 [OCPBUGS-31355]: https://issues.redhat.com/browse/OCPBUGS-31355
@@ -274,3 +279,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16019]: https://github.com/openshift/console/pull/16019
 [#16043]: https://github.com/openshift/console/pull/16043
 [#16057]: https://github.com/openshift/console/pull/16057
+[#16097]: https://github.com/openshift/console/pull/16097
