@@ -33,6 +33,7 @@ import { inject, kindObj } from '../utils/inject';
 import {
   makeQuery,
   makeReduxID,
+  NoModelError,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/k8s-watcher';
 import { RequireCreatePermission } from '../utils/rbac';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
@@ -585,7 +586,10 @@ export const MultiListPage: FC<MultiListPageProps> = (props) => {
   }, [watchedResources, watchResources]);
 
   const loadError = useMemo(
-    () => Object.values(watchedResources).find((r) => r.loadError)?.loadError,
+    () =>
+      Object.values(watchedResources).find(
+        (r) => r.loadError && !(r.loadError instanceof NoModelError),
+      )?.loadError,
     [watchedResources],
   );
 
