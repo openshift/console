@@ -25,11 +25,8 @@ import {
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import {
-  useIsKubevirtPluginActive,
-  useWatchVirtualMachineInstances,
-  VirtualMachineModel,
-} from '../NodeVmUtils';
+import { useIsKubevirtPluginActive } from '../../../utils/kubevirt';
+import { useWatchVirtualMachineInstances, VirtualMachineModel } from '../NodeVmUtils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {

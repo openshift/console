@@ -93,6 +93,7 @@ import {
 } from '@console/shared/src/sorts/nodes';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { nodeStatus } from '../../status';
+import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
@@ -101,7 +102,6 @@ import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
 import {
   filterVirtualMachineInstancesByNode,
-  useIsKubevirtPluginActive,
   useWatchVirtualMachineInstances,
 } from './NodeVmUtils';
 import ClientCSRStatus from './status/CSRStatus';

@@ -5,9 +5,9 @@ import type {
   K8sResourceKind,
   WatchK8sResult,
 } from '@console/dynamic-plugin-sdk/src';
-import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import type { PodKind } from '@console/internal/module/k8s';
+import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 
 export const VirtualMachineModel: K8sModel = {
   label: 'VirtualMachine',
@@ -27,16 +27,6 @@ export const VirtualMachineInstanceGroupVersionKind: K8sGroupVersionKind = {
   group: 'kubevirt.io',
   kind: 'VirtualMachineInstance',
   version: 'v1',
-};
-
-export const useIsKubevirtPluginActive = () => {
-  const kubevirtFeature = useFlag('KUBEVIRT_DYNAMIC');
-
-  return (
-    Array.isArray(window.SERVER_FLAGS?.consolePlugins) &&
-    window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin') &&
-    kubevirtFeature
-  );
 };
 
 // Return all matching VMIs, if no nodeName is given, return all VMIs.
