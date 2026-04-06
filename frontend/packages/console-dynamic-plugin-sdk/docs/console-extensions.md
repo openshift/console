@@ -797,7 +797,7 @@ This extension can be used to add a tab on the sub-tabs for a Nodes details tab.
 | Name | Value Type | Optional | Description |
 | ---- | ---------- | -------- | ----------- |
 | `parentTab` | `'configuration'` | no | Which detail tab to add the sub-tab to. Currently only 'configuration' is supported. |
-| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page to be shown in node sub tabs. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>Tabs are shown in priority order from highest to lowest. Current built-in node tab priorities are:<br/>- **configuration:**<br/>  - Storage: 70<br/>  - Machine: 50 |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page to be shown in node sub tabs. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>Tabs are shown in priority order from highest to lowest. Current built-in node tab priorities are:<br/>- **configuration:**<br/>  - Storage: 70<br/>  - Machine: 50<br/>    High availability: 30 |
 | `component` | `CodeRef<ComponentType<SubPageComponentProps<K8sResourceCommon>>>` | no | The component to be rendered for the sub tab contents. Receives the Node resource as the `obj` prop. |
 
 ---

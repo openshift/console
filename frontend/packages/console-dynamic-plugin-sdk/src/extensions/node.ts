@@ -70,6 +70,7 @@ export type NodeSubNavTab = Extension<
      * - **configuration:**
      *   - Storage: 70
      *   - Machine: 50
+     *     High availability: 30
      */
     page: {
       /**

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src';
 import { NodeSubNavPage } from '../NodeSubNavPage';
+import HighAvailability from './high-availability/HighAvailability';
 import NodeMachine from './machine/NodeMachine';
 import NodeStorage from './node-storage/NodeStorage';
 
@@ -26,6 +27,13 @@ const standardPages = [
     nameKey: 'console-app~Machine',
     component: NodeMachine,
     priority: 50,
+  },
+  {
+    tabId: 'high-availability',
+    // t('console-app~High availability')
+    nameKey: 'console-app~High availability',
+    component: HighAvailability,
+    priority: 30,
   },
 ];
 
