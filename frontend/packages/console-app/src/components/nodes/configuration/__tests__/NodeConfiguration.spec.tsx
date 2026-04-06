@@ -200,7 +200,7 @@ describe('NodeConfiguration', () => {
           page: {
             tabId: 'low-priority-tab',
             name: 'Low Priority',
-            priority: 30,
+            priority: 10,
           },
           component: jest.fn(() => 'LowPriorityComponent'),
         },
@@ -232,6 +232,7 @@ describe('NodeConfiguration', () => {
       'Storage',
       'Operating system',
       'Machine',
+      'High availability',
       'Low Priority',
     ]);
   });
