@@ -3,7 +3,8 @@ import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/h
 import type { NodeKind } from '@console/internal/module/k8s';
 import { getNodeMachineNameAndNamespace } from '@console/shared/src/selectors/node';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import NodeMachine from '../NodeMachine';
+import OperatingSystem from '../../OperatingSystem';
+import MachineDetails from '../MachineDetails';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks', () => {
   const actual = jest.requireActual('@console/dynamic-plugin-sdk/src/utils/k8s/hooks');
@@ -35,10 +36,15 @@ jest.mock('@console/shared/src/selectors/node', () => ({
   getNodeMachineNameAndNamespace: jest.fn(),
 }));
 
+jest.mock('../BMCConfiguration', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 const getNodeMachineNameAndNamespaceMock = getNodeMachineNameAndNamespace as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
-describe('NodeMachine', () => {
+describe('MachineDetails', () => {
   const mockNode: NodeKind = {
     apiVersion: 'v1',
     kind: 'Node',
@@ -88,62 +94,22 @@ describe('NodeMachine', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     getNodeMachineNameAndNamespaceMock.mockReturnValue(['test-machine', 'openshift-machine-api']);
-  });
-
-  it('should show loading skeleton when data is loading', () => {
-    useK8sWatchResourceMock.mockReturnValue([null, false, undefined]);
-
-    const { container } = renderWithProviders(<NodeMachine obj={mockNode} />);
-
-    expect(container.querySelector('[data-test="skeleton-detail-view"]')).toBeInTheDocument();
-  });
-
-  it('should display error message when machine fails to load', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([null, true, new Error('Failed to load')])
-      .mockReturnValueOnce([[], true, undefined]);
-
-    renderWithProviders(<NodeMachine obj={mockNode} />);
-
-    expect(screen.getByText('Error loading machine')).toBeInTheDocument();
-  });
-
-  it('should display message when machine is not found', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([null, true, undefined])
-      .mockReturnValueOnce([[], true, undefined]);
-
-    renderWithProviders(<NodeMachine obj={mockNode} />);
-
-    expect(screen.getByText('There is no machine associated with this node')).toBeInTheDocument();
-  });
-
-  it('should display machine details when machine is loaded', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([mockMachine, true, undefined])
-      .mockReturnValueOnce([[mockMachineConfigPool], true, undefined]);
-
-    renderWithProviders(<NodeMachine obj={mockNode} />);
-
-    expect(screen.getByText('test-machine')).toBeInTheDocument();
+    useK8sWatchResourceMock.mockReset();
   });
 
   it('should display error message when machine config pool fails to load', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([mockMachine, true, undefined])
-      .mockReturnValueOnce([null, true, new Error('Failed to load')]);
+    useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Failed to load')]);
 
-    renderWithProviders(<NodeMachine obj={mockNode} />);
+    renderWithProviders(<OperatingSystem obj={mockNode} />);
 
-    expect(screen.getByText('Error loading machine config pool')).toBeInTheDocument();
+    expect(screen.getByText('MachineConfigPools are not available')).toBeInTheDocument();
+    expect(screen.getByText('Failed to load')).toBeInTheDocument();
   });
 
   it('should display message when machine config pool is not found', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([mockMachine, true, undefined])
-      .mockReturnValueOnce([[], true, undefined]);
+    useK8sWatchResourceMock.mockReturnValue([[], true, undefined]);
 
-    renderWithProviders(<NodeMachine obj={mockNode} />);
+    renderWithProviders(<OperatingSystem obj={mockNode} />);
 
     expect(
       screen.getByText('There is no MachineConfigPool associated with this node'),
@@ -151,11 +117,9 @@ describe('NodeMachine', () => {
   });
 
   it('should display machine config pool details when loaded', () => {
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([mockMachine, true, undefined])
-      .mockReturnValueOnce([[mockMachineConfigPool], true, undefined]);
+    useK8sWatchResourceMock.mockReturnValue([[mockMachineConfigPool], true, undefined]);
 
-    renderWithProviders(<NodeMachine obj={mockNode} />);
+    renderWithProviders(<OperatingSystem obj={mockNode} />);
 
     expect(screen.getByText('test-mcp')).toBeInTheDocument();
     expect(screen.getByText('MachineConfigs')).toBeInTheDocument();
@@ -170,20 +134,51 @@ describe('NodeMachine', () => {
       },
     };
 
-    useK8sWatchResourceMock
-      .mockReturnValueOnce([mockMachine, true, undefined])
-      .mockReturnValueOnce([[pausedMCP], true, undefined]);
+    useK8sWatchResourceMock.mockReturnValue([[pausedMCP], true, undefined]);
 
-    renderWithProviders(<NodeMachine obj={mockNode} />);
+    renderWithProviders(<OperatingSystem obj={mockNode} />);
 
     expect(screen.getByText('Workload paused alert')).toBeInTheDocument();
+  });
+
+  it('should show loading skeleton when data is loading', () => {
+    useK8sWatchResourceMock.mockReturnValue([null, false, undefined]);
+
+    const { container } = renderWithProviders(<MachineDetails node={mockNode} />);
+
+    expect(container.querySelector('[data-test="skeleton-detail-view"]')).toBeInTheDocument();
+  });
+
+  it('should display error message when machine fails to load', () => {
+    useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Failed to load')]);
+
+    renderWithProviders(<MachineDetails node={mockNode} />);
+
+    expect(screen.getByText('Machine is not available')).toBeInTheDocument();
+    expect(screen.getByText('Failed to load')).toBeInTheDocument();
+  });
+
+  it('should display message when machine is not found', () => {
+    useK8sWatchResourceMock.mockReturnValue([null, true, undefined]);
+
+    renderWithProviders(<MachineDetails node={mockNode} />);
+
+    expect(screen.getByText('There is no machine associated with this node')).toBeInTheDocument();
+  });
+
+  it('should display machine details when machine is loaded', () => {
+    useK8sWatchResourceMock.mockReturnValue([mockMachine, true, undefined]);
+
+    renderWithProviders(<MachineDetails node={mockNode} />);
+
+    expect(screen.getByText('test-machine')).toBeInTheDocument();
   });
 
   it('should not watch machine when node has no machine annotation', () => {
     getNodeMachineNameAndNamespaceMock.mockReturnValue([null, null]);
     useK8sWatchResourceMock.mockReturnValue([null, false, undefined]);
 
-    renderWithProviders(<NodeMachine obj={mockNode} />);
+    renderWithProviders(<MachineDetails node={mockNode} />);
 
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
   });

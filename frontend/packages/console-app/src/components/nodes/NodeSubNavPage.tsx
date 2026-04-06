@@ -10,6 +10,8 @@ import { useTranslatedExtensions } from '@console/plugin-sdk/src/utils/useTransl
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 
+export const CONFIG_PAGE_ID = 'configuration';
+
 export type SubPageType = {
   component: ComponentType<PageComponentProps<K8sResourceCommon>>;
   tabId: string;
@@ -75,7 +77,7 @@ export const NodeSubNavPage: FC<NodeSubNavPageProps> = ({ obj, pageId, standardP
           <FlexItem className="pf-v6-u-h-100">
             <Tabs
               className="pf-v6-u-pt-md"
-              activeKey={activeTabKey || pages[0].tabId}
+              activeKey={activeTabKey || pages[0]?.tabId}
               component="nav"
               isVertical
               usePageInsets

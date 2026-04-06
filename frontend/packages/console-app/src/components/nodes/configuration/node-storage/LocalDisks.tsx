@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Title } from '@patternfly/react-core';
+import { Alert, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { humanizeDecimalBytes } from '@console/internal/components/utils/units';
@@ -63,7 +63,9 @@ const LocalDisks: FC<LocalDisksProps> = ({ node }) => {
       {!bareMetalHostLoaded ? (
         <div className="loading-skeleton--table pf-v6-u-w-100" />
       ) : bareMetalHostLoadError ? (
-        t('console-app~Unable to load local disks')
+        <Alert isInline variant="danger" title={t('console-app~Unable to load local disks')}>
+          {bareMetalHostLoadError.message || t('console-app~Unable to load BareMetalHost')}
+        </Alert>
       ) : (
         <div className="co-table-container">
           <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">

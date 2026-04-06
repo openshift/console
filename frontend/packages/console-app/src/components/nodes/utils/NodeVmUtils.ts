@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type {
   K8sGroupVersionKind,
@@ -51,7 +52,15 @@ export const filterVirtualMachineInstancesByNode = (vmis: K8sResourceKind[], nod
 export const useWatchVirtualMachineInstances = (
   nodeName?: string,
 ): WatchK8sResult<K8sResourceKind[]> => {
+  const { t } = useTranslation();
+
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
+  const pluginError = !isKubevirtPluginActive
+    ? {
+        message: t('console-app~Unable to load VirtualMachines'),
+      }
+    : undefined;
+
   const [
     virtualMachineInstances,
     virtualMachineInstancesLoaded,
@@ -74,7 +83,7 @@ export const useWatchVirtualMachineInstances = (
   return [
     nodeVirtualMachineInstances,
     virtualMachineInstancesLoaded,
-    virtualMachineInstancesLoadError,
+    virtualMachineInstancesLoadError || pluginError,
   ];
 };
 

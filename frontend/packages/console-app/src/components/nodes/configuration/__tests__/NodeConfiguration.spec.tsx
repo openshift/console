@@ -17,7 +17,12 @@ jest.mock('../node-storage/NodeStorage', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('../NodeMachine', () => ({
+jest.mock('../machine/MachineDetails', () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock('../machine/Machine', () => ({
   __esModule: true,
   default: jest.fn(() => null),
 }));
@@ -87,7 +92,7 @@ describe('NodeConfiguration', () => {
     const mockQueryParams = new URLSearchParams('activeTab=machine');
     useQueryParamsMock.mockReturnValue(mockQueryParams);
 
-    render(<NodeConfiguration obj={mockNode} />);
+    renderWithProviders(<NodeConfiguration obj={mockNode} />);
 
     const tabs = screen.getAllByRole('tab');
     const machineTab = tabs.find((tab) => tab.textContent === 'Machine');
@@ -222,7 +227,13 @@ describe('NodeConfiguration', () => {
     const tabNames = tabs.map((tab) => within(tab).getByText(/\w+/).textContent);
 
     // Expected order: High Priority (90), Storage (70), Machine (50), Low Priority (30)
-    expect(tabNames).toEqual(['High Priority', 'Storage', 'Machine', 'Low Priority']);
+    expect(tabNames).toEqual([
+      'High Priority',
+      'Storage',
+      'Operating system',
+      'Machine',
+      'Low Priority',
+    ]);
   });
 
   it('should render component from plugin extension when tab is active', async () => {

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import { Title } from '@patternfly/react-core';
+import { Alert, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
@@ -153,6 +153,7 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
       kind: PersistentVolumeClaimModel.kind,
     },
     isList: true,
+    namespaced: true,
   });
   const [dataVolumes, dataVolumesLoaded, dataVolumesLoadError] = useAccessibleResources<
     K8sResourceCommon
@@ -176,26 +177,13 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
     fieldSelector: `spec.nodeName=${node.metadata.name}`,
   });
 
-  const loadError =
-    persistentVolumesLoadError ||
-    pvcsLoadError ||
-    dataVolumesLoadError ||
-    vmsLoadError ||
-    podsLoadError;
+  const loadError = persistentVolumesLoadError || pvcsLoadError || podsLoadError;
   const isLoading =
     !persistentVolumesLoaded || !pvcsLoaded || !dataVolumesLoaded || !vmsLoaded || !podsLoaded;
 
+  const vmDataLoadError = vmsLoadError || dataVolumesLoadError;
   const vmPVCs = useMemo(() => {
-    if (
-      persistentVolumesLoadError ||
-      !persistentVolumesLoaded ||
-      pvcsLoadError ||
-      !pvcsLoaded ||
-      dataVolumesLoadError ||
-      !dataVolumesLoaded ||
-      !vmsLoaded ||
-      vmsLoadError
-    ) {
+    if (loadError || vmDataLoadError || isLoading) {
       return [];
     }
     return (
@@ -241,20 +229,7 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
         return acc;
       }, []) ?? []
     );
-  }, [
-    dataVolumes,
-    dataVolumesLoadError,
-    dataVolumesLoaded,
-    persistentVolumes,
-    persistentVolumesLoadError,
-    persistentVolumesLoaded,
-    pvcs,
-    pvcsLoadError,
-    pvcsLoaded,
-    vms,
-    vmsLoaded,
-    vmsLoadError,
-  ]);
+  }, [loadError, vmDataLoadError, isLoading, pvcs, persistentVolumes, dataVolumes, vms]);
 
   const nodePVCs = useMemo(() => {
     if (persistentVolumesLoadError || !persistentVolumesLoaded || pvcsLoadError || !pvcsLoaded) {
@@ -310,7 +285,13 @@ const PersistentVolumes: FC<PersistentVolumesProps> = ({ node }) => {
       {isLoading ? (
         <div className="loading-skeleton--table pf-v6-u-w-100" />
       ) : loadError ? (
-        t('console-app~Unable to load persistent volumes')
+        <Alert isInline variant="danger" title={t('console-app~Unable to load persistent volumes')}>
+          {loadError.message ?? null}
+        </Alert>
+      ) : nodePersistentVolumeData.length === 0 && vmDataLoadError ? (
+        <Alert isInline variant="danger" title={t('console-app~Unable to load persistent volumes')}>
+          {vmDataLoadError.message ?? null}
+        </Alert>
       ) : (
         <div className="co-table-container">
           <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">

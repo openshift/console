@@ -11,12 +11,13 @@ export type NodeSubNavTab = Extension<
   'console.tab/nodeSubNavTab',
   {
     /** Which detail tab to add the sub-tab to. */
-    parentTab: 'configuration' | 'workload';
+    parentTab: 'configuration' | 'health' | 'workloads';
     /** The page to be show in node sub tabs. It takes tab name as name and priority of the tab.
      * Note: Tabs are shown in priority order from highest to lowest. Current node tab priorities are:
      *  configuration:
      *     Storage: 70
-     *     Machine: 50
+     *     Operating system: 50
+     *     Machine: 40
      */
     page: {
       tabId: string;
