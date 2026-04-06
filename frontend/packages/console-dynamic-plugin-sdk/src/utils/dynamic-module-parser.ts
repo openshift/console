@@ -8,7 +8,7 @@ import * as ts from 'typescript';
 const defaultCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2020,
   module: ts.ModuleKind.ESNext,
-  moduleResolution: ts.ModuleResolutionKind.NodeJs,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
   allowJs: true,
   strict: false,
   esModuleInterop: true,
