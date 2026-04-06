@@ -150,13 +150,13 @@ export const useConsoleDataViewData = <
     }
 
     if (typeof sortColumn.sortFunction === 'string') {
-      return filteredData.sort(
+      return [...filteredData].sort(
         sortResourceByValue(sortDirection, (obj) => _.get(obj, sortColumn.sortFunction as string)),
       );
     }
 
     if (typeof sortColumn.sortFunction === 'function') {
-      return sortColumn.sortFunction(filteredData, sortDirection);
+      return sortColumn.sortFunction([...filteredData], sortDirection);
     }
 
     return filteredData;

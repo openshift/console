@@ -38,6 +38,7 @@ import type { NodeMetrics } from '@console/internal/actions/ui';
 import { setNodeMetrics } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -169,6 +170,17 @@ const nodeColumnInfo = Object.freeze({
 });
 
 const kind = 'Node';
+
+const nodeRowLabelsSortKey = (obj: K8sResourceCommon) => {
+  const labels = getLabels(obj);
+  if (_.isEmpty(labels)) {
+    return '';
+  }
+  return Object.keys(labels)
+    .sort()
+    .map((k) => `${k}=${labels[k]}`)
+    .join(',');
+};
 
 const useNodesColumns = (
   vmsEnabled: boolean,
@@ -341,7 +353,8 @@ const useNodesColumns = (
       {
         title: t('console-app~Labels'),
         id: nodeColumnInfo.labels.id,
-        sortFunction: 'metadata.labels',
+        sortFunction: (data, direction) =>
+          data.sort(sortResourceByValue(direction, nodeRowLabelsSortKey)),
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
           modifier: MODIFIER_NOWRAP,
