@@ -51,10 +51,9 @@ export type SubPageComponentProps<R extends K8sResourceCommon = NodeKind> = {
  * Use this extension to add custom sub-tabs to the Node details page.
  *
  * Notes:
- * - The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register the same `tabId`, only the first one loaded displays.
- *   the same `tabId`, only the first one loaded will be displayed.
+ * - The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register the same `tabId`, the UI displays only the first one loaded.
  * - The `name` property supports i18n translation keys in the format `%namespace~key%`.
- * - The UI sorts tabs by priority in descending order (highest priority first). If two tabs have the same priority, it sorts them alphabetically by name.
+ * - The UI sorts tabs by priority in descending order with highest priority first. If two tabs have the same priority, the UI sorts them alphabetically by name.
  * - The component receives the Node resource as the `obj` prop using `SubPageComponentProps`.
  */
 export type NodeSubNavTab = Extension<
@@ -63,13 +62,14 @@ export type NodeSubNavTab = Extension<
     /** Which detail tab to add the sub-tab to. Only the 'configuration' tab supports adding sub-tabs at this time. */
     parentTab: 'configuration';
     /**
-     * The page to be shown in node sub tabs. It takes tab name as name and priority of the tab.
+     * The page that displays as a subtab. It takes tab name as name and priority of the tab.
      *
      * Notes:
      * The UI displays tabs in priority order from highest to lowest. Default built-in tab priorities include:
      * - **configuration:**
      *   - storage/70
      *   - machine/50
+     *   - high-availability/30
      */
     page: {
       /**
