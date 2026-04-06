@@ -328,7 +328,16 @@ export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   additional?: boolean;
 };
 
-/** Columns for {@link useActiveColumns}: DataView headers or legacy {@link TableColumn}. */
+/**
+ * Union type for columns managed by {@link useActiveColumns}.
+ * Supports both new {@link ConsoleDataViewColumn} and legacy {@link TableColumn} for backward compatibility.
+ *
+ * @remarks
+ * This type enables gradual migration from TableColumn to ConsoleDataViewColumn without breaking existing code.
+ * External plugins can continue using TableColumn while adopting the new ConsoleDataViewColumn pattern.
+ *
+ * @public
+ */
 export type DataViewManagedColumn<D = any> = ConsoleDataViewColumn<D> | TableColumn<D>;
 
 export type ConsoleDataViewRow = any[];

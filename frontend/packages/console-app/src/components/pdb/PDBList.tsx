@@ -114,7 +114,7 @@ const usePDBColumns = (): {
         title: t('console-app~Selector'),
         id: tableColumnInfo[2].id,
         sortFunction: (data, direction) =>
-          data.sort(
+          [...data].sort(
             sortResourceByValue(direction, (pdb) => selectorToString(pdb.spec?.selector ?? {})),
           ),
         resizableProps: getResizableProps(tableColumnInfo[2].id),

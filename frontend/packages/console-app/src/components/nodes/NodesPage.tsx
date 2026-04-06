@@ -354,7 +354,7 @@ const useNodesColumns = (
         title: t('console-app~Labels'),
         id: nodeColumnInfo.labels.id,
         sortFunction: (data, direction) =>
-          data.sort(sortResourceByValue(direction, nodeRowLabelsSortKey)),
+          [...data].sort(sortResourceByValue(direction, nodeRowLabelsSortKey)),
         resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
           modifier: MODIFIER_NOWRAP,

@@ -22,7 +22,10 @@ import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataView
 const isDataViewConfigurableColumn = (
   column: ConsoleDataViewTh,
 ): column is Extract<DataViewTh, { cell: ReactNode }> => {
-  return (column as any)?.cell !== undefined;
+  if (column == null || typeof column !== 'object') {
+    return false;
+  }
+  return 'cell' in column && (column as { cell?: ReactNode }).cell !== undefined;
 };
 
 export const useConsoleDataViewData = <

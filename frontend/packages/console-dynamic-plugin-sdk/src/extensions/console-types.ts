@@ -475,6 +475,11 @@ export type TableColumn<D> = ICell & {
   resizableProps?: any;
 };
 
+/**
+ * Union type for columns managed by {@link useActiveColumns}.
+ * Supports both new ConsoleDataViewColumn and legacy {@link TableColumn} for backward compatibility.
+ * @public
+ */
 export type { DataViewManagedColumn } from '../api/internal-types';
 
 export type RowProps<D, R extends any = {}> = {
