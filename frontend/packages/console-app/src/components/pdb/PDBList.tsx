@@ -13,6 +13,8 @@ import type {
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { selectorToString } from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -111,7 +113,10 @@ const usePDBColumns = (): {
       {
         title: t('console-app~Selector'),
         id: tableColumnInfo[2].id,
-        sortFunction: 'spec.selector',
+        sortFunction: (data, direction) =>
+          data.sort(
+            sortResourceByValue(direction, (pdb) => selectorToString(pdb.spec?.selector ?? {})),
+          ),
         resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: MODIFIER_NOWRAP,
