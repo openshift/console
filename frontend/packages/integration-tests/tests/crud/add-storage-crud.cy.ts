@@ -15,7 +15,7 @@ const k8sWorkloads = [
 ];
 const openshiftWorkloads = ['deploymentconfigs'];
 const resourceObjs =
-  Cypress.env('openshift') === true ? k8sWorkloads.concat(openshiftWorkloads) : k8sWorkloads;
+  Cypress.expose('openshift') === true ? k8sWorkloads.concat(openshiftWorkloads) : k8sWorkloads;
 
 describe('Add storage is applicable for all workloads', () => {
   before(() => {

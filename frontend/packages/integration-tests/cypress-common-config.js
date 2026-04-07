@@ -100,17 +100,6 @@ function setupNodeEvents(on, config) {
     }
     return launchOptions;
   });
-  // `config` is the resolved Cypress config
-  config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
-    process.env.BRIDGE_BASE_PATH || '/'
-  ).replace(/\/$/, '')}`;
-  config.env.BRIDGE_HTPASSWD_IDP = process.env.BRIDGE_HTPASSWD_IDP;
-  config.env.BRIDGE_HTPASSWD_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME;
-  config.env.BRIDGE_HTPASSWD_PASSWORD = process.env.BRIDGE_HTPASSWD_PASSWORD;
-  config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
-  config.env.OAUTH_BASE_ADDRESS = process.env.OAUTH_BASE_ADDRESS;
-  config.env.OPENSHIFT_CI = process.env.OPENSHIFT_CI;
-  config.env.BRIDGE_AWS = process.env.BRIDGE_AWS;
   return config;
 }
 
@@ -124,6 +113,8 @@ const commonConfig = {
   pageLoadTimeout: 100000,
   requestTimeout: 15000,
   responseTimeout: 15000,
+  // blocked on https://github.com/badeball/cypress-cucumber-preprocessor/issues/1340
+  allowCypressEnv: true,
   chromeWebSecurity: true,
   watchForFileChanges: true,
   waitForAnimations: true,
@@ -137,6 +128,19 @@ const commonConfig = {
   retries: {
     runMode: 1,
     openMode: 0,
+  },
+
+  env: {
+    BRIDGE_HTPASSWD_PASSWORD: process.env.BRIDGE_HTPASSWD_PASSWORD,
+    BRIDGE_KUBEADMIN_PASSWORD: process.env.BRIDGE_KUBEADMIN_PASSWORD,
+  },
+
+  expose: {
+    BRIDGE_HTPASSWD_IDP: process.env.BRIDGE_HTPASSWD_IDP,
+    BRIDGE_HTPASSWD_USERNAME: process.env.BRIDGE_HTPASSWD_USERNAME,
+    OAUTH_BASE_ADDRESS: process.env.OAUTH_BASE_ADDRESS,
+    OPENSHIFT_CI: process.env.OPENSHIFT_CI,
+    BRIDGE_AWS: process.env.BRIDGE_AWS,
   },
 
   /**
@@ -159,7 +163,9 @@ const commonConfig = {
 
   e2e: {
     setupNodeEvents,
-    baseUrl: 'http://localhost:9000',
+    baseUrl: `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
+      process.env.BRIDGE_BASE_PATH || '/'
+    ).replace(/\/$/, '')}`,
     testIsolation: false,
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 5,
@@ -174,6 +180,6 @@ const commonConfig = {
  *
  * @param {Cypress.ConfigOptions} overrides - the config that will be deep-merged with Console-wide defaults
  *
- * @returns {Cypress.ConfigOptions} - the merged Cypress configuration
+ * @returns {Cypress.ConfigOptions} the merged Cypress configuration
  */
 module.exports.defineConfig = (overrides) => defineConfig(merge({}, commonConfig, overrides));

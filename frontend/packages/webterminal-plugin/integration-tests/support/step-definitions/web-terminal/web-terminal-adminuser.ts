@@ -125,7 +125,7 @@ Then('user will see the terminal instance for namespace {string}', (nameSpace: s
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
   // cy.get(devNavigationMenuPO.project).click();
 });

@@ -128,7 +128,7 @@ Given('user has created namespace starts with {string}', (projectName: string) =
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  Cypress.env('NAMESPACE', projectName);
+  Cypress.expose('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
 });
 

@@ -53,7 +53,7 @@ describe('Visiting other routes', () => {
       path: '/api-resource/ns/default/core~v1~Pod/instances',
       waitFor: () => cy.byLegacyTestID('api-explorer-resource-title').contains('Pod'),
     },
-    ...(Cypress.env('openshift') === true
+    ...(Cypress.expose('openshift') === true
       ? [
           {
             path: '/api-resource/ns/default/core~v1~Pod/access',

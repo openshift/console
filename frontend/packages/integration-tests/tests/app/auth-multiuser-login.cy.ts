@@ -16,66 +16,74 @@ describe('Auth test', () => {
     Cypress.session.clearAllSavedSessions();
   });
 
-  if (Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {
-    it(`logs in as 'test' user via htpasswd identity provider`, () => {
-      const idp = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';
-      const username = Cypress.env('BRIDGE_HTPASSWD_USERNAME') || 'test';
-      const passwd = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
-      cy.login(idp, username, passwd);
-      cy.url().should('include', Cypress.config('baseUrl'));
+  it(`logs in as 'test' user via htpasswd identity provider`, function () {
+    cy.env(['BRIDGE_KUBEADMIN_PASSWORD', 'BRIDGE_HTPASSWD_PASSWORD']).then(
+      ({ BRIDGE_KUBEADMIN_PASSWORD, BRIDGE_HTPASSWD_PASSWORD }) => {
+        if (!BRIDGE_KUBEADMIN_PASSWORD) {
+          this.skip();
+          return;
+        }
+        const idp = Cypress.expose('BRIDGE_HTPASSWD_IDP') || 'test';
+        const username = Cypress.expose('BRIDGE_HTPASSWD_USERNAME') || 'test';
+        const passwd = BRIDGE_HTPASSWD_PASSWORD || 'test';
+        cy.login(idp, username, passwd);
+        cy.url().should('include', Cypress.config('baseUrl'));
 
-      // test Developer perspective is default for test user
-      // Below line to be uncommented after pr https://github.com/openshift/console-operator/pull/954 is merged
-      masthead.username.shouldHaveText(username);
+        // test Developer perspective is default for test user
+        // Below line to be uncommented after pr https://github.com/openshift/console-operator/pull/954 is merged
+        masthead.username.shouldHaveText(username);
 
-      cy.log('switches from dev to admin perspective');
-      // nav.sidenav.switcher.shouldHaveText('Developer');
-      nav.sidenav.switcher.changePerspectiveTo('Core platform');
-      nav.sidenav.switcher.shouldHaveText('Core platform');
+        cy.log('switches from dev to admin perspective');
+        // nav.sidenav.switcher.shouldHaveText('Developer');
+        nav.sidenav.switcher.changePerspectiveTo('Core platform');
+        nav.sidenav.switcher.shouldHaveText('Core platform');
 
-      cy.log('does not show admin nav items in Administration to test user');
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(10000); // wait for feature FLAGS to load
-      nav.sidenav.shouldNotHaveNavSection(['Administration', 'Cluster Status']);
-      nav.sidenav.shouldNotHaveNavSection(['Administration', 'Cluster Settings']);
-      nav.sidenav.shouldNotHaveNavSection(['Administration', 'Namespaces']);
-      nav.sidenav.shouldNotHaveNavSection(['Administration', 'Custom Resource Definitions']);
+        cy.log('does not show admin nav items in Administration to test user');
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(10000); // wait for feature FLAGS to load
+        nav.sidenav.shouldNotHaveNavSection(['Administration', 'Cluster Status']);
+        nav.sidenav.shouldNotHaveNavSection(['Administration', 'Cluster Settings']);
+        nav.sidenav.shouldNotHaveNavSection(['Administration', 'Namespaces']);
+        nav.sidenav.shouldNotHaveNavSection(['Administration', 'Custom Resource Definitions']);
 
-      cy.log('does not show admin nav items in Ecosystem to test user');
-      nav.sidenav.shouldNotHaveNavSection(['Ecosystem', 'Software Catalog']);
+        cy.log('does not show admin nav items in Ecosystem to test user');
+        nav.sidenav.shouldNotHaveNavSection(['Ecosystem', 'Software Catalog']);
 
-      cy.log('does not show admin nav items in Storage to test user');
-      nav.sidenav.shouldNotHaveNavSection(['Storage', 'Persistent Volumes']);
+        cy.log('does not show admin nav items in Storage to test user');
+        nav.sidenav.shouldNotHaveNavSection(['Storage', 'Persistent Volumes']);
 
-      cy.log('does not show Compute or Monitoring to test user');
-      nav.sidenav.shouldNotHaveNavSection(['Compute']);
-      nav.sidenav.shouldNotHaveNavSection(['Monitoring']);
-    });
-  }
+        cy.log('does not show Compute or Monitoring to test user');
+        nav.sidenav.shouldNotHaveNavSection(['Compute']);
+        nav.sidenav.shouldNotHaveNavSection(['Monitoring']);
+      },
+    );
+  });
 
   it(`log in as 'kubeadmin' user`, () => {
-    cy.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
-    cy.byTestID('loading-indicator').should('not.exist');
-    cy.url().should('include', Cypress.config('baseUrl'));
-    masthead.username.shouldHaveText(KUBEADMIN_IDP);
-    cy.byTestID('global-notifications').contains(
-      'You are logged in as a temporary administrative user. Update the cluster OAuth configuration to allow others to log in.',
-    );
+    cy.env(['BRIDGE_KUBEADMIN_PASSWORD']).then(({ BRIDGE_KUBEADMIN_PASSWORD }) => {
+      cy.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
+      cy.byTestID('loading-indicator').should('not.exist');
+      cy.url().should('include', Cypress.config('baseUrl'));
+      masthead.username.shouldHaveText(KUBEADMIN_IDP);
+      cy.byTestID('global-notifications').contains(
+        'You are logged in as a temporary administrative user. Update the cluster OAuth configuration to allow others to log in.',
+      );
 
-    // test Administrator perspective is default for kubeadmin
-    nav.sidenav.switcher.shouldHaveText('Core platform');
-    // test guided tour is displayed first time switching to 'Developer' perspective
-    // skip if running localhost
-    if (!Cypress.config('baseUrl').includes('localhost')) {
-      // nav.sidenav.switcher.changePerspectiveTo('Developer');
-      // nav.sidenav.switcher.shouldHaveText('Developer');
-      nav.sidenav.switcher.changePerspectiveTo('Core platform');
+      // test Administrator perspective is default for kubeadmin
       nav.sidenav.switcher.shouldHaveText('Core platform');
-    }
-    cy.log('verify sidenav menus and Administration menu access for cluster admin user');
-    nav.sidenav.shouldHaveNavSection(['Compute']);
-    nav.sidenav.shouldHaveNavSection(['Operators']);
-    nav.sidenav.clickNavLink(['Administration', 'Cluster Settings']);
-    cy.byLegacyTestID('cluster-settings-page-heading').should('be.visible');
+      // test guided tour is displayed first time switching to 'Developer' perspective
+      // skip if running localhost
+      if (!Cypress.config('baseUrl').includes('localhost')) {
+        // nav.sidenav.switcher.changePerspectiveTo('Developer');
+        // nav.sidenav.switcher.shouldHaveText('Developer');
+        nav.sidenav.switcher.changePerspectiveTo('Core platform');
+        nav.sidenav.switcher.shouldHaveText('Core platform');
+      }
+      cy.log('verify sidenav menus and Administration menu access for cluster admin user');
+      nav.sidenav.shouldHaveNavSection(['Compute']);
+      nav.sidenav.shouldHaveNavSection(['Operators']);
+      nav.sidenav.clickNavLink(['Administration', 'Cluster Settings']);
+      cy.byLegacyTestID('cluster-settings-page-heading').should('be.visible');
+    });
   });
 });

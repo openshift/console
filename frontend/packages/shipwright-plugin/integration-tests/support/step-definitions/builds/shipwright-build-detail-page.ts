@@ -8,7 +8,7 @@ import { buildPO, resourceRow } from '../../pageObjects';
 
 When('user has created shipwright builds', () => {
   const yamlFileName = `testData/builds/shipwrightBuild.yaml`;
-  cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f ${yamlFileName}`, {
+  cy.exec(`oc apply -n ${Cypress.expose('NAMESPACE')} -f ${yamlFileName}`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);
@@ -124,7 +124,7 @@ Given('user is at Shipwright Builds run page {string}', (buildName: string) => {
 });
 
 When('user has a failed build run', () => {
-  cy.exec(`oc apply -n ${Cypress.env('NAMESPACE')} -f testData/builds/shipwrightBuildRun.yaml`, {
+  cy.exec(`oc apply -n ${Cypress.expose('NAMESPACE')} -f testData/builds/shipwrightBuildRun.yaml`, {
     failOnNonZeroExit: false,
   }).then(function (result) {
     cy.log(result.stdout);
