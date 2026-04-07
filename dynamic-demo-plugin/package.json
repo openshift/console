@@ -39,6 +39,12 @@
     "webpack": "^5.100.0",
     "webpack-cli": "^6.0.1"
   },
+  "resolutions": {
+    "minimatch@npm:^3.0.2": "npm:3.1.4",
+    "minimatch@npm:^3.0.4": "npm:3.1.4",
+    "minimatch@npm:^3.1.1": "npm:3.1.4",
+    "minimatch@npm:^9.0.4": "npm:9.0.7"
+  },
   "consolePlugin": {
     "name": "console-demo-plugin",
     "version": "0.0.0",
