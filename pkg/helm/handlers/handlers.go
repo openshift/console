@@ -64,7 +64,7 @@ type helmHandlers struct {
 	renderManifests       func(string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, string, string, bool) (string, error)
 	installChartAsync     func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	installChart          func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
-	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string) (*kv1.Secret, error)
+	installChartFromURL   func(string, string, string, map[string]interface{}, *action.Configuration, corev1client.CoreV1Interface, string, string) (*kv1.Secret, error)
 	listReleases          func(*action.Configuration, bool) ([]*release.Release, error)
 	upgradeReleaseAsync   func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*kv1.Secret, error)
 	upgradeRelease        func(string, string, string, map[string]interface{}, *action.Configuration, dynamic.Interface, corev1client.CoreV1Interface, bool, string) (*release.Release, error)
@@ -73,7 +73,7 @@ type helmHandlers struct {
 	rollbackRelease       func(string, int, *action.Configuration) (*release.Release, error)
 	getRelease            func(string, *action.Configuration) (*release.Release, error)
 	getChart              func(chartUrl string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, indexEntry string) (*chart.Chart, error)
-	getChartFromURL       func(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error)
+	getChartFromURL       func(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, basicAuthSecretName string) (*chart.Chart, error)
 	getReleaseHistory     func(releaseName string, conf *action.Configuration) ([]*release.Release, error)
 	newProxy              func(bearerToken string) (chartproxy.Proxy, error)
 }
@@ -159,7 +159,7 @@ func (h *helmHandlers) HandleHelmInstallAsync(user *auth.User, w http.ResponseWr
 	}
 
 	if req.NoRepo {
-		resp, err := h.installChartFromURL(namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.CoreClient, req.ChartVersion)
+		resp, err := h.installChartFromURL(namespace, req.Name, req.ChartUrl, req.Values, conf, handlerClients.CoreClient, req.ChartVersion, req.BasicAuthSecretName)
 		if err != nil {
 			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to install helm chart: %v", err)})
 			return
@@ -229,12 +229,13 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 	namespace := params.Get("namespace")
 	indexEntry := params.Get("indexEntry")
 	noRepo := params.Get("noRepo") == "true"
+	basicAuthSecretName := params.Get("basic_auth_secret_name")
 
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	conf := h.getActionConfigurations(h.ApiServerHost, "default", user.Token, &h.Transport)
+	conf := h.getActionConfigurations(h.ApiServerHost, namespace, user.Token, &h.Transport)
 	handlerClients, err := NewHandlerClients(conf)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: err.Error()})
@@ -247,7 +248,7 @@ func (h *helmHandlers) HandleChartGet(user *auth.User, w http.ResponseWriter, r 
 			serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "chart URL is required"})
 			return
 		}
-		resp, err = h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true)
+		resp, err = h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, basicAuthSecretName)
 	} else {
 		resp, err = h.getChart(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, indexEntry)
 	}
@@ -467,7 +468,7 @@ func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter,
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	resp, err := h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true)
+	resp, err := h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, params.Get("basic_auth_secret_name"))
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
 		return

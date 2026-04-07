@@ -9,6 +9,8 @@ type HelmRequest struct {
 	Version      int                    `json:"version"`
 	IndexEntry   string                 `json:"indexEntry"`
 	NoRepo       bool                   `json:"noRepo"`
+	// BasicAuthSecretName is optional; names a Secret in Namespace with keys username and password for OCI/HTTP chart pull when NoRepo is true.
+	BasicAuthSecretName string `json:"basic_auth_secret_name"`
 }
 
 type HelmVerifierRequest struct {

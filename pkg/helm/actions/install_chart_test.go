@@ -405,14 +405,17 @@ func TestInstallChartAsync(t *testing.T) {
 
 func TestInstallChartFromURL(t *testing.T) {
 	tests := []struct {
-		testName      string
-		releaseName   string
-		chartPath     string
-		chartName     string
-		chartVersion  string
-		plainHTTP     bool
-		skipTLSVerify bool
-		expectError   bool
+		testName            string
+		releaseName         string
+		chartPath           string
+		chartName           string
+		chartVersion        string
+		plainHTTP           bool
+		skipTLSVerify       bool
+		basicAuthSecretName string
+		basicAuthUser       string
+		basicAuthPass       string
+		expectError         bool
 	}{
 		{
 			testName:      "valid HTTP chart URL",
@@ -444,6 +447,32 @@ func TestInstallChartFromURL(t *testing.T) {
 			skipTLSVerify: true,
 			expectError:   true,
 		},
+		{
+			testName:            "OCI chart with basic auth",
+			releaseName:         "basicauth-oci",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "oci-auth-secret",
+			basicAuthUser:       "AzureDiamond",
+			basicAuthPass:       "hunter2",
+			expectError:         false,
+		},
+		{
+			testName:            "OCI chart with wrong basic auth credentials",
+			releaseName:         "badauth-oci",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-auth-secret",
+			basicAuthUser:       "wrong-user",
+			basicAuthPass:       "wrong-pass",
+			expectError:         true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
@@ -459,18 +488,28 @@ func TestInstallChartFromURL(t *testing.T) {
 			require.NoError(t, err)
 
 			objs := []runtime.Object{}
+			if tt.basicAuthSecretName != "" {
+				objs = append(objs, &v1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      tt.basicAuthSecretName,
+						Namespace: "test-namespace",
+					},
+					Data: map[string][]byte{
+						"username": []byte(tt.basicAuthUser),
+						"password": []byte(tt.basicAuthPass),
+					},
+				})
+			}
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
 
 			if tt.expectError {
-				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion, tt.basicAuthSecretName)
 				require.Error(t, err)
 				require.Nil(t, rel)
 				return
 			}
 
-			// For valid URLs: create the release secret in a background goroutine
-			// to simulate what Helm's cmd.Run would do, unblocking getSecret's Watch.
 			secretName := fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName)
 			go func() {
 				time.Sleep(2 * time.Second)
@@ -494,7 +533,7 @@ func TestInstallChartFromURL(t *testing.T) {
 				secretsDriver.Create(secretName, &r)
 			}()
 
-			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion, tt.basicAuthSecretName)
 			require.NoError(t, err)
 			require.NotNil(t, rel)
 			require.Equal(t, secretName, rel.ObjectMeta.Name)
