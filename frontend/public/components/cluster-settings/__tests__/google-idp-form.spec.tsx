@@ -22,8 +22,8 @@ describe('Add Identity Provider: Google', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'google',
       testValue: mockData.updatedFormValues.name,
@@ -32,16 +32,16 @@ describe('Add Identity Provider: Google', () => {
     });
   });
 
-  it('should render the Client ID label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Client ID label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
       isRequired: true,
     });
   });
 
-  it('should render the Client Secret label and input password element', () => {
-    verifyInputField({
+  it('should render the Client Secret label and input password element', async () => {
+    await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
       testValue: mockData.updatedFormValues.secret,
@@ -49,8 +49,8 @@ describe('Add Identity Provider: Google', () => {
     });
   });
 
-  it('should render the Hosted Domain label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Hosted Domain label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Hosted domain',
       testValue: mockData.updatedFormValues.domain,
       helpText: 'Restrict users to a Google App domain.',

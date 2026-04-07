@@ -82,8 +82,8 @@ describe('Add Identity Provider: LDAP', () => {
     expect(screen.getByText('Attributes map LDAP attributes to identities.')).toBeVisible();
   });
 
-  it('should render the Attributes > ID label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Attributes > ID label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'ID',
       initialValue: 'dn',
       testValue: mockData.updatedFormValues.id,
@@ -92,8 +92,8 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the Attributes > Preferred username label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Attributes > Preferred username label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Preferred username',
       initialValue: 'uid',
       testValue: mockData.updatedFormValues.id,
@@ -102,8 +102,8 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the Attributes Name label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Attributes Name label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Name',
       initialValue: 'cn',
       testValue: mockData.updatedFormValues.name,
@@ -112,8 +112,8 @@ describe('Add Identity Provider: LDAP', () => {
     });
   });
 
-  it('should render the Attributes Email label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Attributes Email label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Email',
       testValue: mockData.updatedFormValues.email,
       testId: 'ldap-attribute-email',

@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ServiceModel } from '../../../models';
 import SinkSourceModal from '../SinkSourceModal';
@@ -8,7 +9,17 @@ jest.mock('@patternfly/react-core', () => ({
   ...jest.requireActual('@patternfly/react-core'),
   ModalHeader: jest.fn(() => null),
   ModalBody: jest.fn(({ children }) => <div>{children}</div>),
-  Button: jest.fn(() => null),
+  Button: jest.fn(({ children, type = 'button', isDisabled, isLoading: _isLoading, ...props }) =>
+    type === 'submit' ? (
+      <button type="submit" disabled={isDisabled} {...props}>
+        {children}
+      </button>
+    ) : (
+      <button type="button" disabled={isDisabled} {...props}>
+        {children}
+      </button>
+    ),
+  ),
   Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
 }));
 
@@ -51,10 +62,13 @@ describe('SinkSourceModal Form', () => {
   beforeEach(() => {
     formProps = {
       ...formikFormProps,
+      isSubmitting: false,
+      isValidating: false,
       values: formValues,
       resourceName: 'myapps',
       namespace: 'myapp',
       initialValues: formValues,
+      cancel: jest.fn(),
     };
   });
 
@@ -65,13 +79,29 @@ describe('SinkSourceModal Form', () => {
     expect(form).toHaveAttribute('id', 'sink-source-form');
   });
 
-  it('should call handleSubmit on form submit', () => {
-    const { container } = render(<SinkSourceModal {...formProps} />);
-    const form = container.querySelector('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+  it('should call handleSubmit on form submit', async () => {
+    const user = userEvent.setup();
+    // Save is disabled when values match initialValues (not dirty); use changed sink so Save is enabled
+    const dirtyValues = {
+      ...formValues,
+      formData: {
+        ...formValues.formData,
+        sink: {
+          ...formValues.formData.sink,
+          key: 'serving.knative.dev~event-greeter-other',
+        },
+      },
+    };
+    render(<SinkSourceModal {...formProps} values={dirtyValues} initialValues={formValues} />);
+    await user.click(screen.getByRole('button', { name: 'knative-plugin~Save' }));
     expect(formProps.handleSubmit).toHaveBeenCalled();
+  });
+
+  it('should call cancel when Cancel is clicked', async () => {
+    const user = userEvent.setup();
+    render(<SinkSourceModal {...formProps} />);
+    await user.click(screen.getByRole('button', { name: 'knative-plugin~Cancel' }));
+    expect(formProps.cancel).toHaveBeenCalled();
   });
 
   it('should render with different values without errors', () => {

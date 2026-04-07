@@ -3,7 +3,8 @@ import type { PluginStore } from '@openshift/dynamic-plugin-sdk';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { Form } from '@patternfly/react-core';
 import type { RenderOptions, BoundFunctions, Queries } from '@testing-library/react';
-import { render, renderHook, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, renderHook, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { Provider } from 'react-redux';
@@ -182,11 +183,10 @@ export const verifyInputField = async ({
   }
 
   // Simulate an input change if a new value is provided
-  // TODO: Use the 'userEvent' instead of 'fireEvent' after Jest and React Testing Libraries upgrade
   if (testValue !== undefined) {
-    await (async () => {
-      fireEvent.change(input, { target: { value: testValue } });
-      await waitFor(() => expect(input).toHaveValue(testValue));
-    });
+    const user = userEvent.setup();
+    await user.clear(input);
+    await user.type(input, testValue);
+    await waitFor(() => expect(input).toHaveValue(testValue));
   }
 };

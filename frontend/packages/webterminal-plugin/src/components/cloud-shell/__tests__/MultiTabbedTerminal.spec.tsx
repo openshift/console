@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { sendActivityTick } from '../cloud-shell-utils';
 import { MultiTabbedTerminal } from '../MultiTabbedTerminal';
@@ -16,19 +16,29 @@ jest.mock('@console/webterminal-plugin/src/components/cloud-shell/CloudShellTerm
 const originalWindowRequestAnimationFrame = window.requestAnimationFrame;
 const originalWindowCancelAnimationFrame = window.cancelAnimationFrame;
 
-// Helper to click an element multiple times sequentially with act()
-const clickMultipleTimes = async (element: HTMLElement, times: number) => {
+// Helper to click an element multiple times sequentially
+const clickMultipleTimes = async (
+  user: ReturnType<typeof userEvent.setup>,
+  getElement: () => HTMLElement | null,
+  times: number,
+) => {
   for (let i = 0; i < times; i++) {
     // eslint-disable-next-line no-await-in-loop
-    await act(async () => {
-      fireEvent.click(element);
-    });
+    const element = getElement();
+    if (!element) break; // Stop if element disappears
+    // eslint-disable-next-line no-await-in-loop
+    await user.click(element);
   }
 };
 
 describe('MultiTabTerminal', () => {
   jest.useFakeTimers();
+  let user: ReturnType<typeof userEvent.setup>;
   (sendActivityTick as jest.Mock).mockImplementation((a, b) => [a, b]);
+
+  beforeEach(() => {
+    user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  });
 
   beforeAll(() => {
     window.requestAnimationFrame = (cb) => setTimeout(cb, 0);
@@ -40,66 +50,57 @@ describe('MultiTabTerminal', () => {
     window.cancelAnimationFrame = originalWindowCancelAnimationFrame;
   });
 
-  it('should initially load with only one console', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
-    await act(async () => {
-      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
-    });
+  it('should initially load with only one console', () => {
+    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
 
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(1);
   });
 
   it('should add terminals on add terminal icon click', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
-    await act(async () => {
-      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
-    });
+    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
 
     const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
-    await act(async () => {
-      fireEvent.click(addTerminalButton);
-    });
+    await user.click(addTerminalButton);
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(2);
-    await act(async () => {
-      fireEvent.click(addTerminalButton);
-    });
-    await act(async () => {
-      fireEvent.click(addTerminalButton);
-    });
+    await user.click(addTerminalButton);
+    await user.click(addTerminalButton);
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(4);
   });
 
   it('should not allow more than 8 terminals', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
-    await act(async () => {
-      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
-    });
+    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
 
-    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
-    await clickMultipleTimes(addTerminalButton, 8);
+    await clickMultipleTimes(
+      user,
+      () => multiTabTerminalWrapper.queryByLabelText('Add new tab'),
+      8,
+    );
     expect(multiTabTerminalWrapper.getAllByText('Terminal content')).toHaveLength(8);
     expect(multiTabTerminalWrapper.queryByLabelText('Add new tab')).toBeNull();
   });
 
   it('should remove terminals on remove terminal icon click', async () => {
-    let multiTabTerminalWrapper: ReturnType<typeof renderWithProviders>;
-    await act(async () => {
-      multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
-    });
+    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
 
-    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
-    await clickMultipleTimes(addTerminalButton, 8);
+    await clickMultipleTimes(
+      user,
+      () => multiTabTerminalWrapper.queryByLabelText('Add new tab'),
+      8,
+    );
 
-    await act(async () => {
-      fireEvent.click(multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(7));
-    });
+    const closeTerminalTabs = () => multiTabTerminalWrapper.getAllByLabelText('Close terminal tab');
+    const tabs = closeTerminalTabs();
+    expect(tabs[7]).toBeTruthy();
+    await user.click(tabs[7]);
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(7);
-    await act(async () => {
-      fireEvent.click(multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(6));
-    });
-    await act(async () => {
-      fireEvent.click(multiTabTerminalWrapper.getAllByLabelText('Close terminal tab').at(5));
-    });
+
+    const tabs2 = closeTerminalTabs();
+    expect(tabs2[6]).toBeTruthy();
+    await user.click(tabs2[6]);
+
+    const tabs3 = closeTerminalTabs();
+    expect(tabs3[5]).toBeTruthy();
+    await user.click(tabs3[5]);
     expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(5);
   });
 

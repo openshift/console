@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
 import { useK8sWatchResource } from '../../utils/k8s-watch-hook';
 import { GroupKind } from '../../../module/k8s';
@@ -108,7 +109,8 @@ describe('ImpersonateUserModal', () => {
   });
 
   describe('Username Input', () => {
-    it('should allow typing username', () => {
+    it('should allow typing username', async () => {
+      const user = userEvent.setup();
       render(
         <ImpersonateUserModal
           isOpen={true}
@@ -118,7 +120,8 @@ describe('ImpersonateUserModal', () => {
       );
 
       const usernameInput = screen.getByTestId('username-input') as HTMLInputElement;
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       expect(usernameInput.value).toBe('testuser');
     });
@@ -204,6 +207,7 @@ describe('ImpersonateUserModal', () => {
 
   describe('Form Submission', () => {
     it('should call onImpersonate with username only when no groups selected', async () => {
+      const user = userEvent.setup();
       render(
         <ImpersonateUserModal
           isOpen={true}
@@ -213,10 +217,11 @@ describe('ImpersonateUserModal', () => {
       );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
@@ -224,6 +229,7 @@ describe('ImpersonateUserModal', () => {
     });
 
     it('should trim whitespace from username', async () => {
+      const user = userEvent.setup();
       render(
         <ImpersonateUserModal
           isOpen={true}
@@ -233,10 +239,11 @@ describe('ImpersonateUserModal', () => {
       );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: '  testuser  ' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, '  testuser  ');
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockOnImpersonate).toHaveBeenCalledWith('testuser', []);
@@ -244,6 +251,7 @@ describe('ImpersonateUserModal', () => {
     });
 
     it('should close modal after successful submission', async () => {
+      const user = userEvent.setup();
       render(
         <ImpersonateUserModal
           isOpen={true}
@@ -253,10 +261,11 @@ describe('ImpersonateUserModal', () => {
       );
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockOnClose).toHaveBeenCalled();
@@ -265,7 +274,8 @@ describe('ImpersonateUserModal', () => {
   });
 
   describe('Modal Close Behavior', () => {
-    it('should call onClose when cancel button is clicked', () => {
+    it('should call onClose when cancel button is clicked', async () => {
+      const user = userEvent.setup();
       render(
         <ImpersonateUserModal
           isOpen={true}
@@ -275,12 +285,13 @@ describe('ImpersonateUserModal', () => {
       );
 
       const cancelButton = screen.getByTestId('cancel-button');
-      fireEvent.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockOnClose).toHaveBeenCalled();
     });
 
-    it('should reset form when modal is closed and reopened', () => {
+    it('should reset form when modal is closed and reopened', async () => {
+      const user = userEvent.setup();
       const { rerender } = render(
         <ImpersonateUserModal
           isOpen={true}
@@ -291,7 +302,8 @@ describe('ImpersonateUserModal', () => {
 
       // Enter username
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       // Close modal
       rerender(
@@ -350,6 +362,7 @@ describe('ImpersonateUserModal', () => {
 
   describe('Expandable Groups (More than 5 selected)', () => {
     it('should show all groups when 5 or fewer are selected', async () => {
+      const user = userEvent.setup();
       (useK8sWatchResource as jest.Mock).mockReturnValue([
         [
           { metadata: { name: 'group1' } },
@@ -372,13 +385,11 @@ describe('ImpersonateUserModal', () => {
 
       // Open dropdown and select all 5 groups
       const groupInput = screen.getByPlaceholderText('Enter groups');
-      fireEvent.click(groupInput);
+      await user.click(groupInput);
 
-      await waitFor(() => {
-        expect(screen.getByText('Select all')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Select all')).toBeVisible();
 
-      fireEvent.click(screen.getByText('Select all'));
+      await user.click(screen.getByText('Select all'));
 
       // All 5 groups should be visible as chips
       await waitFor(() => {
@@ -394,6 +405,7 @@ describe('ImpersonateUserModal', () => {
     });
 
     it('should hide groups beyond 5 and show "+N" button when more than 5 groups selected', async () => {
+      const user = userEvent.setup();
       (useK8sWatchResource as jest.Mock).mockReturnValue([
         [
           { metadata: { name: 'group1' } },
@@ -419,13 +431,11 @@ describe('ImpersonateUserModal', () => {
 
       // Open dropdown and select all 8 groups
       const groupInput = screen.getByPlaceholderText('Enter groups');
-      fireEvent.click(groupInput);
+      await user.click(groupInput);
 
-      await waitFor(() => {
-        expect(screen.getByText('Select all')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Select all')).toBeVisible();
 
-      fireEvent.click(screen.getByText('Select all'));
+      await user.click(screen.getByText('Select all'));
 
       // First 5 groups should be visible as chips
       await waitFor(() => {
@@ -452,6 +462,7 @@ describe('ImpersonateUserModal', () => {
     });
 
     it('should expand and show all groups when "+N" button is clicked', async () => {
+      const user = userEvent.setup();
       (useK8sWatchResource as jest.Mock).mockReturnValue([
         [
           { metadata: { name: 'group1' } },
@@ -476,21 +487,17 @@ describe('ImpersonateUserModal', () => {
 
       // Open dropdown and select all 7 groups
       const groupInput = screen.getByPlaceholderText('Enter groups');
-      fireEvent.click(groupInput);
+      await user.click(groupInput);
 
-      await waitFor(() => {
-        expect(screen.getByText('Select all')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Select all')).toBeVisible();
 
-      fireEvent.click(screen.getByText('Select all'));
+      await user.click(screen.getByText('Select all'));
 
       // Wait for "+2" button to appear
-      await waitFor(() => {
-        expect(screen.getByText('+2')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('+2')).toBeVisible();
 
       // Click the "+2" button to expand
-      fireEvent.click(screen.getByText('+2'));
+      await user.click(screen.getByText('+2'));
 
       // Now all 7 groups should be visible
       await waitFor(() => {
@@ -508,6 +515,7 @@ describe('ImpersonateUserModal', () => {
     });
 
     it('should collapse back when groups are removed to 5 or fewer', async () => {
+      const user = userEvent.setup();
       (useK8sWatchResource as jest.Mock).mockReturnValue([
         [
           { metadata: { name: 'group1' } },
@@ -531,30 +539,24 @@ describe('ImpersonateUserModal', () => {
 
       // Select all 6 groups
       const groupInput = screen.getByPlaceholderText('Enter groups');
-      fireEvent.click(groupInput);
+      await user.click(groupInput);
 
-      await waitFor(() => {
-        expect(screen.getByText('Select all')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Select all')).toBeVisible();
 
-      fireEvent.click(screen.getByText('Select all'));
+      await user.click(screen.getByText('Select all'));
 
       // Expand to show all groups
-      await waitFor(() => {
-        expect(screen.getByText('+1')).toBeInTheDocument();
-      });
-      fireEvent.click(screen.getByText('+1'));
+      expect(await screen.findByText('+1')).toBeVisible();
+      await user.click(screen.getByText('+1'));
 
-      await waitFor(() => {
-        expect(screen.getByText('group6')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('group6')).toBeVisible();
 
       // Remove one group using the close button on the chip
       const group6Chip = screen.getByText('group6').closest('.pf-v6-c-label');
       const closeButton = group6Chip?.querySelector('button');
       expect(closeButton).toBeInTheDocument();
 
-      fireEvent.click(closeButton!);
+      await user.click(closeButton!);
 
       // Now only 5 groups remain, so it should collapse automatically
       await waitFor(() => {

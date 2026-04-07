@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { TextFilter } from '@console/internal/components/factory/text-filter';
 import {
   ListPageWrapper,
@@ -57,26 +58,29 @@ describe('TextFilter component', () => {
     expect(input).toHaveValue(defaultValue);
   });
 
-  it('calls onChange with event and new value when input changes', () => {
+  it('calls onChange with event and new value when input changes', async () => {
+    const user = userEvent.setup();
     const onChange = jest.fn();
 
     renderWithProviders(<TextFilter onChange={onChange} defaultValue="" />);
 
     const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'test-value' } });
+    await user.type(input, 'test-value');
 
     expect(onChange).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(expect.any(Object), 'test-value');
+    await waitFor(() => {
+      expect(onChange).toHaveBeenLastCalledWith(expect.any(Object), 'test-value');
+    });
   });
 
-  it('calls onChange with empty string when input is cleared', () => {
+  it('calls onChange with empty string when input is cleared', async () => {
+    const user = userEvent.setup();
     const onChange = jest.fn();
 
     renderWithProviders(<TextFilter onChange={onChange} defaultValue="initial" />);
 
     const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '' } });
+    await user.clear(input);
 
     expect(onChange).toHaveBeenCalledWith(expect.any(Object), '');
   });

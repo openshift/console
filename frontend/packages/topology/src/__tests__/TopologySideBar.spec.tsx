@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
@@ -21,7 +22,8 @@ describe('TopologySideBar', () => {
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
-  it('calls onClose when close button is clicked', () => {
+  it('calls onClose when close button is clicked', async () => {
+    const user = userEvent.setup();
     const handleClose = jest.fn();
     render(
       <TopologySideBar onClose={handleClose}>
@@ -29,7 +31,7 @@ describe('TopologySideBar', () => {
       </TopologySideBar>,
     );
 
-    fireEvent.click(screen.getByTestId('sidebar-close-button'));
+    await user.click(screen.getByTestId('sidebar-close-button'));
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,7 +1,28 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
+import type { FC } from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { NameValueEditor } from '../../../components/utils/name-value-editor';
 
 jest.mock('react-i18next');
+
+/** Keeps nameValuePairs in state so controlled inputs match typed values after updateParentData. */
+const NameValueEditorHarness: FC<{
+  initialPairs: Array<[string, string, number]>;
+  onUpdate: jest.Mock;
+}> = ({ initialPairs, onUpdate }) => {
+  const [pairs, setPairs] = useState(initialPairs);
+  return (
+    <NameValueEditor
+      nameValuePairs={pairs}
+      updateParentData={(data, nameValueId) => {
+        setPairs(data.nameValuePairs);
+        onUpdate(data, nameValueId);
+      }}
+      nameValueId={0}
+    />
+  );
+};
 
 describe('NameValueEditor', () => {
   beforeEach(() => {
@@ -9,41 +30,45 @@ describe('NameValueEditor', () => {
   });
 
   describe('User can manage name-value pairs', () => {
-    it('allows user to edit existing key and value', () => {
+    it('allows user to edit existing key and value', async () => {
+      const user = userEvent.setup();
       const mockUpdate = jest.fn();
 
       render(
-        <NameValueEditor
-          nameValuePairs={[['mykey', 'myvalue', 0]]}
-          updateParentData={mockUpdate}
-          nameValueId={0}
-        />,
+        <NameValueEditorHarness initialPairs={[['mykey', 'myvalue', 0]]} onUpdate={mockUpdate} />,
       );
 
       // User can see and edit the key
       const keyInput = screen.getByDisplayValue('mykey');
-      fireEvent.change(keyInput, { target: { value: 'newkey' } });
+      await user.clear(keyInput);
+      await user.type(keyInput, 'newkey');
 
-      expect(mockUpdate).toHaveBeenCalledWith(
-        {
-          nameValuePairs: [['newkey', 'myvalue', 0]],
-        },
-        0,
-      );
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenLastCalledWith(
+          {
+            nameValuePairs: [['newkey', 'myvalue', 0]],
+          },
+          0,
+        );
+      });
 
       // User can see and edit the value
       const valueInput = screen.getByDisplayValue('myvalue');
-      fireEvent.change(valueInput, { target: { value: 'newvalue' } });
+      await user.clear(valueInput);
+      await user.type(valueInput, 'newvalue');
 
-      expect(mockUpdate).toHaveBeenCalledWith(
-        {
-          nameValuePairs: [['mykey', 'newvalue', 0]],
-        },
-        0,
-      );
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenLastCalledWith(
+          {
+            nameValuePairs: [['newkey', 'newvalue', 0]],
+          },
+          0,
+        );
+      });
     });
 
-    it('allows user to add a new pair', () => {
+    it('allows user to add a new pair', async () => {
+      const user = userEvent.setup();
       const mockUpdate = jest.fn();
 
       render(
@@ -56,7 +81,7 @@ describe('NameValueEditor', () => {
 
       // User clicks "Add more" button
       const addButton = screen.getByRole('button', { name: /add more/i });
-      fireEvent.click(addButton);
+      await user.click(addButton);
 
       // Should add a new empty pair
       expect(mockUpdate).toHaveBeenCalledWith(
@@ -70,7 +95,8 @@ describe('NameValueEditor', () => {
       );
     });
 
-    it('allows user to delete a pair', () => {
+    it('allows user to delete a pair', async () => {
+      const user = userEvent.setup();
       const mockUpdate = jest.fn();
 
       render(
@@ -85,8 +111,8 @@ describe('NameValueEditor', () => {
       );
 
       // User clicks delete button for first pair
-      const deleteButtons = screen.getAllByTestId('delete-button');
-      fireEvent.click(deleteButtons[0]);
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
+      await user.click(deleteButtons[0]);
 
       // Should remove the first pair and reindex
       expect(mockUpdate).toHaveBeenCalledWith(
@@ -97,7 +123,8 @@ describe('NameValueEditor', () => {
       );
     });
 
-    it('maintains at least one empty pair when deleting the last pair', () => {
+    it('maintains at least one empty pair when deleting the last pair', async () => {
+      const user = userEvent.setup();
       const mockUpdate = jest.fn();
 
       render(
@@ -109,8 +136,8 @@ describe('NameValueEditor', () => {
       );
 
       // User deletes the only pair
-      const deleteButton = screen.getByTestId('delete-button');
-      fireEvent.click(deleteButton);
+      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      await user.click(deleteButton);
 
       // Should replace with empty pair instead of empty array
       expect(mockUpdate).toHaveBeenCalledWith(
@@ -205,23 +232,23 @@ describe('NameValueEditor', () => {
   });
 
   describe('User interactions update data correctly', () => {
-    it('calls updateParentData with correct parameters when typing', () => {
+    it('calls updateParentData with correct parameters when typing', async () => {
+      const user = userEvent.setup();
       const mockUpdate = jest.fn();
       render(
-        <NameValueEditor
-          nameValuePairs={[['test', 'value', 0]]}
-          updateParentData={mockUpdate}
-          nameValueId={0}
-        />,
+        <NameValueEditorHarness initialPairs={[['test', 'value', 0]]} onUpdate={mockUpdate} />,
       );
       const keyInput = screen.getByDisplayValue('test');
-      fireEvent.change(keyInput, { target: { value: 'testX' } });
-      expect(mockUpdate).toHaveBeenCalledWith(
-        {
-          nameValuePairs: [['testX', 'value', 0]],
-        },
-        0,
-      );
+      await user.clear(keyInput);
+      await user.type(keyInput, 'testX');
+      await waitFor(() => {
+        expect(mockUpdate).toHaveBeenLastCalledWith(
+          {
+            nameValuePairs: [['testX', 'value', 0]],
+          },
+          0,
+        );
+      });
     });
   });
 });

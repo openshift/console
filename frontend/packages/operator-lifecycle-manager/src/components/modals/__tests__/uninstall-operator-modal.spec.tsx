@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
@@ -76,10 +77,11 @@ describe(UninstallOperatorModal.name, () => {
   });
 
   it('deletes subscription when form is submitted', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
     const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
-    fireEvent.click(uninstallButton);
+    await user.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(2);
@@ -99,10 +101,11 @@ describe(UninstallOperatorModal.name, () => {
   });
 
   it('deletes ClusterServiceVersion when form is submitted', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
     const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
-    fireEvent.click(uninstallButton);
+    await user.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(2);
@@ -127,12 +130,13 @@ describe(UninstallOperatorModal.name, () => {
   });
 
   it('does not delete ClusterServiceVersion when installedCSV is missing from subscription', async () => {
+    const user = userEvent.setup();
     renderWithProviders(
       <UninstallOperatorModal {...uninstallOperatorModalProps} subscription={testSubscription} />,
     );
 
     const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
-    fireEvent.click(uninstallButton);
+    await user.click(uninstallButton);
 
     await waitFor(() => {
       expect(mockK8sKill).toHaveBeenCalledTimes(1);
@@ -140,10 +144,11 @@ describe(UninstallOperatorModal.name, () => {
   });
 
   it('calls close callback after successful form submission', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<UninstallOperatorModal {...uninstallOperatorModalProps} />);
 
     const uninstallButton = screen.getByRole('button', { name: 'Uninstall' });
-    fireEvent.click(uninstallButton);
+    await user.click(uninstallButton);
 
     await waitFor(() => {
       expect(uninstallOperatorModalProps.close).toHaveBeenCalledTimes(1);

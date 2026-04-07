@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { TextInputModal } from '../TextInputModal';
 
@@ -33,63 +34,65 @@ describe('TextInputModal', () => {
     expect(input.value).toBe('initial-value');
   });
 
-  it('should call onSubmit with value when save button is clicked', () => {
+  it('should call onSubmit with value when save button is clicked', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} />);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith('initial-value');
     expect(mockCloseOverlay).toHaveBeenCalled();
   });
 
-  it('should update value when input changes', () => {
+  it('should update value when input changes', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} />);
 
     const input = screen.getByTestId('input-value') as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'new-value' } });
+    await user.clear(input);
+    await user.type(input, 'new-value');
 
     expect(input.value).toBe('new-value');
   });
 
-  it('should call closeOverlay when cancel button is clicked', () => {
+  it('should call closeOverlay when cancel button is clicked', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} />);
 
     const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(mockCloseOverlay).toHaveBeenCalled();
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('should show error when submitting empty value and isRequired is true', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} isRequired />);
 
     const input = screen.getByTestId('input-value') as HTMLInputElement;
-    fireEvent.change(input, { target: { value: '' } });
+    await user.clear(input);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
-    await waitFor(() => {
-      expect(screen.getByText('This field is required')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('This field is required')).toBeVisible();
 
     expect(mockOnSubmit).not.toHaveBeenCalled();
     expect(mockCloseOverlay).not.toHaveBeenCalled();
   });
 
   it('should call validator and show error when validation fails', async () => {
+    const user = userEvent.setup();
     const mockValidator = jest.fn().mockReturnValue('Invalid value');
 
     renderWithProviders(<TextInputModal {...defaultProps} validator={mockValidator} />);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
-    await waitFor(() => {
-      expect(screen.getByText('Invalid value')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Invalid value')).toBeVisible();
 
     expect(mockValidator).toHaveBeenCalledWith('initial-value');
     expect(mockOnSubmit).not.toHaveBeenCalled();
@@ -97,22 +100,22 @@ describe('TextInputModal', () => {
   });
 
   it('should allow submission after fixing validation error', async () => {
+    const user = userEvent.setup();
     const mockValidator = jest.fn().mockReturnValueOnce('Invalid value').mockReturnValueOnce(null);
 
     renderWithProviders(<TextInputModal {...defaultProps} validator={mockValidator} />);
 
     // Trigger validation error
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
-    await waitFor(() => {
-      expect(screen.getByText('Invalid value')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Invalid value')).toBeVisible();
 
     // Change input and retry
     const input = screen.getByTestId('input-value') as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'valid-value' } });
-    fireEvent.click(saveButton);
+    await user.clear(input);
+    await user.type(input, 'valid-value');
+    await user.click(saveButton);
 
     expect(mockValidator).toHaveBeenCalledTimes(2);
     expect(mockOnSubmit).toHaveBeenCalledWith('valid-value');
@@ -145,11 +148,12 @@ describe('TextInputModal', () => {
     expect(input).toHaveAttribute('type', 'email');
   });
 
-  it('should allow empty value submission when isRequired is false', () => {
+  it('should allow empty value submission when isRequired is false', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} initialValue="" isRequired={false} />);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith('');
     expect(mockCloseOverlay).toHaveBeenCalled();
@@ -163,26 +167,27 @@ describe('TextInputModal', () => {
     expect(label.closest('.pf-v6-c-form__label')).toBeInTheDocument();
   });
 
-  it('should submit form when Enter is pressed in input field', () => {
+  it('should submit form when Enter is pressed in input field', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} />);
 
     const input = screen.getByTestId('input-value') as HTMLInputElement;
-    fireEvent.submit(input.closest('form'));
+    await user.click(input);
+    await user.keyboard('{Enter}');
 
     expect(mockOnSubmit).toHaveBeenCalledWith('initial-value');
     expect(mockCloseOverlay).toHaveBeenCalled();
   });
 
   it('should prevent submission when value is empty and isRequired is true', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<TextInputModal {...defaultProps} initialValue="" isRequired />);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     // Should show validation error instead of calling onSubmit
-    await waitFor(() => {
-      expect(screen.getByText('This field is required')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('This field is required')).toBeVisible();
 
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });

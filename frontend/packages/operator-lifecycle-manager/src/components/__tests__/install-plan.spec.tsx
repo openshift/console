@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import * as Router from 'react-router';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
@@ -307,8 +308,9 @@ describe('InstallPlanPreview', () => {
 
     renderWithProviders(<InstallPlanPreview obj={manualPlan} />);
 
+    const user = userEvent.setup();
     const approveButton = screen.getByRole('button', { name: 'Approve' });
-    fireEvent.click(approveButton);
+    await user.click(approveButton);
 
     await waitFor(() => {
       expect(k8sPatchMock).toHaveBeenCalledWith(

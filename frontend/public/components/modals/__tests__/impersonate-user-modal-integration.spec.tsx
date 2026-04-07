@@ -3,7 +3,8 @@
  * Tests the modal integrated with Redux actions and state
  */
 
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { ImpersonateUserModal } from '../impersonate-user-modal';
@@ -54,6 +55,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Form submission with Redux integration', () => {
     it('should dispatch startImpersonate action with user only', async () => {
+      const user = userEvent.setup();
       const onClose = jest.fn();
       const onImpersonate = jest.fn((username) => {
         mockStartImpersonate('User', username);
@@ -68,10 +70,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'testuser');
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('testuser', []);
@@ -80,6 +83,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should dispatch startImpersonate action with user and groups', async () => {
+      const user = userEvent.setup();
       const onClose = jest.fn();
       const onImpersonate = jest.fn((username, groups) => {
         if (groups.length > 0) {
@@ -98,27 +102,23 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'multiuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'multiuser');
 
       // Open groups dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
       await act(async () => {
-        fireEvent.click(groupsInput);
+        await user.click(groupsInput);
       });
 
       // Wait for dropdown to open and select first group
-      await waitFor(() => {
-        const firstGroup = screen.getByText('developers');
-        expect(firstGroup).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
+      const developersOption = await screen.findByText('developers');
       await act(async () => {
-        fireEvent.click(developersOption);
+        await user.click(developersOption);
       });
 
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('multiuser', ['developers']);
@@ -131,6 +131,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Group selection workflow', () => {
     it('should handle complete group selection flow', async () => {
+      const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
       await act(async () => {
@@ -143,22 +144,19 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Enter username
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'groupuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'groupuser');
 
       // Open dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
       await act(async () => {
-        fireEvent.click(groupsInput);
+        await user.click(groupsInput);
       });
 
       // Select first group
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
+      const developersOption = await screen.findByText('developers');
       await act(async () => {
-        fireEvent.click(developersOption);
+        await user.click(developersOption);
       });
 
       // Verify group chip appears
@@ -170,7 +168,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       // Select second group
       const adminsOption = screen.getByText('admins');
       await act(async () => {
-        fireEvent.click(adminsOption);
+        await user.click(adminsOption);
       });
 
       // Verify two groups are selected
@@ -181,7 +179,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Submit
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('groupuser', ['developers', 'admins']);
@@ -189,6 +187,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should allow deselecting a group', async () => {
+      const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
       await act(async () => {
@@ -200,21 +199,18 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
 
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'deselectuser' } });
+      await user.clear(usernameInput);
+      await user.type(usernameInput, 'deselectuser');
 
       // Open and select group
       const groupsInput = screen.getByPlaceholderText('Enter groups');
       await act(async () => {
-        fireEvent.click(groupsInput);
+        await user.click(groupsInput);
       });
 
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
-
-      const developersOption = screen.getByText('developers');
+      const developersOption = await screen.findByText('developers');
       await act(async () => {
-        fireEvent.click(developersOption);
+        await user.click(developersOption);
       });
 
       // Wait for chip to appear
@@ -227,7 +223,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const closeButtons = document.querySelectorAll('.pf-v6-c-label__actions button');
       if (closeButtons.length > 0) {
         await act(async () => {
-          fireEvent.click(closeButtons[0]);
+          await user.click(closeButtons[0]);
         });
 
         await waitFor(() => {
@@ -238,7 +234,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Submit with no groups
       const submitButton = screen.getByTestId('impersonate-button');
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(onImpersonate).toHaveBeenCalledWith('deselectuser', []);
@@ -248,6 +244,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Search and filter workflow', () => {
     it('should filter groups based on search input', async () => {
+      const user = userEvent.setup();
       await act(async () => {
         render(
           <Provider store={mockStore}>
@@ -260,17 +257,14 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Open dropdown first
       await act(async () => {
-        fireEvent.click(groupsInput);
+        await user.click(groupsInput);
       });
 
-      // Wait for dropdown to open
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
+      await screen.findByText('developers');
 
       // Type to filter
       await act(async () => {
-        fireEvent.change(groupsInput, { target: { value: 'dev' } });
+        await user.type(groupsInput, 'dev');
       });
 
       await waitFor(() => {
@@ -282,6 +276,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should show no results when filter matches nothing', async () => {
+      const user = userEvent.setup();
       await act(async () => {
         render(
           <Provider store={mockStore}>
@@ -294,22 +289,17 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Open dropdown first
       await act(async () => {
-        fireEvent.click(groupsInput);
+        await user.click(groupsInput);
       });
 
-      // Wait for dropdown to open
-      await waitFor(() => {
-        expect(screen.getByText('developers')).toBeInTheDocument();
-      });
+      await screen.findByText('developers');
 
       // Type to filter with non-matching text
       await act(async () => {
-        fireEvent.change(groupsInput, { target: { value: 'nonexistent' } });
+        await user.type(groupsInput, 'nonexistent');
       });
 
-      await waitFor(() => {
-        expect(screen.getByText('No results found')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('No results found')).toBeVisible();
     });
   });
 
@@ -326,13 +316,13 @@ describe('ImpersonateUserModal Integration Tests', () => {
         );
       });
 
-      await waitFor(() => {
-        expect(screen.getByText('Failed to load groups')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Failed to load groups')).toBeVisible();
 
       // Should still allow impersonation without groups
+      const ue = userEvent.setup();
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'erroruser' } });
+      await ue.clear(usernameInput);
+      await ue.type(usernameInput, 'erroruser');
 
       const submitButton = screen.getByTestId('impersonate-button');
       expect(submitButton).not.toBeDisabled();
@@ -341,6 +331,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
   describe('Modal lifecycle workflow', () => {
     it('should reset form when reopening modal', async () => {
+      const ue = userEvent.setup();
       const { rerender } = render(
         <Provider store={mockStore}>
           <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
@@ -349,7 +340,8 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Fill form
       const usernameInput = screen.getByTestId('username-input');
-      fireEvent.change(usernameInput, { target: { value: 'tempuser' } });
+      await ue.clear(usernameInput);
+      await ue.type(usernameInput, 'tempuser');
 
       // Close modal
       await act(async () => {
@@ -375,6 +367,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
     });
 
     it('should call onClose when cancel is clicked', async () => {
+      const ue = userEvent.setup();
       const onClose = jest.fn();
 
       await act(async () => {
@@ -386,7 +379,7 @@ describe('ImpersonateUserModal Integration Tests', () => {
       });
 
       const cancelButton = screen.getByTestId('cancel-button');
-      fireEvent.click(cancelButton);
+      await ue.click(cancelButton);
 
       expect(onClose).toHaveBeenCalled();
     });
@@ -413,7 +406,6 @@ describe('ImpersonateUserModal Integration Tests', () => {
       expect(usernameInput).toHaveAttribute('readonly');
 
       // Readonly attribute should be present (prevents browser editing)
-      // Note: In test environment, fireEvent.change still works, but readonly
       // attribute is correctly set for browser behavior
     });
   });

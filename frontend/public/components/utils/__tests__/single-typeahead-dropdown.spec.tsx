@@ -1,4 +1,5 @@
-import { screen, act, waitFor, fireEvent } from '@testing-library/react';
+import { screen, act, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { SingleTypeaheadDropdown } from '../single-typeahead-dropdown';
@@ -30,6 +31,7 @@ describe('SingleTypeaheadDropdown', () => {
   });
 
   it('should display the clear button when input value is present', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -45,17 +47,16 @@ describe('SingleTypeaheadDropdown', () => {
 
     // Type some text into the input
     await act(async () => {
-      fireEvent.change(combobox, { target: { value: 'test' } });
+      await user.click(combobox);
+      await user.type(combobox, 'test');
     });
 
-    await waitFor(() => {
-      const clearButton = screen.getByRole('button', { name: /clear input value/i });
-      expect(clearButton).toBeInTheDocument();
-      expect(clearButton).toBeVisible();
-    });
+    const clearButton = await screen.findByRole('button', { name: /clear input value/i });
+    expect(clearButton).toBeVisible();
   });
 
   it('should not display the clear button when hideClearButton is true', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -70,7 +71,8 @@ describe('SingleTypeaheadDropdown', () => {
     const combobox = screen.getByRole('combobox');
 
     await act(async () => {
-      fireEvent.change(combobox, { target: { value: 'test' } });
+      await user.click(combobox);
+      await user.type(combobox, 'test');
     });
 
     await waitFor(() => {
@@ -80,6 +82,7 @@ describe('SingleTypeaheadDropdown', () => {
   });
 
   it('should focus the first item when ArrowDown key is pressed', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -97,15 +100,12 @@ describe('SingleTypeaheadDropdown', () => {
 
     // Press ArrowDown to open dropdown and focus first item
     await act(async () => {
-      fireEvent.click(combobox);
-      fireEvent.keyDown(combobox, { key: 'ArrowDown' });
+      await user.click(combobox);
+      await user.keyboard('{ArrowDown}');
     });
 
-    await waitFor(() => {
-      const firstOption = screen.getByRole('option', { name: 'test1' });
-      expect(firstOption).toBeInTheDocument();
-      expect(firstOption).toBeVisible();
-    });
+    const firstOption = await screen.findByRole('option', { name: 'test1' });
+    expect(firstOption).toBeVisible();
 
     // Verify the combobox has the aria-activedescendant attribute pointing to the focused item
     await waitFor(() => {
@@ -114,6 +114,7 @@ describe('SingleTypeaheadDropdown', () => {
   });
 
   it('should focus the last item when ArrowUp key is pressed on the first item', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -131,18 +132,12 @@ describe('SingleTypeaheadDropdown', () => {
 
     // Press ArrowUp to open dropdown and focus last item
     await act(async () => {
-      fireEvent.click(combobox);
-      fireEvent.keyDown(combobox, { key: 'ArrowUp' });
+      await user.click(combobox);
+      await user.keyboard('{ArrowUp}');
     });
 
-    await waitFor(() => {
-      const firstOption = screen.getByRole('option', { name: 'test1' });
-      const secondOption = screen.getByRole('option', { name: 'test2' });
-      expect(firstOption).toBeInTheDocument();
-      expect(secondOption).toBeInTheDocument();
-      expect(firstOption).toBeVisible();
-      expect(secondOption).toBeVisible();
-    });
+    expect(await screen.findByRole('option', { name: 'test1' })).toBeVisible();
+    expect(await screen.findByRole('option', { name: 'test2' })).toBeVisible();
 
     // Verify the combobox has the aria-activedescendant attribute (should point to last item)
     await waitFor(() => {
@@ -151,6 +146,7 @@ describe('SingleTypeaheadDropdown', () => {
   });
 
   it('should call onChange when an option is selected', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -167,18 +163,13 @@ describe('SingleTypeaheadDropdown', () => {
     const combobox = screen.getByRole('combobox');
 
     await act(async () => {
-      fireEvent.click(combobox);
+      await user.click(combobox);
     });
 
     // Wait for dropdown to open and click on the first option
-    await waitFor(() => {
-      const firstOption = screen.getByRole('option', { name: 'test1' });
-      expect(firstOption).toBeVisible();
-    });
-
-    const firstOption = screen.getByRole('option', { name: 'test1' });
+    const firstOption = await screen.findByRole('option', { name: 'test1' });
     await act(async () => {
-      fireEvent.click(firstOption);
+      await user.click(firstOption);
     });
 
     await waitFor(() => {
@@ -187,6 +178,7 @@ describe('SingleTypeaheadDropdown', () => {
   });
 
   it('should clear the input when clear button is clicked', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       renderWithProviders(
         <SingleTypeaheadDropdown
@@ -201,17 +193,14 @@ describe('SingleTypeaheadDropdown', () => {
     const combobox = screen.getByRole('combobox');
 
     await act(async () => {
-      fireEvent.change(combobox, { target: { value: 'some text' } });
+      await user.click(combobox);
+      await user.clear(combobox);
+      await user.type(combobox, 'some text');
     });
 
-    await waitFor(() => {
-      const clearButton = screen.getByRole('button', { name: /clear input value/i });
-      expect(clearButton).toBeVisible();
-    });
-
-    const clearButton = screen.getByRole('button', { name: /clear input value/i });
+    const clearButton = await screen.findByRole('button', { name: /clear input value/i });
     await act(async () => {
-      fireEvent.click(clearButton);
+      await user.click(clearButton);
     });
 
     await waitFor(() => {

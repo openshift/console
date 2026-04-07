@@ -37,20 +37,19 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies a text input for storage class name', async () => {
-    await waitFor(() => {
-      verifyInputField({
-        inputLabel: 'Name',
-        inputType: 'text',
-      });
+    await verifyInputField({
+      inputLabel: 'Name',
+      inputType: 'text',
     });
   });
 
   it('verifies a text input for storage class description', async () => {
     await waitFor(() => {
-      verifyInputField({
-        inputLabel: 'Description',
-        testValue: 'Test storage class description',
-      });
+      expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    });
+    await verifyInputField({
+      inputLabel: 'Description',
+      testValue: 'Test storage class description',
     });
   });
 

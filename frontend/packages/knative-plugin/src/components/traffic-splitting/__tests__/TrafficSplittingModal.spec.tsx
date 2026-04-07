@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import {
   mockTrafficData,
@@ -11,7 +12,17 @@ jest.mock('@patternfly/react-core', () => ({
   ...jest.requireActual('@patternfly/react-core'),
   ModalHeader: jest.fn(() => null),
   ModalBody: jest.fn(({ children }) => <div>{children}</div>),
-  Button: jest.fn(() => null),
+  Button: jest.fn(({ children, type = 'button', isDisabled, isLoading: _isLoading, ...props }) =>
+    type === 'submit' ? (
+      <button type="submit" disabled={isDisabled} {...props}>
+        {children}
+      </button>
+    ) : (
+      <button type="button" disabled={isDisabled} {...props}>
+        {children}
+      </button>
+    ),
+  ),
   Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
 }));
 
@@ -38,6 +49,8 @@ describe('TrafficSplittingModal', () => {
   beforeEach(() => {
     formProps = {
       ...formikFormProps,
+      isSubmitting: false,
+      isValidating: false,
       status: { error: 'checkErrorProp' },
       values: { trafficSplitting: mockTrafficData },
       revisionItems: mockRevisionItems,
@@ -51,12 +64,17 @@ describe('TrafficSplittingModal', () => {
     expect(container.querySelector('form')).toHaveAttribute('id', 'traffic-splitting-form');
   });
 
-  it('should call handleSubmit on form submit', () => {
-    const { container } = render(<TrafficSplittingModal {...formProps} />);
-    const form = container.querySelector('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+  it('should call handleSubmit on form submit', async () => {
+    const user = userEvent.setup();
+    render(<TrafficSplittingModal {...formProps} />);
+    await user.click(screen.getByRole('button', { name: 'knative-plugin~Save' }));
     expect(formProps.handleSubmit).toHaveBeenCalled();
+  });
+
+  it('should call cancel when Cancel is clicked', async () => {
+    const user = userEvent.setup();
+    render(<TrafficSplittingModal {...formProps} />);
+    await user.click(screen.getByRole('button', { name: 'knative-plugin~Cancel' }));
+    expect(formProps.cancel).toHaveBeenCalled();
   });
 });

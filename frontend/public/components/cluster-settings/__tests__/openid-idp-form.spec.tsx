@@ -88,8 +88,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     ).toBeVisible();
   });
 
-  it('should render the Preferred username label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Preferred username label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Preferred username',
       initialValue: 'preferred_username',
       testValue: mockData.updatedFormValues.username,
@@ -98,8 +98,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Name',
       initialValue: 'name',
       testValue: mockData.updatedFormValues.name,
@@ -108,8 +108,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Email label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Email label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Email',
       initialValue: 'email',
       testValue: mockData.updatedFormValues.email,
@@ -126,8 +126,8 @@ describe('Add Identity Provider: OpenID Connect', () => {
     });
   });
 
-  it('should render the Extra scopes label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Extra scopes label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Extra scopes',
       testValue: mockData.updatedFormValues.updatedValue,
       testId: 'openid-more-options-extra-scopes',

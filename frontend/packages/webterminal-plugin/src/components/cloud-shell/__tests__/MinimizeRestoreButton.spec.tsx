@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MinimizeRestoreButton } from '../MinimizeRestoreButton';
 
 describe('MinimizeRestoreButton', () => {
@@ -34,6 +35,7 @@ describe('MinimizeRestoreButton', () => {
   });
 
   it('should invoke onclose callback with argument true when minimized button clicked and false when restore button clicked', async () => {
+    const user = userEvent.setup();
     const onClose = jest.fn();
 
     const { rerender } = render(
@@ -49,7 +51,7 @@ describe('MinimizeRestoreButton', () => {
     expect(screen.queryByRole('button', { name: 'Restore' })).not.toBeInTheDocument();
 
     // click on minimize button
-    await fireEvent.click(screen.getByRole('button', { name: 'Minimize' }));
+    await user.click(screen.getByRole('button', { name: 'Minimize' }));
     expect(onClose).toHaveBeenLastCalledWith(true);
 
     // Re-render with minimize=false to test restore button
@@ -66,7 +68,7 @@ describe('MinimizeRestoreButton', () => {
     expect(screen.getByRole('button', { name: 'Restore' })).toBeInTheDocument();
 
     // click on restore button
-    await fireEvent.click(screen.getByRole('button', { name: 'Restore' }));
+    await user.click(screen.getByRole('button', { name: 'Restore' }));
     expect(onClose).toHaveBeenLastCalledWith(false);
   });
 });

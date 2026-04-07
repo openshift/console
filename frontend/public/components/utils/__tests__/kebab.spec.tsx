@@ -1,4 +1,5 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { KebabItem, KebabItemAccessReview_ } from '../kebab';
 import { useAccessReview } from '../rbac';
 
@@ -14,25 +15,28 @@ const mockOption = {
 };
 
 describe('KebabItem', () => {
-  it('should disable option without callback / href (i.e. option does nothing)', () => {
+  it('should disable option without callback / href (i.e. option does nothing)', async () => {
+    const user = userEvent.setup();
     const nothingOption = { ...mockOption, href: undefined };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={nothingOption} />);
-    fireEvent.click(renderItem.getByRole('menuitem'));
+    await user.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(0);
   });
-  it('should enable when option has href', () => {
+  it('should enable when option has href', async () => {
+    const user = userEvent.setup();
     const hrefOption = { ...mockOption };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={hrefOption} />);
-    fireEvent.click(renderItem.getByRole('menuitem'));
+    await user.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
-  it('should enable when option has a callback', () => {
+  it('should enable when option has a callback', async () => {
+    const user = userEvent.setup();
     const callbackOption = { ...mockOption, href: undefined, callback: () => {} };
     const trackOnClick = jest.fn();
     const renderItem = render(<KebabItem onClick={trackOnClick} option={callbackOption} />);
-    fireEvent.click(renderItem.getByRole('menuitem'));
+    await user.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
 });
@@ -44,7 +48,8 @@ describe('KebabItemAccessReview_', () => {
     name: 'dummy',
     subprotocols: ['dummy'],
   };
-  it('should disable option when option.accessReview present and not allowed', () => {
+  it('should disable option when option.accessReview present and not allowed', async () => {
+    const user = userEvent.setup();
     const useAccessReviewMock = useAccessReview as jest.Mock;
     const trackOnClick = jest.fn();
     useAccessReviewMock.mockReturnValue(false);
@@ -55,10 +60,11 @@ describe('KebabItemAccessReview_', () => {
         impersonate={mockImpersonate}
       />,
     );
-    fireEvent.click(renderItem.getByRole('menuitem'));
+    await user.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(0);
   });
-  it('should enable option when option.accessReview present and allowed', () => {
+  it('should enable option when option.accessReview present and allowed', async () => {
+    const user = userEvent.setup();
     const useAccessReviewMock = useAccessReview as jest.Mock;
     const trackOnClick = jest.fn();
     useAccessReviewMock.mockReturnValue(true);
@@ -69,7 +75,7 @@ describe('KebabItemAccessReview_', () => {
         impersonate={mockImpersonate}
       />,
     );
-    fireEvent.click(renderItem.getByRole('menuitem'));
+    await user.click(renderItem.getByRole('menuitem'));
     expect(trackOnClick).toHaveBeenCalledTimes(1);
   });
 });
