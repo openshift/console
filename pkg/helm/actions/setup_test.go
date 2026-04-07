@@ -104,6 +104,9 @@ func startTests(m *testing.M) (exitCode int) {
 	if err := setupTestBasicAuth(); err != nil {
 		panic(err)
 	}
+	if err := setupTestOCIBasicAuth(); err != nil {
+		panic(err)
+	}
 	return m.Run()
 }
 
@@ -163,6 +166,17 @@ func setupTestBasicAuth() error {
 	}
 	time.Sleep(5 * time.Second)
 	if err := ExecuteScript("./testdata/uploadChartsWithBasicAuth.sh", true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func setupTestOCIBasicAuth() error {
+	if err := ExecuteScript("./testdata/zotWithBasicAuth.sh", false); err != nil {
+		return err
+	}
+	time.Sleep(5 * time.Second)
+	if err := ExecuteScript("./testdata/uploadOciCharts.sh", true, "--basic-auth"); err != nil {
 		return err
 	}
 	return nil

@@ -63,13 +63,25 @@ func GetChart(url string, conf *action.Configuration, repositoryNamespace string
 	return loader.Load(chartPath)
 }
 
-func GetChartFromURL(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool) (*chart.Chart, error) {
+// GetChartFromURL loads a chart from an OCI or direct HTTP(S) URL. basicAuthSecretName names a
+// Secret in namespace with username and password keys when the registry requires authentication.
+func GetChartFromURL(url string, conf *action.Configuration, namespace string, client dynamic.Interface, coreClient corev1client.CoreV1Interface, filesCleanup bool, basicAuthSecretName string) (*chart.Chart, error) {
 
 	if !isValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
 	}
 	cmd := action.NewInstall(conf)
 	cmd.Namespace = namespace
+	if err := applyBasicAuthFromSecret(cmd, coreClient, namespace, basicAuthSecretName); err != nil {
+		return nil, err
+	}
+	if basicAuthSecretName != "" {
+		rc, err := RegistryClientWithBasicAuth(false, false, cmd.Username, cmd.Password)
+		if err != nil {
+			return nil, fmt.Errorf("failed to configure OCI registry client: %w", err)
+		}
+		cmd.SetRegistryClient(rc)
+	}
 	chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chart from URL: %v", err)

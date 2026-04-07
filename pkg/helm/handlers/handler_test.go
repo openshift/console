@@ -201,8 +201,8 @@ func getFakeActionConfigurations(string, string, string, *http.RoundTripper) *ac
 	}
 }
 
-func fakeInstallChartFromURL(mockedSecret *kv1.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
-	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
+func fakeInstallChartFromURL(mockedSecret *kv1.Secret, err error) func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string, basicAuthSecretName string) (*kv1.Secret, error) {
+	return func(ns string, name string, url string, values map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string, basicAuthSecretName string) (*kv1.Secret, error) {
 		return mockedSecret, err
 	}
 }
