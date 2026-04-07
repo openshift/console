@@ -12,8 +12,9 @@ import {
   TableColumn,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { TableData } from '@console/internal/components/factory';
+import { sorts, TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import {
   ResourceLink,
   ResourceKebab,
@@ -28,9 +29,9 @@ import {
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { snapshotStatus, Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
+import { snapshotStatusFilters } from '../../status';
 
 export const tableColumnInfo = [
   { id: 'name' },
@@ -54,7 +55,7 @@ const Row: React.FC<RowProps<VolumeSnapshotContentKind>> = ({ obj }) => {
         <ResourceLink kind={referenceForModel(VolumeSnapshotContentModel)} name={name} />
       </TableData>
       <TableData {...tableColumnInfo[1]}>
-        <Status status={volumeSnapshotStatus(obj)} />
+        <Status status={snapshotStatus(obj)} />
       </TableData>
       <TableData {...tableColumnInfo[2]}>{sizeMetrics}</TableData>
       <TableData {...tableColumnInfo[3]}>
@@ -95,14 +96,16 @@ const VolumeSnapshotContentTable: React.FC<VolumeSnapshotContentTableProps> = (p
     },
     {
       title: t('console-app~Status'),
-      sort: 'snapshotStatus',
+      sort: (data, direction) =>
+        data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
       transforms: [sortable],
       props: { className: tableColumnInfo[1].className },
       id: tableColumnInfo[1].id,
     },
     {
       title: t('console-app~Size'),
-      sort: 'volumeSnapshotSize',
+      sort: (data, direction) =>
+        data.sort(sortResourceByValue(direction, sorts.volumeSnapshotContentSize)),
       transforms: [sortable],
       props: { className: tableColumnInfo[2].className },
       id: tableColumnInfo[2].id,

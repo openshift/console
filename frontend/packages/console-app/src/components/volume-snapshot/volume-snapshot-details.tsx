@@ -31,10 +31,10 @@ import {
   Status,
   snapshotSource,
   FLAGS,
+  snapshotStatus,
 } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;
 
@@ -62,7 +62,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <Status status={volumeSnapshotStatus(obj)} />
+                <Status status={snapshotStatus(obj)} />
               </DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
@@ -146,7 +146,7 @@ const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
     <DetailsPage
       {...props}
       customActionMenu={customActionMenu}
-      getResourceStatus={volumeSnapshotStatus}
+      getResourceStatus={snapshotStatus}
       pages={pages}
     />
   );

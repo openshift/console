@@ -25,7 +25,12 @@ import { useNavigate } from 'react-router-dom-v5-compat';
 import { getMachinePhase } from '@console/shared/src/selectors/machine';
 import { getMachineSetInstanceType } from '@console/shared/src/selectors/machineSet';
 import { pvcUsed } from '@console/shared/src/sorts/pvc';
-import { snapshotSize, snapshotSource } from '@console/shared/src/sorts/snapshot';
+import {
+  snapshotContentSize,
+  snapshotSize,
+  snapshotSource,
+  snapshotStatus,
+} from '@console/shared/src/sorts/snapshot';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getName } from '@console/shared/src/selectors/common';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
@@ -46,6 +51,7 @@ import {
   MachineKind,
   VolumeSnapshotKind,
   ClusterOperator,
+  VolumeSnapshotContentKind,
 } from '../../module/k8s/types';
 import { getClusterOperatorStatus } from '../../module/k8s/cluster-operator';
 import { getClusterOperatorVersion, getJobTypeAndCompletions } from '../../module/k8s';
@@ -55,7 +61,7 @@ import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
 import { useTableData } from './table-data-hook';
 import TableHeader from './Table/TableHeader';
 
-const sorts = {
+export const sorts = {
   alertingRuleStateOrder,
   alertSeverityOrder,
   crdLatestVersion: (crd: CustomResourceDefinitionKind): string => getLatestVersionForCRD(crd),
@@ -82,7 +88,11 @@ const sorts = {
   getTemplateInstanceStatus,
   machinePhase: (machine: MachineKind): string => getMachinePhase(machine),
   pvcUsed: (pvc: K8sResourceKind): number => pvcUsed(pvc),
+  volumeSnapshotStatus: (snapshot: VolumeSnapshotKind | VolumeSnapshotContentKind): string =>
+    snapshotStatus(snapshot),
   volumeSnapshotSize: (snapshot: VolumeSnapshotKind): number => snapshotSize(snapshot),
+  volumeSnapshotContentSize: (snapshot: VolumeSnapshotContentKind): number =>
+    snapshotContentSize(snapshot),
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
