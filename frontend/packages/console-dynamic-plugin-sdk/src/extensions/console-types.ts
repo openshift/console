@@ -29,6 +29,7 @@ import type {
   ResolvedExtension,
   Selector,
 } from '../api/common-types';
+import type { DataViewManagedColumn } from '../api/internal-types';
 import type { Extension, ExtensionTypeGuard } from '../types';
 import type { CustomDataSource } from './dashboard-data-source';
 
@@ -474,6 +475,13 @@ export type TableColumn<D> = ICell & {
   resizableProps?: any;
 };
 
+/**
+ * Union type for columns managed by {@link useActiveColumns}.
+ * Supports both new ConsoleDataViewColumn and legacy {@link TableColumn} for backward compatibility.
+ * @public
+ */
+export type { DataViewManagedColumn } from '../api/internal-types';
+
 export type RowProps<D, R extends any = {}> = {
   obj: D;
   rowData: R;
@@ -524,10 +532,10 @@ export type UseActiveColumns = <D = any>({
   showNamespaceOverride,
   columnManagementID,
 }: {
-  columns: TableColumn<D>[];
+  columns: DataViewManagedColumn<D>[];
   showNamespaceOverride: boolean;
   columnManagementID: string;
-}) => [TableColumn<D>[], boolean];
+}) => [DataViewManagedColumn<D>[], boolean];
 
 export type ListPageHeaderProps = {
   /** A badge that is displayed next to the title of the heading */

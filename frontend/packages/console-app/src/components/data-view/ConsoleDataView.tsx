@@ -285,3 +285,5 @@ export const getLabelsColumnWidthStyleProp = (width: number | undefined, default
     width: `${width ?? defaultWidth}px`,
   },
 });
+
+export const MODIFIER_NOWRAP = 'nowrap' as const;

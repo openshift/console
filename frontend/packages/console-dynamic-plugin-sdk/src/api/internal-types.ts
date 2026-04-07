@@ -13,6 +13,7 @@ import type {
   TopConsumerPopoverProps,
   ColumnLayout,
   RowProps,
+  TableColumn,
 } from '../extensions/console-types';
 import type { Alert, K8sModel } from './common-types';
 
@@ -323,7 +324,21 @@ export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
   resizableProps?: any;
+  /** When true, column is hidden by default in column management. */
+  additional?: boolean;
 };
+
+/**
+ * Union type for columns managed by {@link useActiveColumns}.
+ * Supports both new {@link ConsoleDataViewColumn} and legacy {@link TableColumn} for backward compatibility.
+ *
+ * @remarks
+ * This type enables gradual migration from TableColumn to ConsoleDataViewColumn without breaking existing code.
+ * External plugins can continue using TableColumn while adopting the new ConsoleDataViewColumn pattern.
+ *
+ * @public
+ */
+export type DataViewManagedColumn<D = any> = ConsoleDataViewColumn<D> | TableColumn<D>;
 
 export type ConsoleDataViewRow = any[];
 
