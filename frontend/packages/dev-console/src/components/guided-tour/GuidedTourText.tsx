@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 
 const DevPerspectiveTourText: FC = () => {
   const { t } = useTranslation();

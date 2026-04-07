@@ -26,11 +26,10 @@ import {
   TextInput,
   InputGroupItem,
 } from '@patternfly/react-core';
-import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon';
+import { ChartLineIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 import type {
   FormatSeriesTitle,
@@ -61,7 +60,8 @@ import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useSafeFetch } from '@console/internal/components/utils/safe-fetch-hook';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { humanizeNumberSI } from '@console/internal/components/utils/units';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   formatPrometheusDuration,
   parsePrometheusDuration,
@@ -687,15 +687,15 @@ const QueryBrowserWrapped: FC<QueryBrowserProps> = ({
   units,
 }) => {
   const { t } = useTranslation();
-  const hideGraphs = useSelector(({ observe }: RootState) => !!observe.get('hideGraphs'));
-  const tickInterval = useSelector(
-    ({ observe }: RootState) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
+  const hideGraphs = useConsoleSelector<boolean>(({ observe }) => !!observe.get('hideGraphs'));
+  const tickInterval = useConsoleSelector<number>(
+    ({ observe }) => pollInterval ?? observe.getIn(['queryBrowser', 'pollInterval']),
   );
-  const lastRequestTime = useSelector(({ observe }: RootState) =>
+  const lastRequestTime = useConsoleSelector<number>(({ observe }) =>
     observe.getIn(['queryBrowser', 'lastRequestTime']),
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan

@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import type { AddActionGroup } from '@console/dynamic-plugin-sdk';
 import { isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { GettingStartedSection } from '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection';
-import { getQueryArgument } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { useActiveNamespace } from '@console/shared';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { getQueryArgument } from '@console/shared/src/hooks/useQueryParamsMutator';
 import TopologyQuickSearch from '@console/topology/src/components/quick-search/TopologyQuickSearch';
 import TopologyQuickSearchButton from '@console/topology/src/components/quick-search/TopologyQuickSearchButton';
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
@@ -112,7 +112,7 @@ const AddPageLayout: FC<AddPageLayoutProps> = ({ title }) => {
       <PageHeading title={title} />
       <PageSection>
         {HelpText}
-        <GettingStartedSection userSettingKey="devconsole.addPage.gettingStarted" />
+        <GettingStartedSection userPreferenceKey="devconsole.addPage.gettingStarted" />
         <AddCardSection
           addActionExtensions={filteredAddActionExtensions}
           addActionGroupExtensions={addActionGroupExtensions}

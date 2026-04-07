@@ -10,11 +10,12 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.2 - TBD
+## 4.22.0-prerelease.2 - 2026-03-26
 
 - **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`. Migrate by
-  building your plugin with a 4.22 or later of `ConsoleRemotePlugin`. Runtime support for older plugins
+  building your plugin with `ConsoleRemotePlugin` version 4.22 or later. Runtime support for older plugins
   built for 4.21 or older will be removed in a future version of OCP Console. ([CONSOLE-3769], [#15904])
+- Add warnings for usage of deprecated Console provided shared modules ([CONSOLE-5135], [#16178])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 
@@ -109,6 +110,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4400]: https://issues.redhat.com/browse/CONSOLE-4400
 [CONSOLE-4623]: https://issues.redhat.com/browse/CONSOLE-4623
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050
+[CONSOLE-5135]: https://issues.redhat.com/browse/CONSOLE-5135
 [OCPBUGS-30762]: https://issues.redhat.com/browse/OCPBUGS-30762
 [OCPBUGS-30824]: https://issues.redhat.com/browse/OCPBUGS-30824
 [OCPBUGS-31901]: https://issues.redhat.com/browse/OCPBUGS-31901
@@ -140,5 +142,6 @@ table in [Console dynamic plugins README](./README.md).
 [#15479]: https://github.com/openshift/console/pull/15479
 [#15802]: https://github.com/openshift/console/pull/15802
 [#15904]: https://github.com/openshift/console/pull/15904
-[#15945]: https://github.com/openshift/console/pull/15945
 [#15934]: https://github.com/openshift/console/pull/15934
+[#15945]: https://github.com/openshift/console/pull/15945
+[#16178]: https://github.com/openshift/console/pull/16178

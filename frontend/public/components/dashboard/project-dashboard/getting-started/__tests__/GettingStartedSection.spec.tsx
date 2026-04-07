@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { useUserPreference } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
@@ -19,13 +19,13 @@ jest.mock('../DeveloperFeaturesGettingStartedCard', () => ({
   DeveloperFeaturesGettingStartedCard: () => 'Developer features',
 }));
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...jest.requireActual('@console/shared/src/hooks/flag'),
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useFlag'),
   useFlag: jest.fn<boolean, []>(),
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useUserPreference'),
   useUserPreference: jest.fn(() => [true, jest.fn()]),
 }));
 
@@ -53,7 +53,7 @@ describe('GettingStartedSection', () => {
 
   it('should render with three child cards when all conditions are met', () => {
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     // Check that all three cards are present by looking for their mocked components
@@ -67,7 +67,7 @@ describe('GettingStartedSection', () => {
     useFlagMock.mockReturnValue(false);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([
@@ -81,7 +81,7 @@ describe('GettingStartedSection', () => {
     useGettingStartedShowStateMock.mockReturnValue([GettingStartedShowState.HIDE, jest.fn(), true]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([
@@ -99,7 +99,7 @@ describe('GettingStartedSection', () => {
     ]);
 
     renderWithProviders(
-      <GettingStartedSection userSettingKey="console.projectOverview.gettingStarted" />,
+      <GettingStartedSection userPreferenceKey="console.projectOverview.gettingStarted" />,
     );
 
     expectTextsNotInDocument([

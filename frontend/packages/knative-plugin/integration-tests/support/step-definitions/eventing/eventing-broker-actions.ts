@@ -130,7 +130,7 @@ When('user adds new label {string}', (labelName: string) => {
 
 When('user clicks on the Save button on the modal', () => {
   cy.get(topologyPO.graph.saveModal).click();
-  cy.get(topologyPO.graph.modalContent).should('not.exist');
+  cy.byLegacyTestID('modal-title').should('not.exist');
   cy.reload();
   app.waitForLoad();
   perspective.switchTo(switchPerspective.Developer);
@@ -149,7 +149,7 @@ When('user selects {string} from Subscriber drop down', (subscriberName: string)
 
 When('user clicks on Add button', () => {
   cy.get(eventingPO.broker.confirm).click();
-  cy.get('[class*="modal-dialog"]').should('not.exist');
+  cy.byLegacyTestID('modal-title').should('not.exist');
 });
 
 Then('user will see {string} created', (triggerName) => {

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo, Suspense } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import * as _ from 'lodash';
 import {
   Button,
@@ -25,12 +25,13 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   GetDataViewRows,
 } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useTranslation } from 'react-i18next';
@@ -125,16 +126,22 @@ const NoDataEmptyMsg = () => {
   );
 };
 
-const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
+const useUsersColumns = (): {
+  columns: ConsoleDataViewColumn<UserKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(UserModel);
+
+  const columns: ConsoleDataViewColumn<UserKind>[] = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -142,6 +149,7 @@ const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
         title: t('public~Full name'),
         id: tableColumnInfo[1].id,
         sort: 'fullName',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -150,6 +158,7 @@ const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
         title: t('public~Identities'),
         id: tableColumnInfo[2].id,
         sort: 'identities[0]',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -157,15 +166,20 @@ const useUsersColumns = (): ConsoleDataViewColumn<UserKind>[] => {
       {
         title: '',
         id: tableColumnInfo[3].id,
+        props: {
+          ...actionsCellProps,
+        },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const UserList: FC<UserListProps> = (props) => {
   const { t } = useTranslation();
-  const columns = useUsersColumns();
+  const { columns, resetAllColumnWidths } = useUsersColumns();
   const { data, loaded } = props;
 
   // Show custom empty state when no users exist
@@ -183,6 +197,8 @@ export const UserList: FC<UserListProps> = (props) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

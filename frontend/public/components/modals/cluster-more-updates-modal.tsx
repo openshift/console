@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionGroup, Button } from '@patternfly/react-core';
+import { Button, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
@@ -13,18 +14,13 @@ import {
   isMinorVersionNewer,
   showReleaseNotes,
 } from '../../module/k8s';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   ClusterNotUpgradeableAlert,
   UpdateBlockedLabel,
 } from '../cluster-settings/cluster-settings';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
@@ -35,58 +31,60 @@ export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ canc
   const { t } = useTranslation();
 
   return (
-    <div className="modal-content" data-test="more-updates-modal">
-      <ModalTitle>{t('public~Other available paths')}</ModalTitle>
+    <>
+      <ModalHeader
+        title={t('public~Other available paths')}
+        data-test-id="modal-title"
+        labelId="cluster-more-updates-modal-title"
+      />
       <ModalBody>
         {clusterUpgradeableFalseAndNotExternallyManaged && (
           <ClusterNotUpgradeableAlert cv={cv} onCancel={cancel} />
         )}
-        <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
-          <thead className="pf-v6-c-table__thead">
-            <tr className="pf-v6-c-table__tr">
-              <th className="pf-v6-c-table__th">{t('public~Version')}</th>
-              {releaseNotes && <th className="pf-v6-c-table__th">{t('public~Release notes')}</th>}
-            </tr>
-          </thead>
-          <tbody className="pf-v6-c-table__tbody">
+        <Table variant="compact" borders>
+          <Thead>
+            <Tr>
+              <Th>{t('public~Version')}</Th>
+              {releaseNotes && <Th>{t('public~Release notes')}</Th>}
+            </Tr>
+          </Thead>
+          <Tbody>
             {moreAvailableUpdates.map((update) => {
               return (
-                <tr className="pf-v6-c-table__tr" key={update.version}>
-                  <td className="pf-v6-c-table__td">
+                <Tr key={update.version}>
+                  <Td>
                     {update.version}
                     {clusterUpgradeableFalseAndNotExternallyManaged &&
                       isMinorVersionNewer(getLastCompletedUpdate(cv), update.version) && (
                         <UpdateBlockedLabel />
                       )}
-                  </td>
+                  </Td>
                   {releaseNotes && (
-                    <td className="pf-v6-c-table__td">
+                    <Td>
                       {getReleaseNotesLink(update.version) ? (
                         <ReleaseNotesLink version={update.version} />
                       ) : (
                         '-'
                       )}
-                    </td>
+                    </Td>
                   )}
-                </tr>
+                </Tr>
               );
             })}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       </ModalBody>
-      <ModalFooter inProgress={false}>
-        <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
-          <Button
-            type="button"
-            variant="primary"
-            onClick={cancel}
-            data-test="more-updates-modal-close-button"
-          >
-            {t('Close')}
-          </Button>
-        </ActionGroup>
-      </ModalFooter>
-    </div>
+      <ModalFooterWithAlerts>
+        <Button
+          type="button"
+          variant="primary"
+          onClick={cancel}
+          data-test="more-updates-modal-close-button"
+        >
+          {t('public~Close')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -94,9 +92,15 @@ export const ClusterMoreUpdatesModalOverlay: OverlayComponent<ClusterMoreUpdates
   props,
 ) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal
+      isOpen
+      onClose={props.closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="cluster-more-updates-modal-title"
+      data-test="more-updates-modal"
+    >
       <ClusterMoreUpdatesModal {...props} cancel={props.closeOverlay} />
-    </ModalWrapper>
+    </Modal>
   );
 };
 

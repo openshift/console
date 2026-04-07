@@ -3,6 +3,7 @@ import * as ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as _ from 'lodash';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { WebpackSharedObject, WebpackSharedConfig } from '@openshift/dynamic-plugin-sdk-webpack';
@@ -24,7 +25,6 @@ interface Configuration extends webpack.Configuration {
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -91,6 +91,11 @@ const config: Configuration = {
     publicPath: 'static/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-[chunkhash].js',
+  },
+  performance: {
+    // The maximum size of the entry point and generated files permitted by analyze.sh
+    maxEntrypointSize: 10.5 * 1048576, // ~10.5 MiB
+    maxAssetSize: 5 * 1048576, // ~5 MiB
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',
@@ -222,13 +227,7 @@ const config: Configuration = {
           test: /\/node_modules\//,
           priority: -10,
           enforce: true,
-          filename: (pathData) => {
-            // give a special name to initial chunk for analyze.sh
-            if ((pathData?.chunk as webpack.Chunk)?.isOnlyInitial()) {
-              return `vendors~main-chunk-[name]-[contenthash].min.js`;
-            }
-            return 'vendors~[name]-chunk-[contenthash].min.js';
-          },
+          filename: 'vendors~[name]-chunk-[contenthash].min.js',
         },
         'vendor-plugins-shared': {
           test(module: webpack.NormalModule) {
@@ -288,36 +287,21 @@ const config: Configuration = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, './public/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/console-shared/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/console-app/locales'), to: 'locales' },
+        { from: path.resolve(__dirname, './public/robots.txt'), to: 'robots.txt' },
         {
-          from: path.resolve(__dirname, './packages/operator-lifecycle-manager/locales'),
-          to: 'locales',
-        },
-        {
-          from: path.resolve(__dirname, './packages/operator-lifecycle-manager-v1/locales'),
-          to: 'locales',
-        },
-        { from: path.resolve(__dirname, './packages/dev-console/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/knative-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/container-security/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/shipwright-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/webterminal-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/topology/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/helm-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/git-service/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/metal3-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/vsphere-plugin/locales'), to: 'locales' },
-        { from: path.resolve(__dirname, './packages/insights-plugin/locales'), to: 'locales' },
-        {
-          from: path.resolve(__dirname, './packages/console-telemetry-plugin/locales'),
-          to: 'locales',
+          from: './{packages/*,public}/locales',
+          // Flat locales directory structure: /static/locales/{en,fr,...}/{namespace}.json
+          to: ({ absoluteFilename }) => {
+            const segments = absoluteFilename.split(path.sep);
+            return segments.slice(segments.lastIndexOf('locales')).join(path.sep);
+          },
+          context: path.resolve(__dirname),
+          filter: (p) => path.extname(p) === '.json',
         },
       ],
     }),
     extractCSS,
-    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(REACT_REFRESH ? [new ReactRefreshWebpackPlugin()] : [new webpack.ProgressPlugin()]),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
@@ -339,6 +323,12 @@ if (ANALYZE_BUNDLE === 'true') {
       openAnalyzer: false,
     }),
   );
+
+  // Only fail the build due to excess bundle size if running analyze.sh
+  // This way, the other tests (frontend, e2e) can still provide feedback in CI
+  if (config.performance) {
+    config.performance.hints = 'error';
+  }
 }
 
 /* Production settings */

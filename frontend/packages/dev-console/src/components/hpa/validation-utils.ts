@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next';
 import * as yup from 'yup';
-import { nameRegex } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { nameRegex } from '@console/shared/src/utils/yup-validations';
 import { isInteger } from '../../utils/yup-validation-util';
 
 export const hpaValidationSchema = (t: TFunction) =>

@@ -12,8 +12,8 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { EllipsisVIcon } from '@patternfly/react-icons';
+import { useNavigate } from 'react-router';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import {
   AccessReviewResourceAttributes,

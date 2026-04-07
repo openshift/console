@@ -3,7 +3,7 @@ import { useState, useMemo, useCallback } from 'react';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import {
   StatusBox,
@@ -24,7 +24,7 @@ import {
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
+import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import type { RouteParams } from '@console/shared/src/types';
 import { exampleForModel, providedAPIForModel } from '..';
@@ -114,7 +114,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
     [formHelpText, t],
   );
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createOperandForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.createOperandForm.editor.lastView';
 
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
@@ -134,7 +134,7 @@ export const CreateOperand: FC<CreateOperandProps> = ({
         onChangeEditorType={onChangeEditorType}
         prune={pruneFunc}
         YAMLEditor={OperandYAML}
-        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+        lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
       />
     </StatusBox>
   );

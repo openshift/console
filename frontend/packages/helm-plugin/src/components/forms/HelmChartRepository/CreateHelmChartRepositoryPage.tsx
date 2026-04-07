@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -11,8 +11,9 @@ import {
   ProjectHelmChartRepositoryModel,
 } from '@console/helm-plugin/src/models';
 import { kindForReference } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, useQueryParams } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import CreateHelmChartRepository from './CreateHelmChartRepository';
 
 const CreateHelmChartRepositoryPage: FC = () => {

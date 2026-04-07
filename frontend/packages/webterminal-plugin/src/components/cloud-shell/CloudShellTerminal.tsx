@@ -7,14 +7,15 @@ import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import type { UserInfo } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import type { WithUserPreferenceCompatibilityProps } from '@console/shared';
-import { useFlag, withUserPreferenceCompatibility } from '@console/shared';
+import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
+import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
 import { initTerminal, startWorkspace, CLOUD_SHELL_PHASE } from './cloud-shell-utils';
 import CloudshellExec from './CloudShellExec';
-import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
+import { CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from './TerminalLoadingBox';
@@ -36,9 +37,7 @@ export type CloudShellTerminalProps = {
 
 type CloudShellTerminalInternalProps = StateProps & CloudShellTerminalProps;
 
-const CloudShellTerminal: FC<
-  CloudShellTerminalInternalProps & WithUserPreferenceCompatibilityProps<string>
-> = ({
+const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenceProps<string>> = ({
   user,
   onCancel,
   userSettingState: namespace,
@@ -256,11 +255,7 @@ const stateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, null, CloudShellTerminalProps>(stateToProps)(
-  withUserPreferenceCompatibility<
-    CloudShellTerminalProps & WithUserPreferenceCompatibilityProps<string>,
-    string
-  >(
-    CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY,
-    CLOUD_SHELL_NAMESPACE,
+  withUserPreference<CloudShellTerminalProps & WithUserPreferenceProps<string>, string>(
+    CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY,
   )(CloudShellTerminal),
 );

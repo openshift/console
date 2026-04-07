@@ -1,11 +1,5 @@
 import { FC, MouseEvent, useEffect, useMemo, useRef, FormEvent, useState } from 'react';
-import {
-  useLocation,
-  useParams,
-  Link,
-  useSearchParams,
-  useNavigate,
-} from 'react-router-dom-v5-compat';
+import { useLocation, useParams, Link, useSearchParams, useNavigate } from 'react-router';
 import { connect } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import * as _ from 'lodash';
@@ -27,7 +21,7 @@ import {
   Pagination,
   Bullseye,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { FilterIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
@@ -68,7 +62,7 @@ import { AsyncComponent } from './utils/async';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { HorizontalNav } from './utils/horizontal-nav';
 import { LinkifyExternal } from './utils/link';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { ResourceIcon } from './utils/resource-icon';
 import { ScrollToTopOnMount } from './utils/scroll-to-top-on-mount';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -436,7 +430,11 @@ const APIResourcesList: FC = () => {
           <ToolbarItem variant="pagination">
             <Pagination
               itemCount={sortedResources.length}
-              titles={{ ofWord: t('public~of') }}
+              titles={{
+                ofWord: t('public~of'),
+                itemsPerPage: t('public~Items per page'),
+                perPageSuffix: t('public~per page'),
+              }}
               {...pagination}
             />
           </ToolbarItem>
@@ -830,7 +828,7 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
               titlePrefix={t('public~Verb')}
             />
           </FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
+          <FlexItem>
             <TextFilter
               defaultValue={filter}
               label={t('public~by subject')}
@@ -840,7 +838,11 @@ const APIResourceAccessReview: FC<APIResourceTabProps> = ({
           <FlexItem align={{ default: 'alignRight' }}>
             <Pagination
               itemCount={filteredData.length}
-              titles={{ ofWord: t('public~of') }}
+              titles={{
+                ofWord: t('public~of'),
+                itemsPerPage: t('public~Items per page'),
+                perPageSuffix: t('public~per page'),
+              }}
               {...pagination}
             />
           </FlexItem>

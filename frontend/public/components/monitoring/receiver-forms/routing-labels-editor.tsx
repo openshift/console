@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import {
   Button,
   Content,
@@ -19,7 +18,6 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DOC_URL_PROMETHEUS_MATCHERS } from '../../utils/documentation';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
 const DEFAULT_RECEIVER_LABEL = 'All (default receiver)';
 

@@ -18,10 +18,11 @@ import { ConfigMapKind, referenceForModel, TableColumn } from '../module/k8s';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { LoadingBox } from '@console/shared/src/components/loading';
 import { sortResourceByValue } from './factory/Table/sort';
@@ -78,16 +79,22 @@ const getDataViewRows: GetDataViewRows<ConfigMapKind> = (data, columns) => {
   });
 };
 
-const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
+const useConfigMapsColumns = (): {
+  columns: TableColumn<ConfigMapKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ConfigMapModel);
+
+  const columns = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -95,6 +102,7 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -103,6 +111,7 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
         title: t('public~Size'),
         id: tableColumnInfo[2].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.dataSize)),
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -111,6 +120,7 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
         title: t('public~Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -119,16 +129,18 @@ const useConfigMapsColumns = (): TableColumn<ConfigMapKind>[] => {
         title: '',
         id: tableColumnInfo[4].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
-  const columns = useConfigMapsColumns();
+  const { columns, resetAllColumnWidths } = useConfigMapsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -140,6 +152,8 @@ export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

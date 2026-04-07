@@ -9,7 +9,7 @@ import {
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
-import { PercentIcon } from '@patternfly/react-icons/dist/esm/icons/percent-icon';
+import { PercentIcon } from '@patternfly/react-icons';
 import type { FormikErrors } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';

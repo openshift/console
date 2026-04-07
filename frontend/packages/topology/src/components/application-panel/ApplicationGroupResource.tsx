@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

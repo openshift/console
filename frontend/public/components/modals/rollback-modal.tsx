@@ -2,15 +2,24 @@ import type { FC, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Alert, Checkbox } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import {
   getDeploymentConfigVersion,
   getOwnerNameByKind,
 } from '@console/shared/src/utils/resource-utils';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { ModalTitle, ModalBody, ModalSubmitFooter, ModalWrapper } from '../factory/modal';
-import type { ModalComponentProps } from '../factory/modal';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { LoadingInline } from '../utils/status-box';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';
 import type { K8sResourceKind } from '../../module/k8s';
@@ -110,9 +119,11 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
       { op: 'replace', path: '/metadata/annotations', value: annotations },
     ];
 
-    handlePromise(k8sPatch(DeploymentModel, deployment, patch)).then(() => {
-      props.close();
-    });
+    handlePromise(k8sPatch(DeploymentModel, deployment, patch))
+      .then(() => {
+        props.close();
+      })
+      .catch(() => {});
   };
 
   const submit = (e: FormEvent) => {
@@ -187,41 +198,61 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('public~Rollback')}</ModalTitle>
-      <ModalBody>
-        {loaded ? (
-          !loadError && !deploymentError ? (
-            renderRollbackBody()
-          ) : (
-            <Alert
-              isInline
-              className="co-alert co-alert--scrollable"
-              variant="danger"
-              title={t('public~Unable to Rollback')}
-            >
-              <div className="co-pre-line">{loadError?.message || deploymentError}</div>
-            </Alert>
-          )
-        ) : (
-          <LoadingInline />
-        )}
-      </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Rollback')}
-        cancel={props.cancel}
-        submitDisabled={loadError?.message || deploymentError}
+    <>
+      <ModalHeader
+        title={t('public~Rollback')}
+        data-test-id="modal-title"
+        labelId="rollback-modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="rollback-form" onSubmit={submit}>
+          {loaded ? (
+            !loadError && !deploymentError ? (
+              renderRollbackBody()
+            ) : (
+              <Alert isInline variant="danger" title={t('public~Unable to Rollback')}>
+                <div className="co-pre-line">{loadError?.message || deploymentError}</div>
+              </Alert>
+            )
+          ) : (
+            <LoadingInline />
+          )}
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          form="rollback-form"
+          data-test="confirm-action"
+          id="confirm-action"
+          isDisabled={!!(loadError || deploymentError)}
+        >
+          {t('public~Rollback')}
+        </Button>
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+        >
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const RollbackModalOverlay: OverlayComponent<RollbackModalProps> = (props) => (
-  <ModalWrapper blocking onClose={props.closeOverlay}>
+  <Modal
+    isOpen
+    onClose={props.closeOverlay}
+    variant={ModalVariant.small}
+    aria-labelledby="rollback-modal-title"
+  >
     <BaseRollbackModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-  </ModalWrapper>
+  </Modal>
 );
 
 export type RollbackModalProps = {

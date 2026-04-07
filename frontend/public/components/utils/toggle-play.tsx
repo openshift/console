@@ -1,7 +1,6 @@
 import type { FC } from 'react';
 import { Button, ButtonProps } from '@patternfly/react-core';
-import { PauseIcon } from '@patternfly/react-icons/dist/esm/icons/pause-icon';
-import { PlayIcon } from '@patternfly/react-icons/dist/esm/icons/play-icon';
+import { PauseIcon, PlayIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 

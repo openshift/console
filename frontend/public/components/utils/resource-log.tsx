@@ -4,13 +4,12 @@ import {
   ReactNode,
   Ref,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -49,11 +48,11 @@ import {
 import { css } from '@patternfly/react-styles';
 import {
   FLAGS,
-  LOG_WRAP_LINES_USERSETTINGS_KEY,
-  SHOW_FULL_LOG_USERSETTINGS_KEY,
+  LOG_WRAP_LINES_USER_PREFERENCE_KEY,
+  SHOW_FULL_LOG_USER_PREFERENCE_KEY,
 } from '@console/shared/src/constants';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 import { Loading } from '@console/shared/src/components/loading/Loading';
 import { FetchProgressModal } from '@console/shared/src/components/modals/FetchProgressModal';
 import { TogglePlay } from './toggle-play';
@@ -63,11 +62,10 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { useFullscreen } from '@console/shared/src/hooks/useFullscreen';
-import { RootState } from '@console/internal/redux';
 import { k8sGet, k8sList, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { usePrevious } from '@console/shared/src/hooks/previous';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { usePrevious } from '@console/shared/src/hooks/usePrevious';
 import { resourcePath } from './resource-link';
 import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
@@ -216,6 +214,8 @@ const LogControls: FC<LogControlsProps> = ({
   const [isLogTypeOpen, setIsLogTypeOpen] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
+  const toolbarId = `resource-log-toolbar-${resource?.metadata?.name || 'unknown'}`;
+
   const logTypes: Array<LogType> = [
     { type: LOG_TYPE_CURRENT, text: t('Current log') },
     { type: LOG_TYPE_PREVIOUS, text: t('Previous log') },
@@ -272,7 +272,7 @@ const LogControls: FC<LogControlsProps> = ({
         onOpenChange={(isOpen) => setIsLogTypeOpen(isOpen)}
         isOpen={isLogTypeOpen}
         popperProps={{
-          appendTo: 'inline', // needed for fullscreen
+          appendTo: isFullscreen ? () => document.getElementById(toolbarId) : undefined,
         }}
       >
         <SelectList>
@@ -356,7 +356,7 @@ const LogControls: FC<LogControlsProps> = ({
       onOpenChange={setIsOptionsOpen}
       isOpen={isOptionsOpen}
       popperProps={{
-        appendTo: 'inline', // needed for fullscreen
+        appendTo: isFullscreen ? () => document.getElementById(toolbarId) : undefined,
       }}
     >
       <SelectList>
@@ -412,7 +412,7 @@ const LogControls: FC<LogControlsProps> = ({
     ));
 
   return (
-    <Toolbar data-test="resource-log-toolbar">
+    <Toolbar data-test="resource-log-toolbar" id={toolbarId}>
       <ToolbarContent>
         <ToolbarGroup className="pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-flex-direction-row-on-md pf-v6-u-w-100">
           <ToolbarGroup align={{ default: 'alignStart' }}>
@@ -498,9 +498,9 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   resourceStatus,
 }) => {
   const { t } = useTranslation('public');
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   const [showFullLog, setShowFullLog] = useUserPreference<boolean>(
-    SHOW_FULL_LOG_USERSETTINGS_KEY,
+    SHOW_FULL_LOG_USER_PREFERENCE_KEY,
     false,
     true,
   );
@@ -534,10 +534,10 @@ export const ResourceLog: FC<ResourceLogProps> = ({
   const previousTotalLineCount = usePrevious(totalLineCount);
   const linkURL = getResourceLogURL(resource, containerName, null, false, logType);
   const watchURL = getResourceLogURL(resource, containerName, null, true, logType);
-  const imp = useSelector((state: RootState) => getImpersonate(state));
+  const imp = useConsoleSelector((state) => getImpersonate(state));
   const subprotocols = useMemo(() => ['base64.binary.k8s.io', ...(imp?.subprotocols ?? [])], [imp]);
   const [wrapLines, setWrapLines] = useUserPreference<boolean>(
-    LOG_WRAP_LINES_USERSETTINGS_KEY,
+    LOG_WRAP_LINES_USER_PREFERENCE_KEY,
     false,
     true,
   );
@@ -809,6 +809,24 @@ export const ResourceLog: FC<ResourceLogProps> = ({
     // trigger resize event to prevent double scrollbar
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstRender, error, stale, hasTruncated, isFullscreen]);
+
+  // Workaround for upstream PF LogViewer bug: scrollIntoView({ inline: 'center' }) propagates
+  // to all scrollable ancestors, shifting the page layout when searching with wrap lines disabled.
+  // Reset scrollLeft on .pf-v6-c-drawer__main to prevent the page shift.
+  // https://github.com/patternfly/react-log-viewer/issues/106
+  useEffect(() => {
+    const drawerMain = fullscreenRef.current?.closest('.pf-v6-c-drawer__main');
+    if (!drawerMain) {
+      return;
+    }
+    const resetScroll = () => {
+      if (drawerMain.scrollLeft !== 0) {
+        drawerMain.scrollLeft = 0;
+      }
+    };
+    drawerMain.addEventListener('scroll', resetScroll);
+    return () => drawerMain.removeEventListener('scroll', resetScroll);
+  }, [fullscreenRef]);
 
   return (
     <div

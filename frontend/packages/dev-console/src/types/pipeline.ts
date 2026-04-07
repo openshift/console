@@ -200,6 +200,8 @@ export type PipelineRunKind = K8sResourceCommon & {
     params?: PipelineRunParam[];
     workspaces?: PipelineRunWorkspace[];
     resources?: PipelineRunResource[];
+    /** @deprecated Removed in 0.9.x in favor of serviceAccountName */
+    serviceAccount?: string;
     serviceAccountName?: string;
     timeout?: string;
     // Only used in a single case - cancelling a pipeline; should not be copied between PLRs

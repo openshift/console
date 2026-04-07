@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import {
   DeploymentConfigModel,
@@ -13,13 +13,12 @@ import {
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
-import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
-import { useUserPreferenceCompatibility } from '../../hooks/useUserPreferenceCompatibility';
+import { USER_PREFERENCE_PREFIX } from '../../constants';
+import { useUserPreference } from '../../hooks/useUserPreference';
 
 import './HealthChecksAlert.scss';
 
-const HIDE_HEALTH_CHECK_ALERT_FOR = `${STORAGE_PREFIX}/hide-health-check-alert-for`;
-const HEALTH_CHECK_CONFIGMAP_KEY = `${USERSETTINGS_PREFIX}.healthChecks`;
+const HEALTH_CHECK_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.healthChecks`;
 
 type HealthChecksAlertProps = {
   resource: K8sResourceKind;
@@ -38,13 +37,8 @@ const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     kind,
     metadata: { name, namespace, uid },
   } = resource;
-  const [
-    hideHealthCheckAlertFor,
-    setHideHealthCheckAlertFor,
-    loaded,
-  ] = useUserPreferenceCompatibility<string[]>(
-    HEALTH_CHECK_CONFIGMAP_KEY,
-    HIDE_HEALTH_CHECK_ALERT_FOR,
+  const [hideHealthCheckAlertFor, setHideHealthCheckAlertFor, loaded] = useUserPreference<string[]>(
+    HEALTH_CHECK_USER_PREFERENCE_KEY,
     [],
   );
   const { t } = useTranslation();

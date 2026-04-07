@@ -1,28 +1,29 @@
 import type { FC } from 'react';
-import { FLAGS, useUserPreference } from '@console/shared';
+import { FLAGS } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   QuickStartGettingStartedCard,
   GettingStartedExpandableGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { SampleGettingStartedCard } from './SampleGettingStartedCard';
 import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 
 import '../../dashboards-page/cluster-dashboard/getting-started/getting-started-section.scss';
 
 type GettingStartedSectionProps = {
-  userSettingKey: string;
+  userPreferenceKey: string;
 };
 
-export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
+export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userPreferenceKey }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
-  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userPreferenceKey);
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserPreference<boolean>(
-    `${userSettingKey}.expanded`,
+    `${userPreferenceKey}.expanded`,
     true,
   );
 

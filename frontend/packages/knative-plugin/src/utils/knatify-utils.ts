@@ -18,7 +18,7 @@ import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getLimitsDataFromResource } from '@console/shared/src';
+import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 import { ServiceModel } from '../models';

@@ -1,6 +1,8 @@
 import type { FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { NavItem } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import navStyles from '@patternfly/react-styles/css/components/Nav/nav';
 import type { ResourceNSNavItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
@@ -19,6 +21,7 @@ export const NavItemResource: FC<NavItemResourceProps> = ({
   namespaced,
   className,
   dataAttributes,
+  listItem = true,
   ...navLinkProps
 }) => {
   const [activeNamespace] = useActiveNamespace();
@@ -41,6 +44,20 @@ export const NavItemResource: FC<NavItemResourceProps> = ({
         : `/k8s/cluster/${resourceReference}`,
     [namespaced, resourceReference, lastNamespace, activeNamespace],
   );
+
+  if (!listItem) {
+    return (
+      <div className={css(navStyles.navItem, className)}>
+        <NavLink
+          {...navLinkProps}
+          {...dataAttributes}
+          to={to()}
+          className={css(navStyles.navLink, isActive && navStyles.modifiers.current)}
+          aria-current={isActive ? 'page' : undefined}
+        />
+      </div>
+    );
+  }
   return (
     <NavItem className={className} isActive={isActive}>
       <NavLink {...navLinkProps} {...dataAttributes} to={to()} />
@@ -51,4 +68,6 @@ export const NavItemResource: FC<NavItemResourceProps> = ({
 export type NavItemResourceProps = Omit<NavLinkProps, 'to'> &
   Pick<ResourceNSNavItem['properties'], 'model' | 'startsWith' | 'dataAttributes'> & {
     namespaced: boolean;
+    /** When false, renders a div instead of li for use in non-list contexts like drag-and-drop. */
+    listItem?: boolean;
   };

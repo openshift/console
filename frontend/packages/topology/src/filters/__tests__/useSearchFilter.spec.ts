@@ -8,14 +8,10 @@ jest.mock('../filter-utils', () => ({
 let mockCurrentSearchQuery: string | null | undefined = '';
 let mockLabelsQuery: string | null | undefined = '';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    useQueryParams: () =>
-      new Map().set('searchQuery', mockCurrentSearchQuery).set('labels', mockLabelsQuery),
-  };
-});
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  useQueryParams: () =>
+    new Map().set('searchQuery', mockCurrentSearchQuery).set('labels', mockLabelsQuery),
+}));
 
 describe('useSearchFilter', () => {
   it('should handle null | undefined text', () => {

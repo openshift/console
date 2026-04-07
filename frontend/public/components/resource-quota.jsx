@@ -1,20 +1,22 @@
 import { useMemo, Suspense } from 'react';
 import * as _ from 'lodash';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router';
 import { Table as PfTable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import { OutlinedCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-circle-icon';
-import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-empty-icon';
-import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
-import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-full-icon';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
-
-import { useTranslation } from 'react-i18next';
+import {
+  OutlinedCircleIcon,
+  ResourcesAlmostEmptyIcon,
+  ResourcesAlmostFullIcon,
+  ResourcesFullIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
+import { Trans, useTranslation } from 'react-i18next';
 import AppliedClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/AppliedClusterResourceQuotaCharts';
 import ResourceQuotaCharts from '@console/app/src/components/resource-quota/ResourceQuotaCharts';
 import ClusterResourceQuotaCharts from '@console/app/src/components/resource-quota/ClusterResourceQuotaCharts';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
 import { FLAGS } from '@console/shared/src/constants/common';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import { DetailsPage, MultiListPage } from './factory';
@@ -51,9 +53,11 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;
 
@@ -527,14 +531,17 @@ const getAppliedClusterResourceQuotaDataViewRows = (data, columns, namespace) =>
 
 const useResourceQuotaColumns = () => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ResourceQuotaModel);
+
+  const columns = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: resourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -542,6 +549,7 @@ const useResourceQuotaColumns = () => {
         title: t('public~Namespace'),
         id: resourceQuotaTableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -550,23 +558,24 @@ const useResourceQuotaColumns = () => {
         title: t('public~Label selector'),
         id: resourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.labels.matchLabels',
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('public~Project annotations'),
         id: resourceQuotaTableColumnInfo[3].id,
         sort: 'spec.selector.annotations',
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('public~Status'),
         id: resourceQuotaTableColumnInfo[4].id,
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -575,6 +584,7 @@ const useResourceQuotaColumns = () => {
         title: t('public~Created'),
         id: resourceQuotaTableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(resourceQuotaTableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -583,17 +593,19 @@ const useResourceQuotaColumns = () => {
         title: '',
         id: resourceQuotaTableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const ResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
-  const columns = useResourceQuotaColumns();
+  const { columns, resetAllColumnWidths } = useResourceQuotaColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -606,6 +618,8 @@ export const ResourceQuotasList = (props) => {
           getResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -613,14 +627,19 @@ export const ResourceQuotasList = (props) => {
 
 const useAppliedClusterResourceQuotaColumns = () => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    AppliedClusterResourceQuotaModel,
+  );
+
+  const columns = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: appliedClusterResourceQuotaTableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -628,23 +647,24 @@ const useAppliedClusterResourceQuotaColumns = () => {
         title: t('public~Label selector'),
         id: appliedClusterResourceQuotaTableColumnInfo[1].id,
         sort: 'spec.selector.labels.matchLabels',
+        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('public~Project annotations'),
         id: appliedClusterResourceQuotaTableColumnInfo[2].id,
         sort: 'spec.selector.annotations',
+        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('public~Status'),
         id: appliedClusterResourceQuotaTableColumnInfo[3].id,
+        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -653,18 +673,21 @@ const useAppliedClusterResourceQuotaColumns = () => {
         title: t('public~Created'),
         id: appliedClusterResourceQuotaTableColumnInfo[4].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(appliedClusterResourceQuotaTableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const AppliedClusterResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
-  const columns = useAppliedClusterResourceQuotaColumns();
+  const { columns, resetAllColumnWidths } = useAppliedClusterResourceQuotaColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -678,6 +701,8 @@ export const AppliedClusterResourceQuotasList = (props) => {
           getAppliedClusterResourceQuotaDataViewRows(dvData, dvColumns, namespace)
         }
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -696,6 +721,9 @@ export const flatten = (resources) => _.flatMap(resources, (resource) => _.compa
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
   ({ namespace, flags, mock, showTitle }) => {
     const { t } = useTranslation();
+    const isKubevirtPluginActive = useIsKubevirtPluginActive();
+    const quotasFeature = useFlag('KUBEVIRT_QUOTAS');
+
     const resources = [{ kind: 'ResourceQuota', namespaced: true }];
     let rowFilters = null;
 
@@ -757,6 +785,31 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
         namespace={namespace}
         flatten={flatten}
         title={t(ResourceQuotaModel.labelPluralKey)}
+        helpText={
+          <div className="pf-v6-u-text-color-subtle pf-v6-u-mt-sm">
+            {t(
+              'public~Manage project capacity by limiting the number of objects and total compute resources available.',
+            )}
+            {isKubevirtPluginActive && (
+              <Trans t={t} ns="public">
+                {' '}
+                Use standard quotas for general container workloads. If you are running OpenShift
+                Virtualization, it is recommended to use{' '}
+                <Link
+                  to={
+                    quotasFeature
+                      ? '/k8s/all-namespaces/quotas'
+                      : '/k8s/all-namespaces/virtualization-overview/settings/cluster'
+                  }
+                >
+                  Application-Aware Quota
+                </Link>{' '}
+                to handle VM infrastructure overhead and live migrations without service
+                interruption.
+              </Trans>
+            )}
+          </div>
+        }
         rowFilters={rowFilters}
         mock={mock}
         showTitle={showTitle}

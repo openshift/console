@@ -11,7 +11,7 @@ import {
   Th,
   Tr,
 } from '@patternfly/react-table';
-import { BanIcon } from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { BanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage } from './factory/details';
@@ -57,11 +57,12 @@ import {
 } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
@@ -215,16 +216,24 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefinitionKind>[] => {
+const useCustomResourceDefinitionsColumns = (): {
+  columns: TableColumn<CustomResourceDefinitionKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(() => {
-    return [
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    CustomResourceDefinitionModel,
+  );
+
+  const columns: TableColumn<CustomResourceDefinitionKind>[] = useMemo(
+    () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'spec.names.kind',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -232,6 +241,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
         title: t('public~Group'),
         id: tableColumnInfo[1].id,
         sort: 'spec.group',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -243,6 +253,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
           data.sort(
             sortResourceByValue<CustomResourceDefinitionKind>(direction, getLatestVersionForCRD),
           ),
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -251,6 +262,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
         title: t('public~Namespaced'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scope',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -258,6 +270,7 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
       {
         title: t('public~Established'),
         id: tableColumnInfo[4].id,
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -266,12 +279,14 @@ const useCustomResourceDefinitionsColumns = (): TableColumn<CustomResourceDefini
         title: '',
         id: tableColumnInfo[5].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
-    ];
-  }, [t]);
-  return columns;
+    ],
+    [t, getResizableProps],
+  );
+
+  return { columns, resetAllColumnWidths };
 };
 
 const IsNamespaced: FC<{ obj: CustomResourceDefinitionKind }> = ({ obj }) => {
@@ -334,7 +349,7 @@ export const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProp
   loaded,
   ...props
 }) => {
-  const columns = useCustomResourceDefinitionsColumns();
+  const { columns, resetAllColumnWidths } = useCustomResourceDefinitionsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -346,6 +361,8 @@ export const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProp
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

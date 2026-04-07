@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, Suspense } from 'react';
 import * as _ from 'lodash';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import {
   Alert,
   DescriptionList,
@@ -11,8 +11,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 
@@ -59,7 +58,7 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from '../factory/Table/sort';
 import { sorts } from '../factory/table';

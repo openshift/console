@@ -14,8 +14,7 @@ import {
   GridItem,
   Popover,
 } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
-
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   K8sResourceKind,
@@ -27,11 +26,13 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 
 import { ImageStreamModel } from '../models';
 import { DOC_URL_PODMAN } from './utils/documentation';
@@ -378,16 +379,25 @@ const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns) => {
   });
 };
 
-const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
+const useImageStreamColumns = (): {
+  columns: TableColumn<K8sResourceKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    ImageStreamModel,
+  );
+
   const columns: TableColumn<K8sResourceKind>[] = useMemo(() => {
+    const labelsColumnId = tableColumnInfo[2].id;
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -395,23 +405,26 @@ const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
       },
       {
         title: t('public~Labels'),
-        id: tableColumnInfo[2].id,
+        id: labelsColumnId,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(labelsColumnId),
         props: {
           modifier: 'nowrap',
-          width: 20,
+          ...getLabelsColumnWidthStyleProp(getWidth(labelsColumnId)),
         },
       },
       {
         title: t('public~Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -420,16 +433,17 @@ const useImageStreamColumns = (): TableColumn<K8sResourceKind>[] => {
         title: '',
         id: tableColumnInfo[4].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps, getWidth]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
-  const columns: TableColumn<K8sResourceKind>[] = useImageStreamColumns();
+  const { columns, resetAllColumnWidths } = useImageStreamColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -441,6 +455,8 @@ export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...p
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

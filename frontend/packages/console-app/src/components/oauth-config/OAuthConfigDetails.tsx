@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import { ResourceSummary } from '@console/internal/components/utils/details-page';
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
@@ -113,7 +113,7 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
           >
             <>
               {t(
-                'console-app~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
+                'console-app~Authentication is being reconfigured. The new identity provider will be available after reconfiguration is complete.',
               )}{' '}
               <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
                 {t('console-app~View authentication conditions for reconfiguration status.')}

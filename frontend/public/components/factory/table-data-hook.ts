@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { createSelectorCreator, lruMemoize } from 'reselect';
 import { SortByDirection } from '@patternfly/react-table';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
+import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import { RowFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import { RootState } from '../../redux';
@@ -90,10 +90,12 @@ export const useTableData = ({
 
   const tableSelectorCreator = useMemo(
     () =>
-      createSelectorCreator(
-        defaultMemoize as any,
-        (oldSortState, newSortState) => oldSortState === newSortState,
-      ),
+      createSelectorCreator({
+        memoize: lruMemoize,
+        memoizeOptions: {
+          equalityCheck: (oldSortState, newSortState) => oldSortState === newSortState,
+        },
+      }),
     [],
   );
 
@@ -112,9 +114,11 @@ export const useTableData = ({
     [tableSelectorCreator, listId],
   );
 
-  const [currentSortField, currentSortFunc, currentSortOrder = defaultSortOrder] = useSelector(
-    sortSelector,
-  );
+  const [
+    currentSortField,
+    currentSortFunc,
+    currentSortOrder = defaultSortOrder,
+  ] = useConsoleSelector(sortSelector);
 
   return useMemo(() => {
     const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;

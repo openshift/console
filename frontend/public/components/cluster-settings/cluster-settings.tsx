@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, ReactNode } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import * as _ from 'lodash';
 import { css } from '@patternfly/react-styles';
 import * as semver from 'semver';
@@ -22,13 +22,13 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PauseCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
@@ -93,8 +93,6 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { documentationURLs, getDocumentationURL, isManaged } from '../utils/documentation';
 import { EmptyBox } from '../utils/status-box';
 import { FieldLevelHelp } from '../utils/field-level-help';
-import { Firehose } from '../utils/firehose';
-import type { FirehoseResource } from '../utils/types';
 import { HorizontalNav } from '../utils/horizontal-nav';
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ResourceLink, resourcePathFromModel } from '../utils/resource-link';
@@ -112,7 +110,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS } from '@console/shared/src/constants';
 
 import {
@@ -808,11 +806,7 @@ export const ClusterNotUpgradeableAlert: FC<ClusterNotUpgradeableAlertProps> = (
       }
       data-test="cluster-settings-alerts-not-upgradeable"
     >
-      <SyncMarkdownView
-        content={clusterUpgradeableFalseCondition.message}
-        inline
-        options={{ simplifiedAutoLink: true }}
-      />
+      <MarkdownView content={clusterUpgradeableFalseCondition.message} inline />
     </Alert>
   );
 };
@@ -888,7 +882,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   obj: cv,
   autoscalers,
 }) => {
-  const { removeQueryArgument } = useQueryParamsMutator();
+  const { getQueryArgument, removeQueryArgument } = useQueryParamsMutator();
   const { history = [] } = cv.status;
   const clusterID = getClusterID(cv);
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
@@ -908,16 +902,26 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   const updateStartedTime = getStartedTimeForCVDesiredVersion(cv, desiredVersion);
   const workerMachineConfigPool = getMCPByName(machineConfigPools, NodeTypes.worker);
   const launchModal = useOverlay();
+  const modalOpenedRef = useRef(false);
+
+  // Check URL params once to avoid re-reading on every cv change
+  const hasShowVersions = useMemo(() => !!getQueryArgument('showVersions'), [getQueryArgument]);
+  const hasShowChannels = useMemo(() => !!getQueryArgument('showChannels'), [getQueryArgument]);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has('showVersions')) {
+    if (modalOpenedRef.current) {
+      return;
+    }
+    if (hasShowVersions) {
       launchModal(LazyClusterUpdateModalOverlay, { cv });
       removeQueryArgument('showVersions');
-    } else if (new URLSearchParams(window.location.search).has('showChannels')) {
+      modalOpenedRef.current = true;
+    } else if (hasShowChannels) {
       launchModal(LazyClusterChannelModalOverlay, { cv });
       removeQueryArgument('showChannels');
+      modalOpenedRef.current = true;
     }
-  }, [launchModal, cv, removeQueryArgument]);
+  }, [launchModal, cv, removeQueryArgument, hasShowVersions, hasShowChannels]);
 
   return (
     <>
@@ -1178,23 +1182,24 @@ export const ClusterSettingsPage: FC = () => {
   const { t } = useTranslation();
   const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('public~Cluster Settings');
-  const resources: FirehoseResource[] = [
-    {
-      kind: clusterVersionReference,
-      name: 'version',
-      isList: false,
-      prop: 'obj',
-    },
-  ];
-  if (hasClusterAutoscaler) {
-    resources.push({
-      kind: clusterAutoscalerReference,
-      isList: true,
-      prop: 'autoscalers',
-      optional: true,
-    });
-  }
-  const resourceKeys = _.map(resources, 'prop');
+
+  const [objData, objLoaded, objLoadError] = useK8sWatchResource<ClusterVersionKind>({
+    kind: clusterVersionReference,
+    name: 'version',
+  });
+
+  const [autoscalersData, autoscalersLoaded, autoscalersLoadError] = useK8sWatchResource<
+    K8sResourceKind[]
+  >(
+    hasClusterAutoscaler
+      ? {
+          kind: clusterAutoscalerReference,
+          isList: true,
+        }
+      : null,
+  );
+
+  const resourceKeys = hasClusterAutoscaler ? ['obj', 'autoscalers'] : ['obj'];
   const pages = [
     {
       href: '',
@@ -1219,12 +1224,25 @@ export const ClusterSettingsPage: FC = () => {
     telemetryPrefix: 'Cluster Settings',
     titlePrefix: title,
   };
+
+  const loaded = hasClusterAutoscaler ? objLoaded && autoscalersLoaded : objLoaded;
+  const loadError = objLoadError || autoscalersLoadError;
+
+  const horizontalNavProps = {
+    pages,
+    resourceKeys,
+    obj: { data: objData, loaded: objLoaded },
+    ...(hasClusterAutoscaler && {
+      autoscalers: { data: autoscalersData, loaded: autoscalersLoaded },
+    }),
+    loaded,
+    loadError,
+  };
+
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
       <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
-      <Firehose resources={resources}>
-        <HorizontalNav pages={pages} resourceKeys={resourceKeys} />
-      </Firehose>
+      <HorizontalNav {...horizontalNavProps} />
     </PageTitleContext.Provider>
   );
 };

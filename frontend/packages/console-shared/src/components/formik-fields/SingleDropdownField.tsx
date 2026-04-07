@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

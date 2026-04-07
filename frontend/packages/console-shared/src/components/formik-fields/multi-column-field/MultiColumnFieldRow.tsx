@@ -2,7 +2,7 @@ import type { ReactNode, ReactElement, FC } from 'react';
 import { Children, cloneElement } from 'react';
 import type { gridItemSpanValueShape } from '@patternfly/react-core';
 import { Tooltip, Button, ButtonVariant, ButtonType, GridItem, Grid } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 

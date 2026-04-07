@@ -45,7 +45,7 @@ import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from './factory/Table/sort';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';

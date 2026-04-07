@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import type { Alert } from '@console/dynamic-plugin-sdk';
 import type { PrometheusRulesResponse } from '@console/dynamic-plugin-sdk/src/lib-core';
 import {
@@ -20,6 +19,7 @@ import {
   getAlertName,
   getAlertTime,
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 
 /** Fetches notification alerts from redux store and updates the notification count.
@@ -29,7 +29,7 @@ import { useNotificationAlerts } from '@console/shared/src/hooks/useNotification
  */
 export const useNotificationPoller = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const [alerts, ,] = useNotificationAlerts();
 

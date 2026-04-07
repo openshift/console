@@ -102,7 +102,7 @@ Feature: Manage user preferences
              Then user will see the language change to 日本語
 
 
-        @regression @odc-6303 @broken-test
+        @regression @ODC-6303 @broken-test
         Scenario: Setting Routing options preference for import form: UP-01-TC10
             Given user has created or selected namespace "aut-user-preferences"
              When user clicks on user dropdown on masthead and selects "User Preferences"
@@ -115,7 +115,7 @@ Feature: Manage user preferences
              Then user is able to see "Secure Route" checkbox is deselected
 
 
-        @regression @manual @odc-5990
+        @regression @manual @ODC-5990
         Scenario: Setting theme preference for Console: UP-01-TC11
              When user clicks on user dropdown on masthead and selects "User Preferences"
               And user changes user preference "Theme" dropdown to "Dark"

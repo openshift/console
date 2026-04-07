@@ -1,5 +1,4 @@
 import { useEffect, useContext } from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useDynamicK8sWatchResources } from '@console/shared/src/hooks/useDynamicK8sWatchResources';
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
@@ -24,13 +23,8 @@ import {
   getPVCStatusGroups,
   getVSStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import type { FirehoseResource } from '../../utils/types';
 import { useAccessReview } from '../../utils/rbac';
-import {
-  K8sKind,
-  K8sResourceCommon as K8sResourceCommonInternal,
-  referenceForModel,
-} from '../../../module/k8s';
+import { K8sKind, referenceForModel } from '../../../module/k8s';
 import { getName } from '@console/shared/src/selectors/common';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
@@ -38,6 +32,7 @@ import {
   DashboardsProjectOverviewInventoryItem,
   isDashboardsProjectOverviewInventoryItem,
   K8sResourceCommon,
+  WatchK8sResource,
   WatchK8sResources,
   ProjectOverviewInventoryItem,
   isProjectOverviewInventoryItem,
@@ -45,7 +40,10 @@ import {
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ErrorBoundary } from '@console/shared/src/components/error';
 
-const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
+const createWatchResource = (
+  model: K8sKind,
+  projectName: string,
+): WatchK8sResource & { prop: string } => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
   isList: true,
   prop: 'resource',
@@ -66,7 +64,7 @@ const ProjectInventoryItem: React.FC<ProjectInventoryItemProps> = ({
       return;
     }
 
-    const resource = createFirehoseResource(model, projectName);
+    const resource = createWatchResource(model, projectName);
     const { prop, ...resourceConfig } = resource;
     watchResource(prop, resourceConfig);
     if (additionalResources) {
@@ -84,25 +82,25 @@ const ProjectInventoryItem: React.FC<ProjectInventoryItemProps> = ({
     };
   }, [watchResource, stopWatchResource, projectName, model, additionalResources]);
 
-  const resourceData = _.get(resources.resource, 'data', []) as K8sResourceCommonInternal[];
-  const resourceLoaded = _.get(resources.resource, 'loaded');
-  const resourceLoadError = _.get(resources.resource, 'loadError');
+  const resourceResult = resources.resource?.data;
+  const resourceData = Array.isArray(resourceResult) ? resourceResult : [];
+  const resourceLoaded = resources.resource?.loaded ?? false;
+  const resourceLoadError = resources.resource?.loadError;
 
   const additionalResourcesData = additionalResources
-    ? additionalResources.reduce((acc, r) => {
-        acc[r.prop] = _.get(resources[r.prop], 'data');
+    ? additionalResources.reduce<{ [key: string]: K8sResourceCommon[] }>((acc, r) => {
+        const data = resources[r.prop]?.data;
+        acc[r.prop] = Array.isArray(data) ? data : [];
         return acc;
       }, {})
     : {};
   const additionalResourcesLoaded = additionalResources
     ? additionalResources
         .filter((r) => !r.optional)
-        .every((r) => _.get(resources[r.prop], 'loaded'))
+        .every((r) => resources[r.prop]?.loaded ?? false)
     : true;
   const additionalResourcesLoadError = additionalResources
-    ? additionalResources
-        .filter((r) => !r.optional)
-        .some((r) => !!_.get(resources[r.prop], 'loadError'))
+    ? additionalResources.filter((r) => !r.optional).some((r) => !!resources[r.prop]?.loadError)
     : false;
 
   const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
@@ -202,7 +200,7 @@ type ProjectInventoryItemProps = {
   projectName: string;
   model: K8sKind;
   mapper?: StatusGroupMapper;
-  additionalResources?: FirehoseResource[];
+  additionalResources?: (WatchK8sResource & { prop: string })[];
   additionalDynamicResources?: WatchK8sResources<{
     [key: string]: K8sResourceCommon[];
   }>;

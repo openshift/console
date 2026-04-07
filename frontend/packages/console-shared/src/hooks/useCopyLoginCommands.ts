@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { consoleFetchJSON as coFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
 import { FLAGS } from '../constants';
-import { useFlag } from './flag';
+import { useFlag } from './useFlag';
 
 const COPY_LOGIN_COMMANDS_ENDPOINT = '/api/copy-login-commands';
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { useLocation } from 'react-router-dom-v5-compat';
-import { usePerspectives } from '@console/shared/src';
+import { useLocation } from 'react-router';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import DetectPerspective from '../DetectPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
@@ -15,11 +15,11 @@ jest.mock('../useValuesForPerspectiveContext', () => ({
   useValuesForPerspectiveContext: jest.fn(),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectives: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   useLocation: jest.fn(),
 }));
 

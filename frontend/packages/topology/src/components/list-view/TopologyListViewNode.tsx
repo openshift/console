@@ -17,12 +17,12 @@ import { connect } from 'react-redux';
 import type { TopologyListViewNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { modelFor } from '@console/internal/module/k8s';
+import { AlertSeverityIcon } from '@console/shared/src/components/alerts/AlertSeverityIcon';
 import {
   getSeverityAlertType,
-  AlertSeverityIcon,
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
-} from '@console/shared';
+} from '@console/shared/src/utils/alert-utils';
 import { useSearchFilter } from '../../filters';
 import { getResource, getResourceKind } from '../../utils/topology-utils';
 import {

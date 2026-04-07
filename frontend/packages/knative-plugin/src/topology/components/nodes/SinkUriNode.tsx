@@ -1,8 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
-import { LinkIcon } from '@patternfly/react-icons/dist/esm/icons/link-icon';
+import { ExternalLinkAltIcon, LinkIcon } from '@patternfly/react-icons';
 import type {
   Node,
   WithDragNodeProps,
@@ -17,7 +16,7 @@ import {
   ScaleDetailsLevel,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { calculateRadius } from '@console/shared';
+import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { Decorator, BaseNode } from '@console/topology/src/components/graph-view';
 
 import './SinkUriNode.scss';

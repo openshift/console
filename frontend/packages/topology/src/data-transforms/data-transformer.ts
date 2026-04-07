@@ -3,7 +3,7 @@ import type { BaseDataModelGetter } from '@console/dynamic-plugin-sdk/src/extens
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import type { Alerts } from '@console/internal/components/monitoring/types';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { createOverviewItemForType } from '@console/shared';
+import { createOverviewItemForType } from '@console/shared/src/utils/resource-utils';
 import { TYPE_APPLICATION_GROUP, TYPE_TRAFFIC_CONNECTOR, TYPE_WORKLOAD } from '../const';
 import type { TopologyDataResources, TrafficData, KialiNode } from '../topology-types';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';

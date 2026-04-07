@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { toLower } from 'lodash';
-import { useQueryParams } from '@console/shared/src';
+import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 
 const EMPTY_QUERY_PARAMS = [];
 

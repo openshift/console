@@ -27,8 +27,7 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons/dist/esm/icons/times-icon';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
+import { TimesIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import { FieldLevelHelp } from '../utils/field-level-help';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { GroupModel } from '../../models';

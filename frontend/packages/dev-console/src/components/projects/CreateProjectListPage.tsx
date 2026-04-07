@@ -3,8 +3,10 @@ import { useCallback } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { FLAGS, useActiveNamespace, useFlag } from '@console/shared';
+import { FLAGS } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import type { ProjectListPageProps } from './ProjectListPage';
 import ProjectListPage from './ProjectListPage';
 

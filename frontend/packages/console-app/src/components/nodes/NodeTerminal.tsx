@@ -144,8 +144,12 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError 
     );
   }
 
-  if (!loaded || !pod) {
+  if (!loaded) {
     return <LoadingBox />;
+  }
+
+  if (!pod) {
+    return <NodeTerminalError error={t('console-app~Debug pod not found or was deleted.')} />;
   }
 
   switch (pod?.status?.phase) {

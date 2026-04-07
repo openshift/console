@@ -1,12 +1,13 @@
 import type { FC, MouseEvent, Ref } from 'react';
-import { useMemo, lazy, useState, useCallback, Suspense } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { MenuToggleElement } from '@patternfly/react-core';
 import { MenuToggle, Select, SelectList, SelectOption, Title } from '@patternfly/react-core';
-import { CogsIcon } from '@patternfly/react-icons/dist/esm/icons/cogs-icon';
+import { CogsIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { usePerspectives } from '@console/shared/src/hooks/perspective-utils';
+import { AsyncComponent } from '@console/internal/components/utils/async';
+import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -19,8 +20,9 @@ type PerspectiveDropdownItemProps = {
   onClick: (perspective: string) => void;
 };
 
+const IconLoadingComponent: FC = () => <>&emsp;</>;
+
 const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective, onClick }) => {
-  const LazyIcon = useMemo(() => lazy(perspective.properties.icon), [perspective.properties.icon]);
   return (
     <SelectOption
       key={perspective.properties.id}
@@ -29,9 +31,10 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
         onClick(perspective.properties.id);
       }}
       icon={
-        <Suspense fallback={<>&emsp;</>}>
-          <LazyIcon />
-        </Suspense>
+        <AsyncComponent
+          loader={() => perspective.properties.icon().then((m) => m.default)}
+          LoadingComponent={IconLoadingComponent}
+        />
       }
     >
       <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
@@ -75,8 +78,6 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [activePerspective, perspectiveExtensions],
   );
 
-  const LazyIcon = useMemo(() => icon && lazy(icon), [icon]);
-
   return perspectiveDropdownItems.length > 1 ? (
     <div
       className="oc-nav-header"
@@ -94,7 +95,14 @@ const NavHeader: FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
             isExpanded={isPerspectiveDropdownOpen}
             ref={toggleRef}
             onClick={() => togglePerspectiveOpen()}
-            icon={<LazyIcon />}
+            icon={
+              icon && (
+                <AsyncComponent
+                  loader={() => icon().then((m) => m.default)}
+                  LoadingComponent={IconLoadingComponent}
+                />
+              )
+            }
           >
             {name && (
               <Title headingLevel="h2" size="md">

@@ -6,7 +6,7 @@ jest.mock('@console/internal/components/utils/console-select', () => ({
   ConsoleSelect: jest.fn(() => null),
 }));
 
-jest.mock('../../../hooks', () => ({
+jest.mock('../../../hooks/useFormikValidationFix', () => ({
   useFormikValidationFix: jest.fn(),
 }));
 

@@ -3,11 +3,12 @@ import { useMemo, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import type { TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { Selector } from '@console/internal/components/utils/selector';
@@ -74,16 +75,24 @@ const getDataViewRows: GetDataViewRows<PodDisruptionBudgetKind> = (data, columns
   });
 };
 
-const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
+const usePDBColumns = (): {
+  columns: TableColumn<PodDisruptionBudgetKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    PodDisruptionBudgetModel,
+  );
+
   const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -91,6 +100,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         title: t('console-app~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -99,15 +109,16 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         title: t('console-app~Selector'),
         id: tableColumnInfo[2].id,
         sort: 'spec.selector',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: t('console-app~Availability'),
         id: tableColumnInfo[3].id,
         sort: 'spec.minAvailable',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -116,6 +127,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         title: t('console-app~Allowed disruptions'),
         id: tableColumnInfo[4].id,
         sort: 'status.disruptionsAllowed',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -124,6 +136,7 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         title: t('console-app~Created'),
         id: tableColumnInfo[5].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -132,16 +145,17 @@ const usePDBColumns = (): TableColumn<PodDisruptionBudgetKind>[] => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const PodDisruptionBudgetList: FC<PodDisruptionBudgetsListProps> = ({ data, loaded, ...props }) => {
-  const columns = usePDBColumns();
+  const { columns, resetAllColumnWidths } = usePDBColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -153,6 +167,8 @@ const PodDisruptionBudgetList: FC<PodDisruptionBudgetsListProps> = ({ data, load
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

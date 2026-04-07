@@ -10,8 +10,8 @@ import {
 } from '@console/internal/components/utils';
 import { JobModel } from '@console/internal/models';
 import type { JobKind } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared/src';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { getResource } from '../../utils';
 
 type JobSideBarDetailsProps = {

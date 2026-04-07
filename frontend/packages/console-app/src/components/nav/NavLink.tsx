@@ -1,6 +1,6 @@
 import type { FC, Ref, ReactNode } from 'react';
-import type { LinkProps } from 'react-router-dom-v5-compat';
-import { Link } from 'react-router-dom-v5-compat';
+import type { LinkProps } from 'react-router';
+import { Link } from 'react-router';
 
 export const NavLink: FC<NavLinkProps> = ({ children, dragRef, ...linkProps }) => {
   return (

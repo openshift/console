@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
+import { HourglassHalfIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type { StatusComponentProps } from '@console/dynamic-plugin-sdk';
 import {

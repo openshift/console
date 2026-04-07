@@ -1,13 +1,12 @@
 import { createHash } from 'crypto';
 import type { SetStateAction } from 'react';
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import type { UseUserPreference } from '@console/dynamic-plugin-sdk';
 import { getImpersonate, getUser } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   createConfigMap,
   deserializeData,
@@ -85,14 +84,14 @@ export const useUserPreference: UseUserPreference = <T>(
   };
 
   // User and impersonate
-  const userUid = useSelector((state: RootState) => {
+  const userUid = useConsoleSelector((state) => {
     const impersonateName = getImpersonate(state)?.name;
     const { uid, username } = getUser(state) ?? {};
     const hashName = hashNameOrKubeadmin(username);
     return impersonateName || uid || hashName || '';
   });
 
-  const impersonate: boolean = useSelector((state: RootState) => !!getImpersonate(state));
+  const impersonate: boolean = useConsoleSelector((state) => !!getImpersonate(state));
 
   // Fallback
   const [fallbackLocalStorage, setFallbackLocalStorageUnsafe] = useState<boolean>(

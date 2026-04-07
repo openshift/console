@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import type { K8sKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared/src/hooks/useTabbedTableBreadcrumb';
 import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models';
 
 export const getHelmChartRepositoriesModel = () => [

@@ -2,32 +2,33 @@ import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import {
   Alert,
+  Button,
   CodeBlock,
   CodeBlockCode,
   Content,
   ContentVariants,
+  Form,
   FormGroup,
   Grid,
   GridItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
   Radio,
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { FC, ChangeEvent, FormEvent } from 'react';
 import { CONST } from '@console/shared';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { k8sPatchByName, k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { useState, useCallback } from 'react';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-  ModalComponentProps,
-} from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { ResourceIcon } from '../utils/resource-icon';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 interface FormData {
   username: string;
@@ -152,178 +153,198 @@ const ConfigureNamespacePullSecret: FC<ConfigureNamespacePullSecretProps> = (pro
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
-      <ModalBody>
-        <Grid hasGutter>
-          <GridItem>
-            <Content component={ContentVariants.p}>
-              {t(
-                'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
-              )}
-            </Content>
-          </GridItem>
-
-          <GridItem span={3}>
-            <label>{t('public~Namespace')}</label>
-          </GridItem>
-          <GridItem span={9}>
-            <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
-          </GridItem>
-
-          <GridItem span={3}>
-            <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
-          </GridItem>
-
-          <GridItem span={9}>
-            <TextInput
-              type="text"
-              id="namespace-pull-secret-name"
-              aria-describedby="namespace-pull-secret-name-help"
-              isRequired
-            />
-            <Content component={ContentVariants.p} id="namespace-pull-secret-name-help">
-              {t('public~Friendly name to help you manage this in the future')}
-            </Content>
-          </GridItem>
-
-          <GridItem span={3}>
-            <label>{t('public~Method')}</label>
-          </GridItem>
-          <GridItem span={9}>
-            <div className="pf-v6-c-form">
-              <FormGroup role="radiogroup" fieldId="namespace-pull-secret-method" isStack>
-                <Radio
-                  id="namespace-pull-secret-method--form"
-                  name="namespace-pull-secret-method"
-                  label={t('public~Enter username/password')}
-                  value="form"
-                  onChange={onMethodChange}
-                  isChecked={method === 'form'}
-                  data-checked-state={method === 'form'}
-                />
-                <Radio
-                  id="namespace-pull-secret-method--upload"
-                  name="namespace-pull-secret-method"
-                  label={t('public~Upload Docker config.json')}
-                  value="upload"
-                  onChange={onMethodChange}
-                  isChecked={method === 'upload'}
-                  data-checked-state={method === 'upload'}
-                />
-              </FormGroup>
-            </div>
-          </GridItem>
-
-          {method === 'form' && (
-            <>
-              <GridItem span={3}>
-                <label htmlFor="namespace-pull-secret-address">
-                  {t('public~Registry address')}
-                </label>
-              </GridItem>
-              <GridItem span={9}>
-                <TextInput
-                  type="text"
-                  id="namespace-pull-secret-address"
-                  placeholder={t('public~quay.io')}
-                  isRequired
-                />
-              </GridItem>
-
-              <GridItem span={3}>
-                <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
-              </GridItem>
-              <GridItem span={9}>
-                <TextInput
-                  type="email"
-                  id="namespace-pull-secret-email"
-                  aria-describedby="namespace-pull-secret-email-help"
-                />
-                <Content component={ContentVariants.p} id="namespace-pull-secret-email-help">
-                  {t('public~Optional, depending on registry provider')}
-                </Content>
-              </GridItem>
-
-              <GridItem span={3}>
-                <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
-              </GridItem>
-              <GridItem span={9}>
-                <TextInput type="text" id="namespace-pull-secret-username" isRequired />
-              </GridItem>
-
-              <GridItem span={3}>
-                <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
-              </GridItem>
-              <GridItem span={9}>
-                <TextInput type="password" id="namespace-pull-secret-password" isRequired />
-              </GridItem>
-            </>
-          )}
-
-          {method === 'upload' && (
-            <>
-              <GridItem span={3}>
-                <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
-              </GridItem>
-              <GridItem span={9}>
-                <input
-                  type="file"
-                  id="namespace-pull-secret-file"
-                  onChange={onFileChange}
-                  aria-describedby="namespace-pull-secret-file-help"
-                />
-                <Content component={ContentVariants.p} id="namespace-pull-secret-file-help">
-                  {t(
-                    'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
-                  )}
-                </Content>
-              </GridItem>
-
-              {invalidJson && (
-                <GridItem span={9} smOffset={3}>
-                  <Alert
-                    isInline
-                    className="co-alert"
-                    variant="danger"
-                    title={t('public~Invalid JSON')}
-                  >
-                    {t('public~The uploaded file is not properly-formatted JSON.')}
-                  </Alert>
-                </GridItem>
-              )}
-              {fileData && (
-                <GridItem span={9} smOffset={3}>
-                  <CodeBlock>
-                    <CodeBlockCode>{fileData}</CodeBlockCode>
-                  </CodeBlock>
-                </GridItem>
-              )}
-            </>
-          )}
-        </Grid>
-      </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Save')}
-        cancel={cancel}
-        submitDisabled={method === 'upload' && (!fileData || invalidJson)}
+    <>
+      <ModalHeader
+        title={t('public~Default pull Secret')}
+        labelId="configure-ns-pull-secret-modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="configure-ns-pull-secret-form" onSubmit={submit}>
+          <Grid hasGutter>
+            <GridItem>
+              <Content component={ContentVariants.p}>
+                {t(
+                  'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
+                )}
+              </Content>
+            </GridItem>
+
+            <GridItem span={3}>
+              <label>{t('public~Namespace')}</label>
+            </GridItem>
+            <GridItem span={9}>
+              <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
+            </GridItem>
+
+            <GridItem span={3}>
+              <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
+            </GridItem>
+
+            <GridItem span={9}>
+              <TextInput
+                type="text"
+                id="namespace-pull-secret-name"
+                aria-describedby="namespace-pull-secret-name-help"
+                isRequired
+              />
+              <Content component={ContentVariants.p} id="namespace-pull-secret-name-help">
+                {t('public~Friendly name to help you manage this in the future')}
+              </Content>
+            </GridItem>
+
+            <GridItem span={3}>
+              <label>{t('public~Method')}</label>
+            </GridItem>
+            <GridItem span={9}>
+              <div className="pf-v6-c-form">
+                <FormGroup role="radiogroup" fieldId="namespace-pull-secret-method" isStack>
+                  <Radio
+                    id="namespace-pull-secret-method--form"
+                    name="namespace-pull-secret-method"
+                    label={t('public~Enter username/password')}
+                    value="form"
+                    onChange={onMethodChange}
+                    isChecked={method === 'form'}
+                    data-checked-state={method === 'form'}
+                  />
+                  <Radio
+                    id="namespace-pull-secret-method--upload"
+                    name="namespace-pull-secret-method"
+                    label={t('public~Upload Docker config.json')}
+                    value="upload"
+                    onChange={onMethodChange}
+                    isChecked={method === 'upload'}
+                    data-checked-state={method === 'upload'}
+                  />
+                </FormGroup>
+              </div>
+            </GridItem>
+
+            {method === 'form' && (
+              <>
+                <GridItem span={3}>
+                  <label htmlFor="namespace-pull-secret-address">
+                    {t('public~Registry address')}
+                  </label>
+                </GridItem>
+                <GridItem span={9}>
+                  <TextInput
+                    type="text"
+                    id="namespace-pull-secret-address"
+                    placeholder={t('public~quay.io')}
+                    isRequired
+                  />
+                </GridItem>
+
+                <GridItem span={3}>
+                  <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
+                </GridItem>
+                <GridItem span={9}>
+                  <TextInput
+                    type="email"
+                    id="namespace-pull-secret-email"
+                    aria-describedby="namespace-pull-secret-email-help"
+                  />
+                  <Content component={ContentVariants.p} id="namespace-pull-secret-email-help">
+                    {t('public~Optional, depending on registry provider')}
+                  </Content>
+                </GridItem>
+
+                <GridItem span={3}>
+                  <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
+                </GridItem>
+                <GridItem span={9}>
+                  <TextInput type="text" id="namespace-pull-secret-username" isRequired />
+                </GridItem>
+
+                <GridItem span={3}>
+                  <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
+                </GridItem>
+                <GridItem span={9}>
+                  <TextInput type="password" id="namespace-pull-secret-password" isRequired />
+                </GridItem>
+              </>
+            )}
+
+            {method === 'upload' && (
+              <>
+                <GridItem span={3}>
+                  <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
+                </GridItem>
+                <GridItem span={9}>
+                  <input
+                    type="file"
+                    id="namespace-pull-secret-file"
+                    onChange={onFileChange}
+                    aria-describedby="namespace-pull-secret-file-help"
+                  />
+                  <Content component={ContentVariants.p} id="namespace-pull-secret-file-help">
+                    {t(
+                      'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
+                    )}
+                  </Content>
+                </GridItem>
+
+                {invalidJson && (
+                  <GridItem span={9} smOffset={3}>
+                    <Alert
+                      isInline
+                      className="co-alert"
+                      variant="danger"
+                      title={t('public~Invalid JSON')}
+                    >
+                      {t('public~The uploaded file is not properly-formatted JSON.')}
+                    </Alert>
+                  </GridItem>
+                )}
+                {fileData && (
+                  <GridItem span={9} smOffset={3}>
+                    <CodeBlock>
+                      <CodeBlockCode>{fileData}</CodeBlockCode>
+                    </CodeBlock>
+                  </GridItem>
+                )}
+              </>
+            )}
+          </Grid>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={inProgress || (method === 'upload' && (!fileData || invalidJson))}
+          data-test="confirm-action"
+          form="configure-ns-pull-secret-form"
+        >
+          {t('public~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const ConfigureNamespacePullSecretModalOverlay: OverlayComponent<ConfigureNamespacePullSecretProps> = (
   props,
 ) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <ConfigureNamespacePullSecret
-        {...props}
-        cancel={props.closeOverlay}
-        close={props.closeOverlay}
-      />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="configure-ns-pull-secret-modal-title"
+    >
+      <ConfigureNamespacePullSecret {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
 };

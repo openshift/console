@@ -6,8 +6,9 @@ import type { Action, GroupedMenuOption, MenuOption } from '@console/dynamic-plu
 import { MenuOptionType } from '@console/dynamic-plugin-sdk/src';
 import type { ContextMenuActions } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { referenceFor } from '@console/internal/module/k8s';
-import { getMenuOptionType, orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
+import { getMenuOptionType } from '@console/shared/src/components/actions/utils';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import { getResource } from '../utils';
 
 export const createContextMenuItems = (actions: MenuOption[]) => {

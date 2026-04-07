@@ -1,6 +1,6 @@
 import type { ReactNode, ComponentType, SetStateAction, Dispatch } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
-import type { DataViewTh } from '@patternfly/react-data-view';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import type { Map as ImmutableMap } from 'immutable';
 import type {
@@ -78,7 +78,7 @@ export type HealthItemProps = WithClassNameProps<{
 
 export type ResourceInventoryItemProps = {
   resources: K8sResourceCommon[];
-  additionalResources?: { [key: string]: [] };
+  additionalResources?: { [key: string]: K8sResourceCommon[] };
   mapper?: StatusGroupMapper;
   kind: K8sModel;
   isLoading: boolean;
@@ -322,6 +322,7 @@ export type ConsoleDataViewColumn<TData> = ConsoleDataViewTh & {
   id: string;
   title: string;
   sortFunction?: string | ((filteredData: TData[], sortDirection: SortByDirection) => TData[]);
+  resizableProps?: any;
 };
 
 export type ConsoleDataViewRow = any[];
@@ -354,6 +355,9 @@ export type ConsoleDataViewProps<
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   mock?: boolean;
+  isResizable?: boolean;
+  /** When provided and isResizable is true, a toolbar action is shown to reset all column widths. */
+  resetAllColumnWidths?: () => void;
 };
 
 // ConsoleDataView helper types

@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { useUserPreference } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
-export const PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY =
+export const PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY =
   'devconsole.import.secureRoutingOptions';
 
 type RoutingOptions = {
@@ -19,7 +19,7 @@ export const usePreferredRoutingOptions = (): [
     preferredRoutingOptions,
     setPreferredRoutingOptions,
     preferredRoutingOptionsLoaded,
-  ] = useUserPreference<RoutingOptions>(PREFERRED_SECURE_ROUTING_OPTIONS_USER_SETTING_KEY, {
+  ] = useUserPreference<RoutingOptions>(PREFERRED_SECURE_ROUTING_OPTIONS_USER_PREFERENCE_KEY, {
     secure: true,
     tlsTermination: 'edge',
     insecureTraffic: 'Redirect',

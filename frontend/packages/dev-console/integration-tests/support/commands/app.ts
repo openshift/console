@@ -1,4 +1,4 @@
-// import { checkErrors } from '../../../../integration-tests-cypress/support';
+// import { checkErrors } from '../../../../integration-tests/support';
 
 import { formPO } from '../pageObjects';
 import { app } from '../pages';

@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
-import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY } from '@console/app/src/consts';
+import { HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY } from '@console/app/src/consts';
 import { useNamespacedNotificationAlertsPoller } from '@console/app/src/hooks/useNamespacedNotificationAlertsPoller';
 import type { ObjectMetadata } from '@console/internal/module/k8s';
 import { LabelSelector } from '@console/internal/module/k8s';
 import type { NotificationAlerts } from '@console/internal/reducers/observe';
-import type { RootState } from '@console/internal/redux';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { SYSTEM_ALERT_RULE_LABEL } from '../constants/monitoring';
 import { useUserPreference } from './useUserPreference';
+
+const emptyNotificationAlerts: NotificationAlerts = {} as NotificationAlerts;
 
 /** Get notification alerts from redux and filter by current user notification settings OR the
   provided override labels. Alerts that match on override labels will not be fitlered even if
@@ -21,13 +22,14 @@ export const useNotificationAlerts = (
   overrideMatchLabels?: ObjectMetadata['labels'],
 ): [NotificationAlerts['data'], NotificationAlerts['loaded'], NotificationAlerts['loadError']] => {
   const [hideUserWorkloadNotifications] = useUserPreference(
-    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY,
     true,
     true,
   );
-  const { data: alerts, loaded, loadError } = useSelector<RootState, NotificationAlerts>(
-    ({ observe }) => observe.get('notificationAlerts') ?? {},
+  const notificationAlerts = useConsoleSelector<NotificationAlerts | undefined>(({ observe }) =>
+    observe.get('notificationAlerts'),
   );
+  const { data: alerts, loaded, loadError } = notificationAlerts ?? emptyNotificationAlerts;
 
   const [filteredAlerts, setFilteredAlerts] = useState<NotificationAlerts['data']>([]);
 
@@ -66,7 +68,7 @@ export const useNamespacedNotificationAlerts = (
   const { alerts, loaded, loadError } = useNamespacedNotificationAlertsPoller(namespace);
 
   const [hideUserWorkloadNotifications] = useUserPreference(
-    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_SETTINGS_KEY,
+    HIDE_USER_WORKLOAD_NOTIFICATIONS_USER_PREFERENCE_KEY,
     true,
     true,
   );

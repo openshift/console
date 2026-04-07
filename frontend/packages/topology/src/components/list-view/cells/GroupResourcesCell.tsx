@@ -4,7 +4,7 @@ import type { Node } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { isValidUrl, labelForNodeKind } from '@console/shared';
+import { isValidUrl, labelForNodeKind } from '@console/shared/src/utils/utils';
 import { showKind, useDisplayFilters } from '../../../filters';
 
 interface GroupResourcesCellProps {

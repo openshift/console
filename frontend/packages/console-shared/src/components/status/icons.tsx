@@ -1,10 +1,12 @@
 import type { FC } from 'react';
 import { Icon } from '@patternfly/react-core';
-import { ArrowCircleUpIcon } from '@patternfly/react-icons/dist/esm/icons/arrow-circle-up-icon';
-import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
-import { ResourcesFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-full-icon';
-import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+import {
+  ArrowCircleUpIcon,
+  ResourcesAlmostFullIcon,
+  ResourcesFullIcon,
+  SyncAltIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
 import type { ColoredIconProps } from '@console/dynamic-plugin-sdk';
 
 export {

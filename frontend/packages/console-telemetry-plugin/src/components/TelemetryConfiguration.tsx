@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { CLUSTER_TELEMETRY_ANALYTICS, useTelemetry } from '@console/shared/src';
+import { CLUSTER_TELEMETRY_ANALYTICS } from '@console/shared/src';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
 import {
   useDebounceCallback,
@@ -21,6 +21,7 @@ import {
   LoadError,
   SaveStatus,
 } from '@console/shared/src/components/cluster-configuration';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type TelemetryConsoleConfig = K8sResourceKind & {
   metadata: {

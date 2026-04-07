@@ -22,7 +22,7 @@ import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared/src/selectors/common';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 
 const RecentEvent: FC<{ projectName: string; viewEvents: string }> = ({
   projectName,

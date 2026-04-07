@@ -1,55 +1,39 @@
-import type { FC } from 'react';
 import { useState } from 'react';
-import { Form } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
-import { t_global_icon_color_status_warning_default as warningColor } from '@patternfly/react-tokens';
+import type { FC } from 'react';
+import { Button, Form, Modal, ModalBody, ModalHeader, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
-import {
-  ModalBody,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sKill } from '@console/internal/module/k8s';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { ModalFooterWithAlerts } from '../modals/ModalFooterWithAlerts';
 
 const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload }) => {
-  const [submitError, setSubmitError] = useState<string>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const { t } = useTranslation();
   const hpaName = hpa.metadata.name;
   const workloadName = workload.metadata.name;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    k8sKill(HorizontalPodAutoscalerModel, hpa)
-      .then(() => {
-        close();
-      })
-      .catch((error) => {
-        setSubmitError(
-          error?.message ||
-            t('console-shared~Unknown error removing {{hpaLabel}} {{hpaName}}.', {
-              hpaLabel: HorizontalPodAutoscalerModel.label,
-              hpaName,
-            }),
-        );
-      });
+    return handlePromise(k8sKill(HorizontalPodAutoscalerModel, hpa)).then(() => {
+      close();
+    });
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <div className="modal-content">
-        <ModalTitle>
-          <ExclamationTriangleIcon color={warningColor.value} />{' '}
-          {t('console-shared~Remove {{label}}?', { label: HorizontalPodAutoscalerModel.label })}
-        </ModalTitle>
-        <ModalBody>
+    <>
+      <ModalHeader
+        title={t('console-shared~Remove {{label}}?', { label: HorizontalPodAutoscalerModel.label })}
+        titleIconVariant="warning"
+        labelId="delete-hpa-modal-title"
+        data-test-id="modal-title"
+      />
+      <ModalBody>
+        <Form id="delete-hpa-modal-form">
           {hpaName ? (
             <>
               <p>
@@ -66,33 +50,57 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
               </p>
             </>
           ) : (
-            !submitError && <LoadingInline />
+            !errorMessage && <LoadingInline />
           )}
-        </ModalBody>
-        <ModalSubmitFooter
-          errorMessage={submitError}
-          inProgress={isSubmitting}
-          submitText={t('console-shared~Remove')}
-          submitDanger
-          submitDisabled={!!submitError}
-          cancel={cancel}
-        />
-      </div>
-    </Form>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="danger"
+          onClick={handleSubmit}
+          form="delete-hpa-modal-form"
+          isLoading={inProgress}
+          isDisabled={inProgress || !!errorMessage}
+          data-test="confirm-action"
+        >
+          {t('console-shared~Remove')}
+        </Button>
+        <Button variant="link" onClick={cancel}>
+          {t('console-shared~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
-export const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+export const DeleteHPAModalOverlay: OverlayComponent<DeleteHPAModalOverlayProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="delete-hpa-modal-title"
+    >
       <DeleteHPAModal
-        close={props.closeOverlay}
-        cancel={props.closeOverlay}
+        close={handleClose}
+        cancel={handleClose}
         hpa={props.hpa}
         workload={props.workload}
       />
-    </ModalWrapper>
-  );
+    </Modal>
+  ) : null;
+};
+
+type DeleteHPAModalOverlayProps = {
+  hpa: HorizontalPodAutoscalerKind;
+  workload: K8sResourceCommon;
 };
 
 type DeleteHPAModalProps = ModalComponentProps & {

@@ -1,16 +1,18 @@
 import type { ReactNode, FC } from 'react';
 import { useState } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
-import { UnknownIcon } from '@patternfly/react-icons/dist/esm/icons/unknown-icon';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  InProgressIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
 import {
   t_color_green_50 as okColor,
   t_color_red_60 as errorColor,
 } from '@patternfly/react-tokens';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import {
   StatusPopupItem,

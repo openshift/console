@@ -1,9 +1,8 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  ThemeContext,
+  useTheme,
   THEME_DARK,
   THEME_LIGHT,
-  applyThemeBehaviour,
   darkThemeMq,
 } from '@console/internal/components/ThemeProvider';
 import okdLogoImg from '../../imgs/okd-logo.svg';
@@ -66,7 +65,7 @@ export const getBrandingDetails = () => {
 export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading: Boolean } => {
   const [logoUrl, setLogoUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
 
   useEffect(() => {
     // return when requested custom logo type is not configured
@@ -87,15 +86,7 @@ export const useCustomLogoURL = (type: CUSTOM_LOGO): { logoUrl: string; loading:
           reqTheme = THEME_DARK;
         }
       } else {
-        reqTheme = applyThemeBehaviour(
-          theme,
-          () => {
-            return THEME_DARK;
-          },
-          () => {
-            return THEME_LIGHT;
-          },
-        );
+        reqTheme = theme;
       }
       const fetchURL = `${window.SERVER_FLAGS.basePath}custom-logo?type=${type}&theme=${capitalize(
         reqTheme,

@@ -7,7 +7,7 @@ import { render, renderHook, screen, fireEvent, waitFor, within } from '@testing
 import type { FormikValues } from 'formik';
 import { Formik } from 'formik';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router';
 import { combineReducers, createStore } from 'redux';
 import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
 import { pluginStore as defaultPluginStore } from '@console/internal/plugins';
@@ -25,7 +25,7 @@ type WrapperProps = {
 };
 
 // Create a Redux store with reducer and initial state.
-const rootReducer = combineReducers<RootState>(baseReducers);
+const rootReducer = combineReducers(baseReducers);
 const setupStore = (initialState?: Partial<RootState>) => {
   const store = createStore(rootReducer, initialState);
   // Set the store in storeHandler so that modules like rbac.tsx can access it

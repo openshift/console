@@ -14,6 +14,12 @@ $consoleWebDistPath: './';
 // PatternFly font path.
 $pf-v6-global--font-path: '~@patternfly/patternfly/assets/fonts';
 
+// PatternFly icon font path.
+$pf-v6-global--fonticon-path: '~@patternfly/patternfly/assets/pficon';
+
+// FontAwesome font path.
+$fa-font-path: '~@patternfly/patternfly/assets/fonts/webfonts';
+
 // == Declare max breakpoints from PatternFly variables
 $pf-v6-global--breakpoint--xs-max: calc(#{$pf-v6-global--breakpoint--xs} - 1);
 $pf-v6-global--breakpoint--sm-max: calc(#{$pf-v6-global--breakpoint--sm} - 1);

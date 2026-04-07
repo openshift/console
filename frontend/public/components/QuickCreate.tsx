@@ -9,14 +9,14 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import type { FC, Ref } from 'react';
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 
 type QuickCreateProps = {
   namespace?: string;

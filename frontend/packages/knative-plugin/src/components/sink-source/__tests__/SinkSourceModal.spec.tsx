@@ -4,10 +4,16 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import { ServiceModel } from '../../../models';
 import SinkSourceModal from '../SinkSourceModal';
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ModalTitle: jest.fn(() => null),
-  ModalBody: jest.fn(() => null),
-  ModalSubmitFooter: jest.fn(() => null),
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  ModalHeader: jest.fn(() => null),
+  ModalBody: jest.fn(({ children }) => <div>{children}</div>),
+  Button: jest.fn(() => null),
+  Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
+}));
+
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 jest.mock('../../add/event-sources/form-fields/SinkUriResourcesGroup', () => ({
@@ -52,10 +58,11 @@ describe('SinkSourceModal Form', () => {
     };
   });
 
-  it('should render form with modal structure', () => {
+  it('should render form with id', () => {
     const { container } = render(<SinkSourceModal {...formProps} />);
-    expect(container.querySelector('form')).toBeInTheDocument();
-    expect(container.querySelector('form')).toHaveClass('modal-content');
+    const form = container.querySelector('form');
+    expect(form).toBeInTheDocument();
+    expect(form).toHaveAttribute('id', 'sink-source-form');
   });
 
   it('should call handleSubmit on form submit', () => {

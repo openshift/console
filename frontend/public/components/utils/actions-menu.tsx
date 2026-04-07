@@ -4,7 +4,7 @@ import { Button, Dropdown, MenuToggle, MenuToggleElement } from '@patternfly/rea
 import { some } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 
 import { ReactNode, RefObject, useEffect, useState } from 'react';
 import { KebabItem, KebabItems, KebabOption } from './kebab';

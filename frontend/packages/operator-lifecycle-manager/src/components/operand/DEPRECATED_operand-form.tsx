@@ -19,15 +19,13 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as Immutable from 'immutable';
 import type { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { useParams, useNavigate } from 'react-router';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
@@ -50,6 +48,7 @@ import {
   modelFor,
 } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import type { ProvidedAPI } from '../../types';
 import { ClusterServiceVersionLogo } from '../cluster-service-version-logo';
@@ -1105,7 +1104,7 @@ export const DEPRECATED_CreateOperandForm: FC<OperandFormProps> = ({
                 icon={_.get(csv, 'spec.icon[0]')}
                 provider={_.get(csv, 'spec.provider')}
               />
-              <SyncMarkdownView content={providedAPI.description} />
+              <MarkdownView content={providedAPI.description} />
             </div>
           )}
         </GridItem>

@@ -1,18 +1,21 @@
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Form, FormGroup } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import {
-  ModalBody,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import { VolumeAttributesClassDropdown } from '@console/internal/components/utils/volume-attributes-class-dropdown';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, close, cancel }) => {
   const { t } = useTranslation();
@@ -21,9 +24,7 @@ const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, c
   );
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
+  const handleSubmit = (): void => {
     const hasExistingVAC = !!resource?.spec?.volumeAttributesClassName;
 
     const patch = [
@@ -46,37 +47,67 @@ const ModifyVACModalComponent: FC<ModifyVACModalComponentProps> = ({ resource, c
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <ModalTitle>{t('console-app~Modify VolumeAttributesClass')}</ModalTitle>
-      <ModalBody>
-        <FormGroup fieldId="vac-dropdown">
-          <VolumeAttributesClassDropdown
-            onChange={setVolumeAttributesClass}
-            selectedKey={volumeAttributesClass}
-            id="vac-dropdown"
-            dataTest="modify-vac-dropdown"
-            required
-            noSelection
-          />
-        </FormGroup>
-      </ModalBody>
-      <ModalSubmitFooter
-        submitText={t('console-app~Save')}
-        submitDisabled={!volumeAttributesClass}
-        cancel={cancel}
-        inProgress={inProgress}
-        errorMessage={errorMessage}
+    <>
+      <ModalHeader
+        title={t('console-app~Modify VolumeAttributesClass')}
+        labelId="modify-vac-modal-title"
       />
-    </Form>
+      <ModalBody>
+        <Form
+          id="modify-vac-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <FormGroup fieldId="vac-dropdown">
+            <VolumeAttributesClassDropdown
+              onChange={setVolumeAttributesClass}
+              selectedKey={volumeAttributesClass}
+              id="vac-dropdown"
+              dataTest="modify-vac-dropdown"
+              required
+              noSelection
+            />
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          form="modify-vac-form"
+          isLoading={inProgress}
+          isDisabled={!volumeAttributesClass || inProgress}
+        >
+          {t('console-app~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('console-app~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
 export const ModifyVACModal: FC<ModifyVACModalProps> = ({ closeOverlay, resource }) => {
-  return (
-    <ModalWrapper blocking onClose={closeOverlay}>
-      <ModifyVACModalComponent close={closeOverlay} cancel={closeOverlay} resource={resource} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={handleClose}
+      aria-labelledby="modify-vac-modal-title"
+    >
+      <ModifyVACModalComponent close={handleClose} cancel={handleClose} resource={resource} />
+    </Modal>
+  ) : null;
 };
 
 export type ModifyVACModalProps = {

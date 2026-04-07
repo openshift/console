@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { useRef, useEffect, useMemo } from 'react';
-import type { DataViewTh } from '@patternfly/react-data-view';
 import { useDataViewPagination } from '@patternfly/react-data-view';
+import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { ThProps } from '@patternfly/react-table';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import type { ConsoleDataViewTh } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import type {
   TableColumn,
@@ -14,6 +14,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
 import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import type { ConsoleDataViewColumn, GetDataViewRows, ResourceFilters } from './types';
 import { useConsoleDataViewSort, getSortByDirection } from './useConsoleDataViewSort';
 
@@ -35,6 +36,7 @@ export const useConsoleDataViewData = <
   showNamespaceOverride,
   columnManagementID,
   customRowData,
+  isResizable = true,
 }: {
   columns: TableColumn<TData>[];
   filteredData: TData[];
@@ -43,10 +45,13 @@ export const useConsoleDataViewData = <
   showNamespaceOverride?: boolean;
   columnManagementID?: string;
   customRowData?: TCustomRowData;
+  isResizable?: boolean;
 }) => {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const prevFiltersRef = useRef(filters);
+  const [activeNamespace] = useActiveNamespace();
+  const prevNamespaceRef = useRef(activeNamespace);
 
   const pagination = useDataViewPagination({
     perPage: 50,
@@ -54,13 +59,17 @@ export const useConsoleDataViewData = <
     setSearchParams,
   });
 
-  // Reset pagination to page 1 when filters change
+  // Reset pagination to page 1 when filters or namespace change
   useEffect(() => {
     const currentFilters = filters;
     const prevFilters = prevFiltersRef.current;
     const filtersChanged = !_.isEqual(currentFilters, prevFilters);
 
-    if (filtersChanged && pagination.page > 1) {
+    const currentNamespace = activeNamespace;
+    const prevNamespace = prevNamespaceRef.current;
+    const namespaceChanged = currentNamespace !== prevNamespace;
+
+    if ((filtersChanged || namespaceChanged) && pagination.page > 1) {
       setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
         newParams.set('page', '1');
@@ -69,7 +78,8 @@ export const useConsoleDataViewData = <
     }
 
     prevFiltersRef.current = currentFilters;
-  }, [filters, pagination.page, setSearchParams]);
+    prevNamespaceRef.current = currentNamespace;
+  }, [filters, activeNamespace, pagination.page, setSearchParams]);
 
   const [activeColumns] = useActiveColumns({
     columns,
@@ -79,7 +89,7 @@ export const useConsoleDataViewData = <
 
   const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(
     () =>
-      activeColumns.map(({ id, title, sort, props }, index) => {
+      activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
         const headerProps: ThProps = {
           ...props,
           dataLabel: title,
@@ -101,6 +111,7 @@ export const useConsoleDataViewData = <
           title,
           sortFunction: sort,
           props: headerProps,
+          resizableProps: isResizable ? resizableProps : undefined,
           cell: title ? (
             <span>{title}</span>
           ) : (
@@ -108,7 +119,7 @@ export const useConsoleDataViewData = <
           ),
         };
       }),
-    [activeColumns, t],
+    [activeColumns, t, isResizable],
   );
 
   const { sortBy, onSort } = useConsoleDataViewSort<TData>({
@@ -121,14 +132,6 @@ export const useConsoleDataViewData = <
 
     if (!isDataViewConfigurableColumn(sortColumn)) {
       return filteredData;
-    }
-
-    if (typeof sortColumn.props.sort === 'string') {
-      return filteredData.sort(
-        sortResourceByValue(sortDirection, (obj) =>
-          _.get(obj, (sortColumn.props.sort as unknown) as string, ''),
-        ),
-      );
     }
 
     if (typeof sortColumn.sortFunction === 'string') {

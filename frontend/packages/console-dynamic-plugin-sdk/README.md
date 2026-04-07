@@ -112,7 +112,8 @@ Console.
 
 | Console Version | PatternFly Versions | Notes                                 |
 | --------------- | ------------------- | ------------------------------------- |
-| 4.19.x          | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
+| 4.22.x          | 6.x                 |                                       |
+| 4.19.x - 4.21.x | 6.x + 5.x           | New dynamic plugins should use PF 6.x |
 | 4.15.x - 4.18.x | 5.x + 4.x           | New dynamic plugins should use PF 5.x |
 | 4.12.x - 4.14.x | 4.x                 |                                       |
 
@@ -125,9 +126,50 @@ or any styles from `@patternfly/patternfly` package in your plugin.
 Plugins should use PatternFly components and styles for a consistent user interface. Refer to the relevant
 [release notes](./release-notes) for more details on PatternFly versions supported by each Console version.
 
+## Console version compatibility
+
+To make your plugin compatible with multiple Console versions, adopt one of the strategies listed below.
+Make sure to follow [release notes](./release-notes) and adapt your code accordingly to avoid compatibility
+issues.
+
+### Target one Console version per code branch
+
+Example project: https://github.com/kubevirt-ui/kubevirt-plugin
+
+Create a code branch for each supported Console version. For example, create a `release-4.21` branch for
+use with Console 4.21. Build the plugin using the Console 4.21 SDK packages. If you use `@console/pluginAPI`
+dependency in your plugin metadata, make sure it targets earlier Console versions that must load the plugin.
+
+Set up CI and related workflows so that changes in your `release-4.21` branch are tested on a cluster that
+runs Console 4.21. Apply the same approach for each supported Console version. When deploying the plugin,
+use the plugin version that matches the Console version on the cluster. This ensures that the plugin uses
+the same API version as the Console, avoiding compatibility issues between plugin code and Console APIs.
+
+With this approach you can target a specific Console version without any Console plugin API version skew.
+
+### Target multiple Console versions per code branch
+
+Example project: https://github.com/stolostron/console/tree/main/frontend/plugins
+
+In the main development branch, use the Console plugin SDK packages that match the oldest Console version
+your plugin supports. This approach relies on newer Console versions continuing to support plugins built
+for earlier versions. For example, using the Console 4.19 plugin SDK package enables the plugin to target
+Console versions 4.19 through to the latest version.
+
+Review the plugin metadata and make sure that the `@console/pluginAPI` dependency is present and matches
+the supported Console version range; for example, `>=4.19.0-0`.
+
+Set up CI and related workflows to test your plugin on all supported Console versions. When deploying the
+plugin, verify that the Console version on the cluster falls within the supported Console version range.
+
+This approach uses a single development branch without the need to maintain separate release branches for
+different Console versions. Be aware of the Console plugin API version skew potential due to your plugin
+supporting multiple Console versions.
+
 ## Shared modules
 
-Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with its dynamic plugins.
+Console is [configured](./src/shared-modules/shared-modules-meta.ts) to share specific modules with its
+dynamic plugins.
 
 The following shared modules are provided by Console, without plugins providing their own fallback:
 
@@ -144,8 +186,8 @@ The following shared modules are provided by Console, without plugins providing 
 - `redux`
 - `redux-thunk`
 
-Any shared modules provided by Console without plugin provided fallback are listed as `dependencies`
-in the `package.json` manifest of `@openshift-console/dynamic-plugin-sdk` package.
+Shared modules which are provided by Console are listed as optional `peerDependencies` in the manifest
+of `@openshift-console/dynamic-plugin-sdk` package.
 
 ## How to upgrade your plugins
 

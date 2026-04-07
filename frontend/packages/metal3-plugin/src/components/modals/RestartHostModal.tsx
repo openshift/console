@@ -1,18 +1,11 @@
 import { useCallback } from 'react';
-import {
-  Modal,
-  ModalHeader,
-  ModalVariant,
-  ModalBody as PfModalBody,
-  ModalFooter as PfModalFooter,
-  Button,
-} from '@patternfly/react-core';
+import { Modal, ModalHeader, ModalVariant, ModalBody, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { ModalComponentProps } from '@console/internal/components/factory';
-import { ErrorMessage } from '@console/internal/components/utils';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
 import type { BareMetalHostKind } from '../../types';
 import { PowerOffWarning } from './PowerOffHostModal';
@@ -45,21 +38,35 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
   );
 
   return (
-    <Modal isOpen onClose={props.closeOverlay} variant={ModalVariant.small}>
-      <ModalHeader title={t('metal3-plugin~Restart Bare Metal Host')} />
-      <PfModalBody>
+    <Modal
+      isOpen
+      onClose={props.closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="restart-host-modal-title"
+    >
+      <ModalHeader
+        title={t('metal3-plugin~Restart Bare Metal Host')}
+        data-test-id="modal-title"
+        labelId="restart-host-modal-title"
+      />
+      <ModalBody>
         <p>{t('metal3-plugin~The host will be powered off and on again.')}</p>
         <PowerOffWarning restart />
-      </PfModalBody>
-      <PfModalFooter>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
-        <Button variant="primary" onClick={onSubmit} isLoading={inProgress}>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          variant="primary"
+          onClick={onSubmit}
+          isLoading={inProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
           {t('metal3-plugin~Restart')}
         </Button>
-        <Button variant="link" onClick={closeOverlay}>
+        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('metal3-plugin~Cancel')}
         </Button>
-      </PfModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

@@ -1,6 +1,6 @@
 import type { ComponentType, FC } from 'react';
 import { useMemo } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 
 export const useQueryParams = () => {
   const { search } = useLocation();

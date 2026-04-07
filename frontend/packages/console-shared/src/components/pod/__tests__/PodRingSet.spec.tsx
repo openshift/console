@@ -1,4 +1,4 @@
-import { LongArrowAltRightIcon } from '@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import * as usePodsWatcherModule from '../../../hooks/usePodsWatcher';
@@ -12,7 +12,8 @@ jest.mock('../PodRing', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('@patternfly/react-icons/dist/esm/icons/long-arrow-alt-right-icon', () => ({
+jest.mock('@patternfly/react-icons', () => ({
+  ...jest.requireActual('@patternfly/react-icons'),
   LongArrowAltRightIcon: jest.fn(() => null),
 }));
 

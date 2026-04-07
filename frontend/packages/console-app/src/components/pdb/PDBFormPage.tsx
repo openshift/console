@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingBox } from '@console/internal/components/utils/status-box';
@@ -17,7 +17,7 @@ import PDBForm from './PDBForm';
 import type { PodDisruptionBudgetKind } from './types';
 import { getPDBResource } from './utils/get-pdb-resources';
 
-const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.pdbForm.editor.lastView';
+const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'console.pdbForm.editor.lastView';
 
 export const PDBFormPage: FC = () => {
   const { t } = useTranslation();
@@ -122,7 +122,7 @@ export const PDBFormPage: FC = () => {
               setHelpText(type === EditorType.Form ? formHelpText : yamlHelpText)
             }
             YAMLEditor={YAMLEditor}
-            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+            lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
             displayConversionError
           />
         </>

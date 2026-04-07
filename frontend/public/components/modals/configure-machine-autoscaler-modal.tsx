@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { Modal, ModalHeader, ModalBody, Button, FormGroup, Form } from '@patternfly/react-core';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { MachineAutoscalerModel } from '../../models';
@@ -9,7 +9,7 @@ import { NumberSpinner } from '../utils/number-spinner';
 import { resourcePathFromModel } from '../utils/resource-link';
 import { K8sResourceKind } from '../../module/k8s';
 import { k8sCreateResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export const ConfigureMachineAutoscalerModal: OverlayComponent<ConfigureMachineAutoscalerModalProps> = ({

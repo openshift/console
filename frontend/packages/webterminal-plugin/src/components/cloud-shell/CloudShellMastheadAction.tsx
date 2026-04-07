@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
+import { CheckIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useToggleCloudShellExpanded } from '../../redux/actions/cloud-shell-dispatchers';
 import { useIsCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';

@@ -8,8 +8,7 @@ import {
   SplitItem,
   Split,
 } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { UndoIcon } from '@patternfly/react-icons/dist/esm/icons/undo-icon';
+import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';

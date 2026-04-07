@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import type { FC, FormEvent } from 'react';
-import { Button, Flex, FlexItem, Label, Popover, Switch } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
+import { Flex, FlexItem, Switch } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { FLAG_TECH_PREVIEW } from '@console/app/src/consts';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { OLMV1_ENABLED_USER_SETTING_KEY } from '../const';
+import { OLMV1_ENABLED_USER_PREFERENCE_KEY } from '../const';
+import { OLMv1TechPreviewBadge } from './OLMv1TechPreviewBadge';
 
 /**
  * Toolbar component for toggling OLMv1 UI visibility in the operator catalog.
@@ -16,7 +16,7 @@ export const OLMv1Switch: FC = () => {
   const { t } = useTranslation();
   const techPreviewEnabled = useFlag(FLAG_TECH_PREVIEW);
   const [olmv1Enabled, setOlmv1Enabled] = useUserPreference<boolean>(
-    OLMV1_ENABLED_USER_SETTING_KEY,
+    OLMV1_ENABLED_USER_PREFERENCE_KEY,
     techPreviewEnabled ?? false,
     true,
   );
@@ -26,14 +26,6 @@ export const OLMv1Switch: FC = () => {
       setOlmv1Enabled(checked);
     },
     [setOlmv1Enabled],
-  );
-
-  const popoverContent = (
-    <div>
-      {t(
-        'olm-v1~Lets you use OLMv1 (Tech Preview), a streamlined redesign of OLMv0. OLMv1 simplifies operator management with declarative APIs, enhanced security, and direct, GitOps-friendly control over upgrades.',
-      )}
-    </div>
   );
 
   return (
@@ -48,19 +40,7 @@ export const OLMv1Switch: FC = () => {
         />
       </FlexItem>
       <FlexItem>
-        <Label color="yellow" isCompact>
-          {t('olm-v1~Tech Preview')}
-        </Label>
-      </FlexItem>
-      <FlexItem>
-        <Popover aria-label={t('olm-v1~OLMv1 information')} bodyContent={popoverContent}>
-          <Button
-            icon={<OutlinedQuestionCircleIcon />}
-            aria-label={t('olm-v1~OLMv1 information')}
-            variant="link"
-            isInline
-          />
-        </Popover>
+        <OLMv1TechPreviewBadge />
       </FlexItem>
     </Flex>
   );

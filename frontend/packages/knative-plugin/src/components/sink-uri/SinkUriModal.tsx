@@ -1,21 +1,20 @@
 import type { FC } from 'react';
 import {
+  Button,
   Form,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
+  ModalBody,
+  ModalHeader,
   TextInputTypes,
 } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-} from '@console/internal/components/factory/modal';
 import { InputField, getFieldId } from '@console/shared';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export interface SinkUriModalProps {
   cancel?: () => void;
@@ -35,10 +34,14 @@ const SinkUriModal: FC<Props> = ({
   const fieldId = getFieldId('sink-name', 'uri');
   const dirty = values?.uri !== initialValues.uri;
   return (
-    <Form onSubmit={handleSubmit}>
-      <div className="modal-content">
-        <ModalTitle>{t('knative-plugin~Edit URI')}</ModalTitle>
-        <ModalBody>
+    <>
+      <ModalHeader
+        title={t('knative-plugin~Edit URI')}
+        labelId="sink-uri-modal-title"
+        data-test-id="modal-title"
+      />
+      <ModalBody>
+        <Form id="sink-uri-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
           <FormSection fullWidth>
             <FormGroup fieldId={fieldId} isRequired>
               <InputField
@@ -58,17 +61,23 @@ const SinkUriModal: FC<Props> = ({
               </FormHelperText>
             </FormGroup>
           </FormSection>
-        </ModalBody>
-        <ModalSubmitFooter
-          inProgress={isSubmitting}
-          submitText={t('knative-plugin~Save')}
-          submitDisabled={!dirty}
-          cancelText={t('knative-plugin~Cancel')}
-          cancel={cancel}
-          errorMessage={status.error}
-        />
-      </div>
-    </Form>
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={status.error}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={isSubmitting}
+          isDisabled={!dirty}
+          form="sink-uri-form"
+        >
+          {t('knative-plugin~Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('knative-plugin~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 

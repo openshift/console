@@ -4,7 +4,7 @@ import { observer } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import type { WatchK8sResources, WatchK8sResults } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDebounceCallback } from '@console/shared';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import type { TopologyResourcesObject, TrafficData } from '../topology-types';
 import type { ExtensibleModel } from './ModelContext';
 import { ModelContext } from './ModelContext';

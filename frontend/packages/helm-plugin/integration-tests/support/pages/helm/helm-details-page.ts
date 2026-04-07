@@ -23,15 +23,13 @@ export const helmDetailsPage = {
     cy.get('dl dt').contains(fieldName).next('dd').should('contain.text', fieldValue);
   },
   uninstallHelmRelease: () => {
-    cy.get('form.modal-content').within(() => {
-      cy.byLegacyTestID('modal-title').should('contain.text', 'Delete Helm Release?');
-      cy.get('button[type=submit]').click({ force: true });
-    });
+    cy.byLegacyTestID('modal-title').should('contain.text', 'Delete Helm Release?');
+    cy.byTestID('confirm-action').click({ force: true });
     modal.shouldBeClosed();
   },
   enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-release') => {
     modal.modalTitleShouldContain('Delete Helm Release?');
-    cy.get('form strong').should('have.text', releaseName);
+    cy.byTestID('resource-name').should('have.text', releaseName);
     cy.get(helmPO.uninstallHelmRelease.releaseName).type(releaseName);
   },
   checkHelmTab: (name: string) => {

@@ -11,7 +11,7 @@ import {
   ModalHeader,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import CatalogBadges from '../CatalogBadges';
 import { useCtaLink } from '../hooks/useCtaLink';

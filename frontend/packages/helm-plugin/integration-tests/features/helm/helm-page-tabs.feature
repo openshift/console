@@ -1,4 +1,4 @@
-@helm @odc-6685
+@helm @ODC-6685
 Feature: Add repositories tab in Helm navigation item
               As a user, I want to navigate to different tabs related to Helm in the Helm page
 
@@ -83,5 +83,3 @@ Feature: Add repositories tab in Helm navigation item
               And user navigates to Helm page
               And user clicks on Repositories tab
              Then user can see "HelmChartRepository" "helm-test2" updated with "https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs/index.yaml" in the list page
-
-

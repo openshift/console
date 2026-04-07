@@ -38,8 +38,8 @@ jest.mock('@console/shared/src/hooks/redux-selectors', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(() => ({})),
   useLocation: jest.fn(() => ({ pathname: '/', search: '', hash: '', state: null })),
 }));
@@ -56,9 +56,8 @@ jest.mock('../../utils/useClusterServiceVersionPath', () => ({
   useClusterServiceVersionPath: jest.fn(() => '/test-path'),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ...jest.requireActual('@console/internal/components/utils'),
-  AsyncComponent: ({ children }) => children || null,
+jest.mock('@console/shared/src/components/markdown/MarkdownView', () => ({
+  MarkdownView: jest.fn(() => '[MARKDOWN_VIEW]'),
 }));
 
 jest.mock('@console/internal/components/conditions', () => ({

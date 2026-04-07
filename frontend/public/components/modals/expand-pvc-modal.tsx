@@ -1,20 +1,26 @@
 import { useState, useCallback, FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { useNavigate } from 'react-router';
 import {
-  ModalTitle,
+  Button,
+  Content,
+  ContentVariants,
+  Form,
+  FormGroup,
+  Modal,
   ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-  ModalComponentProps,
-} from '../factory/modal';
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
+import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { RequestSizeInput } from '../utils/request-size-input';
 import { resourceObjPath } from '../utils/resource-link';
 import { validate, convertToBaseValue, humanizeBinaryBytesWithoutB } from '../utils/units';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel }) => {
@@ -58,36 +64,48 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('public~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
+    <>
+      <ModalHeader title={t('public~Expand {{kind}}', { kind: kind.label })} />
       <ModalBody>
-        <p>
+        <Content component={ContentVariants.p}>
           <Trans t={t} ns="public">
             Increase the capacity of PVC{' '}
             <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
             Note that capacity must be at least the current PVC size. This expansion might take some
             time to complete.
           </Trans>
-        </p>
-        <label className="co-required">{t('public~Total size')}</label>
-        <RequestSizeInput
-          name={t('public~requestSize')}
-          required
-          onChange={handleRequestSizeInputChange}
-          defaultRequestSizeUnit={requestSizeUnit}
-          defaultRequestSizeValue={requestSizeValue}
-          dropdownUnits={dropdownUnits}
-          testID="pvc-expand-size-input"
-          minValue={defaultSize[0]}
-        />
+        </Content>
+        <Form id="expand-pvc-form" onSubmit={submit}>
+          <FormGroup label={t('public~Total size')} isRequired fieldId="pvc-expand-size-input">
+            <RequestSizeInput
+              name={t('public~requestSize')}
+              required
+              onChange={handleRequestSizeInputChange}
+              defaultRequestSizeUnit={requestSizeUnit}
+              defaultRequestSizeValue={requestSizeValue}
+              dropdownUnits={dropdownUnits}
+              testID="pvc-expand-size-input"
+              minValue={defaultSize[0]}
+            />
+          </FormGroup>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('public~Expand')}
-        cancel={cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          isDisabled={inProgress}
+          data-test="confirm-action"
+          form="expand-pvc-form"
+        >
+          {t('public~Expand')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -97,9 +115,15 @@ export type ExpandPVCModalProps = {
 } & ModalComponentProps;
 
 export const ExpandPVCModalOverlay: OverlayComponent<ExpandPVCModalProps> = (props) => {
-  return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <ExpandPVCModal {...props} cancel={props.closeOverlay} close={props.closeOverlay} />
-    </ModalWrapper>
-  );
+  const [isOpen, setIsOpen] = useState(true);
+  const handleClose = () => {
+    setIsOpen(false);
+    props.closeOverlay();
+  };
+
+  return isOpen ? (
+    <Modal variant={ModalVariant.small} isOpen onClose={handleClose}>
+      <ExpandPVCModal {...props} cancel={handleClose} close={handleClose} />
+    </Modal>
+  ) : null;
 };

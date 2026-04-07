@@ -5,7 +5,7 @@ import {
   isClusterConfigurationItem,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import type { ResolvedClusterConfigurationItem } from './types';
 
 const useClusterConfigurationItems = (): [

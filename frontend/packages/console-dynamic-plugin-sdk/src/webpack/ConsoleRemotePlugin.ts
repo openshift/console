@@ -121,6 +121,23 @@ export const validateConsoleExtensionsFileSchema = (
   return new SchemaValidator(description).validate(schema, extensions);
 };
 
+const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
+  const pluginDeps = getPackageDependencies(pkg);
+  const warnings: string[] = [];
+
+  sharedPluginModules.forEach((moduleName) => {
+    const { deprecated } = getSharedModuleMetadata(moduleName);
+
+    if (deprecated && pluginDeps[moduleName]) {
+      warnings.push(
+        `shared modules: [DEPRECATION ALERT] '${moduleName}' is deprecated. ${deprecated}`,
+      );
+    }
+  });
+
+  return warnings;
+};
+
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
   const pluginDeps = getPackageDependencies(pkg);
   const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
@@ -148,6 +165,28 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
 
   return result;
 };
+
+/**
+ * PatternFly packages that support dynamic modules to be used with webpack module federation.
+ *
+ * Console provided {@link sharedPluginModules} should NOT be listed here.
+ */
+const dynamicModulePatternFlyPackages = [
+  '@patternfly/react-charts',
+  '@patternfly/react-core',
+  '@patternfly/react-data-view',
+  '@patternfly/react-icons',
+  '@patternfly/react-table',
+  '@patternfly/react-templates',
+];
+
+type DynamicModulePackageSpec = Partial<{
+  /** @default 'dist/esm/index.js' */
+  indexModule: string;
+
+  /** @default 'module' */
+  resolutionField: string;
+}>;
 
 export type ConsoleRemotePluginOptions = Partial<{
   /**
@@ -250,21 +289,10 @@ export type ConsoleRemotePluginOptions = Partial<{
      * Each package listed here should include a `dist/dynamic` directory containing `package.json`
      * files that refer to specific modules of that package.
      *
-     * If not specified, the following packages will be included:
-     * - `@patternfly/react-core`
-     * - `@patternfly/react-icons`
-     * - `@patternfly/react-table`
+     * If not specified, use packages listed in {@link dynamicModulePatternFlyPackages} with default
+     * settings.
      */
-    packageSpecs: Record<
-      string,
-      Partial<{
-        /** @default 'dist/esm/index.js' */
-        indexModule: string;
-
-        /** @default 'module' */
-        resolutionField: string;
-      }>
-    >;
+    packageSpecs: Record<string, DynamicModulePackageSpec>;
 
     /**
      * Import transformations will be applied to modules that match this filter.
@@ -331,24 +359,24 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       path.resolve(process.cwd(), 'node_modules'),
     ];
 
-    this.sharedDynamicModuleMaps = Object.entries(
-      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? {
-        '@patternfly/react-core': {},
-        '@patternfly/react-icons': {},
-        '@patternfly/react-table': {},
-      },
-    ).reduce<Record<string, DynamicModuleMap>>(
-      (acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
-        const basePath = resolvedModulePaths
-          .map((p) => path.resolve(p, pkgName))
-          .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+    const sharedDynamicModulePackageSpecs =
+      this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ??
+      dynamicModulePatternFlyPackages.reduce<Record<string, DynamicModulePackageSpec>>(
+        (acc, moduleName) => ({ ...acc, [moduleName]: {} }),
+        {},
+      );
 
-        return basePath
-          ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
-          : acc;
-      },
-      {},
-    );
+    this.sharedDynamicModuleMaps = Object.entries(sharedDynamicModulePackageSpecs).reduce<
+      Record<string, DynamicModuleMap>
+    >((acc, [pkgName, { indexModule = 'dist/esm/index.js', resolutionField = 'module' }]) => {
+      const basePath = resolvedModulePaths
+        .map((p) => path.resolve(p, pkgName))
+        .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
+
+      return basePath
+        ? { ...acc, [pkgName]: getDynamicModuleMap(basePath, indexModule, resolutionField) }
+        : acc;
+    }, {});
   }
 
   apply(compiler: Compiler) {
@@ -372,6 +400,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     } = pluginMetadata;
 
     const logger = compiler.getInfrastructureLogger(ConsoleRemotePlugin.name);
+
     const publicPath = `/api/plugins/${name}/`;
 
     if (compiler.options.output.publicPath !== undefined) {
@@ -455,6 +484,10 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
       });
 
     compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
+      getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
+        compilation.warnings.push(new compiler.webpack.WebpackError(message));
+      });
+
       const modifiedModules: string[] = [];
 
       compiler.webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(

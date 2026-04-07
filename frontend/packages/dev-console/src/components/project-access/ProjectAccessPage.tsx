@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom-v5-compat';
+import { useParams, useLocation } from 'react-router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useProjectAccessRoles } from './hooks';

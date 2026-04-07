@@ -1,6 +1,6 @@
 import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router';
 import * as _ from 'lodash';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { css } from '@patternfly/react-styles';
@@ -35,9 +35,9 @@ import {
   normalizeIconClass,
 } from './catalog/catalog-item-icon';
 import { ButtonBar } from './utils/button-bar';
-import { Firehose } from './utils/firehose';
 import { LoadError, LoadingBox } from './utils/status-box';
 import { NsDropdown } from './utils/list-dropdown';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { SecretModel, TemplateInstanceModel } from '../models';
 import {
@@ -327,6 +327,14 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
     return <LoadingBox />;
   }
 
+  if (!obj.data) {
+    return (
+      <LoadError label={t('public~Template')}>
+        {t('public~Template not found or invalid URL parameters.')}
+      </LoadError>
+    );
+  }
+
   const template: TemplateKind = obj.data;
   const params = template.parameters || [];
 
@@ -387,31 +395,34 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
   );
 };
 
-export const InstantiateTemplatePage: FC<{}> = (props) => {
+export const InstantiateTemplatePage: FC<{}> = () => {
   const title = 'Instantiate Template';
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const templateName = searchParams.get('template');
   const templateNamespace = searchParams.get('template-ns');
   const preselectedNamespace = searchParams.get('preselected-ns');
-  const resources = [
-    {
-      kind: 'Template',
-      name: templateName,
-      namespace: templateNamespace,
-      isList: false,
-      prop: 'obj',
-    },
-  ];
+
+  const [template, loaded, loadError] = useK8sWatchResource(
+    templateName && templateNamespace
+      ? {
+          kind: 'Template',
+          name: templateName,
+          namespace: templateNamespace,
+          isList: false,
+        }
+      : null,
+  );
 
   return (
     <>
       <DocumentTitle>{title}</DocumentTitle>
       <PageHeading title={title} />
       <PaneBody>
-        <Firehose resources={resources}>
-          <TemplateForm preselectedNamespace={preselectedNamespace} {...(props as any)} />
-        </Firehose>
+        <TemplateForm
+          preselectedNamespace={preselectedNamespace}
+          obj={{ data: template, loaded, loadError }}
+        />
       </PaneBody>
     </>
   );

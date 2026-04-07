@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
+import { InProgressIcon } from '@patternfly/react-icons';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { FLAGS } from '@console/shared/src/constants/common';
 import {
@@ -10,16 +10,14 @@ import {
   getInfrastructurePlatform,
   isSingleNode,
 } from '@console/shared/src/selectors/infrastructure';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { ErrorBoundaryInline } from '@console/shared/src/components/error';
 import {
   useResolvedExtensions,
-  isOverviewDetailItem,
   isCustomOverviewDetailItem,
   WatchK8sResource,
-  CustomOverviewDetailItem as CustomOverviewDetailItemType,
-  OverviewDetailItem as OverviewDetailItemType,
+  CustomOverviewDetailItem,
 } from '@console/dynamic-plugin-sdk';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { ClusterVersionModel } from '../../../../models';
@@ -45,7 +43,7 @@ import {
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { flagPending } from '../../../../reducers/features';
 import { LoadingInline } from '../../../utils/status-box';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
 
@@ -110,10 +108,7 @@ export const DetailsCard: React.FC = () => {
   const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
     ClusterVersionKind
   >(clusterVersionResource);
-  const [detailItemsExtensions] = useResolvedExtensions<OverviewDetailItemType>(
-    isOverviewDetailItem,
-  );
-  const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItemType>(
+  const [customDetailItemsExtensions] = useResolvedExtensions<CustomOverviewDetailItem>(
     isCustomOverviewDetailItem,
   );
 
@@ -256,19 +251,6 @@ export const DetailsCard: React.FC = () => {
                     {t('public~No (single control plane node)')}
                   </OverviewDetailItem>
                 )}
-                {detailItemsExtensions.map((e) => {
-                  const Component = e.properties.component;
-                  return (
-                    <ErrorBoundaryInline
-                      key={e.uid}
-                      wrapper={({ children }) => (
-                        <OverviewDetailItem title="">{children}</OverviewDetailItem>
-                      )}
-                    >
-                      <Component />
-                    </ErrorBoundaryInline>
-                  );
-                })}
                 {customDetailItemsExtensions.map((e) => {
                   const { component: Component, error, isLoading, ...props } = e.properties;
                   return (

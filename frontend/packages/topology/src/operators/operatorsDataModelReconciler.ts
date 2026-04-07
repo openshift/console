@@ -7,7 +7,7 @@ import {
   isOperatorBackedKnSinkService,
 } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
+import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src/utils/icon-utils';
 import { TYPE_APPLICATION_GROUP } from '../const';
 import { getTopologyNodeItem } from '../data-transforms/transform-utils';
 import type { OdcNodeModel, TopologyDataResources } from '../topology-types';

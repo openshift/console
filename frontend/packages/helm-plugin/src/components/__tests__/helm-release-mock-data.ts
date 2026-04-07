@@ -1,5 +1,5 @@
-import type { FirehoseResourcesResult } from '@console/internal/components/utils/types';
-import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
+import type { K8sResourceCommon, WatchK8sResults } from '@console/dynamic-plugin-sdk';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -260,7 +260,7 @@ export const mockChartEntries1: HelmChartEntries = {
   'rh-hazelcast-enterprise--redhat-helm-repo': mockRedhatHelmChartData,
 };
 
-export const mockReleaseResources: FirehoseResourcesResult<{
+export const mockReleaseResources: WatchK8sResults<{
   Deployment: K8sResourceCommon;
   StatefulSet: K8sResourceCommon;
   Pod: K8sResourceCommon;

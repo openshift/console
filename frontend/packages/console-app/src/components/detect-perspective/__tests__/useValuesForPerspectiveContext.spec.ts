@@ -2,14 +2,17 @@ import {
   acmPerspectiveExtension,
   mockPerspectiveExtensions,
 } from '@console/dynamic-plugin-sdk/src/perspective/__tests__/perspective.data';
-import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
+import {
+  usePerspectiveExtension,
+  usePerspectives,
+} from '@console/shared/src/hooks/usePerspectives';
 import { renderHookWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ACM_PERSPECTIVE_ID } from '../../../consts';
 import { usePreferredPerspective } from '../../user-preferences/perspective/usePreferredPerspective';
 import { useLastPerspective } from '../useLastPerspective';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
-jest.mock('@console/shared/src/hooks/perspective-utils', () => ({
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectiveExtension: jest.fn(),
   usePerspectives: jest.fn(),
 }));

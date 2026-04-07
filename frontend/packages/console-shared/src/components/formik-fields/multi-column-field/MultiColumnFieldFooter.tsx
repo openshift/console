@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 export interface MultiColumnFieldFooterProps {

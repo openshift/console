@@ -12,12 +12,9 @@ import {
   MenuToggle,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  PREFERRED_TELEMETRY_USER_SETTING_KEY,
-  USER_TELEMETRY_ANALYTICS,
-  useTelemetry,
-  useUserPreference,
-} from '@console/shared';
+import { PREFERRED_TELEMETRY_USER_PREFERENCE_KEY, USER_TELEMETRY_ANALYTICS } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 type TelemetryAnalyticsSelectOptions = {
   value: USER_TELEMETRY_ANALYTICS;
@@ -99,7 +96,11 @@ const TelemetryUserPreferenceDropdown: FC = () => {
   const [
     currentUserPreferenceTelemetryValue,
     setCurrentUserPreferenceTelemetryValue,
-  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(PREFERRED_TELEMETRY_USER_SETTING_KEY, null, true);
+  ] = useUserPreference<USER_TELEMETRY_ANALYTICS>(
+    PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+    null,
+    true,
+  );
 
   const onChange = (selectedOption: TelemetryAnalyticsSelectOptions) => {
     fireTelemetryEvent('Telemetry user preference changes', {

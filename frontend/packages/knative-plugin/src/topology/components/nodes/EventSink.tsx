@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import { PodSet } from '@console/topology/src/components/graph-view';
 import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
 import { KafkaSinkModel } from '../../../models';

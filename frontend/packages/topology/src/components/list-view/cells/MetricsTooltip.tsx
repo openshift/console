@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { MetricsTooltipProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { truncateMiddle } from '@console/internal/components/utils';
-import { useIsMobile } from '@console/shared';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 
 const MetricsTooltip: FC<MetricsTooltipProps & { children?: ReactNode }> = ({
   metricLabel,

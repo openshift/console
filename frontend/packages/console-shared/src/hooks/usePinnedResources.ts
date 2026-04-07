@@ -3,17 +3,16 @@ import * as _ from 'lodash';
 import type { ExtensionK8sModel, K8sModel } from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel, useModelFinder } from '@console/internal/module/k8s';
-import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
-import type { Perspective } from './perspective-utils';
-import { usePerspectives } from './perspective-utils';
+import type { Perspective } from './usePerspectives';
+import { usePerspectives } from './usePerspectives';
 import { useTelemetry } from './useTelemetry';
-import { useUserPreferenceCompatibility } from './useUserPreferenceCompatibility';
+import { useUserPreference } from './useUserPreference';
 
 type PinnedResourcesType = {
   [perspective: string]: string[];
 };
 
-const PINNED_RESOURCES_CONFIG_MAP_KEY = 'console.pinnedResources';
+const PINNED_RESOURCES_USER_PREFERENCE_KEY = 'console.pinnedResources';
 
 export const usePinnedResources = (): [string[], (pinnedResources: string[]) => void, boolean] => {
   const fireTelemetryEvent = useTelemetry();
@@ -57,9 +56,11 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
       ),
     [perspectiveExtensions, getPins],
   );
-  const [pinnedResources, setPinnedResources, loaded] = useUserPreferenceCompatibility<
-    PinnedResourcesType
-  >(PINNED_RESOURCES_CONFIG_MAP_KEY, PINNED_RESOURCES_LOCAL_STORAGE_KEY, null, true);
+  const [pinnedResources, setPinnedResources, loaded] = useUserPreference<PinnedResourcesType>(
+    PINNED_RESOURCES_USER_PREFERENCE_KEY,
+    null,
+    true,
+  );
 
   const pins = useMemo(() => {
     if (!loaded) {

@@ -2,11 +2,11 @@ import type { FC, ReactNode, ComponentType } from 'react';
 import { useCallback } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router';
 import type { AlertAction } from '@console/dynamic-plugin-sdk';
 import { isAlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import type { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { useModal } from '@console/dynamic-plugin-sdk/src/lib-core';
+import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { LinkifyExternal } from '@console/internal/components/utils/link';
@@ -92,7 +92,7 @@ export const StatusItem: FC<StatusItemProps> = ({
 
 const AlertItem: FC<AlertItemProps> = ({ alert, documentationLink }) => {
   const { t } = useTranslation();
-  const launchModal = useModal();
+  const launchModal = useOverlay();
   const [actionExtensions] = useResolvedExtensions<AlertAction>(
     useCallback(
       (e): e is AlertAction => isAlertAction(e) && e.properties.alert === alert.rule.name,

@@ -216,14 +216,16 @@
     }
   },
   {
-    "type": "console.page/resource/tab",
+    "type": "console.tab/horizontalNav",
     "properties": {
-      "href": "volumesnapshots",
       "model": {
         "version": "v1",
         "kind": "PersistentVolumeClaim"
       },
-      "name": "%console-app~VolumeSnapshots%",
+      "page": {
+        "name": "%console-app~VolumeSnapshots%",
+        "href": "volumesnapshots"
+      },
       "component": { "$codeRef": "volumeSnapshotPage.VolumeSnapshotPVCPage" }
     }
   },
@@ -696,6 +698,15 @@
     }
   },
   {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "useNodeMgmtV1FlagProvider" }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
     "type": "console.user-preference/group",
     "properties": {
       "id": "general",
@@ -721,6 +732,36 @@
     "properties": {
       "id": "applications",
       "label": "%console-app~Applications%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "node-mgmt-v1",
+      "label": "%console-app~Node management%"
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.nodeMgmtV1.enabled",
+      "label": "%console-app~Node management%",
+      "groupId": "node-mgmt-v1",
+      "description": "%console-app~Enable node management enhancements. This is a technology preview feature.%",
+      "field": {
+        "type": "checkbox",
+        "userSettingsKey": "console.nodeMgmtV1.enabled",
+        "label": "%console-app~Enable node management enhancements%",
+        "trueValue": true,
+        "falseValue": false,
+        "defaultValue": true
+      }
+    },
+    "flags": {
+      "required": ["TECH_PREVIEW"]
     }
   },
   {
@@ -2352,15 +2393,17 @@
     }
   },
   {
-    "type": "console.page/resource/tab",
+    "type": "console.tab/horizontalNav",
     "properties": {
-      "href": "plugin-manifest",
       "model": {
         "group": "console.openshift.io",
         "version": "v1",
         "kind": "ConsolePlugin"
       },
-      "name": "%console-app~Plugin manifest%",
+      "page": {
+        "name": "%console-app~Plugin manifest%",
+        "href": "plugin-manifest"
+      },
       "component": { "$codeRef": "ConsolePluginManifestPage.ConsolePluginManifestPage" }
     }
   },

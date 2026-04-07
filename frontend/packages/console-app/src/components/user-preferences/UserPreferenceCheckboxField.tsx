@@ -31,7 +31,11 @@ const UserPreferenceCheckboxField: FC<UserPreferenceCheckboxFieldProps> = ({
 
   const loaded: boolean = currentUserPreferenceValueLoaded;
 
-  if (defaultValue && loaded && !currentUserPreferenceValue) {
+  if (
+    defaultValue &&
+    loaded &&
+    (currentUserPreferenceValue === '' || currentUserPreferenceValue === undefined)
+  ) {
     setCurrentUserPreferenceValue(defaultValue);
   }
 

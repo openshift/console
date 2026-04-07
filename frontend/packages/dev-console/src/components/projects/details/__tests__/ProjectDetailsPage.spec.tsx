@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
@@ -85,8 +85,8 @@ jest.mock('../../../project-access/ProjectAccessPage', () => ({
   default: () => 'ProjectAccessPage',
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
 }));
 

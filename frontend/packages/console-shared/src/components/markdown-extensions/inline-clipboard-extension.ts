@@ -3,9 +3,9 @@ import { CopyIconConfig } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
-import './showdown-extension.scss';
+import './markdown-extension.scss';
 
-const useInlineCopyClipboardShowdownExtension = () => {
+const useInlineCopyClipboardExtension = () => {
   const { t } = useTranslation();
   return useMemo(
     () => ({
@@ -44,4 +44,4 @@ const useInlineCopyClipboardShowdownExtension = () => {
   );
 };
 
-export default useInlineCopyClipboardShowdownExtension;
+export default useInlineCopyClipboardExtension;

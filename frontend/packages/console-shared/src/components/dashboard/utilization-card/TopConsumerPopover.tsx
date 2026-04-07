@@ -3,7 +3,7 @@ import type { FC, ReactNode, ReactText } from 'react';
 import { memo, useState, useCallback, useMemo } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { Humanize } from '@console/dynamic-plugin-sdk';
 import { LIMIT_STATE } from '@console/dynamic-plugin-sdk';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';

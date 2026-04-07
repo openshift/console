@@ -476,7 +476,9 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
 
 export type StorageClassResourceKind = {
   provisioner: string;
-  reclaimPolicy: string;
+  reclaimPolicy?: string;
+  volumeBindingMode?: string;
+  allowVolumeExpansion?: boolean;
   parameters?: {
     [key: string]: string;
   };
@@ -1085,6 +1087,7 @@ export type MachineHealthCheckKind = K8sResourceCommon & {
 export type VolumeSnapshotKind = K8sResourceCommon & {
   status?: VolumeSnapshotStatus & {
     boundVolumeSnapshotContentName?: string;
+    restoreSize?: string;
   };
   spec: {
     source: {
@@ -1098,6 +1101,7 @@ export type VolumeSnapshotKind = K8sResourceCommon & {
 export type VolumeSnapshotContentKind = K8sResourceCommon & {
   status: VolumeSnapshotStatus & {
     snapshotHandle?: string;
+    restoreSize?: number;
   };
   spec: {
     volumeSnapshotRef: {
@@ -1116,7 +1120,6 @@ export type VolumeSnapshotContentKind = K8sResourceCommon & {
 
 export type VolumeSnapshotStatus = {
   readyToUse: boolean;
-  restoreSize?: number;
   error?: {
     message: string;
     time: string;

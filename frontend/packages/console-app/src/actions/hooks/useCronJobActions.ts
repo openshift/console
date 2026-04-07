@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { Action, AccessReviewResourceAttributes } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { resourceObjPath } from '@console/internal/components/utils';

@@ -16,6 +16,9 @@ type SharedModuleMetadata = Partial<{
    * @default false
    */
   allowFallback: boolean;
+
+  /** A message describing the deprecation, if the module is deprecated. */
+  deprecated: string | false;
 }>;
 
 /**
@@ -49,9 +52,9 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
   react: {},
   'react-i18next': {},
   'react-redux': {},
-  'react-router': { singleton: false }, // fixes runtime error when both v5-compat and v5 are present
-  'react-router-dom': {},
-  'react-router-dom-v5-compat': {},
+  'react-router': {},
+  'react-router-dom': { deprecated: 'Use react-router instead.' },
+  'react-router-dom-v5-compat': { deprecated: 'Use react-router instead.' },
   redux: {},
   'redux-thunk': {},
 };
@@ -62,6 +65,10 @@ const sharedPluginModulesMetadata: Record<SharedModuleNames, SharedModuleMetadat
 export const getSharedModuleMetadata = (
   moduleName: SharedModuleNames,
 ): Required<SharedModuleMetadata> => {
-  const { singleton = true, allowFallback = false } = sharedPluginModulesMetadata[moduleName];
-  return { singleton, allowFallback };
+  const {
+    singleton = true,
+    allowFallback = false,
+    deprecated = false,
+  } = sharedPluginModulesMetadata[moduleName];
+  return { singleton, allowFallback, deprecated };
 };

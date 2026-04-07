@@ -10,7 +10,7 @@ import {
 import type { GraphElement, Node } from '@patternfly/react-topology';
 import { isNode, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { getTitleForNodeKind } from '@console/shared';
+import { getTitleForNodeKind } from '@console/shared/src/utils/utils';
 import ListElementWrapper from './ListElementWrapper';
 
 interface TopologyListViewKindGroupProps {

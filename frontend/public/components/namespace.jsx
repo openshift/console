@@ -14,28 +14,28 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
-import { Link } from 'react-router-dom';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { Link } from 'react-router';
 
 import { Status } from '@console/shared/src/components/status/Status';
 import { getRequester, getDescription } from '@console/shared/src/selectors/namespace';
 import {
   FLAGS,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
   REQUESTER_FILTER,
 } from '@console/shared/src/constants/common';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { DASH } from '@console/shared/src/constants/ui';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -95,11 +95,13 @@ import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateName
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
@@ -177,14 +179,19 @@ const namespaceColumnInfo = [
 
 const useNamespacesColumns = () => {
   const { t } = useTranslation();
-  return useMemo(() => {
-    return [
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    NamespaceModel,
+  );
+
+  const columns = useMemo(
+    () => [
       {
         title: t('public~Name'),
         id: namespaceColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(namespaceColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -192,6 +199,7 @@ const useNamespacesColumns = () => {
         title: t('public~Display name'),
         id: namespaceColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
+        resizableProps: getResizableProps(namespaceColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -200,6 +208,7 @@ const useNamespacesColumns = () => {
         title: t('public~Status'),
         id: namespaceColumnInfo[2].id,
         sort: 'status.phase',
+        resizableProps: getResizableProps(namespaceColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -208,6 +217,7 @@ const useNamespacesColumns = () => {
         title: t('public~Requester'),
         id: namespaceColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
+        resizableProps: getResizableProps(namespaceColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -216,6 +226,7 @@ const useNamespacesColumns = () => {
         title: t('public~Memory'),
         id: namespaceColumnInfo[4].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
+        resizableProps: getResizableProps(namespaceColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -224,6 +235,7 @@ const useNamespacesColumns = () => {
         title: t('public~CPU'),
         id: namespaceColumnInfo[5].id,
         sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
+        resizableProps: getResizableProps(namespaceColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -232,6 +244,7 @@ const useNamespacesColumns = () => {
         title: t('public~Created'),
         id: namespaceColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(namespaceColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -240,6 +253,7 @@ const useNamespacesColumns = () => {
         title: t('public~Description'),
         id: namespaceColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
+        resizableProps: getResizableProps(namespaceColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -249,9 +263,10 @@ const useNamespacesColumns = () => {
         title: t('public~Labels'),
         id: namespaceColumnInfo[8].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(namespaceColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
-          width: 10,
+          ...getLabelsColumnWidthStyleProp(getWidth(namespaceColumnInfo[8].id)),
         },
         additional: true,
       },
@@ -259,11 +274,14 @@ const useNamespacesColumns = () => {
         title: '',
         id: namespaceColumnInfo[9].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
-    ];
-  }, [t]);
+    ],
+    [t, getResizableProps, getWidth],
+  );
+
+  return { columns, resetAllColumnWidths };
 };
 
 const NamespacesColumnManagementID = referenceForModel(NamespaceModel);
@@ -345,15 +363,14 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
 
 export const NamespacesList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const columns = useNamespacesColumns();
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const dispatch = useConsoleDispatch();
+  const { columns, resetAllColumnWidths } = useNamespacesColumns();
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -422,7 +439,7 @@ export const NamespacesList = (props) => {
     return !filters.requester || filters.requester.includes(String(requesterType));
   }, []);
 
-  if (!userSettingsLoaded) {
+  if (!columnPreferenceLoaded) {
     return null;
   }
 
@@ -440,6 +457,8 @@ export const NamespacesList = (props) => {
         getDataViewRows={(rowData, tableColumns) =>
           getNamespaceDataViewRows(rowData, tableColumns, namespaceMetrics, t)
         }
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -466,14 +485,19 @@ const projectColumnInfo = namespaceColumnInfo;
 
 const useProjectsColumns = ({ showMetrics, showActions }) => {
   const { t } = useTranslation();
-  return useMemo(() => {
-    const columns = [
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    ProjectModel,
+  );
+
+  const columns = useMemo(() => {
+    const cols = [
       {
         title: t('public~Name'),
         id: projectColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(projectColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -481,6 +505,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('public~Display name'),
         id: projectColumnInfo[1].id,
         sort: 'metadata.annotations["openshift.io/display-name"]',
+        resizableProps: getResizableProps(projectColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -489,6 +514,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('public~Status'),
         id: projectColumnInfo[2].id,
         sort: 'status.phase',
+        resizableProps: getResizableProps(projectColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -497,6 +523,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('public~Requester'),
         id: projectColumnInfo[3].id,
         sort: "metadata.annotations.['openshift.io/requester']",
+        resizableProps: getResizableProps(projectColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -504,12 +531,13 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
     ];
 
     if (showMetrics) {
-      columns.push(
+      cols.push(
         {
           title: t('public~Memory'),
           id: projectColumnInfo[4].id,
           sort: (data, direction) =>
             data.sort(sortResourceByValue(direction, sorts.namespaceMemory)),
+          resizableProps: getResizableProps(projectColumnInfo[4].id),
           props: {
             modifier: 'nowrap',
           },
@@ -518,6 +546,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
           title: t('public~CPU'),
           id: projectColumnInfo[5].id,
           sort: (data, direction) => data.sort(sortResourceByValue(direction, sorts.namespaceCPU)),
+          resizableProps: getResizableProps(projectColumnInfo[5].id),
           props: {
             modifier: 'nowrap',
           },
@@ -525,11 +554,12 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
       );
     }
 
-    columns.push(
+    cols.push(
       {
         title: t('public~Created'),
         id: projectColumnInfo[6].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(projectColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -538,6 +568,7 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('public~Description'),
         id: projectColumnInfo[7].id,
         sort: "metadata.annotations.['openshift.io/description']",
+        resizableProps: getResizableProps(projectColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -547,26 +578,29 @@ const useProjectsColumns = ({ showMetrics, showActions }) => {
         title: t('public~Labels'),
         id: projectColumnInfo[8].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(projectColumnInfo[8].id),
         props: {
           modifier: 'nowrap',
-          width: 10,
+          ...getLabelsColumnWidthStyleProp(getWidth(projectColumnInfo[8].id)),
         },
         additional: true,
       },
     );
 
     if (showActions) {
-      columns.push({
+      cols.push({
         title: '',
         id: projectColumnInfo[9].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       });
     }
 
-    return columns;
-  }, [t, showMetrics, showActions]);
+    return cols;
+  }, [t, showMetrics, showActions, getResizableProps, getWidth]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const getProjectDataViewRows = (
@@ -656,11 +690,8 @@ const getProjectDataViewRows = (
 };
 
 const ProjectLink = ({ project }) => {
-  const dispatch = useDispatch();
-  const [, setLastNamespace] = useUserPreferenceCompatibility(
-    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
+  const dispatch = useConsoleDispatch();
+  const [, setLastNamespace] = useUserPreference(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   const basePath = url.pathname;
@@ -700,7 +731,7 @@ const ProjectLink = ({ project }) => {
 
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
-  const columns = useProjectsColumns({ showMetrics: false, showActions: false });
+  const { columns } = useProjectsColumns({ showMetrics: false, showActions: false });
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -719,19 +750,18 @@ export const ProjectsTable = (props) => {
 
 export const ProjectList = (props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
   const isPrometheusAvailable = usePrometheusGate();
   const showMetrics = isPrometheusAvailable && canGetNS;
   const showActions = true;
-  const columns = useProjectsColumns({ showMetrics, showActions });
-  const namespaceMetrics = useSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
+  const { columns, resetAllColumnWidths } = useProjectsColumns({ showMetrics, showActions });
+  const namespaceMetrics = useConsoleSelector(({ UI }) => UI.getIn(['metrics', 'namespace']));
 
   // TODO Utilize usePoll hook
   useEffect(() => {
@@ -804,7 +834,7 @@ export const ProjectList = (props) => {
 
   // Don't render the table until we know whether we can get metrics. It's
   // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS) || !userSettingsLoaded) {
+  if (flagPending(canGetNS) || !columnPreferenceLoaded) {
     return null;
   }
 
@@ -823,6 +853,8 @@ export const ProjectList = (props) => {
           getProjectDataViewRows(rowData, tableColumns, namespaceMetrics, showMetrics, undefined, t)
         }
         NoDataEmptyMsg={OpenShiftGettingStarted}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

@@ -2,8 +2,7 @@ import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
-import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon';
-import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import {
   Button,
   DescriptionList,

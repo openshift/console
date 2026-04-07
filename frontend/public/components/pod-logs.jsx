@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ContainerSelect } from './utils/container-select';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   LOG_SOURCE_RESTARTING,
   LOG_SOURCE_RUNNING,

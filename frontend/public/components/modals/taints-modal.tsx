@@ -1,24 +1,27 @@
 import * as _ from 'lodash';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { Button, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  TextInput,
+  Tooltip,
+} from '@patternfly/react-core';
 import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { EmptyBox } from '../utils/status-box';
 import { K8sKind, NodeKind, k8sPatch, Taint } from '../../module/k8s';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  ModalWrapper,
-} from '../factory';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 const TaintsModal = (props: TaintsModalProps) => {
   const [taints, setTaints] = useState(props.resource.spec.taints || []);
@@ -43,7 +46,8 @@ const TaintsModal = (props: TaintsModalProps) => {
   };
 
   const change = (e, i: number, field: string) => {
-    const newValue = e.target ? e.target.value : e;
+    // Handle both native events (from input) and values (from ConsoleSelect)
+    const newValue = typeof e === 'string' ? e : e.target?.value ?? e;
     setTaints((prevTaints) => {
       const clonedTaints = _.cloneDeep(prevTaints);
       clonedTaints[i][field] = newValue;
@@ -72,91 +76,105 @@ const TaintsModal = (props: TaintsModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('Edit taints')}</ModalTitle>
+    <>
+      <ModalHeader
+        title={t('Edit taints')}
+        data-test-id="modal-title"
+        labelId="taints-modal-title"
+      />
       <ModalBody>
-        {_.isEmpty(taints) ? (
-          <EmptyBox label={t('Taints')} />
-        ) : (
-          <Table
-            aria-label={t('Taints')}
-            variant="compact"
-            borders={false}
-            className="co-modal-table"
-          >
-            <Thead>
-              <Tr>
-                <Th>{t('Key')}</Th>
-                <Th>{t('Value')}</Th>
-                <Th>{t('Effect')}</Th>
-              </Tr>
-            </Thead>
+        <Form id="taints-form" onSubmit={submit}>
+          {_.isEmpty(taints) ? (
+            <EmptyBox label={t('Taints')} />
+          ) : (
+            <Table aria-label={t('Taints')} variant="compact" borders={false}>
+              <Thead>
+                <Tr>
+                  <Th>{t('Key')}</Th>
+                  <Th>{t('Value')}</Th>
+                  <Th>{t('Effect')}</Th>
+                </Tr>
+              </Thead>
 
-            <Tbody>
-              {_.map(taints, (c, i: number) => (
-                <Tr key={i}>
-                  <Td dataLabel={t('Key')}>
-                    <span className="pf-v6-c-form-control">
-                      <input
+              <Tbody>
+                {_.map(taints, (c, i: number) => (
+                  <Tr key={i}>
+                    <Td dataLabel={t('Key')}>
+                      <TextInput
                         type="text"
                         value={c.key}
-                        onChange={(e) => change(e, i, 'key')}
-                        required
+                        onChange={(_event, value) => change(value, i, 'key')}
+                        isRequired
+                        aria-label={t('Key')}
                       />
-                    </span>
-                  </Td>
-                  <Td dataLabel={t('Value')}>
-                    <span className="pf-v6-c-form-control">
-                      <input type="text" value={c.value} onChange={(e) => change(e, i, 'value')} />
-                    </span>
-                  </Td>
-                  <Td dataLabel={t('Effect')}>
-                    <ConsoleSelect
-                      isFullWidth
-                      items={effects}
-                      onChange={(e) => change(e, i, 'effect')}
-                      selectedKey={c.effect}
-                      title={effects[c.effect]}
-                      alwaysShowTitle
-                    />
-                  </Td>
-                  <Td isActionCell>
-                    <Tooltip content="Remove">
-                      <Button
-                        icon={
-                          <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-                        }
-                        className="pf-v6-u-mt-md pf-v6-u-mt-0-on-md"
-                        type="button"
-                        onClick={() => remove(i)}
-                        aria-label={t('Remove')}
-                        variant="plain"
+                    </Td>
+                    <Td dataLabel={t('Value')}>
+                      <TextInput
+                        type="text"
+                        value={c.value}
+                        onChange={(_event, value) => change(value, i, 'value')}
+                        aria-label={t('Value')}
                       />
-                    </Tooltip>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        )}
-        <Button
-          icon={<PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />}
-          className="pf-v6-u-mt-md"
-          iconPosition="left"
-          onClick={addRow}
-          type="button"
-          variant="link"
-        >
-          {t('Add more')}
-        </Button>
+                    </Td>
+                    <Td dataLabel={t('Effect')}>
+                      <ConsoleSelect
+                        isFullWidth
+                        items={effects}
+                        onChange={(e) => change(e, i, 'effect')}
+                        selectedKey={c.effect}
+                        title={effects[c.effect]}
+                        alwaysShowTitle
+                      />
+                    </Td>
+                    <Td isActionCell>
+                      <Tooltip content={t('Remove')}>
+                        <Button
+                          icon={
+                            <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
+                          }
+                          className="pf-v6-u-mt-md pf-v6-u-mt-0-on-md"
+                          type="button"
+                          onClick={() => remove(i)}
+                          aria-label={t('Remove')}
+                          variant="plain"
+                        />
+                      </Tooltip>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )}
+          <Button
+            icon={
+              <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+            }
+            iconPosition="left"
+            onClick={addRow}
+            type="button"
+            variant="link"
+            isInline
+          >
+            {t('Add more')}
+          </Button>
+        </Form>
       </ModalBody>
-      <ModalSubmitFooter
-        errorMessage={errorMessage}
-        inProgress={inProgress}
-        submitText={t('Save')}
-        cancel={cancel}
-      />
-    </form>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={inProgress}
+          form="taints-form"
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {t('Save')}
+        </Button>
+        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+          {t('Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </>
   );
 };
 
@@ -167,9 +185,14 @@ export type TaintsModalProps = {
 
 const TaintsModalOverlay: OverlayComponent<TaintsModalProps> = (props) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
+    <Modal
+      isOpen
+      onClose={props.closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="taints-modal-title"
+    >
       <TaintsModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </ModalWrapper>
+    </Modal>
   );
 };
 

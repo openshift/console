@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Icon } from '@patternfly/react-core';
-import { LayerGroupIcon } from '@patternfly/react-icons/dist/esm/icons/layer-group-icon';
+import { LayerGroupIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';

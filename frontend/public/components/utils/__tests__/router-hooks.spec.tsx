@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom-v5-compat';
-import { useQueryParamsMutator } from '../router';
+import { MemoryRouter, Routes, Route } from 'react-router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 
 describe('useQueryParamsMutator', () => {
   const wrapper = ({ children, initialEntries = ['/test?existing=value#hash'] }) => (

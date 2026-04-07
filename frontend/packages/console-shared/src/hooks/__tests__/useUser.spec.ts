@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUser } from '../useUser';
 
 jest.mock('react-i18next', () => ({
@@ -9,10 +10,12 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleSelector', () => ({
+  useConsoleSelector: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
 }));
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
@@ -32,9 +35,9 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
 }));
 
 const mockDispatch = jest.fn();
-const mockUseSelector = useSelector as jest.Mock;
+const mockUseSelector = useConsoleSelector as jest.Mock;
 const mockUseK8sGet = useK8sGet as jest.Mock;
-const mockUseDispatch = useDispatch as jest.Mock;
+const mockUseDispatch = useConsoleDispatch as jest.Mock;
 
 describe('useUser', () => {
   beforeEach(() => {

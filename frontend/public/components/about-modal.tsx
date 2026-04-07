@@ -6,9 +6,9 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { useClusterVersion } from '@console/shared/src/hooks/version';
+import { useClusterVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { BlueArrowCircleUpIcon } from '@console/shared/src/components/status/icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';

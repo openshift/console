@@ -3,7 +3,7 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

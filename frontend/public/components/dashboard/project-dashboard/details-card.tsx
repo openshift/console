@@ -19,7 +19,7 @@ import { LabelList } from '../../utils/label-list';
 import { resourcePathFromModel } from '../../utils/resource-link';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 
 export const DetailsCard: FC = () => {
   const { obj } = useContext(ProjectDashboardContext);

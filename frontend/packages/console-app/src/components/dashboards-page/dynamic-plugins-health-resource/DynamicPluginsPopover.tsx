@@ -1,22 +1,21 @@
 import type { FC } from 'react';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { WatchK8sResults, WatchK8sResources } from '@console/dynamic-plugin-sdk';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import type { ConsolePluginKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import { StatusPopupSection } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import NotLoadedDynamicPlugins from './NotLoadedDynamicPlugins';
 
 const DynamicPluginsPopover: FC<DynamicPluginsPopoverProps> = ({ consolePlugins }) => {
   const { t } = useTranslation();
   const pluginInfoEntries = usePluginInfo();
-  const cspViolations = useSelector<RootState, PluginCSPViolations>(({ UI }) =>
+  const cspViolations = useConsoleSelector<PluginCSPViolations>(({ UI }) =>
     UI.get('pluginCSPViolations'),
   );
   const notLoadedDynamicPluginInfo = pluginInfoEntries.filter(

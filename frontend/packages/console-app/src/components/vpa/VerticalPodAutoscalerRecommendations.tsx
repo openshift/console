@@ -10,7 +10,7 @@ import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getVerticalPodAutoscalersForResource } from '@console/shared/src';
+import { getVerticalPodAutoscalersForResource } from '@console/shared/src/utils/resource-utils';
 
 const Recommendations: FC<VerticalPodAutoscalerRecommendationsProps> = ({ obj }) => {
   const { t } = useTranslation();

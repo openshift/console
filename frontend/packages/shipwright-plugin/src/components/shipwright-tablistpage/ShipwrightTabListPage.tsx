@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import type { Page } from '@console/internal/components/utils';

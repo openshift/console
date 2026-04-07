@@ -28,8 +28,12 @@ jest.mock('@console/internal/module/k8s', () => ({
   },
 }));
 
-jest.mock('../../../utils/get-knative-resources', () => ({
-  getSinkableResources: jest.fn(),
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResources: jest.fn(() => ({
+    services: { data: [], loaded: true, loadError: undefined },
+    ksservices: { data: [], loaded: true, loadError: undefined },
+    kafkasinks: { data: [], loaded: true, loadError: undefined },
+  })),
 }));
 
 jest.mock('../../pub-sub/pub-sub-utils', () => ({

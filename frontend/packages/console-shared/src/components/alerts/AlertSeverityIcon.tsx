@@ -1,6 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 
 interface AlertSeverityIconProps {
@@ -8,7 +7,7 @@ interface AlertSeverityIconProps {
   fontSize?: number;
 }
 
-const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
+export const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
   severityAlertType,
   fontSize,
 }): ReactElement => {

@@ -13,8 +13,9 @@ import {
   ConsoleDataView,
   getNameCellProps,
   actionsCellProps,
-  cellIsStickyProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { referenceForModel } from '../module/k8s';
@@ -95,14 +96,17 @@ const ServiceAccountsDetailsPage = (props) => (
 
 const useServiceAccountColumns = () => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(ServiceAccountModel);
+
+  const columns = useMemo(
     () => [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -110,6 +114,7 @@ const useServiceAccountColumns = () => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -118,6 +123,7 @@ const useServiceAccountColumns = () => {
         title: t('public~Secrets'),
         id: tableColumnInfo[2].id,
         sort: 'secrets.length',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -126,6 +132,7 @@ const useServiceAccountColumns = () => {
         title: t('public~Created'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -134,18 +141,20 @@ const useServiceAccountColumns = () => {
         title: '',
         id: tableColumnInfo[4].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 const ServiceAccountsList = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation();
-  const columns = useServiceAccountColumns();
+  const { columns, resetAllColumnWidths } = useServiceAccountColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -157,6 +166,8 @@ const ServiceAccountsList = (props) => {
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

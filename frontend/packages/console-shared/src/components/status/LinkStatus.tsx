@@ -1,6 +1,6 @@
 import type { FC, ComponentProps } from 'react';
-import type { To } from 'react-router-dom-v5-compat';
-import { Link } from 'react-router-dom-v5-compat';
+import type { To } from 'react-router';
+import { Link } from 'react-router';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 
 const LinkStatus: FC<LinkStatusProps> = ({ linkTitle, linkTo, ...other }) =>

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { resourcePath } from '@console/internal/components/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { referenceForModel } from '@console/internal/module/k8s';

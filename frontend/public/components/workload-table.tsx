@@ -1,14 +1,16 @@
 import type { FC } from 'react';
 import {
   actionsCellProps,
-  cellIsStickyProps,
+  getLabelsColumnWidthStyleProp,
   getNameCellProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
 } from '@console/app/src/components/data-view/types';
-import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import LazyActionMenu, {
@@ -20,7 +22,7 @@ import { sortable } from '@patternfly/react-table';
 import i18next from 'i18next';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { LabelList } from './utils/label-list';
 import { ResourceLink, resourcePath } from './utils/resource-link';
@@ -159,16 +161,21 @@ export const getWorkloadDataViewRows = <T extends K8sResourceKind>(
   });
 };
 
-export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[] => {
+export const useWorkloadColumns = <T extends K8sResourceKind>(
+  model: K8sModel,
+): { columns: TableColumn<T>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -176,6 +183,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -184,6 +192,7 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         title: t('public~Status'),
         id: tableColumnInfo[2].id,
         sort: 'status.replicas',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -192,30 +201,32 @@ export const useWorkloadColumns = <T extends K8sResourceKind>(): TableColumn<T>[
         title: t('public~Labels'),
         id: tableColumnInfo[3].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[3].id)),
         },
       },
       {
         title: t('public~Pod selector'),
         id: tableColumnInfo[4].id,
         sort: 'spec.selector',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
-          width: 20,
         },
       },
       {
         title: '',
         id: tableColumnInfo[5].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps, getWidth]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 type ReplicasCountProps = {

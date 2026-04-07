@@ -11,7 +11,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { RadioGroupItems } from '@console/internal/components/radio';
 import { RadioGroup } from '@console/internal/components/radio';
 import { ButtonBar, NsDropdown } from '@console/internal/components/utils';
@@ -19,7 +19,7 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { CatalogSourceModel } from '../models';
 
 enum AvailabilityValue {

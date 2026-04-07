@@ -8,13 +8,13 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, Table as PfTable, Thead, Th, Tbody, Td, Tr } from '@patternfly/react-table';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { DASH } from '@console/dynamic-plugin-sdk/src/app/constants';
 import { DefaultList } from '@console/internal/components/default-resource';
 import type { RowFunctionArgs } from '@console/internal/components/factory';

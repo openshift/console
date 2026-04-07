@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Button, TextInputTypes, ExpandableSection } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
@@ -87,58 +87,56 @@ const RequestPane: FC<FormikProps<FormikValues>> = ({ setFieldValue, values }) =
           required
         />
       </FormLayout>
-      <div className="kn-test-sf-modal-request__advanced-settings">
-        <ExpandableSection
-          toggleText={t('knative-plugin~Advanced Settings')}
-          onToggle={onToggle}
-          isExpanded={isExpanded}
-          data-test="advanced-settings"
-        >
-          <FormLayout>
-            <InputField
-              type={TextInputTypes.text}
-              name={`request.type`}
-              label={t('knative-plugin~Type')}
-              data-test="request-type"
-              placeholder="boson.fn"
-            />
-            <InputField
-              type={TextInputTypes.text}
-              name={`request.source`}
-              label={t('knative-plugin~Source')}
-              data-test="request-source"
-              placeholder="/boson/fn"
-            />
-          </FormLayout>
+      <ExpandableSection
+        toggleText={t('knative-plugin~Advanced Settings')}
+        onToggle={onToggle}
+        isExpanded={isExpanded}
+        data-test="advanced-settings"
+      >
+        <FormLayout>
+          <InputField
+            type={TextInputTypes.text}
+            name={`request.type`}
+            label={t('knative-plugin~Type')}
+            data-test="request-type"
+            placeholder="boson.fn"
+          />
+          <InputField
+            type={TextInputTypes.text}
+            name={`request.source`}
+            label={t('knative-plugin~Source')}
+            data-test="request-source"
+            placeholder="/boson/fn"
+          />
+        </FormLayout>
 
-          <div className="kn-test-sf-modal-request__custom-headers">
-            {showCustomHeaders || !checkCustomHeadersIsEmpty() ? (
-              <NameValueEditorComponent
-                nameValuePairs={customHeaders}
-                nameString={t('knative-plugin~Name')}
-                valueString={t('knative-plugin~Value')}
-                addString={t('knative-plugin~Add headers')}
-                readOnly={false}
-                allowSorting={false}
-                updateParentData={handleNameValuePairs}
-              />
-            ) : (
-              <Button
-                icon={
-                  <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
-                }
-                className="pf-m-link--align-left"
-                data-test="add-optional-header"
-                onClick={() => setShowCustomHeaders(true)}
-                type="button"
-                variant="link"
-              >
-                {t('knative-plugin~Add optional headers')}
-              </Button>
-            )}
-          </div>
-        </ExpandableSection>
-      </div>
+        <div className="kn-test-sf-modal-request__custom-headers">
+          {showCustomHeaders || !checkCustomHeadersIsEmpty() ? (
+            <NameValueEditorComponent
+              nameValuePairs={customHeaders}
+              nameString={t('knative-plugin~Name')}
+              valueString={t('knative-plugin~Value')}
+              addString={t('knative-plugin~Add headers')}
+              readOnly={false}
+              allowSorting={false}
+              updateParentData={handleNameValuePairs}
+            />
+          ) : (
+            <Button
+              icon={
+                <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
+              }
+              className="pf-m-link--align-left"
+              data-test="add-optional-header"
+              onClick={() => setShowCustomHeaders(true)}
+              type="button"
+              variant="link"
+            >
+              {t('knative-plugin~Add optional headers')}
+            </Button>
+          )}
+        </div>
+      </ExpandableSection>
       <div className="kn-test-sf-modal__editor">
         <CodeEditorField
           name="request.body.data"

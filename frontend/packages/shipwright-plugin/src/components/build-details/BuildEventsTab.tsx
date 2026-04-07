@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { ResourcesEventStream } from '@console/internal/components/events';
 import type { EventInvolvedObject } from '@console/internal/module/k8s';
 import type { Build } from '../../types';

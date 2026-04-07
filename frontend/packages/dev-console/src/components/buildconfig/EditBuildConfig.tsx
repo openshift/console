@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';

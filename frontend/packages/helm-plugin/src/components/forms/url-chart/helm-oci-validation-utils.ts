@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import * as yup from 'yup';
-import { nameValidationSchema } from '@console/shared';
+import { nameValidationSchema } from '@console/shared/src/utils/yup-validations';
 
 export function getHelmChartURLValidationSchema(t: TFunction) {
   return yup.object().shape({

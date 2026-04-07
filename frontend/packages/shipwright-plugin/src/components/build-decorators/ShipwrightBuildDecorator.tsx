@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

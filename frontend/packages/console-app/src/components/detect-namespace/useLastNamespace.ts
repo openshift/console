@@ -1,17 +1,14 @@
-import {
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const useLastNamespace = (): [
   string,
   React.Dispatch<React.SetStateAction<string>>,
   boolean,
 ] => {
-  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserPreferenceCompatibility<
-    string
-  >(LAST_NAMESPACE_NAME_USER_SETTINGS_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
+  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserPreference<string>(
+    LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
+  );
 
   // This toString is workaround because the useUserPreference hook returns a number or boolean
   // when the saved value represents a number (1234) or boolean (true/false).

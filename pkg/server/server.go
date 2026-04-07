@@ -166,7 +166,6 @@ type Server struct {
 	ClusterManagementProxyConfig        *proxy.Config
 	CookieEncryptionKey                 []byte
 	CookieAuthenticationKey             []byte
-	ContentSecurityPolicyEnabled        bool
 	ContentSecurityPolicy               serverconfig.MultiKeyValue
 	ControlPlaneTopology                string
 	CopiedCSVsDisabled                  bool
@@ -335,6 +334,12 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), disableDirectoryListing(http.FileServer(http.Dir(s.PublicDir))))
 	handle("/static/", middleware.WithGZIPEncoding(middleware.WithSecurityHeaders(staticHandler)))
 
+	// Register robots.txt at the origin root so crawlers can find it at /robots.txt
+	// regardless of s.BaseURL.Path (e.g., /console/).
+	mux.Handle("/robots.txt", middleware.WithSecurityHeaders(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, path.Join(s.PublicDir, "robots.txt"))
+	})))
+
 	if s.CustomLogoFiles != nil {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
 			serverconfig.CustomLogosHandler(w, r, s.CustomLogoFiles, s.CustomFaviconFiles)
@@ -381,9 +386,21 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 	handler.InitPayload = resolver.InitPayload
 	graphQLHandler := handler.NewHandlerFunc(schema, gql.NewHttpHandler(schema))
 	handle("/api/graphql", authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(context.Background(), resolver.HeadersKey, map[string]interface{}{
+		headers := map[string]interface{}{
 			"Authorization": fmt.Sprintf("Bearer %s", user.Token),
-		})
+		}
+		if impUser := r.Header.Get("Impersonate-User"); impUser != "" {
+			headers["Impersonate-User"] = impUser
+		}
+		if consoleGroups := r.Header.Get("X-Console-Impersonate-Groups"); consoleGroups != "" {
+			groups := strings.Split(consoleGroups, ",")
+			groups = append(groups, "system:authenticated")
+			headers["Impersonate-Group"] = groups
+		} else if impGroups := r.Header.Values("Impersonate-Group"); len(impGroups) > 0 {
+			impGroups = append(impGroups, "system:authenticated")
+			headers["Impersonate-Group"] = impGroups
+		}
+		ctx := context.WithValue(context.Background(), resolver.HeadersKey, headers)
 		graphQLHandler(w, r.WithContext(ctx))
 	}))
 
@@ -719,18 +736,16 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if s.ContentSecurityPolicyEnabled {
-		cspDirectives, err := utils.BuildCSPDirectives(
-			s.K8sMode,
-			s.ContentSecurityPolicy,
-			indexPageScriptNonce,
-			r.Header.Get("Test-CSP-Reporting-Endpoint"),
-		)
-		if err != nil {
-			klog.Fatalf("Error building Content Security Policy directives: %s", err)
-		}
-		w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
+	cspDirectives, err := utils.BuildCSPDirectives(
+		s.K8sMode,
+		s.ContentSecurityPolicy,
+		indexPageScriptNonce,
+		r.Header.Get("Test-CSP-Reporting-Endpoint"),
+	)
+	if err != nil {
+		klog.Fatalf("Error building Content Security Policy directives: %s", err)
 	}
+	w.Header().Set("Content-Security-Policy-Report-Only", strings.Join(cspDirectives, "; "))
 
 	jsg := &jsGlobals{
 		AddPage:                   s.AddPage,

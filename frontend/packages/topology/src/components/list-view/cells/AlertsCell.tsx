@@ -4,17 +4,17 @@ import { DataListCell, Tooltip } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import type { OverviewItemAlerts } from '@console/shared';
+import { Status as TooltipStatus } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import { useReplicationControllersWatcher } from '@console/shared/src/hooks/useReplicationControllersWatcher';
+import type { OverviewItemAlerts } from '@console/shared/src/types/pod';
 import {
-  Status as TooltipStatus,
-  useBuildConfigsWatcher,
   getBuildAlerts,
   getResourcePausedAlert,
-  usePodsWatcher,
-  useReplicationControllersWatcher,
   getReplicationControllerAlerts,
-  useIsMobile,
-} from '@console/shared';
+} from '@console/shared/src/utils/resource-utils';
 import { getResource } from '../../../utils';
 import { useResourceQuotaAlert } from '../../workload/resource-alert';
 

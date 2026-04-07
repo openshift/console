@@ -14,10 +14,7 @@ import {
   GridItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { GripVerticalIcon } from '@patternfly/react-icons/dist/esm/icons/grip-vertical-icon';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-
+import { GripVerticalIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { withTranslation } from 'react-i18next';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './types';
@@ -97,12 +94,12 @@ const NameValueEditor_ = withDragDropContext(
       const {
         addString,
         nameValuePairs,
-        allowSorting,
-        readOnly,
-        nameValueId,
+        allowSorting = false,
+        readOnly = false,
+        nameValueId = 0,
         configMaps,
         secrets,
-        addConfigMapSecret,
+        addConfigMapSecret = false,
         toolTip,
         t,
         onLastItemRemoved,
@@ -217,12 +214,6 @@ NameValueEditor.propTypes = {
   toolTip: PropTypes.string,
   onLastItemRemoved: PropTypes.func,
 };
-NameValueEditor.defaultProps = {
-  allowSorting: false,
-  readOnly: false,
-  nameValueId: 0,
-  addConfigMapSecret: false,
-};
 
 NameValueEditor.displayName = 'Name Value Editor';
 
@@ -284,14 +275,14 @@ const EnvFromEditor_ = withDragDropContext(
     render() {
       const {
         nameValuePairs,
-        readOnly,
-        nameValueId,
+        readOnly = false,
+        nameValueId = 0,
         configMaps,
         secrets,
         serviceAccounts,
         firstTitle,
         secondTitle,
-        addButtonDisabled,
+        addButtonDisabled = false,
         addButtonLabel,
         t,
       } = this.props;
@@ -373,11 +364,6 @@ EnvFromEditor.propTypes = {
   firstTitle: PropTypes.string,
   secondTitle: PropTypes.string,
   addButtonDisabled: PropTypes.bool,
-};
-EnvFromEditor.defaultProps = {
-  readOnly: false,
-  nameValueId: 0,
-  addButtonDisabled: false,
 };
 const pairSource = {
   beginDrag(props) {

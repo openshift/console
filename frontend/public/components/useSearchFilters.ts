@@ -1,6 +1,6 @@
 import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 import { useState, useMemo, useCallback } from 'react';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { RowSearchFilter } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 /**

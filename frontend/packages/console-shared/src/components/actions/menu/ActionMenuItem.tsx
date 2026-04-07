@@ -5,7 +5,7 @@ import { KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { Action, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils/rbac';

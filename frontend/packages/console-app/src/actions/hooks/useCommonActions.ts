@@ -7,10 +7,10 @@ import {
   LazyAnnotationsModalOverlay,
   LazyDeleteModalOverlay,
   LazyLabelsModalOverlay,
+  LazyTaintsModalOverlay,
   LazyTolerationsModalOverlay,
 } from '@console/internal/components/modals';
 import { useConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
-import { TaintsModalOverlay } from '@console/internal/components/modals/taints-modal';
 import { asAccessReview } from '@console/internal/components/utils/rbac';
 import { resourceObjPath } from '@console/internal/components/utils/resource-link';
 import type { K8sModel, K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
@@ -135,7 +135,6 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
           launchModal(LazyTolerationsModalOverlay, {
             resourceKind: kind,
             resource,
-            modalClassName: 'modal-lg',
           }),
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
@@ -143,7 +142,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         id: 'edit-taints',
         label: t('console-app~Edit taints'),
         cta: () =>
-          launchModal(TaintsModalOverlay, {
+          launchModal(LazyTaintsModalOverlay, {
             resourceKind: kind,
             resource: resource as NodeKind,
           }),
@@ -161,11 +160,7 @@ export const useCommonActions = <T extends readonly CommonActionCreator[]>(
         accessReview: asAccessReview(kind as K8sModel, resource as K8sResourceKind, 'patch'),
       }),
     }),
-    // Excluding stable modal launcher functions (launchCountModal)
-    // to prevent unnecessary re-renders
-    // TODO: remove once all Modals have been updated to useOverlay
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [kind, resource, t, message, actualEditPath, launchModal],
+    [kind, resource, t, message, actualEditPath, launchModal, launchCountModal],
   );
 
   const result = useMemo((): [ActionObject<T>, boolean] => {

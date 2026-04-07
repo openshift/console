@@ -7,15 +7,17 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router';
 import {
   ConsoleDataView,
   initialFiltersDefault,
-  cellIsStickyProps,
+  actionsCellProps,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { ResourceFilters } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
@@ -24,6 +26,7 @@ import { isCatalogTypeEnabled } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
+import { HelmReleaseModel } from '../../models';
 import type { HelmRelease } from '../../types/helm-types';
 import {
   fetchHelmReleases,
@@ -36,16 +39,22 @@ import { getDataViewRows, tableColumnInfo } from './HelmReleaseListRow';
 
 type HelmReleaseFilters = ResourceFilters & { status: string[] };
 
-export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
+export const useHelmReleasesColumns = (): {
+  columns: TableColumn<HelmRelease>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  return useMemo(
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(HelmReleaseModel);
+
+  const columns = useMemo(
     () => [
       {
         title: t('helm-plugin~Name'),
         id: tableColumnInfo[0].id,
         sort: 'name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -53,6 +62,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -61,6 +71,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Revision'),
         id: tableColumnInfo[2].id,
         sort: 'version',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -69,6 +80,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Updated'),
         id: tableColumnInfo[3].id,
         sort: 'info.last_deployed',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -77,6 +89,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Status'),
         id: tableColumnInfo[4].id,
         sort: 'info.status',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -85,6 +98,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Chart name'),
         id: tableColumnInfo[5].id,
         sort: 'chart.metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -93,6 +107,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~Chart version'),
         id: tableColumnInfo[6].id,
         sort: 'chart.metadata.version',
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: {
           modifier: 'nowrap',
         },
@@ -101,6 +116,7 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: t('helm-plugin~App version'),
         id: tableColumnInfo[7].id,
         sort: 'chart.metadata.appVersion',
+        resizableProps: getResizableProps(tableColumnInfo[7].id),
         props: {
           modifier: 'nowrap',
         },
@@ -109,12 +125,14 @@ export const useHelmReleasesColumns = (): TableColumn<HelmRelease>[] => {
         title: '',
         id: tableColumnInfo[8].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
+
+  return { columns, resetAllColumnWidths };
 };
 
 const getObjectMetadata = (release: HelmRelease) => ({
@@ -185,7 +203,7 @@ const HelmReleaseList: FC = () => {
     };
   }, [namespace, newCount, secretsLoadError, secretsLoaded, t]);
 
-  const columns = useHelmReleasesColumns();
+  const { columns, resetAllColumnWidths } = useHelmReleasesColumns();
 
   const helmReleaseStatusFilterOptions = useMemo<DataViewFilterOption[]>(() => {
     return SelectedReleaseStatuses.map((status) => ({
@@ -272,6 +290,8 @@ const HelmReleaseList: FC = () => {
               getDataViewRows={getDataViewRows}
               hideLabelFilter
               hideColumnManagement
+              isResizable
+              resetAllColumnWidths={resetAllColumnWidths}
             />
           )}
         </Suspense>

@@ -1,32 +1,31 @@
 import type { FC } from 'react';
 import { useMemo, useCallback, useEffect, Suspense } from 'react';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  nameCellProps,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
-import {
-  filterVirtualMachineInstancesByNode,
-  useIsKubevirtPluginActive,
-  useWatchVirtualMachineInstances,
-} from '@console/app/src/components/nodes/NodeVmUtils';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
+import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
+  useOverlay,
 } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
 import type {
   K8sResourceCommon,
@@ -64,15 +63,14 @@ import type {
   ControlPlaneMachineSetKind,
 } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
-import type { RootState } from '@console/internal/redux';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import {
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-} from '@console/shared/src/constants/common';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';
-import { useUserPreferenceCompatibility } from '@console/shared/src/hooks/useUserPreferenceCompatibility';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getName, getUID, getLabels } from '@console/shared/src/selectors/common';
 import {
   getNodeArchitecture,
@@ -95,10 +93,17 @@ import {
 } from '@console/shared/src/sorts/nodes';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { nodeStatus } from '../../status';
+import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
+import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
+import { getNodeGroups } from './NodeGroupUtils';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
+import {
+  filterVirtualMachineInstancesByNode,
+  useWatchVirtualMachineInstances,
+} from './NodeVmUtils';
 import ClientCSRStatus from './status/CSRStatus';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
@@ -109,6 +114,9 @@ const nodeColumnInfo = Object.freeze({
   },
   status: {
     id: 'status',
+  },
+  groups: {
+    id: 'groups',
   },
   machineOwner: {
     id: 'machineOwner',
@@ -162,16 +170,22 @@ const nodeColumnInfo = Object.freeze({
 
 const kind = 'Node';
 
-const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
+const useNodesColumns = (
+  vmsEnabled: boolean,
+  nodeMgmtV1Enabled: boolean,
+): { columns: TableColumn<NodeRowItem>[]; resetAllColumnWidths: () => void } => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(NodeModel);
+
   const columns = useMemo(() => {
     return [
       {
         title: t('console-app~Name'),
         id: nodeColumnInfo.name.id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(nodeColumnInfo.name.id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -179,14 +193,29 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Status'),
         id: nodeColumnInfo.status.id,
         sort: sortWithCSRResource(nodeReadiness, 'False'),
+        resizableProps: getResizableProps(nodeColumnInfo.status.id),
         props: {
           modifier: 'nowrap',
         },
       },
+      ...(nodeMgmtV1Enabled
+        ? [
+            {
+              title: t('console-app~Groups'),
+              id: nodeColumnInfo.groups.id,
+              sort: 'groups',
+              resizableProps: getResizableProps(nodeColumnInfo.groups.id),
+              props: {
+                modifier: 'nowrap',
+              },
+            },
+          ]
+        : []),
       {
         title: t('console-app~Machine set'),
         id: nodeColumnInfo.machineOwner.id,
         sort: 'machineOwner.name',
+        resizableProps: getResizableProps(nodeColumnInfo.machineOwner.id),
         props: {
           modifier: 'nowrap',
         },
@@ -197,6 +226,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
               title: t('console-app~Virtual machines'),
               id: nodeColumnInfo.vms.id,
               sort: 'virtualMachines',
+              resizableProps: getResizableProps(nodeColumnInfo.vms.id),
               props: {
                 modifier: 'nowrap',
                 info: {
@@ -215,6 +245,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Pods'),
         id: nodeColumnInfo.pods.id,
         sort: sortWithCSRResource(nodePods, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.pods.id),
         props: {
           modifier: 'nowrap',
         },
@@ -223,6 +254,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Memory'),
         id: nodeColumnInfo.memory.id,
         sort: sortWithCSRResource(nodeMemory, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.memory.id),
         props: {
           modifier: 'nowrap',
         },
@@ -231,6 +263,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~CPU'),
         id: nodeColumnInfo.cpu.id,
         sort: sortWithCSRResource(nodeCPU, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.cpu.id),
         props: {
           modifier: 'nowrap',
         },
@@ -239,6 +272,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Roles'),
         id: nodeColumnInfo.role.id,
         sort: sortWithCSRResource(nodeRolesSort, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.role.id),
         props: {
           modifier: 'nowrap',
         },
@@ -248,6 +282,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Architecture'),
         id: nodeColumnInfo.architecture.id,
         sort: sortWithCSRResource(nodeArch, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.architecture.id),
         props: {
           modifier: 'nowrap',
         },
@@ -257,6 +292,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Filesystem'),
         id: nodeColumnInfo.filesystem.id,
         sort: sortWithCSRResource(nodeFS, 0),
+        resizableProps: getResizableProps(nodeColumnInfo.filesystem.id),
         props: {
           modifier: 'nowrap',
         },
@@ -266,6 +302,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Created'),
         id: nodeColumnInfo.created.id,
         sort: 'metadata.creationTimestamp',
+        resizableProps: getResizableProps(nodeColumnInfo.created.id),
         props: {
           modifier: 'nowrap',
         },
@@ -275,6 +312,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Instance type'),
         id: nodeColumnInfo.instanceType.id,
         sort: sortWithCSRResource(nodeInstanceType, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.instanceType.id),
         props: {
           modifier: 'nowrap',
         },
@@ -284,6 +322,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Machine'),
         id: nodeColumnInfo.machine.id,
         sort: sortWithCSRResource(nodeMachine, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.machine.id),
         props: {
           modifier: 'nowrap',
         },
@@ -293,6 +332,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~MachineConfigPool'),
         id: nodeColumnInfo.machineConfigPool.id,
         sort: 'machineConfigPool.metadata.name',
+        resizableProps: getResizableProps(nodeColumnInfo.machineConfigPool.id),
         props: {
           modifier: 'nowrap',
         },
@@ -302,9 +342,10 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Labels'),
         id: nodeColumnInfo.labels.id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(nodeColumnInfo.labels.id),
         props: {
           modifier: 'nowrap',
-          width: 15,
+          ...getLabelsColumnWidthStyleProp(getWidth(nodeColumnInfo.labels.id)),
         },
         additional: true,
       },
@@ -312,6 +353,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Zone'),
         id: nodeColumnInfo.zone.id,
         sort: sortWithCSRResource(nodeZone, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.zone.id),
         props: {
           modifier: 'nowrap',
         },
@@ -321,6 +363,7 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: t('console-app~Uptime'),
         id: nodeColumnInfo.uptime.id,
         sort: sortWithCSRResource(nodeUptime, ''),
+        resizableProps: getResizableProps(nodeColumnInfo.uptime.id),
         props: {
           modifier: 'nowrap',
         },
@@ -330,12 +373,13 @@ const useNodesColumns = (vmsEnabled: boolean): TableColumn<NodeRowItem>[] => {
         title: '',
         id: nodeColumnInfo.actions.id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t, vmsEnabled]);
-  return columns;
+  }, [t, vmsEnabled, nodeMgmtV1Enabled, getWidth, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 const CPUCell: FC<{ cores: number; totalCores: number }> = ({ cores, totalCores }) => {
@@ -382,7 +426,7 @@ const getNodeDataViewRows = (
     const pods = nodeMetrics?.pods?.[nodeName] ?? DASH;
     const architecture = node ? getNodeArchitecture(node) : '';
     const [machineName, machineNamespace] = node ? getNodeMachineNameAndNamespace(node) : ['', ''];
-    const { machineOwner, machineConfigPool, virtualMachines } = obj;
+    const { machineOwner, machineConfigPool, virtualMachines, groups } = obj;
     const instanceType = node?.metadata.labels?.['beta.kubernetes.io/instance-type'] || '';
     const labels = node ? getLabels(node) : csr ? getLabels(csr) : {};
     const zone = node?.metadata.labels?.['topology.kubernetes.io/zone'] || '';
@@ -414,6 +458,9 @@ const getNodeDataViewRows = (
             title="Discovered"
           />
         ),
+      },
+      [nodeColumnInfo.groups.id]: {
+        cell: groups || DASH,
       },
       [nodeColumnInfo.role.id]: {
         cell: node ? <NodeRoles node={node} /> : DASH,
@@ -571,6 +618,7 @@ type NodeListProps = {
   hideLabelFilter?: boolean;
   hideColumnManagement?: boolean;
   selectedColumns?: TableColumnsType;
+  nodeMgmtV1Enabled?: boolean;
 };
 
 const NodeList: FC<NodeListProps> = ({
@@ -585,10 +633,11 @@ const NodeList: FC<NodeListProps> = ({
   hideLabelFilter,
   hideColumnManagement,
   selectedColumns,
+  nodeMgmtV1Enabled = false,
 }) => {
   const { t } = useTranslation();
-  const columns = useNodesColumns(vmsEnabled);
-  const nodeMetrics = useSelector<RootState, NodeMetrics>(({ UI }) => {
+  const { columns, resetAllColumnWidths } = useNodesColumns(vmsEnabled, nodeMgmtV1Enabled);
+  const nodeMetrics = useConsoleSelector<NodeMetrics>(({ UI }) => {
     return UI.getIn(['metrics', 'node']);
   });
   const columnManagementID = referenceForModel(NodeModel);
@@ -815,6 +864,8 @@ const NodeList: FC<NodeListProps> = ({
         hideNameLabelFilters={hideNameLabelFilters}
         hideLabelFilter={hideLabelFilter}
         hideColumnManagement={hideColumnManagement}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -824,6 +875,7 @@ type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
   machineOwner?: OwnerReference;
   machineConfigPool?: MachineConfigPoolKind;
   virtualMachines?: number;
+  groups?: string;
 };
 
 type NodeFilters = ResourceFilters & {
@@ -855,15 +907,22 @@ const useWatchResourcesIfAllowed = <R extends K8sResourceCommon[]>(
 };
 
 export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
   const { t } = useTranslation();
+  const launchOverlay = useOverlay();
+  const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
 
-  const [selectedColumns, , userSettingsLoaded] = useUserPreferenceCompatibility<TableColumnsType>(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
     undefined,
     true,
   );
+
+  const [canEdit, isEditLoading] = useAccessReview({
+    group: NodeModel.apiGroup || '',
+    resource: NodeModel.plural,
+    verb: 'patch',
+  });
 
   const [nodes, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>({
     groupVersionKind: {
@@ -965,6 +1024,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineOwner,
           machineConfigPool,
           virtualMachines: vmsByNode?.get(node.metadata.name)?.length,
+          groups: getNodeGroups(node).sort().join(', '),
         };
       }),
     ];
@@ -980,13 +1040,22 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   // Don't fail on machine load errors, instead we hide those columns and filters
   const loadError = nodesLoadError || csrsLoadError;
 
-  if (!userSettingsLoaded) {
+  if (!columnPreferenceLoaded) {
     return null;
   }
 
   return (
     <>
-      <ListPageHeader title={t('public~Nodes')} />
+      <ListPageHeader title={t('public~Nodes')}>
+        {nodeMgmtV1Enabled && !isEditLoading && canEdit ? (
+          <Button
+            variant={ButtonVariant.secondary}
+            onClick={() => launchOverlay(GroupsEditorModal, {})}
+          >
+            {t('console-app~Edit groups')}
+          </Button>
+        ) : null}
+      </ListPageHeader>
       <ListPageBody>
         <NodeList
           data={data}
@@ -997,6 +1066,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
           machineConfigPools={machineConfigPools}
           vmsEnabled={isKubevirtPluginActive}
           selectedColumns={selectedColumns}
+          nodeMgmtV1Enabled={nodeMgmtV1Enabled}
         />
       </ListPageBody>
     </>

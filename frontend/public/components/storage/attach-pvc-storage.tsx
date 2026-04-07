@@ -3,7 +3,7 @@ import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { ActionGroup, Button, Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import {
   ContainerSpec,
   k8sCreate,

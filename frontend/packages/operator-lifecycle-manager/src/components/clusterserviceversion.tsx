@@ -16,14 +16,13 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, useLocation, Link } from 'react-router-dom-v5-compat';
-import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
+import { useParams, useLocation, Link } from 'react-router';
+import type { WatchK8sResource, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import {
   ResourceStatus,
   StatusIconAndText,
@@ -36,9 +35,8 @@ import { Conditions, ConditionTypes } from '@console/internal/components/conditi
 import { ResourceEventStream } from '@console/internal/components/events';
 import type { RowFunctionArgs, Flatten } from '@console/internal/components/factory';
 import { DetailsPage, Table, TableData, MultiListPage } from '@console/internal/components/factory';
-import type { FirehoseResult, Page } from '@console/internal/components/utils';
+import type { Page } from '@console/internal/components/utils';
 import {
-  AsyncComponent,
   DOC_URL_OPERATORFRAMEWORK_SDK,
   documentationURLs,
   getDocumentationURL,
@@ -67,12 +65,13 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import { withFallback } from '@console/shared/src/components/error';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { isPluginEnabled } from '@console/shared/src/utils';
+import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {
   ClusterServiceVersionModel,
@@ -576,10 +575,12 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   data,
+  loaded,
   ...rest
 }) => {
   const { t } = useTranslation();
   const activeNamespace = useActiveNamespace();
+
   const nameHeader: Header = {
     title: t('olm~Name'),
     sortField: 'metadata.name',
@@ -704,6 +705,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     <div className="co-installed-operators">
       <Table
         data={filterOperators(data, allNamespaceActive)}
+        loaded={loaded}
         {...rest}
         aria-label={t('olm~Installed Operators')}
         Header={allNamespaceActive ? AllProjectsTableHeader : SingleProjectTableHeader}
@@ -770,9 +772,11 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
         ),
     );
 
+  const showTitle = props.showTitle !== false;
+
   return (
     <>
-      <DocumentTitle>{title}</DocumentTitle>
+      {showTitle && <DocumentTitle>{title}</DocumentTitle>}
       <MultiListPage
         {...props}
         resources={[
@@ -812,30 +816,14 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
             optional: true,
           },
         ]}
-        title={title}
+        title={showTitle ? title : undefined}
         flatten={flatten}
         namespace={props.namespace}
         ListComponent={ClusterServiceVersionList}
-        helpText={helpText}
+        helpText={showTitle ? helpText : undefined}
         textFilter="cluster-service-version"
       />
     </>
-  );
-};
-
-export const MarkdownView = (props: {
-  content: string;
-  styles?: string;
-  exactHeight?: boolean;
-  truncateContent?: boolean;
-}) => {
-  return (
-    <AsyncComponent
-      loader={() =>
-        import('@console/internal/components/markdown-view').then((c) => c.SyncMarkdownView)
-      }
-      {...props}
-    />
   );
 };
 
@@ -1342,12 +1330,14 @@ export const ClusterServiceVersionDetailsPage: FC = (props) => {
       kind={referenceForModel(ClusterServiceVersionModel)}
       name={params.name}
       pagesFor={pagesFor}
-      customActionMenu={[
-        <LazyActionMenu
-          context={{ 'operator-actions': { resource: csv, subscription } }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />,
-      ]}
+      customActionMenu={
+        csv && [
+          <LazyActionMenu
+            context={{ 'operator-actions': { resource: csv, subscription } }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />,
+        ]
+      }
       createRedirect
     />
   );
@@ -1359,17 +1349,18 @@ type ClusterServiceVersionStatusProps = {
 };
 
 export type ClusterServiceVersionsPageProps = {
-  kind: string;
   namespace: string;
-  resourceDescriptions: CRDDescription[];
+  kind?: string;
+  resourceDescriptions?: CRDDescription[];
+  showTitle?: boolean;
 };
 
 export type ClusterServiceVersionListProps = {
   loaded: boolean;
-  loadError?: string;
+  loadError?: unknown;
   data: ClusterServiceVersionKind[];
-  subscriptions: FirehoseResult<SubscriptionKind[]>;
-  catalogSources: FirehoseResult<CatalogSourceKind[]>;
+  subscriptions: WatchK8sResultsObject<SubscriptionKind[]>;
+  catalogSources: WatchK8sResultsObject<CatalogSourceKind[]>;
   activeNamespace?: string;
 };
 

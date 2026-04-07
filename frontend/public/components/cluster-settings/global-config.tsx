@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom-v5-compat';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import { Link } from 'react-router';
 import {
   AlertVariant,
   Content,
@@ -15,7 +15,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { RootState } from '../../redux';
 import {
   K8sKind,
   k8sList,
@@ -74,10 +73,10 @@ const ItemRow = ({ item, showAPIGroup }) => {
 };
 
 const useConfigResources = () => {
-  const { clusterOperatorConfigResources, configResources } = useSelector<
-    RootState,
-    { clusterOperatorConfigResources: K8sKind[]; configResources: K8sKind[] }
-  >(({ k8s }) => ({
+  const { clusterOperatorConfigResources, configResources } = useConsoleSelector<{
+    clusterOperatorConfigResources: K8sKind[];
+    configResources: K8sKind[];
+  }>(({ k8s }) => ({
     clusterOperatorConfigResources:
       k8s.getIn(['RESOURCES', 'clusterOperatorConfigResources']) ?? [],
     configResources: k8s.getIn(['RESOURCES', 'configResources']) ?? [],

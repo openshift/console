@@ -1,26 +1,18 @@
 import { screen, act } from '@testing-library/react';
-import * as ReactRouterBase from 'react-router';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ContainerRow, PodDetailsList, PodsDetailsPage } from '../pod';
-import * as ReactRouter from 'react-router-dom-v5-compat';
+import * as ReactRouter from 'react-router';
 import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
-
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
-}));
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
-  useLocation: jest.fn(),
   useParams: jest.fn(),
+  useLocation: jest.fn(),
 }));
 
 const mockUseParams = ReactRouter.useParams as jest.Mock;
 const mockUseLocation = ReactRouter.useLocation as jest.Mock;
-const mockReactRouterUseLocation = ReactRouterBase.useLocation as jest.Mock;
 
 describe(`PodsDetailsPage`, () => {
   beforeEach(() => {
@@ -34,7 +26,6 @@ describe(`PodsDetailsPage`, () => {
     };
     mockUseParams.mockReturnValue({});
     mockUseLocation.mockReturnValue(mockLocationObject);
-    mockReactRouterUseLocation.mockReturnValue(mockLocationObject);
   });
 
   it('verifies pod details page renders successfully for users', async () => {

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import * as _ from 'lodash';
-import * as Router from 'react-router-dom-v5-compat';
+import * as Router from 'react-router';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
   useK8sWatchResource,
@@ -22,8 +22,8 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useParams: jest.fn(),
   useLocation: jest.fn(),
 }));
@@ -166,6 +166,7 @@ describe('CreateSubscriptionYAML', () => {
       state: null,
       hash: '',
       key: 'default',
+      unstable_mask: undefined,
     });
     mockUseK8sWatchResources.mockClear();
   });

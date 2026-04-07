@@ -1,6 +1,6 @@
 import * as GitUrlParse from 'git-url-parse';
 import * as _ from 'lodash';
-import type { NavigateFunction } from 'react-router-dom-v5-compat';
+import type { NavigateFunction } from 'react-router';
 import type { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
 import { GitProvider } from '@console/git-service/src';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
@@ -24,7 +24,8 @@ import {
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
 import type { LimitsData } from '@console/shared/src/types';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
+import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
+import { getRandomChars } from '@console/shared/src/utils/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { BUILD_OUTPUT_IMAGESTREAM_URL } from '@console/shipwright-plugin/src/const';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';

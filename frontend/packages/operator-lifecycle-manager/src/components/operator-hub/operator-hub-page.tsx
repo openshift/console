@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom-v5-compat';
+import { useParams, Link } from 'react-router';
 import { OPERATOR_BACKED_SERVICE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { skeletonCatalog, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';

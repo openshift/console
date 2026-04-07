@@ -1,19 +1,19 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { ActionType } from '@console/internal/reducers/ols';
-import { useOLSConfig } from '../../../hooks/ols-hook';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useOLSConfig } from '../../../hooks/useOLSConfig';
 import { AskOpenShiftLightspeedButton, CodeEditorToolbar } from '../CodeEditorToolbar';
 
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
+jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
+  useConsoleDispatch: jest.fn(),
 }));
 
-jest.mock('../../../hooks/ols-hook', () => ({
+jest.mock('../../../hooks/useOLSConfig', () => ({
   useOLSConfig: jest.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe('CodeEditorToolbar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useTranslation as jest.Mock).mockReturnValue({ t: (key: string) => key });
-    (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+    (useConsoleDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
 
   it('should render null when showShortcuts is false and toolbarLinks is empty', () => {

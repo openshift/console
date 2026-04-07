@@ -3,7 +3,10 @@ import { getImageForIconClass } from '@console/internal/components/catalog/catal
 import { SecretModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/shared';
+import {
+  createOverviewItemForType,
+  WORKLOAD_TYPES,
+} from '@console/shared/src/utils/resource-utils';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,

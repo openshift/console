@@ -9,19 +9,19 @@ import {
   ModalVariant,
   Modal,
   ModalHeader,
-  ModalBody as PfModalBody,
-  ModalFooter as PfModalFooter,
+  ModalBody,
 } from '@patternfly/react-core';
 import type { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { ModalComponentProps } from '@console/internal/components/factory';
-import { ErrorMessage, LoadingBox } from '@console/internal/components/utils';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
@@ -203,9 +203,18 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
   const isUnderMaintenance = status.status === NODE_STATUS_UNDER_MAINTENANCE;
 
   return (
-    <Modal isOpen onClose={props.closeOverlay} variant={ModalVariant.small}>
-      <ModalHeader title={t('metal3-plugin~Power Off Host')} />
-      <PfModalBody>
+    <Modal
+      isOpen
+      onClose={props.closeOverlay}
+      variant={ModalVariant.small}
+      aria-labelledby="power-off-host-modal-title"
+    >
+      <ModalHeader
+        title={t('metal3-plugin~Power Off Host')}
+        data-test-id="modal-title"
+        labelId="power-off-host-modal-title"
+      />
+      <ModalBody>
         {!loaded ? (
           <LoadingBox />
         ) : canPowerOffSafely ? (
@@ -229,21 +238,22 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
             cancel={closeOverlay}
           />
         )}
-      </PfModalBody>
-      <PfModalFooter>
-        {errorMessage && <ErrorMessage message={errorMessage} />}
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={errorMessage}>
         <Button
           variant="primary"
           onClick={submit}
           isLoading={inProgress}
           isDisabled={!canPowerOffSafely && !forceOff}
+          data-test="confirm-action"
+          id="confirm-action"
         >
           {t('metal3-plugin~Power Off')}
         </Button>
-        <Button variant="link" onClick={closeOverlay}>
+        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
           {t('metal3-plugin~Cancel')}
         </Button>
-      </PfModalFooter>
+      </ModalFooterWithAlerts>
     </Modal>
   );
 };

@@ -2,7 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import type { Iterable as ImmutableIterable } from 'immutable';
 import { Map as ImmutableMap } from 'immutable';
 import { useDispatch, useSelector } from 'react-redux';
-import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { createSelectorCreator, lruMemoize } from 'reselect';
 import type { K8sModel } from '../../../api/common-types';
 import * as k8sActions from '../../../app/k8s/actions/k8s';
 import type { SDKDispatch, SDKStoreState } from '../../../app/redux-types';
@@ -119,14 +119,18 @@ export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
 
   const resourceK8sSelectorCreator = useMemo(
     () =>
-      createSelectorCreator(
-        // specifying createSelectorCreator<ImmutableMap<string, K8sKind>> throws type error
-        defaultMemoize as any,
-        (oldK8s: ImmutableMap<string, K8sModel>, newK8s: ImmutableMap<string, K8sModel>) =>
-          Object.keys(reduxIDs || {})
-            .filter((k) => !reduxIDs[k].noModel)
-            .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
-      ),
+      createSelectorCreator({
+        memoize: lruMemoize,
+        memoizeOptions: {
+          equalityCheck: (
+            oldK8s: ImmutableMap<string, K8sModel>,
+            newK8s: ImmutableMap<string, K8sModel>,
+          ) =>
+            Object.keys(reduxIDs || {})
+              .filter((k) => !reduxIDs[k].noModel)
+              .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
+        },
+      }),
     [reduxIDs],
   );
 

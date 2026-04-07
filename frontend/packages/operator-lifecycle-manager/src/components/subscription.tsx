@@ -15,13 +15,12 @@ import {
   GridItem,
   Grid,
 } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
+import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import { ResourceStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -38,7 +37,6 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '@console/internal/components/utils';
-import { useQueryParamsMutator } from '@console/internal/components/utils/router';
 import type { K8sKind, K8sModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -57,6 +55,7 @@ import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyA
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -764,14 +763,16 @@ export const SubscriptionDetailsPage: FC<SubscriptionDetailsPageProps> = (props)
           prop: 'subscriptions',
         },
       ]}
-      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) => (
-        <LazyActionMenu
-          context={{
-            [referenceFor(obj)]: obj,
-          }}
-          variant={ActionMenuVariant.DROPDOWN}
-        />
-      )}
+      customActionMenu={(kindObj: K8sModel, obj: K8sResourceKind) =>
+        obj ? (
+          <LazyActionMenu
+            context={{
+              [referenceFor(obj)]: obj,
+            }}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        ) : null
+      }
     />
   );
 };

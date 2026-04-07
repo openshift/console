@@ -2,12 +2,12 @@ import type { FC, MouseEvent } from 'react';
 import { useMemo } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { JobModel, PodModel } from '@console/internal/models';
 import type { PodKind, JobKind } from '@console/internal/module/k8s';
-import { isModifiedEvent } from '@console/shared';
+import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { EXPORT_JOB_PREFIX } from '../../const';
 
 interface ExportViewLogButtonProps {

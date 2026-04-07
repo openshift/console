@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { TerminalIcon } from '@patternfly/react-icons/dist/esm/icons/terminal-icon';
+import { TerminalIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

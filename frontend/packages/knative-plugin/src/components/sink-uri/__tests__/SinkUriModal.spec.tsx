@@ -3,10 +3,24 @@ import { render } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkUriModal from '../SinkUriModal';
 
-jest.mock('@console/internal/components/factory/modal', () => ({
-  ModalTitle: jest.fn(() => null),
-  ModalBody: jest.fn(() => null),
-  ModalSubmitFooter: jest.fn(() => null),
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  ModalHeader: jest.fn(() => null),
+  ModalBody: jest.fn(({ children }) => <div>{children}</div>),
+  Button: jest.fn(() => null),
+  Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
+  FormGroup: jest.fn(({ children }) => <div>{children}</div>),
+  FormHelperText: jest.fn(() => null),
+  HelperText: jest.fn(() => null),
+  HelperTextItem: jest.fn(() => null),
+  TextInputTypes: {
+    text: 'text',
+    url: 'url',
+  },
+}));
+
+jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
+  ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
 jest.mock('@console/shared', () => ({
@@ -17,17 +31,6 @@ jest.mock('@console/shared', () => ({
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,
   default: jest.fn(() => null),
-}));
-
-jest.mock('@patternfly/react-core', () => ({
-  Form: jest.fn(() => null),
-  FormGroup: jest.fn(() => null),
-  FormHelperText: jest.fn(() => null),
-  HelperText: jest.fn(() => null),
-  HelperTextItem: jest.fn(() => null),
-  TextInputTypes: {
-    url: 'url',
-  },
 }));
 
 jest.mock('react-i18next', () => ({

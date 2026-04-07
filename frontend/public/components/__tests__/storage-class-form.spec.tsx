@@ -6,14 +6,9 @@ import {
 import { StorageClassForm } from '../storage-class-form';
 
 // Mock router
-jest.mock('react-router-dom-v5-compat', () => ({
-  ...jest.requireActual('react-router-dom-v5-compat'),
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
   useNavigate: jest.fn(),
-}));
-
-// Mock Firehose
-jest.mock('../utils/firehose', () => ({
-  Firehose: ({ children }) => children,
 }));
 
 describe('StorageClassForm', () => {

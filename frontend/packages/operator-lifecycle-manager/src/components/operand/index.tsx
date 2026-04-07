@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useLocation, useNavigate } from 'react-router';
 import type { K8sModel } from '@console/dynamic-plugin-sdk';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { getResources } from '@console/internal/actions/k8s';
@@ -60,12 +60,12 @@ import {
   LazyActionMenu,
   ActionMenuVariant,
   getNamespace,
-  useActiveNamespace,
 } from '@console/shared';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
@@ -361,7 +361,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   const dispatch = useConsoleDispatch();
   const [apiRefreshed, setAPIRefreshed] = useState(false);
 
-  // Map APIs provided by this CSV to Firehose resources. Exclude APIs that do not have a model.
+  // Map APIs provided by this CSV to watch resources. Exclude APIs that do not have a model.
   const providedAPIs = providedAPIsForCSV(obj);
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>

@@ -2,9 +2,9 @@ import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { PodRCData } from '../types';
-import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils';
-import { useDebounceCallback } from './debounce';
-import { useDeepCompareMemoize } from './deep-compare-memoize';
+import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils/pod-resource-utils';
+import { useDebounceCallback } from './useDebounceCallback';
+import { useDeepCompareMemoize } from './useDeepCompareMemoize';
 
 /**
  * Watches for all Pods for a kind and namespace.

@@ -1,11 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import type { ResolvedExtension, TelemetryListener } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import {
-  CLUSTER_TELEMETRY_ANALYTICS,
-  USER_TELEMETRY_ANALYTICS,
-  useUserPreference,
-} from '@console/shared';
+import { CLUSTER_TELEMETRY_ANALYTICS, USER_TELEMETRY_ANALYTICS } from '@console/shared';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import {
   getClusterProperties,
   updateClusterPropertiesFromTests,

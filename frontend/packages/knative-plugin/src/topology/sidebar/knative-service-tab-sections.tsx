@@ -1,8 +1,8 @@
 import type { GraphElement } from '@patternfly/react-topology';
 import type { AdapterDataType } from '@console/dynamic-plugin-sdk/src';
 import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
-import type { BuildConfigData } from '@console/shared';
-import { useBuildConfigsWatcher } from '@console/shared';
+import type { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import RevisionsOverviewList from '../../components/overview/RevisionsOverviewList';

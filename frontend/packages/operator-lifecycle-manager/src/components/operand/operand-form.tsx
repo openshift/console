@@ -3,13 +3,13 @@ import { useState, useMemo } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { useParams, useNavigate } from 'react-router';
 import { resourcePathFromModel, useScrollToTopOnMount } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
@@ -78,7 +78,7 @@ export const OperandForm: FC<OperandFormProps> = ({
                 icon={_.get(csv, 'spec.icon[0]')}
                 provider={_.get(csv, 'spec.provider')}
               />
-              <SyncMarkdownView content={providedAPI.description} />
+              <MarkdownView content={providedAPI.description} />
             </div>
           )}
         </GridItem>

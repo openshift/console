@@ -9,7 +9,7 @@ import {
   SplitItem,
   ExpandableSection,
 } from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons/dist/esm/icons/add-circle-o-icon';
+import { AddCircleOIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import type {
   CertificateSigningRequestKind,

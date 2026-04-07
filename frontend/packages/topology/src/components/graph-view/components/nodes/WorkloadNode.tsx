@@ -11,16 +11,12 @@ import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import type { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import type { PodRCData } from '@console/shared';
-import {
-  AllPodStatus,
-  calculateRadius,
-  getFiringAlerts,
-  getPodStatus,
-  getSeverityAlertType,
-  useBuildConfigsWatcher,
-  usePodsWatcher,
-} from '@console/shared';
+import { AllPodStatus } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import type { PodRCData } from '@console/shared/src/types/pod';
+import { getFiringAlerts, getSeverityAlertType } from '@console/shared/src/utils/alert-utils';
+import { calculateRadius, getPodStatus } from '@console/shared/src/utils/pod-utils';
 import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../../workload/resource-alert';

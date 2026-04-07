@@ -16,7 +16,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, Link, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, Link, useNavigate } from 'react-router';
 import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { RadioGroup } from '@console/internal/components/radio';
 import {
@@ -1235,7 +1235,11 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
 };
 
 const OperatorHubSubscribe: FC<OperatorHubSubscribeFormProps> = (props) => (
-  <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
+  <StatusBox
+    data={props.packageManifest?.data?.[0]}
+    loaded={props.loaded}
+    loadError={props.loadError}
+  >
     <OperatorHubSubscribeForm {...props} />
   </StatusBox>
 );
@@ -1268,8 +1272,10 @@ export const OperatorHubSubscribePage: FC = () => {
     },
   });
 
-  const loaded = Object.values(resources).every((r) => r.loaded);
-  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
+  const resourceValues = Object.values(resources);
+  const loaded =
+    resourceValues.length === 0 || resourceValues.every((r) => r.loaded || r.loadError);
+  const loadError = resourceValues.find((r) => r.loadError)?.loadError;
 
   return (
     <OperatorHubSubscribe

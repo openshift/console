@@ -24,7 +24,7 @@ import {
   K8sResourceKindReference,
   referenceForExtensionModel,
 } from '../../module/k8s';
-import type { FirehoseResult } from './types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
 import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
@@ -147,9 +147,10 @@ export const ConnectedPageHeading = connectToModel(
             </ActionListItem>
           )}
 
-          {_.isFunction(customActionMenu)
-            ? customActionMenu(kindObj, data, extraResources)
-            : customActionMenu}
+          {hasData &&
+            (_.isFunction(customActionMenu)
+              ? customActionMenu(kindObj, data, extraResources)
+              : customActionMenu)}
         </>
       );
 
@@ -250,7 +251,7 @@ export type ConnectedPageHeadingProps = Omit<PageHeadingProps, 'primaryAction'> 
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
-  obj?: FirehoseResult<K8sResourceKind>;
+  obj?: WatchK8sResultsObject<K8sResourceKind>;
   /** A component to override the title of the page */
   OverrideTitle?: ComponentType<{ obj?: K8sResourceKind }>;
   resourceKeys?: string[];

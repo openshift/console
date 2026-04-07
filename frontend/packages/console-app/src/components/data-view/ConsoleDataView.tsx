@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import './ConsoleDataView.scss';
 import {
   ResponsiveAction,
   ResponsiveActions,
@@ -10,11 +11,11 @@ import {
   DataView,
   DataViewState,
   DataViewTable,
-  DataViewTextFilter,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
-import DataViewFilters from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
-import { ColumnsIcon } from '@patternfly/react-icons';
+import DataViewFilters from '@patternfly/react-data-view/dist/esm/DataViewFilters';
+import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
+import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -26,6 +27,7 @@ import { LazyColumnManagementModalOverlay } from '@console/internal/components/m
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { DataViewLabelFilter } from './DataViewLabelFilter';
+import { DataViewTextFilter } from './DataViewTextFilter';
 import { useConsoleDataViewData } from './useConsoleDataViewData';
 import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
@@ -76,9 +78,17 @@ export const ConsoleDataView = <
   hideLabelFilter,
   hideColumnManagement,
   mock,
+  isResizable,
+  resetAllColumnWidths,
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
+  const [tableKey, setTableKey] = useState(0);
+
+  const handleResetColumnWidths = useCallback(() => {
+    resetAllColumnWidths?.();
+    setTableKey((k) => k + 1);
+  }, [resetAllColumnWidths]);
 
   const { filters, onSetFilters, clearAllFilters, filteredData } = useConsoleDataViewFilters<
     TData,
@@ -102,6 +112,7 @@ export const ConsoleDataView = <
     showNamespaceOverride,
     columnManagementID,
     customRowData,
+    isResizable,
   });
 
   const bodyLoading = useMemo(() => <BodyLoading columns={dataViewColumns.length} />, [
@@ -161,7 +172,10 @@ export const ConsoleDataView = <
       loadError={loadError}
       skeleton={<div className="loading-skeleton--table" />}
     >
-      <DataView activeState={activeState}>
+      <DataView
+        activeState={activeState}
+        className={css(dataViewFilterNodes.length === 1 && 'co-console-data-view-single-filter')}
+      >
         <DataViewToolbar
           filters={
             dataViewFilterNodes.length > 0 && (
@@ -172,8 +186,8 @@ export const ConsoleDataView = <
           }
           clearAllFilters={clearAllFilters}
           actions={
-            !hideColumnManagement && (
-              <ResponsiveActions breakpoint="lg">
+            <ResponsiveActions breakpoint="lg">
+              {!hideColumnManagement && (
                 <ResponsiveAction
                   isPersistent
                   variant="plain"
@@ -190,19 +204,37 @@ export const ConsoleDataView = <
                     <ColumnsIcon />
                   </Tooltip>
                 </ResponsiveAction>
-              </ResponsiveActions>
-            )
+              )}
+              {isResizable && resetAllColumnWidths && (
+                <ResponsiveAction
+                  isPersistent
+                  variant="plain"
+                  onClick={handleResetColumnWidths}
+                  aria-label={t('public~Reset column widths')}
+                  data-test="reset-column-widths"
+                >
+                  <Tooltip content={t('public~Reset column widths')} trigger="mouseenter">
+                    <UndoIcon />
+                  </Tooltip>
+                </ResponsiveAction>
+              )}
+            </ResponsiveActions>
           }
           pagination={
             <Pagination
               itemCount={filteredData.length}
-              titles={{ ofWord: t('public~of') }}
+              titles={{
+                ofWord: t('public~of'),
+                itemsPerPage: t('public~Items per page'),
+                perPageSuffix: t('public~per page'),
+              }}
               {...pagination}
             />
           }
         />
         <InnerScrollContainer>
           <DataViewTable
+            key={tableKey}
             aria-label={t(`public~{{label}} table`, { label })}
             // @ts-expect-error - TODO(react18): CONSOLE-5040: Remove ConsoleDataViewColumn bodge
             columns={dataViewColumns}
@@ -211,6 +243,7 @@ export const ConsoleDataView = <
             gridBreakPoint=""
             variant="compact"
             data-test="data-view-table"
+            isResizable={isResizable}
           />
         </InnerScrollContainer>
       </DataView>
@@ -223,7 +256,7 @@ export const cellIsStickyProps = {
   stickyMinWidth: '0',
 };
 
-const nameCellProps = {
+export const nameCellProps = {
   ...cellIsStickyProps,
   hasRightBorder: true,
 };
@@ -240,3 +273,15 @@ export const actionsCellProps = {
   hasLeftBorder: true,
   isActionCell: true,
 };
+
+/**
+ * Returns the style prop for a Labels column so it can be shared across tables.
+ * @param width - Persisted or current width in pixels (e.g. from getWidth(columnId))
+ * @param defaultWidth - Default width when no width is provided (default 200)
+ * @returns Style object for the column's props.style
+ */
+export const getLabelsColumnWidthStyleProp = (width: number | undefined, defaultWidth = 200) => ({
+  style: {
+    width: `${width ?? defaultWidth}px`,
+  },
+});

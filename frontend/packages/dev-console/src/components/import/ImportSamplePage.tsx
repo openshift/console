@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useMemo, useCallback } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel } from '@console/internal/models';

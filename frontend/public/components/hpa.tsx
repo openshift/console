@@ -27,11 +27,13 @@ import { ResourceEventStream } from './events';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
+  nameCellProps,
   ConsoleDataView,
+  getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DASH } from '@console/shared/src/constants/ui';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 
@@ -320,16 +322,24 @@ const getDataViewRows: GetDataViewRows<HorizontalPodAutoscalerKind> = (data, col
   });
 };
 
-const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscalerKind>[] => {
+const useHorizontalPodAutoscalersColumns = (): {
+  columns: TableColumn<HorizontalPodAutoscalerKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(
+    HorizontalPodAutoscalerModel,
+  );
+
   const columns: TableColumn<HorizontalPodAutoscalerKind>[] = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -337,6 +347,7 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -345,14 +356,17 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
         title: t('public~Labels'),
         id: tableColumnInfo[2].id,
         sort: 'metadata.labels',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
+          ...getLabelsColumnWidthStyleProp(getWidth(tableColumnInfo[2].id)),
         },
       },
       {
         title: t('public~Scale target'),
         id: tableColumnInfo[3].id,
         sort: 'spec.scaleTargetRef.name',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -361,6 +375,7 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
         title: t('public~Min pods'),
         id: tableColumnInfo[4].id,
         sort: 'spec.minReplicas',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -369,6 +384,7 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
         title: t('public~Max pods'),
         id: tableColumnInfo[5].id,
         sort: 'spec.maxReplicas',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -377,12 +393,13 @@ const useHorizontalPodAutoscalersColumns = (): TableColumn<HorizontalPodAutoscal
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps, getWidth]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
@@ -390,7 +407,7 @@ export const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps>
   loaded,
   ...props
 }) => {
-  const columns = useHorizontalPodAutoscalersColumns();
+  const { columns, resetAllColumnWidths } = useHorizontalPodAutoscalersColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -402,6 +419,8 @@ export const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps>
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

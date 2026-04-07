@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { getUser, getUserResource, setUserResource } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { UserModel } from '@console/internal/models';
 import type { UserKind } from '@console/internal/module/k8s/types';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 
 /**
  * Custom hook that provides centralized user data fetching and management.
@@ -15,13 +16,13 @@ import type { UserKind } from '@console/internal/module/k8s/types';
  */
 export const useUser = () => {
   const { t } = useTranslation('public');
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   // Get current user info from Redux (username, groups, etc.)
-  const user = useSelector(getUser);
+  const user = useConsoleSelector(getUser);
 
   // Get current user resource from Redux (fullName, identities, etc.)
-  const userResource = useSelector(getUserResource);
+  const userResource = useConsoleSelector(getUserResource);
 
   // Fetch user resource from k8s API
   const [userResourceData, userResourceLoaded, userResourceError] = useK8sGet<UserKind>(

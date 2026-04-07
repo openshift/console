@@ -2,7 +2,7 @@ import type { FC } from 'react';
 
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedExpandableGrid,
   GettingStartedShowState,
@@ -16,16 +16,16 @@ import { ExploreAdminFeaturesGettingStartedCard } from './explore-admin-features
 import './getting-started-section.scss';
 
 type GettingStartedSectionProps = {
-  userSettingKey: string;
+  userPreferenceKey: string;
 };
 
-export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userSettingKey }) => {
+export const GettingStartedSection: FC<GettingStartedSectionProps> = ({ userPreferenceKey }) => {
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
 
-  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userSettingKey);
+  const [showState, setShowState, showStateLoaded] = useGettingStartedShowState(userPreferenceKey);
 
   const [isGettingStartedSectionOpen, setIsGettingStartedSectionOpen] = useUserPreference<boolean>(
-    `${userSettingKey}.expanded`,
+    `${userPreferenceKey}.expanded`,
     true,
   );
 

@@ -11,9 +11,10 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, To } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
+import type { To } from 'react-router';
 import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import { ModalComponentProps } from '../factory/modal';
+import { ModalComponentProps } from '@console/shared/src/types/modal';
 import { resourceListPathFromModel, ResourceLink } from '../utils/resource-link';
 import {
   k8sKill,
@@ -27,7 +28,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
@@ -152,7 +153,7 @@ export const DeleteModal = (props: DeleteModalProps) => {
                 <Trans t={t} ns="public">
                   This resource is managed by{' '}
                   <ResourceLink
-                    className="modal__inline-resource-link"
+                    className="pf-v6-u-mr-0"
                     inline
                     kind={referenceForOwnerRef(owner)}
                     name={owner.name}

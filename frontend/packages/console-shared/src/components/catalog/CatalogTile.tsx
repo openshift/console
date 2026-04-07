@@ -7,9 +7,9 @@ import {
 import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { isModifiedEvent } from '../../utils';
+import { isModifiedEvent } from '../../utils/utils';
 import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
 import type { CatalogType } from './utils/types';

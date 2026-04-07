@@ -4,8 +4,10 @@ import * as _ from 'lodash';
 import {
   initSharedScope,
   getSharedScope,
+  monkeyPatchSharedScope,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-shared-modules';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
+import { addTestError } from '@console/shared/src/utils/test-errors';
 import { REMOTE_ENTRY_CALLBACK } from '../constants';
 import type { ErrorWithCause } from '../utils/error/custom-error';
 import { resolveURL } from '../utils/url';
@@ -104,11 +106,14 @@ export const initConsolePlugins = _.once((pluginStore: PluginStore) => {
   // Initialize webpack share scope object and start loading plugins
   initSharedScope()
     .then(() => {
+      monkeyPatchSharedScope();
+    })
+    .then(() => {
       dynamicPluginNames.forEach((pluginName) => {
         loadAndEnablePlugin(pluginName, pluginStore, (errorMessage, errorCause) => {
           // eslint-disable-next-line no-console
           console.error(..._.compact([errorMessage, errorCause]));
-          window.windowError = `${window.windowError ?? ''};${errorMessage}: ${String(errorCause)}`;
+          addTestError(`${errorMessage}: ${String(errorCause)}`);
         });
       });
 

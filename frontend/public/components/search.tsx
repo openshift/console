@@ -2,9 +2,9 @@ import * as _ from 'lodash';
 import type { FC, MouseEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import {
   Accordion,
   AccordionContent,
@@ -19,8 +19,7 @@ import {
   ToolbarFilter,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
-import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { usePinnedResources } from '@console/shared/src/hooks/usePinnedResources';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -38,7 +37,7 @@ import {
 } from '../module/k8s';
 import { LoadingBox, ConsoleEmptyState } from './utils/status-box';
 import { ResourceIcon } from './utils/resource-icon';
-import { useQueryParamsMutator } from './utils/router';
+import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { AsyncComponent } from './utils/async';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import useConfirmNavUnpinModal from '@console/app/src/components/nav/useConfirmNavUnpinModal';

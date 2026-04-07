@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
@@ -57,7 +57,7 @@ const CreateClusterExtension: FC = () => {
     return data;
   }, [packageName, version, catalog]);
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY =
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY =
     'console.createClusterExtensionForm.editor.lastView';
 
   return (
@@ -74,7 +74,7 @@ const CreateClusterExtension: FC = () => {
         initialData={initialData}
         initialType={EditorType.Form}
         YAMLEditor={ClusterExtensionYAMLEditor}
-        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+        lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
       />
     </>
   );

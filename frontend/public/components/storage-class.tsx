@@ -12,11 +12,12 @@ import {
 } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useTranslation } from 'react-i18next';
 import { StorageClassModel } from '@console/internal/models';
@@ -40,6 +41,7 @@ import {
   referenceFor,
   referenceForModel,
 } from '../module/k8s';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 
 const { kind } = StorageClassModel;
 
@@ -67,15 +69,10 @@ const isDefaultVirtClass = (storageClass: K8sResourceKind) => {
   return annotations[defaultVirtClassAnnotation] === 'true';
 };
 
-// TODO remove this code, the plugin should use an appropriate extension
-const isKubevirtPluginActive =
-  Array.isArray(window.SERVER_FLAGS.consolePlugins) &&
-  window.SERVER_FLAGS.consolePlugins.includes('kubevirt-plugin');
-
-const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<StorageClassResourceKind> = (t) => (
-  data,
-  columns,
-) => {
+const getDataViewRowsCreator: (
+  t: TFunction,
+  isKubevirtPluginActive: boolean,
+) => GetDataViewRows<StorageClassResourceKind> = (t, isKubevirtPluginActive) => (data, columns) => {
   return data.map(({ obj }) => {
     const name = obj.metadata?.name || '';
     const context = { [referenceFor(obj)]: obj };
@@ -122,8 +119,12 @@ const getDataViewRowsCreator: (t: TFunction) => GetDataViewRows<StorageClassReso
   });
 };
 
-const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
+const useStorageClassColumns = (): {
+  columns: TableColumn<StorageClassResourceKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(StorageClassModel);
 
   const columns: TableColumn<StorageClassResourceKind>[] = useMemo(
     () => [
@@ -131,36 +132,43 @@ const useStorageClassColumns = (): TableColumn<StorageClassResourceKind>[] => {
         title: t('public~Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
         title: t('public~Provisioner'),
         sort: 'provisioner',
         id: tableColumnInfo[1].id,
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Reclaim policy'),
         sort: 'reclaimPolicy',
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: '',
         id: tableColumnInfo[3].id,
-        props: { ...cellIsStickyProps },
+        props: { ...actionsCellProps },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
 
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 export const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
-  const columns = useStorageClassColumns();
-  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);
+  const { columns, resetAllColumnWidths } = useStorageClassColumns();
+  const isKubevirtPluginActive = useIsKubevirtPluginActive();
+  const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, isKubevirtPluginActive), [
+    t,
+    isKubevirtPluginActive,
+  ]);
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -172,6 +180,8 @@ export const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...p
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );

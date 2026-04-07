@@ -2,13 +2,11 @@ import type { FC } from 'react';
 import { Fragment, useContext, useState, useRef, useCallback, useEffect } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { shallowEqual } from 'react-redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
-import { useNavigate } from 'react-router-dom-v5-compat';
-import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon';
-import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { ThIcon } from '@patternfly/react-icons/dist/esm/icons/th-icon';
-import { QuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/question-circle-icon';
+import { useNavigate } from 'react-router';
+import { BellIcon, EllipsisVIcon, ThIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   Dropdown,
   Divider,
@@ -26,7 +24,7 @@ import { ACM_LINK_ID, FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useCopyCodeModal } from '@console/shared/src/hooks/useCopyCodeModal';
 import { useCopyLoginCommands } from '@console/shared/src/hooks/useCopyLoginCommands';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUser } from '@console/shared/src/hooks/useUser';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
@@ -53,7 +51,7 @@ import { action as reduxAction } from 'typesafe-actions';
 import feedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback.svg';
 import darkFeedbackImage from '@patternfly/react-user-feedback/dist/esm/images/rh_feedback-dark.svg';
 import QuickCreate, { QuickCreateImportFromGit, QuickCreateContainerImages } from '../QuickCreate';
-import { ThemeContext, THEME_DARK } from '../ThemeProvider';
+import { useTheme, THEME_DARK } from '../ThemeProvider';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 import { ImpersonateUserModal } from '../modals/impersonate-user-modal';
 
@@ -86,7 +84,7 @@ const FeedbackModalLocalized: FC<FeedbackModalLocalizedProps> = ({
   reportBugLink,
 }) => {
   const feedbackLocales = useFeedbackLocal(reportBugLink);
-  const theme = useContext(ThemeContext);
+  const { theme } = useTheme();
   return (
     <FeedbackModal
       onShareFeedback="https://console.redhat.com/self-managed-feedback-form?source=openshift"
@@ -169,12 +167,15 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
     t('public~Login with this command'),
     externalLoginCommand,
   );
-  const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector((state) => ({
-    clusterID: state.UI.get('clusterID'),
-    alertCount: state.observe.getIn(['alertCount']),
-    canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
-    impersonate: getImpersonate(state),
-  }));
+  const { clusterID, alertCount, canAccessNS, impersonate } = useConsoleSelector(
+    (state) => ({
+      clusterID: state.UI.get('clusterID'),
+      alertCount: state.observe.getIn(['alertCount']),
+      canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+      impersonate: getImpersonate(state),
+    }),
+    shallowEqual,
+  );
 
   // Use centralized user hook for user data
   const { displayName, username } = useUser();

@@ -3,7 +3,7 @@ import { FormGroup, FormHelperText, HelperText, HelperTextItem } from '@patternf
 import type { FormikValues } from 'formik';
 import { useField, useFormikContext } from 'formik';
 import { RequestSizeInput } from '@console/internal/components/utils/request-size-input';
-import { useFormikValidationFix } from '../../hooks/formik-validation-fix';
+import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { ResourceLimitFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

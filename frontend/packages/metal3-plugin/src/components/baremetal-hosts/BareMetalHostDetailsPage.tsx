@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import type { FirehoseResource } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
 import type {
@@ -14,7 +14,7 @@ import type {
 import { referenceForModel } from '@console/internal/module/k8s';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getMachineNode, getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
@@ -45,7 +45,7 @@ const BareMetalHostDetailsPage: FC<BareMetalHostDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const [maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
-  const resources: FirehoseResource[] = [
+  const resources: WatchK8sResourceWithProp[] = [
     {
       kind: referenceForModel(MachineModel),
       namespaced: true,

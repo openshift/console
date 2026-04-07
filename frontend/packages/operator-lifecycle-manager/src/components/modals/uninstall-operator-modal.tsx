@@ -1,24 +1,28 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import type { FC, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import { Alert, Progress, ProgressSize, Title } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalVariant,
+  Progress,
+  ProgressSize,
+  Title,
+} from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { Checkbox } from '@console/internal/components/checkbox';
-import type { ModalComponentProps } from '@console/internal/components/factory/modal';
-import {
-  ModalTitle,
-  ModalBody,
-  ModalSubmitFooter,
-  ModalWrapper,
-} from '@console/internal/components/factory/modal';
 import {
   LinkifyExternal,
   ResourceLink,
@@ -36,11 +40,15 @@ import {
   k8sPatch,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
-import { getPatchForRemovingPlugins, isPluginEnabled } from '@console/shared/src/utils';
+import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
+import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import {
+  getPatchForRemovingPlugins,
+  isPluginEnabled,
+} from '@console/shared/src/utils/console-plugin';
 import { DEFAULT_GLOBAL_OPERATOR_INSTALLATION_NAMESPACE } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { OperandLink } from '../operand/operand-link';
@@ -335,10 +343,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
           />
         </span>
         <Checkbox
-          onChange={({ currentTarget }) => setDeleteOperands(currentTarget.checked)}
+          id="delete-all-operands"
+          data-test="delete-all-operands"
+          onChange={(_event, isChecked) => setDeleteOperands(isChecked)}
           name="delete-all-operands"
           label={t('olm~Delete all operand instances for this operator')}
-          checked={deleteOperands}
+          isChecked={deleteOperands}
         />
       </>
     )
@@ -376,51 +386,70 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
   );
 
   return (
-    <form onSubmit={submit} name="form" className="modal-content co-catalog-install-modal">
-      <ModalTitle className="modal-header">
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('olm~Uninstall Operator?')}
-      </ModalTitle>
-      <ModalBody>
-        {showInstructions && (
-          <>
-            <p>
-              <Trans t={t} ns="olm">
-                Operator <strong>{{ name }}</strong> will be removed from{' '}
-                <strong>{{ namespace }}</strong>.
-              </Trans>
-            </p>
-            {!optedOut && <>{instructions}</>}
-            {uninstallMessage && (
-              <>
-                <Title headingLevel="h2" className="pf-v6-u-mb-sm">
-                  {t('olm~Message from Operator developer')}
-                </Title>
-                <p>
-                  <LinkifyExternal>{uninstallMessage}</LinkifyExternal>
-                </p>
-              </>
-            )}
-            {!optedOut && <>{operandsSection}</>}
-          </>
-        )}
-        {operandsDeleteInProgress && (
-          <OperandDeleteProgress total={operands.length} remaining={operandsRemaining} />
-        )}
-        {operatorUninstallInProgress && (
-          <div>
-            <p>{t('olm~Uninstalling the Operator...')}</p>
-          </div>
-        )}
-        {isSubmitFinished && results}
-      </ModalBody>
-      <ModalSubmitFooter
-        inProgress={isSubmitInProgress}
-        cancel={cancel}
-        submitDanger={!isSubmitFinished} // if submit finished show a non-danger 'OK'
-        submitText={isSubmitFinished ? t('olm~OK') : t('olm~Uninstall')}
-        submitDisabled={isSubmitInProgress}
+    <Modal
+      variant={ModalVariant.small}
+      isOpen
+      onClose={isSubmitInProgress ? undefined : close}
+      aria-labelledby="uninstall-operator-modal-title"
+    >
+      <ModalHeader
+        title={t('olm~Uninstall Operator?')}
+        titleIconVariant="warning"
+        data-test-id="modal-title"
+        labelId="uninstall-operator-modal-title"
       />
-    </form>
+      <ModalBody>
+        <Form id="uninstall-operator-form" onSubmit={submit}>
+          {showInstructions && (
+            <>
+              <p>
+                <Trans t={t} ns="olm">
+                  Operator <strong>{{ name }}</strong> will be removed from{' '}
+                  <strong>{{ namespace }}</strong>.
+                </Trans>
+              </p>
+              {!optedOut && <>{instructions}</>}
+              {uninstallMessage && (
+                <>
+                  <Title headingLevel="h2" className="pf-v6-u-mb-sm">
+                    {t('olm~Message from Operator developer')}
+                  </Title>
+                  <p>
+                    <LinkifyExternal>{uninstallMessage}</LinkifyExternal>
+                  </p>
+                </>
+              )}
+              {!optedOut && <>{operandsSection}</>}
+            </>
+          )}
+          {operandsDeleteInProgress && (
+            <OperandDeleteProgress total={operands.length} remaining={operandsRemaining} />
+          )}
+          {operatorUninstallInProgress && (
+            <div>
+              <p>{t('olm~Uninstalling the Operator...')}</p>
+            </div>
+          )}
+          {isSubmitFinished && results}
+        </Form>
+      </ModalBody>
+      <ModalFooterWithAlerts errorMessage={operatorUninstallErrorMessage}>
+        <Button
+          type="submit"
+          variant={isSubmitFinished ? 'primary' : 'danger'}
+          form="uninstall-operator-form"
+          isLoading={isSubmitInProgress}
+          isDisabled={isSubmitInProgress}
+          data-test="confirm-action"
+          id="confirm-action"
+        >
+          {isSubmitFinished ? t('olm~OK') : t('olm~Uninstall')}
+        </Button>
+        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+          {t('public~Cancel')}
+        </Button>
+      </ModalFooterWithAlerts>
+    </Modal>
   );
 };
 
@@ -639,9 +668,7 @@ export const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorMo
   props,
 ) => {
   return (
-    <ModalWrapper blocking onClose={props.closeOverlay}>
-      <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
-    </ModalWrapper>
+    <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
   );
 };
 

@@ -1,7 +1,7 @@
 import type { ReactElement, FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import type { TopologyDataObject } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { ResourceIcon, StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';

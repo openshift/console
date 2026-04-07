@@ -1,12 +1,11 @@
 import type { ReactNode, FC } from 'react';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import type { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { ThemeContext } from '@console/internal/components/ThemeProvider';
 import {
   InputField,
   FormFooter,
@@ -73,13 +72,9 @@ const HelmInstallUpgradeForm: FC<
   providerName,
 }) => {
   const { t } = useTranslation();
-  const theme = useContext(ThemeContext);
   const { chartName, chartVersion, chartReadme, formData, formSchema, editorType } = values;
   const { type: helmAction, title, subTitle } = helmActionConfig;
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
-    readme: chartReadme,
-    theme,
-  });
+  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
     isSubmitting ||
@@ -88,7 +83,7 @@ const HelmInstallUpgradeForm: FC<
 
   const uiSchema = useMemo(() => getJSONSchemaOrder(formSchema, {}), [formSchema]);
 
-  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'helm.installUgradeForm.editor.lastView';
+  const LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY = 'helm.installUgradeForm.editor.lastView';
 
   const formEditor = formData && formSchema && (
     <DynamicFormField
@@ -185,7 +180,7 @@ const HelmInstallUpgradeForm: FC<
               name="editorType"
               formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
               yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-              lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+              lastViewUserPreferenceKey={LAST_VIEWED_EDITOR_TYPE_USER_PREFERENCE_KEY}
               prune={prune}
               noMargin
             />

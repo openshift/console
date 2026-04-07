@@ -6,9 +6,9 @@ import {
   EmptyStateActions,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { TopologyIcon } from '@patternfly/react-icons/dist/esm/icons/topology-icon';
+import { TopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 
 type LimitExceededStateProps = {
   onShowTopologyAnyway: () => void;

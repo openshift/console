@@ -14,10 +14,10 @@ import {
   StackItem,
   AlertVariant,
 } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -26,11 +26,11 @@ import CatalogPageOverlay from '@console/shared/src/components/catalog/catalog-v
 import CatalogPageOverlayDescription from '@console/shared/src/components/catalog/catalog-view/CatalogPageOverlayDescription';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { DefaultCatalogSource } from '../../const';
 import { useCurrentCSVDescription } from '../../hooks/useCurrentCSVDescription';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import type { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
-import { MarkdownView } from '../clusterserviceversion';
 import { DeprecatedOperatorWarningAlert } from '../deprecated-operator-warnings/deprecated-operator-warnings';
 import { useDeprecatedOperatorWarnings } from '../deprecated-operator-warnings/use-deprecated-operator-warnings';
 import { defaultChannelNameFor } from '../index';

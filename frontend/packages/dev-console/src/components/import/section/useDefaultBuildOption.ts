@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useShipwrightBuilds } from '@console/dev-console/src/utils/shipwright-build-hook';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAG_OPENSHIFT_BUILDCONFIG, FLAG_OPENSHIFT_PIPELINE } from '../../../const';
 import { BuildOptions } from '../import-types';
 

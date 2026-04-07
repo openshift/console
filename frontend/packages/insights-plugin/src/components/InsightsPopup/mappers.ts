@@ -1,7 +1,9 @@
-import { AngleDoubleDownIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-down-icon';
-import { AngleDoubleUpIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-up-icon';
-import { CriticalRiskIcon } from '@patternfly/react-icons/dist/esm/icons/critical-risk-icon';
-import { EqualsIcon } from '@patternfly/react-icons/dist/esm/icons/equals-icon';
+import {
+  AngleDoubleDownIcon,
+  AngleDoubleUpIcon,
+  CriticalRiskIcon,
+  EqualsIcon,
+} from '@patternfly/react-icons';
 import {
   t_color_blue_10 as blue50,
   t_color_blue_50 as blue300,

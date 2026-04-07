@@ -1,5 +1,13 @@
 const { CustomJSONLexer } = require('./i18n-scripts/lexers');
 
+/* eslint-disable */
+// Global suppression for all i18next instances
+// See https://www.locize.com/docs/general-questions/why-am-i-seeing-a-support-notice-for-i18next/
+if (typeof globalThis !== 'undefined') {
+  globalThis.__i18next_supportNoticeShown = true;
+}
+/* eslint-enable */
+
 /*eslint no-undef: "error"*/
 /*eslint-env node*/
 

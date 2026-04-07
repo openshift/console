@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
 import { CatalogController, CatalogServiceProvider } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';

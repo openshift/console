@@ -4,15 +4,17 @@ import { useState } from 'react';
 import { Button, Level, LevelItem, List, ListItem, Title } from '@patternfly/react-core';
 import { Language } from '@patternfly/react-code-editor';
 import { BasicCodeEditor } from '@console/shared/src/components/editor/BasicCodeEditor';
-import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
-import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
-import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
-import { PasteIcon } from '@patternfly/react-icons/dist/esm/icons/paste-icon';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  DownloadIcon,
+  PasteIcon,
+} from '@patternfly/react-icons';
 import { Sample } from '@console/shared/src/hooks/useResourceSidebarSamples';
 import { useTranslation } from 'react-i18next';
 
-import { K8sKind, referenceFor } from '../../module/k8s';
-import { FirehoseResult } from '../utils/types';
+import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import { K8sKind, K8sResourceKind, referenceFor } from '../../module/k8s';
 
 const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
   sample,
@@ -214,6 +216,6 @@ type ResourceSidebarSamplesProps = {
   samples: Sample[];
   loadSampleYaml: LoadSampleYaml;
   downloadSampleYaml: DownloadSampleYaml;
-  yamlSamplesList?: FirehoseResult;
+  yamlSamplesList?: WatchK8sResultsObject<K8sResourceKind[]>;
   kindObj: K8sKind;
 };

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useCommonResourceActions } from '@console/app/src/actions//hooks/useCommonResourceActions';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import type { Action } from '@console/dynamic-plugin-sdk/src/extensions/actions';

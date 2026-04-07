@@ -25,7 +25,7 @@ import {
   groupVersionFor,
 } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { getOwnedResources } from '@console/shared';
+import { getOwnedResources } from '@console/shared/src/utils/resource-utils';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
   getTopologyGroupItems,

@@ -5,10 +5,13 @@ import { MenuToggle, Select, SelectOption, Skeleton } from '@patternfly/react-co
 import { useTranslation } from 'react-i18next';
 import type { Perspective } from '@console/dynamic-plugin-sdk/src/extensions';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { usePerspectiveExtension, usePerspectives } from '@console/shared/src';
+import {
+  usePerspectiveExtension,
+  usePerspectives,
+} from '@console/shared/src/hooks/usePerspectives';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import {
-  PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+  PREFERRED_PERSPECTIVE_USER_PREFERENCE_KEY,
   usePreferredPerspective,
 } from './usePreferredPerspective';
 
@@ -53,7 +56,7 @@ const PreferrredPerspectiveSelect: FC = () => {
       if (selection !== preferredPerspectiveID) {
         setPreferredPerspectiveID(selection === lastViewed ? null : selection);
         fireTelemetryEvent('User Preference Changed', {
-          property: PREFERRED_PERSPECTIVE_USER_SETTING_KEY,
+          property: PREFERRED_PERSPECTIVE_USER_PREFERENCE_KEY,
           value: selection,
         });
       }

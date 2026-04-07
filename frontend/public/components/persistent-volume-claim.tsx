@@ -3,7 +3,8 @@ import { useMemo, useCallback, Suspense, useState, useEffect } from 'react';
 import * as _ from 'lodash';
 import i18next, { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import {
   Alert,
   AlertActionCloseButton,
@@ -15,16 +16,17 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
-import { DataViewFilterOption } from '@patternfly/react-data-view/dist/cjs/DataViewFilters';
+import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { ChartDonut } from '@patternfly/react-charts/victory';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   initialFiltersDefault,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { ResourceFilters, GetDataViewRows } from '@console/app/src/components/data-view/types';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import {
@@ -36,7 +38,6 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { PersistentVolumeClaimKind, referenceFor } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
 import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
 import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
@@ -47,7 +48,7 @@ import { calculateRadius } from '@console/shared/src/utils/pod-utils';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getRequestedPVCSize } from '@console/shared/src/selectors/storage';
 import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DASH } from '@console/shared/src/constants/ui';
 import { Conditions } from './conditions';
@@ -198,8 +199,14 @@ const getDataViewRowsCreator: (
   });
 };
 
-const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKind>[] => {
+const usePersistentVolumeClaimColumns = (): {
+  columns: TableColumn<PersistentVolumeClaimKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(
+    PersistentVolumeClaimModel,
+  );
 
   const columns: TableColumn<PersistentVolumeClaimKind>[] = useMemo(
     () => [
@@ -207,54 +214,61 @@ const usePersistentVolumeClaimColumns = (): TableColumn<PersistentVolumeClaimKin
         title: t('public~Name'),
         sort: 'metadata.name',
         id: tableColumnInfo[0].id,
-        props: { ...cellIsStickyProps, modifier: 'nowrap' },
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
+        props: { ...nameCellProps, modifier: 'nowrap' },
       },
       {
         title: t('public~Namespace'),
         sort: 'metadata.namespace',
         id: tableColumnInfo[1].id,
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Status'),
         sort: 'status.phase',
         id: tableColumnInfo[2].id,
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~PersistentVolume'),
         sort: 'spec.volumeName',
         id: tableColumnInfo[3].id,
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Capacity'),
         sort: 'pvcStorage',
         id: tableColumnInfo[4].id,
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~Used'),
         sort: 'pvcUsed',
         id: tableColumnInfo[5].id,
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: t('public~StorageClass'),
         sort: 'spec.storageClassName',
         id: tableColumnInfo[6].id,
+        resizableProps: getResizableProps(tableColumnInfo[6].id),
         props: { modifier: 'nowrap' },
       },
       {
         title: '',
         id: tableColumnInfo[7].id,
-        props: { ...cellIsStickyProps },
+        props: { ...actionsCellProps },
       },
     ],
-    [t],
+    [t, getResizableProps],
   );
 
-  return columns;
+  return { columns, resetAllColumnWidths };
 };
 
 const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
@@ -339,6 +353,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
             title={t('public~VolumeAttributesClass modification failed')}
             className="co-alert co-alert--margin-bottom-sm"
             actionClose={<AlertActionCloseButton onClose={() => setIsErrorAlertDismissed(true)} />}
+            data-test-id="vac-error-alert"
           >
             {t(
               'public~VolumeAttributesClass modification failed. Your volume settings could not be updated. Please try again.',
@@ -515,8 +530,8 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const columns = usePersistentVolumeClaimColumns();
-  const pvcMetrics = useSelector<RootState, PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
+  const { columns, resetAllColumnWidths } = usePersistentVolumeClaimColumns();
+  const pvcMetrics = useConsoleSelector<PVCMetrics>(({ UI }) => UI.getIn(['metrics', 'pvc']));
 
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t, pvcMetrics), [t, pvcMetrics]);
 
@@ -584,6 +599,8 @@ export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
         additionalFilterNodes={additionalFilterNodes}
         matchesAdditionalFilters={matchesAdditionalFilters}
         hideColumnManagement
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -595,7 +612,7 @@ export const PersistentVolumeClaimsPage: FC<PersistentVolumeClaimsPageProps> = (
 }) => {
   const { t } = useTranslation();
   const createPropExtensions = useExtensions(isPVCCreateProp);
-  const dispatch = useDispatch();
+  const dispatch = useConsoleDispatch();
 
   const [response, loadError, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,

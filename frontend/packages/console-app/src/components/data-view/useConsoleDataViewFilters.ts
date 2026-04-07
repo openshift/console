@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
 import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import {

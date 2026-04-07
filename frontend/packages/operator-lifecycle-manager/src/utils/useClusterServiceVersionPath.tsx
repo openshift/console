@@ -1,6 +1,7 @@
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { resourceObjPath, resourcePath } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { ClusterServiceVersionModel } from '../models';
 import type { ClusterServiceVersionKind } from '../types';
 

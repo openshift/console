@@ -24,9 +24,8 @@ import {
 } from '../module/k8s';
 import { ContainerTable } from './utils/container-table';
 import { DetailsItem } from './utils/details-item';
-import { Firehose } from './utils/firehose';
-import { FirehoseResourcesResult } from './utils/types';
 import { ResourceLink } from './utils/resource-link';
+import { useK8sWatchResources } from './utils/k8s-watch-hook';
 import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { navFactory } from './utils/horizontal-nav';
@@ -39,10 +38,11 @@ import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDis
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import {
   actionsCellProps,
-  cellIsStickyProps,
   getNameCellProps,
   ConsoleDataView,
+  nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { LoadingBox } from './utils/status-box';
@@ -216,63 +216,63 @@ export type CronJobPodsComponentProps = {
   obj: K8sResourceKind;
 };
 
-const getJobsWatcher = (namespace: string) => {
-  return [
-    {
-      prop: 'jobs',
-      isList: true,
-      kind: 'Job',
-      namespace,
-    },
-  ];
-};
-
-const getPodsWatcher = (namespace: string) => {
-  return [
-    ...getJobsWatcher(namespace),
-    {
-      prop: 'pods',
-      isList: true,
-      kind: 'Pod',
-      namespace,
-    },
-  ];
-};
-
 export const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
   const podFilters = useMemo(() => getPodFilters(t), [t]);
+
+  const resources = useK8sWatchResources<{
+    jobs: K8sResourceCommon[];
+    pods: PodKind[];
+  }>({
+    jobs: {
+      isList: true,
+      kind: 'Job',
+      namespace: obj.metadata.namespace,
+    },
+    pods: {
+      isList: true,
+      kind: 'Pod',
+      namespace: obj.metadata.namespace,
+    },
+  });
+
+  const loaded = resources.jobs.loaded && resources.pods.loaded;
+  const loadError = resources.jobs.loadError || resources.pods.loadError;
+
+  const flattenedPods = useMemo(() => {
+    if (!loaded) {
+      return [];
+    }
+    const jobsData = resources.jobs.data ?? [];
+    const podsData = resources.pods.data ?? [];
+
+    const jobs = jobsData.filter((job) =>
+      job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+    );
+
+    return jobs.reduce((acc, job) => {
+      acc.push(
+        ...getPodsForResource(job, {
+          jobs: { data: jobsData, loaded: true },
+          pods: { data: podsData, loaded: true },
+        }),
+      );
+      return acc;
+    }, [] as PodKind[]);
+  }, [resources.jobs.data, resources.pods.data, obj.metadata.uid, loaded]);
+
   return (
     <PaneBody>
-      <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
-        <ListPageWrapper
-          flatten={(
-            _resources: FirehoseResourcesResult<{
-              jobs: K8sResourceCommon[];
-              pods: K8sResourceCommon[];
-            }>,
-          ) => {
-            if (!_resources.jobs.loaded || !_resources.pods.loaded) {
-              return [];
-            }
-            const jobs = _resources.jobs.data.filter((job) =>
-              job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
-            );
-            return (
-              jobs &&
-              jobs.reduce((acc, job) => {
-                acc.push(...getPodsForResource(job, _resources));
-                return acc;
-              }, [])
-            );
-          }}
-          kinds={['Pods']}
-          ListComponent={PodList}
-          rowFilters={podFilters}
-          hideColumnManagement={true}
-          omitFilterToolbar={true}
-        />
-      </Firehose>
+      <ListPageWrapper
+        flatten={() => flattenedPods}
+        kinds={['Pods']}
+        ListComponent={PodList}
+        rowFilters={podFilters}
+        hideColumnManagement={true}
+        omitFilterToolbar={true}
+        loaded={loaded}
+        loadError={loadError}
+      />
     </PaneBody>
   );
 };
@@ -281,37 +281,59 @@ export type CronJobJobsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => (
-  <PaneBody>
-    <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
+export const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
+  const resources = useK8sWatchResources<{
+    jobs: K8sResourceCommon[];
+  }>({
+    jobs: {
+      isList: true,
+      kind: 'Job',
+      namespace: obj.metadata.namespace,
+    },
+  });
+
+  const { loaded, loadError } = resources.jobs;
+
+  const flattenedJobs = useMemo(() => {
+    if (!loaded) {
+      return [];
+    }
+    return (resources.jobs.data ?? []).filter((job) =>
+      job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
+    );
+  }, [resources.jobs.data, obj.metadata.uid, loaded]);
+
+  return (
+    <PaneBody>
       <ListPageWrapper
-        flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
-          if (!_resources.jobs.loaded) {
-            return [];
-          }
-          return _resources.jobs.data.filter((job) =>
-            job.metadata?.ownerReferences?.find((ref) => ref.uid === obj.metadata.uid),
-          );
-        }}
+        flatten={() => flattenedJobs}
         kinds={['Jobs']}
         ListComponent={JobsList}
         hideColumnManagement={true}
         omitFilterToolbar={true}
+        loaded={loaded}
+        loadError={loadError}
       />
-    </Firehose>
-  </PaneBody>
-);
+    </PaneBody>
+  );
+};
 
-const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
+const useCronJobsColumns = (): {
+  columns: TableColumn<CronJobKind>[];
+  resetAllColumnWidths: () => void;
+} => {
   const { t } = useTranslation();
-  const columns: TableColumn<CronJobKind>[] = useMemo(() => {
+  const { getResizableProps, resetAllColumnWidths } = useColumnWidthSettings(CronJobModel);
+
+  const columns = useMemo(() => {
     return [
       {
         title: t('public~Name'),
         id: tableColumnInfo[0].id,
         sort: 'metadata.name',
+        resizableProps: getResizableProps(tableColumnInfo[0].id),
         props: {
-          ...cellIsStickyProps,
+          ...nameCellProps,
           modifier: 'nowrap',
         },
       },
@@ -319,6 +341,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Namespace'),
         id: tableColumnInfo[1].id,
         sort: 'metadata.namespace',
+        resizableProps: getResizableProps(tableColumnInfo[1].id),
         props: {
           modifier: 'nowrap',
         },
@@ -327,6 +350,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Schedule'),
         id: tableColumnInfo[2].id,
         sort: 'spec.schedule',
+        resizableProps: getResizableProps(tableColumnInfo[2].id),
         props: {
           modifier: 'nowrap',
         },
@@ -335,6 +359,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Suspend'),
         id: tableColumnInfo[3].id,
         sort: 'spec.suspend',
+        resizableProps: getResizableProps(tableColumnInfo[3].id),
         props: {
           modifier: 'nowrap',
         },
@@ -343,6 +368,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Concurrency policy'),
         id: tableColumnInfo[4].id,
         sort: 'spec.concurrencyPolicy',
+        resizableProps: getResizableProps(tableColumnInfo[4].id),
         props: {
           modifier: 'nowrap',
         },
@@ -351,6 +377,7 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: t('public~Starting deadline seconds'),
         id: tableColumnInfo[5].id,
         sort: 'spec.startingDeadlineSeconds',
+        resizableProps: getResizableProps(tableColumnInfo[5].id),
         props: {
           modifier: 'nowrap',
         },
@@ -359,16 +386,17 @@ const useCronJobsColumns = (): TableColumn<CronJobKind>[] => {
         title: '',
         id: tableColumnInfo[6].id,
         props: {
-          ...cellIsStickyProps,
+          ...actionsCellProps,
         },
       },
     ];
-  }, [t]);
-  return columns;
+  }, [t, getResizableProps]);
+
+  return { columns, resetAllColumnWidths };
 };
 
 export const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
-  const columns = useCronJobsColumns();
+  const { columns, resetAllColumnWidths } = useCronJobsColumns();
 
   return (
     <Suspense fallback={<LoadingBox />}>
@@ -380,6 +408,8 @@ export const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) 
         columns={columns}
         getDataViewRows={getDataViewRows}
         hideColumnManagement={true}
+        isResizable
+        resetAllColumnWidths={resetAllColumnWidths}
       />
     </Suspense>
   );
@@ -397,6 +427,9 @@ export const CronJobsPage: FC<CronJobsPageProps> = (props) => (
 
 export const CronJobsDetailsPage: FC = (props) => {
   const customActionMenu = (kindObj, obj) => {
+    if (!kindObj || !obj) {
+      return null;
+    }
     const resourceKind = referenceForModel(kindObj);
     const context = { [resourceKind]: obj };
     return (

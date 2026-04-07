@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';

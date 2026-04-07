@@ -18,14 +18,12 @@ import {
   CronJobModel,
   PodModel,
 } from '@console/internal/models';
-import type { BuildConfigData } from '@console/shared';
-import {
-  getPodsForResource,
-  getResourcesToWatchForPods,
-  useBuildConfigsWatcher,
-  useJobsForCronJobWatcher,
-  usePodsWatcher,
-} from '@console/shared';
+import type { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
+import { useJobsForCronJobWatcher } from '@console/shared/src/hooks/useJobsForCronJobWatcher';
+import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import { getResourcesToWatchForPods } from '@console/shared/src/utils/pod-resource-utils';
+import { getPodsForResource } from '@console/shared/src/utils/resource-utils';
 import { getResource } from '../../utils';
 
 export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E extends Extension>(
