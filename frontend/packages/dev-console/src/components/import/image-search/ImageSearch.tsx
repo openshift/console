@@ -220,9 +220,16 @@ const ImageSearch: FC = () => {
       setFieldValue('application.name', '');
   };
 
+  // Use a ref to avoid re-running this effect when handleSearch is recreated.
+  // handleSearch changes on every render where its deps (touched, values.name,
+  // etc.) change, which happens on every keystroke via resetFields().
+  const handleSearchRef = useRef(handleSearch);
+  handleSearchRef.current = handleSearch;
+
   useEffect(() => {
-    !dirty && values.searchTerm && handleSearch(values.searchTerm);
-  }, [dirty, handleSearch, values.searchTerm]);
+    !dirty && values.searchTerm && handleSearchRef.current(values.searchTerm);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirty, values.searchTerm]);
 
   useEffect(() => {
     if (touched.searchTerm && initialValues.searchTerm !== values.searchTerm) {
