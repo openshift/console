@@ -5,7 +5,6 @@ import {
   devNavigationMenu,
   addOptions,
   pageTitle,
-  switchPerspective,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
@@ -16,7 +15,6 @@ import {
   navigateTo,
   addPage,
   catalogPage,
-  perspective,
   createForm,
 } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
@@ -33,7 +31,6 @@ const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
 });
 
 When('user clicks on the Helm tab in dev perspective', () => {

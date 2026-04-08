@@ -1,20 +1,15 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import {
-  devNavigationMenu,
-  switchPerspective,
-} from '@console/dev-console/integration-tests/support/constants';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import {
   createGitWorkloadIfNotExistsOnTopologyPage,
   navigateTo,
-  perspective,
 } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { functionsPage } from '../../pages/functions/functions-page';
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
 });
 
 When('user clicks on the Functions tab', () => {
