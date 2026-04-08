@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   switchPerspective,
   devNavigationMenu,
@@ -117,8 +116,6 @@ Then('user is able to see health check notification', () => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
 });
 
 Given('user has created namespace starts with {string}', (projectName: string) => {

@@ -67,6 +67,13 @@ Cypress.Commands.add(
     cy.get(selector).click();
     cy.byTestID('console-select-search-input').type(dropdownText);
     cy.byTestID('console-select-menu-list').find('li').contains(dropdownText).click();
+
+    // Under React 18 createRoot, state updates from dropdown selection can be concurrent.
+    // Wait for the dropdown menu to close, indicating the selection has been processed.
+    cy.byTestID('console-select-menu-list').should('not.exist');
+
+    // Verify the selected value appears in the toggle to ensure selection was applied
+    cy.get(selector).should('contain.text', dropdownText);
   },
 );
 

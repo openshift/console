@@ -1,12 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { addOptions, devNavigationMenu, switchPerspective } from '../../constants';
+import { addOptions, devNavigationMenu } from '../../constants';
 import { addPagePO, samplesPO } from '../../pageObjects';
 import {
   addPage,
   app,
   navigateTo,
-  perspective,
   projectNameSpace,
   samplesPage,
   topologyPage,
@@ -16,7 +15,6 @@ import { checkDeveloperPerspective } from '../../pages/functions/checkDeveloperP
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {

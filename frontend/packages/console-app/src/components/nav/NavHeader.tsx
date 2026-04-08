@@ -26,6 +26,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
   return (
     <SelectOption
       key={perspective.properties.id}
+      data-test-id="perspective-switcher-menu-option"
       onClick={(e: MouseEvent<HTMLLinkElement>) => {
         e.preventDefault();
         onClick(perspective.properties.id);
@@ -37,7 +38,7 @@ const PerspectiveDropdownItem: FC<PerspectiveDropdownItemProps> = ({ perspective
         />
       }
     >
-      <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
+      <Title headingLevel="h2" size="md">
         {perspective.properties.name}
       </Title>
     </SelectOption>

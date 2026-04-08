@@ -1,6 +1,5 @@
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { nav } from '@console/cypress-integration-tests/views/nav';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
 import {
   devNavigationMenu,
@@ -196,8 +195,6 @@ Given('user has installed Service Binding operator', () => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
 });
 
 When('user right clicks on workload {string}', (appName: string) => {
