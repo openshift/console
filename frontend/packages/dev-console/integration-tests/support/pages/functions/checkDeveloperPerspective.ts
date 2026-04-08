@@ -5,13 +5,16 @@ export const checkDeveloperPerspective = () => {
   cy.byLegacyTestID('perspective-switcher-toggle')
     .should('be.visible')
     .then(($toggle) => {
-      const currentText = $toggle.text().trim();
+      // Read text only from the toggle label, not from the dropdown menu items
+      // that PF appends inside the toggle element via popperProps.appendTo.
+      const $label = $toggle.find('.pf-v6-c-menu-toggle__text');
+      const currentText = ($label.length ? $label.text() : $toggle.text()).trim();
       const isSinglePerspective = $toggle.attr('id') === 'core-platform-perspective';
 
       cy.log(`Current perspective: "${currentText}"`);
 
       // If already on Developer, we're done
-      if (currentText.includes('Developer')) {
+      if (currentText === 'Developer') {
         cy.log('Already on Developer perspective');
         return;
       }
@@ -49,11 +52,11 @@ export const checkDeveloperPerspective = () => {
         timeout: 10000,
       }).click();
 
-      // Verify we're on Developer
-      cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 15000 }).should(
-        'contain.text',
-        'Developer',
-      );
+      // Verify we're on Developer: check .pf-v6-c-menu-toggle__text specifically
+      // because PF appends the dropdown menu inside the toggle element.
+      cy.byLegacyTestID('perspective-switcher-toggle', { timeout: 15000 })
+        .find('.pf-v6-c-menu-toggle__text')
+        .should('contain.text', 'Developer');
 
       // Wait for perspective to fully load
       cy.document().its('readyState').should('eq', 'complete');

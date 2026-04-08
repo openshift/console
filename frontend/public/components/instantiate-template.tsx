@@ -305,11 +305,11 @@ export const TemplateForm: FC<TemplateFormProps> = (props) => {
       .then((secret: K8sResourceKind) => {
         return createTemplateInstance(secret).then(async (templateInstance: K8sResourceKind) => {
           await updatesecretOwnerRef(secret, templateInstance);
-          setInProgress(false);
           const activeExtension = perspectiveExtensions.find(
             (p) => p.properties.id === activePerspective,
           );
           const url = (await activeExtension.properties.importRedirectURL())(namespace);
+          // Navigate before clearing inProgress
           navigate(url);
         });
       })
