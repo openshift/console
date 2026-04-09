@@ -452,7 +452,10 @@ export const NotificationDrawer: FC<NotificationDrawerProps> = ({
 
   return (
     <PfNotificationDrawer ref={drawerRef}>
-      <NotificationDrawerHeader onClose={toggleNotificationDrawer} />
+      <NotificationDrawerHeader
+        title={t('public~Notifications')}
+        onClose={toggleNotificationDrawer}
+      />
       <NotificationDrawerBody>
         <NotificationDrawerGroupList>
           {[criticalAlertCategory, nonCriticalAlertCategory, recommendationsCategory]}
