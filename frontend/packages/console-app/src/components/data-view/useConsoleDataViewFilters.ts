@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDataViewFilters } from '@patternfly/react-data-view';
 import { useSearchParams } from 'react-router';
 import { useExactSearch } from '@console/app/src/components/user-preferences/search/useExactSearch';
@@ -37,6 +37,39 @@ export const useConsoleDataViewFilters = <
     searchParams,
     setSearchParams,
   });
+
+  // Sync URL search params → internal filter state.
+  // useDataViewFilters only reads searchParams on mount (empty deps useEffect).
+  // This effect ensures filters stay in sync when the URL changes externally
+  // (e.g., the Search page updating query params without remounting).
+  const filtersRef = useRef(filters);
+  filtersRef.current = filters;
+  useEffect(() => {
+    const updates: Partial<TFilters> = {};
+    let hasChanges = false;
+    for (const key of Object.keys(filtersRef.current)) {
+      const currentValue = filtersRef.current[key];
+      if (Array.isArray(currentValue)) {
+        const urlValues = searchParams.getAll(key);
+        if (
+          urlValues.length !== currentValue.length ||
+          urlValues.some((v, i) => v !== currentValue[i])
+        ) {
+          updates[key] = urlValues;
+          hasChanges = true;
+        }
+      } else {
+        const urlValue = searchParams.get(key) ?? '';
+        if (urlValue !== currentValue) {
+          updates[key] = urlValue;
+          hasChanges = true;
+        }
+      }
+    }
+    if (hasChanges) {
+      onSetFilters(updates as TFilters);
+    }
+  }, [searchParams, onSetFilters]);
 
   const filteredData = useMemo(
     () =>
