@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render } from '@testing-library/react';
 import DynamicResourceLink from '../DynamicResourceLink';
 

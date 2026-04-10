@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { fetchK8s } from '@console/internal/graphql/client';
@@ -90,11 +90,10 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, { items: [] }], [], []]),
     );
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
@@ -102,11 +101,10 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[{ items: [] }, helmChartRepositoryList], [], []]),
     );
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
@@ -114,11 +112,10 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[helmChartRepositoryList, helmChartRepositoryList], [], []]),
     );
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, true]);
   });
 
@@ -126,11 +123,10 @@ describe('useDetectHelmChartRepositories', () => {
     settleAllPromisesMock.mockReturnValue(
       Promise.resolve([[{ items: [] }, { items: [] }], [], []]),
     );
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(1);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
   });
 
@@ -145,11 +141,10 @@ describe('useDetectHelmChartRepositories', () => {
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
 
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(2);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(2);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, false]);
   });
 
@@ -159,11 +154,10 @@ describe('useDetectHelmChartRepositories', () => {
     } as Response);
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error200, error200], []]));
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(setFeatureFlag).toHaveBeenCalledTimes(2);
     });
-    expect(setFeatureFlag).toHaveBeenCalledTimes(2);
     expect(setFeatureFlag.mock.calls[0]).toEqual([FLAG_OPENSHIFT_HELM, undefined]);
   });
 
@@ -186,11 +180,10 @@ describe('useDetectHelmChartRepositories', () => {
     } as Response);
     // settleAllPromises mock returns errors in rejectedReasons array
     settleAllPromisesMock.mockReturnValue(Promise.resolve([[], [error404, error200], []]));
-    const { rerender } = renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
-    await act(async () => {
-      rerender();
+    renderHook(() => useDetectHelmChartRepositories(setFeatureFlag));
+    await waitFor(() => {
+      expect(fetchK8sMock).toHaveBeenCalledTimes(4);
     });
-    expect(fetchK8sMock).toHaveBeenCalledTimes(4);
     jest.advanceTimersByTime(20 * 1000);
     expect(fetchK8sMock).toHaveBeenCalledTimes(4);
   });

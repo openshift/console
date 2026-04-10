@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import SinkResources from '../SinkResources';

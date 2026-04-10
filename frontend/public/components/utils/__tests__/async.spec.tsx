@@ -127,11 +127,9 @@ describe('AsyncComponent', () => {
 
     renderWithProviders(<AsyncComponent loader={loader} className={className} />);
 
-    await waitFor(() => {
-      const component = screen.getByText('Foo Component');
-      expect(component).toBeInTheDocument();
-      expect(component).toHaveClass(className);
-    });
+    const component = await screen.findByText('Foo Component');
+    expect(component).toBeInTheDocument();
+    expect(component).toHaveClass(className);
   });
 
   it('renders new component if props.loader changes', async () => {

@@ -1,4 +1,4 @@
-import { cleanup, screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -14,18 +14,12 @@ import {
 import { AddRequestHeaderPage } from '../../cluster-settings/request-header-idp-form';
 
 describe('Add Identity Provider: Request Header', () => {
+  const renderPage = () => {
+    renderWithProviders(<AddRequestHeaderPage />);
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddRequestHeaderPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
@@ -33,6 +27,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: Request Header',
       subtitle:
@@ -41,6 +36,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'request-header',
@@ -51,11 +47,13 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the URLs sub heading', () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'URLs' })).toBeVisible();
     expect(screen.getByText('At least one URL must be provided.')).toBeVisible();
   });
 
   it('should render the Challenge URL label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Challenge URL',
       inputType: 'url',
@@ -66,6 +64,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Login URL label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Login URL',
       inputType: 'url',
@@ -76,17 +75,21 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the More options sub heading', () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'More options' })).toBeVisible();
   });
 
   it('should render the More options sub heading and CA file label and input element', async () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'More options' })).toBeVisible();
     await verifyIDPFileFields({
       inputLabel: 'CA file',
+      fieldId: 'ca-file-input',
     });
   });
 
   it('should render the Client common names label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Client common names',
       testValue: mockData.updatedFormValues.name,
@@ -96,6 +99,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Headers label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Headers',
       testValue: mockData.updatedFormValues.headers,
@@ -106,6 +110,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Preferred username headers label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Preferred username headers',
       testValue: mockData.updatedFormValues.name,
@@ -115,6 +120,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Name headers label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Name headers',
       testValue: mockData.updatedFormValues.headers,
@@ -124,6 +130,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render the Email headers label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Email headers',
       testValue: mockData.updatedFormValues.email,
@@ -133,6 +140,7 @@ describe('Add Identity Provider: Request Header', () => {
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

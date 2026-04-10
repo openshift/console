@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as Router from 'react-router';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
@@ -50,7 +50,7 @@ describe('UserPreferencePage', () => {
     jest.clearAllMocks();
   });
 
-  it('should render with default user preference group based on the url params', async () => {
+  it('should render with default user preference group based on the url params', () => {
     useParamsMock.mockReturnValue({
       group: 'language',
     });
@@ -58,35 +58,29 @@ describe('UserPreferencePage', () => {
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    await act(async () => {
-      renderWithProviders(<UserPreferencePage />);
-    });
+    renderWithProviders(<UserPreferencePage />);
 
     expect(screen.getByRole('tab', { name: /Language/ })).toBeVisible();
   });
 
-  it('should render with "general" user preference group as default when URL has no group param', async () => {
+  it('should render with "general" user preference group as default when URL has no group param', () => {
     useParamsMock.mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, true]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    await act(async () => {
-      renderWithProviders(<UserPreferencePage />);
-    });
+    renderWithProviders(<UserPreferencePage />);
 
     expect(screen.getByRole('tab', { name: /General/ })).toBeVisible();
   });
 
-  it('should render loading state when user preference extensions have not resolved', async () => {
+  it('should render loading state when user preference extensions have not resolved', () => {
     useParamsMock.mockReturnValue({});
     useExtensionsMock.mockReturnValue(mockUserPreferenceGroupExtensions);
     useResolvedExtensionsMock.mockReturnValue([mockUserPreferenceItemExtensions, false]);
     useQueryParamsMock.mockReturnValue(new URLSearchParams());
 
-    await act(async () => {
-      renderWithProviders(<UserPreferencePage />);
-    });
+    renderWithProviders(<UserPreferencePage />);
 
     expect(screen.getByText('Loading...')).toBeVisible();
     expect(screen.queryByRole('tab', { name: /General/ })).not.toBeInTheDocument();

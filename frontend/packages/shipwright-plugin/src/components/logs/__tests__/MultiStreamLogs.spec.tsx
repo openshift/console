@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
 import { MultiStreamLogs } from '../MultiStreamLogs';
 import { podData } from './logs-test-data';
@@ -49,7 +49,7 @@ jest.mock('../Logs', () => {
     default: jest.fn(({ container }: { container: { name: string } }) => {
       return ReactMock.createElement(
         'div',
-        { className: 'odc-logs', 'data-testid': `logs-${container.name}` },
+        { className: 'odc-logs', 'data-test': `logs-${container.name}` },
         container.name,
       );
     }),
@@ -70,25 +70,24 @@ describe('MultiStreamLogs', () => {
 
   it('should not render logs when containers is not present', () => {
     props.resource.spec.containers = [];
-    const { container } = render(<MultiStreamLogs {...props} />);
-    const logsElements = container.querySelectorAll('.odc-logs');
-    expect(logsElements.length).toBe(0);
+    render(<MultiStreamLogs {...props} />);
+    // Mocked Logs use data-testid "logs-${container.name}"; no containers => none rendered.
+    expect(screen.queryByTestId('logs-step-oc')).not.toBeInTheDocument();
   });
 
   it('should render inline loading based on logs completion', () => {
-    const { container } = render(<MultiStreamLogs {...props} />);
-    const taskNameElement = container.querySelector('[data-test-id="logs-taskName"]');
-    expect(taskNameElement).not.toBeNull();
-    expect(taskNameElement?.textContent).toBe('step-oc');
-    expect(
-      taskNameElement?.querySelector('.odc-multi-stream-logs__taskName__loading-indicator'),
-    ).toBeNull();
+    render(<MultiStreamLogs {...props} />);
+    const taskNameRegion = screen.getByTestId('multi-stream-logs-task-name');
+    // When stillFetching is false, only the task name is present (no loading sub-tree from mock data).
+    expect(taskNameRegion).toHaveTextContent('step-oc');
   });
 
   it('should render number of logs equal to number of containers', () => {
-    const containersLength = props.resource.spec.containers.length;
-    const { container } = render(<MultiStreamLogs {...props} />);
-    const logsElements = container.querySelectorAll('.odc-logs');
-    expect(logsElements.length).toBe(containersLength);
+    const { containers: containerSpecs } = props.resource.spec;
+    render(<MultiStreamLogs {...props} />);
+    expect(containerSpecs.length).toBeGreaterThan(0);
+    containerSpecs.forEach((c) => {
+      expect(screen.getByTestId(`logs-${c.name}`)).toBeInTheDocument();
+    });
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render, screen } from '@testing-library/react';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../../models';

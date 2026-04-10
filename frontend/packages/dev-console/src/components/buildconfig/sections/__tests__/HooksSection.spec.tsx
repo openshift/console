@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
@@ -44,22 +44,22 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section hooks');
-    renderResult.getByText('Run build hooks after image is built');
+    expect(screen.getByTestId('section hooks')).toBeInTheDocument();
+    expect(screen.getByText('Run build hooks after image is built')).toBeVisible();
 
-    const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
+    const [checkbox] = screen.getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkbox.checked).toBeFalsy();
 
     // Exeept that the other input elements are not shown.
-    expect(renderResult.queryByTestId('type')).toBeFalsy();
-    expect(renderResult.queryByTestId('Add command')).toBeFalsy();
-    expect(renderResult.queryByTestId('Add argument')).toBeFalsy();
+    expect(screen.queryByTestId('type')).toBeFalsy();
+    expect(screen.queryByTestId('Add command')).toBeFalsy();
+    expect(screen.queryByTestId('Add argument')).toBeFalsy();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -79,28 +79,26 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section hooks');
-    renderResult.getByText('Run build hooks after image is built');
+    expect(screen.getByTestId('section hooks')).toBeInTheDocument();
+    expect(screen.getByText('Run build hooks after image is built')).toBeVisible();
 
-    const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
+    const [checkbox] = screen.getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkbox.checked).toBeFalsy();
 
     await user.click(checkbox);
 
-    await waitFor(() => {
-      expect(checkbox.checked).toBeTruthy();
-      expect(renderResult.getByTestId('type').textContent).toEqual('Command');
-      expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(1);
-      renderResult.getByText('Add command');
-      expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(0);
-      renderResult.getByText('Add argument');
-    });
+    expect(checkbox.checked).toBeTruthy();
+    expect(screen.getByTestId('type').textContent).toEqual('Command');
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(1);
+    expect(screen.getByText('Add command')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(0);
+    expect(screen.getByText('Add argument')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -119,31 +117,31 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section hooks');
-    renderResult.getByText('Run build hooks after image is built');
+    expect(screen.getByTestId('section hooks')).toBeInTheDocument();
+    expect(screen.getByText('Run build hooks after image is built')).toBeVisible();
 
-    const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
+    const [checkbox] = screen.getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkbox.checked).toBeTruthy();
 
     await waitFor(() => {
       expect(checkbox.checked).toBeTruthy();
-      expect(renderResult.getByTestId('type').textContent).toEqual('Command');
-      expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(2);
-      renderResult.getByDisplayValue('command 1');
-      renderResult.getByDisplayValue('command 2');
-      renderResult.getByText('Add command');
-      renderResult.getByDisplayValue('command 1');
-      expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
-      renderResult.getByDisplayValue('argument 1');
-      renderResult.getByDisplayValue('argument 2');
-      renderResult.getByText('Add argument');
     });
+    expect(screen.getByTestId('type').textContent).toEqual('Command');
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(2);
+    expect(screen.getByDisplayValue('command 1')).toBeVisible();
+    expect(screen.getByDisplayValue('command 2')).toBeVisible();
+    expect(screen.getByText('Add command')).toBeVisible();
+    expect(screen.getByDisplayValue('command 1')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(2);
+    expect(screen.getByDisplayValue('argument 1')).toBeVisible();
+    expect(screen.getByDisplayValue('argument 2')).toBeVisible();
+    expect(screen.getByText('Add argument')).toBeVisible();
   });
 
   it('should not render commands when hook type is changed to script', async () => {
@@ -161,24 +159,24 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    expect(renderResult.getByTestId('type').textContent).toEqual('Command');
-    expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(2);
-    expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
+    expect(screen.getByTestId('type').textContent).toEqual('Command');
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(2);
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(2);
 
-    await user.click(renderResult.getByTestId('type'));
-    await user.click(renderResult.getByText('Shell script'));
+    await user.click(screen.getByTestId('type'));
+    await user.click(screen.getByText('Shell script'));
 
     await waitFor(() => {
-      expect(renderResult.baseElement.querySelector('textarea')).toBeTruthy();
-      expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(0);
-      expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
+      expect(screen.getByLabelText('Script')).toBeInTheDocument();
     });
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(0);
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(2);
   });
 
   it('should not render commands when hook type is changed to argsOnly', async () => {
@@ -196,24 +194,24 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    expect(renderResult.getByTestId('type').textContent).toEqual('Command');
-    expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(2);
-    expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
+    expect(screen.getByTestId('type').textContent).toEqual('Command');
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(2);
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(2);
 
-    await user.click(renderResult.getByTestId('type'));
-    await user.click(renderResult.getByText('Arguments to default image entry point'));
+    await user.click(screen.getByTestId('type'));
+    await user.click(screen.getByText('Arguments to default image entry point'));
 
     await waitFor(() => {
-      expect(renderResult.baseElement.querySelector('textarea')).toBeFalsy();
-      expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(0);
-      expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(2);
+      expect(screen.queryByLabelText('Script')).not.toBeInTheDocument();
     });
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(0);
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(2);
   });
 
   it('should update formik data', async () => {
@@ -231,36 +229,36 @@ describe('HooksSection', () => {
     };
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <HooksSection />
       </Wrapper>,
     );
 
-    const [checkbox] = renderResult.getAllByRole('checkbox') as HTMLInputElement[];
+    const [checkbox] = screen.getAllByRole('checkbox') as HTMLInputElement[];
     await user.click(checkbox);
 
     // Wait for subform
     await waitFor(() => {
       expect(checkbox.checked).toBeTruthy();
-      expect(renderResult.getByTestId('type').textContent).toEqual('Command');
-      expect(renderResult.queryAllByPlaceholderText('Command')).toHaveLength(1);
-      renderResult.getByText('Add command');
-      expect(renderResult.queryAllByPlaceholderText('Argument')).toHaveLength(0);
-      renderResult.getByText('Add argument');
     });
+    expect(screen.getByTestId('type').textContent).toEqual('Command');
+    expect(screen.queryAllByPlaceholderText('Command')).toHaveLength(1);
+    expect(screen.getByText('Add command')).toBeVisible();
+    expect(screen.queryAllByPlaceholderText('Argument')).toHaveLength(0);
+    expect(screen.getByText('Add argument')).toBeVisible();
 
     // Fill out subform
-    const [command1] = renderResult.getAllByPlaceholderText('Command');
+    const [command1] = screen.getAllByPlaceholderText('Command');
     await user.type(command1, 'echo');
-    await user.click(renderResult.getByText('Add argument'));
-    await user.click(renderResult.getByText('Add argument'));
-    const [argument1, argument2] = renderResult.getAllByPlaceholderText('Argument');
+    await user.click(screen.getByText('Add argument'));
+    await user.click(screen.getByText('Add argument'));
+    const [argument1, argument2] = screen.getAllByPlaceholderText('Argument');
     await user.type(argument1, 'hello');
     await user.type(argument2, 'world');
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

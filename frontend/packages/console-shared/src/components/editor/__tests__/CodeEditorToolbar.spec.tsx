@@ -29,7 +29,7 @@ describe('CodeEditorToolbar', () => {
 
   it('should render null when showShortcuts is false and toolbarLinks is empty', () => {
     const { container } = render(<CodeEditorToolbar />);
-    expect(container.firstChild).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('should render toolbar with custom links when toolbarLinks are provided', () => {

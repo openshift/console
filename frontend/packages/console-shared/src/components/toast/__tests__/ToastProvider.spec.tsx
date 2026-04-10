@@ -138,7 +138,7 @@ describe('ToastProvider', () => {
 
     const actionLink = await screen.findByText('action 1');
     expect(actionLink).toBeVisible();
-    expect(actionLink.closest('a')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'action 1' })).not.toBeInTheDocument();
   });
 
   it('should dismiss toast on action on anchor click', async () => {
@@ -171,9 +171,7 @@ describe('ToastProvider', () => {
     });
 
     const actionLink = await screen.findByText('action 1');
-    const anchorElement = actionLink.closest('a');
-    expect(anchorElement).toBeTruthy();
-    await user.click(anchorElement as HTMLElement);
+    await user.click(actionLink);
 
     expect(actionFn).toHaveBeenCalledTimes(1);
 

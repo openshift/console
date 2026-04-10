@@ -150,16 +150,14 @@ describe('ColumnManagementModal component', () => {
   };
 
   describe('basic rendering', () => {
-    beforeEach(() => {
-      renderColumnManagementModal();
-    });
-
     it('renders title and subtitle', () => {
+      renderColumnManagementModal();
       expect(screen.getByText('Manage columns')).toBeVisible();
       expect(screen.getByText('Selected columns will appear in the table.')).toBeVisible();
     });
 
     it('renders max row info alert', () => {
+      renderColumnManagementModal();
       expect(screen.getByText('You can select up to {{MAX_VIEW_COLS}} columns')).toBeVisible();
       expect(
         screen.getByText('The namespace column is only shown when in "All projects"'),
@@ -167,11 +165,13 @@ describe('ColumnManagementModal component', () => {
     });
 
     it('renders data lists', () => {
+      renderColumnManagementModal();
       expect(screen.getByLabelText('Default column list')).toBeVisible();
       expect(screen.getByLabelText('Additional column list')).toBeVisible();
     });
 
     it('renders 12 checkboxes with name, and last 3 disabled', () => {
+      renderColumnManagementModal();
       const checkboxes = screen.getAllByRole('checkbox');
       expect(checkboxes).toHaveLength(12);
 
@@ -184,6 +184,7 @@ describe('ColumnManagementModal component', () => {
     });
 
     it('renders restore default column, save and cancel buttons', () => {
+      renderColumnManagementModal();
       expect(screen.getByRole('button', { name: 'Restore default columns' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();

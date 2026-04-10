@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { ContainerRow, PodDetailsList, PodsDetailsPage } from '../pod';
@@ -28,46 +28,36 @@ describe(`PodsDetailsPage`, () => {
     mockUseLocation.mockReturnValue(mockLocationObject);
   });
 
-  it('verifies pod details page renders successfully for users', async () => {
-    let container;
-    await act(async () => {
-      const renderResult = renderWithProviders(<PodsDetailsPage kind="Pod" />);
-      container = renderResult.container;
-    });
-    expect(container).toBeInTheDocument();
+  it('verifies pod details page renders successfully for users', () => {
+    const view = renderWithProviders(<PodsDetailsPage kind="Pod" />);
+    expect(view.container).toBeInTheDocument();
   });
 
-  it('shows well-structured pod details layout for users', async () => {
-    let container;
-    await act(async () => {
-      const renderResult = renderWithProviders(<PodsDetailsPage kind="Pod" />);
-      container = renderResult.container;
-    });
-    expect(container).toBeInTheDocument();
+  it('shows well-structured pod details layout for users', () => {
+    const view = renderWithProviders(<PodsDetailsPage kind="Pod" />);
+    expect(view.container).toBeInTheDocument();
   });
 });
 
 describe('PodDetailsList', () => {
-  const renderPodDetailsList = async (testPod = testPodInstance) => {
-    await act(async () => {
-      renderWithProviders(<PodDetailsList pod={testPod} />);
-    });
+  const renderPodDetailsList = (testPod = testPodInstance) => {
+    renderWithProviders(<PodDetailsList pod={testPod} />);
   };
 
-  it('verifies pod status as CrashLoopBackOff', async () => {
-    await renderPodDetailsList();
+  it('verifies pod status as CrashLoopBackOff', () => {
+    renderPodDetailsList();
 
     expect(screen.getByText(/Crash.*Loop.*Back.*Off/)).toBeVisible();
   });
 
   it("verifies restart policy as 'Always restart'", async () => {
-    await renderPodDetailsList();
+    renderPodDetailsList();
 
     expect(screen.getByText('Always restart')).toBeVisible();
   });
 
   it('verifies active deadline seconds as not configured', async () => {
-    await renderPodDetailsList();
+    renderPodDetailsList();
     expect(screen.getByText('Not configured')).toBeVisible();
   });
 
@@ -76,25 +66,25 @@ describe('PodDetailsList', () => {
       ...testPodInstance,
       spec: { ...testPodInstance.spec, activeDeadlineSeconds: 10 },
     };
-    await renderPodDetailsList(podWithDeadline);
+    renderPodDetailsList(podWithDeadline);
 
     expect(screen.getByText(/10.*second/i)).toBeVisible();
   });
 
   it('verifies the Pod IP address', async () => {
-    await renderPodDetailsList();
+    renderPodDetailsList();
 
     expect(screen.getByText('10.131.0.48')).toBeVisible();
   });
 
   it('verifies a link to the node', async () => {
-    await renderPodDetailsList();
+    renderPodDetailsList();
 
     expect(screen.getByText('ip-10-0-132-2.ec2.internal')).toBeVisible();
   });
 
   it('verifies image pull secrets', async () => {
-    await renderPodDetailsList();
+    renderPodDetailsList();
 
     expect(screen.getByText('default-dockercfg-fcb57')).toBeVisible();
   });
@@ -104,7 +94,7 @@ describe('PodDetailsList', () => {
       ...testPodInstance,
       spec: { ...testPodInstance.spec, runtimeClassName: 'test-runtime' },
     };
-    await renderPodDetailsList(podWithRuntime);
+    renderPodDetailsList(podWithRuntime);
 
     expect(screen.getByText('test-runtime')).toBeVisible();
   });
@@ -116,51 +106,49 @@ describe('ContainerRow', () => {
     image: 'quay.io/openshifttest/crashpod',
   };
 
-  const renderContainerRow = async () => {
-    await act(async () => {
-      renderWithProviders(
-        <table>
-          <tbody>
-            <ContainerRow pod={testPodInstance} container={containerSpec} />
-          </tbody>
-        </table>,
-      );
-    });
+  const renderContainerRow = () => {
+    renderWithProviders(
+      <table>
+        <tbody>
+          <ContainerRow pod={testPodInstance} container={containerSpec} />
+        </tbody>
+      </table>,
+    );
   };
 
   it('verifies the container name as a link', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getByText('crash-app')).toBeVisible();
   });
 
   it('verifies the container image', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getByText('quay.io/openshifttest/crashpod')).toBeVisible();
   });
 
   it('verifies the container restart count', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getByText('29')).toBeVisible();
   });
 
   it('verifies container state information', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getByText('Waiting')).toBeVisible();
   });
 
   it('verifies the container exit code as dash when not applicable', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     const dashElements = screen.getAllByText('-');
     expect(dashElements.length).toBeGreaterThan(0);
   });
 
   it('verifies container timing information', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getAllByText(/Feb 9, 2022/)[0]).toBeVisible();
     expect(screen.getAllByText(/11:20|6:20|4:50/)[0]).toBeVisible();
@@ -168,7 +156,7 @@ describe('ContainerRow', () => {
   });
 
   it('verifies container ready status displays as Not ready', async () => {
-    await renderContainerRow();
+    renderContainerRow();
 
     expect(screen.getByText('Not ready')).toBeVisible();
   });

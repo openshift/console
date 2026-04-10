@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as ReactRouter from 'react-router';
 
 import { testPodInstance } from '../../../__mocks__/k8sResourcesMocks';
@@ -67,9 +67,7 @@ describe('ContainerDetails', () => {
       name: testPodInstance.spec.containers[0].name,
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded />);
 
     expect(screen.getByText('crash-app')).toBeVisible();
     // Verify "Waiting" appears in both the page heading and details section
@@ -83,9 +81,7 @@ describe('ContainerDetails', () => {
       name: 'non-existing-container',
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded />);
 
     expect(screen.getByRole('heading', { name: '404: Page Not Found' })).toBeVisible();
     expect(screen.getByText("We couldn't find that page.")).toBeVisible();
@@ -99,9 +95,7 @@ describe('ContainerDetails', () => {
       name: testPodInstance.spec.containers[0].name,
     });
 
-    await act(async () => {
-      renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
-    });
+    renderWithProviders(<ContainerDetails pod={pod} loaded={false} />);
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeVisible();
   });

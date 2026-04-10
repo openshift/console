@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {

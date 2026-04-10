@@ -551,12 +551,7 @@ describe('ImpersonateUserModal', () => {
 
       expect(await screen.findByText('group6')).toBeVisible();
 
-      // Remove one group using the close button on the chip
-      const group6Chip = screen.getByText('group6').closest('.pf-v6-c-label');
-      const closeButton = group6Chip?.querySelector('button');
-      expect(closeButton).toBeInTheDocument();
-
-      await user.click(closeButton!);
+      await user.click(screen.getByRole('button', { name: /close.*group6/i }));
 
       // Now only 5 groups remain, so it should collapse automatically
       await waitFor(() => {

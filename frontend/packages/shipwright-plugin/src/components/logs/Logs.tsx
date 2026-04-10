@@ -129,7 +129,7 @@ const Logs: FC<LogsProps> = ({
   }, [autoScroll, render, addContentAndScroll]);
 
   return (
-    <div className="odc-logs" style={{ display: render ? '' : 'none' }}>
+    <div className="odc-logs" data-test="odc-logs" style={{ display: render ? '' : 'none' }}>
       <p className="odc-logs__name">{name}</p>
       {error && (
         <Alert
@@ -139,7 +139,7 @@ const Logs: FC<LogsProps> = ({
         />
       )}
       <div>
-        <div className="odc-logs__content" ref={contentRef} />
+        <div className="odc-logs__content" data-test="odc-logs__content" ref={contentRef} />
         <div ref={scrollToRef} />
       </div>
     </div>

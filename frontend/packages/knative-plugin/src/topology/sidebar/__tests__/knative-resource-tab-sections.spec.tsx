@@ -7,14 +7,14 @@ describe('EventSinkSourceSection', () => {
   it('should show message no output resources foung if none exists', () => {
     const mockEventSink = _.omit(eventSinkKamelet, 'spec.source');
     render(<EventSinkSourceSection resource={mockEventSink} />);
-    screen.getByTestId('event-sink-text');
+    expect(screen.getByTestId('event-sink-text')).toBeVisible();
     expect(screen.queryByTestId('event-sink-sb-res')).toBeNull();
     expect(screen.queryByTestId('event-sink-target-uri')).toBeNull();
   });
 
   it('should show ResourceLink as output resource if source is ref', () => {
     render(<EventSinkSourceSection resource={eventSinkKamelet} />);
-    screen.getByTestId('event-sink-sb-res');
+    expect(screen.getByTestId('event-sink-sb-res')).toBeVisible();
     expect(screen.queryByTestId('event-sink-text')).toBeNull();
     expect(screen.queryByTestId('event-sink-target-uri')).toBeNull();
   });
@@ -23,7 +23,7 @@ describe('EventSinkSourceSection', () => {
     const mockEventSink = _.omit(eventSinkKamelet, 'spec.source.ref');
     mockEventSink.spec.source.uri = 'http://abc.com';
     render(<EventSinkSourceSection resource={mockEventSink} />);
-    screen.getByTestId('event-sink-target-uri');
+    expect(screen.getByTestId('event-sink-target-uri')).toBeVisible();
     expect(screen.queryByTestId('event-sink-text')).toBeNull();
     expect(screen.queryByTestId('event-sink-sb-res')).toBeNull();
   });

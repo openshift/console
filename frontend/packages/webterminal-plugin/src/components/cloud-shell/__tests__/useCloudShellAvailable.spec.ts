@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { checkTerminalAvailable } from '../cloud-shell-utils';
 import { useCloudShellAvailable } from '../useCloudShellAvailable';
 // Need to import useFlag after useCloudShellAvailable for the mock to work correctly. FInd out why?
@@ -33,10 +33,10 @@ describe('useCloudShellAvailable', () => {
     useFlagMock.mockReturnValue(true);
     checkTerminalAvailableMock.mockReturnValue(Promise.reject());
     const { result, rerender } = renderHook(() => useCloudShellAvailable());
-    await act(async () => {
-      rerender();
+    rerender();
+    await waitFor(() => {
+      expect(result.current).toBe(false);
     });
-    expect(result.current).toBe(false);
   });
 
   it('should be available if flag is set and service is available', async () => {
@@ -44,9 +44,9 @@ describe('useCloudShellAvailable', () => {
     checkTerminalAvailableMock.mockReturnValue(Promise.resolve());
     const { result, rerender } = renderHook(() => useCloudShellAvailable());
 
-    await act(async () => {
-      rerender();
+    rerender();
+    await waitFor(() => {
+      expect(result.current).toBe(true);
     });
-    expect(result.current).toBe(true);
   });
 });

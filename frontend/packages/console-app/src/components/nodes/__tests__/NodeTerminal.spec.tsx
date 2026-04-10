@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
@@ -41,11 +41,13 @@ const setupPodCreation = () => {
 
 const renderAndCreatePod = async () => {
   jest.useFakeTimers();
+  render(<NodeTerminal obj={mockNode} />);
   await act(async () => {
-    render(<NodeTerminal obj={mockNode} />);
+    await Promise.resolve();
   });
   await act(async () => {
-    jest.advanceTimersByTime(1100);
+    jest.runOnlyPendingTimers();
+    await Promise.resolve();
   });
   jest.useRealTimers();
 };
@@ -80,7 +82,7 @@ describe('NodeTerminal', () => {
 
     await renderAndCreatePod();
 
-    expect(screen.getByText('Connection refused')).toBeVisible();
+    expect(await screen.findByText('Connection refused')).toBeVisible();
   });
 
   it('should show loading when watch has not loaded yet', async () => {
@@ -102,7 +104,7 @@ describe('NodeTerminal', () => {
 
     await renderAndCreatePod();
 
-    expect(screen.getByText('Debug pod not found or was deleted.')).toBeVisible();
+    expect(await screen.findByText('Debug pod not found or was deleted.')).toBeVisible();
   });
 
   it('should show error with message when pod phase is Failed', async () => {
@@ -118,7 +120,7 @@ describe('NodeTerminal', () => {
 
     await renderAndCreatePod();
 
-    expect(screen.getByText(/The debug pod failed.*ImagePullBackOff/)).toBeVisible();
+    expect(await screen.findByText(/The debug pod failed.*ImagePullBackOff/)).toBeVisible();
   });
 
   it('should render terminal when pod is Running', async () => {
@@ -134,7 +136,7 @@ describe('NodeTerminal', () => {
 
     await renderAndCreatePod();
 
-    expect(screen.getByText('PodConnectLoader')).toBeInTheDocument();
+    expect(await screen.findByText('PodConnectLoader')).toBeInTheDocument();
   });
 
   it('should show error when pod creation fails', async () => {
@@ -143,10 +145,7 @@ describe('NodeTerminal', () => {
     (k8sKillByName as jest.Mock).mockResolvedValue({});
     (useK8sWatchResource as jest.Mock).mockReturnValue([undefined, true, undefined]);
 
-    await act(async () => {
-      render(<NodeTerminal obj={mockNode} />);
-    });
-
-    expect(screen.getByText('Forbidden')).toBeVisible();
+    await renderAndCreatePod();
+    expect(await screen.findByText('Forbidden')).toBeVisible();
   });
 });

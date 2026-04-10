@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { supportedLocales } from '../const';
 import { getLastLanguage } from '../getLastLanguage';
@@ -35,46 +35,38 @@ describe('LanguageDropdown', () => {
     jest.clearAllMocks();
   });
 
-  it('should show loading state while language preferences are being fetched', async () => {
+  it('should show loading state while language preferences are being fetched', () => {
     setupMocks('', false);
 
-    await act(async () => {
-      renderWithProviders(<LanguageDropdown />);
-    });
+    renderWithProviders(<LanguageDropdown />);
 
     expect(screen.getByTestId('dropdown skeleton console.preferredLanguage')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
-  it('should show "Use browser language" option when no preference is set', async () => {
+  it('should show "Use browser language" option when no preference is set', () => {
     setupMocks(undefined, true);
 
-    await act(async () => {
-      renderWithProviders(<LanguageDropdown />);
-    });
+    renderWithProviders(<LanguageDropdown />);
 
     expect(screen.getByRole('checkbox')).toBeChecked();
     expect(screen.getByRole('button', { name: 'Select a language' })).toBeDisabled();
   });
 
-  it('should enable custom language selection when preference is set', async () => {
+  it('should enable custom language selection when preference is set', () => {
     setupMocks(preferredLanguageValue, true);
 
-    await act(async () => {
-      renderWithProviders(<LanguageDropdown />);
-    });
+    renderWithProviders(<LanguageDropdown />);
 
     expect(screen.getByRole('checkbox')).not.toBeChecked();
     expect(screen.getByRole('button', { name: 'Select a language' })).toBeEnabled();
   });
 
-  it('should display the selected language name when preference is set', async () => {
+  it('should display the selected language name when preference is set', () => {
     setupMocks(preferredLanguageValue, true);
 
-    await act(async () => {
-      renderWithProviders(<LanguageDropdown />);
-    });
+    renderWithProviders(<LanguageDropdown />);
 
     expect(screen.getByText(supportedLocales.ja)).toBeVisible();
   });

@@ -104,9 +104,9 @@ describe('BareMetalInventoryItems', () => {
     useIsBareMetalPluginActiveMock.mockReturnValue(false);
     useWatchBareMetalHostMock.mockReturnValue([null, false, undefined]);
 
-    const { container } = renderWithContext();
+    renderWithContext();
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.queryByTestId('inventory-item')).not.toBeInTheDocument();
   });
 
   it('should show loading state when data is loading', () => {
@@ -154,9 +154,9 @@ describe('BareMetalInventoryItems', () => {
     useIsBareMetalPluginActiveMock.mockReturnValue(true);
     useWatchBareMetalHostMock.mockReturnValue([mockBareMetalHost, true, undefined]);
 
-    const { container } = renderWithContext();
+    renderWithContext();
 
-    const links = container.querySelectorAll('a');
+    const links = screen.getAllByRole('link');
     expect(links).toHaveLength(2); // Disk and Network links
 
     expect(links[0]).toHaveAttribute(
@@ -173,10 +173,9 @@ describe('BareMetalInventoryItems', () => {
     useIsBareMetalPluginActiveMock.mockReturnValue(true);
     useWatchBareMetalHostMock.mockReturnValue([null, true, undefined]);
 
-    const { container } = renderWithContext();
+    renderWithContext();
 
-    const links = container.querySelectorAll('a');
-    expect(links).toHaveLength(0);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
   it('should call useWatchBareMetalHost with the node object', () => {

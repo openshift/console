@@ -1,4 +1,4 @@
-import { cleanup, screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { AddGitHubPage } from '../../cluster-settings/github-idp-form';
 import {
   verifyIDPAddAndCancelButtons,
@@ -14,25 +14,21 @@ import {
 } from '@console/shared/src/test-utils/unit-test-utils';
 
 describe('Add Identity Provider: GitHub', () => {
+  const renderPage = async () => {
+    renderWithProviders(<AddGitHubPage />);
+    expect(await screen.findByRole('button', { name: 'Add' })).toBeInTheDocument();
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddGitHubPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
     jest.resetAllMocks();
   });
 
-  it('should render page title and sub title', () => {
+  it('should render page title and sub title', async () => {
+    await renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: GitHub',
       subtitle:
@@ -41,6 +37,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    await renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'github',
@@ -51,6 +48,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the Client ID label, input element, and help text', async () => {
+    await renderPage();
     await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
@@ -59,6 +57,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the Client Secret label and input password element', async () => {
+    await renderPage();
     await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
@@ -68,6 +67,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the Hostname label, input element, and help text', async () => {
+    await renderPage();
     await verifyInputField({
       inputLabel: 'Hostname',
       testValue: mockData.updatedFormValues.name,
@@ -76,14 +76,17 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the CA file label and elements, and verify upload file selection', async () => {
+    await renderPage();
     await verifyIDPFileFields({
       inputLabel: 'CA file',
+      fieldId: 'ca-file-input',
       fileName: 'ca-certificate.pem',
       fileContent: 'test certificate content',
     });
   });
 
   it('should render the Organizations sub heading and input element', async () => {
+    await renderPage();
     expect(screen.getByRole('heading', { name: 'Organizations' })).toBeVisible();
 
     // Verify the text content
@@ -107,6 +110,7 @@ describe('Add Identity Provider: GitHub', () => {
   });
 
   it('should render the Teams sub heading', async () => {
+    await renderPage();
     expect(screen.getByRole('heading', { name: 'Teams' })).toBeVisible();
 
     // Verify the text content
@@ -129,7 +133,8 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it("should render 'Add' and 'Cancel' buttons in a button bar", () => {
+  it("should render 'Add' and 'Cancel' buttons in a button bar", async () => {
+    await renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

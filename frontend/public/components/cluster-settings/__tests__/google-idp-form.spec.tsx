@@ -1,4 +1,3 @@
-import { cleanup } from '@testing-library/react';
 import {
   renderWithProviders,
   verifyInputField,
@@ -7,15 +6,12 @@ import { verifyIDPAddAndCancelButtons, verifyPageTitleAndSubtitle, mockData } fr
 import { AddGooglePage } from '../../cluster-settings/google-idp-form';
 
 describe('Add Identity Provider: Google', () => {
-  beforeEach(() => {
+  const renderPage = () => {
     renderWithProviders(<AddGooglePage />);
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
+  };
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: Google',
       subtitle: 'You can use Google integration for users authenticating with Google credentials.',
@@ -23,6 +19,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'google',
@@ -33,6 +30,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render the Client ID label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
@@ -41,6 +39,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render the Client Secret label and input password element', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
@@ -50,6 +49,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render the Hosted Domain label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Hosted domain',
       testValue: mockData.updatedFormValues.domain,
@@ -59,6 +59,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

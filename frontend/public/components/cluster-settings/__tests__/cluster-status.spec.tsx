@@ -128,7 +128,9 @@ describe('UpdateStatus', () => {
 
       expect(mockK8sPatch).toHaveBeenCalled();
       // Wait for the promise to reject and the modal to be launched
-      await screen.findByRole('button', { name: /Cancel update/ });
+      await expect(
+        screen.findByRole('button', { name: /Cancel update/ }),
+      ).resolves.toBeInTheDocument();
       expect(mockLaunchModal).toHaveBeenCalledWith(
         expect.any(Function),
         expect.objectContaining({ error: errorMessage }),

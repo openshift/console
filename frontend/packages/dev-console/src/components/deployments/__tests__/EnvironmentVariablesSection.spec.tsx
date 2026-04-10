@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
@@ -29,7 +29,7 @@ beforeAll(() => {
   mockedContainerField.mockImplementation(MockContainerField);
 });
 
-beforeEach(() =>
+const renderEnvironmentVariablesSection = () =>
   render(
     <MockForm initialValues={mockInitialValues} handleSubmit={handleSubmit}>
       {() => (
@@ -38,13 +38,11 @@ beforeEach(() =>
         </Provider>
       )}
     </MockForm>,
-  ),
-);
-
-afterEach(() => cleanup());
+  );
 
 describe('EnvironmentVariablesSection', () => {
   it('should show initial name value pairs', async () => {
+    renderEnvironmentVariablesSection();
     const names = screen.getAllByPlaceholderText(/name/i).map((ele: HTMLInputElement) => ele.value);
     const values = screen
       .getAllByPlaceholderText(/value/i)
@@ -54,6 +52,7 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should add a new row when (+) Add button is clicked', async () => {
+    renderEnvironmentVariablesSection();
     const user = userEvent.setup();
     const addButton = screen.getByRole('button', { name: /add value/i });
 
@@ -71,6 +70,7 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should add new row with resourse and key dropdowns when (+) Add ConfigMap or Secret button is clicked', async () => {
+    renderEnvironmentVariablesSection();
     const user = userEvent.setup();
     const addCMSButton = screen.getByRole('button', {
       name: /add from configmap or secret/i,
@@ -91,6 +91,7 @@ describe('EnvironmentVariablesSection', () => {
   });
 
   it('should remove row when (-) button is clicked', async () => {
+    renderEnvironmentVariablesSection();
     const user = userEvent.setup();
     const deleteButtons = screen.getAllByRole('button', { name: /delete/i });
 

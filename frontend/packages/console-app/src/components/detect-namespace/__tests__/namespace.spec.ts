@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { act, renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
@@ -73,14 +73,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(urlNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(urlNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return activeNamespace if it it already defined', async () => {
@@ -91,14 +89,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(activeNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(activeNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return preferredNamespace if it exists', async () => {
@@ -108,14 +104,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(preferredNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(preferredNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return lastNamespace if it exists and preferredNamespace do not exist', async () => {
@@ -125,14 +119,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([undefined, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(lastNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(lastNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return ALL_NAMESPACES_KEY if urlNamespacel, preferredNamespace, lastNamespace are not defined', async () => {
@@ -142,14 +134,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([undefined, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([undefined, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    const { namespace, loaded } = result.current;
-    expect(namespace).toEqual(ALL_NAMESPACES_KEY);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(ALL_NAMESPACES_KEY);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return true for loaded if urlNamespace has loaded irrespective of loaded status for other resources', async () => {
@@ -159,14 +149,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), false]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), false]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(urlNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(urlNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return true for loaded if urlNamespace is not defined and preferredNamespace and lastNamespace are loaded, and flags are not pending anymore', async () => {
@@ -176,14 +164,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toEqual(preferredNamespace);
-    expect(loaded).toBeTruthy();
+    await waitFor(() => {
+      expect(result.current.namespace).toEqual(preferredNamespace);
+    });
+    expect(result.current.loaded).toBeTruthy();
   });
 
   it('should return false for loaded if urlNamespace is undefined and no resources is loaded yet', async () => {
@@ -193,14 +179,12 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([undefined, jest.fn(), false]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), false]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toBeFalsy();
-    expect(loaded).toBeFalsy();
+    await waitFor(() => {
+      expect(result.current.namespace).toBeFalsy();
+    });
+    expect(result.current.loaded).toBeFalsy();
   });
 
   it('should return false for loaded if urlNamespace is undefined and flags are pending', async () => {
@@ -210,13 +194,11 @@ describe('useValuesForNamespaceContext', () => {
     usePreferredNamespaceMock.mockReturnValue([undefined, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
-    const { result, rerender } = renderHook(() => useValuesForNamespaceContext());
-    await act(async () => {
-      rerender();
-    });
-    const { namespace, loaded } = result.current;
+    const { result } = renderHook(() => useValuesForNamespaceContext());
 
-    expect(namespace).toBeFalsy();
-    expect(loaded).toBeFalsy();
+    await waitFor(() => {
+      expect(result.current.namespace).toBeFalsy();
+    });
+    expect(result.current.loaded).toBeFalsy();
   });
 });

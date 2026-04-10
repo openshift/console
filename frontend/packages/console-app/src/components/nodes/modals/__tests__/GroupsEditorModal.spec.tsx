@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
@@ -44,6 +44,7 @@ const createMockNode = (name: string, groups?: string): NodeKind =>
   } as NodeKind);
 
 describe('GroupsEditorModal', () => {
+  let user: ReturnType<typeof userEvent.setup>;
   const mockNodes: NodeKind[] = [
     createMockNode('node-1', 'group-a,group-b'),
     createMockNode('node-2', 'group-b,group-c'),
@@ -52,6 +53,7 @@ describe('GroupsEditorModal', () => {
   ];
 
   beforeEach(() => {
+    user = userEvent.setup();
     jest.clearAllMocks();
     (useK8sWatchResource as jest.Mock).mockReturnValue([mockNodes, true, null]);
     (k8sPatchResource as jest.Mock).mockResolvedValue({});
@@ -127,7 +129,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const groupAButton2 = screen.getByRole('button', { name: 'group-a' });
       expect(groupAButton2).toHaveClass('pf-m-current');
@@ -137,7 +139,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       expect(screen.getByText('Nodes for group group-a')).toBeInTheDocument();
 
@@ -153,13 +155,13 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       // node-4 is not in group-a initially
       const node4Checkbox = screen.getByLabelText('node-4');
       expect(node4Checkbox).not.toBeChecked();
 
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       expect(node4Checkbox).toBeChecked();
     });
@@ -168,12 +170,12 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node1Checkbox = screen.getByLabelText('node-1');
       expect(node1Checkbox).toBeChecked();
 
-      await userEvent.click(node1Checkbox);
+      await user.click(node1Checkbox);
 
       expect(node1Checkbox).not.toBeChecked();
     });
@@ -184,7 +186,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const addButton = screen.getByText('Add new group');
-      await userEvent.click(addButton);
+      await user.click(addButton);
 
       expect(screen.getByPlaceholderText('Enter a group name')).toBeInTheDocument();
     });
@@ -193,10 +195,10 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const addButton = screen.getByText('Add new group');
-      await userEvent.click(addButton);
+      await user.click(addButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'new-group{enter}');
+      await user.type(input, 'new-group{enter}');
 
       expect(screen.getByText('new-group')).toBeInTheDocument();
     });
@@ -205,13 +207,13 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'button-group');
+      await user.type(input, 'button-group');
 
       const addButton = screen.getByRole('button', { name: 'Add' });
-      await userEvent.click(addButton);
+      await user.click(addButton);
 
       expect(screen.getByText('button-group')).toBeInTheDocument();
     });
@@ -220,10 +222,10 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'group-a');
+      await user.type(input, 'group-a');
 
       const addButton = screen.getByRole('button', { name: 'Add' });
       expect(addButton).toBeDisabled();
@@ -233,7 +235,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const addButton = screen.getByRole('button', { name: 'Add' });
       expect(addButton).toBeDisabled();
@@ -243,10 +245,10 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'auto-select{enter}');
+      await user.type(input, 'auto-select{enter}');
 
       const newGroupButton = screen.getByRole('button', { name: 'auto-select' });
       expect(newGroupButton).toHaveClass('pf-m-current');
@@ -256,10 +258,10 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name') as HTMLInputElement;
-      await userEvent.type(input, 'clear-test{enter}');
+      await user.type(input, 'clear-test{enter}');
 
       expect(input.value).toBe('');
     });
@@ -269,12 +271,12 @@ describe('GroupsEditorModal', () => {
     it('removes group when trash icon is clicked', async () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
-      const groupAItem = screen
-        .getByText('group-a')
-        .closest('.pf-v6-c-simple-list__item') as HTMLElement;
-      const trashIcon = within(groupAItem).getByRole('img', { hidden: true });
+      // Uninterpolated mock t() gives identical delete labels; groups are sorted, so index 0 is group-a.
+      const deleteGroupAButton = screen.getAllByRole('button', {
+        name: 'Delete group {{groupName}}',
+      })[0];
 
-      await userEvent.click(trashIcon);
+      await user.click(deleteGroupAButton);
 
       expect(screen.queryByText('group-a')).not.toBeInTheDocument();
     });
@@ -284,16 +286,15 @@ describe('GroupsEditorModal', () => {
 
       // Select group-a
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       expect(screen.getByText('Nodes for group group-a')).toBeInTheDocument();
 
       // Delete group-a
-      const groupAItem = screen
-        .getByText('group-a')
-        .closest('.pf-v6-c-simple-list__item') as HTMLElement;
-      const trashIcon = within(groupAItem).getByRole('img', { hidden: true });
-      await userEvent.click(trashIcon);
+      const deleteGroupAButton = screen.getAllByRole('button', {
+        name: 'Delete group {{groupName}}',
+      })[0];
+      await user.click(deleteGroupAButton);
 
       // Should no longer show nodes for deleted group
       expect(screen.queryByText('Nodes for group group-a')).not.toBeInTheDocument();
@@ -307,13 +308,13 @@ describe('GroupsEditorModal', () => {
 
       // Select group-a and add node-4 to it
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node4Checkbox = screen.getByLabelText('node-4');
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(k8sPatchResource).toHaveBeenCalled();
@@ -325,13 +326,13 @@ describe('GroupsEditorModal', () => {
 
       // Add node-4 to group-a
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node4Checkbox = screen.getByLabelText('node-4');
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(k8sPatchResource).toHaveBeenCalledWith(
@@ -359,7 +360,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       // Since no changes were made, k8sPatchResource should not be called
       await waitFor(() => {
@@ -372,13 +373,13 @@ describe('GroupsEditorModal', () => {
 
       // Make a change
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node4Checkbox = screen.getByLabelText('node-4');
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(mockCloseOverlay).toHaveBeenCalled();
@@ -393,19 +394,19 @@ describe('GroupsEditorModal', () => {
 
       // Make a change
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node4Checkbox = screen.getByLabelText('node-4');
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       const detailsButton = await waitFor(() => {
         return screen.getByRole('button', { name: 'Show details' });
       });
 
-      await userEvent.click(detailsButton);
+      await user.click(detailsButton);
 
       expect(screen.getByText('Error updating {{nodeName}}')).toBeInTheDocument();
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
@@ -420,13 +421,13 @@ describe('GroupsEditorModal', () => {
 
       // Make a change
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       const node4Checkbox = screen.getByLabelText('node-4');
-      await userEvent.click(node4Checkbox);
+      await user.click(node4Checkbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       expect(saveButton).toBeDisabled();
     });
@@ -437,7 +438,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-      await userEvent.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockCloseOverlay).toHaveBeenCalled();
     });
@@ -446,7 +447,7 @@ describe('GroupsEditorModal', () => {
       renderWithProviders(<GroupsEditorModal closeOverlay={mockCloseOverlay} />);
 
       const reloadButton = screen.getByRole('button', { name: 'Reload' });
-      await userEvent.click(reloadButton);
+      await user.click(reloadButton);
 
       // After reload, selected group should be cleared
       expect(screen.getByText('Select a group')).toBeInTheDocument();
@@ -497,14 +498,14 @@ describe('GroupsEditorModal', () => {
 
       // Select group-a
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
-      await userEvent.click(groupAButton);
+      await user.click(groupAButton);
 
       expect(screen.getByLabelText('node-1')).toBeChecked();
       expect(screen.getByLabelText('node-3')).toBeChecked();
 
       // Select group-b
       const groupBButton = screen.getByRole('button', { name: 'group-b' });
-      await userEvent.click(groupBButton);
+      await user.click(groupBButton);
 
       expect(screen.getByLabelText('node-1')).toBeChecked();
       expect(screen.getByLabelText('node-2')).toBeChecked();

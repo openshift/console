@@ -4,7 +4,7 @@ import HelmResourcesList from '../HelmReleaseResourcesList';
 import { helmReleaseResourceData } from './helm-release-resource.data';
 
 describe('HelmResourcesList', () => {
-  beforeEach(() => {
+  const renderComponent = () => {
     renderWithProviders(
       <HelmResourcesList
         aria-label="Resources"
@@ -14,14 +14,16 @@ describe('HelmResourcesList', () => {
         Header={() => null}
       />,
     );
-  });
+  };
 
   it('should render the ConsoleDataView component', () => {
+    renderComponent();
     // Check that the ConsoleDataView is rendered by looking for the data view table
     expect(screen.getByTestId('data-view-table')).toBeTruthy();
   });
 
   it('should render the proper Headers in the Resources tab', () => {
+    renderComponent();
     const expectedHelmResourcesHeader: string[] = ['Name', 'Type', 'Status', 'Created'];
 
     // Check that all expected headers are rendered (use getAllByText to handle multiple matches)
@@ -31,6 +33,7 @@ describe('HelmResourcesList', () => {
   });
 
   it('should render resource data correctly', () => {
+    renderComponent();
     // Check that the resource name is rendered
     expect(screen.getByText('dotnet')).toBeTruthy();
 

@@ -1,13 +1,13 @@
 import type { FC, ReactNode } from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import { DropdownField } from '@console/shared/src';
+import DropdownField from '@console/shared/src/components/formik-fields/DropdownField';
 import { BuildStrategyType } from '../../types';
 import type { ImagesSectionFormData } from '../ImagesSection';
 import ImagesSection from '../ImagesSection';
@@ -129,16 +129,16 @@ describe('ImagesSection', () => {
   it('should render form without subforms', () => {
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
-    renderResult.getByTestId('section images');
-    renderResult.getByText('Images');
-    renderResult.getByText('Build from');
-    renderResult.getByText('Push to');
+    expect(screen.getByTestId('section images')).toBeInTheDocument();
+    expect(screen.getByText('Images')).toBeVisible();
+    expect(screen.getByText('Build from')).toBeVisible();
+    expect(screen.getByText('Push to')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -147,24 +147,23 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
     // Dropdown titles
-    renderResult.getByText('Please select');
-    renderResult.getByText('None');
+    expect(screen.getByText('Please select')).toBeVisible();
+    expect(screen.getByText('None')).toBeVisible();
 
     // Open first dropdown
-    await user.click(renderResult.getByText('Please select'));
+    await user.click(screen.getByText('Please select'));
 
     // Assert options
-    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
-    expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const menuList = screen.getByTestId('console-select-menu-list');
+    const options = within(menuList).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
       'Image Stream Tag',
       'Image Stream Image',
       'External container image',
@@ -179,23 +178,22 @@ describe('ImagesSection', () => {
     initialValues.formData.images.strategyType = BuildStrategyType.Docker;
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={initialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
     // Dropdown titles
-    expect(renderResult.queryAllByText('None')).toHaveLength(2);
+    expect(screen.queryAllByText('None')).toHaveLength(2);
 
     // Open first dropdown
-    await user.click(renderResult.getAllByText('None')[0]);
+    await user.click(screen.getAllByText('None')[0]);
 
     // Assert options
-    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
-    expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const menuList = screen.getByTestId('console-select-menu-list');
+    const options = within(menuList).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
       'Image Stream Image',
@@ -209,24 +207,23 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
     // Dropdown titles
-    renderResult.getByText('Please select');
-    renderResult.getByText('None');
+    expect(screen.getByText('Please select')).toBeVisible();
+    expect(screen.getByText('None')).toBeVisible();
 
     // Open second dropdown
-    await user.click(renderResult.getByText('None'));
+    await user.click(screen.getByText('None'));
 
     // Assert options
-    const menuList = document.querySelector('[data-test="console-select-menu-list"]');
-    expect(menuList).not.toBeNull();
-    const options = menuList.querySelectorAll('li button');
-    expect(Object.values(options).map((option) => option.textContent)).toEqual([
+    const menuList = screen.getByTestId('console-select-menu-list');
+    const options = within(menuList).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
       'None',
       'Image Stream Tag',
       'External container image',
@@ -239,18 +236,18 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('Image Stream Tag'));
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('Image Stream Tag'));
 
-    renderResult.getByText('Project');
-    renderResult.getByText('Image Stream');
-    renderResult.getByText('Tag');
+    expect(screen.getByText('Project')).toBeVisible();
+    expect(screen.getByText('Image Stream')).toBeVisible();
+    expect(screen.getByText('Tag')).toBeVisible();
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -259,16 +256,16 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('Image Stream Image'));
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('Image Stream Image'));
 
-    expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
+    expect(screen.getAllByRole('textbox')).toHaveLength(1);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -277,16 +274,16 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('External container image'));
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('External container image'));
 
-    expect(renderResult.getAllByRole('textbox')).toHaveLength(1);
+    expect(screen.getAllByRole('textbox')).toHaveLength(1);
 
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
@@ -295,25 +292,25 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('Image Stream Tag'));
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('Image Stream Tag'));
 
     // Fill form
-    await user.click(renderResult.getByText('Select Project'));
-    await user.click(renderResult.getByText('project-a'));
-    await user.click(renderResult.getByText('Select Image Stream'));
-    await user.click(renderResult.getByText('imagestream-a'));
-    await user.click(renderResult.getByText('Select tag'));
-    await user.click(renderResult.getByText('latest'));
+    await user.click(screen.getByText('Select Project'));
+    await user.click(screen.getByText('project-a'));
+    await user.click(screen.getByText('Select Image Stream'));
+    await user.click(screen.getByText('imagestream-a'));
+    await user.click(screen.getByText('Select tag'));
+    await user.click(screen.getByText('latest'));
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -369,19 +366,19 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
     // Fill form
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('Image Stream Image'));
-    await user.type(renderResult.getByRole('textbox'), 'my-namespace/an-image');
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('Image Stream Image'));
+    await user.type(screen.getByRole('textbox'), 'my-namespace/an-image');
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -412,19 +409,19 @@ describe('ImagesSection', () => {
     const user = userEvent.setup();
     const onSubmit = jest.fn();
 
-    const renderResult = render(
+    render(
       <Wrapper initialValues={emptyInitialValues} onSubmit={onSubmit}>
         <ImagesSection />
       </Wrapper>,
     );
 
     // Fill form
-    await user.click(renderResult.getByText('Please select'));
-    await user.click(renderResult.getByText('External container image'));
-    await user.type(renderResult.getByRole('textbox'), 'centos');
+    await user.click(screen.getByText('Please select'));
+    await user.click(screen.getByText('External container image'));
+    await user.type(screen.getByRole('textbox'), 'centos');
 
     // Submit
-    const submitButton = renderResult.getByRole('button', { name: 'Submit' });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
     await user.click(submitButton);
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);

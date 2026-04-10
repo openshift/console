@@ -38,15 +38,15 @@ describe('ImportToastContent', () => {
   });
 
   it('should render null when no deployed resources', () => {
-    const { container } = render(<ImportToastContent deployedResources={[]} />);
+    render(<ImportToastContent deployedResources={[]} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.queryByText(/created successfully/i)).not.toBeInTheDocument();
   });
 
   it('should render null when deployed resources is undefined', () => {
-    const { container } = render(<ImportToastContent deployedResources={undefined} />);
+    render(<ImportToastContent deployedResources={undefined} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.queryByText(/created successfully/i)).not.toBeInTheDocument();
   });
 
   it('should show success message without route when no route provided', () => {

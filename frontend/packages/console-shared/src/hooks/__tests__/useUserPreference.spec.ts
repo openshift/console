@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { useFavoritesOptions } from '@console/internal/components/useFavoritesOptions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { ConfigMapKind } from '@console/internal/module/k8s';
@@ -87,12 +87,10 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock ConfigMap not found
-    await act(async () => {
-      const k8sError: Error & { response?: any } = new Error('Not found');
-      k8sError.response = { ok: false, status: 404 };
-      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
-      rerender();
-    });
+    const k8sError: Error & { response?: any } = new Error('Not found');
+    k8sError.response = { ok: false, status: 404 };
+    useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
+    rerender();
 
     // Expect loading
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
@@ -101,13 +99,13 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
 
     // Mock that ConfigMap is now available
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    rerender();
 
     // Expect default value with loaded
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -131,12 +129,10 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock ConfigMap not found
-    await act(async () => {
-      const k8sError: Error & { response?: any } = new Error('Forbidden');
-      k8sError.response = { ok: false, status: 403 };
-      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
-      rerender();
-    });
+    const k8sError2: Error & { response?: any } = new Error('Forbidden');
+    k8sError2.response = { ok: false, status: 403 };
+    useK8sWatchResourceMock.mockReturnValue([null, false, k8sError2]);
+    rerender();
 
     // Expect loading
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
@@ -145,13 +141,13 @@ describe('useUserPreference', () => {
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
 
     // Mock that ConfigMap is now available
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    rerender();
 
     // Expect default value with loaded
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -175,13 +171,13 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock empty ConfigMap
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    rerender();
 
     // Expect default value with loaded
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -204,13 +200,13 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock saved ConfigMap
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    rerender();
 
     // Expect default value with loaded
-    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
     expect(consoleMock).toHaveBeenCalledTimes(0);
@@ -281,13 +277,13 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock saved ConfigMap
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    rerender();
 
     // Expect saved data
-    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
     expect(consoleMock).toHaveBeenCalledTimes(0);
@@ -319,14 +315,16 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
+    const [, setPreference] = result.current;
+    act(() => {
       setPreference('new value');
-      rerender();
     });
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -350,17 +348,19 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['default value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
+    const [, setPreference] = result.current;
+    act(() => {
       setPreference((oldValue) => {
         expect(oldValue).toEqual('default value');
         return 'new value';
       });
-      rerender();
     });
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
     expect(updateConfigMapMock).toHaveBeenLastCalledWith(
@@ -384,9 +384,9 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['default value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
-      setPreference((oldValue) => {
+    const [, setPreference2] = result.current;
+    act(() => {
+      setPreference2((oldValue) => {
         expect(oldValue).toEqual('default value');
         return 'new value';
       });
@@ -394,17 +394,17 @@ describe('useUserPreference', () => {
 
     // With sync=true, the hook returns the value from cfData after the request completes.
     // Simulate the server update by updating the mock to return the new value.
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([
-        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
-        true,
-        null,
-      ]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([
+      { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+      true,
+      null,
+    ]);
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
     expect(updateConfigMapMock).toHaveBeenLastCalledWith(
@@ -428,17 +428,19 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
-      setPreference((oldValue) => {
+    const [, setPreference3] = result.current;
+    act(() => {
+      setPreference3((oldValue) => {
         expect(oldValue).toEqual('saved value');
         return 'new value';
       });
-      rerender();
     });
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -462,9 +464,9 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
-      setPreference((oldValue) => {
+    const [, setPreference4] = result.current;
+    act(() => {
+      setPreference4((oldValue) => {
         expect(oldValue).toEqual('saved value');
         return 'new value';
       });
@@ -472,17 +474,17 @@ describe('useUserPreference', () => {
 
     // With sync=true, the hook returns the value from cfData after the request completes.
     // Simulate the server update by updating the mock to return the new value.
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([
-        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
-        true,
-        null,
-      ]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([
+      { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+      true,
+      null,
+    ]);
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -506,32 +508,32 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Mock updated data (like, 'from another browser tab/window')
-    await act(async () => {
-      const updatedConfigMap = {
-        ...emptyConfigMap,
-        data: {
-          'console.key': 'magically changed value',
-        },
-      };
-      useK8sWatchResourceMock.mockReturnValue([updatedConfigMap, true, null]);
-      rerender();
-    });
+    const updatedConfigMap = {
+      ...emptyConfigMap,
+      data: {
+        'console.key': 'magically changed value',
+      },
+    };
+    useK8sWatchResourceMock.mockReturnValue([updatedConfigMap, true, null]);
+    rerender();
 
     // Expect that data are not changed when sync is disabled!
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
-      setPreference((oldValue) => {
+    const [, setPreference5] = result.current;
+    act(() => {
+      setPreference5((oldValue) => {
         expect(oldValue).toEqual('saved value');
         return 'new value';
       });
-      rerender();
     });
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -556,24 +558,24 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual(['saved value', expect.any(Function), true]);
 
     // Mock updated data (like, 'from another browser tab/window')
-    await act(async () => {
-      const updatedConfigMap = {
-        ...emptyConfigMap,
-        data: {
-          'console.key': 'magically changed value',
-        },
-      };
-      useK8sWatchResourceMock.mockReturnValue([updatedConfigMap, true, null]);
-      rerender();
-    });
+    const updatedConfigMap2 = {
+      ...emptyConfigMap,
+      data: {
+        'console.key': 'magically changed value',
+      },
+    };
+    useK8sWatchResourceMock.mockReturnValue([updatedConfigMap2, true, null]);
+    rerender();
 
     // Expect changed data if sync option is enabled
-    expect(result.current).toEqual(['magically changed value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['magically changed value', expect.any(Function), true]);
+    });
 
     // Call setPreference
-    await act(async () => {
-      const [, setPreference] = result.current;
-      setPreference((oldValue) => {
+    const [, setPreference6] = result.current;
+    act(() => {
+      setPreference6((oldValue) => {
         expect(oldValue).toEqual('magically changed value');
         return 'new value';
       });
@@ -581,17 +583,17 @@ describe('useUserPreference', () => {
 
     // With sync=true, the hook returns the value from cfData after the request completes.
     // Simulate the server update by updating the mock to return the new value.
-    await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([
-        { ...emptyConfigMap, data: { 'console.key': 'new value' } },
-        true,
-        null,
-      ]);
-      rerender();
-    });
+    useK8sWatchResourceMock.mockReturnValue([
+      { ...emptyConfigMap, data: { 'console.key': 'new value' } },
+      true,
+      null,
+    ]);
+    rerender();
 
     // Expect new value and API update
-    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
@@ -619,16 +621,16 @@ describe('useUserPreference', () => {
       ok: false,
       status: 404,
     };
-    await act(async () => {
-      createConfigMapMock.mockImplementation(async () => {
-        throw error;
-      });
-      useK8sWatchResourceMock.mockReturnValue([null, false, error]);
-      rerender();
+    createConfigMapMock.mockImplementation(async () => {
+      throw error;
     });
+    useK8sWatchResourceMock.mockReturnValue([null, false, error]);
+    rerender();
 
     // Should call createConfigMap, but not updateConfigMap
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
@@ -650,31 +652,26 @@ describe('useUserPreference', () => {
     // Expect loading data
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
-    // Mock that createConfigMap is 404 API not found.
-    const error: Error & { response?: any } = new Error('Forbidden');
-    error.response = {
-      ok: false,
-      status: 403,
-    };
-    await act(async () => {
-      createConfigMapMock.mockImplementation(async () => {
-        throw error;
-      });
-      const k8sError: Error & { response?: any } = new Error('Forbidden');
-      k8sError.response = { ok: false, status: 403 };
-      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
-      rerender();
+    // Same as 404 case above, but API returns 403 Forbidden when the user cannot access the namespace.
+    const forbiddenError: Error & { response?: any } = new Error('Forbidden');
+    forbiddenError.response = { ok: false, status: 403 };
+    createConfigMapMock.mockImplementation(async () => {
+      throw forbiddenError;
     });
+    useK8sWatchResourceMock.mockReturnValue([null, false, forbiddenError]);
+    rerender();
 
     // Should call createConfigMap, but not updateConfigMap
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
     expect(consoleMock).toHaveBeenCalledTimes(1);
     expect(consoleMock).toHaveBeenCalledWith(
       'Could not create ConfigMap for user settings:',
-      error,
+      forbiddenError,
     );
   });
 
@@ -690,16 +687,16 @@ describe('useUserPreference', () => {
     expect(result.current).toEqual([undefined, expect.any(Function), false]);
 
     // Mock that createConfigMap returns an unknown error.
-    await act(async () => {
-      createConfigMapMock.mockImplementation(async () => {
-        throw new Error('Unknown error');
-      });
-      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('Unknown error')]);
-      rerender();
+    createConfigMapMock.mockImplementation(async () => {
+      throw new Error('Unknown error');
     });
+    useK8sWatchResourceMock.mockReturnValue([null, false, new Error('Unknown error')]);
+    rerender();
 
     // Should call createConfigMap, but not updateConfigMap
-    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    await waitFor(() => {
+      expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    });
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
     expect(consoleMock).toHaveBeenCalledTimes(0);
@@ -728,11 +725,13 @@ describe('useUserPreference', () => {
 
     expect(result.current).toEqual(['impersonate.value', expect.any(Function), true]);
 
-    await act(async () => {
+    act(() => {
       result.current[1]('newValue');
     });
 
-    expect(storageListenerInvoked).toBe(true);
+    await waitFor(() => {
+      expect(storageListenerInvoked).toBe(true);
+    });
     window.removeEventListener('storage', storageListener);
 
     expect(consoleMock).toHaveBeenCalledTimes(0);

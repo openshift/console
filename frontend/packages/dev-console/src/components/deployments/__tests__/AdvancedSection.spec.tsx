@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import i18n from 'i18next';
 import { setI18n } from 'react-i18next';
@@ -10,8 +10,7 @@ window.HTMLElement.prototype.scrollIntoView = () => {}; // scrollIntoView is not
 
 const handleSubmit = jest.fn();
 
-beforeEach(() => {
-  // Initialize i18n.services if it doesn't exist
+function setupI18n() {
   if (!i18n.services) {
     (i18n as any).services = {};
   }
@@ -23,18 +22,23 @@ beforeEach(() => {
     nest: (str: string) => str,
   };
   setI18n(i18n);
+}
 
+function renderAdvancedSection() {
   render(
     <MockForm handleSubmit={handleSubmit}>
       {() => <AdvancedSection resourceType={Resources.OpenShift} />}
     </MockForm>,
   );
-});
+}
 
-afterEach(() => cleanup());
+beforeEach(() => {
+  setupI18n();
+});
 
 describe('AdvancedSection', () => {
   it('should show Pause rollouts section on click', async () => {
+    renderAdvancedSection();
     const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
@@ -49,7 +53,7 @@ describe('AdvancedSection', () => {
 
     await user.click(pauseRolloutsButton);
 
-    expect(await screen.findByTestId('pause-rollouts')).toBeInTheDocument();
+    expect(await screen.findByTestId('pause-rollouts')).toBeVisible();
     expect(await screen.findByRole('checkbox')).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
@@ -58,6 +62,7 @@ describe('AdvancedSection', () => {
   });
 
   it('should show Scaling section on click', async () => {
+    renderAdvancedSection();
     const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
@@ -72,7 +77,7 @@ describe('AdvancedSection', () => {
 
     await user.click(scalingButton);
 
-    expect(await screen.findByTestId('scaling')).toBeInTheDocument();
+    expect(await screen.findByTestId('scaling')).toBeVisible();
     expect(await screen.findByRole('spinbutton', { name: /input/i })).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
@@ -81,6 +86,7 @@ describe('AdvancedSection', () => {
   });
 
   it('should not show message when both advanced options are clicked', async () => {
+    renderAdvancedSection();
     const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
@@ -94,7 +100,7 @@ describe('AdvancedSection', () => {
 
     await user.click(pauseRolloutsButton);
 
-    expect(await screen.findByTestId('pause-rollouts')).toBeInTheDocument();
+    expect(await screen.findByTestId('pause-rollouts')).toBeVisible();
     expect(await screen.findByRole('checkbox')).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
@@ -110,7 +116,7 @@ describe('AdvancedSection', () => {
 
     await user.click(scalingButton);
 
-    expect(await screen.findByTestId('scaling')).toBeInTheDocument();
+    expect(await screen.findByTestId('scaling')).toBeVisible();
     expect(await screen.findByRole('spinbutton', { name: /input/i })).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).not.toContain(

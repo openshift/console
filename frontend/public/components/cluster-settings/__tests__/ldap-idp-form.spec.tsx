@@ -1,4 +1,4 @@
-import { cleanup, screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -14,18 +14,12 @@ import {
 import { AddLDAPPage } from '../../cluster-settings/ldap-idp-form';
 
 describe('Add Identity Provider: LDAP', () => {
+  const renderPage = () => {
+    renderWithProviders(<AddLDAPPage />);
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddLDAPPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
@@ -33,6 +27,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: LDAP',
       subtitle: 'Integrate with an LDAP identity provider.',
@@ -40,6 +35,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       containerId: 'idp-name-form',
@@ -51,6 +47,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the URL label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'URL',
       inputType: 'url',
@@ -61,6 +58,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Bind DN label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Bind DN',
       testValue: mockData.updatedFormValues.updatedValue,
@@ -69,6 +67,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Bind Password label and input password element', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Bind password',
       inputType: 'password',
@@ -78,11 +77,13 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Attributes sub heading', () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'Attributes' })).toBeVisible();
     expect(screen.getByText('Attributes map LDAP attributes to identities.')).toBeVisible();
   });
 
   it('should render the Attributes > ID label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'ID',
       initialValue: 'dn',
@@ -93,6 +94,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Attributes > Preferred username label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Preferred username',
       initialValue: 'uid',
@@ -103,6 +105,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Attributes Name label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Name',
       initialValue: 'cn',
@@ -113,6 +116,7 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the Attributes Email label, input element, and help text', async () => {
+    renderPage();
     await verifyIDPListInputFields({
       inputLabel: 'Email',
       testValue: mockData.updatedFormValues.email,
@@ -122,14 +126,17 @@ describe('Add Identity Provider: LDAP', () => {
   });
 
   it('should render the More options sub heading and CA file label and input element', async () => {
+    renderPage();
     expect(screen.getByRole('heading', { name: 'More options' })).toBeVisible();
 
     await verifyIDPFileFields({
       inputLabel: 'CA file',
+      fieldId: 'ca-file-input',
     });
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });
