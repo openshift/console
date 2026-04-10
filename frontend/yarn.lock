@@ -3516,9 +3516,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-component-groups@npm:^6.1.0, @patternfly/react-component-groups@npm:~6.4.0":
-  version: 6.4.0
-  resolution: "@patternfly/react-component-groups@npm:6.4.0"
+"@patternfly/react-component-groups@npm:6.4.0-prerelease.18":
+  version: 6.4.0-prerelease.18
+  resolution: "@patternfly/react-component-groups@npm:6.4.0-prerelease.18"
   dependencies:
     "@patternfly/react-core": "npm:^6.0.0"
     "@patternfly/react-icons": "npm:^6.0.0"
@@ -3529,7 +3529,7 @@ __metadata:
     "@patternfly/react-drag-drop": ^6.0.0
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/97e6e910206b6c4c0e04a44b1b62fb7dbf24538aa367e01948abe0b27ae3f58a0b2316d150a22a885a566c10e065093388111710dd45a7a5d85817aabfb05b50
+  checksum: 10c0/e97fa9a59b236973e37505c81cec893c48230ce965bf32840c31f3f01de1fa4ddd0183d797ae8ffe6f3ae89b1b020cebffea7128a3604aaaed39f10f7448781d
   languageName: node
   linkType: hard
 
@@ -17312,7 +17312,7 @@ __metadata:
     "@patternfly/react-catalog-view-extension": "npm:~6.3.0"
     "@patternfly/react-charts": "npm:~8.4.1"
     "@patternfly/react-code-editor": "npm:~6.4.2"
-    "@patternfly/react-component-groups": "npm:~6.4.0"
+    "@patternfly/react-component-groups": "npm:6.4.0-prerelease.18"
     "@patternfly/react-core": "npm:~6.4.2"
     "@patternfly/react-data-view": "npm:~6.4.0-prerelease.12"
     "@patternfly/react-drag-drop": "npm:~6.5.0-prerelease.38"
