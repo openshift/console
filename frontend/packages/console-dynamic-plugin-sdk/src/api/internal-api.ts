@@ -25,6 +25,7 @@ import {
   CellIsStickyProps,
   GetNameCellProps,
   ActionsCellProps,
+  GetCSRFToken,
 } from './internal-types';
 
 export * from './internal-console-api';
@@ -109,3 +110,6 @@ export const initialFiltersDefault: ResourceFilters = require('@console/app/src/
 
 export const definitionFor: DefinitionFor = require('@console/internal/module/k8s/swagger')
   .definitionFor;
+
+export const getCSRFToken: GetCSRFToken = require('@console/shared/src/utils/console-fetch-utils')
+  .getCSRFToken;

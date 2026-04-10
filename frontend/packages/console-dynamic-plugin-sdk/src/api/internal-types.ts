@@ -399,3 +399,5 @@ export type SwaggerDefinitions = {
 };
 
 export type DefinitionFor = (model: K8sModel) => SwaggerDefinition;
+
+export type GetCSRFToken = () => string;

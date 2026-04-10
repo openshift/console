@@ -433,6 +433,14 @@ export type GetSegmentAnalytics = () => {
   analyticsEnabled: boolean;
 };
 
+/**
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
+ * @param url - The URL to fetch
+ * @param options - The options to pass to fetch
+ * @param timeout - The timeout in milliseconds
+ * @returns A promise that resolves to the response.
+ */
 export type ConsoleFetch = (
   url: string,
   options?: RequestInit,
@@ -440,14 +448,94 @@ export type ConsoleFetch = (
 ) => Promise<Response>;
 
 export type ConsoleFetchJSON<T = any> = {
+  /**
+   * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+   * It also validates the response status code and throws an appropriate error or logs out the user if required.
+   * It returns the response as a JSON object.
+   * Uses consoleFetch internally.
+   * @param url The URL to fetch
+   * @param method  The HTTP method to use. Defaults to GET
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   * @returns A promise that resolves to the response as text or JSON object.
+   */
   (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom DELETE method of consoleFetchJSON.
+   * It sends an optional JSON object as the body of the request and adds extra headers for patch request.
+   * @param url The URL to delete the object
+   * @param json The JSON to delete the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom POST method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to post the object
+   * @param json The JSON to POST the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom PUT method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to put the object
+   * @param json The JSON to PUT the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  /**
+   * A custom PATCH method of consoleFetchJSON.
+   * It sends the JSON object as the body of the request.
+   * @param url The URL to patch the object
+   * @param json The JSON to PATCH the object
+   * @param options The options to pass to fetch
+   * @param timeout The timeout in milliseconds
+   */
   patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
 };
 
+/**
+ * A custom wrapper around `fetch` that adds console-specific headers and allows for retries and timeouts.
+ * It also validates the response status code and throws an appropriate error or logs out the user if required.
+ * It returns the response as a text.
+ * Uses `consoleFetch` internally.
+ * @param url The URL to fetch
+ * @param options The options to pass to fetch
+ * @param timeout The timeout in milliseconds
+ * @returns A promise that resolves to the response as text or JSON object.
+ */
 export type ConsoleFetchText<T = any> = (...args: Parameters<ConsoleFetch>) => Promise<T>;
+
+/**
+ * Headers that are added to all requests made by consoleFetch and consoleFetchJSON.
+ *
+ * These headers are used for impersonation and CSRF protection.
+ */
+export type ConsoleRequestHeaders = {
+  'Impersonate-Group'?: string | string[];
+  'Impersonate-User'?: string;
+  'X-CSRFToken'?: string;
+};
+
+/**
+ * A function that creates impersonation headers for API requests using current redux state.
+ * @returns an object containing the appropriate impersonation requst headers, based on redux state
+ */
+export type GetConsoleRequestHeaders = () => ConsoleRequestHeaders;
+
+/**
+ * Normalizes console headers to be compatible with fetch API's HeadersInit.
+ * Converts array values (like Impersonate-Group) to a format that fetch() accepts.
+ * @param headers - Headers object that may contain array values
+ * @returns Normalized headers object with only string values
+ */
+export type NormalizeConsoleHeaders = (
+  headers: Record<string, string | string[] | undefined>,
+) => Record<string, string>;
 
 export type ConsoleTFunction = TFunction | ((key: string, options?: any) => string);
 
