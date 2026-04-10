@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { getNodeGroups } from '@console/app/src/components/nodes/NodeGroupUtils';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
-import { useAccessReview } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import { useAccessReview } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
