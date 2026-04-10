@@ -45,7 +45,7 @@ Component that allows to receive contributions from other plugins for the `conso
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -239,7 +239,7 @@ A basic lazy loaded Code editor with hover help and completion.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -397,7 +397,7 @@ This will change the title to "My Page Title · [Product Name]"
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -439,7 +439,7 @@ Creates a full page ErrorBoundaryFallbackPage component to display the "Somethin
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -772,7 +772,7 @@ const HomePage: React.FC = (props) => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -843,7 +843,7 @@ Creates an inventory card item.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -881,7 +881,7 @@ Creates the body of an inventory card. Used within `InventoryCard` and can be us
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -914,7 +914,7 @@ return (
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -953,7 +953,7 @@ Creates a count and icon for an inventory card with optional link address. Used 
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -990,7 +990,7 @@ Creates a title for an inventory card item. Used within `InventoryItem`.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1322,7 +1322,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1361,7 +1361,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1406,7 +1406,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1446,7 +1446,7 @@ const exampleList: React.FC<MyProps> = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1487,7 +1487,7 @@ const exampleList: React.FC = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1582,7 +1582,7 @@ A component that renders a horizontal toolbar with a namespace dropdown menu in 
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1651,7 +1651,7 @@ Creates a wrapper component for a dashboard.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1685,7 +1685,7 @@ Creates a grid of card elements for a dashboard. Used within `Overview`.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -1941,7 +1941,7 @@ A component that renders a graph of the results from a Prometheus PromQL query a
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2022,7 +2022,7 @@ return <ResourceEventStream resource={resource} />
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2054,7 +2054,7 @@ Component that creates an icon badge for a specific resource type.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2100,7 +2100,7 @@ Component that creates a link to a specific resource type with an icon badge.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2170,7 +2170,7 @@ A lazy loaded YAML editor for Kubernetes resources with hover help and completio
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2373,7 +2373,7 @@ Status element used in status popup. Used in in `StatusPopupSection`.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2415,7 +2415,7 @@ Component that shows the status in a popup window. Can be used when building `co
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2496,7 +2496,7 @@ const PodRow: React.FC<RowProps<K8sResourceCommon>> = ({ obj, activeColumnIDs })
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2523,7 +2523,7 @@ A component to render timestamp.<br/>The timestamps are synchronized between ind
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2595,7 +2595,7 @@ A tuple containing the current user-selected active columns (a subset of options
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2633,7 +2633,7 @@ A tuple containing the current active namespace and setter callback.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2709,7 +2709,7 @@ A function which will launch a modal for editing a resource's annotations.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2751,7 +2751,7 @@ A function which will launch a modal for deleting a resource.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -2967,7 +2967,7 @@ A function which will launch a modal for editing a resource's labels.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3054,7 +3054,7 @@ A tuple containing the query response, a boolean flag indicating whether the res
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3088,7 +3088,7 @@ Quick start context values object.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3123,7 +3123,7 @@ Tuple containing a list of adapted extension instances with resolved code refere
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3168,7 +3168,7 @@ A tuple containing the user preference value, a setter callback, and a loaded bo
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3278,7 +3278,7 @@ Component for displaying a yellow triangle exclamation icon.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3386,7 +3386,7 @@ A tuple containing the data filtered by all static filteres, the data filtered b
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3438,7 +3438,7 @@ const AppPage: React.FC = () => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3493,7 +3493,7 @@ const MachineList: React.FC<MachineListProps> = (props) => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -3535,5 +3535,5 @@ const MachineList: React.FC<MachineListProps> = (props) => {
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/dynamic-core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 

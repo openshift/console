@@ -20,13 +20,13 @@ import type {
 } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
-import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import {
   getGroupVersionKindForResource,
   ListPageBody,
   useAccessReview,
   useOverlay,
-} from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+} from '@console/dynamic-plugin-sdk/src/api/core-api';
 import type {
   K8sResourceCommon,
   NodeCertificateSigningRequestKind,
