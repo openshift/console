@@ -8,7 +8,6 @@ export * from './lists';
 export * from './status';
 export * from './pod';
 export * from './popper';
-export * from './shortcuts';
 export * from './health-checks';
 export * from './virtualized-grid';
 export * from './alerts';
