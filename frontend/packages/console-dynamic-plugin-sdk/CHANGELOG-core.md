@@ -12,6 +12,8 @@ table in [Console dynamic plugins README](./README.md).
 
 ## 4.22.0-prerelease.3 - TBD
 
+- **Breaking**: The `dynamic-core-api`, `console-fetch`, and `console-fetch-utils` modules are no longer provided. Console plugin APIs should be imported from the package index. ([OCPBUGS-81319], [#15655])
+- Added `HttpError` class export for `instanceof` checks on errors thrown by `consoleFetch` ([OCPBUGS-81319], [#15655])
 - **Type-breaking**: Update `K8sResourceCommon`, `ObjectMetadata`, `OwnerReference` types to interfaces ([CONSOLE-5108], [#16097])
 
 ## 4.22.0-prerelease.2 - 2026-03-26
@@ -226,6 +228,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58118]: https://issues.redhat.com/browse/OCPBUGS-58118
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
+[OCPBUGS-81319]: https://issues.redhat.com/browse/OCPBUGS-81319
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -267,6 +270,7 @@ table in [Console dynamic plugins README](./README.md).
 [#15509]: https://github.com/openshift/console/pull/15509
 [#15526]: https://github.com/openshift/console/pull/15526
 [#15641]: https://github.com/openshift/console/pull/15641
+[#15655]: https://github.com/openshift/console/pull/15655
 [#15671]: https://github.com/openshift/console/pull/15671
 [#15699]: https://github.com/openshift/console/pull/15699
 [#15735]: https://github.com/openshift/console/pull/15735

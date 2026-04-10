@@ -1,6 +1,10 @@
-import { RetryError } from '../../error/http-error';
-import { consoleFetch } from '../console-fetch';
-import { shouldLogout, unescapeGoUnicode, validateStatus } from '../console-fetch-utils';
+import { RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
+import {
+  shouldLogout,
+  unescapeGoUnicode,
+  validateStatus,
+} from '@console/shared/src/utils/console-fetch-utils';
+import { coFetch } from '../console-fetch';
 
 describe('unescapeGoUnicode', () => {
   it('should unescape 4-digit Go unicode escapes', () => {
@@ -104,7 +108,7 @@ describe('consoleFetch', () => {
       Promise.resolve({ status: 404, headers: emptyHeaders } as Response),
     );
     try {
-      await consoleFetch('');
+      await coFetch('');
     } catch {
       // ignore
     }
@@ -115,7 +119,7 @@ describe('consoleFetch', () => {
       Promise.resolve({ status: 429, headers: emptyHeaders } as Response),
     );
     try {
-      await consoleFetch('');
+      await coFetch('');
     } catch {
       // ignore
     }
@@ -124,7 +128,7 @@ describe('consoleFetch', () => {
     (window.fetch as jest.Mock).mockClear();
     window.fetch = jest.fn(() => Promise.resolve({ status: 409, json, headers } as Response));
     try {
-      await consoleFetch('', { method: 'POST' });
+      await coFetch('', { method: 'POST' });
     } catch {
       // ignore
     }

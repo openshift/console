@@ -1,12 +1,11 @@
-import { getImpersonate } from '../../app/core/reducers';
-import storeHandler from '../../app/storeHandler';
-import { HttpError, RetryError } from '../error/http-error';
-
-type ConsoleRequestHeaders = {
-  'Impersonate-Group'?: string | string[];
-  'Impersonate-User'?: string;
-  'X-CSRFToken'?: string;
-};
+import { getImpersonate } from '@console/dynamic-plugin-sdk/src/app/core/reducers';
+import storeHandler from '@console/dynamic-plugin-sdk/src/app/storeHandler';
+import type {
+  ConsoleRequestHeaders,
+  GetConsoleRequestHeaders,
+  NormalizeConsoleHeaders,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { HttpError, RetryError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
 
 export const getCSRFToken = () => {
   const cookiePrefix = 'csrf-token=';
@@ -22,11 +21,7 @@ export const getCSRFToken = () => {
   );
 };
 
-/**
- * A function that creates impersonation headers for API requests using current redux state.
- * @returns an object containing the appropriate impersonation requst headers, based on redux state
- */
-export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
+export const getConsoleRequestHeaders: GetConsoleRequestHeaders = () => {
   const store = storeHandler.getStore();
   if (!store) return undefined;
   const state = store.getState();
@@ -59,15 +54,7 @@ export const getConsoleRequestHeaders = (): ConsoleRequestHeaders => {
   return headers;
 };
 
-/**
- * Normalizes console headers to be compatible with fetch API's HeadersInit.
- * Converts array values (like Impersonate-Group) to a format that fetch() accepts.
- * @param headers - Headers object that may contain array values
- * @returns Normalized headers object with only string values
- */
-export const normalizeConsoleHeaders = (
-  headers: Record<string, string | string[] | undefined>,
-): Record<string, string> => {
+export const normalizeConsoleHeaders: NormalizeConsoleHeaders = (headers) => {
   const normalized: Record<string, string> = {};
 
   Object.entries(headers || {}).forEach(([key, value]) => {
@@ -174,7 +161,7 @@ export const validateStatus = async (
 
   if (response.status === 401 && shouldLogout(url)) {
     const next = window.location.pathname + window.location.search + window.location.hash;
-    // We can't use regular import from outside this package, so a dynamic import is required
+
     // This also breaks a nasty cycle - authSvc.logout calls coFetch (which calls validateStatus)
     import('@console/internal/module/auth')
       .then((m) => m.authSvc)

@@ -6,6 +6,7 @@
 | TypeAlias (27) | [Alert](#alert), [Alerts](#alerts), [ColoredIconProps](#colorediconprops), [DiscoveryResources](#discoveryresources), [ExtensionHook](#extensionhook), [ExtensionHookResult](#extensionhookresult), [ExtensionK8sGroupKindModel](#extensionk8sgroupkindmodel), [ExtensionK8sGroupModel](#extensionk8sgroupmodel), [ExtensionK8sKindVersionModel](#extensionk8skindversionmodel), [ExtensionK8sModel](#extensionk8smodel), [K8sModel](#k8smodel), [K8sVerb](#k8sverb), [MatchExpression](#matchexpression), [MatchLabels](#matchlabels), [ModalComponent](#modalcomponent), [OverlayComponent](#overlaycomponent), [PerspectiveContextType](#perspectivecontexttype), [PrometheusAlert](#prometheusalert), [PrometheusLabels](#prometheuslabels), [PrometheusRule](#prometheusrule), [PrometheusRulesResponse](#prometheusrulesresponse), [PrometheusValue](#prometheusvalue), [ResolvedExtension](#resolvedextension), [Rule](#rule), [Selector](#selector), [Silence](#silence), [K8sKind](#k8skind) |
 | Interface (0) |  |
 | Enum (6) | [AlertSeverity](#alertseverity), [AlertStates](#alertstates), [Operator](#operator), [PrometheusEndpoint](#prometheusendpoint), [RuleStates](#rulestates), [SilenceStates](#silencestates) |
+| Class (1) | [HttpError](#httperror) |
 
 ---
 
@@ -287,7 +288,7 @@ A promise that resolves to the response.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -318,7 +319,7 @@ A promise that resolves to the response as text or JSON object.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -348,7 +349,7 @@ A promise that resolves to the response as text or JSON object.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/utils/fetch/console-fetch.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
 
 ---
 
@@ -773,6 +774,45 @@ const HomePage: React.FC = (props) => {
 ### Source
 
 [`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+
+---
+
+## `HttpError`
+
+### Summary 
+
+Error thrown by `consoleFetch`, `consoleFetchJSON`, and `consoleFetchText` when the<br/>server responds with a non-OK HTTP status code (other than 304).
+
+
+### Example
+
+```ts
+try {
+  await consoleFetchJSON('/api/kubernetes/api/v1/namespaces');
+} catch (e) {
+  if (e instanceof HttpError) {
+    console.error(`HTTP ${e.code}: ${e.message}`);
+  }
+}
+```
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `message` | The error message, typically derived from the response body or status text. |
+| `code` | The HTTP status code (e.g. 404, 500). |
+| `response` | The original `Response` object from the fetch call. |
+| `json` | The parsed JSON body of the error response, if available. |
+
+
+
+
+### Source
+
+[`frontend/packages/console-dynamic-plugin-sdk/src/utils/error/http-error.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/utils/error/http-error.ts)
 
 ---
 

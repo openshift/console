@@ -1,6 +1,3 @@
-export {
-  consoleFetch as coFetch,
-  consoleFetchJSON as coFetchJSON,
-  consoleFetchText as coFetchText,
-  getConsoleRequestHeaders,
-} from '@console/dynamic-plugin-sdk/src/utils/fetch';
+export { coFetch, coFetchJSON, coFetchText } from '@console/shared/src/utils/console-fetch';
+
+export { getConsoleRequestHeaders } from '@console/shared/src/utils/console-fetch-utils';

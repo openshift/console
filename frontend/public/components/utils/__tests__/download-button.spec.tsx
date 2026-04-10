@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import * as fileSaver from 'file-saver';
 
 import { DownloadButton } from '../../../components/utils/download-button';
-import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import * as coFetchModule from '@console/shared/src/utils/console-fetch';
 
 // Mock file-saver
 jest.mock('file-saver', () => ({
@@ -11,13 +11,13 @@ jest.mock('file-saver', () => ({
 }));
 
 // Mock console-fetch
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
-  consoleFetch: jest.fn(),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  coFetch: jest.fn(),
 }));
 
 describe('DownloadButton', () => {
   const url = 'http://google.com';
-  const mockConsoleFetch = coFetchModule.consoleFetch as jest.Mock;
+  const mockConsoleFetch = coFetchModule.coFetch as jest.Mock;
   const mockSaveAs = fileSaver.saveAs as jest.Mock;
 
   beforeEach(() => {
