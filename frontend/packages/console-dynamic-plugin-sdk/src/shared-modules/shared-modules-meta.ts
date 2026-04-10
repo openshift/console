@@ -17,7 +17,11 @@ type SharedModuleMetadata = Partial<{
    */
   allowFallback: boolean;
 
-  /** A message describing the deprecation, if the module is deprecated. */
+  /**
+   * A message describing the deprecation, if the module has been deprecated.
+   *
+   * @default false
+   */
   deprecated: string | false;
 }>;
 

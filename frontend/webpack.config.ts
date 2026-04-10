@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as path from 'path';
+import * as semver from 'semver';
 import * as webpack from 'webpack';
 import { WebpackSharedObject, WebpackSharedConfig } from '@openshift/dynamic-plugin-sdk-webpack';
 
@@ -13,6 +14,14 @@ import {
   getSharedModuleMetadata,
 } from '@console/dynamic-plugin-sdk/src/shared-modules/shared-modules-meta';
 import { ExtensionValidatorPlugin } from '@console/dynamic-plugin-sdk/src/webpack/ExtensionValidatorPlugin';
+import {
+  dynamicModulePackageSpecs,
+  dynamicModuleImportTransformFilter,
+} from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
+import {
+  DynamicModuleImportPlugin,
+  resolveDynamicModuleMaps,
+} from '@console/dynamic-plugin-sdk/src/webpack/DynamicModuleImportPlugin';
 import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { HtmlWebpackSkipAssetsPlugin } from 'html-webpack-skip-assets-plugin';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
@@ -64,20 +73,57 @@ const sharedPluginModulesTest = getVendorModuleRegExp(
   sharedPluginModules.map(getSharedModuleImport),
 );
 
-// Shared modules provided by Console application to all dynamic plugins
-// https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
-const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
-  (acc, moduleName) => {
-    const { singleton } = getSharedModuleMetadata(moduleName);
-    const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
+const dynamicModuleMaps = resolveDynamicModuleMaps(dynamicModulePackageSpecs, [
+  path.resolve(__dirname, 'node_modules'),
+]);
 
-    moduleConfig.import = getSharedModuleImport(moduleName);
+/**
+ * Get webpack shared module configuration to use by Console application.
+ *
+ * This includes Console provided {@link sharedPluginModules} and shared dynamic modules
+ * resolved from {@link dynamicModulePackageSpecs}.
+ *
+ * Note: shared modules contributed by Console application should be marked with `eager: true`
+ * to ensure these modules are part of the initial chunk.
+ *
+ * @see https://webpack.js.org/plugins/module-federation-plugin/#sharing-hints
+ */
+const getWebpackSharedModules = () => {
+  const consoleProvidedSharedModules = sharedPluginModules.reduce<WebpackSharedObject>(
+    (acc, moduleName) => {
+      const { singleton } = getSharedModuleMetadata(moduleName);
+      const moduleConfig: WebpackSharedConfig = { singleton, eager: true };
 
-    acc[moduleName] = moduleConfig;
-    return acc;
-  },
-  {},
-);
+      moduleConfig.import = getSharedModuleImport(moduleName);
+
+      acc[moduleName] = moduleConfig;
+      return acc;
+    },
+    {},
+  );
+
+  const sharedDynamicModules = Object.entries(dynamicModuleMaps).reduce<WebpackSharedObject>(
+    (acc, [moduleName, dynamicModuleMap]) => {
+      const moduleConfig: WebpackSharedConfig = { eager: true };
+
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const moduleVersion = require(`${moduleName}/package.json`).version;
+
+      if (semver.valid(moduleVersion)) {
+        moduleConfig.version = moduleVersion;
+      }
+
+      Object.values(dynamicModuleMap).forEach((request) => {
+        acc[`${moduleName}/${request}`] = moduleConfig;
+      });
+
+      return acc;
+    },
+    {},
+  );
+
+  return { ...consoleProvidedSharedModules, ...sharedDynamicModules };
+};
 
 const config: Configuration = {
   entry: {
@@ -244,8 +290,14 @@ const config: Configuration = {
   },
   plugins: [
     new ExtensionValidatorPlugin({ pluginPackages }),
+    new DynamicModuleImportPlugin({
+      loader:
+        '@console/dynamic-plugin-sdk/dist/webpack/lib/webpack/loaders/dynamic-module-import-loader',
+      dynamicModuleMaps,
+      moduleFilter: dynamicModuleImportTransformFilter,
+    }),
     new webpack.container.ModuleFederationPlugin({
-      shared: consoleProvidedSharedModules,
+      shared: getWebpackSharedModules(),
     }),
     new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({

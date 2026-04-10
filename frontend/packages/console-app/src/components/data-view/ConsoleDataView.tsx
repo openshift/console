@@ -9,11 +9,11 @@ import {
 import { Bullseye, Pagination, Tooltip } from '@patternfly/react-core';
 import {
   DataView,
+  DataViewFilters,
   DataViewState,
   DataViewTable,
   DataViewToolbar,
 } from '@patternfly/react-data-view';
-import DataViewFilters from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { ColumnsIcon, UndoIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import { InnerScrollContainer, Tbody, Td, Tr } from '@patternfly/react-table';
