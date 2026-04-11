@@ -9,13 +9,15 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../../mocks';
+import { DEFAULT_SOURCE_NAMESPACE } from '../../const';
 import { CatalogSourceModel, PackageManifestModel } from '../../models';
 import {
   CatalogSourceDetails,
   CatalogSourceDetailsPage,
   CreateSubscriptionYAML,
-  CatalogSourceOperatorsPage,
 } from '../catalog-source';
+
+jest.mock('@patternfly/react-topology', () => ({}));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -38,13 +40,28 @@ jest.mock('@console/internal/components/factory', () => ({
 jest.mock('@console/internal/components/utils', () => ({
   ...jest.requireActual('@console/internal/components/utils'),
   LoadingBox: jest.fn(() => 'Loading...'),
-  ResourceSummary: jest.fn(() => null),
-  SectionHeading: jest.fn(() => null),
-  DetailsItem: jest.fn(({ obj, path, children }) => {
-    if (children) return children;
+  ResourceSummary: jest.fn(() => 'ResourceSummary'),
+  SectionHeading: jest.fn(({ text }) => text),
+  DetailsItem: jest.fn(({ obj, path, children, label }) => {
+    if (children) {
+      return (
+        <>
+          {label && <span>{label}</span>}
+          <span>{children}</span>
+        </>
+      );
+    }
     if (path) {
       const value = path.split('.').reduce((acc, key) => acc?.[key], obj);
-      return value || null;
+      if (value == null || value === '') {
+        return null;
+      }
+      return (
+        <>
+          {label && <span>{label}</span>}
+          <span>{value}</span>
+        </>
+      );
     }
     return null;
   }),
@@ -94,20 +111,39 @@ describe('CatalogSourceDetails', () => {
     obj = _.cloneDeep(testCatalogSource);
   });
 
-  it('displays catalog source name and publisher', () => {
+  it('renders catalog source details with display name and publisher', () => {
     renderWithProviders(
       <CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} />,
     );
-
+    expect(screen.getByText(/CatalogSource details/i)).toBeVisible();
     expect(screen.getByText(obj.spec.displayName, { exact: false })).toBeVisible();
     expect(screen.getByText(obj.spec.publisher, { exact: false })).toBeVisible();
+  });
+
+  it('displays availability based on namespace', () => {
+    const clusterWideSource = {
+      ...obj,
+      metadata: { ...obj.metadata, namespace: DEFAULT_SOURCE_NAMESPACE },
+    };
+    renderWithProviders(
+      <CatalogSourceDetails obj={clusterWideSource} packageManifests={[testPackageManifest]} />,
+    );
+    expect(screen.getByText('Cluster wide')).toBeVisible();
+  });
+
+  it('displays image endpoint when spec.image is set', () => {
+    const sourceWithImage = {
+      ...obj,
+      spec: { ...obj.spec, image: 'quay.io/my-registry/my-catalog:latest' },
+    };
+    renderWithProviders(<CatalogSourceDetails obj={sourceWithImage} packageManifests={[]} />);
+    expect(screen.getByText('quay.io/my-registry/my-catalog:latest')).toBeVisible();
   });
 });
 
 describe('CatalogSourceDetailsPage', () => {
   beforeEach(() => {
     mockUseK8sWatchResource.mockReturnValue([dummyPackageManifest, true, null]);
-    jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'default', name: 'some-catalog' });
     mockDetailsPage.mockClear();
   });
 
@@ -115,42 +151,32 @@ describe('CatalogSourceDetailsPage', () => {
     jest.restoreAllMocks();
   });
 
-  it('renders catalog source details page without errors', () => {
-    expect(() => {
-      renderWithProviders(<CatalogSourceDetailsPage />);
-    }).not.toThrow();
-  });
+  it('configures DetailsPage with route, CatalogSource kind, Operators tab data, and three tabs', () => {
+    const params = { ns: 'my-namespace', name: 'my-catalog' };
+    jest.spyOn(Router, 'useParams').mockReturnValue(params);
 
-  // TODO: Refactor to test user behavior instead of implementation details
-  it('configures DetailsPage with correct navigation and resources', () => {
     renderWithProviders(<CatalogSourceDetailsPage />);
 
     expect(mockDetailsPage).toHaveBeenCalledTimes(1);
-    const [detailsPageProps] = mockDetailsPage.mock.calls[0];
+    const [props] = mockDetailsPage.mock.calls[0];
 
-    expect(detailsPageProps.kind).toEqual(referenceForModel(CatalogSourceModel));
+    expect(props.namespace).toBe(params.ns);
+    expect(props.name).toBe(params.name);
+    expect(props.kind).toBe(referenceForModel(CatalogSourceModel));
 
-    expect(detailsPageProps.pages).toHaveLength(3);
-    expect(detailsPageProps.pages[0]).toMatchObject({
-      nameKey: 'public~Details',
-      component: CatalogSourceDetails,
-    });
-    expect(detailsPageProps.pages[1]).toMatchObject({
-      nameKey: 'public~YAML',
-    });
-    expect(detailsPageProps.pages[2]).toMatchObject({
-      nameKey: 'olm~Operators',
-      component: CatalogSourceOperatorsPage,
-    });
-
-    expect(detailsPageProps.resources).toEqual([
-      {
-        kind: referenceForModel(PackageManifestModel),
-        isList: true,
-        prop: 'packageManifests',
-        namespace: 'default',
-      },
+    expect(props.pages.map((p) => p.nameKey)).toEqual([
+      'public~Details',
+      'public~YAML',
+      'olm~Operators',
     ]);
+
+    expect(props.resources).toHaveLength(1);
+    expect(props.resources[0]).toMatchObject({
+      kind: referenceForModel(PackageManifestModel),
+      isList: true,
+      prop: 'packageManifests',
+      namespace: params.ns,
+    });
   });
 });
 
@@ -175,7 +201,17 @@ describe('CreateSubscriptionYAML', () => {
     jest.restoreAllMocks();
   });
 
-  it('displays package name in the subscription YAML when loaded', () => {
+  it('displays loading indicator when package manifest is not yet loaded', () => {
+    mockUseK8sWatchResources.mockReturnValue({
+      packageManifest: { loaded: false, data: undefined, loadError: null },
+      operatorGroup: { loaded: false, data: undefined, loadError: null },
+    });
+
+    renderWithProviders(<CreateSubscriptionYAML />);
+    expect(screen.getByText('Loading...')).toBeVisible();
+  });
+
+  it('displays subscription YAML with package name, channel, and catalog info when loaded', () => {
     mockUseK8sWatchResources.mockReturnValue({
       packageManifest: { loaded: true, data: testPackageManifest, loadError: null },
       operatorGroup: { loaded: true, data: [], loadError: null },
@@ -184,29 +220,27 @@ describe('CreateSubscriptionYAML', () => {
     renderWithProviders(<CreateSubscriptionYAML />);
 
     expect(screen.getByText(new RegExp(testPackageManifest.metadata.name))).toBeVisible();
+    expect(screen.getByText(/channel:\s*alpha/)).toBeVisible();
+    expect(screen.getByText(/source:\s*ocs/)).toBeVisible();
+    expect(screen.getByText(/startingCSV:\s*testapp/)).toBeVisible();
   });
 
-  it('displays loading indicator when package manifest is not yet loaded', () => {
+  it('uses first channel when no default channel is specified', () => {
+    const packageWithoutDefault = {
+      ...testPackageManifest,
+      status: {
+        ...testPackageManifest.status,
+        defaultChannel: undefined,
+        channels: [{ name: 'beta', currentCSV: 'testapp-beta' }],
+      },
+    };
+
     mockUseK8sWatchResources.mockReturnValue({
-      packageManifest: { loaded: false, data: undefined, loadError: null },
-      operatorGroup: { loaded: false, data: undefined, loadError: null },
-    });
-
-    renderWithProviders(<CreateSubscriptionYAML />);
-
-    expect(screen.getByText('Loading...')).toBeVisible();
-  });
-
-  it('displays subscription YAML with default channel information', () => {
-    mockUseK8sWatchResources.mockReturnValue({
-      packageManifest: { loaded: true, data: testPackageManifest, loadError: null },
+      packageManifest: { loaded: true, data: packageWithoutDefault, loadError: null },
       operatorGroup: { loaded: true, data: [], loadError: null },
     });
 
     renderWithProviders(<CreateSubscriptionYAML />);
-
-    expect(screen.getByText(/channel:\s*alpha/)).toBeInTheDocument();
-    expect(screen.getByText(/source:\s*ocs/)).toBeInTheDocument();
-    expect(screen.getByText(/startingCSV:\s*testapp/)).toBeInTheDocument();
+    expect(screen.getByText(/channel:\s*beta/)).toBeVisible();
   });
 });

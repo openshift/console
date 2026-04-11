@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
-import { ResourceLimitField } from '@console/shared';
+import ResourceLimitField from '@console/shared/src/components/formik-fields/ResourceLimitField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { MemoryUnits, CPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';
@@ -36,6 +36,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
       <ResourceLimitField
         name="limits.cpu.request"
         label={t('devconsole~Request')}
+        inputAriaLabel={t('devconsole~CPU request')}
         unitName="limits.cpu.requestUnit"
         unitOptions={CPUUnits}
         helpText={t('devconsole~The minimum amount of CPU the Container is guaranteed.')}
@@ -44,6 +45,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
       <ResourceLimitField
         name="limits.cpu.limit"
         label={t('devconsole~Limit')}
+        inputAriaLabel={t('devconsole~CPU limit')}
         unitName="limits.cpu.limitUnit"
         unitOptions={CPUUnits}
         helpText={t(
@@ -55,6 +57,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
       <ResourceLimitField
         name="limits.memory.request"
         label={t('devconsole~Request')}
+        inputAriaLabel={t('devconsole~Memory request')}
         unitName="limits.memory.requestUnit"
         unitOptions={MemoryUnits}
         helpText={t('devconsole~The minimum amount of Memory the Container is guaranteed.')}
@@ -63,6 +66,7 @@ const ResourceLimitSection: FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
       <ResourceLimitField
         name="limits.memory.limit"
         label={t('devconsole~Limit')}
+        inputAriaLabel={t('devconsole~Memory limit')}
         unitName="limits.memory.limitUnit"
         unitOptions={MemoryUnits}
         helpText={t(

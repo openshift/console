@@ -110,6 +110,7 @@ export interface ResourceLimitFieldProps extends FieldProps {
   fullWidth?: boolean;
   label?: ReactNode;
   helpText?: ReactNode;
+  inputAriaLabel?: string;
 }
 
 export interface MultiColumnFieldProps extends FieldProps {

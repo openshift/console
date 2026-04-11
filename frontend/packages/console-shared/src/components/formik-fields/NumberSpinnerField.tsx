@@ -13,6 +13,8 @@ interface NumberSpinnerFieldProps extends FieldProps {
   setOutputAsIntegerFlag?: boolean;
   label?: React.ReactNode;
   helpText?: React.ReactNode;
+  min?: number;
+  max?: number;
 }
 
 const NumberSpinnerField: FC<NumberSpinnerFieldProps> = ({

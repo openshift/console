@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import {
   IncompleteDataError,
@@ -19,24 +19,29 @@ jest.mock('@console/internal/components/useFavoritesOptions', () => ({
 const useLocationMock = useLocation as jest.Mock;
 
 describe('StatusBox', () => {
-  it('should render 404: Page Not Found if the loadError status is 404', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders 404: Page Not Found when loadError status is 404', () => {
     useLocationMock.mockReturnValue({ pathname: '' });
     useFavoritesOptionsMock.mockReturnValue([[], jest.fn(), true]);
-    const { getByText } = render(<StatusBox loadError={{ response: { status: 404 } }} />);
-    getByText('404: Page Not Found');
+    render(<StatusBox loadError={{ response: { status: 404 } }} />);
+
+    expect(screen.getByText('404: Page Not Found')).toBeVisible();
   });
 
-  it('should render access denied info together with the error message', () => {
-    const { getByText } = render(
-      <StatusBox loadError={{ message: 'test-message', response: { status: 403 } }} />,
-    );
+  it('renders access denied info together with the error message', () => {
+    render(<StatusBox loadError={{ message: 'test-message', response: { status: 403 } }} />);
 
-    getByText("You don't have access to this section due to cluster policy");
-    getByText('test-message');
+    expect(
+      screen.getByText("You don't have access to this section due to cluster policy"),
+    ).toBeVisible();
+    expect(screen.getByText('test-message')).toBeVisible();
   });
 
-  it('should render a patternfly alert together with its children when an IncompleteDataError occured', () => {
-    const { getByText } = render(
+  it('renders a PatternFly alert with children when IncompleteDataError occurs', () => {
+    render(
       <StatusBox
         loaded
         data={[{}]}
@@ -46,35 +51,38 @@ describe('StatusBox', () => {
       </StatusBox>,
     );
 
-    getByText(
-      'Test, RedHat, and Hello World content is not available in the catalog at this time due to loading failures.',
-    );
-    getByText('my-children');
+    expect(
+      screen.getByText(
+        'Test, RedHat, and Hello World content is not available in the catalog at this time due to loading failures.',
+      ),
+    ).toBeVisible();
+    expect(screen.getByText('my-children')).toBeVisible();
   });
 
-  it('should render an info together with its children when loaded and a TimeOutError ocurred', () => {
-    const { getByText } = render(
+  it('renders stale-data info with children when loaded and TimeoutError occurs', () => {
+    render(
       <StatusBox loaded data={[{}]} loadError={new TimeoutError('url', 346)}>
         my-children
       </StatusBox>,
     );
 
-    getByText('Timed out fetching new data. The data below is stale.');
-    getByText('my-children');
+    expect(screen.getByText('Timed out fetching new data. The data below is stale.')).toBeVisible();
+    expect(screen.getByText('my-children')).toBeVisible();
   });
 
-  it("should render skeleton when not loaded and there's no error", () => {
-    const { getByTestId } = render(<StatusBox loaded={false} />);
-    getByTestId('loading-indicator');
+  it('renders skeleton when not loaded and there is no error', () => {
+    render(<StatusBox loaded={false} />);
+
+    expect(screen.getByTestId('loading-indicator')).toBeVisible();
   });
 
-  it("should render its children when loaded and there's no error", () => {
-    const { getByText } = render(
+  it('renders children when loaded and there is no error', () => {
+    render(
       <StatusBox loaded data={[{}]}>
         my-children
       </StatusBox>,
     );
 
-    getByText('my-children');
+    expect(screen.getByText('my-children')).toBeVisible();
   });
 });

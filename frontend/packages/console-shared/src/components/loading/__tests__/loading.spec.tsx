@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { LoadError } from '../LoadError';
 import { Loading } from '../Loading';
 import { LoadingBox } from '../LoadingBox';
@@ -8,57 +9,66 @@ const label = 'foo';
 const message = 'bar';
 
 describe('LoadError', () => {
-  it('should render info with label and message', () => {
-    const { getByText } = render(<LoadError label={label}>{message}</LoadError>);
-    getByText(`Error loading ${label}`);
-    getByText(message);
+  it('renders info with label and message', () => {
+    renderWithProviders(<LoadError label={label}>{message}</LoadError>);
+
+    expect(screen.getByText(`Error loading ${label}`)).toBeVisible();
+    expect(screen.getByText(message)).toBeVisible();
   });
 
-  it('should render info with label and without message', () => {
-    const { getByText } = render(<LoadError label={label} />);
-    getByText(`Error loading ${label}`);
+  it('renders info with label and without message', () => {
+    renderWithProviders(<LoadError label={label} />);
+
+    expect(screen.getByText(`Error loading ${label}`)).toBeVisible();
   });
 
-  it('should render with retry button', () => {
-    const { getByText } = render(<LoadError label={label} />);
-    getByText('Try again');
+  it('renders with retry button', () => {
+    renderWithProviders(<LoadError label={label} />);
+
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeVisible();
   });
 
-  it('should render without retry button', () => {
-    const { queryByText } = render(<LoadError label={label} canRetry={false} />);
-    expect(queryByText('Try again')).toBeNull();
+  it('renders without retry button', () => {
+    renderWithProviders(<LoadError label={label} canRetry={false} />);
+
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
   });
 });
 
 describe('Loading', () => {
-  it('should render loading indicator', () => {
-    const { getByTestId } = render(<Loading />);
-    getByTestId('loading-indicator');
+  it('renders loading indicator', () => {
+    render(<Loading />);
+
+    expect(screen.getByTestId('loading-indicator')).toBeVisible();
   });
 });
 
 describe('LoadingInline', () => {
-  it('should render inline loading indicator', async () => {
-    const { getByTestId } = render(<LoadingInline />);
-    const el = await getByTestId('loading-indicator');
+  it('renders inline loading indicator', () => {
+    render(<LoadingInline />);
+
+    const el = screen.getByTestId('loading-indicator');
+    expect(el).toBeVisible();
     expect(el).toHaveClass('co-m-loader--inline');
   });
 });
 
 describe('LoadingBox', () => {
-  it('should render loading box', () => {
-    const { getByTestId } = render(<LoadingBox />);
-    getByTestId('loading-indicator');
+  it('renders loading box', () => {
+    render(<LoadingBox />);
+
+    expect(screen.getByTestId('loading-indicator')).toBeVisible();
   });
 
-  it('should render children', () => {
-    const { getByText } = render(<LoadingBox>{message}</LoadingBox>);
-    getByText(message);
+  it('renders children', () => {
+    render(<LoadingBox>{message}</LoadingBox>);
+
+    expect(screen.getByText(message)).toBeVisible();
   });
 
-  it('should not render blame info when query param disabled', () => {
-    // can't test the other way around without some hacks
-    const { queryByText } = render(<LoadingBox blame={label} />);
-    expect(queryByText(label)).toBeNull();
+  it('does not render blame info when query param disabled', () => {
+    render(<LoadingBox blame={label} />);
+
+    expect(screen.queryByText(label)).not.toBeInTheDocument();
   });
 });

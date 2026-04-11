@@ -12,6 +12,7 @@ const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
   unitName,
   unitOptions,
   helpText,
+  inputAriaLabel,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -27,6 +28,8 @@ const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
     <FormGroup fieldId={fieldId} label={label} isRequired={props.required}>
       <RequestSizeInput
         {...props}
+        ariaLabel={inputAriaLabel}
+        inputID={fieldId}
         onChange={(val) => {
           setFieldValue(props.name, val.value);
           setFieldTouched(props.name, true);
