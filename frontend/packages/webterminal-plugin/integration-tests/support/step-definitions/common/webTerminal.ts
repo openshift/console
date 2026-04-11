@@ -86,7 +86,6 @@ And('user has logged in as basic user', () => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
 });
 
 Given('user is at administrator perspective', () => {

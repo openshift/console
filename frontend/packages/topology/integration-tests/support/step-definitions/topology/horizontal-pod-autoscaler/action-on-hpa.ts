@@ -36,7 +36,6 @@ Given('user is at administrator perspective', () => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
   cy.testA11y('Developer perspective with guider tour modal');
 });
 

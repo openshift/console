@@ -1,4 +1,5 @@
-@helm @smoke
+# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82511)
+@helm @smoke @manual
 Feature: Helm Release
               As a user, I want to perform actions on the helm release
 

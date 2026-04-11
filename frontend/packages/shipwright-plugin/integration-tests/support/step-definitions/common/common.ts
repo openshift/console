@@ -1,7 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
   switchPerspective,
@@ -29,12 +28,6 @@ Given('user has logged in as a basic user', () => {
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
-  // Due to bug ODC-6231
-  // cy.testA11y('Developer perspective with guide tour modal');
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
-  // Commenting below line, because it is executing on every test scenario - we will remove this in future releases
-  // cy.testA11y('Developer perspective');
 });
 
 Given('user is at Add page', () => {

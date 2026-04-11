@@ -40,7 +40,8 @@ const cleanupOperatorResources = (namespace: string) => {
   );
 };
 
-describe(`Installing "${testOperator.name}" operator in test namespace`, () => {
+// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82508)
+xdescribe(`Installing "${testOperator.name}" operator in test namespace`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);

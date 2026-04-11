@@ -42,6 +42,11 @@ const NamespacedPage: FC<NamespacedPageProps> = ({
       className={css('odc-namespaced-page__content', {
         [`is-${variant}`]: variant !== NamespacedPageVariants.default,
       })}
+      role="region"
+      aria-label="Page content"
+      // Scrollable region must be keyboard-focusable (axe: scrollable-region-focusable).
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      tabIndex={0}
     >
       {children}
     </div>

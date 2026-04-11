@@ -21,8 +21,6 @@ import { checkDeveloperPerspective } from '@console/dev-console/integration-test
 
 Given('user is at developer perspective', () => {
   checkDeveloperPerspective();
-  perspective.switchTo(switchPerspective.Developer);
-  // cy.testA11y('Developer perspective with guider tour modal');
 });
 
 Given('user is at administrator perspective', () => {

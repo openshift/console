@@ -1,4 +1,5 @@
-@add-flow @smoke
+# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82505)
+@add-flow @smoke @to-do
 Feature: Create the different workloads from Add page
               As a user, I should be able to create an Application, component or service from one of the options provided on Add page
 

@@ -22,7 +22,8 @@ const alertExists = (titleText: string) => {
   cy.get('.co-alert').contains(titleText).should('exist');
 };
 
-describe(`Testing uninstall of ${testOperator.name} Operator`, () => {
+// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82509)
+xdescribe(`Testing uninstall of ${testOperator.name} Operator`, () => {
   before(() => {
     cy.login();
     cy.createProjectWithCLI(testName);

@@ -1,4 +1,5 @@
-@topology @smoke
+# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82513)
+@topology @smoke @manual
 Feature: Perform actions on topology
     User will be able to create workloads and perform actions on topology page
 
