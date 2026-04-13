@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { coFetch } from '@console/internal/co-fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import type { FetchProgressModalProps } from '../FetchProgressModal';
 import { FetchProgressModal } from '../FetchProgressModal';
 
@@ -11,7 +11,7 @@ jest.mock('../../toast', () => ({
   }),
 }));
 
-jest.mock('@console/internal/co-fetch', () => ({
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetch: jest.fn(),
 }));
 

@@ -9,7 +9,8 @@ import { getK8sResourcePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8
 import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
 import { URLQuery } from './client.gql';
 import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';
-import { getConsoleRequestHeaders, coFetch } from '../co-fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
+import { getConsoleRequestHeaders } from '@console/shared/src/utils/console-fetch-utils';
 
 let wssErrors = 0;
 let forceHTTP = false;

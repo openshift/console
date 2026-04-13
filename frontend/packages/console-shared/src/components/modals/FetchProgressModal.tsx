@@ -15,8 +15,8 @@ import {
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { coFetch } from '@console/internal/co-fetch';
 import { units } from '@console/internal/components/utils/units';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { useToast } from '../toast';
 
 export interface FetchProgressModalProps {

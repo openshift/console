@@ -1,5 +1,5 @@
-import { coFetch } from '@console/internal/co-fetch';
 import type { ConfigMapKind } from '@console/internal/module/k8s';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import {
   createConfigMap,
   updateConfigMap,
@@ -10,7 +10,7 @@ import {
 
 const coFetchMock = coFetch as jest.Mock;
 
-jest.mock('@console/internal/co-fetch', () => ({
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetch: jest.fn(),
 }));
 

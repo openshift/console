@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { useSafeFetch } from './utils';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import type { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';

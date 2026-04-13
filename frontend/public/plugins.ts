@@ -5,7 +5,7 @@ import type { Middleware } from 'redux';
 import { dynamicPluginNames } from '@console/plugin-sdk/src/utils/allowed-plugins';
 import type { RootState } from './redux';
 import { valid as semver } from 'semver';
-import { consoleFetch } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { REMOTE_ENTRY_CALLBACK } from '@console/dynamic-plugin-sdk/src/constants';
 import { noop } from 'lodash';
@@ -55,7 +55,7 @@ export const pluginStore = new PluginStore({
     },
 
     // Use coFetch for plugin resource fetching
-    fetchImpl: consoleFetch,
+    fetchImpl: coFetch,
 
     // Allows plugins to target a specific version of OpenShift via semver
     customDependencyResolutions: {

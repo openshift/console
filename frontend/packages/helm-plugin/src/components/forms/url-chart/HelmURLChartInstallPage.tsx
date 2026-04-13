@@ -10,12 +10,12 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { prune } from '@console/shared/src/components/dynamic-form/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { HelmChart, HelmRelease } from '../../../types/helm-types';
 import {
   getChartValuesYAML,

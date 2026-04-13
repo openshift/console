@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import type { Action, K8sKind } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyDeleteResourceModalOverlay } from '@console/shared';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { ProjectHelmChartRepositoryModel } from '../models';
 import type { HelmActionsScope } from './types';
 
