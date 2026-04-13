@@ -8,7 +8,6 @@ import type {
   SubsystemHealth,
   GetOperatorStatusPriority,
 } from '@console/dynamic-plugin-sdk';
-import { coFetch } from '@console/internal/co-fetch';
 import type { PrometheusResponse } from '@console/internal/components/graphs';
 import { humanizePercentage } from '@console/internal/components/utils/units';
 import type { ClusterVersionKind, ClusterOperator } from '@console/internal/module/k8s';
@@ -25,6 +24,7 @@ import {
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { isSingleNode } from '@console/shared/src/selectors/infrastructure';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const fetchK8sHealth = async (url: string) => {
   const response = await coFetch(url);

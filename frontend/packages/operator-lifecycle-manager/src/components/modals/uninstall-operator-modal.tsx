@@ -22,7 +22,6 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { k8sGetResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import {
   LinkifyExternal,
   ResourceLink,
@@ -45,6 +44,7 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import {
   getPatchForRemovingPlugins,
   isPluginEnabled,

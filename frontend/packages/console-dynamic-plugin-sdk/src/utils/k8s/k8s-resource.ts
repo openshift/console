@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import type { K8sModel } from '../../api/common-types';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import type { K8sModel } from '../../api/common-types';
 import type { Options } from '../../api/internal-types';
 import type { K8sResourceCommon, Patch, QueryParams } from '../../extensions/console-types';
 import { selectorToString, resourceURL } from './k8s-utils';

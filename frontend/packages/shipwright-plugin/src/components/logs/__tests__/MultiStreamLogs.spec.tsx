@@ -19,7 +19,7 @@ jest.mock('@console/shared', () => ({
 }));
 
 // Mock coFetchText
-jest.mock('@console/internal/co-fetch', () => ({
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetchText: jest.fn(() => Promise.resolve('')),
 }));
 

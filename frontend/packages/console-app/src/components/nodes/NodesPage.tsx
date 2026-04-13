@@ -36,7 +36,6 @@ import type {
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { NodeMetrics } from '@console/internal/actions/ui';
 import { setNodeMetrics } from '@console/internal/actions/ui';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import ListPageHeader from '@console/internal/components/factory/ListPage/ListPageHeader';
 import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
@@ -92,6 +91,7 @@ import {
   sortWithCSRResource,
 } from '@console/shared/src/sorts/nodes';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { nodeStatus } from '../../status';
 import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';

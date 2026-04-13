@@ -7,9 +7,9 @@ import type {
   CatalogItemDetailsProperty,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import type { APIError } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfile = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {

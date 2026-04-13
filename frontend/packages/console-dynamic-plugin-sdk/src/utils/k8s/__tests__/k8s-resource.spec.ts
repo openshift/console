@@ -1,13 +1,13 @@
+import * as coFetchModule from '@console/shared/src/utils/console-fetch';
 import type { K8sModel } from '../../../api/common-types';
-import * as coFetchModule from '../../fetch/console-fetch';
 import { k8sGet, k8sList, k8sGetResource } from '../k8s-resource';
 
-jest.mock('../../fetch/console-fetch', () => ({
-  ...jest.requireActual('../../fetch/console-fetch'),
-  consoleFetchJSON: jest.fn(),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  ...jest.requireActual('@console/shared/src/utils/console-fetch'),
+  coFetchJSON: jest.fn(),
 }));
 
-const spyCoFetchJSON = jest.mocked(coFetchModule.consoleFetchJSON);
+const spyCoFetchJSON = jest.mocked(coFetchModule.coFetchJSON);
 
 describe('k8s-Resource', () => {
   const MockPodModel: K8sModel = {

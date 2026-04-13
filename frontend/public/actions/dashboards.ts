@@ -1,7 +1,7 @@
 import { action, ActionType as Action } from 'typesafe-actions';
 import { Dispatch } from 'redux';
 
-import { coFetchJSON } from '../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { k8sBasePath } from '../module/k8s/consts';
 import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
 import type { RootState } from '../redux';
