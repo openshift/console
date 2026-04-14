@@ -250,7 +250,11 @@ export const navigateTo = (opt: devNavigationMenu) => {
 
 export const projectNameSpace = {
   clickProjectDropdown: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown').find('button').first().click();
+    cy.byLegacyTestID('namespace-bar-dropdown', { timeout: 30000 })
+      .should('exist')
+      .find('button')
+      .first()
+      .click();
   },
   selectCreateProjectOption: () => {
     cy.document().then((doc) => {
