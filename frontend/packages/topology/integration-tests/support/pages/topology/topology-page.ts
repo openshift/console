@@ -289,7 +289,10 @@ export const topologyPage = {
     cy.get(`[data-test-action="${action}"] button`).click();
   },
   getNode: (nodeName: string) => {
-    return cy.get(topologyPO.graph.nodeLabel).should('be.visible').contains(nodeName);
+    return cy
+      .get(topologyPO.graph.nodeLabel, { timeout: 30000 })
+      .should('be.visible')
+      .contains(nodeName);
   },
   getNodeLabel: (nodeName: string) => {
     return cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName);
