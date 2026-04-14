@@ -5,6 +5,6 @@
   "private": true,
   "scripts": {
     "test-cypress": "cypress open --env openshift=true",
-    "test-cypress-headless": "node --max-old-space-size=4096 ../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}"
+    "test-cypress-headless": "node --max-old-space-size=4096 ../../node_modules/.bin/cypress run ${CYPRESS_RECORD_KEY:+--record} --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:-electron}"
   }
 }

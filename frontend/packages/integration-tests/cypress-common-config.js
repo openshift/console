@@ -105,6 +105,7 @@ function setupNodeEvents(on, config) {
 
 /** @type {Cypress.ConfigOptions} */
 const commonConfig = {
+  projectId: 'yfeyv6',
   viewportWidth: 1920,
   viewportHeight: 1080,
   defaultCommandTimeout: 40000,
