@@ -11,6 +11,7 @@ export const nav = {
         // dropdown menu inside the toggle element, so .text() on the toggle
         // itself would include menu item labels.
         cy.byLegacyTestID('perspective-switcher-toggle')
+          .scrollIntoView()
           .should('be.visible')
           .then(($toggle) => {
             if (text === switchPerspective.Administrator) {
@@ -32,6 +33,7 @@ export const nav = {
           case 'Admin':
           case 'admin':
             cy.byLegacyTestID('perspective-switcher-toggle')
+              .scrollIntoView()
               .should('be.visible')
               .then(($toggle) => {
                 if ($toggle.attr('id') === 'core-platform-perspective') {
@@ -76,6 +78,7 @@ export const nav = {
             // dropdown menu item text (PF appends the menu inside the toggle
             // element via popperProps.appendTo).
             cy.byLegacyTestID('perspective-switcher-toggle')
+              .scrollIntoView()
               .should('be.visible')
               .find('.pf-v6-c-menu-toggle__text')
               .invoke('text')

@@ -1,13 +1,11 @@
-# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82510)
-@web-terminal @manual
+@web-terminal
 Feature: Web Terminal for Admin user
               As a user with admin rights, I should be able to use web terminal
 
 
         Background:
             Given user has logged in
-            #   And user is at administrator perspective
-            #   And user has created or selected namespace "aut-terminal"
+              And user has closed existing terminal workspace
 
 
         @regression @ODC-6463
@@ -33,7 +31,6 @@ Feature: Web Terminal for Admin user
               And user clicks on Start button
              Then user will see the terminal instance for namespace "openshift-terminal"
               And user ID obtained by API should match with user id in yaml editor for "openshift-terminal" namespace
-              And user has closed existing terminal workspace
 
 
         @smoke @ODC-6745
@@ -44,4 +41,3 @@ Feature: Web Terminal for Admin user
              Then user will see the terminal window
               And user will see the terminal instance for namespace "openshift-terminal"
               And user ID obtained by API should match with user id in yaml editor for "openshift-terminal" namespace
-              And user has closed existing terminal workspace
