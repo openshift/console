@@ -1,7 +1,16 @@
 import { useMemo, useState, useEffect, createRef } from 'react';
 import type { FC, ReactElement, JSXElementConstructor, MouseEvent } from 'react';
 import type { TabProps, TabContentProps } from '@patternfly/react-core';
-import { Tabs, Tab, TabTitleText, TabContent, PageSection } from '@patternfly/react-core';
+import {
+  Tabs,
+  Tab,
+  TabTitleText,
+  TabContent,
+  PageSection,
+  Sidebar,
+  SidebarContent,
+  SidebarPanel,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
 import {
@@ -19,6 +28,7 @@ import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
 import { USER_PREFERENCES_BASE_URL } from './const';
+import './UserPreferencePage.scss';
 import type {
   UserPreferenceTabGroup,
   ResolvedUserPreferenceItem,
@@ -26,7 +36,6 @@ import type {
 } from './types';
 import UserPreferenceForm from './UserPreferenceForm';
 import { getUserPreferenceGroups } from './utils/getUserPreferenceGroups';
-import './UserPreferencePage.scss';
 
 const UserPreferencePage: FC = () => {
   // resources and calls to hooks
@@ -78,6 +87,7 @@ const UserPreferencePage: FC = () => {
         );
         acc[1].push(
           <TabContent
+            className="pf-v6-u-w-75-on-lg pf-v6-u-w-50-on-xl"
             key={id}
             eventKey={id}
             id={id}
@@ -117,7 +127,7 @@ const UserPreferencePage: FC = () => {
   };
   const activeTab = sortedUserPreferenceGroups.find((group) => group.id === activeTabId)?.label;
   return (
-    <div className="co-user-preference-page">
+    <>
       <DocumentTitle>
         {activeTab
           ? t('console-app~User Preferences {{activeTab}}', { activeTab })
@@ -131,8 +141,8 @@ const UserPreferencePage: FC = () => {
       />
       <PageSection>
         {userPreferenceItemResolved ? (
-          <div className="co-user-preference-page-content">
-            <div className="co-user-preference-page-content__tabs">
+          <Sidebar hasGutter>
+            <SidebarPanel variant="sticky" className="co-user-preferences__sidebar-panel">
               <Tabs
                 activeKey={activeTabId}
                 onSelect={handleTabClick}
@@ -142,17 +152,17 @@ const UserPreferencePage: FC = () => {
               >
                 {userPreferenceTabs}
               </Tabs>
-            </div>
-            <div className="co-user-preference-page-content__tab-content">
+            </SidebarPanel>
+            <SidebarContent>
               {userPreferenceTabContents}
               {spotlight && spotlightElement && <Spotlight selector={spotlight} interactive />}
-            </div>
-          </div>
+            </SidebarContent>
+          </Sidebar>
         ) : (
           <LoadingBox />
         )}
       </PageSection>
-    </div>
+    </>
   );
 };
 
