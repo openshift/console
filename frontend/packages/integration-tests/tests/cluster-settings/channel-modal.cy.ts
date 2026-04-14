@@ -8,7 +8,7 @@ import { clusterSettings } from '../../views/cluster-settings';
 const CHANNEL_CANDIDATE = 'candidate-4.16';
 const CHANNEL_STABLE = 'stable-4.16';
 const CLUSTER_VERSION_ALIAS = 'clusterVersion';
-const WAIT_OPTIONS = { requestTimeout: 300000 };
+const WAIT_OPTIONS = { timeout: 300000 };
 
 describe('Cluster Settings channel modal', () => {
   before(() => {

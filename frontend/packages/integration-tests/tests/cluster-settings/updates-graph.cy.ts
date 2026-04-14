@@ -3,7 +3,7 @@ import { checkErrors } from '../../support';
 import { clusterSettings } from '../../views/cluster-settings';
 
 const CLUSTER_VERSION_ALIAS = 'clusterVersion';
-const WAIT_OPTIONS = { requestTimeout: 300000 };
+const WAIT_OPTIONS = { timeout: 300000 };
 
 describe('Cluster Settings updates graph', () => {
   before(() => {

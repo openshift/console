@@ -8,7 +8,7 @@ import { clusterSettings } from '../../views/cluster-settings';
 import { isLocalDevEnvironment } from '../../views/common';
 
 const CLUSTER_VERSION_ALIAS = 'clusterVersion';
-const WAIT_OPTIONS = { requestTimeout: 300000 };
+const WAIT_OPTIONS = { timeout: 300000 };
 
 // Disabled due to createRoot concurrent rendering failures (OCPBUGS-82504)
 xdescribe('Cluster Settings cluster update modal', () => {
