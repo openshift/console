@@ -39,7 +39,7 @@ const PLUGIN_MANIFEST_NEW_VERSION = {
   name: PLUGIN_NAME,
   version: '1.0.0',
 };
-const WAIT_OPTIONS = { requestTimeout: 300000 };
+const WAIT_OPTIONS = { timeout: 300000 };
 
 const loadApp = () => {
   cy.visit('/');
