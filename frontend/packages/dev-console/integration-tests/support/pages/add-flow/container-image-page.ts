@@ -6,7 +6,19 @@ import { gitPage } from './git-page';
 
 export const containerImagePage = {
   enterExternalRegistryImageName: (imageName: string) => {
-    cy.get(containerImagePO.imageSection.externalRegistry.imageName).type(imageName);
+    // Set the value atomically via native setter to avoid React 18 createRoot
+    // concurrent rendering stealing focus during character-by-character typing.
+    cy.get(containerImagePO.imageSection.externalRegistry.imageName)
+      .should('be.visible')
+      .then(($input) => {
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          'value',
+        ).set;
+        nativeInputValueSetter.call($input[0], imageName);
+        $input[0].dispatchEvent(new Event('input', { bubbles: true }));
+      })
+      .should('have.value', imageName);
     containerImagePage.verifyValidatedMessage();
   },
   selectProject: (projectName: string) =>
