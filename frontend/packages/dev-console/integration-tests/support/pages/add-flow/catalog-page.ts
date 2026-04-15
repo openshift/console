@@ -21,7 +21,11 @@ export const catalogPage = {
   },
   search: (keyword: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
-    cy.get(catalogPO.search).clear().type(keyword);
+    // Split clear/type so Cypress re-queries the DOM between operations.
+    // Under React 18 createRoot, clear() can trigger a re-render that
+    // replaces the input node, detaching it before type() runs.
+    cy.get(catalogPO.search).clear();
+    cy.get(catalogPO.search).type(keyword);
   },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),
   verifyCreateHelmReleasePage: () =>

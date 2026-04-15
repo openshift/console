@@ -33,7 +33,7 @@ const ImageSearchSection: FC<{ disabled?: boolean }> = ({ disabled = false }) =>
     initialValues.searchTerm,
     registry,
     setFieldValue,
-    values,
+    values.registry,
   ]);
 
   return (
