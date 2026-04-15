@@ -88,6 +88,14 @@ go mod vendor && go mod tidy # Update Go dependencies
 - Subject line answers "what changed"; body answers "why"
 - Frontend i18n updates: Run `yarn i18n` and commit updated keys alongside any code changes that affect i18n
 
+### Pull request strategy
+
+- When opening a PR, make sure to fill out the PR template located in `docs/pull_request_template.md` with all required sections. This helps the OpenShift Console team triage, review, and verify the changes effectively.
+- Always link to the relevant JIRA issue in the PR title and description. If not provided prompt the user for the JIRA.
+- You cannot produce screenshots or screen recordings but leave the field there so the user can fill it out afterwards.
+- You can use the `gh` CLI to open a PR but ALWAYS prompt the user before doing so to confirm the PR title, description, and linked JIRA issue are correct.
+- If the `jira` CLI or MCP is available, use it to fill out the PR description as well as assignee(s).
+
 ### Branch naming
 
 - Feature work: `CONSOLE-####` (Jira story number)
