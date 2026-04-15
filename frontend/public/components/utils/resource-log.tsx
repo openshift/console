@@ -234,6 +234,8 @@ const LogControls: React.FCC<LogControlsProps> = ({
   const [isLogTypeOpen, setIsLogTypeOpen] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
+  const toolbarId = `resource-log-toolbar-${resource?.metadata?.name || 'unknown'}`;
+
   const logTypes: Array<LogType> = [
     { type: LOG_TYPE_CURRENT, text: t('Current log') },
     { type: LOG_TYPE_PREVIOUS, text: t('Previous log') },
@@ -290,7 +292,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
         onOpenChange={(isOpen) => setIsLogTypeOpen(isOpen)}
         isOpen={isLogTypeOpen}
         popperProps={{
-          appendTo: 'inline', // needed for fullscreen
+          appendTo: isFullscreen ? () => document.getElementById(toolbarId) : undefined,
         }}
       >
         <SelectList>
@@ -374,7 +376,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
       onOpenChange={setIsOptionsOpen}
       isOpen={isOptionsOpen}
       popperProps={{
-        appendTo: 'inline', // needed for fullscreen
+        appendTo: isFullscreen ? () => document.getElementById(toolbarId) : undefined,
       }}
     >
       <SelectList>
@@ -430,7 +432,7 @@ const LogControls: React.FCC<LogControlsProps> = ({
     ));
 
   return (
-    <Toolbar data-test="resource-log-toolbar">
+    <Toolbar data-test="resource-log-toolbar" id={toolbarId}>
       <ToolbarContent>
         <ToolbarGroup className="pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-flex-direction-row-on-md pf-v6-u-w-100">
           <ToolbarGroup align={{ default: 'alignStart' }}>

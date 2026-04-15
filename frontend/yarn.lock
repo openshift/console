@@ -2911,12 +2911,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-code-editor@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "@patternfly/react-code-editor@npm:6.2.2"
+"@patternfly/react-code-editor@npm:~6.2.3":
+  version: 6.2.3
+  resolution: "@patternfly/react-code-editor@npm:6.2.3"
   dependencies:
     "@monaco-editor/react": "npm:^4.6.0"
-    "@patternfly/react-core": "npm:^6.2.2"
+    "@patternfly/react-core": "npm:^6.2.3"
     "@patternfly/react-icons": "npm:^6.2.2"
     "@patternfly/react-styles": "npm:^6.2.2"
     react-dropzone: "npm:14.3.5"
@@ -2924,7 +2924,7 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18
     react-dom: ^17 || ^18
-  checksum: 10c0/c808ba250c8f78295ffdf5babbd33d04a2141e53c97cd472cde70ca66d05c02b433a9412dec2f55d586185748b8cb023af0223d727e7dea695d86ef05fd479b4
+  checksum: 10c0/f7aff3b386f35558d40fe04d025545962980ed7fc485a289af9cecb3bc978aedfe6622a52f4df00a89e6602995d0574b2a22be35028f2ff9f8b18c430cc87558
   languageName: node
   linkType: hard
 
@@ -2963,9 +2963,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.1.0, @patternfly/react-core@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "@patternfly/react-core@npm:6.2.2"
+"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.1.0, @patternfly/react-core@npm:^6.2.3, @patternfly/react-core@npm:~6.2.3":
+  version: 6.2.3
+  resolution: "@patternfly/react-core@npm:6.2.3"
   dependencies:
     "@patternfly/react-icons": "npm:^6.2.2"
     "@patternfly/react-styles": "npm:^6.2.2"
@@ -2976,7 +2976,7 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18
     react-dom: ^17 || ^18
-  checksum: 10c0/a75facefb5111cbb90b00f9a616b04e88740a46a113455eefc0722b5a05851f32453f7fd29b281584dfc8536da0972f1fad890ee23075adcbd8c84e8aca90eb9
+  checksum: 10c0/57b5ba11daea17c6e10ebd4fe8f460275f99bbb2af81dc4da143b3f01c35c4d4959a56329a76a2eff25bab6499e30c0a688475bd13a7c18b8478ecfa3790bf21
   languageName: node
   linkType: hard
 
@@ -3029,11 +3029,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-table@npm:^6.0.0, @patternfly/react-table@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "@patternfly/react-table@npm:6.2.2"
+"@patternfly/react-table@npm:^6.0.0, @patternfly/react-table@npm:~6.2.3":
+  version: 6.2.3
+  resolution: "@patternfly/react-table@npm:6.2.3"
   dependencies:
-    "@patternfly/react-core": "npm:^6.2.2"
+    "@patternfly/react-core": "npm:^6.2.3"
     "@patternfly/react-icons": "npm:^6.2.2"
     "@patternfly/react-styles": "npm:^6.2.2"
     "@patternfly/react-tokens": "npm:^6.2.2"
@@ -3042,15 +3042,15 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18
     react-dom: ^17 || ^18
-  checksum: 10c0/6159880410a17c6a16c2497e741657ee68eea1ab68d4cacb442761edfe17b0c44da3f9064e744ce940cca5194070446251d27ce45b7be760e4d2253d0eef83ff
+  checksum: 10c0/c8a447f04e61129a9007ad263ad1fdeb4ad65751b220741e3dd6bc891f0cc4a66acee0096705cbd07f6de13201fce7cf5f6cf25e181dcee4fa57eaa8c7fb0faf
   languageName: node
   linkType: hard
 
-"@patternfly/react-templates@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "@patternfly/react-templates@npm:6.2.2"
+"@patternfly/react-templates@npm:~6.2.3":
+  version: 6.2.3
+  resolution: "@patternfly/react-templates@npm:6.2.3"
   dependencies:
-    "@patternfly/react-core": "npm:^6.2.2"
+    "@patternfly/react-core": "npm:^6.2.3"
     "@patternfly/react-icons": "npm:^6.2.2"
     "@patternfly/react-styles": "npm:^6.2.2"
     "@patternfly/react-tokens": "npm:^6.2.2"
@@ -3058,7 +3058,7 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18
     react-dom: ^17 || ^18
-  checksum: 10c0/9e8e192b102307501d03d7e0156892e11c776cfafbcc1c5eff26b99454191c4e2add50d3e57d879fa4d9a635a4fb83c240039969dd1309d349f28d4d805aee1e
+  checksum: 10c0/0f082f35fbc195c5c6230198f477a5afb5a7e9f7a3db63ae3f76469d77c88c95e64c5c0715de94b8331cd403daa807749226d1ba4b63cfd452c6bed9c6a93d08
   languageName: node
   linkType: hard
 
@@ -18084,16 +18084,16 @@ __metadata:
     "@patternfly/quickstarts": "npm:^6.4.0"
     "@patternfly/react-catalog-view-extension": "npm:^6.1.0"
     "@patternfly/react-charts": "npm:^8.2.2"
-    "@patternfly/react-code-editor": "npm:^6.2.2"
+    "@patternfly/react-code-editor": "npm:~6.2.3"
     "@patternfly/react-component-groups": "npm:6.2.0-prerelease.10"
     "@patternfly/react-console": "npm:^6.0.0"
-    "@patternfly/react-core": "npm:^6.2.2"
+    "@patternfly/react-core": "npm:~6.2.3"
     "@patternfly/react-data-view": "npm:^6.2.0"
     "@patternfly/react-icons": "npm:^6.2.2"
     "@patternfly/react-log-viewer": "npm:6.3.0-prerelease.2"
     "@patternfly/react-styles": "npm:^6.2.2"
-    "@patternfly/react-table": "npm:^6.2.2"
-    "@patternfly/react-templates": "npm:^6.2.2"
+    "@patternfly/react-table": "npm:~6.2.3"
+    "@patternfly/react-templates": "npm:~6.2.3"
     "@patternfly/react-tokens": "npm:^6.2.2"
     "@patternfly/react-topology": "npm:^6.2.0"
     "@patternfly/react-user-feedback": "npm:^6.1.0"
