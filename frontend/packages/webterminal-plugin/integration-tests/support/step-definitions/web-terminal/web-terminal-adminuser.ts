@@ -16,22 +16,15 @@ import {
 import { checkTerminalIcon } from '@console/dev-console/integration-tests/support/pages/functions/checkTerminalIcon';
 import { operatorsPage } from '@console/dev-console/integration-tests/support/pages/operators-page';
 import { searchResource } from '@console/dev-console/integration-tests/support/pages/search-resources/search-page';
-import { webTerminalPage } from '../pages/web-terminal/webTerminal-page';
 
 Given('user has logged in', () => {
   cy.login();
 });
 
 Given('user has closed existing terminal workspace', () => {
-  searchResource.searchResourceByNameAsAdmin('DevWorkspace');
-  cy.get('.loading-box').then(($body) => {
-    if ($body.find('[data-test="empty-box-body"]').length === 0) {
-      cy.log($body.find('[data-test="empty-box-body"]').length.toString());
-      searchResource.selectSearchedItem('terminal');
-      webTerminalPage.deleteTerminalInstanceActionMenu();
-    } else {
-      cy.log('No DevWorkspaces found');
-    }
+  cy.exec('oc delete devworkspaces --all -n openshift-terminal', {
+    failOnNonZeroExit: false,
+    timeout: 30000,
   });
 });
 
@@ -42,7 +35,7 @@ Given('user can see terminal icon on masthead', () => {
 
 When('user clicks on the Web Terminal icon on the Masthead', () => {
   cy.get(webTerminalPO.webTerminalIcon).click();
-  cy.get('cos-status-box cos-status-box--loading').should('not.exist');
+  cy.get('[data-test="loading-box"]').should('not.exist');
 });
 
 When('user clicks advanced option for Timeout', () => {

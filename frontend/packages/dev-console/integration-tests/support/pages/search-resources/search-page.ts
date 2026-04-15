@@ -25,7 +25,7 @@ export const searchResource = {
         navigateToAdminMenu(adminNavigationBar.Home);
       }
     });
-    cy.get(adminNavigationMenuPO.home.search).click();
+    cy.get(adminNavigationMenuPO.home.search).scrollIntoView().click();
     performResourceSearching(resourceName);
     cy.get('[id="resource-dropdown-listbox"]').scrollTo('top', { ensureScrollable: false });
     cy.byLegacyTestID('close-icon').should('be.visible').click({ force: true });
