@@ -23,6 +23,12 @@ Cypress.Cookies.debug(true);
 
 Cypress.on('uncaught:exception', (err) => {
   console.error('Uncaught exception', err);
+
+  // ResizeObserver loop errors are non-actionable and can be ignored
+  if (err.message && err.message.includes('ResizeObserver loop')) {
+    return false;
+  }
+
   return true; // test fails
 });
 
