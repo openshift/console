@@ -230,7 +230,18 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errMsg, statusCode)
 		return
 	}
-	defer backend.Close()
+	isExec := strings.HasSuffix(r.URL.Path, "/exec")
+	var backendWriteMutex sync.Mutex // Protects backend writes from copyMsgs and deferred exec cleanup
+	defer func() {
+		if isExec {
+			backendWriteMutex.Lock()
+			sendExecExitCommand(backend)
+			backendWriteMutex.Unlock()
+		}
+		closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "")
+		_ = backend.WriteControl(websocket.CloseMessage, closeMsg, time.Now().Add(websocketTimeout))
+		backend.Close()
+	}()
 
 	upgrader := &websocket.Upgrader{
 		Subprotocols: []string{subProtocol},
@@ -269,7 +280,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Can't just use io.Copy here since browsers care about frame headers.
 	go func() { errc <- copyMsgs(nil, frontend, backend) }()
-	go func() { errc <- copyMsgs(&writeMutex, backend, frontend) }()
+	go func() { errc <- copyMsgs(&backendWriteMutex, backend, frontend) }()
 
 	for {
 		select {
@@ -285,6 +296,31 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+	}
+}
+
+// sendExecExitCommand sends "exit\r" to the exec session's STDIN channel
+// to terminate the shell process and prevent orphaned processes when the
+// frontend WebSocket disconnects.
+func sendExecExitCommand(backend *websocket.Conn) {
+	var msg []byte
+	var msgType int
+
+	switch backend.Subprotocol() {
+	case "base64.channel.k8s.io":
+		exitCmd := base64.StdEncoding.EncodeToString([]byte("exit\r"))
+		msg = []byte("0" + exitCmd)
+		msgType = websocket.TextMessage
+	case "v4.channel.k8s.io", "v5.channel.k8s.io":
+		msg = append([]byte{0}, []byte("exit\r")...)
+		msgType = websocket.BinaryMessage
+	default:
+		klog.V(4).Infof("Skipping exec exit command for unsupported websocket subprotocol: %q", backend.Subprotocol())
+		return
+	}
+
+	if err := backend.WriteMessage(msgType, msg); err != nil {
+		klog.V(4).Infof("Failed to send exit command to exec session: %v", err)
 	}
 }
 
