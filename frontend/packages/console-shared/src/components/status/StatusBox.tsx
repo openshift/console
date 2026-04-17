@@ -88,7 +88,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   }
 
   if (!loaded) {
-    return skeleton ? <>{skeleton}</> : <LoadingBox />;
+    return skeleton ? <>{skeleton}</> : <LoadingBox blame={props.label} />;
   }
   return <Data data={data} {...dataProps} />;
 };
