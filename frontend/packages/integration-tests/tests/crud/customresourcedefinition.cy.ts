@@ -100,6 +100,7 @@ describe('CustomResourceDefinitions', () => {
     listPage.dvRows.shouldBeLoaded();
     listPage.dvRows.clickKebabAction(`CRD${testName}`, 'View instances');
     cy.url().should('include', `/k8s/all-namespaces/test.example.com~v1~CRD${testName}`);
+    cy.byTestID('empty-box').should('be.visible');
     listPage.isCreateButtonVisible();
     listPage.clickCreateYAMLbutton();
     yamlEditor.isLoaded();
