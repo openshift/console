@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import '@testing-library/jest-dom';
 import * as redux from 'react-redux';
 import { BrowserRouter } from 'react-router-dom-v5-compat';
-import { QueryBrowser } from '@console/shared/src/components/query-browser';
+import { QueryBrowser } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
