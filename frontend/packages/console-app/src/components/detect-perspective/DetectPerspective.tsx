@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react';
 import { createPath, useLocation } from 'react-router-dom-v5-compat';
 import { Perspective, PerspectiveContext } from '@console/dynamic-plugin-sdk';
 import { usePerspectives } from '@console/shared/src';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import PerspectiveDetector from './PerspectiveDetector';
 import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
 
@@ -43,7 +44,9 @@ const DetectPerspective: FC<DetectPerspectiveProps> = ({ children }) => {
     ) : (
       <PerspectiveDetector setActivePerspective={setActivePerspective} />
     )
-  ) : null;
+  ) : (
+    <LoadingBox blame="DetectPerspective" />
+  );
 };
 
 export default DetectPerspective;

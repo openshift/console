@@ -42,7 +42,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
+import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
@@ -220,7 +220,7 @@ const App = (props) => {
   };
 
   const content = (
-    <>
+    <Suspense fallback={<LoadingBox blame="App content suspense" />}>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -276,7 +276,7 @@ const App = (props) => {
       </QuickStartDrawer>
       <ConsoleNotifier location="BannerBottom" />
       <FeatureFlagExtensionLoader />
-    </>
+    </Suspense>
   );
 
   return (
@@ -285,14 +285,16 @@ const App = (props) => {
       <DetectNamespace>
         <ModalProvider>
           <OverlayProvider>
-            {contextProviderExtensions.reduce(
-              (children, e) => (
-                <EnhancedProvider key={e.uid} {...e.properties}>
-                  {children}
-                </EnhancedProvider>
-              ),
-              content,
-            )}
+            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
+              {contextProviderExtensions.reduce(
+                (children, e) => (
+                  <EnhancedProvider key={e.uid} {...e.properties}>
+                    {children}
+                  </EnhancedProvider>
+                ),
+                content,
+              )}
+            </Suspense>
           </OverlayProvider>
         </ModalProvider>
       </DetectNamespace>
@@ -312,10 +314,10 @@ const AppWithExtensions = (props) => {
     return <App contextProviderExtensions={contextProviderExtensions} {...props} />;
   }
 
-  return <LoadingBox />;
+  return <LoadingBox blame="AppWithExtensions" />;
 };
 
-render(<LoadingBox />, document.getElementById('app'));
+render(<LoadingBox blame="Init" />, document.getElementById('app'));
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -443,6 +445,11 @@ graphQLReady.onReady(() => {
   // Used by GUI tests to check for unhandled exceptions
   window.windowError = null;
   window.onerror = (message, source, lineno, colno, error) => {
+    // ResizeObserver loop errors are non-actionable and can be ignored
+    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+      return undefined;
+    }
+
     const formattedStack = error?.stack?.replace(/\\n/g, '\n');
     const formattedMessage = `unhandled error: ${message} ${formattedStack || ''}`;
     window.windowError = `${window.windowError ?? ''};${formattedMessage}`;
@@ -487,7 +494,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <Suspense fallback={<LoadingBox />}>
+    <Suspense fallback={<LoadingBox blame="Root suspense" />}>
       <Provider store={store}>
         <ThemeProvider>
           <HelmetProvider>

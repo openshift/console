@@ -1,89 +1,114 @@
-import * as React from 'react';
-import * as _ from 'lodash-es';
-
+import { ComponentType, lazy, ComponentProps, Suspense, useRef, FC } from 'react';
 import { LoadingBox } from './status-box';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error';
 
 /**
- * FIXME: Comparing two functions is not the *best* solution, but we can handle false negatives.
+ * Common interface for loading async React components.
  */
-const sameLoader = (a: () => Promise<React.ComponentType>) => (
-  b: () => Promise<React.ComponentType>,
+export type LazyLoader<C extends React.ComponentType | React.FCC> = () => Promise<C>;
+
+export type AsyncComponentProps = Pick<ComponentProps<typeof LoadingBox>, 'blame'> & {
+  /** The lazy loader function to load the component. Note that this is only called once on mount. */
+  loader: LazyLoader<ComponentType<unknown>>;
+  /** Optional loading component to show while the component is being loaded. */
+  LoadingComponent?: ComponentType<Partial<Pick<ComponentProps<typeof LoadingBox>, 'blame'>>>;
+} & ComponentProps<ComponentType<any>>;
+
+/** Comparing two functions is not the *best* solution, but we can handle false negatives. */
+const sameLoader = (
+  a?: LazyLoader<ComponentType<unknown>>,
+  b?: LazyLoader<ComponentType<unknown>>,
 ) => a?.name === b?.name && (a || 'a').toString() === (b || 'b').toString();
 
-enum AsyncComponentError {
-  ComponentNotFound = 'COMPONENT_NOT_FOUND',
-}
+/** Maximum number of retries for loading a component. */
+const MAX_RETRIES = 25;
 
-export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncComponentState> {
-  state: AsyncComponentState = { Component: null, loader: null };
-  props: AsyncComponentProps;
+/**
+ * Wraps a loader function with retry logic using exponential backoff.
+ *
+ * If the loader fails, it will retry up to {@link MAX_RETRIES} times with
+ * increasing delays.
+ */
+const withRetry = <C extends ComponentType | React.FCC>(loader: LazyLoader<C>): LazyLoader<C> => {
+  return async () => {
+    let lastError: unknown;
 
-  private retryCount: number = 0;
-  private maxRetries: number = 25;
-  private isAsyncMounted: boolean = false;
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        return await loader(); // Attempt to load component
+      } catch (error) {
+        lastError = error;
 
-  static getDerivedStateFromProps(props, state) {
-    if (!sameLoader(props.loader)(state.loader)) {
-      return { Component: null, loader: props.loader };
-    }
-    return null;
-  }
-
-  componentDidUpdate() {
-    if (this.state.Component === null) {
-      this.loadComponent();
-    }
-  }
-
-  componentDidMount() {
-    this.isAsyncMounted = true;
-    if (this.state.Component === null) {
-      this.loadComponent();
-    }
-  }
-
-  componentWillUnmount() {
-    this.isAsyncMounted = false;
-  }
-
-  private loadComponent() {
-    this.state
-      .loader()
-      .then((Component) => {
-        if (!Component) {
-          return Promise.reject(AsyncComponentError.ComponentNotFound);
+        // Wait with exponential backoff before retrying (capped at 30s)
+        if (attempt < MAX_RETRIES) {
+          const delay = Math.min(100 * Math.pow(2, attempt), 30000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
-        this.isAsyncMounted && this.setState({ Component });
-      })
-      .catch((error) => {
-        if (error === AsyncComponentError.ComponentNotFound) {
-          // eslint-disable-next-line no-console
-          console.error('Component does not exist in module');
-        } else {
-          setTimeout(() => this.loadComponent(), this.retryAfter);
-        }
-      });
+      }
+    }
+    throw lastError;
+  };
+};
+
+/**
+ * Load a component asynchronously with a loading state.
+ */
+export const AsyncComponent: React.FC<AsyncComponentProps> = ({
+  loader,
+  LoadingComponent = LoadingBox,
+  // Typically import loader strings are of the form "() => import('./path/to/Component').then(c => c.Component)"
+  // So we extract "Component" from the end of the string for easier identification.
+  blame = String(loader).split('.').pop()?.replaceAll(')', '') ?? 'AsyncComponent',
+  ...props
+}): ReturnType<FC> => {
+  /**
+   * Use refs to make the loader referentially stable. Only rerender
+   * when the loader actually changes according to {@link sameLoader}.
+   *
+   * This prevents infinite rerenders when inline loader functions are used.
+   */
+  const loaderRef = useRef<LazyLoader<ComponentType<unknown>> | null>(null);
+  const lazyComponentRef = useRef<ReturnType<typeof lazy> | null>(null);
+
+  if (!sameLoader(loaderRef.current, loader)) {
+    loaderRef.current = loader;
+    // WORKAROUND (OCPBUGS-77246): useResolvedExtensions mutates shared
+    // extension objects in-place, replacing CodeRef loaders with resolved
+    // component functions. When useExtensions later returns the same object
+    // (e.g. for console.tab/horizontalNav), the "loader" is the component
+    // itself rather than a CodeRef. Wrap the loader so that each call
+    // detects this and returns the component directly.
+    //
+    // This workaround is not needed in 4.22+ where useResolvedExtensions
+    // deep-clones the raw extension object before resolution, fixing the
+    // root cause.
+    const safeLoader = (): Promise<ComponentType<unknown>> => {
+      let result: unknown;
+      try {
+        result = loader();
+      } catch {
+        // Threw synchronously (e.g. hooks called outside render) -- loader is a component
+        return Promise.resolve((loader as unknown) as ComponentType<unknown>);
+      }
+      if (result && typeof (result as any).then === 'function') {
+        // Normal case: loader returned a thenable (CodeRef / dynamic import)
+        return result as Promise<ComponentType<unknown>>;
+      }
+      // Returned a non-Promise (e.g. React element) -- loader is a component
+      return Promise.resolve((loader as unknown) as ComponentType<unknown>);
+    };
+    lazyComponentRef.current = lazy(() =>
+      withRetry(safeLoader)().then((module) => ({ default: module })),
+    );
   }
 
-  private get retryAfter(): number {
-    this.retryCount++;
-    const base = this.retryCount < this.maxRetries ? this.retryCount : this.maxRetries;
-    return 100 * Math.pow(base, 2);
-  }
+  const LazyComponent = lazyComponentRef.current!;
 
-  render() {
-    const { Component } = this.state;
-    const { LoadingComponent = LoadingBox, forwardRef } = this.props;
-    const rest = _.omit(this.props, 'loader');
-    return Component != null ? <Component ref={forwardRef} {...rest} /> : <LoadingComponent />;
-  }
-}
-
-export type AsyncComponentProps = {
-  loader: () => Promise<React.ComponentType>;
-  LoadingComponent?: React.ReactNode;
-} & any;
-export type AsyncComponentState = {
-  Component: React.ComponentType;
-  loader: () => Promise<React.ComponentType>;
+  return (
+    <ErrorBoundaryPage>
+      <Suspense fallback={<LoadingComponent blame={blame} />}>
+        <LazyComponent {...props} />
+      </Suspense>
+    </ErrorBoundaryPage>
+  );
 };

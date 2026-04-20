@@ -1,16 +1,5 @@
 import { quickStartSidebarPO } from '../pageObjects/quickStarts-po';
 
-//  To ignore the resizeObserverLoopErrors on CI, adding below code
-const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
-/* eslint-disable consistent-return */
-Cypress.on('uncaught:exception', (err, runnable, promise) => {
-  /* returning false here prevents Cypress from failing the test */
-  if (resizeObserverLoopErrRe.test(err.message)) {
-    return false;
-  }
-  cy.log('uncaught:exception', err, runnable, promise);
-});
-
 before(() => {
   cy.exec('../../../../contrib/create-user.sh');
   const bridgePasswordIDP: string = Cypress.env('BRIDGE_HTPASSWD_IDP') || 'test';

@@ -99,7 +99,7 @@ export const verifyPageTitleAndSubtitle = ({
 };
 
 // Verifies file input UI elements and test file upload selection functionality and filename verifications.
-export const verifyIDPFileFields = ({
+export const verifyIDPFileFields = async ({
   inputLabel,
   idPrefix = 'ca-file-input',
   isRequired = false,
@@ -114,8 +114,8 @@ export const verifyIDPFileFields = ({
   fileName?: string;
   fileContent?: string;
 }) => {
-  // Verify the label is visible, input element 'type' attribute and required status
-  const input = screen.getByLabelText(`${inputLabel} filename`);
+  // Wait for the async component to load and find the filename input by its aria-label
+  const input = await screen.findByLabelText(`${inputLabel} filename`);
   verifyFormElementBasics(input, 'text', '');
 
   // Verify browse button visible and input element 'type' attribute within its container
