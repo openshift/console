@@ -68,6 +68,9 @@ describe('Debug pod', () => {
     cy.visit(`/k8s/ns/${testName}/pods/${POD_NAME}`);
     detailsPage.isLoaded();
     cy.byTestID('popover-status-button', { timeout: 60000 }).click();
+    // Regression test for OCPBUGS-83813: Wait for popover content to be stable before clicking
+    // https://issues.redhat.com/browse/OCPBUGS-83813
+    cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).should('be.visible');
     cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
@@ -79,8 +82,9 @@ describe('Debug pod', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
     listPage.dvRows.shouldExist(POD_NAME);
     listPage.dvRows.clickStatusButton(POD_NAME);
-    // Click on first debug link
-    cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).click();
+    // Regression test for OCPBUGS-83813: Wait for popover content to be stable before clicking
+    // https://issues.redhat.com/browse/OCPBUGS-83813
+    cy.byTestID(`popup-debug-container-link-${CONTAINER_NAME}`).should('be.visible').click();
     listPage.titleShouldHaveText(`Debug ${CONTAINER_NAME}`);
     cy.get(XTERM_CLASS).should('exist');
 
