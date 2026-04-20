@@ -3366,16 +3366,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk-webpack@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.1.0"
+"@openshift/dynamic-plugin-sdk-webpack@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.1.1"
   dependencies:
     lodash: "npm:^4.17.23"
     semver: "npm:^7.7.3"
     yup: "npm:^1.7.1"
   peerDependencies:
     webpack: ^5.100.0
-  checksum: 10c0/ac947101408406a049a67fc54549ffca03bec3dbaae705f9434f95e6f6c79319efcba9c0bff69fc16abee55a7ecc5df130e96b7cb6d958c298ac4adbb87c2994
+  checksum: 10c0/365b36ac1081e5f633b41b312b63951325153f4223ee4dc7afc53b7312bc9cf60e36f6cc3a8196f63b44677dc5f7dec3c0409ef2cbd240133a1ecbbf46aeca72
   languageName: node
   linkType: hard
 
@@ -17306,7 +17306,7 @@ __metadata:
     "@graphql-codegen/typescript-graphql-files-modules": "npm:^1.15.1"
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
-    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.0"
+    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.1"
     "@patternfly/patternfly": "npm:~6.4.0"
     "@patternfly/quickstarts": "npm:~6.4.0"
     "@patternfly/react-catalog-view-extension": "npm:~6.3.0"
