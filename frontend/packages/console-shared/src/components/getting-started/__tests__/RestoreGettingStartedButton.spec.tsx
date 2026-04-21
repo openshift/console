@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { RestoreGettingStartedButton } from '../RestoreGettingStartedButton';
 import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
@@ -29,7 +30,8 @@ describe('RestoreGettingStartedButton', () => {
     expect(screen.getByText('Show getting started resources')).toBeVisible();
   });
 
-  it('should change user settings to show if button is pressed', () => {
+  it('should change user settings to show if button is pressed', async () => {
+    const user = userEvent.setup();
     const setGettingStartedShowState = jest.fn();
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.HIDE,
@@ -39,12 +41,13 @@ describe('RestoreGettingStartedButton', () => {
 
     renderWithProviders(<RestoreGettingStartedButton userPreferenceKey="test" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show getting started resources' }));
+    await user.click(screen.getByRole('button', { name: 'Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.SHOW);
   });
 
-  it('should change user settings to disappear if close (x) on the button is pressed', () => {
+  it('should change user settings to disappear if close (x) on the button is pressed', async () => {
+    const user = userEvent.setup();
     const setGettingStartedShowState = jest.fn();
     useGettingStartedShowStateMock.mockReturnValue([
       GettingStartedShowState.HIDE,
@@ -54,7 +57,7 @@ describe('RestoreGettingStartedButton', () => {
 
     renderWithProviders(<RestoreGettingStartedButton userPreferenceKey="test" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Close Show getting started resources' }));
+    await user.click(screen.getByRole('button', { name: 'Close Show getting started resources' }));
     expect(setGettingStartedShowState).toHaveBeenCalledTimes(1);
     expect(setGettingStartedShowState).toHaveBeenLastCalledWith(GettingStartedShowState.DISAPPEAR);
   });

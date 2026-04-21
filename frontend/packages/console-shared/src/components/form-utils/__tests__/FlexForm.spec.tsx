@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import FlexForm from '../FlexForm';
 
@@ -22,14 +23,19 @@ describe('FlexForm', () => {
     });
   });
 
-  it('should preserve form props including onSubmit', () => {
+  it('should preserve form props including onSubmit', async () => {
+    const user = userEvent.setup();
     const handleSubmit = jest.fn((e) => e.preventDefault());
-    renderWithProviders(<FlexForm onSubmit={handleSubmit} aria-label="flex form" />);
+    renderWithProviders(
+      <FlexForm onSubmit={handleSubmit} aria-label="flex form">
+        <button type="submit">Submit</button>
+      </FlexForm>,
+    );
 
     const formElement = screen.getByRole('form', { name: 'flex form' });
     expect(formElement).toHaveAttribute('style');
 
-    fireEvent.submit(formElement);
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
     expect(handleSubmit).toHaveBeenCalledTimes(1);
   });
 
@@ -45,7 +51,8 @@ describe('FlexForm', () => {
     expect(screen.getByRole('button', { name: 'Submit' })).toBeVisible();
   });
 
-  it('should handle form submission', () => {
+  it('should handle form submission', async () => {
+    const user = userEvent.setup();
     const handleSubmit = jest.fn((e) => e.preventDefault());
 
     renderWithProviders(
@@ -55,7 +62,7 @@ describe('FlexForm', () => {
     );
 
     const submitButton = screen.getByRole('button', { name: 'Submit' });
-    fireEvent.click(submitButton);
+    await user.click(submitButton);
 
     expect(handleSubmit).toHaveBeenCalledTimes(1);
   });

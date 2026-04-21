@@ -39,8 +39,8 @@ describe('Add Identity Provider: Keystone Authentication', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'keystone',
       testValue: mockData.updatedFormValues.name,
@@ -49,16 +49,16 @@ describe('Add Identity Provider: Keystone Authentication', () => {
     });
   });
 
-  it('should render the Domain name label and input element', () => {
-    verifyInputField({
+  it('should render the Domain name label and input element', async () => {
+    await verifyInputField({
       inputLabel: 'Domain name',
       testValue: mockData.updatedFormValues.url,
       isRequired: true,
     });
   });
 
-  it('should render the URL label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the URL label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import type { RenderResult } from '@testing-library/react';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';
@@ -41,22 +42,24 @@ afterEach(() => cleanup());
 
 describe('ImagesSection', () => {
   it('should have image-stream-tag dropdowns or image-name text field based on fromImageStreamTagCheckbox value', async () => {
+    const user = userEvent.setup();
     const fromImageStreamTagCheckbox = screen.getByRole('checkbox', {
       name: /deploy image from an image stream tag/i,
     });
 
-    expect(screen.queryByTestId('image-stream-tag')).not.toBeNull();
-    expect(screen.queryByTestId('image-name')).toBeNull();
+    expect(screen.queryByTestId('image-stream-tag')).toBeInTheDocument();
+    expect(screen.queryByTestId('image-name')).not.toBeInTheDocument();
 
-    fireEvent.click(fromImageStreamTagCheckbox);
+    await user.click(fromImageStreamTagCheckbox);
 
     await waitFor(() => {
-      expect(screen.queryByTestId('image-name')).not.toBeNull();
-      expect(screen.queryByTestId('image-stream-tag')).toBeNull();
+      expect(screen.queryByTestId('image-name')).toBeInTheDocument();
+      expect(screen.queryByTestId('image-stream-tag')).not.toBeInTheDocument();
     });
   });
 
   it('should have the required trigger checkbox fields based on fromImageStreamTagCheckbox value', async () => {
+    const user = userEvent.setup();
     const fromImageStreamTagCheckbox = screen.getByRole('checkbox', {
       name: /deploy image from an image stream tag/i,
     });
@@ -65,30 +68,31 @@ describe('ImagesSection', () => {
       screen.queryByRole('checkbox', {
         name: /auto deploy when new Image is available/i,
       }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('checkbox', {
         name: /auto deploy when deployment configuration changes/i,
       }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
 
-    fireEvent.click(fromImageStreamTagCheckbox);
+    await user.click(fromImageStreamTagCheckbox);
 
     await waitFor(() => {
       expect(
         screen.queryByRole('checkbox', {
           name: /auto deploy when new Image is available/i,
         }),
-      ).toBeNull();
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByRole('checkbox', {
           name: /auto deploy when deployment configuration changes/i,
         }),
-      ).not.toBeNull();
+      ).toBeInTheDocument();
     });
   });
 
   it('should have the required trigger checkbox fields based on resourceType', async () => {
+    const user = userEvent.setup();
     renderResults.rerender(
       <MockForm handleSubmit={handleSubmit}>
         {() => (
@@ -107,30 +111,31 @@ describe('ImagesSection', () => {
       screen.queryByRole('checkbox', {
         name: /auto deploy when new Image is available/i,
       }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('checkbox', {
         name: /auto deploy when deployment configuration changes/i,
       }),
-    ).toBeNull();
+    ).not.toBeInTheDocument();
 
-    fireEvent.click(fromImageStreamTagCheckbox);
+    await user.click(fromImageStreamTagCheckbox);
 
     await waitFor(() => {
       expect(
         screen.queryByRole('checkbox', {
           name: /auto deploy when new Image is available/i,
         }),
-      ).toBeNull();
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByRole('checkbox', {
           name: /auto deploy when deployment configuration changes/i,
         }),
-      ).toBeNull();
+      ).not.toBeInTheDocument();
     });
   });
 
   it('should have the advanced options expand/collapse button', async () => {
+    const user = userEvent.setup();
     const showAdvancedOptions = screen.getByRole('button', {
       name: /show advanced image options/i,
     });
@@ -139,26 +144,26 @@ describe('ImagesSection', () => {
       screen.queryByRole('button', {
         name: /show advanced image options/i,
       }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', {
         name: /hide advanced image options/i,
       }),
-    ).toBeNull();
+    ).not.toBeInTheDocument();
 
-    fireEvent.click(showAdvancedOptions);
+    await user.click(showAdvancedOptions);
 
     await waitFor(() => {
       expect(
         screen.queryByRole('button', {
           name: /show advanced image options/i,
         }),
-      ).toBeNull();
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByRole('button', {
           name: /hide advanced image options/i,
         }),
-      ).not.toBeNull();
+      ).toBeInTheDocument();
     });
   });
 });

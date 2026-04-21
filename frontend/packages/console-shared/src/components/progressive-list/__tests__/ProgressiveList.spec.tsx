@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import ProgressiveList from '../ProgressiveList';
 import ProgressiveListItem from '../ProgressiveListItem';
@@ -49,7 +50,8 @@ describe('ProgressiveList', () => {
     expect(screen.getByRole('button', { name: 'Dummy' })).toBeVisible();
   });
 
-  it('clicking on a button should add that component related to it to visibleItems list', () => {
+  it('clicking on a button should add that component related to it to visibleItems list', async () => {
+    const user = userEvent.setup();
     const visibleItems: string[] = [];
     const callback = jest.fn((item: string) => {
       visibleItems.push(item);
@@ -67,7 +69,7 @@ describe('ProgressiveList', () => {
     expect(screen.queryByText('Dummy Component')).not.toBeInTheDocument();
     expect(visibleItems).toHaveLength(0);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Dummy' }));
+    await user.click(screen.getByRole('button', { name: 'Dummy' }));
 
     expect(callback).toHaveBeenCalledWith('Dummy');
     expect(visibleItems).toHaveLength(1);

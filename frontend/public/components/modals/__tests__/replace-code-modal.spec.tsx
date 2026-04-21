@@ -1,4 +1,5 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ReplaceCodeModal } from '../replace-code-modal';
 
 jest.mock('react-i18next', () => ({
@@ -32,34 +33,38 @@ describe('ReplaceCodeModal', () => {
     expect(getByText('Keep both')).toBeTruthy();
   });
 
-  it('should call handleCodeReplace when "Yes" button is clicked', () => {
+  it('should call handleCodeReplace when "Yes" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = renderComponent();
 
-    fireEvent.click(getByText('Yes'));
+    await user.click(getByText('Yes'));
     expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should call handleCodeReplace when "No" button is clicked', () => {
+  it('should call handleCodeReplace when "No" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = renderComponent();
 
-    fireEvent.click(getByText('No'));
+    await user.click(getByText('No'));
     expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should call handleCodeReplace when "Keep both" button is clicked', () => {
+  it('should call handleCodeReplace when "Keep both" button is clicked', async () => {
+    const user = userEvent.setup();
     const { getByText } = renderComponent();
 
-    fireEvent.click(getByText('Keep both'));
+    await user.click(getByText('Keep both'));
     expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should call handleCodeReplace when close button (X) is clicked', () => {
+  it('should call handleCodeReplace when close button (X) is clicked', async () => {
+    const user = userEvent.setup();
     const { getByLabelText } = renderComponent();
 
     const closeButton = getByLabelText('Close');
     expect(closeButton).toBeTruthy();
 
-    fireEvent.click(closeButton);
+    await user.click(closeButton);
     expect(handleCodeReplaceMock).toHaveBeenCalledTimes(1);
   });
 });

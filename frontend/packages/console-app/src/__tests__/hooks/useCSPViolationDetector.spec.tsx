@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   newPluginCSPViolationEvent,
@@ -78,7 +78,7 @@ describe('useCSPViolationDetector', () => {
     mockCacheEvent.mockReturnValue(true);
     renderWithProviders(<TestComponent />);
     act(() => {
-      fireEvent(document, testEvent);
+      document.dispatchEvent(testEvent);
     });
     expect(mockCacheEvent).toHaveBeenCalledWith(testPluginEvent);
     expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', testPluginEvent);
@@ -89,7 +89,7 @@ describe('useCSPViolationDetector', () => {
     renderWithProviders(<TestComponent />);
 
     act(() => {
-      fireEvent(document, testEvent);
+      document.dispatchEvent(testEvent);
     });
 
     expect(mockCacheEvent).toHaveBeenCalledWith(testPluginEvent);
@@ -104,7 +104,7 @@ describe('useCSPViolationDetector', () => {
     const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
     renderWithProviders(<TestComponent />);
     act(() => {
-      fireEvent(document, testEventWithPlugin);
+      document.dispatchEvent(testEventWithPlugin);
     });
     expect(mockCacheEvent).toHaveBeenCalledWith(expected);
     expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', expected);
@@ -119,7 +119,7 @@ describe('useCSPViolationDetector', () => {
     const expected = newPluginCSPViolationEvent('foo', testEventWithPlugin);
     renderWithProviders(<TestComponent />);
     act(() => {
-      fireEvent(document, testEventWithPlugin);
+      document.dispatchEvent(testEventWithPlugin);
     });
     expect(mockCacheEvent).toHaveBeenCalledWith(expected);
     expect(mockFireTelemetry).toHaveBeenCalledWith('CSPViolation', expected);

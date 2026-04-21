@@ -1,4 +1,5 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
 import { Resources } from '../../import/import-types';
@@ -18,6 +19,7 @@ afterEach(() => cleanup());
 
 describe('DeploymentStrategySection(DeploymentConfig)', () => {
   it('should show strategy fields based on strategy type selected', async () => {
+    const user = userEvent.setup();
     render(
       <MockForm handleSubmit={handleSubmit} enableReinitialize>
         {() => (
@@ -31,36 +33,31 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
       </MockForm>,
     );
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('rollingParams')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('rollingParams')).toBeInTheDocument();
 
     const strategyDropdown = screen.getByRole('button', {
       name: /strategy type/i,
     });
 
-    fireEvent.click(strategyDropdown);
+    await user.click(strategyDropdown);
 
     const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
-    fireEvent.click(recreateButton);
+    await user.click(recreateButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('recreateParams')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('recreateParams')).toBeInTheDocument();
 
-    fireEvent.click(strategyDropdown);
+    await user.click(strategyDropdown);
 
     const customButton = screen.getByRole('option', { name: /custom/i });
 
-    fireEvent.click(customButton);
+    await user.click(customButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('customParams')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('customParams')).toBeInTheDocument();
   });
 
   it('should render additional fields for Recreate strategy type', async () => {
+    const user = userEvent.setup();
     render(
       <MockForm
         handleSubmit={handleSubmit}
@@ -85,62 +82,53 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
       name: /strategy type/i,
     });
 
-    fireEvent.click(strategyDropdown);
+    await user.click(strategyDropdown);
 
     const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
-    fireEvent.click(recreateButton);
+    await user.click(recreateButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('recreateParams')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('recreateParams')).toBeInTheDocument();
 
     const advancedSection = screen.getByText('Show additional parameters and lifecycle hooks');
 
-    fireEvent.click(advancedSection);
+    await user.click(advancedSection);
 
-    await waitFor(() => {
-      expect(screen.getByText('Pre Lifecycle Hook')).not.toBeNull();
-      expect(screen.getByText('Mid Lifecycle Hook')).not.toBeNull();
-      expect(screen.getByText('Post Lifecycle Hook')).not.toBeNull();
-    });
+    expect(await screen.findByText('Pre Lifecycle Hook')).toBeVisible();
+    expect(await screen.findByText('Mid Lifecycle Hook')).toBeVisible();
+    expect(await screen.findByText('Post Lifecycle Hook')).toBeVisible();
 
     const addMidLifecycleHook = screen.getByText('Add mid lifecycle hook');
 
-    fireEvent.click(addMidLifecycleHook);
+    await user.click(addMidLifecycleHook);
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(
-          'Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes',
-        ),
-      ).not.toBeNull();
-    });
+    expect(
+      await screen.findByText(
+        'Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes',
+      ),
+    ).toBeVisible();
 
     let action = screen.getByText(
       'Runs a command in a new pod using the container from the deployment template. You can add additional environment variables and volumes',
     );
-    fireEvent.click(action);
+    await user.click(action);
 
-    await waitFor(() => {
-      expect(screen.getByText('Container name')).not.toBeNull();
-      expect(screen.getByText('Command')).not.toBeNull();
-    });
+    expect(await screen.findByText('Container name')).toBeVisible();
+    expect(await screen.findByText('Command')).toBeVisible();
 
     action = screen.getByText(
       'Tags the current image as an image stream tag if the deployment succeeds',
     );
-    fireEvent.click(action);
+    await user.click(action);
 
-    await waitFor(() => {
-      expect(screen.getByText('Container name')).not.toBeNull();
-      expect(screen.getByText('Tag as')).not.toBeNull();
-    });
+    expect(await screen.findByText('Container name')).toBeVisible();
+    expect(await screen.findByText('Tag as')).toBeVisible();
   });
 });
 
 describe('DeploymentStrategySection(Deployment)', () => {
   it('should show strategy fields based on strategy type selected', async () => {
+    const user = userEvent.setup();
     render(
       <MockForm
         initialValues={{
@@ -165,24 +153,22 @@ describe('DeploymentStrategySection(Deployment)', () => {
       name: /strategy type/i,
     });
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('rollingUpdate')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('rollingUpdate')).toBeInTheDocument();
 
-    fireEvent.click(strategyDropdown);
+    await user.click(strategyDropdown);
 
     const recreateButton = screen.getByRole('option', { name: /recreate/i });
 
-    fireEvent.click(recreateButton);
+    await user.click(recreateButton);
 
     await waitFor(() => {
-      expect(screen.queryByTestId('recreateParams')).toBeNull();
+      expect(screen.queryByTestId('recreateParams')).not.toBeInTheDocument();
     });
 
-    fireEvent.click(strategyDropdown);
+    await user.click(strategyDropdown);
 
     await waitFor(() => {
-      expect(screen.queryByRole('option', { name: /custom/i })).toBeNull();
+      expect(screen.queryByRole('option', { name: /custom/i })).not.toBeInTheDocument();
     });
   });
 });

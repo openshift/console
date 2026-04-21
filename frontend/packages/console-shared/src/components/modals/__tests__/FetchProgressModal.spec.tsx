@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { coFetch } from '@console/internal/co-fetch';
 import type { FetchProgressModalProps } from '../FetchProgressModal';
 import { FetchProgressModal } from '../FetchProgressModal';
@@ -163,6 +164,7 @@ describe('FetchProgressModal', () => {
   });
 
   it('should show toast when download is cancelled', async () => {
+    const user = userEvent.setup();
     const setIsDownloading = jest.fn();
     coFetchMock.mockImplementation(
       (_url: string, options: { signal: AbortSignal }) =>
@@ -177,7 +179,7 @@ describe('FetchProgressModal', () => {
       <FetchProgressModal {...defaultProps} isDownloading setIsDownloading={setIsDownloading} />,
     );
 
-    fireEvent.click(screen.getByTestId('fetch-progress-modal-cancel'));
+    await user.click(screen.getByTestId('fetch-progress-modal-cancel'));
 
     await waitFor(() => {
       expect(setIsDownloading).toHaveBeenCalledWith(false);
@@ -194,7 +196,8 @@ describe('FetchProgressModal', () => {
     expect(addToastMock).toHaveBeenCalled();
   });
 
-  it('should abort the fetch when Cancel button is clicked', () => {
+  it('should abort the fetch when Cancel button is clicked', async () => {
+    const user = userEvent.setup();
     const abortSpy = jest.spyOn(AbortController.prototype, 'abort');
     const setIsDownloading = jest.fn();
     coFetchMock.mockReturnValue(new Promise(() => {}));
@@ -203,7 +206,7 @@ describe('FetchProgressModal', () => {
       <FetchProgressModal {...defaultProps} isDownloading setIsDownloading={setIsDownloading} />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(abortSpy).toHaveBeenCalled();
     expect(setIsDownloading).toHaveBeenCalledWith(false);
@@ -312,6 +315,7 @@ describe('FetchProgressModal', () => {
   });
 
   it('should close the modal when PF modal close button is clicked', async () => {
+    const user = userEvent.setup();
     const setIsDownloading = jest.fn();
     const mockReader = createMockReader();
     coFetchMock.mockResolvedValue({
@@ -334,7 +338,7 @@ describe('FetchProgressModal', () => {
       />,
     );
 
-    fireEvent.click(screen.getByLabelText('Close'));
+    await user.click(screen.getByLabelText('Close'));
 
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

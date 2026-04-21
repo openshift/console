@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { act, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import type { ToastContextType } from '../ToastContext';
 import ToastContext, { ToastVariant } from '../ToastContext';
@@ -70,6 +71,7 @@ describe('ToastProvider', () => {
   });
 
   it('should dismiss toast on action', async () => {
+    const user = userEvent.setup();
     const actionFn = jest.fn();
     renderWithProviders(
       <ToastProvider>
@@ -97,7 +99,7 @@ describe('ToastProvider', () => {
     });
 
     const actionButton = screen.getByRole('button', { name: /action 1/i });
-    fireEvent.click(actionButton);
+    await user.click(actionButton);
 
     expect(actionFn).toHaveBeenCalledTimes(1);
 
@@ -140,6 +142,7 @@ describe('ToastProvider', () => {
   });
 
   it('should dismiss toast on action on anchor click', async () => {
+    const user = userEvent.setup();
     const actionFn = jest.fn();
     renderWithProviders(
       <ToastProvider>
@@ -169,9 +172,8 @@ describe('ToastProvider', () => {
 
     const actionLink = await screen.findByText('action 1');
     const anchorElement = actionLink.closest('a');
-    if (anchorElement) {
-      fireEvent.click(anchorElement);
-    }
+    expect(anchorElement).toBeTruthy();
+    await user.click(anchorElement as HTMLElement);
 
     expect(actionFn).toHaveBeenCalledTimes(1);
 
@@ -181,6 +183,7 @@ describe('ToastProvider', () => {
   });
 
   it('should call onToastClose if provided on toast close', async () => {
+    const user = userEvent.setup();
     const toastClose = jest.fn();
     renderWithProviders(
       <ToastProvider>
@@ -203,7 +206,7 @@ describe('ToastProvider', () => {
     });
 
     const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
+    await user.click(closeButton);
 
     expect(toastClose).toHaveBeenCalled();
   });

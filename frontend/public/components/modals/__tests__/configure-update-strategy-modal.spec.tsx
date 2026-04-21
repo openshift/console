@@ -1,4 +1,6 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
@@ -24,11 +26,8 @@ describe('ConfigureUpdateStrategy component', () => {
   });
 
   describe('RollingUpdate strategy', () => {
-    beforeEach(() => {
-      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
-    });
-
     it('has proper labels', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
       expect(screen.getByText('RollingUpdate (default)')).toBeVisible();
       expect(screen.getByText('Recreate')).toBeVisible();
       expect(screen.getByText('Max unavailable')).toBeVisible();
@@ -36,6 +35,7 @@ describe('ConfigureUpdateStrategy component', () => {
     });
 
     it('shows rolling update strategy as selected', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
       const rollingUpdateRadio = screen.getByTestId('rolling-update-strategy-radio');
       const recreateRadio = screen.getByTestId('recreate-update-strategy-radio');
 
@@ -44,6 +44,7 @@ describe('ConfigureUpdateStrategy component', () => {
     });
 
     it('renders max unavailable and max surge inputs as enabled', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
       const maxUnavailableInput = screen.getByTestId('max-unavailable-input');
       const maxSurgeInput = screen.getByTestId('max-surge-input');
 
@@ -54,6 +55,7 @@ describe('ConfigureUpdateStrategy component', () => {
     });
 
     it('displays current values in input fields', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
       const maxUnavailableInput = screen.getByTestId('max-unavailable-input');
       const maxSurgeInput = screen.getByTestId('max-surge-input');
 
@@ -61,20 +63,76 @@ describe('ConfigureUpdateStrategy component', () => {
       expect(maxSurgeInput).toHaveValue('25%');
     });
 
-    it('calls onChangeMaxUnavailable when input changes', () => {
+    it('calls onChangeMaxUnavailable when input changes', async () => {
+      const user = userEvent.setup();
+
+      const RollingUpdateInputsHarness = () => {
+        const [maxUnavailable, setMaxUnavailable] = useState('25%');
+        const [maxSurge, setMaxSurge] = useState('25%');
+        return (
+          <ConfigureUpdateStrategy
+            {...mockProps}
+            strategyType="RollingUpdate"
+            maxUnavailable={maxUnavailable}
+            maxSurge={maxSurge}
+            onChangeMaxUnavailable={(v) => {
+              setMaxUnavailable(String(v));
+              mockProps.onChangeMaxUnavailable(v);
+            }}
+            onChangeMaxSurge={(v) => {
+              setMaxSurge(String(v));
+              mockProps.onChangeMaxSurge(v);
+            }}
+          />
+        );
+      };
+
+      renderWithProviders(<RollingUpdateInputsHarness />);
+
       const maxUnavailableInput = screen.getByTestId('max-unavailable-input');
 
-      fireEvent.change(maxUnavailableInput, { target: { value: '50%' } });
+      await user.clear(maxUnavailableInput);
+      await user.type(maxUnavailableInput, '50%');
 
-      expect(mockProps.onChangeMaxUnavailable).toHaveBeenCalledWith('50%');
+      await waitFor(() => {
+        expect(mockProps.onChangeMaxUnavailable).toHaveBeenLastCalledWith('50%');
+      });
     });
 
-    it('calls onChangeMaxSurge when input changes', () => {
+    it('calls onChangeMaxSurge when input changes', async () => {
+      const user = userEvent.setup();
+
+      const RollingUpdateInputsHarness = () => {
+        const [maxUnavailable, setMaxUnavailable] = useState('25%');
+        const [maxSurge, setMaxSurge] = useState('25%');
+        return (
+          <ConfigureUpdateStrategy
+            {...mockProps}
+            strategyType="RollingUpdate"
+            maxUnavailable={maxUnavailable}
+            maxSurge={maxSurge}
+            onChangeMaxUnavailable={(v) => {
+              setMaxUnavailable(String(v));
+              mockProps.onChangeMaxUnavailable(v);
+            }}
+            onChangeMaxSurge={(v) => {
+              setMaxSurge(String(v));
+              mockProps.onChangeMaxSurge(v);
+            }}
+          />
+        );
+      };
+
+      renderWithProviders(<RollingUpdateInputsHarness />);
+
       const maxSurgeInput = screen.getByTestId('max-surge-input');
 
-      fireEvent.change(maxSurgeInput, { target: { value: '1' } });
+      await user.clear(maxSurgeInput);
+      await user.type(maxSurgeInput, '1');
 
-      expect(mockProps.onChangeMaxSurge).toHaveBeenCalledWith('1');
+      await waitFor(() => {
+        expect(mockProps.onChangeMaxSurge).toHaveBeenLastCalledWith('1');
+      });
     });
   });
 
@@ -103,20 +161,22 @@ describe('ConfigureUpdateStrategy component', () => {
   });
 
   describe('strategy switching', () => {
-    it('calls onChangeStrategyType when switching to rolling update', () => {
+    it('calls onChangeStrategyType when switching to rolling update', async () => {
+      const user = userEvent.setup();
       renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="Recreate" />);
 
       const rollingUpdateRadio = screen.getByTestId('rolling-update-strategy-radio');
-      fireEvent.click(rollingUpdateRadio);
+      await user.click(rollingUpdateRadio);
 
       expect(mockProps.onChangeStrategyType).toHaveBeenCalledWith('RollingUpdate');
     });
 
-    it('calls onChangeStrategyType when switching to recreate', () => {
+    it('calls onChangeStrategyType when switching to recreate', async () => {
+      const user = userEvent.setup();
       renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="RollingUpdate" />);
 
       const recreateRadio = screen.getByTestId('recreate-update-strategy-radio');
-      fireEvent.click(recreateRadio);
+      await user.click(recreateRadio);
 
       expect(mockProps.onChangeStrategyType).toHaveBeenCalledWith('Recreate');
     });

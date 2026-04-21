@@ -39,8 +39,8 @@ describe('Add Identity Provider: HTPasswd', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'htpasswd',
       testValue: mockData.updatedFormValues.name,

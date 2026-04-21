@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as fileSaver from 'file-saver';
 
 import { DownloadButton } from '../../../components/utils/download-button';
@@ -31,6 +32,7 @@ describe('DownloadButton', () => {
   });
 
   it('renders button which calls `consoleFetch` to download URL when clicked', async () => {
+    const user = userEvent.setup();
     await act(async () => {
       render(<DownloadButton url={url} />);
     });
@@ -39,7 +41,7 @@ describe('DownloadButton', () => {
     expect(downloadButton).toBeInTheDocument();
 
     await act(async () => {
-      fireEvent.click(downloadButton);
+      await user.click(downloadButton);
     });
 
     // Verify consoleFetch was called with the correct URL
@@ -47,6 +49,7 @@ describe('DownloadButton', () => {
   });
 
   it('renders "Downloading..." if download is in flight', async () => {
+    const user = userEvent.setup();
     let resolvePromise: (value: Blob) => void;
     const controlledPromise = new Promise<Blob>((resolve) => {
       resolvePromise = resolve;
@@ -65,7 +68,7 @@ describe('DownloadButton', () => {
 
     // Click to start download
     await act(async () => {
-      fireEvent.click(downloadButton);
+      await user.click(downloadButton);
     });
 
     // Check that button shows "Downloading..." while in flight

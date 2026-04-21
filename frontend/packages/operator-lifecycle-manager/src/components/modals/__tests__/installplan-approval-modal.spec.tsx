@@ -1,4 +1,5 @@
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { modelFor } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -78,17 +79,15 @@ describe('InstallPlanApprovalModal', () => {
   });
 
   it('calls k8sUpdate with updated subscription when form is submitted', async () => {
+    const user = userEvent.setup();
     mockModelFor.mockReturnValue(SubscriptionModel);
 
     renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
 
     const manualRadio = screen.getByRole('radio', { name: 'Manual' });
-    fireEvent.click(manualRadio);
+    await user.click(manualRadio);
 
-    const form = screen.getByRole('radio', { name: 'Manual' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledTimes(1);
@@ -105,6 +104,7 @@ describe('InstallPlanApprovalModal', () => {
   });
 
   it('calls k8sUpdate with updated install plan when form is submitted', async () => {
+    const user = userEvent.setup();
     const installPlan = _.cloneDeep(testInstallPlan);
     mockModelFor.mockReturnValue(InstallPlanModel);
 
@@ -113,12 +113,9 @@ describe('InstallPlanApprovalModal', () => {
     );
 
     const manualRadio = screen.getByRole('radio', { name: 'Manual' });
-    fireEvent.click(manualRadio);
+    await user.click(manualRadio);
 
-    const form = screen.getByRole('radio', { name: 'Manual' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(installPlanApprovalModalProps.k8sUpdate).toHaveBeenCalledTimes(1);
@@ -135,12 +132,14 @@ describe('InstallPlanApprovalModal', () => {
   });
 
   it('calls close callback after successful submit', async () => {
+    const user = userEvent.setup();
+    mockModelFor.mockReturnValue(SubscriptionModel);
+
     renderWithProviders(<InstallPlanApprovalModal {...installPlanApprovalModalProps} />);
 
-    const form = screen.getByRole('radio', { name: 'Automatic (default)' }).closest('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    // Save stays disabled when the selected strategy matches the resource; change first so submit runs.
+    await user.click(screen.getByRole('radio', { name: 'Manual' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(installPlanApprovalModalProps.close).toHaveBeenCalledTimes(1);

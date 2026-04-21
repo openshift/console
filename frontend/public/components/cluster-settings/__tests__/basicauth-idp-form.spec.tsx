@@ -39,8 +39,8 @@ describe('Add Identity Provider: Basic Authentication', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'basic-auth',
       testValue: mockData.updatedFormValues.name,
@@ -49,8 +49,8 @@ describe('Add Identity Provider: Basic Authentication', () => {
     });
   });
 
-  it('should render the URL label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the URL label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,

@@ -40,8 +40,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'request-header',
       testValue: mockData.updatedFormValues.name,
@@ -55,8 +55,8 @@ describe('Add Identity Provider: Request Header', () => {
     expect(screen.getByText('At least one URL must be provided.')).toBeVisible();
   });
 
-  it('should render the Challenge URL label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Challenge URL label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Challenge URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,
@@ -65,8 +65,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Login URL label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Login URL label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Login URL',
       inputType: 'url',
       testValue: mockData.updatedFormValues.url,
@@ -86,8 +86,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Client common names label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Client common names label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Client common names',
       testValue: mockData.updatedFormValues.name,
       testId: 'request-header-client-common-names',
@@ -95,8 +95,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Headers label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Headers label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Headers',
       testValue: mockData.updatedFormValues.headers,
       testId: 'request-header-headers',
@@ -105,8 +105,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Preferred username headers label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Preferred username headers label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Preferred username headers',
       testValue: mockData.updatedFormValues.name,
       testId: 'request-header-preferred-username-headers',
@@ -114,8 +114,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Name headers label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Name headers label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Name headers',
       testValue: mockData.updatedFormValues.headers,
       testId: 'request-header-name-headers',
@@ -123,8 +123,8 @@ describe('Add Identity Provider: Request Header', () => {
     });
   });
 
-  it('should render the Email headers label, input element, and help text', () => {
-    verifyIDPListInputFields({
+  it('should render the Email headers label, input element, and help text', async () => {
+    await verifyIDPListInputFields({
       inputLabel: 'Email headers',
       testValue: mockData.updatedFormValues.email,
       testId: 'request-header-email-headers',

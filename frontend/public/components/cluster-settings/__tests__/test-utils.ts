@@ -1,5 +1,5 @@
 // Reusable test utilities for Identity Provider (IDP) form components
-import { screen, fireEvent, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { verifyFormElementBasics } from '@console/shared/src/test-utils/unit-test-utils';
 
@@ -176,7 +176,7 @@ export const verifyIDPFileFields = async ({
  * @param helpText - The expected help text for the input group (optional)
  * @param isRequired - Whether the first input element should be required (optional)
  */
-export const verifyIDPListInputFields = ({
+export const verifyIDPListInputFields = async ({
   inputLabel,
   testId,
   initialValue = '',
@@ -191,6 +191,7 @@ export const verifyIDPListInputFields = ({
   testValue?: string;
   isRequired?: boolean;
 }) => {
+  const user = userEvent.setup();
   const listInputContainer = screen.getByTestId(testId);
   expect(listInputContainer).toBeInTheDocument();
 
@@ -206,14 +207,15 @@ export const verifyIDPListInputFields = ({
   }
 
   // Test input element functionality by entering a value
-  fireEvent.change(initialInputFields[0], { target: { value: testValue } });
+  await user.clear(initialInputFields[0]);
+  await user.type(initialInputFields[0], testValue);
   expect(initialInputFields[0]).toHaveValue(testValue);
 
   const addMoreButton = within(listInputContainer).getByRole('button', { name: 'Add more' });
   verifyFormElementBasics(addMoreButton, 'button');
 
   // Click "Add more" and verify length increases
-  fireEvent.click(addMoreButton);
+  await user.click(addMoreButton);
   const updatedInputFields = within(listInputContainer).getAllByLabelText(inputLabel);
 
   expect(updatedInputFields.length).toBe(initialInputFields.length + 1);
@@ -225,7 +227,8 @@ export const verifyIDPListInputFields = ({
 
   // Test the new element by entering a value
   const newTestValue = `${testValue}-2`;
-  fireEvent.change(newField, { target: { value: newTestValue } });
+  await user.clear(newField);
+  await user.type(newField, newTestValue);
   expect(newField).toHaveValue(newTestValue);
 
   // Verify remove buttons exist for all elements
@@ -234,7 +237,7 @@ export const verifyIDPListInputFields = ({
   verifyFormElementBasics(removeButtons[0], 'button');
 
   // Click remove button and verify length decreases
-  fireEvent.click(removeButtons[0]);
+  await user.click(removeButtons[0]);
   const finalInputFields = within(listInputContainer).getAllByLabelText(inputLabel);
   expect(finalInputFields.length).toBe(updatedInputFields.length - 1);
 };

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useTranslation } from 'react-i18next';
 import { ActionType } from '@console/internal/reducers/ols';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
@@ -48,11 +49,12 @@ describe('CodeEditorToolbar', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('should dispatch OpenOLS action when "Ask OpenShift Lightspeed" button is clicked', () => {
+  it('should dispatch OpenOLS action when "Ask OpenShift Lightspeed" button is clicked', async () => {
+    const user = userEvent.setup();
     (useOLSConfig as jest.Mock).mockReturnValue(true);
     render(<AskOpenShiftLightspeedButton />);
     const button = screen.getByRole('button');
-    fireEvent.click(button);
+    await user.click(button);
     expect(mockDispatch).toHaveBeenCalledWith({ type: ActionType.OpenOLS });
   });
 });

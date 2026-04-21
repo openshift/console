@@ -40,8 +40,8 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it('should render the Name label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Name label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'github',
       testValue: mockData.updatedFormValues.name,
@@ -50,16 +50,16 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it('should render the Client ID label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Client ID label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
       isRequired: true,
     });
   });
 
-  it('should render the Client Secret label and input password element', () => {
-    verifyInputField({
+  it('should render the Client Secret label and input password element', async () => {
+    await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
       testValue: mockData.updatedFormValues.secret,
@@ -67,8 +67,8 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it('should render the Hostname label, input element, and help text', () => {
-    verifyInputField({
+  it('should render the Hostname label, input element, and help text', async () => {
+    await verifyInputField({
       inputLabel: 'Hostname',
       testValue: mockData.updatedFormValues.name,
       helpText: 'Optional domain for use with a hosted instance of GitHub Enterprise.',
@@ -83,7 +83,7 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it('should render the Organizations sub heading and input element', () => {
+  it('should render the Organizations sub heading and input element', async () => {
     expect(screen.getByRole('heading', { name: 'Organizations' })).toBeVisible();
 
     // Verify the text content
@@ -98,7 +98,7 @@ describe('Add Identity Provider: GitHub', () => {
     expect(strongElement).toBeVisible();
     expect(strongElement.tagName).toBe('STRONG');
 
-    verifyIDPListInputFields({
+    await verifyIDPListInputFields({
       inputLabel: 'Organization',
       testValue: 'Example organization',
       testId: 'organization-list-input',
@@ -106,7 +106,7 @@ describe('Add Identity Provider: GitHub', () => {
     });
   });
 
-  it('should render the Teams sub heading', () => {
+  it('should render the Teams sub heading', async () => {
     expect(screen.getByRole('heading', { name: 'Teams' })).toBeVisible();
 
     // Verify the text content
@@ -121,7 +121,7 @@ describe('Add Identity Provider: GitHub', () => {
     expect(strongElement).toBeVisible();
     expect(strongElement.tagName).toBe('STRONG');
 
-    verifyIDPListInputFields({
+    await verifyIDPListInputFields({
       inputLabel: 'Team',
       testValue: 'Example team',
       testId: 'team-list-input',

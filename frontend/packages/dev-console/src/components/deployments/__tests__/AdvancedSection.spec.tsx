@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import i18n from 'i18next';
 import { setI18n } from 'react-i18next';
 import { Resources } from '../../import/import-types';
@@ -34,6 +35,7 @@ afterEach(() => cleanup());
 
 describe('AdvancedSection', () => {
   it('should show Pause rollouts section on click', async () => {
+    const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
@@ -42,15 +44,13 @@ describe('AdvancedSection', () => {
       name: /pause rollouts/i,
     }) as HTMLButtonElement;
 
-    expect(screen.queryByTestId('pause-rollouts')).toBeNull();
-    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(screen.queryByTestId('pause-rollouts')).not.toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
 
-    fireEvent.click(pauseRolloutsButton);
+    await user.click(pauseRolloutsButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('pause-rollouts')).not.toBeNull();
-      expect(screen.queryByRole('checkbox')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('pause-rollouts')).toBeInTheDocument();
+    expect(await screen.findByRole('checkbox')).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Scaling.',
@@ -58,6 +58,7 @@ describe('AdvancedSection', () => {
   });
 
   it('should show Scaling section on click', async () => {
+    const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
@@ -66,15 +67,13 @@ describe('AdvancedSection', () => {
       name: 'Scaling',
     }) as HTMLButtonElement;
 
-    expect(screen.queryByTestId('scaling')).toBeNull();
-    expect(screen.queryByRole('spinbutton', { name: /input/i })).toBeNull();
+    expect(screen.queryByTestId('scaling')).not.toBeInTheDocument();
+    expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeInTheDocument();
 
-    fireEvent.click(scalingButton);
+    await user.click(scalingButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('scaling')).not.toBeNull();
-      expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeNull();
-    });
+    expect(await screen.findByTestId('scaling')).toBeInTheDocument();
+    expect(await screen.findByRole('spinbutton', { name: /input/i })).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Pause rollouts.',
@@ -82,6 +81,7 @@ describe('AdvancedSection', () => {
   });
 
   it('should not show message when both advanced options are clicked', async () => {
+    const user = userEvent.setup();
     expect(screen.getByTestId('deployment-form-testid').textContent).toEqual(
       'Click on the names to access advanced options for Pause rollouts and Scaling.',
     );
@@ -89,15 +89,13 @@ describe('AdvancedSection', () => {
       name: /pause rollouts/i,
     }) as HTMLButtonElement;
 
-    expect(screen.queryByTestId('pause-rollouts')).toBeNull();
-    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(screen.queryByTestId('pause-rollouts')).not.toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
 
-    fireEvent.click(pauseRolloutsButton);
+    await user.click(pauseRolloutsButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('pause-rollouts')).not.toBeNull();
-      expect(screen.queryByRole('checkbox')).not.toBeNull();
-    });
+    expect(await screen.findByTestId('pause-rollouts')).toBeInTheDocument();
+    expect(await screen.findByRole('checkbox')).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).toContain(
       'Click on the names to access advanced options for Scaling.',
@@ -107,15 +105,13 @@ describe('AdvancedSection', () => {
       name: 'Scaling',
     }) as HTMLButtonElement;
 
-    expect(screen.queryByTestId('scaling')).toBeNull();
-    expect(screen.queryByRole('spinbutton', { name: /input/i })).toBeNull();
+    expect(screen.queryByTestId('scaling')).not.toBeInTheDocument();
+    expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeInTheDocument();
 
-    fireEvent.click(scalingButton);
+    await user.click(scalingButton);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('scaling')).not.toBeNull();
-      expect(screen.queryByRole('spinbutton', { name: /input/i })).not.toBeNull();
-    });
+    expect(await screen.findByTestId('scaling')).toBeInTheDocument();
+    expect(await screen.findByRole('spinbutton', { name: /input/i })).toBeVisible();
 
     expect(screen.getByTestId('deployment-form-testid').textContent).not.toContain(
       'Click on the names to access advanced options for ',

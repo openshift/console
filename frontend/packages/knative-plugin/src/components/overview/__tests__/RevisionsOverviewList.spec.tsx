@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';
 import { useAccessReview } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -129,7 +130,8 @@ describe('RevisionsOverviewList', () => {
     expect(button?.outerHTML).not.toContain('isdisabled');
   });
 
-  it('should call setTrafficDistributionModal on click', () => {
+  it('should call setTrafficDistributionModal on click', async () => {
+    const user = userEvent.setup();
     const trafficSplitModalLauncherMock = jest.fn();
     useTrafficSplittingModalLauncherMock.mockImplementation(() => trafficSplitModalLauncherMock);
     const { container } = render(
@@ -140,7 +142,7 @@ describe('RevisionsOverviewList', () => {
     );
     const button = container.querySelector('Button');
     expect(button).toBeInTheDocument();
-    fireEvent.click(button);
+    await user.click(button as HTMLElement);
     expect(trafficSplitModalLauncherMock).toHaveBeenCalled();
   });
 

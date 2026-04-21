@@ -1,4 +1,5 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import ClusterExtensionForm from '../ClusterExtensionForm';
 
@@ -34,6 +35,9 @@ jest.mock('../ServiceAccountDropdown', () => ({
     </div>
   ),
 }));
+
+/** Matches `setTimeout` debounce on name → `debouncedName` in ClusterExtensionForm */
+const NAME_DEBOUNCE_MS = 500;
 
 describe('ClusterExtensionForm', () => {
   const mockOnChange = jest.fn();
@@ -76,17 +80,42 @@ describe('ClusterExtensionForm', () => {
     expect(screen.getByLabelText('Version or Version range')).toHaveValue('1.0.0');
   });
 
-  it('should auto-generate namespace and service account names based on ClusterExtension name', () => {
-    renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
+  it('should auto-generate namespace and service account names based on ClusterExtension name', async () => {
+    const user = userEvent.setup();
+    let currentFormData = {};
 
-    const nameInput = screen.getByLabelText('Name');
-    fireEvent.change(nameInput, { target: { value: 'my-operator' } });
+    // Render with onChange that tracks formData updates
+    const { rerender } = renderWithProviders(
+      <ClusterExtensionForm formData={currentFormData} onChange={mockOnChange} />,
+    );
 
-    // Should call onChange with auto-generated names
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        metadata: expect.objectContaining({ name: 'my-operator' }),
-      }),
+    const nameInput = screen.getByRole('textbox', { name: /^Name$/i });
+    await user.click(nameInput);
+    await user.paste('my-operator');
+
+    // Wait for onChange to be called with the name
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          metadata: expect.objectContaining({ name: 'my-operator' }),
+        }),
+      );
+    });
+
+    // Simulate parent component updating formData
+    [currentFormData] = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1];
+    rerender(<ClusterExtensionForm formData={currentFormData} onChange={mockOnChange} />);
+
+    // After debounce, effects sync auto-generated namespace and service account (may be separate onChange calls)
+    await waitFor(
+      () => {
+        const payloads = mockOnChange.mock.calls.map(([data]) => data);
+        expect(payloads.some((d) => d?.spec?.namespace === 'my-operator')).toBe(true);
+        expect(
+          payloads.some((d) => d?.spec?.serviceAccount?.name === 'my-operator-service-account'),
+        ).toBe(true);
+      },
+      { timeout: NAME_DEBOUNCE_MS + 1000 },
     );
   });
 
@@ -108,96 +137,117 @@ describe('ClusterExtensionForm', () => {
     expect(createNewRadio).toBeChecked();
   });
 
-  it('should switch to "Select from cluster" when radio button is clicked', () => {
+  it('should switch to "Select from cluster" when radio button is clicked', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
     const selectFromClusterRadios = screen.getAllByLabelText('Select from cluster');
     const namespaceRadio = selectFromClusterRadios[0];
-    fireEvent.click(namespaceRadio);
+    await user.click(namespaceRadio);
 
     expect(namespaceRadio).toBeChecked();
   });
 
-  it('should update formData when package name changes', () => {
+  it('should update formData when package name changes', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
-    const packageNameInput = screen.getByLabelText('Package name');
-    fireEvent.change(packageNameInput, { target: { value: 'test-package' } });
+    const packageNameInput = screen.getByRole('textbox', { name: /Package name/i });
+    await user.click(packageNameInput);
+    await user.paste('test-package');
 
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        spec: expect.objectContaining({
-          source: expect.objectContaining({
-            catalog: expect.objectContaining({
-              packageName: 'test-package',
+    // Wait for onChange to be called with updated package name
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            source: expect.objectContaining({
+              catalog: expect.objectContaining({
+                packageName: 'test-package',
+              }),
             }),
           }),
         }),
-      }),
-    );
+      );
+    });
   });
 
-  it('should update formData when version changes', () => {
+  it('should update formData when version changes', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
-    const versionInput = screen.getByLabelText('Version or Version range');
-    fireEvent.change(versionInput, { target: { value: '1.2.3' } });
+    const versionInput = screen.getByRole('textbox', { name: /Version or Version range/i });
+    await user.click(versionInput);
+    await user.paste('1.2.3');
 
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        spec: expect.objectContaining({
-          source: expect.objectContaining({
-            catalog: expect.objectContaining({
-              version: '1.2.3',
+    // Wait for onChange to be called with updated version
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            source: expect.objectContaining({
+              catalog: expect.objectContaining({
+                version: '1.2.3',
+              }),
             }),
           }),
         }),
-      }),
-    );
+      );
+    });
   });
 
-  it('should add channel when Enter is pressed', () => {
+  it('should add channel when Enter is pressed', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
     const channelInput = screen.getByLabelText('Channels');
-    fireEvent.change(channelInput, { target: { value: 'stable' } });
-    fireEvent.keyDown(channelInput, { key: 'Enter', code: 'Enter' });
+    await user.click(channelInput);
+    await user.clear(channelInput);
+    await user.type(channelInput, 'stable');
+    await user.keyboard('{Enter}');
 
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        spec: expect.objectContaining({
-          source: expect.objectContaining({
-            catalog: expect.objectContaining({
-              channels: ['stable'],
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            source: expect.objectContaining({
+              catalog: expect.objectContaining({
+                channels: ['stable'],
+              }),
             }),
           }),
         }),
-      }),
-    );
+      );
+    });
   });
 
-  it('should add catalog when Enter is pressed', () => {
+  it('should add catalog when Enter is pressed', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<ClusterExtensionForm formData={{}} onChange={mockOnChange} />);
 
     const catalogInput = screen.getByLabelText('Catalogs');
-    fireEvent.change(catalogInput, { target: { value: 'redhat-operators' } });
-    fireEvent.keyDown(catalogInput, { key: 'Enter', code: 'Enter' });
+    await user.click(catalogInput);
+    await user.clear(catalogInput);
+    await user.type(catalogInput, 'redhat-operators');
+    await user.keyboard('{Enter}');
 
-    expect(mockOnChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        spec: expect.objectContaining({
-          source: expect.objectContaining({
-            catalog: expect.objectContaining({
-              selector: expect.objectContaining({
-                matchLabels: expect.objectContaining({
-                  'olm.operatorframework.io/metadata.name': 'redhat-operators',
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          spec: expect.objectContaining({
+            source: expect.objectContaining({
+              catalog: expect.objectContaining({
+                selector: expect.objectContaining({
+                  matchLabels: expect.objectContaining({
+                    'olm.operatorframework.io/metadata.name': 'redhat-operators',
+                  }),
                 }),
               }),
             }),
           }),
         }),
-      }),
-    );
+      );
+    });
   });
 
   it('should render channel labels when channels are added', () => {
