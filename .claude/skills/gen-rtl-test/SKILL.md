@@ -562,7 +562,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 it('should submit the form', async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   render(<MyForm />);
 
   const input = screen.getByLabelText(/name/i);
@@ -572,7 +572,7 @@ it('should submit the form', async () => {
   await user.click(button);
 
   expect(screen.getByText(/success/i)).toBeVisible();
-}, 30000); // userEvent.type is slow — extend timeout for tests with significant typing
+});
 ```
 
 `fireEvent` is acceptable for simple, synchronous interactions:
