@@ -193,7 +193,7 @@ it('should do something when k8sGet succeeds', () => {
 **DO NOT** mock the `useReduxStore` hook. Instead, pass `initialState` to `renderWithProviders`:
 
 ```typescript
-import { renderWithProviders } from '@console/test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 it('should render with mock Redux data', () => {
   const mockK8sState = { /* ... */ };
