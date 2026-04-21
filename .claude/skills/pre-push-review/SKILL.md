@@ -131,7 +131,7 @@ Run both reviews concurrently for efficiency:
      - `--type uncommitted`: Review working directory and staged changes (for staged mode)
      - `--base <branch>`: Specify base branch for comparison
    - Monitor progress: CodeRabbit will output findings as it discovers them
-   - Note: CodeRabbit automatically reads `.claude/CLAUDE.md` for project context
+   - Note: CodeRabbit automatically reads `AGENTS.md` for project context
    - **Expected output format**: CodeRabbit provides findings in format:
      ```
      File: path/to/file.ts
@@ -156,7 +156,7 @@ Run both reviews concurrently for efficiency:
      - Test coverage gaps
      - Documentation completeness
      - Project-specific requirements:
-       - i18n usage (per project CLAUDE.md)
+       - i18n usage (per AGENTS.md)
        - PatternFly v6 usage, avoid inline styles
        - No React namespace imports
 
@@ -317,9 +317,9 @@ After implementing fixes, optionally re-run the review to verify:
 - Highlight what's done well, not just problems
 - Consider if the issue blocks pushing or can be addressed later
 - Validate that tests cover the changes
-- Check for proper i18n usage (per project CLAUDE.md)
-- Verify PatternFly v6 usage and avoid inline styles (per project CLAUDE.md)
-- Check for React namespace import issues (per project CLAUDE.md)
+- Check for proper i18n usage (per AGENTS.md)
+- Verify PatternFly v6 usage and avoid inline styles (per AGENTS.md)
+- Check for React namespace import issues (per AGENTS.md)
 
 **Tool Usage**:
 - Use `git diff` and `git log` for gathering local changes
@@ -370,8 +370,8 @@ git checkout feature/new-auth
   - Whether changes are ready to push or need fixes
 
 ## Workflow Tracking
-- Use TodoWrite to track the 6-8 phases of the review process (including optional implementation and verification phases)
-- Mark each phase as in_progress when starting and completed when done
+- Use TaskCreate to track the 6-8 phases of the review process (including optional implementation and verification phases)
+- Mark each phase as in_progress when starting and completed when done via TaskUpdate
 - This gives the user visibility into review progress, especially during CodeRabbit's long analysis
 - If implementing fixes, track individual fix tasks to show progress
 
@@ -451,7 +451,7 @@ git checkout feature/new-auth
 **CodeRabbit Integration**:
 - CodeRabbit excels at finding race conditions, memory leaks, and subtle logic errors
 - The `--prompt-only` flag provides AI-optimized output without posting to GitHub
-- CodeRabbit automatically reads `.claude/CLAUDE.md` for project-specific context
+- CodeRabbit automatically reads `AGENTS.md` for project-specific context
 - Reviews can take 7-30+ minutes depending on change size - this is normal
 - Authenticated CodeRabbit provides significantly better review quality
 - Use `--type uncommitted` (staged mode) for faster reviews
@@ -473,7 +473,7 @@ git checkout feature/new-auth
 **Managing Long Review Times**:
 - CodeRabbit reviews take 7-30+ minutes - this is expected for thorough analysis
 - Always run CodeRabbit in background first, then start Claude review
-- Use TodoWrite to show progress - helps user understand what's happening
+- Use TaskCreate/TaskUpdate to show progress - helps user understand what's happening
 - Don't interrupt CodeRabbit - let it complete for best results
 - If truly time-constrained, proceed with Claude-only review
 
@@ -489,7 +489,7 @@ git checkout feature/new-auth
 - Monitor CodeRabbit progress in background
 - Claude can analyze while CodeRabbit runs (parallel efficiency)
 - Don't skip waiting for CodeRabbit unless absolutely necessary
-- Use TodoWrite phases to communicate progress to user
+- Use TaskCreate/TaskUpdate phases to communicate progress to user
 
 **After Review**:
 - Address critical issues before pushing (Claude can implement these fixes)
