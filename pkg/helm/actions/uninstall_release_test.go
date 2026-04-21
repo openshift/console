@@ -3,7 +3,7 @@ package actions
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"testing"
 	"time"
 
@@ -38,7 +38,7 @@ func TestUninstallRelease(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
@@ -75,7 +75,7 @@ func TestUninstallInvalidRelease(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
@@ -121,7 +121,7 @@ func TestUninstallReleaseAsync(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
@@ -171,7 +171,7 @@ func TestUninstallInvalidReleaseAsync(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			actionConfig := &action.Configuration{
 				Releases:     store,
-				KubeClient:   &kubefake.PrintingKubeClient{Out: ioutil.Discard},
+				KubeClient:   &kubefake.PrintingKubeClient{Out: io.Discard},
 				Capabilities: chartutil.DefaultCapabilities,
 				Log:          func(format string, v ...interface{}) {},
 			}
