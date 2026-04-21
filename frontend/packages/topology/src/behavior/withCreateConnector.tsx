@@ -238,7 +238,7 @@ const CreateConnectorWidget: FC<CreateConnectorWidgetProps> = observer((props) =
 
   return (
     <>
-      {active ? <Layer id={TOP_LAYER}>{connector}</Layer> : connector}
+      <Layer id={TOP_LAYER}>{connector}</Layer>
       {prompt && (
         <ContextMenu
           reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}
