@@ -14,8 +14,9 @@ import {
   TableColumn,
   RowProps,
 } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { TableData } from '@console/internal/components/factory';
+import { sorts, TableData } from '@console/internal/components/factory';
 import { useActiveColumns } from '@console/internal/components/factory/Table/active-columns-hook';
+import { sortResourceByValue } from '@console/internal/components/factory/Table/sort';
 import {
   ResourceLink,
   Kebab,
@@ -45,10 +46,11 @@ import {
   getNamespace,
   snapshotSource,
   FLAGS,
+  snapshotStatus,
 } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
+import { snapshotStatusFilters } from '../../status';
 
 const tableColumnInfo = [
   { id: 'name' },
@@ -78,21 +80,24 @@ const getTableColumns = (t: TFunction, disableItems = {}): TableColumn<VolumeSna
     },
     {
       title: t('console-app~Status'),
-      sort: 'snapshotStatus',
+      sort: (data, direction) =>
+        data.sort(sortResourceByValue(direction, sorts.volumeSnapshotStatus)),
       transforms: [sortable],
       props: { className: tableColumnInfo[2].className },
       id: tableColumnInfo[2].id,
     },
     {
       title: t('console-app~Size'),
-      sort: 'volumeSnapshotSize',
+      sort: (data, direction) =>
+        data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSize)),
       transforms: [sortable],
       props: { className: tableColumnInfo[3].className },
       id: tableColumnInfo[3].id,
     },
     {
       title: t('console-app~Source'),
-      sort: 'volumeSnapshotSource',
+      sort: (data, direction) =>
+        data.sort(sortResourceByValue(direction, sorts.volumeSnapshotSource)),
       transforms: [sortable],
       props: { className: tableColumnInfo[4].className },
       id: tableColumnInfo[4].id,
@@ -154,7 +159,7 @@ const Row: React.FC<RowProps<VolumeSnapshotKind, VolumeSnapshotRowProsCustomData
         <ResourceLink kind={NamespaceModel.kind} name={namespace} />
       </TableData>
       <TableData {...tableColumnInfo[2]}>
-        <Status status={volumeSnapshotStatus(obj)} />
+        <Status status={snapshotStatus(obj)} />
       </TableData>
       <TableData {...tableColumnInfo[3]}>{sizeMetrics}</TableData>
       {!customData?.disableItems?.Source && (
