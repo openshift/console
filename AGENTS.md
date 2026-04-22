@@ -21,21 +21,22 @@ Static plugins are built into the console bundle and are core parts of the appli
 - **Type safety:** When writing code for static plugins, ensure that all `$codeRef` ALWAYS **reference the corresponding extension type from the dynamic plugin SDK package**. This ensures type safety and consistency across both static and dynamic plugins.
 
 Example:
+
 ```jsonc
 // In console-extensions.json of a static plugin
 {
   "type": "console.flag",
-  "$codeRef": "exampleFlag.handler"
+  "$codeRef": "exampleFlag.handler",
 }
 ```
 
 ```typescript
 // In the exampleFlag exposed module of the static plugin:
-import type { FeatureFlagHandler } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
+import type { FeatureFlagHandler } from "@console/dynamic-plugin-sdk/src/extensions/feature-flags";
 
 // Exposed type from dynamic plugin SDK is used for type safety
 export const handler: FeatureFlagHandler = (setFeatureFlag) => {
-  setFeatureFlag('EXAMPLE', true);
+  setFeatureFlag("EXAMPLE", true);
 };
 ```
 
@@ -121,3 +122,7 @@ These files are the single source of truth for architecture, coding standards, a
 - [Dynamic Plugin SDK documentation](frontend/packages/console-dynamic-plugin-sdk/README.md) - architecture, design principles, and development guidelines. Consult before modifying SDK code.
 - [Extension Types Reference](frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md) - complete extension type definitions, naming conventions (`console.*`), and deprecation notices.
 - [Console API Documentation](frontend/packages/console-dynamic-plugin-sdk/docs/api.md) - React components, hooks, utilities, and TypeScript types exported by the SDK.
+
+## Playwright migration
+
+We are migrating Cypress e2e tests to Playwright. Use `/migrate-cypress` to convert test files and `/debug-test` to fix failing tests. Shared migration context (translation tables, structural rules, checklist) is in `.claude/migration-context.md`.
