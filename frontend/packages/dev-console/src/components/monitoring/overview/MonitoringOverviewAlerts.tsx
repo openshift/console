@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
-import { Alert as AlertType } from '@console/dynamic-plugin-sdk';
+import { Alert as AlertType, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortMonitoringAlerts } from '@console/shared';
@@ -14,6 +14,7 @@ interface MonitoringOverviewAlertsProps {
 }
 
 const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const sortedAlerts = sortMonitoringAlerts(alerts);
 
   return (
@@ -22,15 +23,32 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ ale
         const {
           activeAt,
           annotations: { message },
-          labels: { severity, alertname },
+          labels: { severity, alertname, namespace },
           rule: { name, id },
         } = alert;
-        const alertDetailsPageLink = `/monitoring/alerts/${id}?${labelsToParams(alert.labels)}`;
+        const alertDetailsPageLink =
+          activePerspective === 'dev'
+            ? `/dev-monitoring/ns/${namespace}/alerts/${id}?${labelsToParams(alert.labels)}`
+            : `/monitoring/alerts/${id}?${labelsToParams(alert.labels)}`;
         return (
           <Alert
             variant={getAlertType(severity)}
             isInline
-            title={<Link to={alertDetailsPageLink}>{name}</Link>}
+            title={
+              <Link
+                onClick={() => {
+                  if (
+                    alertDetailsPageLink.startsWith('/dev-monitoring') &&
+                    activePerspective !== 'dev'
+                  ) {
+                    setActivePerspective('dev');
+                  }
+                }}
+                to={alertDetailsPageLink}
+              >
+                {name}
+              </Link>
+            }
             key={`${alertname}-${id}`}
           >
             {message}

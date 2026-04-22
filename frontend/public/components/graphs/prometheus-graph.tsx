@@ -9,6 +9,7 @@ import { FLAGS } from '@console/shared/src/constants/common';
 import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
@@ -17,11 +18,13 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
+  canAccessMonitoring,
   children,
   query,
   namespace,
   ariaChartLinkLabel,
 }) => {
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const queries = _.compact(_.castArray(query));
   if (!queries.length) {
     return <>{children}</>;
@@ -31,13 +34,21 @@ const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   queries.forEach((q, index) => params.set(`query${index}`, q));
   params.set('namespace', namespace);
 
-  const url = `/monitoring/query-browser?${params.toString()}`;
+  const url =
+    canAccessMonitoring && activePerspective !== 'dev'
+      ? `/monitoring/query-browser?${params.toString()}`
+      : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
   return (
     <Link
       to={url}
       aria-label={ariaChartLinkLabel}
       style={{ color: 'inherit', textDecoration: 'none' }}
+      onClick={() => {
+        if (url.startsWith('/dev-monitoring/') && activePerspective !== 'dev') {
+          setActivePerspective('dev');
+        }
+      }}
     >
       {children}
     </Link>
@@ -59,6 +70,7 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 );
 
 type PrometheusGraphLinkProps = {
+  canAccessMonitoring: boolean;
   query: string | string[];
   namespace?: string;
   ariaChartLinkLabel?: string;
