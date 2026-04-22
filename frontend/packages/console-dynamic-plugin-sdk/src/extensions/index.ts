@@ -17,6 +17,7 @@ export * from './file-upload';
 export * from './horizontal-nav-tabs';
 export * from './import-environments';
 export * from './navigation';
+export * from './node-subnav-tabs';
 export * from './notification-alert';
 export * from './pages';
 export * from './perspectives';
