@@ -22,7 +22,13 @@ export const operator = {
     cy.log('go to operator overview panel');
     cy.byTestID(operatorCardTestID).click();
     cy.log('go to the install form');
-    cy.byTestID('catalog-details-modal-cta').click({ force: true });
+    // Wait for the Install button to be visible and have a valid href before clicking.
+    // The button is conditionally rendered based on useCtaLink hook, which processes
+    // the CTA href asynchronously. Clicking before href is set causes navigation to fail.
+    cy.byTestID('catalog-details-modal-cta')
+      .should('be.visible')
+      .should('have.attr', 'href')
+      .click();
     cy.log('verify the channel selection is displayed');
     cy.byTestID('operator-channel-select-toggle').should('exist');
     cy.log('verify the version selection is displayed');
@@ -39,7 +45,8 @@ export const operator = {
      */
     if (installToNamespace !== GlobalInstalledNamespace) {
       cy.log('configure Operator install for single namespace');
-      cy.byTestID('A specific namespace on the cluster-radio-input').check();
+      // Wait for radio button to be visible before checking to avoid race conditions
+      cy.byTestID('A specific namespace on the cluster-radio-input').should('be.visible').check();
       if (useOperatorRecommendedNamespace) {
         cy.log('configure Operator install for operator recommended namespace');
         cy.byTestID('Operator recommended Namespace:-radio-input').check();
