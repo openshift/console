@@ -96,7 +96,6 @@
   "Started": "开始",
   "Unknown failure condition": "未知故障状况",
   "Failure on task {{taskName}} - check logs for details.": "任务 {{taskName}} 失败 - 检查日志详情。",
-  "Error downloading logs.": "下载日志时出错。",
   "An error occurred while retrieving the requested logs.": "在获取请求的日志时发生错误。",
   "Unknown error retrieving logs": "获取日志的未知错误",
   "Download": "下载",

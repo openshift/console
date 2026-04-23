@@ -152,7 +152,7 @@
   "Inspection error": "Error de inspección",
   "Provisioning error": "Error de aprovisionamiento",
   "Matching profile": "Perfil coincidente",
-  "Deleting": "Eliminando",
+  "Deleting": "Eliminar",
   "Unknown": "Desconocido",
   "The host is available to be provisioned as a node.": "El host está disponible para ser aprovisionado como nodo.",
   "The hardware details of the host are being collected. This will take a while. The host will become available when finished.": "Se están recopilando los detalles de hardware del host. Esta acción llevará un tiempo. El host estará disponible cuando termine.",

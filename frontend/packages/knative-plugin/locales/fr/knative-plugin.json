@@ -265,7 +265,7 @@
   "No Subscriber available": "Aucun abonné disponible",
   "To create a Subscriber, first create a Knative Service from the <1>Add page</1>.": "Pour créer un abonné, créez d'abord un service Knative à partir de <1> Ajouter une page</1>.",
   "Select Subscriber": "Sélectionner un abonné",
-  "Add {{kind}}": "Ajouter {{kind}}",
+  "Add {{kind}}": "Ajouter une sonde {{kind}}",
   "Add": "Ajouter",
   "Delete {{revlabel}}?": "Supprimer {{revlabel}} ?",
   "Are you sure you want to delete ": "Voulez-vous vraiment supprimer ",

@@ -12,6 +12,7 @@
   "No Image vulnerabilities found": "未找到镜像漏洞",
   "Image Manifest Vulnerabilities": "镜像清单安全漏洞",
   "Search by image name...": "根据镜像名称搜索......",
+  "Unable to load vulnerability data": "无法加载安全漏洞数据",
   "Container": "容器",
   "Image": "镜像",
   "Security scan": "安全性扫描",

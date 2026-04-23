@@ -207,7 +207,7 @@
   "The name of Service Account use to run this": "これを実行するために使用するサービスアカウントの名前",
   "Namespace": "Namespace",
   "Ready": "準備完了",
-  "Conditions": "条件",
+  "Conditions": "状態",
   "Created": "作成済み",
   "{{OKcount}} OK / {{conditionsSize}}": "{{OKcount}} OK / {{conditionsSize}}",
   "Attributes": "属性",
