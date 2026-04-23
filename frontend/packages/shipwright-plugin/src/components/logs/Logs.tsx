@@ -4,11 +4,11 @@ import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { coFetchText } from '@console/internal/co-fetch';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import type { PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { resourceURL, modelFor } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
+import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import './Logs.scss';
 
 type LogsProps = {

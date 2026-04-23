@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
-import * as coFetchModule from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { referenceForModel } from '@console/internal/module/k8s';
+import * as coFetchModule from '@console/shared/src/utils/console-fetch';
 import { EVENTING_IMC_KIND } from '../../const';
 import { ServiceModel } from '../../models';
 import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
@@ -20,12 +20,12 @@ import {
   getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
 
-jest.mock('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch'),
-  consoleFetch: jest.fn(),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  ...jest.requireActual('@console/shared/src/utils/console-fetch'),
+  coFetch: jest.fn(),
 }));
 
-const consoleFetchMock = coFetchModule.consoleFetch as jest.Mock;
+const consoleFetchMock = coFetchModule.coFetch as jest.Mock;
 
 describe('fetch-dynamic-eventsources: EventSources', () => {
   beforeEach(() => {

@@ -35,7 +35,7 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { Link } from 'react-router';
 import * as UIActions from '../actions/ui';
-import { coFetchJSON } from '../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { PodModel } from '../models';
 import { ContainerSpec, PodKind, referenceFor, referenceForModel, Selector } from '../module/k8s';
 import {

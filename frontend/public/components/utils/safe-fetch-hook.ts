@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { coFetchJSON } from '../../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 export const useSafeFetch = () => {
   const controller = useRef<AbortController>();

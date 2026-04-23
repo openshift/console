@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 type HelmReadmeLoaderProps = {
   chartURL: string;

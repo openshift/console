@@ -1,9 +1,24 @@
 import { CustomError } from './custom-error';
 
 /**
- * Http error
+ * Error thrown by `consoleFetch`, `consoleFetchJSON`, and `consoleFetchText` when the
+ * server responds with a non-OK HTTP status code (other than 304).
  *
- * Usage: throw HttpError.fromCode(404)
+ * @example
+ * ```ts
+ * try {
+ *   await consoleFetchJSON('/api/kubernetes/api/v1/namespaces');
+ * } catch (e) {
+ *   if (e instanceof HttpError) {
+ *     console.error(`HTTP ${e.code}: ${e.message}`);
+ *   }
+ * }
+ * ```
+ *
+ * @param message - The error message, typically derived from the response body or status text.
+ * @param code - The HTTP status code (e.g. 404, 500).
+ * @param response - The original `Response` object from the fetch call.
+ * @param json - The parsed JSON body of the error response, if available.
  */
 export class HttpError extends CustomError {
   protected static messages = {

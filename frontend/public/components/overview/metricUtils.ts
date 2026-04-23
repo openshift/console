@@ -1,7 +1,7 @@
 import { Alert } from '@console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
-import { coFetchJSON } from '../../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { getAlertsAndRules } from '../monitoring/utils';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 

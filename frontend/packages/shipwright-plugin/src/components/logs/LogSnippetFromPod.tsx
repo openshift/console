@@ -2,10 +2,10 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { coFetchText } from '@console/internal/co-fetch';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { resourceURL } from '@console/internal/module/k8s';
+import { coFetchText } from '@console/shared/src/utils/console-fetch';
 
 type LogSnippetFromPodProps = {
   children: (logSnippet: string) => ReactNode;

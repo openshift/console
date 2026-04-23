@@ -19,7 +19,6 @@ import {
 import { LogViewer, LogViewerSearch } from '@patternfly/react-log-viewer';
 import { css } from '@patternfly/react-styles';
 import { Trans, useTranslation } from 'react-i18next';
-import { coFetch } from '@console/internal/co-fetch';
 import { useTheme } from '@console/internal/components/ThemeProvider';
 import { LoadingBox, LoadingInline } from '@console/internal/components/utils/status-box';
 import type { NodeKind } from '@console/internal/module/k8s';
@@ -29,6 +28,7 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import NodeLogsUnitFilter from './NodeLogsUnitFilter';
 import './node-logs.scss';
 

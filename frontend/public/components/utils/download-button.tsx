@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { saveAs } from 'file-saver';
 import { Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
-import { coFetch } from '../../co-fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const DownloadButton: FC<DownloadButtonProps> = (props) => {
   const [inFlight, setInFlight] = useState(false);

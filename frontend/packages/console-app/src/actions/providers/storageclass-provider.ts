@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Action } from '@console/dynamic-plugin-sdk';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/dynamic-core-api';
+import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import {
   getGroupVersionKindForModel,

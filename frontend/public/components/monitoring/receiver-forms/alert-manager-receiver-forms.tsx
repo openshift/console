@@ -45,7 +45,7 @@ import * as PagerDutyForm from './pagerduty-receiver-form';
 import * as WebhookForm from './webhook-receiver-form';
 import * as EmailForm from './email-receiver-form';
 import * as SlackForm from './slack-receiver-form';
-import { coFetchJSON } from '../../../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 
 /**
