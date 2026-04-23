@@ -531,6 +531,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 		createSecret    bool
 		namespace       string
 		createNamespace bool
+		clusterScoped   bool
 	}{
 		{
 			name: "Namespace present",
@@ -558,6 +559,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			createSecret:    true,
 			namespace:       "testing",
 			createNamespace: true,
+			clusterScoped:   false,
 		},
 		{
 			name: "Namespace not present",
@@ -583,6 +585,61 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 			wantsErr:        false,
 			createSecret:    true,
 			createNamespace: false,
+			clusterScoped:   false,
+		},
+		{
+			name: "Basic auth is not supported for http repositories - cluster scope",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "HelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "",
+						"name":      "repo6",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "http://localhost:9553",
+							"basicAuthConfig": map[string]interface{}{
+								"name":      "fooSecret",
+								"namespace": "testing",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo6",
+			wantsErr:        true,
+			createSecret:    false,
+			createNamespace: false,
+			clusterScoped:   true,
+		},
+		{
+			name: "Basic auth is supported only for https respositories",
+			helmCRS: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "helm.openshift.io/v1beta1",
+					"kind":       "ProjectHelmChartRepository",
+					"metadata": map[string]interface{}{
+						"namespace": "",
+						"name":      "repo4",
+					},
+					"spec": map[string]interface{}{
+						"connectionConfig": map[string]interface{}{
+							"url": "http://localhost:9553",
+							"basicAuthConfig": map[string]interface{}{
+								"name":      "fooSecret",
+								"namespace": "testing",
+							},
+						},
+					},
+				},
+			},
+			repoName:        "repo7",
+			wantsErr:        true,
+			createSecret:    false,
+			createNamespace: false,
+			clusterScoped:   false,
 		},
 	}
 	for _, tt := range tests {
@@ -610,7 +667,7 @@ func TestHelmRepoGetter_unmarshallConfig(t *testing.T) {
 				Client:     fake.K8sDynamicClient("helm.openshift.io/v1beta1", "HelmChartRepository", ""),
 				CoreClient: k8sfake.NewSimpleClientset(objs...).CoreV1(),
 			}
-			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, false)
+			_, err := repoGetter.unmarshallConfig(*tt.helmCRS, tt.namespace, tt.clusterScoped)
 			if tt.wantsErr {
 				require.Error(t, err)
 			} else {
