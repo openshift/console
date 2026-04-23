@@ -175,7 +175,7 @@
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-conv": "^10.1.0",
     "i18next-http-backend": "^1.0.21",
-    "immutable": "3.x",
+    "immutable": "^3.8.3",
     "js-base64": "^2.5.1",
     "js-yaml": "^3.13.1",
     "json-schema": "^0.3.0",
@@ -351,7 +351,8 @@
     "ua-parser-js": "^0.7.24",
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13"
+    "postcss": "^8.2.13",
+    "immutable": "3.8.3"
   },
   "husky": {
     "hooks": {
