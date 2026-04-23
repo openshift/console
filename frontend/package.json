@@ -71,7 +71,7 @@
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",
-    "prepare-husky": "cd .. && husky install frontend/.husky"
+    "prepare-husky": "[ \"${OPENSHIFT_CI:-}\" = true ] || (cd .. && husky install frontend/.husky)"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -111,11 +111,13 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests"
+      "<rootDir>/.*/integration-tests",
+      "<rootDir>/e2e"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests"
+      "<rootDir>/.*/integration-tests",
+      "<rootDir>/e2e"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testEnvironmentOptions": {

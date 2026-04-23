@@ -10,3 +10,4 @@ public/lib
 Godeps
 @types
 dynamic-demo-plugin
+e2e/tsconfig.json

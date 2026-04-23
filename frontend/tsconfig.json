@@ -43,7 +43,8 @@
     "**/node_modules",
     "public/dist",
     "packages/console-dynamic-plugin-sdk/scripts",
-    "**/integration-tests"
+    "**/integration-tests",
+    "e2e"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }
