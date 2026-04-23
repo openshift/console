@@ -180,7 +180,7 @@
     "i18next-conv": "12.1.1",
     "i18next-http-backend": "^1.0.21",
     "i18next-v4-format-converter": "^1.0.3",
-    "immutable": "3.x",
+    "immutable": "^3.8.3",
     "istextorbinary": "^9.5.0",
     "js-base64": "^2.5.1",
     "js-yaml": "^3.13.1",
@@ -358,7 +358,8 @@
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.13",
-    "axios": "0.31.0"
+    "axios": "0.31.0",
+    "immutable": "3.8.3"
   },
   "husky": {
     "hooks": {
