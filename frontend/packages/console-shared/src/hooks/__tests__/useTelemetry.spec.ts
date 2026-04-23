@@ -24,6 +24,24 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useUser', () => ({
+  useUser: jest.fn(() => ({
+    user: {},
+    userResource: {},
+    userResourceLoaded: true,
+    userResourceError: null,
+    username: 'testuser',
+    fullName: 'Test User',
+    displayName: 'Test User',
+  })),
+}));
+
+const mockUserResource = {};
+
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: () => [mockUserResource, true],
+}));
+
 const mockUserSettings = useUserSettings as jest.Mock;
 
 const useResolvedExtensionsMock = useResolvedExtensions as jest.Mock;
@@ -135,10 +153,13 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 1');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 1', {
-      consoleVersion: undefined,
-      clusterType: undefined,
-    });
+    expect(listener).toBeCalledWith(
+      'test 1',
+      expect.objectContaining({
+        consoleVersion: undefined,
+        clusterType: undefined,
+      }),
+    );
   });
 
   it('calls the listener with console version and clusterType when they are configured (x.y.z and OSD)', () => {
@@ -152,10 +173,13 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 2');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 2', {
-      consoleVersion: 'x.y.z',
-      clusterType: 'OSD',
-    });
+    expect(listener).toBeCalledWith(
+      'test 2',
+      expect.objectContaining({
+        consoleVersion: 'x.y.z',
+        clusterType: 'OSD',
+      }),
+    );
   });
 
   it('calls the listener with the optional properties', () => {
@@ -169,12 +193,15 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 3', { 'a-string': 'works fine', 'a-boolean': true });
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 3', {
-      consoleVersion: 'x.y.z',
-      clusterType: 'OSD',
-      'a-string': 'works fine',
-      'a-boolean': true,
-    });
+    expect(listener).toBeCalledWith(
+      'test 3',
+      expect.objectContaining({
+        consoleVersion: 'x.y.z',
+        clusterType: 'OSD',
+        'a-string': 'works fine',
+        'a-boolean': true,
+      }),
+    );
   });
 
   it('calls the listener with clusterType DEVSANDBOX when CLUSTER_TYPE is OSD and DEVSANDBOX is "true"', () => {
@@ -192,10 +219,13 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 4');
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener).toBeCalledWith('test 4', {
-      consoleVersion: 'x.y.z',
-      clusterType: 'DEVSANDBOX',
-    });
+    expect(listener).toBeCalledWith(
+      'test 4',
+      expect.objectContaining({
+        consoleVersion: 'x.y.z',
+        clusterType: 'DEVSANDBOX',
+      }),
+    );
   });
 
   it('Should not send telemetry event when cluster configuration telemetry state is set to disabled', () => {

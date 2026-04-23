@@ -2,14 +2,19 @@ import * as React from 'react';
 import { Select, SelectProps } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensions/user-preferences';
-import { useUserSettings } from '@console/shared';
+import { useUserSettings, useTelemetry } from '@console/shared';
 import UserPreferenceDropdownField from '../UserPreferenceDropdownField';
 
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+  useTelemetry: jest.fn(),
+}));
+
 const mockUserSettings = useUserSettings as jest.Mock;
+const mockUseTelemetry = useTelemetry as jest.Mock;
 
 describe('UserPreferenceDropdownField', () => {
   type UserPreferenceDropdownFieldProps = React.ComponentProps<typeof UserPreferenceDropdownField>;
@@ -23,6 +28,10 @@ describe('UserPreferenceDropdownField', () => {
     ],
   };
   let wrapper: ShallowWrapper<UserPreferenceDropdownFieldProps>;
+
+  beforeEach(() => {
+    mockUseTelemetry.mockReturnValue(jest.fn());
+  });
 
   afterEach(() => {
     jest.resetAllMocks();
