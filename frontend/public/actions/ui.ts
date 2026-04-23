@@ -15,7 +15,7 @@ import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { setClusterID, setCreateProjectMessage, ActionType } from './common';
-import { subsClient } from '../graphql/client';
+import { subsClient, setForceHTTP } from '../graphql/client';
 import {
   beginImpersonate,
   endImpersonate,
@@ -249,17 +249,16 @@ export const startImpersonate = (kind: string, name: string, groups?: string[]) 
   // This ensures flags refresh happens in sync with React's render cycle
 };
 
-// Action to refresh features after impersonation change
-// Don't clear flags - just re-detect them. Old values remain until new ones are fetched.
-// This prevents components from seeing PENDING state and showing loading spinners.
 export const refreshFeaturesAfterImpersonation = () => (dispatch) => {
-  dispatch(detectFeatures());
+  setForceHTTP(true);
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
   subsClient.close(false, true);
+  setForceHTTP(true);
   dispatch(clearSSARFlags());
-  dispatch(detectFeatures());
+  dispatch(detectFeatures()).then(() => setForceHTTP(false));
 };
 export const sortList = (listId: string, field: string, func: string, orderBy: string) => {
   // const url = new URL(window.location.href);
