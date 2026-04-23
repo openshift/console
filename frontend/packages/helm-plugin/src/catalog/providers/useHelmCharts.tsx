@@ -52,7 +52,7 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
       .then(async (res) => {
         if (mounted) {
           const yaml = await res.text();
-          const json = safeLoad(yaml);
+          const json = safeLoad(yaml) as { entries: HelmChartEntries };
           setHelmCharts(json.entries);
         }
       })
