@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
@@ -10,7 +12,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
+  ...(jest as any).requireActual('react-redux'),
   useSelector: jest.fn(),
   useDispatch: jest.fn(),
 }));
@@ -25,7 +27,7 @@ const mockSetUserResource = jest.fn((userResource) => ({
 }));
 
 jest.mock('@console/dynamic-plugin-sdk', () => ({
-  ...jest.requireActual('@console/dynamic-plugin-sdk'),
+  ...(jest as any).requireActual('@console/dynamic-plugin-sdk'),
   getUser: jest.fn(),
   getUserResource: jest.fn(),
   setUserResource: (...args) => mockSetUserResource(...args),

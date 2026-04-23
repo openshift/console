@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser, getUserResource, setUserResource } from '@console/dynamic-plugin-sdk';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
@@ -30,7 +32,7 @@ export const useUser = () => {
   );
 
   // Update Redux when user resource is loaded
-  useEffect(() => {
+  React.useEffect(() => {
     if (userResourceLoaded && userResourceData && !userResourceError) {
       dispatch(setUserResource(userResourceData));
     }
