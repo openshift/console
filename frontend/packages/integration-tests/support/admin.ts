@@ -15,6 +15,7 @@ Cypress.Commands.add('initAdmin', () => {
   cy.log('redirect to home');
   cy.visit('/');
   cy.byTestID('loading-indicator').should('not.exist');
+  cy.document().its('readyState').should('eq', 'complete');
   cy.log('ensure perspective switcher is set to Core platform');
   nav.sidenav.switcher.changePerspectiveTo('Core platform');
   nav.sidenav.switcher.shouldHaveText('Core platform');
