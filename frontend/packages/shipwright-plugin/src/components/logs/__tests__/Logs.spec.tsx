@@ -1,8 +1,8 @@
 import type { ComponentProps } from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
-import { coFetchText } from '@console/internal/co-fetch';
 import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
+import { coFetchText } from '@console/shared/src/utils/console-fetch';
 import Logs from '../Logs';
 import { podData, sampleContainer } from './logs-test-data';
 
@@ -10,7 +10,7 @@ import { podData, sampleContainer } from './logs-test-data';
 Element.prototype.scrollIntoView = jest.fn();
 
 // Mock coFetchText
-jest.mock('@console/internal/co-fetch', () => ({
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
   coFetchText: jest.fn(() => Promise.resolve('')),
 }));
 

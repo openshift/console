@@ -13,6 +13,7 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.22.0-prerelease.3 - TBD
 
 - **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to `moduleFilter` ([CONSOLE-5065], [#16224])
+- Bump `@openshift/dynamic-plugin-sdk-webpack` version to `5.1.1` ([OCPBUGS-83823], [#15655])
 - Update the default list of PatternFly packages that support dynamic modules ([CONSOLE-5065], [#16182])
 - Add support for `dist/dynamic-modules.json` when resolving dynamic module maps ([CONSOLE-5065], [#16224])
 
@@ -130,6 +131,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-55323]: https://issues.redhat.com/browse/OCPBUGS-55323
 [OCPBUGS-61569]: https://issues.redhat.com/browse/OCPBUGS-61569
 [OCPBUGS-66345]: https://issues.redhat.com/browse/OCPBUGS-66345
+[OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -147,6 +149,7 @@ table in [Console dynamic plugins README](./README.md).
 [#14993]: https://github.com/openshift/console/pull/14993
 [#15183]: https://github.com/openshift/console/pull/15183
 [#15479]: https://github.com/openshift/console/pull/15479
+[#15655]: https://github.com/openshift/console/pull/15655
 [#15802]: https://github.com/openshift/console/pull/15802
 [#15904]: https://github.com/openshift/console/pull/15904
 [#15934]: https://github.com/openshift/console/pull/15934

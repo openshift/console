@@ -11,7 +11,7 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
-import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { getDuration, dateFormatter } from './datetime';
 import { getOCMLink } from '../../module/k8s';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -117,7 +117,7 @@ const useLoadServiceLevel = (): [boolean, boolean, (clusterID: string) => void] 
         setLoadingServiceLevel(true);
         hasSecretAccess = true;
 
-        consoleFetchJSON(apiUrl, 'GET', {
+        coFetchJSON(apiUrl, 'GET', {
           headers,
         })
           .then((ocmResponse) => {

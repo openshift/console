@@ -50,7 +50,7 @@ import {
   SecretModel,
   ServiceAccountModel,
 } from '../models';
-import { coFetchJSON } from '../co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, sorts } from './factory';

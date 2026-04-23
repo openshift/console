@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { coFetch } from '@console/internal/co-fetch';
 import {
   ServiceModel,
   RouteModel,
@@ -15,6 +14,7 @@ import {
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
 import type { NameValuePair } from '@console/shared/src/components/formik-fields/field-types';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { CUSTOM_ICON_ANNOTATION } from '../../const';

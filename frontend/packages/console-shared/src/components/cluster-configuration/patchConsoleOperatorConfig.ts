@@ -1,7 +1,7 @@
-import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/utils/fetch/console-fetch';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { resourceURL } from '@console/internal/module/k8s';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '../../constants/resource';
 
 /**
@@ -11,7 +11,7 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '../../constants/resource';
  */
 const patchConsoleOperatorConfig = <R extends K8sResourceKind>(resource: R): Promise<R> => {
   const url = resourceURL(ConsoleOperatorConfigModel, { name: CONSOLE_OPERATOR_CONFIG_NAME });
-  return consoleFetchJSON(url, 'PATCH', {
+  return coFetchJSON(url, 'PATCH', {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/merge-patch+json;charset=UTF-8',

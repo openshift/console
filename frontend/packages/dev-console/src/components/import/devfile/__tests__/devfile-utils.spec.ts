@@ -299,8 +299,8 @@ jest.mock('@console/git-service', () => ({
   },
 }));
 
-jest.mock('@console/internal/co-fetch', () => ({
-  ...jest.requireActual('@console/internal/co-fetch'),
+jest.mock('@console/shared/src/utils/console-fetch', () => ({
+  ...jest.requireActual('@console/shared/src/utils/console-fetch'),
   coFetch: function mockedCoFetch() {
     return Promise.resolve({
       text: () => mockExternalDeploymentYaml,

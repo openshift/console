@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { getLimitsDataFromResource } from '@console/shared/src/utils/resource-utils';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
 import type { DevfileSuggestedResources } from '../import-types';

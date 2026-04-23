@@ -9,7 +9,6 @@ import {
   alertingLoading,
   setAlertCount,
 } from '@console/internal/actions/observe';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import {
   getAlertsAndRules,
@@ -21,6 +20,7 @@ import {
 } from '@console/shared/src/components/dashboard/status-card/alert-utils';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
+import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 /** Fetches notification alerts from redux store and updates the notification count.
  * Polls the Prometheus and Alertmanager for notification alerts AND silences, stores the
