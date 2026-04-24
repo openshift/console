@@ -31,8 +31,9 @@ export const topologySidePane = {
   verifyActions: (...actions: string[]) => {
     cy.byLegacyTestID('action-items')
       .find('li')
-      .each(($el) => {
-        expect(actions).toContain($el.text());
+      .should('have.length', actions.length)
+      .each(($el, index) => {
+        expect($el.text()).to.equal(actions[index]);
       });
   },
   close: () => cy.get(topologyPO.sidePane.close).scrollIntoView().click(),

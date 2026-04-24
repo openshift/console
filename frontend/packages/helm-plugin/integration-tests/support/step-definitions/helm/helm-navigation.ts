@@ -19,6 +19,7 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 import { checkDeveloperPerspective } from '@console/dev-console/integration-tests/support/pages/functions/checkDeveloperPerspective';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { navPaths } from '../../constants';
 import { helmPage, helmDetailsPage } from '../../pages';
 
 const deleteChartRepositoryFromDetailsPage = (name: string, type: string) => {
@@ -35,7 +36,7 @@ Given('user is at developer perspective', () => {
 
 When('user clicks on the Helm tab in dev perspective', () => {
   cy.get('[data-quickstart-id="qs-admin-nav-helm"]').should('be.visible').click({ force: true });
-  navigateTo(devNavigationMenu.Helm);
+  cy.clickNavLink(navPaths.helm);
 });
 
 Then('user will be redirected to Helm releases page', () => {
@@ -89,16 +90,17 @@ Then('Topology page have the helm chart workload {string}', (nodeName: string) =
 });
 
 Given('user has installed helm chart', () => {
-  navigateTo(devNavigationMenu.Topology);
+  cy.clickNavLink(navPaths.topology);
+  topologyPage.verifyTopologyPage();
   topologyPage.verifyWorkloadInTopologyPage('nodejs-release');
 });
 
 Given('user is at the Helm page', () => {
-  navigateTo(devNavigationMenu.Helm);
+  cy.clickNavLink(navPaths.helm);
 });
 
 Given('user is at the Helm Release tab in admin perspective', () => {
-  cy.clickNavLink(['Ecosystem', 'Helm']);
+  cy.clickNavLink(navPaths.helm);
   cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
@@ -315,7 +317,7 @@ When('user selects cluster-scoped scope type', () => {
 });
 
 When('user navigates to Helm page', () => {
-  navigateTo(devNavigationMenu.Helm);
+  cy.clickNavLink(navPaths.helm);
 });
 
 When('user can see {string} {string} details page', (type: string, name: string) => {
@@ -331,7 +333,7 @@ Given(
 );
 
 Given('user is able to see {string} in helm page', (helmRelease: string) => {
-  navigateTo(devNavigationMenu.Helm);
+  cy.clickNavLink(navPaths.helm);
   helmPage.search(helmRelease);
 });
 
