@@ -1,12 +1,12 @@
-# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82511)
-@helm @smoke @manual
+@helm @smoke
 Feature: Helm Release
               As a user, I want to perform actions on the helm release
 
 
         @pre-condition
         Scenario: Create or Select the project namespace
-            Given user has created or selected namespace "aut-ci-helm"
+            Given user is at the Helm Release tab in admin perspective
+             And user has created or selected namespace "aut-ci-helm"
 
 
         Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
@@ -17,8 +17,7 @@ Feature: Helm Release
 
 
         Scenario: Create Helm Release page details: HR-05-TC02
-            Given user has created or selected namespace "aut-ci-helm"
-              And user is at Software Catalog page
+            Given user is at Software Catalog page
              When user selects Helm Charts type from Software Catalog page
               And user searches and selects "Nodejs" card from catalog page
               And user clicks on the Create button on side bar
@@ -39,6 +38,7 @@ Feature: Helm Release
              Then user will be redirected to Topology page
               And Topology page have the helm chart workload "nodejs-release"
 
+
         Scenario: Helm release status verification: HR-01-TC04
             Given user is at the Helm Release tab in admin perspective
               And user is able to see "nodejs-release" in helm page in admin view
@@ -51,7 +51,7 @@ Feature: Helm Release
               And user is able to see the status and status icon of Revision history page
 
         Scenario: Context menu options of helm release:  HR-01-TC01
-            Given user is at the Topology page in admin view
+            Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
              Then user is able to see the context menu with actions Upgrade and Delete Helm Release
 
@@ -78,19 +78,20 @@ Feature: Helm Release
               And user will see the Release Notes tab
               And user will see the Actions drop down menu with options Upgrade, Rollback, and Delete Helm Release
 
-        Scenario: Actions menu on Helm page after helm chart upgrade: HR-08-TC01
-            Given user is on the Helm page with helm release "nodejs-release"
-             When user clicks on the Kebab menu
-             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release
-
 
         Scenario: Perform Upgrade action on Helm Release through Context Menu: HR-08-TC04
-            Given user is at the Topology page in admin view
+            Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
               And user clicks on the "Upgrade" action
               And user upgrades the chart Version
               And user clicks on the upgrade button
              Then user will be redirected to Topology page
+
+
+        Scenario: Actions menu on Helm page after helm chart upgrade: HR-08-TC01
+            Given user is on the Helm page with helm release "nodejs-release"
+             When user clicks on the Kebab menu
+             Then user is able to see kebab menu with actions Upgrade, Rollback and Delete Helm Release
 
 
         Scenario: Perform the helm chart upgrade for already upgraded helm chart : HR-08-TC02
@@ -103,7 +104,7 @@ Feature: Helm Release
 
 
         Scenario: Perform Rollback action on Helm Release through Context Menu: HR-08-TC03
-            Given user is at the Topology page in admin view
+            Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-release"
              When user clicks on the Actions drop down menu
               And user clicks on the "Rollback" action
@@ -113,7 +114,7 @@ Feature: Helm Release
 
 
         Scenario: Delete Helm Release through Context Menu: HR-01-TC03
-            Given user is at the Topology page in admin view
+            Given user is at the Topology page
              When user right clicks on the helm release "nodejs-release" to open the context menu
               And user clicks on the "Delete Helm Release" action
               And user enters the release name "nodejs-release"
