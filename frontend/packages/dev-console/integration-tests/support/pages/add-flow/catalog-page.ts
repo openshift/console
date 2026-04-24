@@ -82,6 +82,7 @@ export const catalogPage = {
         throw new Error('Card is not available in Catalog');
       }
     }
+    catalogPage.verifyPageTitle(type);
   },
   selectTemplateCategory: (templateCategoryTitle: string) => {
     const selector =
@@ -100,6 +101,7 @@ export const catalogPage = {
   selectHelmChartCard: (cardName: string) => cy.byTestID(`HelmChart-${cardName}`).first().click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.create).click();
+    cy.get('.pf-v6-c-button__progress').should('not.exist');
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
   },
   enterReleaseName: (releaseName: string) =>
