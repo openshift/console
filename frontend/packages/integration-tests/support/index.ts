@@ -50,19 +50,6 @@ Cypress.Commands.add('visitAndWait', (url, options, selector = '#content') => {
   waitForElementToExist(selector);
 });
 
-Cypress.Commands.add('clickNavLink', (path: string[]) => {
-  cy.get('#page-sidebar')
-    .contains(path[0])
-    .then(($navItem) => {
-      if ($navItem.attr('aria-expanded') !== 'true') {
-        cy.wrap($navItem).click();
-      }
-    });
-  if (path.length === 2) {
-    cy.get('#page-sidebar').contains(path[1]).click();
-  }
-});
-
 before(() => {
   cy.task('readFileIfExists', 'cypress-a11y-report.json').then((a11yReportOrNull: string) => {
     if (a11yReportOrNull !== null) {
