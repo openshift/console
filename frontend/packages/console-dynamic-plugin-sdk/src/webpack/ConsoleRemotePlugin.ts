@@ -44,6 +44,9 @@ const getPackageDependencies = (pkg: readPkg.PackageJson) => ({
   ...pkg.dependencies,
 });
 
+const hasPackageDependency = (pkg: readPkg.PackageJson, depName: string) =>
+  Object.keys(getPackageDependencies(pkg)).includes(depName);
+
 const getPluginSDKPackagePeerDependencies = () =>
   loadVendorPackageJSON('@openshift-console/dynamic-plugin-sdk').peerDependencies;
 
@@ -133,13 +136,12 @@ export const validateConsoleExtensionsFileSchema = (
 };
 
 const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
-  const pluginDeps = getPackageDependencies(pkg);
   const warnings: string[] = [];
 
   sharedPluginModules.forEach((moduleName) => {
     const { deprecated } = getSharedModuleMetadata(moduleName);
 
-    if (deprecated && pluginDeps[moduleName]) {
+    if (deprecated && hasPackageDependency(pkg, moduleName)) {
       warnings.push(
         `[DEPRECATION WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`,
       );
@@ -150,7 +152,6 @@ const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): strin
 };
 
 const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => {
-  const pluginDeps = getPackageDependencies(pkg);
   const sdkPkgDeps = getPluginSDKPackagePeerDependencies();
   const result = new ValidationResult('package.json');
 
@@ -159,7 +160,7 @@ const validateConsoleProvidedSharedModules = (pkg: ConsolePluginPackageJSON) => 
 
     // Skip modules that allow a fallback version to be provided by the plugin.
     // Also skip modules which are not explicitly listed in the plugin's dependencies.
-    if (allowFallback || !pluginDeps[moduleName]) {
+    if (allowFallback || !hasPackageDependency(pkg, moduleName)) {
       return;
     }
 
@@ -381,6 +382,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
     this.dynamicModuleMaps = resolveDynamicModuleMaps(
       this.adaptedOptions.sharedDynamicModuleSettings.packageSpecs ?? dynamicModulePackageSpecs,
       resolvedModulePaths,
+      (pkgName) => hasPackageDependency(this.pkg, pkgName),
     );
   }
 

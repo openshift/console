@@ -34,6 +34,8 @@ export const resolveDynamicModuleMaps = (
   packageSpecs: DynamicModulePackageSpecs,
   /** Absolute paths to `node_modules` directories to search. */
   modulePaths: string[],
+  /** Optional check if the package is available. */
+  isPackageAvailable: (pkgName: string) => boolean = () => true,
 ) =>
   Object.entries(packageSpecs).reduce<Record<string, DynamicModuleMap>>(
     (
@@ -48,6 +50,10 @@ export const resolveDynamicModuleMaps = (
         },
       ],
     ) => {
+      if (!isPackageAvailable(pkgName)) {
+        return acc;
+      }
+
       const basePath = modulePaths
         .map((p) => path.resolve(p, pkgName))
         .find((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
