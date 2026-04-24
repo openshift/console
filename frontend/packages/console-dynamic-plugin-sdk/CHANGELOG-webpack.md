@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.3 - TBD
+## 4.22.0-prerelease.3 - 2026-04-24
 
 - **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to `moduleFilter` ([CONSOLE-5065], [#16224])
 - Bump `@openshift/dynamic-plugin-sdk-webpack` version to `5.1.1` ([OCPBUGS-83823], [#15655])

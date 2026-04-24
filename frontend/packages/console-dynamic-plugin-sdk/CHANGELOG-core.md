@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.22.0-prerelease.3 - TBD
+## 4.22.0-prerelease.3 - 2026-04-24
 
 - **Breaking**: The `dynamic-core-api`, `console-fetch`, and `console-fetch-utils` modules are no longer provided. Console plugin APIs should be imported from the package index. ([OCPBUGS-81319], [#15655])
 - Added `HttpError` class export for `instanceof` checks on errors thrown by `consoleFetch` ([OCPBUGS-81319], [#15655])
