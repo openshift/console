@@ -26,7 +26,7 @@ import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/
 import { Status, snapshotSource, FLAGS } from '@console/shared';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const { editYaml, events } = navFactory;
 const { common, RestorePVC } = Kebab.factory;
@@ -56,7 +56,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('console-app~Status')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <Status status={volumeSnapshotStatus(obj)} />
+                <Status status={snapshotStatus(obj)} />
               </DescriptionListDescription>
             </DescriptionListGroup>
           </ResourceSummary>
@@ -126,7 +126,7 @@ const VolumeSnapshotDetailsPage: React.FC<DetailsPageProps> = (props) => {
   return (
     <DetailsPage
       {...props}
-      getResourceStatus={volumeSnapshotStatus}
+      getResourceStatus={snapshotStatus}
       menuActions={menuActions}
       pages={pages}
     />
