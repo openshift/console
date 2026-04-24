@@ -39,6 +39,99 @@ This guide establishes a consistent, project-wide standard for all React compone
 
 ---
 
+## The OpenShift Way (Structurally Enforced)
+
+These patterns are **STRUCTURALLY ENFORCED** by Claude Code hooks (`.claude/hooks/`). Violations will **BLOCK** file writes.
+
+### Rule 0: Always Use renderWithProviders (MANDATORY)
+
+**NEVER** use standard `render` from RTL for OpenShift Console components. Always use `renderWithProviders`.
+
+```typescript
+// FORBIDDEN - Enforced by convention and code review
+import { render } from '@testing-library/react';
+render(<MyComponent />);
+
+// REQUIRED - OpenShift Console Way
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+renderWithProviders(<MyComponent />);
+```
+
+**Why:**
+- Components depend on Redux store (k8s resources, features, user settings)
+- Components depend on React Router (navigation, route params)
+- Components depend on PluginStore (dynamic plugins)
+- `renderWithProviders` wraps all three providers automatically
+
+**Exception for Isolated Components:**
+Use standard `render` ONLY for truly isolated components that have:
+- No Redux dependencies (no `useSelector`, no k8s hooks like `useK8sWatchResource`)
+- No routing dependencies (no `useNavigate`, `useParams`, `useLocation`)
+- No plugin dependencies
+
+To mark a component as isolated, add this comment at the top of the test file:
+```typescript
+// ISOLATED_COMPONENT - This component has no Redux, Router, or Plugin dependencies
+import { render } from '@testing-library/react';
+```
+
+### Rule 0.1: Use userEvent (Not fireEvent)
+
+**ALWAYS** use `userEvent` from `@testing-library/user-event` for user interactions.
+
+```typescript
+// FORBIDDEN - Will be BLOCKED
+import { fireEvent } from '@testing-library/react';
+fireEvent.click(button);
+fireEvent.change(input, { target: { value: 'test' } });
+
+// REQUIRED
+import userEvent from '@testing-library/user-event';
+const user = userEvent.setup();
+await user.click(button);
+await user.type(input, 'test');
+```
+
+**Why:**
+- `userEvent` simulates real user behavior (focus, blur, keyboard events)
+- `fireEvent` dispatches raw DOM events (not realistic)
+- `userEvent` catches more bugs related to event handling
+- Better async handling with `await`
+
+### Rule 0.2: Use screen Queries (Not Destructured)
+
+**ALWAYS** use `screen` from RTL instead of destructuring queries from `render`.
+
+```typescript
+// FORBIDDEN - Will be BLOCKED
+const { getByRole, getByText } = render(<MyComponent />);
+const button = getByRole('button');
+
+// REQUIRED
+import { screen } from '@testing-library/react';
+renderWithProviders(<MyComponent />);
+const button = screen.getByRole('button');
+```
+
+**Why:**
+- Consistent query access across all tests
+- Better debugging with `screen.debug()`
+- Cleaner test code
+- ESLint rule `testing-library/prefer-screen-queries` enforces this
+
+### Hook Enforcement Summary
+
+| Violation | Hook Action | Severity |
+|-----------|-------------|----------|
+| `require()` in test file | **BLOCKED** | Critical |
+| `expect.anything()` | **BLOCKED** | Critical |
+| `container.querySelector` | **BLOCKED** | Critical |
+| Using `fireEvent` | **BLOCKED** | Critical |
+| Destructuring queries from render | **BLOCKED** | Critical |
+| `toMatchSnapshot()` / `toMatchInlineSnapshot()` | **BLOCKED** | Critical |
+
+---
+
 ## Section 1: React Testing Library Overview
 
 ### The RTL Approach
@@ -482,14 +575,17 @@ When testing form components:
 ### Rule 10: Test Conditional Rendering by Asserting Both States
 
 ```typescript
-it('should show content when expanded', () => {
+import userEvent from '@testing-library/user-event';
+
+it('should show content when expanded', async () => {
   render(<Collapsible />);
+  const user = userEvent.setup();
 
   // 1. Assert initial hidden state
   expect(screen.queryByText('Hidden content')).not.toBeInTheDocument();
 
   // 2. Simulate user action
-  fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
+  await user.click(screen.getByRole('button', { name: 'Expand' }));
 
   // 3. Assert final visible state
   expect(screen.getByText('Hidden content')).toBeVisible();
@@ -509,7 +605,7 @@ await waitFor(() => {
 });
 ```
 
-**Avoid Explicit act():** Rarely needed. `render`, `fireEvent`, `findBy*`, and `waitFor` already wrap operations in `act()`.
+**Avoid Explicit act():** Rarely needed. `render`, `userEvent`, `findBy*`, and `waitFor` already wrap operations in `act()`.
 
 ### Rule 12: Use Lifecycle Hooks for Setup and Cleanup
 
@@ -553,24 +649,31 @@ expect(userName).toBeVisible();
 expect(editButton).toBeVisible();
 ```
 
-### Rule 14: Simulate User Events with fireEvent
+### Rule 14: Simulate User Events with userEvent
 
 ```typescript
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
-render(<MyForm />);
+renderWithProviders(<MyForm />);
+const user = userEvent.setup();
 
 const input = screen.getByLabelText(/name/i);
 const button = screen.getByRole('button', { name: /submit/i });
 
 // Simulate typing
-fireEvent.change(input, { target: { value: 'John Doe' } });
+await user.type(input, 'John Doe');
 
 // Simulate clicking
-fireEvent.click(button);
+await user.click(button);
 ```
 
-**Note:** `userEvent` from `@testing-library/user-event` is not supported due to incompatible Jest version (will be updated after Jest upgrade).
+**Why userEvent over fireEvent:**
+- `userEvent` simulates real user behavior (focus, blur, keyboard events)
+- `fireEvent` dispatches raw DOM events (not realistic)
+- `userEvent` catches more bugs related to event handling
+- Better async handling with `await`
 
 ### Rule 15: Test "Unhappy Paths" and Error States
 
@@ -648,12 +751,14 @@ Remove any imports that are not used in the test file:
 
 ```typescript
 // ❌ BAD - Unused imports
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { k8sCreate, k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-// ... but only using render, screen, fireEvent
+// ... but only using render, screen, userEvent
 
 // ✅ GOOD - Only what's needed
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { k8sCreate } from '@console/internal/module/k8s';
 ```
 
@@ -716,24 +821,29 @@ it('should work', () => {
 Clean up any variables that are declared but never used:
 
 ```typescript
+// Imports omitted for brevity - see Rule 14 for full import pattern
+import userEvent from '@testing-library/user-event';
+
 // ❌ BAD - Unused variables
-it('should submit form', () => {
+it('should submit form', async () => {
   const mockData = { foo: 'bar' };
   const unusedSpy = jest.spyOn(console, 'log');
   const onSubmit = jest.fn();
+  const user = userEvent.setup();
 
   render(<Form onSubmit={onSubmit} />);
-  fireEvent.click(screen.getByRole('button'));
+  await user.click(screen.getByRole('button'));
 
   expect(onSubmit).toHaveBeenCalled();
 });
 
 // ✅ GOOD - Only necessary variables
-it('should submit form', () => {
+it('should submit form', async () => {
   const onSubmit = jest.fn();
+  const user = userEvent.setup();
 
   render(<Form onSubmit={onSubmit} />);
-  fireEvent.click(screen.getByRole('button'));
+  await user.click(screen.getByRole('button'));
 
   expect(onSubmit).toHaveBeenCalled();
 });
@@ -948,14 +1058,16 @@ act(() => {
 
 #### How to Fix act() Warnings
 
-**Strategy 1: Wrap async interactions in waitFor**
+**Strategy 1: Use userEvent with async/await**
 ```typescript
-// ❌ BAD: Causes act() warning
-fireEvent.click(button);
+// ❌ BAD: Not awaiting user interactions
+const user = userEvent.setup();
+user.click(button); // Missing await
 expect(screen.getByText('Updated')).toBeInTheDocument();
 
-// ✅ GOOD: Use waitFor for async updates
-fireEvent.click(button);
+// ✅ GOOD: Await userEvent interactions
+const user = userEvent.setup();
+await user.click(button);
 await waitFor(() => {
   expect(screen.getByText('Updated')).toBeInTheDocument();
 });
@@ -963,30 +1075,34 @@ await waitFor(() => {
 
 **Strategy 2: Use findBy* queries (preferred for new elements)**
 ```typescript
-// ❌ BAD: Causes act() warning
-fireEvent.click(button);
-expect(screen.getByText('Loaded')).toBeInTheDocument();
+// ❌ BAD: Using getBy for async content
+const user = userEvent.setup();
+await user.click(button);
+expect(screen.getByText('Loaded')).toBeInTheDocument(); // May fail if async
 
 // ✅ GOOD: Use findBy* which waits automatically
-fireEvent.click(button);
+const user = userEvent.setup();
+await user.click(button);
 expect(await screen.findByText('Loaded')).toBeInTheDocument();
 ```
 
 **Strategy 3: Wrap test in act() when needed**
 ```typescript
 // Import act from @testing-library/react
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 // ❌ BAD: Causes act() warning for dropdown/select interactions
+const user = userEvent.setup();
 const dropdown = screen.getByText('Select Option');
-fireEvent.click(dropdown);
+await user.click(dropdown);
 
 // ✅ GOOD: Wrap in act() for complex interactions
 await act(async () => {
-  fireEvent.click(dropdown);
+  await user.click(dropdown);
 });
 const option = await screen.findByText('Option 1');
-fireEvent.click(option);
+await user.click(option);
 ```
 
 **Strategy 4: Mock timers or async operations**
@@ -1459,7 +1575,8 @@ When generating tests for React components:
 **Code Generation Pattern:**
 ```typescript
 // ✅ ALWAYS - ES6 imports at file top
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { history } from '@console/internal/components/utils';
 import { verifyInputField } from '@console/shared/src/test-utils/unit-test-utils'; // For form components
