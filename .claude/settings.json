@@ -128,5 +128,28 @@
 
       "Bash(yarn dev)"
     ]
+  },
+
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/rtl-test/post-tool-use.sh Write \"$CLAUDE_FILE_PATH\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/rtl-test/post-tool-use.sh Edit \"$CLAUDE_FILE_PATH\""
+          }
+        ]
+      }
+    ]
   }
 }
