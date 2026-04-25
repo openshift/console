@@ -37,13 +37,13 @@ const AddBroker: FC<AddBrokerProps> = ({ namespace, selectedApplication }) => {
   const createResources = (
     formValues: AddBrokerFormYamlValues,
     actions: FormikHelpers<AddBrokerFormYamlValues>,
-  ): Promise<K8sResourceKind> => {
+  ): Promise<K8sResourceKind | null> => {
     let broker: K8sResourceKind;
     if (formValues.editorType === EditorType.Form) {
       broker = convertFormToBrokerYaml(formValues.formData);
     } else {
       try {
-        broker = safeLoad(formValues.yamlData);
+        broker = safeLoad(formValues.yamlData) as K8sResourceKind;
         if (!broker.metadata?.namespace) {
           broker.metadata.namespace = formValues.formData.project.name;
         }

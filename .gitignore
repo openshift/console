@@ -27,6 +27,10 @@ cypress-a11y-report.json
 /frontend/**/yarn-error.log
 /frontend/**/dist
 /frontend/@types/console/generated
+/frontend/e2e/.auth/
+/frontend/e2e/.test-config.json
+/frontend/test-results/
+/frontend/playwright-report/
 /frontend/gui_test_screenshots
 /frontend/package-lock.json
 /frontend/po-files

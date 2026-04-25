@@ -125,7 +125,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
       try {
         const response = await coFetch(`/api/helm/charts/index.yaml?namespace=${namespace}`);
         const yaml = await response.text();
-        json = safeLoad(yaml);
+        json = safeLoad(yaml) as { entries: HelmChartEntries };
       } catch {
         if (ignore) return;
       }

@@ -49,6 +49,10 @@
     "test-cypress-topology": "cd packages/topology/integration-tests && yarn run test-cypress",
     "test-cypress-topology-headless": "cd packages/topology/integration-tests && yarn run test-cypress-headless",
     "test-cypress-topology-nightly": "cd packages/topology/integration-tests && yarn run test-cypress-headless-all",
+    "test-playwright": "playwright test",
+    "test-playwright-headed": "playwright test --headed",
+    "test-playwright-debug": "playwright test --debug",
+    "test-playwright-ui": "playwright test --ui",
     "test-puppeteer-csp": "yarn ts-node ./test-puppeteer-csp.ts",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
@@ -67,7 +71,7 @@
     "export-pos": "./i18n-scripts/export-pos.sh",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",
-    "prepare-husky": "cd .. && husky install frontend/.husky"
+    "prepare-husky": "[ \"${OPENSHIFT_CI:-}\" = true ] || (cd .. && husky install frontend/.husky)"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -107,11 +111,13 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests"
+      "<rootDir>/.*/integration-tests",
+      "<rootDir>/e2e"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/public/dist",
-      "<rootDir>/.*/integration-tests"
+      "<rootDir>/.*/integration-tests",
+      "<rootDir>/e2e"
     ],
     "testRegex": ".*\\.spec\\.(ts|tsx|js|jsx)$",
     "testEnvironmentOptions": {
@@ -231,6 +237,8 @@
     "@graphql-codegen/typescript": "^1.15.1",
     "@graphql-codegen/typescript-graphql-files-modules": "^1.15.1",
     "@graphql-codegen/typescript-operations": "^1.15.1",
+    "@kubernetes/client-node": "^1.4.0",
+    "@playwright/test": "^1.59.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
     "@swc/core": "^1.15.18",
     "@swc/jest": "^0.2.39",
@@ -242,6 +250,7 @@
     "@types/glob": "7.x",
     "@types/immutable": "3.x",
     "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^3.12.7",
     "@types/json-schema": "^7.0.7",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "22.x",
@@ -264,6 +273,7 @@
     "cypress-cucumber-preprocessor": "^4.3.1",
     "cypress-jest-adapter": "^0.1.1",
     "cypress-multi-reporters": "^2.0.5",
+    "dotenv": "^17.4.2",
     "esbuild-loader": "^4.4.2",
     "file-loader": "6.2.0",
     "find-up": "4.x",

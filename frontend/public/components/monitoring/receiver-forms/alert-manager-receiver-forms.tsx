@@ -543,7 +543,7 @@ const ReceiverWrapper = memo<ReceiverFormsWrapperProps>(({ obj, ...props }) => {
           setLoadError({ message: 'alertmanager.v2.status.config.original not found.' });
         } else {
           try {
-            const { global } = safeLoad(originalAlertmanagerConfigJSON);
+            const { global } = safeLoad(originalAlertmanagerConfigJSON) as Record<string, any>;
             setAlertmanagerGlobals(global);
             setLoaded(true);
           } catch (error) {

@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import YAML from 'js-yaml';
+import * as YAML from 'js-yaml';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { PodDisruptionBudgetModel } from '@console/app/src/models';

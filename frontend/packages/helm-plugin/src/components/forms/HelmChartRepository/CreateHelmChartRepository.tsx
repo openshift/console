@@ -91,7 +91,7 @@ const CreateHelmChartRepository: FC<CreateHelmChartRepositoryProps> = ({
 
     if (values.editorType === EditorType.YAML) {
       try {
-        HelmChartRepositoryRes = safeLoad(values.yamlData);
+        HelmChartRepositoryRes = safeLoad(values.yamlData) as HelmChartRepositoryType;
         if (
           HelmChartRepositoryRes &&
           HelmChartRepositoryRes.kind === 'ProjectHelmChartRepository' &&

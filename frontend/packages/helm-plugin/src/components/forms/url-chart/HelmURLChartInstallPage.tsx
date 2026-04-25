@@ -136,7 +136,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       }
     } else if (yamlData) {
       try {
-        valuesObj = safeLoad(yamlData);
+        valuesObj = safeLoad(yamlData) as Record<string, unknown>;
       } catch (err) {
         actions.setStatus({
           submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),

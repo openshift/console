@@ -167,7 +167,7 @@ const HelmInstallUpgradePage: FC = () => {
       }
     } else if (yamlData) {
       try {
-        valuesObj = safeLoad(yamlData);
+        valuesObj = safeLoad(yamlData) as any;
       } catch (err) {
         actions.setStatus({
           submitError: t('helm-plugin~Invalid YAML - {{errorText}}', { errorText: err.toString() }),
