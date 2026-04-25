@@ -11,6 +11,7 @@
     "no-redeclare": "off",
     "promise/catch-or-return": "off",
     "promise/no-nesting": "off",
-    "cypress/no-unnecessary-waiting": "off"
+    "cypress/no-unnecessary-waiting": "off",
+    "cypress/unsafe-to-chain-command": "off"
   }
 }

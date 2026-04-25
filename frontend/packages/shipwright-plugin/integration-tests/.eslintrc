@@ -10,6 +10,7 @@
     "no-namespace": "off",
     "no-redeclare": "off",
     "promise/catch-or-return": "off",
-    "promise/no-nesting": "off"
+    "promise/no-nesting": "off",
+    "cypress/unsafe-to-chain-command": "off"
   }
 }

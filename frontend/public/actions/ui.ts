@@ -320,6 +320,7 @@ export const setPluginCSPViolations = (pluginName: string, hasViolation: boolean
 };
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const uiActions = {
   setCurrentLocation,
   setShowOperandsInAllNamespaces,

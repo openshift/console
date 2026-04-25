@@ -149,8 +149,10 @@ export const updateModelFlags = (
   models: K8sModel[],
 ) => action(ActionType.UpdateModelFlags, { added, removed, models });
 
+/* eslint-disable @typescript-eslint/no-unused-vars -- used in typeof for type export */
 const featureActions = { setFlag, updateModelFlags };
 const clearFlags = { clearSSARFlags };
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export type FeatureAction = Action<
   typeof featureActions | typeof receivedResources | typeof clearFlags

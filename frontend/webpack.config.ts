@@ -106,7 +106,7 @@ const getWebpackSharedModules = () => {
     (acc, [moduleName, dynamicModuleMap]) => {
       const moduleConfig: WebpackSharedConfig = { eager: true };
 
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const moduleVersion = require(`${moduleName}/package.json`).version;
 
       if (semver.valid(moduleVersion)) {

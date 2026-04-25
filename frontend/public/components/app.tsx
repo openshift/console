@@ -499,8 +499,8 @@ graphQLReady.onReady(() => {
 
   if ('serviceWorker' in navigator) {
     if (window.SERVER_FLAGS.loadTestFactor > 1) {
-      // eslint-disable-next-line import/no-unresolved
       // @ts-expect-error file-loader is not a module but it does resolve
+      // eslint-disable-next-line import/no-unresolved
       import('file-loader?name=load-test.sw.js!../load-test.sw.js')
         .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
         .then(

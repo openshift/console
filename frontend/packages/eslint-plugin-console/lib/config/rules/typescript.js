@@ -14,18 +14,13 @@ module.exports = {
   // Disallow `@ts-<directive>` comments or require descriptions after directives
   '@typescript-eslint/ban-ts-comment': 'error',
 
-  // Disallow certain types
-  '@typescript-eslint/ban-types': [
-    'error',
-    {
-      extendDefaults: true,
-      types: {
-        '{}': false,
-        Function: false,
-        object: false,
-      },
-    },
-  ],
+  // In @typescript-eslint v6, ban-types was split into:
+  //   no-restricted-types (custom bans, no defaults)
+  //   no-empty-object-type (bans {})
+  //   no-unsafe-function-type (bans Function)
+  // Our old config allowed {}, Function, and object, so disable the new rules.
+  '@typescript-eslint/no-empty-object-type': 'off',
+  '@typescript-eslint/no-unsafe-function-type': 'off',
 
   // Enforce naming conventions for everything across a codebase
   camelcase: 'off',
@@ -37,7 +32,7 @@ module.exports = {
       leadingUnderscore: 'allowSingleOrDouble',
     },
     {
-      selector: ['variableLike', 'memberLike'],
+      selector: ['variableLike', 'memberLike', 'import'],
       format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
       leadingUnderscore: 'allowSingleOrDouble',
     },
@@ -61,69 +56,18 @@ module.exports = {
   // Require explicit accessibility modifiers on class properties and methods
   '@typescript-eslint/explicit-member-accessibility': 'off',
 
-  // Require or disallow spacing between function identifiers and their invocations
-  'func-call-spacing': 'off',
-  '@typescript-eslint/func-call-spacing': 'error',
-
-  // Enforce consistent indentation
-  indent: 'off',
-  '@typescript-eslint/indent': ['error', 2],
-
-  // Require that interface names be prefixed with I
-  '@typescript-eslint/interface-name-prefix': 'off',
-
-  // Require a specific member delimiter style for interfaces and type literals
-  '@typescript-eslint/member-delimiter-style': 'error',
-
   // Require a consistent member declaration order
-  // FIXME Off for now to figure out how best to utilize this rule
   '@typescript-eslint/member-ordering': 'off',
-  // '@typescript-eslint/member-ordering': [
-  //   'error',
-  //   {
-  //     default: [
-  //       'public-static-field',
-  //       'protected-static-field',
-  //       'private-static-field',
-  //       'public-static-method',
-  //       'protected-static-method',
-  //       'private-static-method',
-  //       'public-instance-field',
-  //       'protected-instance-field',
-  //       'private-instance-field',
-  //       'constructor',
-  //       'public-instance-method',
-  //       'protected-instance-method',
-  //       'private-instance-method',
-  //     ],
-  //   },
-  // ],
 
-  // TODO This rule wasn't working as expected prior to @typescript-eslint/eslint-plugin v2.11.0.
-  // Disabled for now as it is causing failures
   // Enforces the use of as Type assertions instead of <Type> assertions
-  // '@typescript-eslint/consistent-type-assertions': [
-  //   'error',
-  //   {
-  //     assertionStyle: 'as',
-  //     objectLiteralTypeAssertions: 'allow-as-parameter',
-  //   },
-  // ],
   '@typescript-eslint/consistent-type-assertions': 'off',
 
   // Disallow generic Array constructors
   'no-array-constructor': 'off',
   '@typescript-eslint/no-array-constructor': 'error',
 
-  // Disallow the declaration of empty interfaces
-  '@typescript-eslint/no-empty-interface': 'error',
-
   // Disallow usage of the any type
   '@typescript-eslint/no-explicit-any': 'off',
-
-  // Disallow unnecessary parentheses
-  'no-extra-parens': 'off',
-  '@typescript-eslint/no-extra-parens': 'error',
 
   // Forbids the use of classes as namespaces
   '@typescript-eslint/no-extraneous-class': 'error',
@@ -131,10 +75,7 @@ module.exports = {
   // Disallow iterating over an array with a for-in loop
   '@typescript-eslint/no-for-in-array': 'error',
 
-  // TODO This rule wasn't working as expected prior to @typescript-eslint/eslint-plugin v2.11.0.
-  // Disabled for now as it is causing failures
   // Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean
-  // '@typescript-eslint/no-inferrable-types': 'error',
   '@typescript-eslint/no-inferrable-types': 'off',
 
   // Disallows magic numbers
@@ -151,9 +92,6 @@ module.exports = {
   '@typescript-eslint/no-non-null-assertion': 'error',
 
   // Disallow the use of parameter properties in class constructors
-  '@typescript-eslint/no-parameter-properties': 'off',
-
-  // Disallow the use of parameter properties in class constructors
   '@typescript-eslint/no-require-imports': 'error',
 
   // Force consistent usage of type imports
@@ -167,9 +105,6 @@ module.exports = {
     'error',
     { path: 'never', types: 'never', lib: 'never' },
   ],
-
-  // Disallow the use of type aliases
-  '@typescript-eslint/no-type-alias': 'off',
 
   // Warns when a namespace qualifier is unnecessary
   '@typescript-eslint/no-unnecessary-qualifier': 'error',
@@ -186,7 +121,10 @@ module.exports = {
 
   // Disallow unused variables
   'no-unused-vars': 'off',
-  '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    { ignoreRestSiblings: true, caughtErrors: 'none' },
+  ],
 
   // Disallow the use of variables before they are defined
   'no-use-before-define': 'off',
@@ -200,10 +138,7 @@ module.exports = {
   'no-shadow': 'off',
   '@typescript-eslint/no-shadow': 'error',
 
-  // Disallows the use of require statements except in import statements
-  '@typescript-eslint/no-var-requires': 'error',
-
-  // Prefer a ‘for-of’ loop over a standard ‘for’ loop if the index is only used to access the array being iterated
+  // Prefer a 'for-of' loop over a standard 'for' loop if the index is only used to access the array being iterated
   '@typescript-eslint/prefer-for-of': 'error',
 
   // Use function types instead of interfaces with call signatures
@@ -211,9 +146,6 @@ module.exports = {
 
   // Enforce includes method over indexOf method
   '@typescript-eslint/prefer-includes': 'error',
-
-  // Prefer an interface declaration over a type literal (type T = { ... })
-  '@typescript-eslint/prefer-interface': 'off',
 
   // Require the use of the namespace keyword instead of the module keyword to declare custom TypeScript modules
   '@typescript-eslint/prefer-namespace-keyword': 'error',
@@ -232,13 +164,6 @@ module.exports = {
 
   // When adding two variables, operands must both be of type number or of type string
   '@typescript-eslint/restrict-plus-operands': 'error',
-
-  // Require or disallow semicolons instead of ASI
-  semi: 'off',
-  '@typescript-eslint/semi': 'error',
-
-  // Require consistent spacing around type annotations
-  '@typescript-eslint/type-annotation-spacing': 'error',
 
   // Enforces unbound methods are called with their expected scope
   '@typescript-eslint/unbound-method': 'error',
@@ -290,40 +215,21 @@ module.exports = {
   'prefer-spread': 'error',
 
   // Prevent imports from @patternfly CJS distributions (dist/js or dist/cjs).
-  // The import/no-restricted-paths rule does not support globs, so each package
-  // with a CJS distribution must be listed individually.
-  // TODO: change this to a glob when our eslint is no longer ancient
   'import/no-restricted-paths': [
     'error',
     {
       zones: [
-        'react-core',
-        'react-icons',
-        'react-table',
-        'react-charts',
-        'react-code-editor',
-        'react-data-view',
-        'react-drag-drop',
-        'react-log-viewer',
-        'react-styles',
-        'react-templates',
-        'react-tokens',
-        'react-topology',
-        'react-virtualized-extension',
-        'react-catalog-view-extension',
-      ]
-        .map((pkg) => ({
+        {
           target: './',
-          from: `node_modules/@patternfly/${pkg}/dist/js`,
+          from: 'node_modules/@patternfly/*/dist/js/**',
           message: 'Import from the package index instead of the CJS dist/js path.',
-        }))
-        .concat(
-          ['react-component-groups', 'react-data-view', 'react-user-feedback'].map((pkg) => ({
-            target: './',
-            from: `node_modules/@patternfly/${pkg}/dist/cjs`,
-            message: 'Import from the package index instead of the CJS dist/cjs path.',
-          })),
-        ),
+        },
+        {
+          target: './',
+          from: 'node_modules/@patternfly/*/dist/cjs/**',
+          message: 'Import from the package index instead of the CJS dist/cjs path.',
+        },
+      ],
     },
   ],
 };

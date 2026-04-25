@@ -278,7 +278,7 @@ const CreateSnapshotForm = (props: SnapshotResourceProps) => {
             ) : (
               /* eslint-disable jsx-a11y/label-has-associated-control */
               <>
-                <label className="co-required" html-for="claimName">
+                <label className="co-required" htmlFor="claimName">
                   {t('console-app~PersistentVolumeClaim')}
                 </label>
                 <PVCDropdown

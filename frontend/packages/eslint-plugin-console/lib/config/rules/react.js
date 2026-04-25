@@ -44,4 +44,25 @@ module.exports = {
 
   // Enforce component methods order (fixable)
   'react/sort-comp': 'off',
+
+  // Disable prop-types related rules (TypeScript handles this)
+  'react/no-unused-prop-types': 'off',
+  'react/forbid-prop-types': 'off',
+
+  /* ---- Rules new/changed in eslint-config-airbnb v19 / eslint-plugin-react v7.37 ---- */
+
+  // Enforce function component definition style (new in airbnb v19)
+  'react/function-component-definition': 'off',
+
+  // Require defaultProps for non-required props (TypeScript handles this)
+  'react/require-default-props': 'off',
+
+  // Disallow useless JSX fragments (new in airbnb v19)
+  'react/jsx-no-useless-fragment': 'off',
+
+  // Prevent unstable nested components (new in react plugin)
+  'react/no-unstable-nested-components': 'off',
+
+  // Prevent creating context values in render (new in react plugin)
+  'react/jsx-no-constructed-context-values': 'off',
 };
