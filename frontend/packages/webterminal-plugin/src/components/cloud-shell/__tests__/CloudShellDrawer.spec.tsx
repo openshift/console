@@ -21,6 +21,7 @@ jest.mock('@console/webterminal-plugin/src/redux/actions/cloud-shell-dispatchers
 
 jest.mock('@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors', () => ({
   useIsCloudShellExpanded: jest.fn(() => true),
+  useDetachedSessions: jest.fn(() => []),
 }));
 
 const mockUseFlag = useFlag as jest.Mock;

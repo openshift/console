@@ -1,5 +1,6 @@
 import type { RootState } from '@console/internal/redux';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
+import type { DetachedSession } from '../actions/cloud-shell-actions';
 
 export const cloudShellReducerName = 'cloudShell';
 
@@ -22,4 +23,11 @@ export const getCloudShellCommand = (state: RootState): string | null =>
 
 export const useGetCloudShellCommand = (): string | null => {
   return useConsoleSelector<string | null>(getCloudShellCommand);
+};
+
+export const getDetachedSessions = (state: RootState): DetachedSession[] =>
+  state.plugins?.webterminal?.[cloudShellReducerName]?.detachedSessions ?? [];
+
+export const useDetachedSessions = (): DetachedSession[] => {
+  return useConsoleSelector<DetachedSession[]>(getDetachedSessions);
 };

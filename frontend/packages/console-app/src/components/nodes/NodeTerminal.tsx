@@ -8,7 +8,9 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { ImageStreamTagModel, NamespaceModel, PodModel } from '@console/internal/models';
 import type { NodeKind, PodKind } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sKillByName } from '@console/internal/module/k8s';
+import store from '@console/internal/redux';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 
 type NodeTerminalErrorProps = {
   error: ReactNode;
@@ -18,6 +20,7 @@ type NodeTerminalInnerProps = {
   pod?: PodKind;
   loaded: boolean;
   loadError?: unknown;
+  debugNamespace?: string;
 };
 
 type NodeTerminalProps = {
@@ -77,7 +80,7 @@ const getDebugPod = async (
             runAsUser: 0,
           },
           stdin: true,
-          stdinOnce: true,
+          stdinOnce: false,
           tty: true,
           volumeMounts: [
             {
@@ -126,7 +129,12 @@ const NodeTerminalError: FC<NodeTerminalErrorProps> = ({ error }) => {
   );
 };
 
-const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError }) => {
+const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({
+  pod,
+  loaded,
+  loadError,
+  debugNamespace,
+}) => {
   const { t } = useTranslation();
   const message = (
     <Trans t={t} ns="console-app">
@@ -166,7 +174,14 @@ const NodeTerminalInner: FC<NodeTerminalInnerProps> = ({ pod, loaded, loadError 
         />
       );
     case 'Running':
-      return <PodConnectLoader obj={pod} message={message} attach />;
+      return (
+        <PodConnectLoader
+          obj={pod}
+          message={message}
+          attach
+          cleanupOnDetach={debugNamespace ? { type: 'namespace', name: debugNamespace } : undefined}
+        />
+      );
     default:
       return <LoadingBox />;
   }
@@ -207,7 +222,10 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     };
     const closeTab = (event) => {
       event.preventDefault();
-      deleteNamespace(namespace.metadata.name);
+      const detached = getDetachedSessions(store.getState());
+      if (!detached.some((s) => s.podName === name)) {
+        deleteNamespace(namespace.metadata.name);
+      }
     };
     const createDebugPod = async () => {
       try {
@@ -244,22 +262,25 @@ const NodeTerminal: FC<NodeTerminalProps> = ({ obj: node }) => {
     createDebugPod();
     window.addEventListener('beforeunload', closeTab);
     return () => {
-      if (namespace) {
+      const detached = getDetachedSessions(store.getState());
+      const isDetached = detached.some((s) => s.podName === name);
+      if (!isDetached) {
         deleteNamespace(namespace.metadata.name);
       }
       window.removeEventListener('beforeunload', closeTab);
     };
   }, [nodeName, isWindows]);
 
-  if (errorMessage) {
-    return <NodeTerminalError error={errorMessage} />;
-  }
-
-  if (!podName) {
-    return <LoadingBox />;
-  }
-
-  return <NodeTerminalInner pod={pod} loaded={loaded} loadError={loadError} />;
+  return errorMessage ? (
+    <NodeTerminalError error={errorMessage} />
+  ) : (
+    <NodeTerminalInner
+      pod={pod}
+      loaded={loaded}
+      loadError={loadError}
+      debugNamespace={podNamespace}
+    />
+  );
 };
 
 export default NodeTerminal;

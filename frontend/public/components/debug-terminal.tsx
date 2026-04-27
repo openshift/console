@@ -10,6 +10,8 @@ import { ConnectedPageHeading } from '@console/internal/components/utils/heading
 import { ObjectMetadata, PodKind, k8sCreate, k8sKillByName } from '@console/internal/module/k8s';
 import { PodConnectLoader } from '@console/internal/components/pod';
 import { PodModel } from '@console/internal/models';
+import store from '@console/internal/redux';
+import { getDetachedSessions } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 
@@ -70,7 +72,12 @@ const DebugTerminalError: FC<DebugTerminalErrorProps> = ({ error, description })
   );
 };
 
-const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialContainer }) => {
+const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({
+  debugPod,
+  initialContainer,
+  debugPodName,
+  debugPodNamespace,
+}) => {
   const { t } = useTranslation();
   const infoMessage = (
     <Alert
@@ -99,6 +106,11 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
           obj={debugPod}
           initialContainer={initialContainer}
           infoMessage={infoMessage}
+          cleanupOnDetach={
+            debugPodName && debugPodNamespace
+              ? { type: 'pod', name: debugPodName, namespace: debugPodNamespace }
+              : undefined
+          }
         />
       );
     case 'Pending':
@@ -147,7 +159,11 @@ export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }
     window.addEventListener('beforeunload', closeTab);
     return () => {
       if (newDebugPod) {
-        deleteDebugPod(newDebugPod.metadata.name);
+        const detached = getDetachedSessions(store.getState());
+        const isDetached = detached.some((s) => s.podName === newDebugPod.metadata.name);
+        if (!isDetached) {
+          deleteDebugPod(newDebugPod.metadata.name);
+        }
       }
       window.removeEventListener('beforeunload', closeTab);
     };
@@ -173,7 +189,14 @@ export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }
       return <DebugTerminalError error={err.message || t('public~The debug pod failed.')} />;
     }
     if (loaded) {
-      return <DebugTerminalInner initialContainer={containerName} debugPod={debugPod} />;
+      return (
+        <DebugTerminalInner
+          initialContainer={containerName}
+          debugPod={debugPod}
+          debugPodName={generatedDebugPodName}
+          debugPodNamespace={podNamespace}
+        />
+      );
     }
   }
 
@@ -230,6 +253,8 @@ type DebugTerminalErrorProps = {
 type DebugTerminalInnerProps = {
   debugPod: PodKind;
   initialContainer?: string;
+  debugPodName?: string;
+  debugPodNamespace?: string;
 };
 
 type DebugTerminalProps = {
