@@ -22,7 +22,11 @@ import { sortable, wrappable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams, useLocation, Link } from 'react-router';
-import type { WatchK8sResource, WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
+import type {
+  ColumnLayout,
+  WatchK8sResource,
+  WatchK8sResultsObject,
+} from '@console/dynamic-plugin-sdk';
 import {
   ResourceStatus,
   StatusIconAndText,
@@ -69,10 +73,19 @@ import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownVi
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
-import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
+import { Flags, GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
+import {
+  useOperatorLifecycle,
+  getLifecycleInfoFromSubscription,
+  getPackageNameFromCSV,
+  getClusterVersion,
+} from '../hooks/useOperatorLifecycle';
 import {
   ClusterServiceVersionModel,
   SubscriptionModel,
@@ -114,6 +127,12 @@ import {
   getInitializationResource,
 } from './operator-hub/operator-hub-utils';
 import { CreateInitializationResourceButton } from './operator-install-page';
+import {
+  ClusterCompatibilityStatus,
+  SupportPhaseStatus,
+  getClusterCompatibility,
+  getSupportPhase,
+} from './operator-lifecycle-status';
 import type { SubscriptionDetailsProps } from './subscription';
 import {
   SourceMissingStatus,
@@ -132,12 +151,16 @@ const isPackageServer = (obj) =>
   obj.metadata.name === 'packageserver' &&
   obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
 
+const csvColumnManagementID = 'operators.coreos.com~v1alpha1~ClusterServiceVersion';
+
 const nameColumnClass = '';
 const namespaceColumnClass = '';
 const managedNamespacesColumnClass = css('pf-m-hidden', 'pf-m-visible-on-sm');
 const statusColumnClass = css('pf-m-hidden', 'pf-m-visible-on-lg');
 const lastUpdatedColumnClass = css('pf-m-hidden', 'pf-m-visible-on-2xl');
 const providedAPIsColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
+const clusterCompatibilityColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
+const supportColumnClass = css('pf-m-hidden', 'pf-m-visible-on-xl');
 
 const SubscriptionStatus: FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
   muted = false,
@@ -333,7 +356,7 @@ const ConsolePluginStatus: FC<ConsolePluginStatusProps> = ({ csv, csvPlugins }) 
 };
 
 export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(
-  ({ activeNamespace, obj, subscription, catalogSourceMissing }) => {
+  ({ activeNamespace, obj, subscription, catalogSourceMissing, lifecycleEnabled }) => {
     const { displayName, provider, version } = obj.spec ?? {};
     const { t } = useTranslation();
     const olmOperatorNamespace = operatorNamespaceFor(obj) ?? '';
@@ -342,6 +365,41 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     const providedAPIs = providedAPIsForCSV(obj);
     const csvPlugins = getClusterServiceVersionPlugins(obj?.metadata?.annotations);
     const { deprecatedPackage } = findDeprecatedOperator(subscription);
+
+    const { catalogName, catalogNamespace } = getLifecycleInfoFromSubscription(subscription);
+    const packageName = getPackageNameFromCSV(obj, subscription);
+
+    // eslint-disable-next-line no-console
+    console.log('[lifecycle-csv-row] Lifecycle params:', {
+      csvName: obj?.metadata?.name,
+      displayName,
+      version,
+      lifecycleEnabled,
+      packageName,
+      catalogName,
+      catalogNamespace,
+      effectivePackageName: lifecycleEnabled ? packageName : undefined,
+      subscriptionSpecName: subscription?.spec?.name,
+      olmProperties: obj?.metadata?.annotations?.['olm.properties'],
+    });
+
+    const [lifecycleData] = useOperatorLifecycle(
+      lifecycleEnabled ? packageName : undefined,
+      catalogName,
+      catalogNamespace,
+    );
+    const clusterVersion = getClusterVersion();
+    const compatible = getClusterCompatibility(lifecycleData, version, clusterVersion);
+    const supportPhase = getSupportPhase(lifecycleData, version);
+
+    // eslint-disable-next-line no-console
+    console.log('[lifecycle-csv-row] Lifecycle result:', {
+      csvName: obj?.metadata?.name,
+      lifecycleData,
+      clusterVersion,
+      compatible,
+      supportPhase,
+    });
 
     return (
       <>
@@ -421,6 +479,20 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
           )}
         </TableData>
 
+        {/* Cluster Compatibility */}
+        {lifecycleEnabled ? (
+          <TableData className={clusterCompatibilityColumnClass}>
+            <ClusterCompatibilityStatus compatible={compatible} />
+          </TableData>
+        ) : null}
+
+        {/* Support */}
+        {lifecycleEnabled ? (
+          <TableData className={supportColumnClass}>
+            <SupportPhaseStatus phase={supportPhase} />
+          </TableData>
+        ) : null}
+
         {/* Kebab */}
         <TableData className={KEBAB_COLUMN_CLASS}>
           <LazyActionMenu
@@ -437,6 +509,7 @@ export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   activeNamespace,
   catalogSourceMissing,
   obj,
+  lifecycleEnabled,
 }) => {
   const { t } = useTranslation();
   const csvName = obj?.spec?.name;
@@ -484,6 +557,14 @@ export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
         <span className="pf-v6-u-text-color-subtle">{t('olm~None')}</span>
       </TableData>
 
+      {/* Cluster Compatibility */}
+      {lifecycleEnabled ? (
+        <TableData className={clusterCompatibilityColumnClass}>-</TableData>
+      ) : null}
+
+      {/* Support */}
+      {lifecycleEnabled ? <TableData className={supportColumnClass}>-</TableData> : null}
+
       {/* Kebab */}
       <TableData className={KEBAB_COLUMN_CLASS}>
         <LazyActionMenu
@@ -496,10 +577,23 @@ export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
 };
 
 const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, customData }) => {
-  const { catalogSources, subscriptions, activeNamespace } = customData;
+  const { catalogSources, subscriptions, activeNamespace, lifecycleEnabled } = customData;
   const subscription = isCSV(obj)
     ? subscriptionForCSV(subscriptions, obj as ClusterServiceVersionKind)
     : (obj as SubscriptionKind);
+
+  // eslint-disable-next-line no-console
+  console.log('[lifecycle-row] Row render:', {
+    name: obj?.metadata?.name,
+    isCSV: isCSV(obj),
+    lifecycleEnabled,
+    subscriptionFound: !!subscription,
+    subscriptionCount: subscriptions?.length,
+    subscriptionName: subscription?.metadata?.name,
+    subscriptionSource: subscription?.spec?.source,
+    subscriptionInstalledCSV: subscription?.status?.installedCSV,
+  });
+
   // Only warn about missing catalog sources if the user was able to list them
   // but exclude PackageServer as it does not have a subscription.
   const catalogSourceMissing =
@@ -513,12 +607,14 @@ const InstalledOperatorTableRow: FC<InstalledOperatorTableRowProps> = ({ obj, cu
       catalogSourceMissing={catalogSourceMissing}
       obj={obj as ClusterServiceVersionKind}
       subscription={subscription}
+      lifecycleEnabled={lifecycleEnabled}
     />
   ) : (
     <SubscriptionTableRow
       activeNamespace={activeNamespace}
       catalogSourceMissing={catalogSourceMissing}
       obj={subscription as SubscriptionKind}
+      lifecycleEnabled={lifecycleEnabled}
     />
   );
 };
@@ -580,8 +676,10 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 }) => {
   const { t } = useTranslation();
   const activeNamespace = useActiveNamespace();
+  const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
 
   const nameHeader: Header = {
+    id: 'name',
     title: t('olm~Name'),
     sortField: 'metadata.name',
     transforms: [sortable],
@@ -589,6 +687,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   };
 
   const namespaceHeader: Header = {
+    id: 'namespace',
     title: t('olm~Namespace'),
     sortFunc: 'getOperatorNamespace',
     transforms: [sortable],
@@ -596,6 +695,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   };
 
   const managedNamespacesHeader: Header = {
+    id: 'managedNamespaces',
     title: t('olm~Managed Namespaces'),
     sortFunc: 'formatTargetNamespaces',
     transforms: [sortable, wrappable],
@@ -603,24 +703,41 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   };
 
   const statusHeader: Header = {
+    id: 'status',
     title: t('olm~Status'),
     props: { className: statusColumnClass },
   };
 
   const lastUpdatedHeader: Header = {
+    id: 'lastUpdated',
     title: t('olm~Last updated'),
     props: { className: lastUpdatedColumnClass },
   };
 
   const providedAPIsHeader: Header = {
+    id: 'providedAPIs',
     title: t('olm~Provided APIs'),
     props: { className: providedAPIsColumnClass },
+  };
+
+  const clusterCompatibilityHeader: Header = {
+    id: 'clusterCompatibility',
+    title: t('olm~Cluster Compatibility'),
+    props: { className: clusterCompatibilityColumnClass },
+  };
+
+  const supportHeader: Header = {
+    id: 'support',
+    title: t('olm~Support'),
+    props: { className: supportColumnClass },
   };
 
   const kebabHeader: Header = {
     title: '',
     props: { className: KEBAB_COLUMN_CLASS },
   };
+
+  const lifecycleHeaders = lifecycleEnabled ? [clusterCompatibilityHeader, supportHeader] : [];
 
   const AllProjectsTableHeader = (): Header[] => [
     nameHeader,
@@ -629,6 +746,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     statusHeader,
     lastUpdatedHeader,
     providedAPIsHeader,
+    ...lifecycleHeaders,
     kebabHeader,
   ];
 
@@ -638,6 +756,7 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
     statusHeader,
     lastUpdatedHeader,
     providedAPIsHeader,
+    ...lifecycleHeaders,
     kebabHeader,
   ];
 
@@ -692,13 +811,34 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   };
   const allNamespaceActive = activeNamespace === ALL_NAMESPACES_KEY;
 
+  const [selectedColumns] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
+    undefined,
+    true,
+  );
+
+  const allHeaders = useMemo(
+    () => (allNamespaceActive ? AllProjectsTableHeader() : SingleProjectTableHeader()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allNamespaceActive, lifecycleEnabled],
+  );
+
+  const activeColumns = useMemo(() => {
+    const saved = selectedColumns?.[csvColumnManagementID];
+    if (saved?.length > 0) {
+      return new Set<string>(saved);
+    }
+    return new Set<string>(allHeaders.filter((h) => h.id && !h.additional).map((h) => h.id));
+  }, [selectedColumns, allHeaders]);
+
   const customData = useMemo(
     () => ({
-      catalogoperators: catalogSources?.data ?? [],
+      catalogSources: catalogSources?.data ?? [],
       subscriptions: subscriptions?.data ?? [],
       activeNamespace,
+      lifecycleEnabled,
     }),
-    [activeNamespace, catalogSources, subscriptions],
+    [activeNamespace, catalogSources, subscriptions, lifecycleEnabled],
   );
 
   return (
@@ -718,6 +858,8 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
           formatTargetNamespaces,
           getOperatorNamespace,
         }}
+        columnManagementID={csvColumnManagementID}
+        activeColumns={activeColumns}
       />
     </div>
   );
@@ -725,11 +867,44 @@ export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
 
 export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (props) => {
   const { t } = useTranslation();
+  const lifecycleEnabled = useFlag(Flags.OPERATOR_LIFECYCLE_METADATA);
   const [canListAllSubscriptions] = useAccessReview({
     group: SubscriptionModel.apiGroup,
     resource: SubscriptionModel.plural,
     verb: 'list',
   });
+  const [selectedColumns] = useUserPreference(
+    COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
+    undefined,
+    true,
+  );
+
+  const columnLayout = useMemo<ColumnLayout>(() => {
+    const columns = [
+      { id: 'name', title: t('olm~Name') },
+      { id: 'namespace', title: t('olm~Namespace') },
+      { id: 'managedNamespaces', title: t('olm~Managed Namespaces') },
+      { id: 'status', title: t('olm~Status') },
+      { id: 'lastUpdated', title: t('olm~Last updated') },
+      { id: 'providedAPIs', title: t('olm~Provided APIs') },
+      ...(lifecycleEnabled
+        ? [
+            { id: 'clusterCompatibility', title: t('olm~Cluster Compatibility') },
+            { id: 'support', title: t('olm~Support') },
+          ]
+        : []),
+    ];
+    return {
+      id: csvColumnManagementID,
+      type: t('olm~Operator'),
+      columns,
+      selectedColumns:
+        selectedColumns?.[csvColumnManagementID]?.length > 0
+          ? new Set(selectedColumns[csvColumnManagementID])
+          : new Set<string>(),
+    };
+  }, [lifecycleEnabled, selectedColumns, t]);
+
   const title = t('olm~Installed Operators');
   const olmURL = getDocumentationURL(documentationURLs.operators);
   const helpText = (
@@ -822,6 +997,7 @@ export const ClusterServiceVersionsPage: FC<ClusterServiceVersionsPageProps> = (
         ListComponent={ClusterServiceVersionList}
         helpText={showTitle ? helpText : undefined}
         textFilter="cluster-service-version"
+        columnLayout={columnLayout}
       />
     </>
   );
@@ -1406,6 +1582,7 @@ type InstalledOperatorTableRowProps = RowFunctionArgs<
     activeNamespace: string;
     catalogSources: CatalogSourceKind[];
     subscriptions: SubscriptionKind[];
+    lifecycleEnabled: boolean;
   }
 >;
 
@@ -1414,12 +1591,14 @@ export type ClusterServiceVersionTableRowProps = {
   catalogSourceMissing: boolean;
   subscription: SubscriptionKind;
   activeNamespace?: string;
+  lifecycleEnabled?: boolean;
 };
 
 type SubscriptionTableRowProps = {
   obj: SubscriptionKind;
   catalogSourceMissing: boolean;
   activeNamespace?: string;
+  lifecycleEnabled?: boolean;
 };
 
 type ManagedNamespacesProps = {
@@ -1438,10 +1617,12 @@ type InitializationResourceAlertProps = {
 };
 
 type Header = {
+  id?: string;
   title: string;
   sortField?: string;
   sortFunc?: string;
   transforms?: any;
+  additional?: boolean;
   props: { className: string };
 };
 

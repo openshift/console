@@ -1,0 +1,35 @@
+# RBAC required for the OpenShift Console to access the lifecycle-server API.
+#
+# The lifecycle-server authenticates callers via TokenReview and authorizes
+# them via SubjectAccessReview on nonResourceURLs. The console backend uses
+# its pod ServiceAccount token to authenticate, so that SA needs permission
+# to GET the lifecycle API paths.
+#
+# These resources should be managed by the console-operator. They are
+# provided here as a reference for development and testing.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:openshift:console:lifecycle-reader
+  annotations:
+    release.openshift.io/feature-set: "TechPreviewNoUpgrade"
+rules:
+  - nonResourceURLs:
+      - "/api/*/lifecycles/*"
+    verbs:
+      - "get"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: console-lifecycle-reader
+  annotations:
+    release.openshift.io/feature-set: "TechPreviewNoUpgrade"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:console:lifecycle-reader
+subjects:
+  - kind: ServiceAccount
+    name: console
+    namespace: openshift-console
