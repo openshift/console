@@ -3921,12 +3921,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/immutable@npm:3.x":
-  version: 3.8.7
-  resolution: "@types/immutable@npm:3.8.7"
-  dependencies:
-    immutable: "npm:*"
-  checksum: 10c0/05fc9999a686ce27db61d693bdaabcce00db4141aa74e9542a9e022e15d2bba9db8458a434c2340e1641af6c5d2ae56291143e16487c2d0655a2257fe1d8f767
+"@types/immutable@npm:^3.8.3":
+  version: 3.8.6
+  resolution: "@types/immutable@npm:3.8.6"
+  checksum: 10c0/1f734f97ae3bbb00f28632d5a68a82fcc17886054c335d78a054adbb5fba16b38a9dfc99c73b8406786b128e7fc11f43a99f3a7849332536f06e6da8eedc93e5
   languageName: node
   linkType: hard
 
@@ -13467,10 +13465,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutable@npm:*, immutable@npm:3.x":
-  version: 3.8.2
-  resolution: "immutable@npm:3.8.2"
-  checksum: 10c0/fb6a2999ad3bda9e51741721e42547076dd492635ee4df9241224055fe953ec843583a700088cc4915f23dc326e5084f4e17f1bbd7388c3e872ef5a242e0ac5e
+"immutable@npm:^3.8.3":
+  version: 3.8.3
+  resolution: "immutable@npm:3.8.3"
+  checksum: 10c0/bafa7b8371b7622bc3d128cd9e6bba3a654b968f09a237929629f43ac26f7e974a5879cd38baad0c26f6f0628753968611bf832add7bf0c44d647bf4306a2988
   languageName: node
   linkType: hard
 
@@ -18106,7 +18104,7 @@ __metadata:
     "@types/chai": "npm:^4.2.12"
     "@types/git-url-parse": "npm:^9.0.0"
     "@types/glob": "npm:7.x"
-    "@types/immutable": "npm:3.x"
+    "@types/immutable": "npm:^3.8.3"
     "@types/jasmine": "npm:2.8.x"
     "@types/jest": "npm:22.x"
     "@types/json-schema": "npm:^7.0.7"
@@ -18171,7 +18169,7 @@ __metadata:
     i18next-parser: "npm:^9.3.0"
     i18next-pseudo: "npm:^2.2.0"
     i18next-v4-format-converter: "npm:^1.0.3"
-    immutable: "npm:3.x"
+    immutable: "npm:^3.8.3"
     istextorbinary: "npm:^9.5.0"
     jasmine-core: "npm:2.x"
     jest: "npm:22.x"
