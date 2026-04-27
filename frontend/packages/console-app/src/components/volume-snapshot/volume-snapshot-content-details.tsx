@@ -13,7 +13,7 @@ import {
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
-import { volumeSnapshotStatus } from '../../status';
+import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const { editYaml, events } = navFactory;
 
@@ -33,7 +33,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
           <ResourceSummary resource={obj}>
             <dt>{t('console-app~Status')}</dt>
             <dd>
-              <Status status={volumeSnapshotStatus(obj)} />
+              <Status status={snapshotStatus(obj)} />
             </dd>
           </ResourceSummary>
         </div>
@@ -97,7 +97,7 @@ const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => 
   return (
     <DetailsPage
       {...props}
-      getResourceStatus={volumeSnapshotStatus}
+      getResourceStatus={snapshotStatus}
       menuActions={Kebab.factory.common}
       pages={pages}
     />
