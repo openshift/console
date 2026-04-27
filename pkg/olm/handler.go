@@ -17,22 +17,25 @@ import (
 )
 
 type OLMHandler struct {
-	client         *http.Client
-	catalogService *CatalogService
-	apiServerURL   string
-	mux            *http.ServeMux
+	client          *http.Client
+	lifecycleClient *http.Client
+	catalogService  *CatalogService
+	apiServerURL    string
+	mux             *http.ServeMux
 }
 
-func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogService) http.Handler {
+func NewOLMHandler(apiServerURL string, client *http.Client, service *CatalogService, lifecycleClient *http.Client) http.Handler {
 	o := &OLMHandler{
-		apiServerURL:   apiServerURL,
-		client:         client,
-		catalogService: service,
+		apiServerURL:    apiServerURL,
+		client:          client,
+		catalogService:  service,
+		lifecycleClient: lifecycleClient,
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/olm/catalog-items/", o.catalogItemsHandler)
 	mux.HandleFunc("/api/olm/catalogd/metas/{catalogName}", middleware.AllowMethod(http.MethodGet, o.catalogdMetasHandler))
 	mux.HandleFunc("/api/olm/catalog-icons/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.catalogIconHandler))
+	mux.HandleFunc("/api/olm/lifecycle/{catalogNamespace}/{catalogName}/{packageName}", middleware.AllowMethod(http.MethodGet, o.lifecycleHandler))
 	mux.HandleFunc("/api/olm/list-operands/", o.operandsListHandler)
 	mux.HandleFunc("/api/olm/check-package-manifests/", o.checkPackageManifestHandler)
 	o.mux = mux
