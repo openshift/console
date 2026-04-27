@@ -145,7 +145,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
         .catch((e) => {
           if (!unmounted) {
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
-              // eslint-disable-next-line promise/no-nesting
+              /* eslint-disable promise/no-nesting */
               e.response
                 .text()
                 .then((text) => {
@@ -154,6 +154,7 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
                 .catch(() => {
                   setInitError(defaultError);
                 });
+              /* eslint-enable promise/no-nesting */
             } else {
               setInitError(defaultError);
             }

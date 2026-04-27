@@ -28,7 +28,7 @@ import { DynamicModuleImportPlugin, resolveDynamicModuleMaps } from './DynamicMo
 const loadPluginPackageJSON = () => readPkg.sync({ normalize: false }) as ConsolePluginPackageJSON;
 
 const loadVendorPackageJSON = (moduleName: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require(`${moduleName}/package.json`) as readPkg.PackageJson;
 
 const getVendorPackageVersion = (moduleName: string) => {

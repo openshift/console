@@ -16,6 +16,7 @@ export const setCloudShellExpanded = (isExpanded: boolean) =>
 export const setCloudShellActive = (isActive: boolean) =>
   action(Actions.SetCloudShellActive, { isActive });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const actions = {
   setCloudShellExpanded,
   setCloudShellActive,

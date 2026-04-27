@@ -118,6 +118,7 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
   return (
     <div className={css('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
       {groupedColumns.map((groupedColumn, columnIndex) => (
+        // eslint-disable-next-line react/no-array-index-key
         <div key={columnIndex.toString()} className="odc-masonry-layout__column">
           {groupedColumn.items}
         </div>

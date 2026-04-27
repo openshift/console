@@ -28,6 +28,7 @@ export const setAdmissionWebhookWarning = (id: string, warning: AdmissionWebhook
   action(ActionType.SetAdmissionWebhookWarning, { id, warning });
 export const removeAdmissionWebhookWarning = (id) =>
   action(ActionType.RemoveAdmissionWebhookWarning, { id });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const coreActions = {
   setUser,
   setUserResource,

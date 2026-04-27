@@ -132,6 +132,7 @@ export const queryBrowserToggleSeries = (index: number, labels: { [key: string]:
 
 export const setAlertCount = (alertCount) => action(ActionType.SetAlertCount, { alertCount });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const actions = {
   alertingErrored,
   alertingLoaded,

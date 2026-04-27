@@ -10,7 +10,7 @@ module.exports = {
     node: true,
   },
 
-  plugins: ['node'],
+  plugins: ['n'],
 
   rules: merge(require('./rules/node'), {
     'no-process-env': 'off',

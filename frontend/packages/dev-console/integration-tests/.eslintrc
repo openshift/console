@@ -12,7 +12,8 @@
     "promise/catch-or-return": "off",
     "promise/no-nesting": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "cypress/no-unnecessary-waiting": "off"
+    "cypress/no-unnecessary-waiting": "off",
+    "cypress/unsafe-to-chain-command": "off"
   },
   "settings": {
     "import/resolver": {

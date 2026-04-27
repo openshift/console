@@ -101,6 +101,7 @@ export const startAPIDiscovery = () => (dispatch) => {
     });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const k8sActions = {
   startAPIDiscovery,
 };

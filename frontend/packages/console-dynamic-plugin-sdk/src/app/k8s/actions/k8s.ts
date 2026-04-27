@@ -296,6 +296,7 @@ export const receivedResources = (resources: DiscoveryResources) =>
   action(ActionType.ReceivedResources, { resources });
 export const getResourcesInFlight = () => action(ActionType.GetResourcesInFlight);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
 const k8sActions = {
   startWatchK8sObject,
   startWatchK8sList,

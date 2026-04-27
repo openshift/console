@@ -1,4 +1,4 @@
-/* eslint-disable global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
+/* eslint-disable import/no-dynamic-require, @typescript-eslint/no-require-imports */
 
 export const gitImportRepos: GithubRepo[] = [
   { url: 'https://github.com/sclorg/dancer-ex', folder: 'dancer-ex' },
