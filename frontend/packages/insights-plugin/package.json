@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "Insights - provide cluster health data and integrate with OpenShift Cluster Manager",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
     "test": "yarn --cwd ../.. test packages/insights-plugin"
   },

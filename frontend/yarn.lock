@@ -1605,7 +1605,6 @@ __metadata:
     gitlab: "npm:10.0.1"
     nock: "npm:^11.4.0"
     openapi-typescript: "npm:5.4.2"
-    parse-bitbucket-url: "npm:^0.3.0"
   languageName: unknown
   linkType: soft
 
@@ -17993,7 +17992,6 @@ __metadata:
     node-fetch: "npm:^2.3.0"
     node-polyfill-webpack-plugin: "npm:~4.0.0"
     pluralize: "npm:^8.0.0"
-    point-in-svg-path: "npm:1.0.1"
     popper.js: "npm:^1.16.1"
     prettier: "npm:2.0.5"
     prop-types: "npm:15.8.x"
@@ -18338,13 +18336,6 @@ __metadata:
     pbkdf2: "npm:^3.1.2"
     safe-buffer: "npm:^5.2.1"
   checksum: 10c0/05eb5937405c904eb5a7f3633bab1acc11f4ae3478a07ef5c6d81ce88c3c0e505ff51f9c7b935ebc1265c868343793698fc91025755a895d0276f620f95e8a82
-  languageName: node
-  linkType: hard
-
-"parse-bitbucket-url@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "parse-bitbucket-url@npm:0.3.0"
-  checksum: 10c0/5e7c5c242734388f047b6dbb5ce7d4654c9b9a4bb1c81a3af740135b73a6bd41ad0754c7fd11d2acbfcd274e796aad6e25eec7f4ff50097d9e03895fbeafe85e
   languageName: node
   linkType: hard
 
@@ -18713,7 +18704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"point-in-svg-path@npm:1.0.1, point-in-svg-path@npm:^1.0.1":
+"point-in-svg-path@npm:^1.0.1":
   version: 1.0.1
   resolution: "point-in-svg-path@npm:1.0.1"
   checksum: 10c0/8ec16d8b0148a1868335241818512ed79ba93c9a46a9eb125a1118fed77207e77d0acc03c72c7b010928c99a3cecb69ceed55765a45c161f0d95e0a5dd3063ff
