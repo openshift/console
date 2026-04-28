@@ -4,7 +4,7 @@ import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import { safeLoad } from 'js-yaml';
+import { safeDump, safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import type { WatchK8sResource } from '@console/dynamic-plugin-sdk';
@@ -22,12 +22,12 @@ import { HelmActionType } from '../../../types/helm-types';
 import {
   getChartURL,
   getChartVersions,
-  getChartValuesYAML,
   getChartReadme,
   concatVersions,
   getChartEntriesByName,
   getChartRepositoryTitle,
   getChartIndexEntry,
+  mergeHelmValuesOnChartVersionChange,
 } from '../../../utils/helm-utils';
 
 export type HelmChartVersionDropdownProps = {
@@ -54,7 +54,7 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
   const { t } = useTranslation();
   const {
     setFieldValue,
-    values: { chartRepoName, yamlData, formData, appVersion },
+    values: { chartRepoName, yamlData, formData, appVersion, editorType },
     setFieldTouched,
   } = useFormikContext<FormikValues>();
   const [helmChartVersions, setHelmChartVersions] = useState({});
@@ -88,7 +88,8 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         <p>
           <InfoCircleIcon color="var(--pf-t--global--icon--color--status--info--default)" />{' '}
           <Trans t={t} ns="helm-plugin">
-            All data entered for version <strong>{{ currentVersion }}</strong> will be reset
+            Values from your current release are merged with the new chart{"'"}s defaults. Review
+            the YAML or form before upgrading.
           </Trans>
         </p>
       </>
@@ -180,17 +181,33 @@ const HelmChartVersionDropdown: FC<HelmChartVersionDropdownProps> = ({
         onVersionChange(res);
 
         const chartReadme = getChartReadme(res);
-        const valuesYAML = getChartValuesYAML(res);
         const valuesJSON = res?.values;
         const valuesSchema = res?.schema && JSON.parse(atob(res?.schema));
-        const editorType = valuesSchema ? EditorType.Form : EditorType.YAML;
-        setFieldValue('editorType', editorType);
-        setFieldValue('formSchema', valuesSchema);
-        setFieldValue('yamlData', valuesYAML);
-        setFieldValue('formData', valuesJSON);
-        setFieldValue('chartReadme', chartReadme);
-        setInitialYamlData(valuesYAML);
-        setInitialFormData(valuesJSON);
+        const nextEditorType = valuesSchema ? EditorType.Form : EditorType.YAML;
+        const mergedValues = mergeHelmValuesOnChartVersionChange(
+          valuesJSON as Record<string, unknown> | undefined,
+          yamlData as string,
+          formData,
+          editorType as EditorType,
+        );
+        try {
+          const mergedYaml = safeDump(mergedValues);
+          setFieldValue('editorType', nextEditorType);
+          setFieldValue('formSchema', valuesSchema);
+          setFieldValue('yamlData', mergedYaml);
+          setFieldValue('formData', mergedValues);
+          setFieldValue('chartReadme', chartReadme);
+          setInitialYamlData(mergedYaml);
+          setInitialFormData(mergedValues);
+        } catch (err) {
+          console.error('Failed to serialize merged values:', err); // eslint-disable-line no-console
+          // Fall back to using the merged values object without YAML serialization
+          setFieldValue('editorType', nextEditorType);
+          setFieldValue('formSchema', valuesSchema);
+          setFieldValue('formData', mergedValues);
+          setFieldValue('chartReadme', chartReadme);
+          setInitialFormData(mergedValues);
+        }
       })
       .catch((err) => {
         console.error(`Could not fetch helm chart with chart URL ${chartURL}:`, err); // eslint-disable-line no-console
