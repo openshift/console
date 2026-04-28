@@ -16,13 +16,13 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 22 with [corepack](https://npmjs.com/package/corepack) enabled for [yarn berry](https://yarnpkg.com/)
-2. [go](https://golang.org/) >= 1.25
-3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
-4. [jq](https://stedolan.github.io/jq/download/) (for `contrib/environment.sh`)
+2. [go](https://go.dev/) >= 1.25
+3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/) or [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and an OpenShift or Kubernetes cluster
+4. [jq](https://stedolan.github.io/jq/download/) (used by scripts and tests; see [code usage](https://github.com/search?q=repo%3Aopenshift%2Fconsole+%2F+jq+%2F+-path%3A**%2F*.md+-path%3A**%2FDockerfile*&type=code))
 
 ### Build everything:
 
-This project uses [Go modules](https://github.com/golang/go/wiki/Modules),
+This project uses [Go modules](https://go.dev/wiki/Modules),
 so you should clone the project outside of your `GOPATH`. To build both the
 frontend and backend, run:
 
@@ -38,7 +38,7 @@ The following instructions assume you have an existing cluster you can connect
 to. OpenShift 4.x clusters can be installed using the
 [OpenShift Installer](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/). More information about installing OpenShift can be found at
 <https://try.openshift.com/>.
-You can also use [CodeReady Containers](https://github.com/code-ready/crc)
+You can also use [CodeReady Containers](https://github.com/crc-org/crc)
 for local installs, or native Kubernetes clusters.
 
 #### OpenShift (no authentication)
@@ -139,7 +139,7 @@ In order to update the `tectonic-console-builder` to a new version (e.g., v29), 
 
 #### CodeReady Containers
 
-If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/crc/#setting-up-codeready-containers_gsg), and the [OpenShift cluster is started](https://crc.dev/crc/#starting-the-virtual-machine_gsg).
+If you want to use CodeReady for local development, first make sure [it is set up](https://crc.dev/docs/networking/#setting-up-on-a-remote-server), and the [OpenShift cluster is started](https://crc.dev/docs/getting-started/#creating-openshift-preset).
 
 To login to the cluster's API server, you can use the following command:
 
@@ -309,7 +309,7 @@ When running in headless mode, Cypress will test using its integrated Electron b
 #### How the Integration Tests Run in CI
 
 The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
-The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
+The tests are defined in [this manifest](https://github.com/openshift/release/blob/main/ci-operator/jobs/openshift/console/openshift-console-main-presubmits.yaml)
 in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
 
 CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which runs [frontend/integration-tests/test-cypress.sh](frontend/integration-tests/test-cypress.sh).
