@@ -19,12 +19,13 @@ export interface ClusterProperties {
   clusterType?: string;
   consoleVersion?: string;
   organizationId?: string;
-  accountMail?: string;
+  accountMailDomain?: string;
 }
 
 export type TelemetryEventProperties = {
   user?: UserInfo;
-  userResource?: UserKind;
+  /** Only sent if in a sandbox cluster */
+  sandboxUserId?: string;
 } & ClusterProperties &
   Record<string, any>;
 
@@ -34,6 +35,11 @@ export interface TelemetryEvent {
 }
 
 let telemetryEvents: TelemetryEvent[] = [];
+
+const getEmailDomain = (email: string = ''): string => {
+  const emailParts = email.split('@');
+  return emailParts.length === 2 ? emailParts[1] : '';
+};
 
 export const getClusterProperties = () => {
   const clusterProperties: ClusterProperties = {};
@@ -46,7 +52,7 @@ export const getClusterProperties = () => {
   clusterProperties.consoleVersion =
     window.SERVER_FLAGS.releaseVersion || window.SERVER_FLAGS.consoleVersion;
   clusterProperties.organizationId = window.SERVER_FLAGS.telemetry?.ORGANIZATION_ID;
-  clusterProperties.accountMail = window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL;
+  clusterProperties.accountMailDomain = getEmailDomain(window.SERVER_FLAGS.telemetry?.ACCOUNT_MAIL);
   return clusterProperties;
 };
 
@@ -65,6 +71,20 @@ const userIsOptedInToTelemetry = (currentUserPreferenceTelemetryValue: USER_TELE
 let clusterProperties = getClusterProperties();
 
 export const updateClusterPropertiesFromTests = () => (clusterProperties = getClusterProperties());
+
+const injectSandboxProperties = (
+  properties: TelemetryEventProperties,
+  userResource: UserKind,
+): TelemetryEventProperties => {
+  if (clusterProperties.clusterType === 'DEVSANDBOX') {
+    return {
+      ...properties,
+      sandboxUserId:
+        userResource?.metadata?.annotations?.['toolchain.dev.openshift.com/sso-user-id'],
+    };
+  }
+  return properties;
+};
 
 export const useTelemetry = () => {
   // TODO use usePluginInfo() hook to tell whether all dynamic plugins have been processed
@@ -89,7 +109,10 @@ export const useTelemetry = () => {
       userResourceIsLoaded
     ) {
       telemetryEvents.forEach(({ eventType, event }) => {
-        extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
+        // Sends the telemetry event to all the listeners
+        extensions.forEach((e) =>
+          e.properties.listener(eventType, injectSandboxProperties(event, userResource)),
+        );
       });
       telemetryEvents = [];
     }
@@ -120,7 +143,10 @@ export const useTelemetry = () => {
         return;
       }
 
-      extensions.forEach((e) => e.properties.listener(eventType, { ...event, userResource }));
+      // Sends the telemetry event to all the listeners
+      extensions.forEach((e) =>
+        e.properties.listener(eventType, injectSandboxProperties(event, userResource)),
+      );
     },
     [extensions, currentUserPreferenceTelemetryValue, userResource, userResourceIsLoaded],
   );
