@@ -25,6 +25,11 @@ export interface TerminalProps {
   className?: string;
 }
 
+/**
+ * This component loads the entire `xterm` library with it.
+ * Use `AsyncComponent` on components that consume this one to dynamically
+ * load xterm only when used.
+ */
 export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
   ({ onData, onResize, padding = 52, options = defaultOptions, className }, ref) => {
     const terminal = useRef<XTerminal>();

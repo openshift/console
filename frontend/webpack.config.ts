@@ -140,7 +140,7 @@ const config: Configuration = {
   },
   performance: {
     // The maximum size of the entry point and generated files permitted by analyze.sh
-    maxEntrypointSize: 10.5 * 1048576, // ~10.5 MiB
+    maxEntrypointSize: 9.841 * 1048576, // ~9.841 MiB
     maxAssetSize: 5 * 1048576, // ~5 MiB
   },
   devServer: {
