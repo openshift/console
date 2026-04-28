@@ -22,7 +22,7 @@ const LOCALE_FILES = glob('{packages/*/locales,public/locales}/*/**.json', {
 // causes issues when sending our i18n files to translation services.
 
 describe('locales folder structure', () => {
-  it('locale filename must match its namespace directory', () => {
+  it('must only have locale filenames that match its namespace directory', () => {
     const mismatches = LOCALE_FILES.filter((file) => {
       // packages/{namespace}/locales/{lang}/{file}.json => namespace is segments[1]
       // public/locales/{lang}/{file}.json => namespace is segments[0] ("public")
@@ -38,7 +38,7 @@ describe('locales folder structure', () => {
     expect(mismatches).toEqual([]);
   });
 
-  it('each locale directory should contain only one file', () => {
+  it('must contain only one file per locale directory', () => {
     const dirCounts: Record<string, string[]> = {};
     for (const file of LOCALE_FILES) {
       const dir = file.substring(0, file.lastIndexOf('/'));
