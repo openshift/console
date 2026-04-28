@@ -12,7 +12,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { supportedLocales } from './const';
-import { useLanguage } from './useLanguage';
 import {
   PREFERRED_LANGUAGE_USER_PREFERENCE_KEY,
   usePreferredLanguage,
@@ -59,8 +58,6 @@ const LanguageDropdown: FC = () => {
       setPreferredLanguage('');
     }
   };
-
-  useLanguage(preferredLanguage, preferredLanguageLoaded); // sync the preferred language with local storage and set the console language
 
   useEffect(() => {
     if (preferredLanguageLoaded) {
