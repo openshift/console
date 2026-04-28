@@ -9,7 +9,6 @@ declare global {
   namespace Cypress {
     interface Chainable {
       alertTitleShouldContain(title: string): Chainable<Element>;
-      clickNavLink(path: string[]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       selectByAutoCompleteDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       verifyDropdownselected(selector: string): Chainable<Element>;
@@ -29,15 +28,6 @@ declare global {
 
 Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
   cy.byLegacyTestID('modal-title').should('contain.text', alertTitle);
-});
-
-Cypress.Commands.add('clickNavLink', (path: string[]) => {
-  cy.get(`[data-test="nav"]`) // this assumes all top level menu items are expandable
-    .contains(path[0])
-    .click(); // open top, expandable menu
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(500); // wait for animation
-  cy.get('#page-sidebar').contains(path[1]).click();
 });
 
 Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: string) => {
