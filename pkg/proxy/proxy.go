@@ -256,7 +256,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errMsg, statusCode)
 		return
 	}
-	isExec := strings.HasSuffix(r.URL.Path, "/exec")
+	isExec := strings.HasSuffix(strings.TrimRight(r.URL.Path, "/"), "/exec")
 	var backendWriteMutex sync.Mutex // Protects backend writes from copyMsgs and deferred exec cleanup
 	defer func() {
 		if isExec {
