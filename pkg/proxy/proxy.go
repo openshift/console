@@ -261,7 +261,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if isExec {
 			backendWriteMutex.Lock()
+			_ = backend.SetWriteDeadline(time.Now().Add(websocketTimeout))
 			sendExecExitCommand(backend)
+			_ = backend.SetWriteDeadline(time.Time{})
 			backendWriteMutex.Unlock()
 		}
 		closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "")
@@ -361,7 +363,9 @@ func copyMsgs(writeMutex *sync.Mutex, dest, src *websocket.Conn) error {
 			err = dest.WriteMessage(messageType, msg)
 		} else {
 			writeMutex.Lock()
+			_ = dest.SetWriteDeadline(time.Now().Add(websocketTimeout))
 			err = dest.WriteMessage(messageType, msg)
+			_ = dest.SetWriteDeadline(time.Time{})
 			writeMutex.Unlock()
 		}
 
