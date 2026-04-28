@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import {
   NodeStatus,
@@ -147,6 +148,7 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
   ...rest
 }) {
   const { t } = useTranslation();
+  const dropTooltipTriggerRef = useRef<SVGGElement>(null);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
@@ -185,9 +187,11 @@ const WorkloadPodsNode: FC<WorkloadPodsNodeProps> = observer(function WorkloadPo
         trigger="manual"
         isVisible={dropTarget && canDrop}
         animationDuration={0}
+        triggerRef={dropTooltipTriggerRef}
       >
         <BaseNode
           className="odc-workload-node"
+          tooltipTriggerRef={dropTooltipTriggerRef}
           hoverRef={hoverRef}
           innerRadius={podSetInnerRadius(size, donutStatus)}
           icon={showDetails && !showPodCount ? iconImageUrl : undefined}
