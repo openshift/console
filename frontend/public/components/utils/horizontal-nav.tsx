@@ -28,6 +28,7 @@ import {
   NavPage,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useDeepCompareMemoize';
 
 export const editYamlComponent = (props) => (
   <AsyncComponent
@@ -235,7 +236,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
 NavBar.displayName = 'NavBar';
 
 export const HorizontalNav = memo<HorizontalNavProps>((props) => {
-  const params = useParams();
+  const params = useDeepCompareMemoize(useParams());
 
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
@@ -283,15 +284,17 @@ export const HorizontalNav = memo<HorizontalNavProps>((props) => {
     );
   };
 
-  const componentProps = {
+  const componentProps = useDeepCompareMemoize({
     ..._.pick(props, ['filters', 'selected']),
     loaded: props.obj?.loaded,
     obj: _.get(props.obj, 'data'),
-  };
-  const extraResources = _.reduce(
-    props.resourceKeys,
-    (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
-    {},
+  });
+  const extraResources = useDeepCompareMemoize(
+    _.reduce(
+      props.resourceKeys,
+      (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
+      {},
+    ),
   );
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';

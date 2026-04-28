@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useMemo, useContext } from 'react';
+import { useEffect, useMemo, useContext, memo } from 'react';
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
@@ -142,7 +142,7 @@ const OngoingActivityComponent: FC<OngoingActivityProps> = ({ projectName, model
 
 const OngoingActivity = connect(mapStateToProps)(OngoingActivityComponent);
 
-export const ActivityCard: FC = () => {
+export const ActivityCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
@@ -160,7 +160,7 @@ export const ActivityCard: FC = () => {
       </Card>
     </>
   );
-};
+});
 
 type OngoingActivityReduxProps = {
   models: ImmutableMap<string, K8sKind>;

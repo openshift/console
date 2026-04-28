@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
-import type { FC } from 'react';
-import { useContext } from 'react';
+import { useContext, memo } from 'react';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,7 +20,7 @@ import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { Link } from 'react-router';
 
-export const DetailsCard: FC = () => {
+export const DetailsCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
   const keys = _.keys(obj.metadata.labels).sort();
   const labelsSubset = _.take(keys, 3);
@@ -86,4 +85,4 @@ export const DetailsCard: FC = () => {
       </CardBody>
     </Card>
   );
-};
+});

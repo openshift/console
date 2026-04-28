@@ -1,5 +1,5 @@
 import type { FC, Ref, MouseEvent, ComponentType } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo } from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -257,7 +257,7 @@ const UtilizationCardNodeFilter: FC<UtilizationCardNodeFilterProps> = ({
   );
 };
 
-export const UtilizationCard = () => {
+export const UtilizationCard = memo(() => {
   const { t } = useTranslation();
   const [machineConfigPools, machineConfigPoolsLoaded] = useK8sWatchResource<
     MachineConfigPoolKind[]
@@ -386,7 +386,7 @@ export const UtilizationCard = () => {
       </Card>
     )
   );
-};
+});
 
 type PrometheusCommonProps = {
   title: string;
