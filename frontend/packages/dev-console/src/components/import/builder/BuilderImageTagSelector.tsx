@@ -4,7 +4,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { ResourceName } from '@console/internal/components/utils';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';

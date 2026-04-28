@@ -1,4 +1,4 @@
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import type { PipelineKind } from '../../../types/pipeline';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';

@@ -23,7 +23,7 @@ jest.mock('@console/internal/components/utils', () => ({
   LoadingInline: () => 'Loading...',
 }));
 
-jest.mock('@console/git-service/src', () => ({
+jest.mock('@console/git-service/src/types/git', () => ({
   ImportStrategy: {
     DOCKERFILE: 1,
     S2I: 0,

@@ -5,7 +5,7 @@ import { useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';

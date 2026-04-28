@@ -1,7 +1,9 @@
 import * as nock from 'nock';
-import type { GitSource, BranchList, RepoFileList, BuildType, RepoLanguageList } from '../../types';
-import { RepoStatus } from '../../types';
-import { DockerFileParser } from '../../utils';
+import type { BuildType } from '../../types/build-tools';
+import type { GitSource } from '../../types/git';
+import type { BranchList, RepoFileList, RepoLanguageList } from '../../types/repo';
+import { RepoStatus } from '../../types/repo';
+import { DockerFileParser } from '../../utils/dockerfile-parser';
 import { GitlabService } from '../gitlab-service';
 
 describe('Gitlab Service', () => {

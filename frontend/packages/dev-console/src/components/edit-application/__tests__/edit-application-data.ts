@@ -1,4 +1,4 @@
-import { GitProvider, ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';

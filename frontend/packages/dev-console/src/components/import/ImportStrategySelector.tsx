@@ -7,7 +7,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
-import { GitProvider, ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';

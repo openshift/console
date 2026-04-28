@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { ValidatedOptions } from '@patternfly/react-core';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import type { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import type { LazyLoader } from '@console/internal/components/utils/async';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';

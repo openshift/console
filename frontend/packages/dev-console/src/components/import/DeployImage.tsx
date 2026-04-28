@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { ImportStrategy } from '@console/git-service/src/types';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';

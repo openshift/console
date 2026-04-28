@@ -2,7 +2,7 @@ import * as GitUrlParse from 'git-url-parse';
 import * as _ from 'lodash';
 import type { NavigateFunction } from 'react-router';
 import type { Perspective, ConsoleTFunction } from '@console/dynamic-plugin-sdk';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import {
