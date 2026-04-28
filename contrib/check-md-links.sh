@@ -42,6 +42,10 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -o|--output)
+      if [ $# -lt 2 ] || [[ "$2" == -* ]]; then
+        echo "ERROR: -o/--output requires a value" >&2
+        exit 1
+      fi
       OUTPUT="$2"
       shift 2
       ;;
@@ -76,17 +80,12 @@ done
 # Start fresh
 echo "file,line,status,http_code,url,redirect_url" > "$OUTPUT"
 
-total=0
-problems=0
-
 for file in "${FILES[@]}"; do
   grep -noE 'https?://[^)> "]+' "$file" | sed 's/[).,]*$//' | while IFS=: read -r line url; do
     # Skip localhost / local-only URLs
     case "$url" in
       *localhost*|*127.0.0.1*|*api.crc.testing*) continue ;;
     esac
-
-    total=$((total + 1))
 
     result=$(curl -sL -o /dev/null -w "%{http_code}|%{url_effective}" --max-time 15 "$url" 2>/dev/null || echo "000|")
     http_code="${result%%|*}"
@@ -113,8 +112,7 @@ for file in "${FILES[@]}"; do
       continue
     fi
 
-    echo "$file,$line,$status,$http_code,$url,$redirect," >> "$OUTPUT"
-    problems=$((problems + 1))
+    echo "$file,$line,$status,$http_code,$url,$redirect" >> "$OUTPUT"
   done
 done
 
