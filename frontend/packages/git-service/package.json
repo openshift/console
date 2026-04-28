@@ -14,8 +14,7 @@
     "@octokit/rest": "^16.30.1",
     "docker-file-parser": "^1.0.4",
     "git-url-parse": "^11.1.2",
-    "gitlab": "10.0.1",
-    "parse-bitbucket-url": "^0.3.0"
+    "gitlab": "10.0.1"
   },
   "devDependencies": {
     "nock": "^11.4.0",

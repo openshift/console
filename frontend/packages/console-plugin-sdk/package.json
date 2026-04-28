@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "Console static plugin SDK",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
     "test": "yarn --cwd ../.. test packages/console-plugin-sdk"
   },
