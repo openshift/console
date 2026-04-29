@@ -1,14 +1,9 @@
 #!/bin/bash -e
-# Upload Helm charts as OCI artifacts to zot registry (with TLS)
+# Upload Helm charts as OCI artifacts to zot registry
+# Usage: uploadOciCharts.sh --tls | --no-tls | --basic-auth
 
 # Change to the script's directory (pkg/helm/actions/testdata/)
 cd "$(dirname "$0")"
-
-if [[ $1 == "--tls" ]]; then
-  REGISTRY="localhost:5443"
-else
-  REGISTRY="localhost:5000"
-fi
 
 CACERT="../cacert.pem"
 CHARTS_DIR="../../testdata"
@@ -27,9 +22,17 @@ fi
 
 # Push charts to OCI registry using helm push
 if [[ $1 == "--tls" ]]; then
+  REGISTRY="localhost:5443"
   echo "Pushing mariadb-7.3.5.tgz to oci://$REGISTRY/helm-charts..."
   $HELM push $CHARTS_DIR/mariadb-7.3.5.tgz oci://$REGISTRY/helm-charts --ca-file=$CACERT
+elif [[ $1 == "--basic-auth" ]]; then
+  REGISTRY="localhost:5001"
+  echo "Logging in to oci://$REGISTRY with basic auth..."
+  echo "hunter2" | $HELM registry login $REGISTRY --username AzureDiamond --password-stdin --plain-http
+  echo "Pushing mychart-0.1.0.tgz to oci://$REGISTRY/helm-charts..."
+  $HELM push $CHARTS_DIR/mychart-0.1.0.tgz oci://$REGISTRY/helm-charts --plain-http
 else
+  REGISTRY="localhost:5000"
   echo "Pushing mychart-0.1.0.tgz to oci://$REGISTRY/helm-charts..."
   $HELM push $CHARTS_DIR/mychart-0.1.0.tgz oci://$REGISTRY/helm-charts --plain-http
 fi

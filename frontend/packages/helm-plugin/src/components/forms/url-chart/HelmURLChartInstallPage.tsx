@@ -65,38 +65,48 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
     chartURL: '',
     chartVersion: '',
     namespace,
+    basicAuthSecretName: '',
   };
 
-  const fetchChartData = useCallback(async (chartURL: string, chartVersion: string) => {
-    setIsLoadingChart(true);
-    setChartError(null);
+  const fetchChartData = useCallback(
+    async (chartURL: string, chartVersion: string, basicAuthSecretName: string) => {
+      setIsLoadingChart(true);
+      setChartError(null);
 
-    try {
-      const fullChartURL = getFullChartURL(chartURL, chartVersion);
-      const apiUrl = `/api/helm/chart?url=${encodeURIComponent(fullChartURL)}&noRepo=true`;
+      try {
+        const fullChartURL = getFullChartURL(chartURL, chartVersion);
+        let authParam = '';
+        if (basicAuthSecretName) {
+          authParam = `&basic_auth_secret_name=${encodeURIComponent(basicAuthSecretName)}`;
+        }
+        const apiUrl = `/api/helm/chart?url=${encodeURIComponent(
+          fullChartURL,
+        )}&noRepo=true&namespace=${namespace}${authParam}`;
 
-      const res = await coFetchJSON(apiUrl);
-      const chart: HelmChart = res?.chart || res;
-      const valuesYAML = getChartValuesYAML(chart);
-      const valuesJSON = chart?.values ?? {};
-      const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
+        const res = await coFetchJSON(apiUrl);
+        const chart: HelmChart = res?.chart || res;
+        const valuesYAML = getChartValuesYAML(chart);
+        const valuesJSON = chart?.values ?? {};
+        const valuesSchema = chart?.schema && JSON.parse(atob(chart?.schema));
 
-      setInitialYamlData(valuesYAML);
-      setInitialFormData(valuesJSON as Record<string, unknown>);
-      setInitialFormSchema(valuesSchema);
-      setChartHasValues(!!valuesYAML);
-      setChartData(chart);
-    } catch (e) {
-      setChartError(e as Error);
-    } finally {
-      setIsLoadingChart(false);
-    }
-  }, []);
+        setInitialYamlData(valuesYAML);
+        setInitialFormData(valuesJSON as Record<string, unknown>);
+        setInitialFormSchema(valuesSchema);
+        setChartHasValues(!!valuesYAML);
+        setChartData(chart);
+      } catch (e) {
+        setChartError(e as Error);
+      } finally {
+        setIsLoadingChart(false);
+      }
+    },
+    [namespace],
+  );
 
   const handleNextStep = useCallback(
     (values: HelmURLChartFormData) => {
       setChartDetails(values);
-      fetchChartData(values.chartURL, values.chartVersion);
+      fetchChartData(values.chartURL, values.chartVersion, values.basicAuthSecretName);
       setCurrentStep(WizardStep.ConfigureInstall);
     },
     [fetchChartData],
@@ -112,7 +122,15 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
     values: HelmURLInstallFormData,
     actions: FormikHelpers<HelmURLInstallFormData>,
   ) => {
-    const { releaseName, chartURL, chartVersion, yamlData, formData, editorType } = values;
+    const {
+      releaseName,
+      chartURL,
+      chartVersion,
+      yamlData,
+      formData,
+      editorType,
+      basicAuthSecretName,
+    } = values;
 
     let valuesObj: Record<string, unknown> | undefined;
     if (editorType === EditorType.Form) {
@@ -153,6 +171,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       chart_url: fullChartURL, // eslint-disable-line @typescript-eslint/naming-convention
       ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       ...(valuesObj ? { values: valuesObj } : {}),
+      ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
       noRepo: true,
     };
 
@@ -197,6 +216,7 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
       chartURL: chartDetails?.chartURL || '',
       chartVersion: chartDetails?.chartVersion || '',
       namespace,
+      basicAuthSecretName: chartDetails?.basicAuthSecretName || '',
       chartName: chartData?.metadata?.name || '',
       appVersion: chartData?.metadata?.appVersion || '',
       chartReadme: getChartReadme(chartData),
@@ -254,7 +274,6 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
                   chartHasValues={chartHasValues}
                   chartMetaDescription={chartMetaDescription}
                   chartError={chartError}
-                  namespace={namespace}
                   onBack={handleBackStep}
                 />
               )}

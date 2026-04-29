@@ -6,6 +6,7 @@ export interface HelmURLChartFormData {
   chartURL: string;
   chartVersion: string;
   namespace: string;
+  basicAuthSecretName?: string;
 }
 
 export interface HelmURLInstallFormData extends HelmURLChartFormData {

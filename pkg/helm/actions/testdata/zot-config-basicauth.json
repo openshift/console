@@ -1,0 +1,19 @@
+{
+  "distSpecVersion": "1.1.0",
+  "storage": {
+    "rootDirectory": "./zot-storage-5001",
+    "gc": false
+  },
+  "http": {
+    "address": "127.0.0.1",
+    "port": "5001",
+    "auth": {
+      "htpasswd": {
+        "path": "./testdata/htpasswd"
+      }
+    }
+  },
+  "log": {
+    "level": "debug"
+  }
+}

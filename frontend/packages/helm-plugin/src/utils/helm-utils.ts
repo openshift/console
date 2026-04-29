@@ -357,6 +357,7 @@ export const installChartFromURL = (
   chartURL: string,
   chartVersion?: string,
   values?: Record<string, unknown>,
+  basicAuthSecretName?: string,
 ) => {
   return coFetchJSON.post('/api/helm/release/async', {
     namespace,
@@ -364,6 +365,7 @@ export const installChartFromURL = (
     chart_url: chartURL, // eslint-disable-line @typescript-eslint/naming-convention
     ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
     ...(values ? { values } : {}),
+    ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
     noRepo: true,
   });
 };

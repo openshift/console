@@ -23,7 +23,6 @@ export interface HelmURLInstallFormProps {
   chartHasValues: boolean;
   chartMetaDescription: ReactNode;
   chartError: Error | null;
-  namespace: string;
   onBack: () => void;
 }
 
@@ -142,6 +141,17 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 data-test="chart-version"
               />
             </GridItem>
+            {values.basicAuthSecretName && (
+              <GridItem xl={12} lg={12} md={12}>
+                <InputField
+                  type={TextInputTypes.text}
+                  name="basicAuthSecretName"
+                  label={t('helm-plugin~Basic Auth Secret')}
+                  isDisabled
+                  data-test="basic-auth-secret-readonly"
+                />
+              </GridItem>
+            )}
           </Grid>
         </FormSection>
         {!chartError &&
