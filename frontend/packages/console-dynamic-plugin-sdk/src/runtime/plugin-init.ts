@@ -82,7 +82,7 @@ const registerLegacyPluginEntryCallback = () => {
 
     // eslint-disable-next-line no-console
     console.warn(
-      `[DEPRECATION WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
+      `[WARNING] ${pluginName} was built for an older version of Console and may not work correctly in this version.`,
     );
 
     window[REMOTE_ENTRY_CALLBACK](patchedPluginName, entryModule);
