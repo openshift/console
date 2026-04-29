@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useContext } from 'react';
+import { useRef, useContext } from 'react';
 import {
   Button,
   ButtonVariant,
@@ -8,12 +8,11 @@ import {
   CardHeader,
   CardTitle,
   DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
   Divider,
   DividerVariant,
   Flex,
   FlexItem,
+  Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -41,6 +40,7 @@ const DetailsCard: FC = () => {
   const { t } = useTranslation();
   const launchOverlay = useOverlay();
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const editGroupButtonRef = useRef<HTMLDivElement>(null);
 
   const [canEdit, isEditLoading] = useAccessReview({
     group: NodeModel.apiGroup || '',
@@ -94,29 +94,29 @@ const DetailsCard: FC = () => {
           {nodeMgmtV1Enabled ? (
             <>
               <Divider component={DividerVariant.div} className="pf-v6-u-w-75" />
-              <DescriptionListGroup>
-                <dt className="pf-v6-c-description-list__term" data-test="detail-item-title">
-                  <span className="pf-v6-c-description-list__text pf-v6-u-w-100">
-                    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-                      <FlexItem>{t('console-app~Groups')}</FlexItem>
-                      {!isEditLoading && canEdit ? (
-                        <FlexItem>
-                          <Button
-                            variant={ButtonVariant.link}
-                            isInline
-                            onClick={() => launchOverlay(NodeGroupsEditorModal, { node: obj })}
-                          >
-                            {t('console-app~Edit')}
-                          </Button>
-                        </FlexItem>
-                      ) : null}
-                    </Flex>
-                  </span>
-                </dt>
-                <DescriptionListDescription data-test="detail-item-value">
-                  {getNodeGroups(obj).sort().join(', ') || DASH}
-                </DescriptionListDescription>
-              </DescriptionListGroup>
+              <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+                <FlexItem>
+                  <OverviewDetailItem isLoading={!obj} title={t('console-app~Groups')}>
+                    {getNodeGroups(obj).sort().join(', ') || DASH}
+                  </OverviewDetailItem>
+                </FlexItem>
+                <FlexItem>
+                  <div ref={!isEditLoading && !canEdit ? editGroupButtonRef : undefined}>
+                    <Button
+                      variant={ButtonVariant.link}
+                      isInline
+                      isDisabled={isEditLoading || !canEdit}
+                      onClick={() => launchOverlay(NodeGroupsEditorModal, { node: obj })}
+                    >
+                      {t('console-app~Edit')}
+                    </Button>
+                  </div>
+                  <Tooltip
+                    triggerRef={editGroupButtonRef}
+                    content={t('console-app~You do not have permission to edit groups.')}
+                  />
+                </FlexItem>
+              </Flex>
             </>
           ) : null}
         </DescriptionList>

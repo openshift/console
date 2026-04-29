@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import { useMemo, useCallback, useEffect, Suspense } from 'react';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { useRef, useMemo, useCallback, useEffect, Suspense } from 'react';
+import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import * as _ from 'lodash';
@@ -97,7 +97,7 @@ import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
-import { getNodeGroups } from './NodeGroupUtils';
+import { getExistingGroups, getNodeGroups } from './NodeGroupUtils';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
 import {
@@ -702,6 +702,14 @@ const NodeList: FC<NodeListProps> = ({
     [],
   );
 
+  const nodeGroupFilterOptions = useMemo<DataViewFilterOption[]>(() => {
+    const groupNames = getExistingGroups(data as NodeKind[]);
+    return groupNames.map((groupName) => ({
+      value: groupName,
+      label: groupName,
+    }));
+  }, [data]);
+
   const machineSetFilterOptions = useMemo<DataViewFilterOption[]>(
     () =>
       [
@@ -733,6 +741,7 @@ const NodeList: FC<NodeListProps> = ({
       ...initialFiltersDefault,
       status: [],
       roles: [],
+      groups: [],
       architecture: [],
       machineOwners: [],
       machineConfigPools: [],
@@ -757,6 +766,17 @@ const NodeList: FC<NodeListProps> = ({
         placeholder={t('console-app~Filter by roles')}
         options={nodeRoleFilterOptions}
       />,
+      ...(nodeMgmtV1Enabled
+        ? [
+            <DataViewCheckboxFilter
+              key="groups"
+              filterId="groups"
+              title={t('console-app~Groups')}
+              placeholder={t('console-app~Filter by groups')}
+              options={nodeGroupFilterOptions}
+            />,
+          ]
+        : []),
       <DataViewCheckboxFilter
         key="architecture"
         filterId="architecture"
@@ -783,9 +803,11 @@ const NodeList: FC<NodeListProps> = ({
       t,
       nodeStatusFilterOptions,
       nodeRoleFilterOptions,
+      nodeGroupFilterOptions,
       nodeArchitectureFilterOptions,
       machineSetFilterOptions,
       machineConfigPoolFilterOptions,
+      nodeMgmtV1Enabled,
     ],
   );
 
@@ -807,6 +829,17 @@ const NodeList: FC<NodeListProps> = ({
       }
       const nodeRoles = getNodeRoles(resource as NodeKind);
       if (!filters.roles.some((r) => nodeRoles.includes(r))) {
+        return false;
+      }
+    }
+
+    // Groups filter
+    if (filters.groups.length > 0) {
+      if (isCSR) {
+        return false;
+      }
+      const nodeGroups = getNodeGroups(resource as NodeKind);
+      if (!filters.groups.some((r) => nodeGroups.includes(r))) {
         return false;
       }
     }
@@ -881,6 +914,7 @@ type NodeRowItem = (NodeKind | NodeCertificateSigningRequestKind) & {
 type NodeFilters = ResourceFilters & {
   status: string[];
   roles: string[];
+  groups: string[];
   architecture: string[];
   machineOwners: string[];
   machineConfigPools: string[];
@@ -911,6 +945,7 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   const { t } = useTranslation();
   const launchOverlay = useOverlay();
   const nodeMgmtV1Enabled = useFlag(FLAG_NODE_MGMT_V1);
+  const editGroupButtonRef = useRef<HTMLDivElement>(null);
 
   const [selectedColumns, , columnPreferenceLoaded] = useUserPreference<TableColumnsType>(
     COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
@@ -1047,13 +1082,22 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
   return (
     <>
       <ListPageHeader title={t('public~Nodes')}>
-        {nodeMgmtV1Enabled && !isEditLoading && canEdit ? (
-          <Button
-            variant={ButtonVariant.secondary}
-            onClick={() => launchOverlay(GroupsEditorModal, {})}
-          >
-            {t('console-app~Edit groups')}
-          </Button>
+        {nodeMgmtV1Enabled ? (
+          <>
+            <span ref={!isEditLoading && !canEdit ? editGroupButtonRef : undefined}>
+              <Button
+                variant={ButtonVariant.secondary}
+                onClick={() => launchOverlay(GroupsEditorModal, {})}
+                isDisabled={isEditLoading || !canEdit}
+              >
+                {t('console-app~Edit groups')}
+              </Button>
+            </span>
+            <Tooltip
+              triggerRef={editGroupButtonRef}
+              content={t('console-app~You do not have permission to edit groups.')}
+            />
+          </>
         ) : null}
       </ListPageHeader>
       <ListPageBody>
