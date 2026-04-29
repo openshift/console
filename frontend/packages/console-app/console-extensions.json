@@ -1153,7 +1153,7 @@
       "perspective": "admin",
       "section": "workloads",
       "id": "statefulsets",
-      "insertAfter": "deploymentconfigs",
+      "insertAfter": ["deploymentconfigs", "deployments"],
       "name": "%console-app~StatefulSets%",
       "model": {
         "group": "apps",
