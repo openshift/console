@@ -222,11 +222,11 @@ export const getOriginRedirectURL = (
     case HelmActionOrigins.topology:
       return `/topology/ns/${namespace}`;
     case HelmActionOrigins.list:
-      return `/helm-releases/ns/${namespace}`;
+      return `/helm/ns/${namespace}`;
     case HelmActionOrigins.details:
       return `/helm-releases/ns/${namespace}/release/${releaseName}`;
     default:
-      return `/helm-releases/ns/${namespace}`;
+      return `/helm/ns/${namespace}`;
   }
 };
 

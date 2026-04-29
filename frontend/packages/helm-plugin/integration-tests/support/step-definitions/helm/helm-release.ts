@@ -4,9 +4,9 @@ import { helmPO } from '@console/dev-console/integration-tests/support/pageObjec
 import {
   topologyPage,
   topologySidePane,
-  app,
   createHelmChartFromAddPage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { navPaths } from '../../constants';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
@@ -74,8 +74,7 @@ Then(
 );
 
 Given('user is on the Helm page with helm release {string}', (helmRelease: string) => {
-  cy.get('[data-quickstart-id="qs-nav-ecosystem"]').should('be.visible').click({ force: true });
-  cy.get('[data-test-id="helm-nav"]').should('be.visible').click({ force: true });
+  cy.clickNavLink(navPaths.helm);
   helmPage.search(helmRelease);
 });
 
@@ -84,7 +83,7 @@ Given('user is able to see {string} in helm page in admin view', (helmRelease: s
 });
 
 When('user clicks on the Helm Release tab in admin perspective', () => {
-  cy.clickNavLink(['Ecosystem', 'Helm']);
+  cy.clickNavLink(navPaths.helm);
   cy.byLegacyTestID('horizontal-link-Helm Releases').should('exist').click({ force: true });
 });
 
@@ -136,11 +135,6 @@ When('user clicks on the Delete button', () => {
   helmDetailsPage.uninstallHelmRelease();
 });
 
-Then('user will be redirected to Topology page', () => {
-  cy.reload();
-  app.waitForDocumentLoad();
-  topologyPage.verifyTopologyPage();
-});
 When('user clicks on the helm release {string}', (helmReleaseName: string) => {
   topologyPage.clickOnGroup(helmReleaseName);
 });
@@ -151,11 +145,6 @@ Then('user will see the sidebar for the helm release', () => {
 
 Then('user will see the Details, Resources, Release notes tabs', () => {
   topologyPage.verifyHelmReleaseSidePaneTabs();
-});
-
-Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
-  topologyPage.clickOnHelmGroup(helmReleaseName);
-  topologySidePane.verify();
 });
 
 Then('user will see the {string} action item', (actionItem: string) => {
