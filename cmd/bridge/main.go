@@ -127,6 +127,7 @@ func main() {
 	_ = fs.String("kubectl-client-secret-file", "", "DEPRECATED: setting this does not do anything.")
 
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use to communicate to the API server.")
+	fCustomLoginServerURL := fs.String("custom-login-server-url", "", "Optional URL to display as the --server value in the 'oc login' command shown in the console. Does not affect API proxying. When unset the console uses the cluster API server URL.")
 
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, azure, or rosa. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
@@ -635,6 +636,9 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
+	_, err = flags.ValidateFlagIsURL("custom-login-server-url", *fCustomLoginServerURL, true)
+	flags.FatalIfFailed(err)
+	srv.LoginServerURL = *fCustomLoginServerURL
 
 	clusterManagementURL, err := url.Parse(clusterManagementURL)
 	if err != nil {

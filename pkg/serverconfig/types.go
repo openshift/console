@@ -109,6 +109,11 @@ type Customization struct {
 	DocumentationBaseURL string `yaml:"documentationBaseURL,omitempty"`
 	CustomProductName    string `yaml:"customProductName,omitempty"`
 	CustomLogoFile       string `yaml:"customLogoFile,omitempty"`
+	// CustomLoginServerURL, when set, overrides the API server URL shown in the
+	// 'oc login --server=...' command displayed by the console. The actual
+	// API proxy target is not affected. This is an opt-in field; when omitted
+	// the console falls back to the cluster API server URL.
+	CustomLoginServerURL string `yaml:"customLoginServerURL,omitempty"`
 	// developerCatalog allows to configure the shown developer catalog categories and it's types.
 	DeveloperCatalog DeveloperConsoleCatalogCustomization `yaml:"developerCatalog,omitempty"`
 	QuickStarts      QuickStarts                          `yaml:"quickStarts,omitempty"`
