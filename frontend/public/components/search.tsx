@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { FC, MouseEvent } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, memo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTranslation } from 'react-i18next';
@@ -51,37 +51,51 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspectiv
 import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
-const ResourceList = ({ kind, mock, namespace, selector, nameFilter }) => {
-  const { plural } = useParams<{ plural?: string }>();
-  const [kindObj] = useK8sModel(kind || plural);
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  if (!kindObj) {
-    return <LoadingBox />;
-  }
+const ResourceList = memo(
+  ({
+    kind,
+    mock,
+    namespace,
+    selector,
+    nameFilter,
+  }: {
+    kind: string;
+    mock: boolean;
+    namespace: string;
+    selector: any;
+    nameFilter: string;
+  }) => {
+    const { plural } = useParams<{ plural?: string }>();
+    const [kindObj] = useK8sModel(kind || plural);
+    const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+    if (!kindObj) {
+      return <LoadingBox />;
+    }
 
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
-  const ns = kindObj.namespaced ? namespace : undefined;
+    const componentLoader = getResourceListPages(resourceListPageExtensions).get(
+      referenceForModel(kindObj),
+      () => Promise.resolve(DefaultPage),
+    );
+    const ns = kindObj.namespaced ? namespace : undefined;
 
-  return (
-    <AsyncComponent
-      loader={componentLoader}
-      namespace={ns === ALL_NAMESPACES_KEY ? undefined : ns}
-      selector={selector}
-      nameFilter={nameFilter}
-      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
-      showTitle={false}
-      hideTextFilter
-      autoFocus={false}
-      mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
-      hideNameLabelFilters
-      hideColumnManagement
-    />
-  );
-};
+    return (
+      <AsyncComponent
+        loader={componentLoader}
+        namespace={ns === ALL_NAMESPACES_KEY ? undefined : ns}
+        selector={selector}
+        nameFilter={nameFilter}
+        kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
+        showTitle={false}
+        hideTextFilter
+        autoFocus={false}
+        mock={mock}
+        badge={getBadgeFromType(kindObj.badge)}
+        hideNameLabelFilters
+        hideColumnManagement
+      />
+    );
+  },
+);
 
 const SearchPage_: FC<SearchProps> = (props) => {
   const { setQueryArgument, removeQueryArguments } = useQueryParamsMutator();
@@ -120,10 +134,12 @@ const SearchPage_: FC<SearchProps> = (props) => {
     const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
+    setDebouncedNameFilter(name || '');
   }, [location.search]);
 
   const debouncedNameFilterCallback = useDebounceCallback((nameFilter: string) => {
     setDebouncedNameFilter(nameFilter);
+    setQueryArgument('name', nameFilter);
   }, 300);
 
   useEffect(() => {
@@ -131,7 +147,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   }, [typeaheadNameFilter, debouncedNameFilterCallback]);
 
   const updateSelectedItems = (selection: string) => {
-    const updateItems = selectedItems;
+    const updateItems = new Set(selectedItems);
     fireTelemetryEvent('search-resource-selected', {
       resource: selection,
     });
@@ -141,7 +157,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   };
 
   const updateNewItems = (_filter: string, { key }: ToolbarLabel) => {
-    const updateItems = selectedItems;
+    const updateItems = new Set(selectedItems);
     updateItems.has(key) ? updateItems.delete(key) : updateItems.add(key);
     setSelectedItems(updateItems);
     setQueryArgument('kind', [...updateItems].join(','));
@@ -154,6 +170,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
 
   const clearNameFilter = () => {
     setTypeaheadNameFilter('');
+    setDebouncedNameFilter('');
     setQueryArgument('name', '');
   };
 
@@ -165,6 +182,7 @@ const SearchPage_: FC<SearchProps> = (props) => {
   const clearAll = () => {
     setSelectedItems(new Set([]));
     setTypeaheadNameFilter('');
+    setDebouncedNameFilter('');
     setLabelFilter([]);
     removeQueryArguments('kind', 'name', 'q');
   };
@@ -188,7 +206,6 @@ const SearchPage_: FC<SearchProps> = (props) => {
 
   const updateNameFilter = (value: string) => {
     setTypeaheadNameFilter(value);
-    setQueryArgument('name', value);
   };
 
   const updateLabelFilter = (value: string, endOfString: boolean) => {
@@ -238,6 +255,8 @@ const SearchPage_: FC<SearchProps> = (props) => {
     }
     return model.labelKey ? t(model.labelKey) : model.label;
   };
+
+  const selector = useMemo(() => selectorFromString(labelFilter.join(',')), [labelFilter]);
 
   return (
     <>
@@ -338,11 +357,11 @@ const SearchPage_: FC<SearchProps> = (props) => {
                   {!isCollapsed && (
                     <ResourceList
                       kind={resource}
-                      selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={typeaheadNameFilter}
+                      selector={selector}
+                      nameFilter={debouncedNameFilter}
                       namespace={namespace}
                       mock={noProjectsAvailable}
-                      key={`${resource}-${labelFilter.join(',')}-${debouncedNameFilter}`}
+                      key={resource}
                     />
                   )}
                 </AccordionContent>
