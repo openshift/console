@@ -36,3 +36,4 @@ cypress-a11y-report.json
 /dynamic-demo-plugin/**/dist
 **/.claude/settings.local.json
 **/chartstore-*/
+link-markdown-check.csv
