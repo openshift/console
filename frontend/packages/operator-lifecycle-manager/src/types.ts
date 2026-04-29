@@ -200,6 +200,7 @@ export type SubscriptionKind = {
     installPlanApproval?: InstallPlanApproval;
     config?: {
       env?: Env[];
+      nodeSelector?: { [key: string]: string };
     };
   };
   status?: {
