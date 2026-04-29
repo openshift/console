@@ -60,7 +60,7 @@ a link to the issue in the commit description to make it easy to get to the issu
 ### Backporting Fixes
 
 Branches for previous releases follow the format `release-X.Y`, for example,
-`release-4.1`. Typically, bugs are fixed in the master branch first then
+`release-4.1`. Typically, bugs are fixed in the main branch first then
 backported to the appropriate release branches. Fixes backported to previous
 releases should have a Bugzilla bug for each version fixed.
 
