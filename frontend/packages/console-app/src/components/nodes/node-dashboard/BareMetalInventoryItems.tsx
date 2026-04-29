@@ -12,7 +12,7 @@ import {
   metricsFromBareMetalHosts,
   useIsBareMetalPluginActive,
   useWatchBareMetalHost,
-} from '@console/app/src/components/nodes/NodeBareMetalUtils';
+} from '@console/app/src/components/nodes/utils/NodeBareMetalUtils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { DASH } from '@console/shared/src';
 import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';

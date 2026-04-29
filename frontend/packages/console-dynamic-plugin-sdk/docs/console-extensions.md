@@ -58,26 +58,27 @@
 56.  [console.storage-provider](#consolestorage-provider)
 57.  [console.tab](#consoletab)
 58.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-59.  [console.telemetry/listener](#consoletelemetrylistener)
-60.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-61.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-62.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-63.  [console.topology/component/factory](#consoletopologycomponentfactory)
-64.  [console.topology/create/connector](#consoletopologycreateconnector)
-65.  [console.topology/data/factory](#consoletopologydatafactory)
-66.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-67.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-68.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-69.  [console.topology/details/tab](#consoletopologydetailstab)
-70.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-71.  [console.topology/display/filters](#consoletopologydisplayfilters)
-72.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-73.  [console.user-preference/group](#consoleuser-preferencegroup)
-74.  [console.user-preference/item](#consoleuser-preferenceitem)
-75.  [console.yaml-template](#consoleyaml-template)
-76.  [dev-console.add/action](#dev-consoleaddaction)
-77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-78.  [dev-console.import/environment](#dev-consoleimportenvironment)
+59.  [console.tab/nodeSubNavTab](#consoletabnodeSubNavTab)
+60.  [console.telemetry/listener](#consoletelemetrylistener)
+61.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+62.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+63.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+64.  [console.topology/component/factory](#consoletopologycomponentfactory)
+65.  [console.topology/create/connector](#consoletopologycreateconnector)
+66.  [console.topology/data/factory](#consoletopologydatafactory)
+67.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+68.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+69.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+70.  [console.topology/details/tab](#consoletopologydetailstab)
+71.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+72.  [console.topology/display/filters](#consoletopologydisplayfilters)
+73.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+74.  [console.user-preference/group](#consoleuser-preferencegroup)
+75.  [console.user-preference/item](#consoleuser-preferenceitem)
+76.  [console.yaml-template](#consoleyaml-template)
+77.  [dev-console.add/action](#dev-consoleaddaction)
+78.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+79.  [dev-console.import/environment](#dev-consoleimportenvironment)
 
 ---
 
@@ -1057,6 +1058,22 @@ This extension can be used to add a tab on the resource details page.
 | `model` | `ExtensionK8sKindVersionModel` | no | The model for which this provider show tab. |
 | `page` | `{ name: string; href: string; }` | no | The page to be show in horizontal tab. It takes tab name as name and href of the tab.<br/>Note: any special characters in href are encoded, and href is treated as a single<br/>path element. |
 | `component` | `CodeRef<React.ComponentType<PageComponentProps<K8sResourceCommon>>>` | no | The component to be rendered when the route matches. |
+
+---
+
+## `console.tab/nodeSubNavTab`
+
+### Summary 
+
+This extension can be used to add a tab on the sub-tabs for a Nodes details tab.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `parentTab` | `'configuration' \| 'health' \| 'workloads'` | no | Which detail tab to add the sub-tab to. |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page to be show in node sub tabs. It takes tab name as name and priority of the tab.<br/>Note: Tabs are shown in priority order from highest to lowest. Current node tab priorities are:<br/>configuration:<br/>   Storage: 70<br/>   Operating system: 50<br/>   Machine: 40 |
+| `component` | `CodeRef<ComponentType<SubPageComponentProps<K8sResourceCommon>>>` | no | The component to be rendered when the route matches. |
 
 ---
 

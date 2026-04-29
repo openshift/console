@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type {
   K8sGroupVersionKind,
   K8sModel,
@@ -5,9 +8,8 @@ import type {
   K8sResourceKind,
   WatchK8sResult,
 } from '@console/dynamic-plugin-sdk/src';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import type { PodKind } from '@console/internal/module/k8s';
-import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
+import { useAccessibleResources } from './useAccessibleResources';
 
 export const VirtualMachineModel: K8sModel = {
   label: 'VirtualMachine',
@@ -20,6 +22,19 @@ export const VirtualMachineModel: K8sModel = {
   kind: 'VirtualMachine',
   id: 'virtualmachine',
   crd: true,
+};
+
+export const DataVolumeModel: K8sModel = {
+  abbr: 'DV',
+  apiGroup: 'cdi.kubevirt.io',
+  apiVersion: 'v1beta1',
+  crd: true,
+  id: 'datavolume',
+  kind: 'DataVolume',
+  label: 'DataVolume',
+  labelPlural: 'DataVolumes',
+  namespaced: true,
+  plural: 'datavolumes',
 };
 
 // TODO: Remove VMI retrieval and VMs count column if/when the plugin is able to add the VMs count column
@@ -37,25 +52,38 @@ export const filterVirtualMachineInstancesByNode = (vmis: K8sResourceKind[], nod
 export const useWatchVirtualMachineInstances = (
   nodeName?: string,
 ): WatchK8sResult<K8sResourceKind[]> => {
+  const { t } = useTranslation();
+
   const isKubevirtPluginActive = useIsKubevirtPluginActive();
+  const pluginError = !isKubevirtPluginActive
+    ? {
+        message: t('console-app~Unable to load VirtualMachines'),
+      }
+    : undefined;
 
   const [
     virtualMachineInstances,
     virtualMachineInstancesLoaded,
     virtualMachineInstancesLoadError,
-  ] = useK8sWatchResource<K8sResourceKind[]>(
+  ] = useAccessibleResources(
     isKubevirtPluginActive
       ? {
-          isList: true,
           groupVersionKind: VirtualMachineInstanceGroupVersionKind,
+          isList: true,
+          namespaced: true,
         }
       : undefined,
   );
 
+  const nodeVirtualMachineInstances = useMemo(
+    () => filterVirtualMachineInstancesByNode(virtualMachineInstances, nodeName),
+    [nodeName, virtualMachineInstances],
+  );
+
   return [
-    filterVirtualMachineInstancesByNode(virtualMachineInstances, nodeName),
+    nodeVirtualMachineInstances,
     virtualMachineInstancesLoaded,
-    virtualMachineInstancesLoadError,
+    virtualMachineInstancesLoadError || pluginError,
   ];
 };
 

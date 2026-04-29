@@ -1,5 +1,4 @@
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src';
-import type { GroupNameMap } from '../NodeGroupUtils';
 import {
   GROUP_ANNOTATION,
   getGroupsFromGroupAnnotation,
@@ -9,6 +8,7 @@ import {
   getGroupsByNameFromNodes,
   getNodeGroupAnnotationFromGroupNameMap,
 } from '../NodeGroupUtils';
+import type { GroupNameMap } from '../NodeGroupUtils';
 
 describe('NodeGroupUtils', () => {
   describe('getGroupsFromGroupAnnotation', () => {

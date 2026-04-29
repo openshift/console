@@ -5,7 +5,7 @@ import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/h
 import { NodeModel } from '@console/internal/models';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
-import { GROUP_ANNOTATION } from '../../NodeGroupUtils';
+import { GROUP_ANNOTATION } from '../../utils/NodeGroupUtils';
 import NodeGroupsEditorModal from '../NodeGroupsEditorModal';
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks', () => ({

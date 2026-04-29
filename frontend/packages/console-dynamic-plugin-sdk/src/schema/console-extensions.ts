@@ -42,6 +42,7 @@ import type {
   Separator,
   NavSection,
 } from '../extensions/navigation';
+import type { NodeSubNavTab } from '../extensions/node-subnav-tabs';
 import type { AlertAction } from '../extensions/notification-alert';
 import type {
   StandaloneRoutePage,
@@ -128,6 +129,7 @@ export type SupportedExtension =
   | UserPreferenceItem
   | Perspective
   | HorizontalNavTab
+  | NodeSubNavTab
   | NavTab
   | ClusterOverviewInventoryItem
   | ClusterOverviewUtilizationItem

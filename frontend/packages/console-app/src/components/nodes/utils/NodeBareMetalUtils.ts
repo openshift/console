@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import { useAccessibleResources } from '@console/app/src/components/nodes/utils/useAccessibleResources';
 import type {
   K8sGroupVersionKind,
   K8sResourceKind,
@@ -5,12 +7,14 @@ import type {
 } from '@console/dynamic-plugin-sdk/src';
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { MachineModel } from '@console/internal/models';
 import type { K8sKind, MachineKind } from '@console/internal/module/k8s';
 import { getName, getNodeMachineNameAndNamespace } from '@console/shared/src';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';
+
+export const HOST_STATUS_UNMANAGED = 'unmanaged';
+export const HOST_STATUS_DETACHED = 'detached';
 
 export const BareMetalHostModel: K8sKind = {
   label: 'Bare Metal Host',
@@ -66,28 +70,36 @@ export const findBareMetalHostByNode = (
 export const useWatchBareMetalHost = (
   node: NodeKind,
 ): WatchK8sResult<K8sResourceKind | undefined> => {
-  const isBareMetalPluginActive = useIsBareMetalPluginActive();
+  const { t } = useTranslation();
 
-  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useK8sWatchResource<
-    K8sResourceKind[]
+  const isBareMetalPluginActive = useIsBareMetalPluginActive();
+  const pluginError = !isBareMetalPluginActive
+    ? {
+        message: t('console-app~Unable to load BareMetalHost'),
+      }
+    : undefined;
+
+  const [bareMetalHosts, bareMetalHostsLoaded, bareMetalHostsLoadError] = useAccessibleResources<
+    K8sResourceKind
   >(
     isBareMetalPluginActive
       ? {
-          isList: true,
           groupVersionKind: BareMetalHostGroupVersionKind,
+          isList: true,
+          namespaced: true,
         }
       : undefined,
   );
-
-  const [machines, machinesLoaded, machinesLoadError] = useK8sWatchResource<MachineKind[]>(
+  const [machines, machinesLoaded, machinesLoadError] = useAccessibleResources<MachineKind>(
     isBareMetalPluginActive
       ? {
-          isList: true,
           groupVersionKind: {
             group: MachineModel.apiGroup,
             version: MachineModel.apiVersion,
             kind: MachineModel.kind,
           },
+          isList: true,
+          namespaced: true,
         }
       : undefined,
   );
@@ -100,7 +112,7 @@ export const useWatchBareMetalHost = (
   return [
     bareMetalHost,
     bareMetalHostsLoaded && machinesLoaded,
-    bareMetalHostsLoadError || machinesLoadError,
+    bareMetalHostsLoadError || machinesLoadError || pluginError,
   ];
 };
 
@@ -111,3 +123,19 @@ export const metricsFromBareMetalHosts = (
   nics: bareMetalHost?.status?.hardware?.nics?.length,
   cpus: bareMetalHost?.status?.hardware?.cpu?.count,
 });
+
+const ANNOTATION_HOST_RESTART = 'reboot.metal3.io';
+
+export const getPoweroffAnnotation = (host: K8sResourceKind): string | undefined =>
+  Object.keys(host?.metadata?.annotations || {}).find((annotation) =>
+    annotation.startsWith(`${ANNOTATION_HOST_RESTART}/`),
+  );
+
+export const hasRebootAnnotation = (host: K8sResourceKind): boolean =>
+  !!Object.keys(host?.metadata?.annotations || {}).find(
+    (annotation) => annotation === ANNOTATION_HOST_RESTART,
+  );
+export const isHostOnline = (host: K8sResourceKind): boolean => host?.spec?.online ?? false;
+export const isHostPoweredOn = (host: K8sResourceKind): boolean => host?.status?.poweredOn ?? false;
+export const isHostScheduledForRestart = (host: K8sResourceKind) =>
+  !!hasRebootAnnotation(host) && isHostPoweredOn(host);
