@@ -1,6 +1,7 @@
 import type { ReactNode, ComponentType } from 'react';
-import { screen, cleanup } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as Router from 'react-router';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { PageContents as AddPage } from '../AddPage';
 
@@ -10,12 +11,16 @@ jest.mock('react-router', () => ({
 }));
 
 jest.mock('@console/shared', () => {
-  const originalModule = jest.requireActual('@console/shared');
   return {
-    ...originalModule,
-    useFlag: jest.fn<boolean, []>().mockReturnValue(false),
+    FLAGS: {
+      OPENSHIFT: 'OPENSHIFT',
+    },
   };
 });
+
+jest.mock('@console/shared/src/hooks/useFlag', () => ({
+  useFlag: jest.fn(),
+}));
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -42,6 +47,22 @@ jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: () => [true, jest.fn()],
 }));
 
+jest.mock('../../NamespacedPage', () => ({
+  __esModule: true,
+  default: ({ children }) => children,
+  NamespacedPageVariants: { light: 'light' },
+}));
+
+jest.mock('../../projects/CreateProjectListPage', () => ({
+  __esModule: true,
+  default: ({ children }) => (typeof children === 'function' ? children(jest.fn()) : children),
+  CreateAProjectButton: () => null,
+}));
+
+jest.mock('../../../../../../public/components/start-guide', () => ({
+  withStartGuide: (Component) => Component,
+}));
+
 jest.mock(
   '@console/internal/components/dashboard/project-dashboard/getting-started/GettingStartedSection',
   () => ({
@@ -60,10 +81,14 @@ jest.mock('@console/topology/src/components/quick-search/TopologyQuickSearchButt
 }));
 
 const useParamsMock = Router.useParams as jest.Mock;
+const useFlagMock = useFlag as jest.Mock;
 
 describe('AddPage', () => {
+  beforeEach(() => {
+    useFlagMock.mockReturnValue(false);
+  });
+
   afterEach(() => {
-    cleanup();
     jest.clearAllMocks();
   });
 

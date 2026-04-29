@@ -1,4 +1,4 @@
-import { cleanup } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as Router from 'react-router';
 import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -51,12 +51,11 @@ const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mo
 
 beforeEach(() => {
   useUserPreferenceMock.mockReturnValue([undefined, jest.fn(), true]);
-  usePreferredCreateEditMethodMock.mockReturnValue([[undefined, true]]);
+  usePreferredCreateEditMethodMock.mockReturnValue([undefined, true]);
 });
 
 afterEach(() => {
   jest.resetAllMocks();
-  cleanup();
 });
 
 describe('BuildConfigFormPage', () => {
@@ -65,10 +64,10 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = renderWithProviders(<BuildConfigFormPage />);
-    expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
-    expect(renderResult.queryByText('Edit BuildConfig')).toBeFalsy();
-    renderResult.getByTestId('loading-indicator');
+    renderWithProviders(<BuildConfigFormPage />);
+    expect(screen.queryByText('Create BuildConfig')).toBeFalsy();
+    expect(screen.queryByText('Edit BuildConfig')).toBeFalsy();
+    expect(screen.getByTestId('loading-indicator')).toBeVisible();
 
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
@@ -78,7 +77,7 @@ describe('BuildConfigFormPage', () => {
     });
   });
 
-  it('should fetch BuildConfig and render edit form when BuildConfig is loaded', () => {
+  it('should fetch BuildConfig and render edit form when BuildConfig is loaded', async () => {
     const watchedBuildConfig: BuildConfig = {
       apiVersion: 'build.openshift.io/v1',
       kind: 'BuildConfig',
@@ -93,13 +92,13 @@ describe('BuildConfigFormPage', () => {
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = renderWithProviders(<BuildConfigFormPage />);
-    expect(renderResult.queryByText('Create BuildConfig')).toBeFalsy();
-    renderResult.findByText('Edit BuildConfig');
-    renderResult.findByText('Configure via:');
-    renderResult.findByText('Form view');
-    renderResult.findByText('YAML view');
-    renderResult.findByRole('button', { name: /Submit/ });
+    renderWithProviders(<BuildConfigFormPage />);
+    expect(screen.queryByText('Create BuildConfig')).toBeFalsy();
+    expect(await screen.findByText('Edit BuildConfig')).toBeVisible();
+    expect(await screen.findByText('Configure via:')).toBeVisible();
+    expect(await screen.findByText('Form view')).toBeVisible();
+    expect(await screen.findByText('YAML view')).toBeVisible();
+    expect(await screen.findByRole('button', { name: 'Save' })).toBeVisible();
 
     expect(useK8sWatchResourceMock).toHaveBeenCalledTimes(1);
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
@@ -109,14 +108,13 @@ describe('BuildConfigFormPage', () => {
     });
   });
 
-  it('should render an error when the BuildConfig fetching fails', () => {
+  it('should render an error when the BuildConfig fetching fails', async () => {
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Something went wrong')]);
 
     jest.spyOn(Router, 'useParams').mockReturnValue({ ns: 'a-namespace', name: 'a-buildconfig' });
 
-    const renderResult = renderWithProviders(<BuildConfigFormPage />);
-    renderResult.findByText('Error Loading');
-    renderResult.findByText('Edit BuildConfig');
-    renderResult.findByText('Something went wrong');
+    renderWithProviders(<BuildConfigFormPage />);
+    expect(await screen.findByText(/Error loading/i)).toBeVisible();
+    expect(await screen.findByText('Something went wrong')).toBeVisible();
   });
 });

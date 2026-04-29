@@ -4,7 +4,10 @@ import './AddCardSectionSkeleton.scss';
 
 const AddCardSectionSkeleton: FC = () => {
   return (
-    <Card className="odc-add-section-skeleton-placeholder__container">
+    <Card
+      className="odc-add-section-skeleton-placeholder__container"
+      data-test="add-card-section-skeleton"
+    >
       <Skeleton width="75%" height="30px" />
       {Array.from({ length: 4 }, (_, i) => (
         <div key={i.toString()}>

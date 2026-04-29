@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render, screen } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';

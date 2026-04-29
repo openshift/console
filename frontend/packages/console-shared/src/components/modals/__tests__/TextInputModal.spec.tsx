@@ -162,9 +162,9 @@ describe('TextInputModal', () => {
   it('should show required indicator on label when isRequired is true', () => {
     renderWithProviders(<TextInputModal {...defaultProps} isRequired />);
 
-    const label = screen.getByText('Name');
-    // PatternFly adds an asterisk or required class to the label
-    expect(label.closest('.pf-v6-c-form__label')).toBeInTheDocument();
+    // PatternFly adds required attribute to the input when isRequired is true
+    const input = screen.getByTestId('input-value');
+    expect(input).toBeRequired();
   });
 
   it('should submit form when Enter is pressed in input field', async () => {

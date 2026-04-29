@@ -15,6 +15,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:console/json',
     'plugin:console/prettier',
+    'plugin:console/testing-library-tests',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

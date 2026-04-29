@@ -24,13 +24,13 @@ describe('<ApplicationGroupResource />', () => {
   });
 
   it('should not render component when resourcesData is empty', () => {
-    const { container } = renderComponent({
+    renderComponent({
       title: 'Deployments',
       group: 'a',
       resourcesData: [],
     });
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.queryByText('Deployments')).not.toBeInTheDocument();
   });
 
   it('should render "View all" link if resources exceed MAX_RESOURCES', () => {

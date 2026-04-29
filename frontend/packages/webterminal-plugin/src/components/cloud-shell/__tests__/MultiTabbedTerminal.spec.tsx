@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { sendActivityTick } from '../cloud-shell-utils';
@@ -51,48 +52,40 @@ describe('MultiTabTerminal', () => {
   });
 
   it('should initially load with only one console', () => {
-    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
+    renderWithProviders(<MultiTabbedTerminal />);
 
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(1);
+    expect(screen.getAllByText('Terminal content').length).toBe(1);
   });
 
   it('should add terminals on add terminal icon click', async () => {
-    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
+    renderWithProviders(<MultiTabbedTerminal />);
 
-    const addTerminalButton = multiTabTerminalWrapper.getByLabelText('Add new tab');
+    const addTerminalButton = screen.getByLabelText('Add new tab');
     await user.click(addTerminalButton);
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(2);
+    expect(screen.getAllByText('Terminal content').length).toBe(2);
     await user.click(addTerminalButton);
     await user.click(addTerminalButton);
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(4);
+    expect(screen.getAllByText('Terminal content').length).toBe(4);
   });
 
   it('should not allow more than 8 terminals', async () => {
-    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
+    renderWithProviders(<MultiTabbedTerminal />);
 
-    await clickMultipleTimes(
-      user,
-      () => multiTabTerminalWrapper.queryByLabelText('Add new tab'),
-      8,
-    );
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content')).toHaveLength(8);
-    expect(multiTabTerminalWrapper.queryByLabelText('Add new tab')).toBeNull();
+    await clickMultipleTimes(user, () => screen.queryByLabelText('Add new tab'), 8);
+    expect(screen.getAllByText('Terminal content')).toHaveLength(8);
+    expect(screen.queryByLabelText('Add new tab')).toBeNull();
   });
 
   it('should remove terminals on remove terminal icon click', async () => {
-    const multiTabTerminalWrapper = renderWithProviders(<MultiTabbedTerminal />);
+    renderWithProviders(<MultiTabbedTerminal />);
 
-    await clickMultipleTimes(
-      user,
-      () => multiTabTerminalWrapper.queryByLabelText('Add new tab'),
-      8,
-    );
+    await clickMultipleTimes(user, () => screen.queryByLabelText('Add new tab'), 8);
 
-    const closeTerminalTabs = () => multiTabTerminalWrapper.getAllByLabelText('Close terminal tab');
+    const closeTerminalTabs = () => screen.getAllByLabelText('Close terminal tab');
     const tabs = closeTerminalTabs();
     expect(tabs[7]).toBeTruthy();
     await user.click(tabs[7]);
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(7);
+    expect(screen.getAllByText('Terminal content').length).toBe(7);
 
     const tabs2 = closeTerminalTabs();
     expect(tabs2[6]).toBeTruthy();
@@ -101,7 +94,7 @@ describe('MultiTabTerminal', () => {
     const tabs3 = closeTerminalTabs();
     expect(tabs3[5]).toBeTruthy();
     await user.click(tabs3[5]);
-    expect(multiTabTerminalWrapper.getAllByText('Terminal content').length).toBe(5);
+    expect(screen.getAllByText('Terminal content').length).toBe(5);
   });
 
   jest.clearAllTimers();

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { incompleteBuildRun } from '../../../__tests__/mock-data-v1beta1';
 import type { BuildRun } from '../../../types';
 import BuildRunDuration, { getDuration } from '../BuildRunDuration';
@@ -33,8 +33,8 @@ describe('getDuration', () => {
 describe('BuildRunDuration', () => {
   it('should render a placeholder for incomplete BuildRuns', () => {
     const buildRun: BuildRun = incompleteBuildRun;
-    const renderResult = render(<BuildRunDuration buildRun={buildRun} />);
-    expect(renderResult.container.textContent).toEqual('-');
+    render(<BuildRunDuration buildRun={buildRun} />);
+    expect(screen.getByText('-')).toBeInTheDocument();
   });
 
   it('should render a the time between startTime and completionTime', () => {
@@ -51,8 +51,8 @@ describe('BuildRunDuration', () => {
         completionTime: '2022-06-06T13:53:26Z',
       },
     };
-    const renderResult = render(<BuildRunDuration buildRun={buildRun} />);
-    expect(renderResult.container.textContent).toEqual('52 second');
+    render(<BuildRunDuration buildRun={buildRun} />);
+    expect(screen.getByText('52 second')).toBeInTheDocument();
   });
 
   it('should render a the time between startTime and NOW if completionTime is missing', () => {
@@ -69,7 +69,7 @@ describe('BuildRunDuration', () => {
       },
     };
     now = '2022-06-06T13:54:34Z';
-    const renderResult = render(<BuildRunDuration buildRun={buildRun} />);
-    expect(renderResult.container.textContent).toEqual('2 minute');
+    render(<BuildRunDuration buildRun={buildRun} />);
+    expect(screen.getByText('2 minute')).toBeInTheDocument();
   });
 });

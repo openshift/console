@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import {
   incompleteBuildRun,
   pendingBuildRun,
@@ -21,19 +21,19 @@ describe('getBuildRunStatus', () => {
 
 describe('BuildRunStatus', () => {
   it('should render the right status', () => {
-    const renderResult = render(<BuildRunStatus buildRun={incompleteBuildRun} />);
-    expect(renderResult.container.textContent).toEqual('Unknown');
+    const { rerender } = render(<BuildRunStatus buildRun={incompleteBuildRun} />);
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
 
-    renderResult.rerender(<BuildRunStatus buildRun={pendingBuildRun} />);
-    expect(renderResult.container.textContent).toEqual('Pending');
+    rerender(<BuildRunStatus buildRun={pendingBuildRun} />);
+    expect(screen.getByText('Pending')).toBeInTheDocument();
 
-    renderResult.rerender(<BuildRunStatus buildRun={runningBuildRun} />);
-    expect(renderResult.container.textContent).toEqual('Running');
+    rerender(<BuildRunStatus buildRun={runningBuildRun} />);
+    expect(screen.getByText('Running')).toBeInTheDocument();
 
-    renderResult.rerender(<BuildRunStatus buildRun={succeededBuildRun} />);
-    expect(renderResult.container.textContent).toEqual('Succeeded');
+    rerender(<BuildRunStatus buildRun={succeededBuildRun} />);
+    expect(screen.getByText('Succeeded')).toBeInTheDocument();
 
-    renderResult.rerender(<BuildRunStatus buildRun={failedBuildRun} />);
-    expect(renderResult.container.textContent).toEqual('Failed');
+    rerender(<BuildRunStatus buildRun={failedBuildRun} />);
+    expect(screen.getByText('Failed')).toBeInTheDocument();
   });
 });

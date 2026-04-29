@@ -137,11 +137,8 @@ describe('ConfigureUpdateStrategy component', () => {
   });
 
   describe('Recreate strategy', () => {
-    beforeEach(() => {
-      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="Recreate" />);
-    });
-
     it('shows recreate strategy as selected', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="Recreate" />);
       const rollingUpdateRadio = screen.getByTestId('rolling-update-strategy-radio');
       const recreateRadio = screen.getByTestId('recreate-update-strategy-radio');
 
@@ -152,6 +149,7 @@ describe('ConfigureUpdateStrategy component', () => {
     });
 
     it('disables max unavailable and max surge inputs', () => {
+      renderWithProviders(<ConfigureUpdateStrategy {...mockProps} strategyType="Recreate" />);
       const maxUnavailableInput = screen.getByTestId('max-unavailable-input');
       const maxSurgeInput = screen.getByTestId('max-surge-input');
 

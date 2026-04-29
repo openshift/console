@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
@@ -14,8 +14,6 @@ import DeploymentStrategySection from '../deployment-strategy/DeploymentStrategy
 import { convertDeploymentToEditForm } from '../utils/deployment-utils';
 
 const handleSubmit = jest.fn();
-
-afterEach(() => cleanup());
 
 describe('DeploymentStrategySection(DeploymentConfig)', () => {
   it('should show strategy fields based on strategy type selected', async () => {
@@ -33,7 +31,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
       </MockForm>,
     );
 
-    expect(await screen.findByTestId('rollingParams')).toBeInTheDocument();
+    expect(await screen.findByTestId('rollingParams')).toBeVisible();
 
     const strategyDropdown = screen.getByRole('button', {
       name: /strategy type/i,
@@ -45,7 +43,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     await user.click(recreateButton);
 
-    expect(await screen.findByTestId('recreateParams')).toBeInTheDocument();
+    expect(await screen.findByTestId('recreateParams')).toBeVisible();
 
     await user.click(strategyDropdown);
 
@@ -53,7 +51,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     await user.click(customButton);
 
-    expect(await screen.findByTestId('customParams')).toBeInTheDocument();
+    expect(await screen.findByTestId('customParams')).toBeVisible();
   });
 
   it('should render additional fields for Recreate strategy type', async () => {
@@ -88,7 +86,7 @@ describe('DeploymentStrategySection(DeploymentConfig)', () => {
 
     await user.click(recreateButton);
 
-    expect(await screen.findByTestId('recreateParams')).toBeInTheDocument();
+    expect(await screen.findByTestId('recreateParams')).toBeVisible();
 
     const advancedSection = screen.getByText('Show additional parameters and lifecycle hooks');
 
@@ -153,7 +151,7 @@ describe('DeploymentStrategySection(Deployment)', () => {
       name: /strategy type/i,
     });
 
-    expect(await screen.findByTestId('rollingUpdate')).toBeInTheDocument();
+    expect(await screen.findByTestId('rollingUpdate')).toBeVisible();
 
     await user.click(strategyDropdown);
 

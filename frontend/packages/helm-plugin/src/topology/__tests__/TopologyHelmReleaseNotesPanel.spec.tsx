@@ -19,14 +19,14 @@ describe('TopologyHelmReleaseResourcesPanel', () => {
   const manifestResources = mockManifest;
 
   it('should render the correct number of resource categories', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <TopologyGroupResourcesPanel
         manifestResources={manifestResources}
         releaseNamespace="mock-ns"
       />,
     );
-    // Check that the component renders successfully
-    expect(container.firstChild).toBeTruthy();
+    expect(screen.getByText('ConfigMaps')).toBeInTheDocument();
+    expect(screen.getByText('Deployments')).toBeInTheDocument();
   });
 });
 
@@ -44,6 +44,6 @@ describe('TopologyHelmReleaseNotesPanel', () => {
     mockUserPreference.mockReturnValue(['light', jest.fn(), true]);
     renderWithProviders(<TopologyHelmReleaseNotesPanel releaseNotes="" />);
     // Check for empty state text or message
-    expect(screen.getByText(/no release notes available/i)).toBeTruthy();
+    expect(screen.getByText(/no release notes available/i)).toBeInTheDocument();
   });
 });

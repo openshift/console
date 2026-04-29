@@ -51,14 +51,14 @@ describe('logs component', () => {
   });
 
   it('should show the logs block based on the render prop', async () => {
-    const { container, rerender } = render(<Logs {...props} />);
-    const logsElement = container.querySelector('.odc-logs') as HTMLElement;
-    expect(logsElement).not.toBeNull();
-    expect(logsElement.style.display).toBe('none');
+    const { rerender } = render(<Logs {...props} />);
+    const logsElement = screen.getByTestId('odc-logs');
+    expect(logsElement).toHaveStyle({ display: 'none' });
 
     rerender(<Logs {...props} render />);
     await waitFor(() => {
-      expect(logsElement.style.display).toBe('');
+      // React sets `display: ''` when `render` is true; the computed style is not `none`.
+      expect(screen.getByTestId('odc-logs').style.display).not.toBe('none');
     });
   });
 
@@ -103,13 +103,12 @@ describe('logs component', () => {
   it('should display log content when fetched successfully', async () => {
     const logContent = 'log line 1\nlog line 2\nlog line 3';
     mockCoFetchText.mockResolvedValue(logContent);
-    const { container } = render(<Logs {...props} render />);
+    render(<Logs {...props} render />);
 
     // Wait for fetch to complete and throttled content update (throttle is 1000ms)
     await waitFor(
       () => {
-        const contentElement = container.querySelector('.odc-logs__content') as HTMLElement;
-        expect(contentElement).not.toBeNull();
+        const contentElement = screen.getByTestId('odc-logs__content');
         const actualContent = contentElement.innerText || contentElement.textContent || '';
         // Handle case where innerText might start as undefined
         const normalizedContent = actualContent.replace(/^undefined/, '');
@@ -127,7 +126,7 @@ describe('logs component', () => {
   it('should handle autoScroll prop being false', async () => {
     const logContent = 'test log content';
     mockCoFetchText.mockResolvedValue(logContent);
-    const { container } = render(<Logs {...props} render autoScroll={false} />);
+    render(<Logs {...props} render autoScroll={false} />);
 
     await waitFor(() => {
       expect(mockCoFetchText).toHaveBeenCalled();
@@ -136,8 +135,7 @@ describe('logs component', () => {
     // With autoScroll false, scrollIntoView should not be called as frequently
     // The content should still be added though
     await waitFor(() => {
-      const contentElement = container.querySelector('.odc-logs__content') as HTMLElement;
-      expect(contentElement).not.toBeNull();
+      expect(screen.getByTestId('odc-logs__content')).toBeInTheDocument();
     });
   });
 });

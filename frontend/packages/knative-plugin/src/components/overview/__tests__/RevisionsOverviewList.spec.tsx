@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as _ from 'lodash';

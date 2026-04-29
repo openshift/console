@@ -1,4 +1,4 @@
-import { screen, cleanup } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import * as utils from '../../../utils/useAddActionExtensions';
 import AddPageLayout from '../AddPageLayout';
@@ -35,7 +35,6 @@ describe('AddPageLayout', () => {
   const props = { title: 'title' };
 
   afterEach(() => {
-    cleanup();
     jest.clearAllMocks();
   });
 

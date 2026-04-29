@@ -121,6 +121,7 @@ export const DroppableFileInput: FC<DroppableFileInputProps> = ({
     <FormGroup label={label} isRequired={isRequired} fieldId={id}>
       <FileUpload
         className="co-file-input pf-v6-u-mb-md"
+        data-test={id}
         id={id}
         type="text"
         value={inputFileData}

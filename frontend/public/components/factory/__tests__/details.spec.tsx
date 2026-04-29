@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { DetailsPage } from '@console/internal/components/factory/details';
 import { PodModel } from '@console/internal/models';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
@@ -36,10 +36,8 @@ describe('Resource DetailsPage', () => {
     mockUseK8sWatchResources.mockReturnValue({ obj: { data: null, loaded: true } });
   });
 
-  it('should verify the detail page basic information and navigation tabs', async () => {
-    await act(async () => {
-      renderWithProviders(<DetailsPage {...defaultProps} />);
-    });
+  it('should verify the detail page basic information and navigation tabs', () => {
+    renderWithProviders(<DetailsPage {...defaultProps} />);
 
     // Verify hook was called
     expect(mockUseK8sWatchResources).toHaveBeenCalled();
@@ -57,7 +55,7 @@ describe('Resource DetailsPage', () => {
     expect(screen.getByRole('tab', { name: 'Events' })).toBeVisible();
   });
 
-  it('should verify details page with extra resources passed to useK8sWatchResources', async () => {
+  it('should verify details page with extra resources passed to useK8sWatchResources', () => {
     const extraResource = [
       {
         kind: 'ConfigMap',
@@ -72,9 +70,7 @@ describe('Resource DetailsPage', () => {
       configMap: { data: null, loaded: true },
     });
 
-    await act(async () => {
-      renderWithProviders(<DetailsPage {...defaultProps} resources={extraResource} />);
-    });
+    renderWithProviders(<DetailsPage {...defaultProps} resources={extraResource} />);
 
     // Verify hook was called with both resources
     expect(mockUseK8sWatchResources).toHaveBeenCalled();

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useIsCloudShellExpanded } from '@console/webterminal-plugin/src/redux/reducers/cloud-shell-selectors';
 import { CloudShellDrawer } from '../CloudShellDrawer';
@@ -31,38 +31,38 @@ describe('CloudShellDrawer', () => {
     mockUseFlag.mockReturnValue(true);
     mockUseIsCloudShellExpanded.mockReturnValue(true);
 
-    const wrapper = render(
+    render(
       <CloudShellDrawer>
         <p>Console webapp</p>
       </CloudShellDrawer>,
     );
-    expect(wrapper.getByText('Console webapp')).toBeInTheDocument();
-    expect(wrapper.getByText('Terminal content')).toBeInTheDocument();
+    expect(screen.getByText('Console webapp')).toBeVisible();
+    expect(screen.getByText('Terminal content')).toBeVisible();
   });
 
   it('should still render children when the Drawer is closed', () => {
     mockUseFlag.mockReturnValue(true);
     mockUseIsCloudShellExpanded.mockReturnValue(false);
 
-    const wrapper = render(
+    render(
       <CloudShellDrawer open={false}>
         <p data-test="body">Console webapp</p>
       </CloudShellDrawer>,
     );
-    expect(wrapper.getByTestId('body').innerHTML).toEqual('Console webapp');
-    expect(wrapper.queryByText('Terminal content')).not.toBeInTheDocument();
+    expect(screen.getByTestId('body').innerHTML).toEqual('Console webapp');
+    expect(screen.queryByText('Terminal content')).not.toBeInTheDocument();
   });
 
   it('should render children even if web terminal is not available', () => {
     mockUseFlag.mockReturnValue(false);
     mockUseIsCloudShellExpanded.mockReturnValue(true);
 
-    const wrapper = render(
+    render(
       <CloudShellDrawer open={false}>
         <p>Console webapp</p>
       </CloudShellDrawer>,
     );
-    expect(wrapper.getByText('Console webapp')).toBeInTheDocument();
-    expect(wrapper.queryByText('Terminal content')).not.toBeInTheDocument();
+    expect(screen.getByText('Console webapp')).toBeVisible();
+    expect(screen.queryByText('Terminal content')).not.toBeInTheDocument();
   });
 });

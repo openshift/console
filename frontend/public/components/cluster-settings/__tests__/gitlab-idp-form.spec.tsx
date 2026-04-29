@@ -1,4 +1,3 @@
-import { cleanup, act } from '@testing-library/react';
 import {
   verifyIDPAddAndCancelButtons,
   verifyPageTitleAndSubtitle,
@@ -13,18 +12,12 @@ import {
 import { AddGitLabPage } from '../../cluster-settings/gitlab-idp-form';
 
 describe('Add Identity Provider: GitLab', () => {
+  const renderPage = () => {
+    renderWithProviders(<AddGitLabPage />);
+  };
+
   beforeAll(() => {
     setupFileReaderMock();
-  });
-
-  beforeEach(async () => {
-    await act(async () => {
-      renderWithProviders(<AddGitLabPage />);
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
   });
 
   afterAll(() => {
@@ -32,6 +25,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render page title and sub title', () => {
+    renderPage();
     verifyPageTitleAndSubtitle({
       title: 'Add Identity Provider: GitLab',
       subtitle: 'You can use GitLab integration for users authenticating with GitLab credentials.',
@@ -39,6 +33,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render the Name label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Name',
       initialValue: 'gitlab',
@@ -49,6 +44,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render the URL label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'URL',
       inputType: 'url',
@@ -59,6 +55,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render the Client ID label, input element, and help text', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client ID',
       testValue: mockData.updatedFormValues.id,
@@ -67,6 +64,7 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render the Client Secret label and input password element', async () => {
+    renderPage();
     await verifyInputField({
       inputLabel: 'Client secret',
       inputType: 'password',
@@ -76,12 +74,15 @@ describe('Add Identity Provider: GitLab', () => {
   });
 
   it('should render the CA file label and elements', async () => {
+    renderPage();
     await verifyIDPFileFields({
       inputLabel: 'CA file',
+      fieldId: 'ca-file-input',
     });
   });
 
   it('should render control buttons in a button bar', () => {
+    renderPage();
     verifyIDPAddAndCancelButtons();
   });
 });

@@ -50,6 +50,7 @@ const createMockNode = (name: string, groups?: string): NodeKind =>
   } as NodeKind);
 
 describe('NodeGroupsEditorModal', () => {
+  let user: ReturnType<typeof userEvent.setup>;
   const testNode = createMockNode('test-node', 'group-a,group-b');
   const mockNodes: NodeKind[] = [
     testNode,
@@ -59,6 +60,7 @@ describe('NodeGroupsEditorModal', () => {
   ];
 
   beforeEach(() => {
+    user = userEvent.setup();
     jest.clearAllMocks();
     (useK8sWatchResource as jest.Mock).mockReturnValue([mockNodes, true, null]);
     (k8sPatchResource as jest.Mock).mockResolvedValue({});
@@ -161,7 +163,7 @@ describe('NodeGroupsEditorModal', () => {
       const groupCCheckbox = screen.getByLabelText('group-c');
       expect(groupCCheckbox).not.toBeChecked();
 
-      await userEvent.click(groupCCheckbox);
+      await user.click(groupCCheckbox);
 
       expect(groupCCheckbox).toBeChecked();
     });
@@ -174,7 +176,7 @@ describe('NodeGroupsEditorModal', () => {
       const groupACheckbox = screen.getByLabelText('group-a');
       expect(groupACheckbox).toBeChecked();
 
-      await userEvent.click(groupACheckbox);
+      await user.click(groupACheckbox);
 
       expect(groupACheckbox).not.toBeChecked();
     });
@@ -185,14 +187,14 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Add group-c and group-d
-      await userEvent.click(screen.getByLabelText('group-c'));
-      await userEvent.click(screen.getByLabelText('group-d'));
+      await user.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-d'));
 
       expect(screen.getByLabelText('group-c')).toBeChecked();
       expect(screen.getByLabelText('group-d')).toBeChecked();
 
       // Remove group-a
-      await userEvent.click(screen.getByLabelText('group-a'));
+      await user.click(screen.getByLabelText('group-a'));
 
       expect(screen.getByLabelText('group-a')).not.toBeChecked();
     });
@@ -205,7 +207,7 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const addButton = screen.getByText('Add new group');
-      await userEvent.click(addButton);
+      await user.click(addButton);
 
       expect(screen.getByPlaceholderText('Enter a group name')).toBeInTheDocument();
     });
@@ -216,10 +218,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'new-group{enter}');
+      await user.type(input, 'new-group{enter}');
 
       expect(screen.getByLabelText('new-group')).toBeInTheDocument();
     });
@@ -230,13 +232,13 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'button-group');
+      await user.type(input, 'button-group');
 
       const addButton = screen.getByRole('button', { name: 'Add' });
-      await userEvent.click(addButton);
+      await user.click(addButton);
 
       expect(screen.getByLabelText('button-group')).toBeInTheDocument();
     });
@@ -247,10 +249,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'group-a');
+      await user.type(input, 'group-a');
 
       const addButton = screen.getByRole('button', { name: 'Add' });
       expect(addButton).toBeDisabled();
@@ -262,7 +264,7 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const addButton = screen.getByRole('button', { name: 'Add' });
       expect(addButton).toBeDisabled();
@@ -274,10 +276,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'auto-select{enter}');
+      await user.type(input, 'auto-select{enter}');
 
       const newGroupCheckbox = screen.getByLabelText('auto-select');
       expect(newGroupCheckbox).toBeChecked();
@@ -289,10 +291,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name') as HTMLInputElement;
-      await userEvent.type(input, 'clear-test{enter}');
+      await user.type(input, 'clear-test{enter}');
 
       expect(input.value).toBe('');
     });
@@ -303,10 +305,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const expandButton = screen.getByText('Add new group');
-      await userEvent.click(expandButton);
+      await user.click(expandButton);
 
       const input = screen.getByPlaceholderText('Enter a group name');
-      await userEvent.type(input, 'group-bb{enter}');
+      await user.type(input, 'group-bb{enter}');
 
       // Check order: group-a, group-b, group-bb, group-c, group-d
       const checkboxes = screen.getAllByRole('checkbox');
@@ -328,10 +330,10 @@ describe('NodeGroupsEditorModal', () => {
 
       // Add group-c to the node
       const groupCCheckbox = screen.getByLabelText('group-c');
-      await userEvent.click(groupCCheckbox);
+      await user.click(groupCCheckbox);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(k8sPatchResource).toHaveBeenCalled();
@@ -344,12 +346,12 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Add group-c and group-d, remove group-a
-      await userEvent.click(screen.getByLabelText('group-c'));
-      await userEvent.click(screen.getByLabelText('group-d'));
-      await userEvent.click(screen.getByLabelText('group-a'));
+      await user.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-d'));
+      await user.click(screen.getByLabelText('group-a'));
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(k8sPatchResource).toHaveBeenCalledWith(
@@ -375,10 +377,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Make a change
-      await userEvent.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-c'));
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(mockCloseOverlay).toHaveBeenCalled();
@@ -394,10 +396,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Make a change
-      await userEvent.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-c'));
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(screen.getByText('Error occurred')).toBeInTheDocument();
@@ -415,10 +417,10 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Make a change
-      await userEvent.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-c'));
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       const saveButton2 = screen.getByRole('button', { name: 'Save' });
       expect(saveButton2).toBeDisabled();
@@ -430,7 +432,7 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       // k8sPatchResource might still be called, but we're just ensuring the test doesn't error
       // The actual implementation might choose to skip the call or make it anyway
@@ -444,7 +446,7 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-      await userEvent.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockCloseOverlay).toHaveBeenCalled();
     });
@@ -455,11 +457,11 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Make a change
-      await userEvent.click(screen.getByLabelText('group-c'));
+      await user.click(screen.getByLabelText('group-c'));
       expect(screen.getByLabelText('group-c')).toBeChecked();
 
       const reloadButton = screen.getByRole('button', { name: 'Reload' });
-      await userEvent.click(reloadButton);
+      await user.click(reloadButton);
 
       // After reload, changes should be reverted
       expect(screen.getByLabelText('group-c')).not.toBeChecked();
@@ -525,11 +527,11 @@ describe('NodeGroupsEditorModal', () => {
       );
 
       // Uncheck all groups
-      await userEvent.click(screen.getByLabelText('group-a'));
-      await userEvent.click(screen.getByLabelText('group-b'));
+      await user.click(screen.getByLabelText('group-a'));
+      await user.click(screen.getByLabelText('group-b'));
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
-      await userEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => {
         expect(k8sPatchResource).toHaveBeenCalledWith(

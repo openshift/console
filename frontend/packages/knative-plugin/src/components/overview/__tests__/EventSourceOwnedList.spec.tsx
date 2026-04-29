@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { EVENT_SOURCE_SINK_BINDING_KIND, KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';

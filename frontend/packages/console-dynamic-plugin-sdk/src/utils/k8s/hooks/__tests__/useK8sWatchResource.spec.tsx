@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { act, cleanup, render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
@@ -74,8 +74,6 @@ afterEach(async () => {
   await act(async () => {
     jest.runAllTimers();
   });
-
-  cleanup();
 
   // Ensure that there is no unexpected api calls
   expect(k8sListMock).toHaveBeenCalledTimes(0);

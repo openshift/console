@@ -3,7 +3,7 @@
  * Tests the modal integrated with Redux actions and state
  */
 
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -61,13 +61,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
         mockStartImpersonate('User', username);
       });
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
       await user.clear(usernameInput);
@@ -93,13 +91,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
         }
       });
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
       await user.clear(usernameInput);
@@ -107,15 +103,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Open groups dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        await user.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
       // Wait for dropdown to open and select first group
       const developersOption = await screen.findByText('developers');
-      await act(async () => {
-        await user.click(developersOption);
-      });
+      await user.click(developersOption);
 
       const submitButton = screen.getByTestId('impersonate-button');
       await user.click(submitButton);
@@ -134,13 +126,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       // Enter username
       const usernameInput = screen.getByTestId('username-input');
@@ -149,30 +139,27 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Open dropdown
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        await user.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
       // Select first group
       const developersOption = await screen.findByText('developers');
-      await act(async () => {
-        await user.click(developersOption);
-      });
+      await user.click(developersOption);
 
       // Verify group chip appears
+      // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBeGreaterThan(0);
       });
 
       // Select second group
       const adminsOption = screen.getByText('admins');
-      await act(async () => {
-        await user.click(adminsOption);
-      });
+      await user.click(adminsOption);
 
       // Verify two groups are selected
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBe(2);
       });
@@ -190,13 +177,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const user = userEvent.setup();
       const onImpersonate = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={onImpersonate} />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input');
       await user.clear(usernameInput);
@@ -204,29 +189,26 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
       // Open and select group
       const groupsInput = screen.getByPlaceholderText('Enter groups');
-      await act(async () => {
-        await user.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
       const developersOption = await screen.findByText('developers');
-      await act(async () => {
-        await user.click(developersOption);
-      });
+      await user.click(developersOption);
 
       // Wait for chip to appear
       await waitFor(() => {
+        // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
         const chips = document.querySelectorAll('.pf-v6-c-label');
         expect(chips.length).toBe(1);
       });
 
       // Remove the group by clicking the X button
+      // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
       const closeButtons = document.querySelectorAll('.pf-v6-c-label__actions button');
       if (closeButtons.length > 0) {
-        await act(async () => {
-          await user.click(closeButtons[0]);
-        });
+        await user.click(closeButtons[0]);
 
         await waitFor(() => {
+          // eslint-disable-next-line testing-library/no-node-access -- PatternFly chips don't have accessible test IDs
           const chips = document.querySelectorAll('.pf-v6-c-label');
           expect(chips.length).toBe(0);
         });
@@ -245,27 +227,21 @@ describe('ImpersonateUserModal Integration Tests', () => {
   describe('Search and filter workflow', () => {
     it('should filter groups based on search input', async () => {
       const user = userEvent.setup();
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
       // Open dropdown first
-      await act(async () => {
-        await user.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
-      await screen.findByText('developers');
+      expect(await screen.findByText('developers')).toBeInTheDocument();
 
       // Type to filter
-      await act(async () => {
-        await user.type(groupsInput, 'dev');
-      });
+      await user.type(groupsInput, 'dev');
 
       await waitFor(() => {
         // Should show developers (matches "dev")
@@ -277,27 +253,21 @@ describe('ImpersonateUserModal Integration Tests', () => {
 
     it('should show no results when filter matches nothing', async () => {
       const user = userEvent.setup();
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const groupsInput = screen.getByPlaceholderText('Enter groups');
 
       // Open dropdown first
-      await act(async () => {
-        await user.click(groupsInput);
-      });
+      await user.click(groupsInput);
 
-      await screen.findByText('developers');
+      expect(await screen.findByText('developers')).toBeInTheDocument();
 
       // Type to filter with non-matching text
-      await act(async () => {
-        await user.type(groupsInput, 'nonexistent');
-      });
+      await user.type(groupsInput, 'nonexistent');
 
       expect(await screen.findByText('No results found')).toBeVisible();
     });
@@ -308,13 +278,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const error = new Error('Failed to fetch groups');
       (useK8sWatchResource as jest.Mock).mockReturnValue([[], false, error]);
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       expect(await screen.findByText('Failed to load groups')).toBeVisible();
 
@@ -344,22 +312,18 @@ describe('ImpersonateUserModal Integration Tests', () => {
       await ue.type(usernameInput, 'tempuser');
 
       // Close modal
-      await act(async () => {
-        rerender(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={false} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      rerender(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={false} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       // Reopen modal
-      await act(async () => {
-        rerender(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      rerender(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={jest.fn()} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       // Form should be reset
       const resetUsernameInput = screen.getByTestId('username-input') as HTMLInputElement;
@@ -370,13 +334,11 @@ describe('ImpersonateUserModal Integration Tests', () => {
       const ue = userEvent.setup();
       const onClose = jest.fn();
 
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={jest.fn()} />
-          </Provider>,
-        );
-      });
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal isOpen={true} onClose={onClose} onImpersonate={jest.fn()} />
+        </Provider>,
+      );
 
       const cancelButton = screen.getByTestId('cancel-button');
       await ue.click(cancelButton);
@@ -386,20 +348,18 @@ describe('ImpersonateUserModal Integration Tests', () => {
   });
 
   describe('Readonly mode workflow', () => {
-    it('should support readonly username for prefilled scenarios', async () => {
-      await act(async () => {
-        render(
-          <Provider store={mockStore}>
-            <ImpersonateUserModal
-              isOpen={true}
-              onClose={jest.fn()}
-              onImpersonate={jest.fn()}
-              prefilledUsername="readonly-user"
-              isUsernameReadonly={true}
-            />
-          </Provider>,
-        );
-      });
+    it('should support readonly username for prefilled scenarios', () => {
+      render(
+        <Provider store={mockStore}>
+          <ImpersonateUserModal
+            isOpen={true}
+            onClose={jest.fn()}
+            onImpersonate={jest.fn()}
+            prefilledUsername="readonly-user"
+            isUsernameReadonly={true}
+          />
+        </Provider>,
+      );
 
       const usernameInput = screen.getByTestId('username-input') as HTMLInputElement;
       expect(usernameInput.value).toBe('readonly-user');

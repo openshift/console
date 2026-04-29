@@ -120,34 +120,42 @@ export const verifyPageTitleAndSubtitle = ({
 // Verifies file input UI elements and test file upload selection functionality and filename verifications.
 export const verifyIDPFileFields = async ({
   inputLabel,
+  fieldId,
   helpText,
   fileName = 'test-idp.pem',
   fileContent = mockData.testPemFileContent,
 }: {
   inputLabel: string;
+  /** `id` of the `DroppableFileInput` (see `data-test` on the PatternFly `FileUpload` in `file-input`). */
+  fieldId: string;
   helpText?: string;
   fileName?: string;
   fileContent?: string;
 }) => {
   const user = userEvent.setup();
 
+  const fileUpload = await screen.findByTestId(fieldId);
+
   // Wait for the async component to load and find the filename input by its aria-label
-  const filenameInput = await screen.findByLabelText(`${inputLabel} filename`);
+  const filenameInput = within(fileUpload).getByLabelText(`${inputLabel} filename`);
   verifyFormElementBasics(filenameInput, 'text', '');
 
-  // Find the file upload container by traversing up from the filename input
-  const fileUploadContainer = filenameInput.closest('.pf-v6-c-file-upload');
-  expect(fileUploadContainer).toBeInTheDocument();
-
   // Verify browse button is visible within the container
-  const browseButton = within(fileUploadContainer as HTMLElement).getByRole('button', {
+  const browseButton = within(fileUpload).getByRole('button', {
     name: 'Browse...',
   });
   expect(browseButton).toBeVisible();
 
-  // Find the hidden file input element within the container
-  const fileInput = fileUploadContainer.querySelector('input[type="file"]') as HTMLInputElement;
-  expect(fileInput).toBeTruthy();
+  // PF FileUpload renders an unlabeled hidden input[type=file], so we locate it from this scoped container.
+  const fileInput = within(fileUpload)
+    .getAllByDisplayValue('')
+    .find((element) => element instanceof HTMLInputElement && element.type === 'file') as
+    | HTMLInputElement
+    | undefined;
+  expect(fileInput).toBeDefined();
+  if (!fileInput) {
+    throw new Error(`Could not find file input for ${inputLabel}`);
+  }
 
   // Verify help text if provided - in PF FileUpload, this is the placeholder attribute
   if (helpText) {
@@ -161,7 +169,7 @@ export const verifyIDPFileFields = async ({
   await user.upload(fileInput, file);
 
   // Verify the file was properly selected and assigned to the input element
-  expect(fileInput.files).toBeTruthy();
+  expect(fileInput.files).toBeDefined();
   expect(fileInput.files?.length).toBe(1);
   expect(fileInput.files?.[0]).toBe(file);
   expect(fileInput.files?.[0]?.name).toBe(fileName);

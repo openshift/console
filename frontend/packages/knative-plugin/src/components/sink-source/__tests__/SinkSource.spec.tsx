@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';

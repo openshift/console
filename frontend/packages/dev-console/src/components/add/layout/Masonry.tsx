@@ -67,7 +67,8 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
       return { ...old, [key]: height };
     });
   }, []);
-  const groupedColumns = Array.from({ length: columns }, () => ({
+  const groupedColumns = Array.from({ length: columns }, (_, idx) => ({
+    id: `masonry-column-${idx.toString()}`,
     height: 0,
     items: [] as ReactElement[],
   }));
@@ -117,9 +118,12 @@ export const Masonry: FC<MasonryProps> = ({ columnCount, children }) => {
 
   return (
     <div className={css('odc-masonry-layout', { 'odc-masonry-layout__allRendered': allRendered })}>
-      {groupedColumns.map((groupedColumn, columnIndex) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <div key={columnIndex.toString()} className="odc-masonry-layout__column">
+      {groupedColumns.map((groupedColumn) => (
+        <div
+          key={groupedColumn.id}
+          className="odc-masonry-layout__column"
+          data-test="masonry-column"
+        >
           {groupedColumn.items}
         </div>
       ))}

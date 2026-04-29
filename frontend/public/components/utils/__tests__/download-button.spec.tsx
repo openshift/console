@@ -33,16 +33,12 @@ describe('DownloadButton', () => {
 
   it('renders button which calls `consoleFetch` to download URL when clicked', async () => {
     const user = userEvent.setup();
-    await act(async () => {
-      render(<DownloadButton url={url} />);
-    });
+    render(<DownloadButton url={url} />);
 
     const downloadButton = screen.getByRole('button');
     expect(downloadButton).toBeInTheDocument();
 
-    await act(async () => {
-      await user.click(downloadButton);
-    });
+    await user.click(downloadButton);
 
     // Verify consoleFetch was called with the correct URL
     expect(mockConsoleFetch).toHaveBeenCalledWith(url, {}, 30000);
@@ -60,16 +56,12 @@ describe('DownloadButton', () => {
     };
     mockConsoleFetch.mockResolvedValue(mockResponse as Response);
 
-    await act(async () => {
-      render(<DownloadButton url={url} />);
-    });
+    render(<DownloadButton url={url} />);
 
     const downloadButton = screen.getByRole('button');
 
     // Click to start download
-    await act(async () => {
-      await user.click(downloadButton);
-    });
+    await user.click(downloadButton);
 
     // Check that button shows "Downloading..." while in flight
     await waitFor(() => {

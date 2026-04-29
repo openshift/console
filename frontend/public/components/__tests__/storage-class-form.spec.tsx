@@ -14,14 +14,12 @@ jest.mock('react-router', () => ({
 describe('StorageClassForm', () => {
   let onClose: jest.Mock;
 
-  beforeEach(async () => {
-    onClose = jest.fn();
-
+  const renderForm = () => {
     renderWithProviders(<StorageClassForm onClose={onClose} />);
+  };
 
-    await waitFor(() => {
-      expect(screen.getByText('StorageClass')).toBeInTheDocument();
-    });
+  beforeEach(() => {
+    onClose = jest.fn();
   });
 
   afterAll(() => {
@@ -29,14 +27,18 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies StorageClass as the page title', async () => {
+    renderForm();
     expect(await screen.findByText('StorageClass')).toBeVisible();
   });
 
   it('verifies the Edit YAML link', async () => {
-    expect(await screen.findByText('Edit YAML')).toBeVisible();
+    renderForm();
+    const editYamlLink = await screen.findByRole('link', { name: 'Edit YAML' });
+    expect(editYamlLink).toHaveAttribute('href', '/k8s/cluster/storageclasses/~new');
   });
 
   it('verifies a text input for storage class name', async () => {
+    renderForm();
     await verifyInputField({
       inputLabel: 'Name',
       inputType: 'text',
@@ -44,6 +46,7 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies a text input for storage class description', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.getByLabelText('Description')).toBeInTheDocument();
     });
@@ -54,6 +57,7 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies a dropdown for selecting reclaim policy with correct options and help text', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.getByLabelText('Reclaim policy')).toBeInTheDocument();
     });
@@ -66,6 +70,7 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies a dropdown for selecting volume binding mode with correct options and help text', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.getByLabelText('Volume binding mode')).toBeInTheDocument();
     });
@@ -76,6 +81,7 @@ describe('StorageClassForm', () => {
   });
 
   it('verifies a dropdown for selecting provisioner with correct help text', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.getByLabelText('Provisioner')).toBeInTheDocument();
     });
@@ -86,12 +92,14 @@ describe('StorageClassForm', () => {
   });
 
   it('shows additional parameters section is not visible without selected provisioner', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.queryByText('Additional parameters')).not.toBeInTheDocument();
     });
   });
 
   it('should render control buttons', async () => {
+    renderForm();
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /create/i })).toBeVisible();
       expect(screen.getByRole('button', { name: /cancel/i })).toBeVisible();
