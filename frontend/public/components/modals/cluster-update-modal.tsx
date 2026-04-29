@@ -15,8 +15,10 @@ import {
   ModalVariant,
   Radio,
 } from '@patternfly/react-core';
+import { MagicIcon } from '@patternfly/react-icons';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
+import { useFlag } from '@console/shared/src/hooks/useFlag';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
 import { FieldLevelHelp } from '../utils/field-level-help';
@@ -47,6 +49,7 @@ import {
 } from '../cluster-settings/cluster-settings';
 import { MachineConfigPoolsSelector } from '../machine-config-pools-selector';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { UpdateWorkflowOLSButton } from '../cluster-settings/ols-update-workflows/explain-button';
 
 enum upgradeTypes {
   Full = 'Full',
@@ -79,6 +82,8 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
   const [upgradeType, setUpgradeType] = useState<upgradeTypes>(upgradeTypes.Full);
   const [includeNotRecommended, setIncludeNotRecommended] = useState(false);
   const { t } = useTranslation();
+  const isLightspeedAvailable = useFlag('LIGHTSPEED_CONSOLE');
+
   useEffect(() => {
     const initialMCPPausedValues = machineConfigPools
       .filter((mcp) => !isMCPMaster(mcp) && isMCPPaused(mcp))
@@ -339,6 +344,42 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
               data-test="update-cluster-modal-partial-update-radio"
             />
           </FormGroup>
+          {/* OLS Update Precheck Section */}
+          {isLightspeedAvailable && desiredVersion && (
+            <Alert
+              variant="info"
+              customIcon={<MagicIcon style={{ color: '#8B5CF6' }} />}
+              isInline
+              title={t('public~Update Prerequisites')}
+              className="pf-v6-u-background-color-purple-100 pf-v6-u-mb-md"
+              actionLinks={
+                <UpdateWorkflowOLSButton
+                  phase="pre-check"
+                  cv={cv}
+                  targetVersion={desiredVersion}
+                  variant="primary"
+                  data-test="ols-update-modal-precheck"
+                  onClick={() => {
+                    // Close modal when OLS opens
+                    close();
+                  }}
+                />
+              }
+              data-test="update-cluster-modal-ols-precheck"
+            >
+              <div>
+                {t('public~Updating from {{currentVersion}} to {{desiredVersion}}', {
+                  currentVersion,
+                  desiredVersion,
+                })}
+              </div>
+              <div className="pf-v6-u-mt-sm pf-v6-u-color-200 pf-v6-u-font-size-sm">
+                {t(
+                  'public~Get help understanding the prerequisites and requirements for this specific update.',
+                )}
+              </div>
+            </Alert>
+          )}
         </Form>
       </ModalBody>
       <ModalFooterWithAlerts errorMessage={errorMessage || error}>
