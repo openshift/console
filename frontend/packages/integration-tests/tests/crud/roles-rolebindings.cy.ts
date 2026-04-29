@@ -90,7 +90,7 @@ const deleteClusterExamples = () => {
   nav.sidenav.clickNavLink(['User Management', 'Roles']);
   listPage.titleShouldHaveText('Roles');
   listPage.dvRows.shouldBeLoaded();
-  listPage.dvFilter.by('cluster');
+  listPage.dvFilter.by('Role', 'cluster');
   listPage.dvFilter.byName(clusterRoleName);
   listPage.dvRows.clickKebabAction(clusterRoleName, 'Delete ClusterRole');
   modal.shouldBeOpened();
@@ -101,7 +101,7 @@ const deleteClusterExamples = () => {
   nav.sidenav.clickNavLink(['User Management', 'RoleBindings']);
   listPage.titleShouldHaveText('RoleBindings');
   listPage.dvRows.shouldBeLoaded();
-  listPage.dvFilter.by('cluster');
+  listPage.dvFilter.by('Kind', 'cluster');
   listPage.dvFilter.byName(clusterRoleBindingName);
   listPage.dvRows.clickKebabAction(clusterRoleBindingName, 'Delete ClusterRoleBinding');
   modal.shouldBeOpened();
@@ -145,7 +145,7 @@ describe('Roles and RoleBindings', () => {
   it('displays Resource names column in ClusterRole rules table', () => {
     nav.sidenav.clickNavLink(['User Management', 'Roles']);
     listPage.dvRows.shouldBeLoaded();
-    listPage.dvFilter.by('cluster');
+    listPage.dvFilter.by('Role', 'cluster');
     listPage.dvFilter.byName(clusterRoleName);
     listPage.dvRows.clickRowByName(clusterRoleName);
     detailsPage.isLoaded();
@@ -165,7 +165,7 @@ describe('Roles and RoleBindings', () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
       projectDropdown.selectProject(allProjectsDropdownLabel);
       listPage.dvRows.shouldBeLoaded();
-      listPage.dvFilter.by('namespace');
+      listPage.dvFilter.by(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'namespace');
       listPage.dvFilter.byName(roleOrBindingName);
       listPage.dvRows.clickRowByName(roleOrBindingName);
       detailsPage.isLoaded();
@@ -180,7 +180,7 @@ describe('Roles and RoleBindings', () => {
       projectDropdown.selectProject(testName);
       projectDropdown.shouldContain(testName);
       listPage.dvRows.shouldBeLoaded();
-      listPage.dvFilter.by('namespace');
+      listPage.dvFilter.by(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'namespace');
       listPage.dvFilter.byName(roleOrBindingName);
       listPage.dvRows.clickRowByName(roleOrBindingName);
       detailsPage.isLoaded();
@@ -194,7 +194,7 @@ describe('Roles and RoleBindings', () => {
       nav.sidenav.clickNavLink(['User Management', rolesOrBindings]);
       projectDropdown.selectProject(allProjectsDropdownLabel);
       listPage.dvRows.shouldBeLoaded();
-      listPage.dvFilter.by('cluster');
+      listPage.dvFilter.by(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'cluster');
       listPage.dvFilter.byName(clusterRoleOrBindingName);
       listPage.dvRows.clickRowByName(clusterRoleOrBindingName);
       detailsPage.isLoaded();
@@ -210,7 +210,7 @@ describe('Roles and RoleBindings', () => {
       projectDropdown.selectProject(testName);
       projectDropdown.shouldContain(testName);
       listPage.dvRows.shouldBeLoaded();
-      listPage.dvFilter.by('cluster');
+      listPage.dvFilter.by(rolesOrBindings === 'Roles' ? 'Role' : 'Kind', 'cluster');
       listPage.dvFilter.byName(clusterRoleOrBindingName);
       listPage.dvRows.clickRowByName(clusterRoleOrBindingName);
       detailsPage.isLoaded();

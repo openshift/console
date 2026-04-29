@@ -65,10 +65,14 @@ export const listPage = {
       cy.get('[aria-label="Filter by name"]').should('be.enabled').clear();
       cy.get('[aria-label="Filter by name"]').type(name);
     },
-    by: (checkboxLabel: string) => {
+    by: (filterName: string, checkboxLabel: string) => {
       // Wait for list data to settle before opening the filter, otherwise a
       // concurrent re-render (e.g. after a project switch) closes the menu.
       cy.byTestID('data-view-table').should('be.visible');
+      cy.get('[data-ouia-component-id="DataViewFilters"]').within(() =>
+        cy.get('.pf-v6-c-menu-toggle').first().click(),
+      );
+      cy.get('.pf-v6-c-menu__list-item').contains(filterName).click();
       cy.get('[data-ouia-component-id="DataViewCheckboxFilter"]').click();
       cy.get(`[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`)
         .should('be.visible')
