@@ -1,7 +1,9 @@
 import type { FC, ReactNode } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import './ConsoleDataView.scss';
 import {
+  BulkSelect,
+  BulkSelectValue,
   ResponsiveAction,
   ResponsiveActions,
   SkeletonTableBody,
@@ -80,6 +82,10 @@ export const ConsoleDataView = <
   mock,
   isResizable,
   resetAllColumnWidths,
+  bulkSelect,
+  bulkActions,
+  selection,
+  actionsBreakpoint = 'lg',
 }: ConsoleDataViewProps<TData, TCustomRowData, TFilters>) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
@@ -99,6 +105,22 @@ export const ConsoleDataView = <
     getObjectMetadata,
     matchesAdditionalFilters,
   });
+
+  // Notify parent of filtered selected items when filters or selection changes
+  useEffect(() => {
+    if (selection?.onFilteredSelectionChange) {
+      const filteredSelectedItems = filteredData.filter((item) =>
+        selection.selectedItems.has(selection.getItemId(item)),
+      );
+      selection.onFilteredSelectionChange(filteredSelectedItems);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    filteredData,
+    selection?.selectedItems,
+    selection?.getItemId,
+    selection?.onFilteredSelectionChange,
+  ]);
 
   const { dataViewColumns, dataViewRows, pagination } = useConsoleDataViewData<
     TData,
@@ -133,6 +155,43 @@ export const ConsoleDataView = <
     }
     return undefined;
   }, [filteredData.length, loaded]);
+
+  // Create bulkSelect component if selection is provided but bulkSelect prop is not
+  let defaultBulkSelect = null;
+  if (selection?.onSelectAll && !bulkSelect) {
+    const totalCount = filteredData.length;
+    const pageCount = dataViewRows.length;
+    // Count only selected items that are in the current filtered dataset
+    const selectedCount = filteredData.filter((item) =>
+      selection.selectedItems.has(selection.getItemId(item)),
+    ).length;
+
+    const handleBulkSelect = (value: BulkSelectValue) => {
+      if (value === BulkSelectValue.all || value === BulkSelectValue.page) {
+        selection.onSelectAll(true, filteredData);
+      } else if (value === BulkSelectValue.none || value === BulkSelectValue.nonePage) {
+        selection.onSelectAll(false, filteredData);
+      }
+    };
+
+    defaultBulkSelect = (
+      <BulkSelect
+        pageCount={pageCount}
+        selectedCount={selectedCount}
+        totalCount={totalCount}
+        onSelect={handleBulkSelect}
+        canSelectAll
+        selectNoneLabel={t('public~Select none (0)')}
+        selectPageLabel={(itemCount) =>
+          `${t('public~Select page')}${itemCount ? ` (${itemCount})` : ''}`
+        }
+        selectAllLabel={(itemCount) =>
+          `${t('public~Select all')}${itemCount ? ` (${itemCount})` : ''}`
+        }
+        selectedLabel={(itemCount) => t('public~{{itemCount}} selected', { itemCount })}
+      />
+    );
+  }
 
   const dataViewFilterNodes = useMemo<React.ReactNode[]>(() => {
     const basicFilters: ReactNode[] = [];
@@ -177,6 +236,7 @@ export const ConsoleDataView = <
         className={css(dataViewFilterNodes.length === 1 && 'co-console-data-view-single-filter')}
       >
         <DataViewToolbar
+          bulkSelect={bulkSelect ?? defaultBulkSelect}
           filters={
             dataViewFilterNodes.length > 0 && (
               <DataViewFilters values={filters} onChange={(_e, values) => onSetFilters(values)}>
@@ -186,7 +246,8 @@ export const ConsoleDataView = <
           }
           clearAllFilters={clearAllFilters}
           actions={
-            <ResponsiveActions breakpoint="lg">
+            <ResponsiveActions breakpoint={actionsBreakpoint}>
+              {bulkActions}
               {!hideColumnManagement && (
                 <ResponsiveAction
                   isPersistent
@@ -251,9 +312,16 @@ export const ConsoleDataView = <
   );
 };
 
+export const SELECTION_COLUMN_WIDTH = '45px';
+
 export const cellIsStickyProps = {
   isStickyColumn: true,
   stickyMinWidth: '0',
+};
+
+export const selectionColumnProps = {
+  ...cellIsStickyProps,
+  stickyLeftOffset: '0',
 };
 
 export const nameCellProps = {
@@ -261,12 +329,28 @@ export const nameCellProps = {
   hasRightBorder: true,
 };
 
-export const getNameCellProps = (name: string) => {
-  return {
-    ...nameCellProps,
-    'data-test': `data-view-cell-${name}-name`,
-  };
-};
+/**
+ * Returns name column props with appropriate offset based on whether bulk select is enabled.
+ * Use this for column definitions.
+ * @param hasRightBorder - Whether to include hasRightBorder (default: true)
+ * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
+ */
+export const getNameColumnProps = (hasRightBorder = true, withBulkSelect = false) => ({
+  ...cellIsStickyProps,
+  ...(hasRightBorder && { hasRightBorder: true }),
+  ...(withBulkSelect && { stickyLeftOffset: SELECTION_COLUMN_WIDTH }),
+});
+
+/**
+ * Returns name cell props with appropriate offset based on whether bulk select is enabled.
+ * Use this for row cell definitions.
+ * @param name - The name to use in the data-test attribute
+ * @param withBulkSelect - Whether the table has bulk selection enabled (default: false)
+ */
+export const getNameCellProps = (name: string, withBulkSelect = false) => ({
+  ...getNameColumnProps(true, withBulkSelect),
+  'data-test': `data-view-cell-${name}-name`,
+});
 
 export const actionsCellProps = {
   ...cellIsStickyProps,

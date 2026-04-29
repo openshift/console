@@ -141,7 +141,7 @@ export const DroppableEditYAML: FC<DroppableEditYAMLProps & EditYAMLProps> = ({
             onDropRejected(fileRejections, event);
           }
           if (acceptedFiles.length > 0) {
-            onFileDrop(event, acceptedFiles as File[]);
+            onFileDrop(event as DropEvent, acceptedFiles as File[]);
           }
         },
         accept: {

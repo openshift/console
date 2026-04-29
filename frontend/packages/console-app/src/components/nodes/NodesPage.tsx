@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useCallback, useEffect, Suspense } from 'react';
+import { useMemo, useCallback, useEffect, useState, Suspense } from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
@@ -8,16 +8,21 @@ import { useTranslation } from 'react-i18next';
 import {
   actionsCellProps,
   getNameCellProps,
+  getNameColumnProps,
   initialFiltersDefault,
   ConsoleDataView,
-  nameCellProps,
   getLabelsColumnWidthStyleProp,
 } from '@console/app/src/components/data-view/ConsoleDataView';
+import {
+  createSelectionColumn,
+  createSelectionCell,
+} from '@console/app/src/components/data-view/dataViewSelectionHelpers';
 import type {
   ConsoleDataViewColumn,
   ConsoleDataViewRow,
   ResourceFilters,
 } from '@console/app/src/components/data-view/types';
+import { useDataViewSelection } from '@console/app/src/components/data-view/useDataViewSelection';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { FLAG_NODE_MGMT_V1 } from '@console/app/src/consts';
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/core-api';
@@ -105,6 +110,7 @@ import {
   useWatchVirtualMachineInstances,
 } from './NodeVmUtils';
 import ClientCSRStatus from './status/CSRStatus';
+import { useBulkNodeActions as useBulkNodeActionsHook } from './useBulkNodeActions';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
 
@@ -179,13 +185,14 @@ const useNodesColumns = (
 
   const columns = useMemo(() => {
     return [
+      createSelectionColumn<NodeRowItem>(),
       {
         title: t('console-app~Name'),
         id: nodeColumnInfo.name.id,
         sort: 'metadata.name',
         resizableProps: getResizableProps(nodeColumnInfo.name.id),
         props: {
-          ...nameCellProps,
+          ...getNameColumnProps(true, true),
           modifier: 'nowrap',
         },
       },
@@ -401,8 +408,12 @@ const getNodeDataViewRows = (
   tableColumns: ConsoleDataViewColumn<NodeRowItem>[],
   nodeMetrics: NodeMetrics,
   statusExtensions: GetNodeStatusExtensions,
+  selection?: {
+    selectedItems: Set<string>;
+    onSelect: (itemId: string, isSelecting: boolean) => void;
+  },
 ): ConsoleDataViewRow[] => {
-  return rowData.map(({ obj }) => {
+  return rowData.map(({ obj }, rowIndex) => {
     const isCSR = isCSRResource(obj);
     const node = isCSR ? null : (obj as NodeKind);
     const csr = isCSR ? (obj as NodeCertificateSigningRequestKind) : null;
@@ -434,6 +445,15 @@ const getNodeDataViewRows = (
     const context = node ? { [resourceKind]: node } : {};
 
     const rowCells = {
+      select:
+        selection && node
+          ? createSelectionCell({
+              rowIndex,
+              itemId: nodeUID,
+              isSelected: selection.selectedItems.has(nodeUID),
+              onSelect: selection.onSelect,
+            })
+          : undefined,
       [nodeColumnInfo.name.id]: {
         cell: node ? (
           <ResourceLink
@@ -447,7 +467,7 @@ const getNodeDataViewRows = (
         ) : (
           csr?.metadata.name || DASH
         ),
-        props: getNameCellProps(nodeName),
+        props: getNameCellProps(nodeName, true),
       },
       [nodeColumnInfo.status.id]: {
         cell: node ? (
@@ -547,11 +567,19 @@ const getNodeDataViewRows = (
     };
 
     return tableColumns.map(({ id }) => {
-      const cell = rowCells[id]?.cell || DASH;
+      const rowCell = rowCells[id];
+      if (!rowCell) {
+        return {
+          id,
+          cell: DASH,
+        };
+      }
+      // For select column, don't default to DASH - checkbox is rendered via props
+      const cellContent = id === 'select' ? rowCell.cell ?? '' : rowCell.cell ?? DASH;
       return {
         id,
-        props: rowCells[id]?.props,
-        cell,
+        props: rowCell.props,
+        cell: cellContent,
       };
     });
   });
@@ -643,15 +671,38 @@ const NodeList: FC<NodeListProps> = ({
   const columnManagementID = referenceForModel(NodeModel);
   const statusExtensions = useNodeStatusExtensions();
 
+  // Selection state
+  const { selectedIds, onSelectItem, onSelectAll, clearSelection } = useDataViewSelection({
+    data,
+    getItemId: getUID,
+    filterSelectable: (item) => !isCSRResource(item),
+  });
+
+  // Track filtered selected nodes for bulk actions
+  const [filteredSelectedNodes, setFilteredSelectedNodes] = useState<NodeKind[]>([]);
+
+  const handleFilteredSelectionChange = useCallback((items: NodeRowItem[]) => {
+    // Filter out CSRs and cast to NodeKind
+    const nodes = items.filter((item) => !isCSRResource(item)) as NodeKind[];
+    setFilteredSelectedNodes(nodes);
+  }, []);
+
+  const bulkActions = useBulkNodeActionsHook({
+    selectedNodes: filteredSelectedNodes,
+    onComplete: clearSelection,
+  });
+
   const columnLayout = useMemo(
     () => ({
       id: columnManagementID,
       type: t('console-app~Node'),
-      columns: columns.map((col) => ({
-        id: col.id,
-        title: col.title,
-        additional: col.additional,
-      })),
+      columns: columns
+        .filter((col) => col.id !== 'select' && col.id !== nodeColumnInfo.actions.id)
+        .map((col) => ({
+          id: col.id,
+          title: col.title,
+          additional: col.additional,
+        })),
       selectedColumns:
         selectedColumns?.[columnManagementID]?.length > 0
           ? new Set(selectedColumns[columnManagementID] as string[])
@@ -859,6 +910,10 @@ const NodeList: FC<NodeListProps> = ({
             tableColumns,
             nodeMetrics,
             statusExtensions,
+            {
+              selectedItems: selectedIds,
+              onSelect: onSelectItem,
+            },
           )
         }
         hideNameLabelFilters={hideNameLabelFilters}
@@ -866,6 +921,15 @@ const NodeList: FC<NodeListProps> = ({
         hideColumnManagement={hideColumnManagement}
         isResizable
         resetAllColumnWidths={resetAllColumnWidths}
+        bulkActions={bulkActions}
+        selection={{
+          selectedItems: selectedIds,
+          onSelect: onSelectItem,
+          onSelectAll,
+          getItemId: getUID,
+          onFilteredSelectionChange: handleFilteredSelectionChange,
+        }}
+        actionsBreakpoint="2xl"
       />
     </Suspense>
   );
