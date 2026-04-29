@@ -193,7 +193,7 @@ it('should do something when k8sGet succeeds', () => {
 **DO NOT** mock the `useReduxStore` hook. Instead, pass `initialState` to `renderWithProviders`:
 
 ```typescript
-import { renderWithProviders } from '@console/test-utils';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 it('should render with mock Redux data', () => {
   const mockK8sState = { /* ... */ };
@@ -509,7 +509,7 @@ await waitFor(() => {
 });
 ```
 
-**Avoid Explicit act():** Rarely needed. `render`, `fireEvent`, `findBy*`, and `waitFor` already wrap operations in `act()`.
+**Avoid Explicit act():** Rarely needed. `render`, `userEvent`, `fireEvent`, `findBy*`, and `waitFor` already wrap operations in `act()`.
 
 ### Rule 12: Use Lifecycle Hooks for Setup and Cleanup
 
@@ -553,24 +553,38 @@ expect(userName).toBeVisible();
 expect(editButton).toBeVisible();
 ```
 
-### Rule 14: Simulate User Events with fireEvent
+### Rule 14: Simulate User Events with userEvent (preferred) or fireEvent
+
+Prefer `userEvent` over `fireEvent` — it more closely simulates real browser behavior (focus, keystrokes, pointer events).
+
+```typescript
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+it('should submit the form', async () => {
+  const user = userEvent.setup();
+  render(<MyForm />);
+
+  const input = screen.getByLabelText(/name/i);
+  const button = screen.getByRole('button', { name: /submit/i });
+
+  await user.type(input, 'John Doe');
+  await user.click(button);
+
+  expect(screen.getByText(/success/i)).toBeVisible();
+}, 30000); // userEvent.type is slow — extend timeout for tests with significant typing
+```
+
+`fireEvent` is acceptable for simple, synchronous interactions:
 
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 
 render(<MyForm />);
 
-const input = screen.getByLabelText(/name/i);
-const button = screen.getByRole('button', { name: /submit/i });
-
-// Simulate typing
-fireEvent.change(input, { target: { value: 'John Doe' } });
-
-// Simulate clicking
-fireEvent.click(button);
+fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'John Doe' } });
+fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 ```
-
-**Note:** `userEvent` from `@testing-library/user-event` is not supported due to incompatible Jest version (will be updated after Jest upgrade).
 
 ### Rule 15: Test "Unhappy Paths" and Error States
 
