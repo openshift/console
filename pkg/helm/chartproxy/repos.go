@@ -228,6 +228,9 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured, namespa
 	}
 
 	if basicAuthReference != "" {
+		if h.URL.Scheme != "https" {
+			return nil, fmt.Errorf("Basic authentication is only supported for HTTPS repositories")
+		}
 		secret, err := b.CoreClient.Secrets(basicAuthRefNamespace).Get(context.TODO(), basicAuthReference, v1.GetOptions{})
 		if err != nil {
 			return nil, fmt.Errorf("Failed to GET secret %q from %q reason %v", basicAuthReference, basicAuthRefNamespace, err)
