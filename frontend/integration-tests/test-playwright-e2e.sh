@@ -49,9 +49,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 if [ -z "${BRIDGE_KUBEADMIN_PASSWORD:-}" ]; then
   pass_file="${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}"
   if [ -f "$pass_file" ]; then
-    set +x
     export BRIDGE_KUBEADMIN_PASSWORD="$(cat "$pass_file")"
-    set -x
   fi
 fi
 
