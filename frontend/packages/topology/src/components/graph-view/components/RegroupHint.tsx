@@ -1,23 +1,19 @@
 import type { FC } from 'react';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import ShortcutGrid from '@patternfly/react-component-groups/dist/dynamic/ShortcutGrid';
 import { useTranslation } from 'react-i18next';
-import { ShortcutTable, Shortcut } from '@console/shared';
-
-import './RegroupHint.scss';
 
 const RegroupHint: FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="odc-regroup-hint">
-      <InfoCircleIcon className="odc-regroup-hint__icon" />
-      <span className="odc-regroup-hint__text">
-        <ShortcutTable>
-          <Shortcut shift drag>
-            {t('topology~Edit application grouping')}
-          </Shortcut>
-        </ShortcutTable>
-      </span>
-    </div>
+    <ShortcutGrid
+      shortcuts={[
+        {
+          keys: ['shift'],
+          drag: true,
+          description: t('topology~Edit application grouping'),
+        },
+      ]}
+    />
   );
 };
 

@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { memo, useRef, useState, useCallback, useEffect } from 'react';
+import { Hint, HintBody } from '@patternfly/react-core';
 import type {
   GraphElement,
   BaseEdge,
@@ -43,7 +44,6 @@ import { SHOW_GROUPING_HINT_EVENT } from '../../topology-types';
 import { componentFactory } from './components';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
-
 import './Topology.scss';
 
 const STORED_NODE_LAYOUT_FIELDS = ['id', 'x', 'y'];
@@ -93,7 +93,9 @@ const TopologyGraphView = memo<TopologyGraphViewProps>(
           <VisualizationSurface state={{ selectedIds: [selectedId] }} />
           {dragHint && (
             <div className="odc-topology__hint-container">
-              <div className="odc-topology__hint-background">{dragHint}</div>
+              <Hint>
+                <HintBody>{dragHint}</HintBody>
+              </Hint>
             </div>
           )}
           <TopologyControlBar visualization={visualization} isDisabled={controlsDisabled} />
