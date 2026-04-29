@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { useNavigate } from 'react-router';
+import { useTheme } from '@console/internal/components/ThemeProvider';
 
 type QuickCreateProps = {
   namespace?: string;
@@ -72,6 +73,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
   const navigate = useNavigate();
   const fireTelemetryEvent = useTelemetry();
   const opeshiftStartGuideEnable = useFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE);
+  const { redHat } = useTheme();
 
   const canCreate = useCanCreateResource();
   const [isOpen, setIsOpen] = useState(false);
@@ -95,6 +97,7 @@ const QuickCreate: FC<QuickCreateProps> = ({ namespace }) => {
             ref={toggleRef}
             aria-label={t('public~Quick create')}
             variant="plain"
+            isCircle={redHat}
             onClick={onToggleClick}
             isExpanded={isOpen}
             data-test="quick-create-dropdown"

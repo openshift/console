@@ -5,7 +5,15 @@ import * as _ from 'lodash';
 import { Marked } from 'marked';
 import { useTranslation } from 'react-i18next';
 import * as sanitizeHtml from 'sanitize-html';
-import { THEME_DARK, THEME_DARK_CLASS, useTheme } from '@console/internal/components/ThemeProvider';
+import {
+  THEME_CONTRAST,
+  THEME_CONTRAST_CLASS,
+  THEME_DARK,
+  THEME_DARK_CLASS,
+  THEME_GLASS,
+  THEME_GLASS_CLASS,
+  useTheme,
+} from '@console/internal/components/ThemeProvider';
 import { useForceRender } from '../../hooks/useForceRender';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 
@@ -144,10 +152,12 @@ const IFrameMarkdownView: FC<InnerSyncMarkdownProps> = ({
   const [frameHeight, setFrameHeight] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
-  const { theme } = useTheme();
+  const { theme, contrast } = useTheme();
 
   const themeClass = css({
     [THEME_DARK_CLASS]: theme === THEME_DARK,
+    [THEME_CONTRAST_CLASS]: contrast === THEME_CONTRAST,
+    [THEME_GLASS_CLASS]: contrast === THEME_GLASS,
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

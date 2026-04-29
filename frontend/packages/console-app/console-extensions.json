@@ -17,6 +17,12 @@
     }
   },
   {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "isOpenShift5.handler" }
+    }
+  },
+  {
     "type": "INTERNAL_DO_NOT_USE.guided-tour",
     "properties": {
       "perspective": "admin",
@@ -789,6 +795,46 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.theme/contrast",
+      "label": "%console-app~Contrast mode%",
+      "groupId": "general",
+      "description": "%console-app~Controls the contrast level of the console.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.theme/contrast",
+        "defaultValue": "systemDefault",
+        "options": [
+          {
+            "value": "systemDefault",
+            "label": "%console-app~System default%",
+            "description": "%console-app~Matches your operating system's contrast setting.%"
+          },
+          {
+            "value": "glass",
+            "label": "%console-app~Glass%",
+            "description": "%console-app~A modern, visually refreshed console appearance.%"
+          },
+          {
+            "value": "default",
+            "label": "%console-app~Traditional%",
+            "description": "%console-app~The traditional console appearance.%"
+          },
+          {
+            "value": "contrast",
+            "label": "%console-app~High contrast%",
+            "description": "%console-app~Enhances contrast between interface elements for readability.%"
+          }
+        ]
+      },
+      "insertAfter": "console.theme"
+    },
+    "flags": {
+      "required": ["FLAG_OPENSHIFT_5"]
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredPerspective",
       "label": "%console-app~Perspective%",
       "groupId": "general",
@@ -797,7 +843,7 @@
         "type": "custom",
         "component": { "$codeRef": "PreferredPerspectiveSelect" }
       },
-      "insertAfter": "console.theme"
+      "insertAfter": "console.theme/contrast"
     },
     "flags": {
       "required": ["FLAG_PERSPECTIVES_AVAILABLE"]

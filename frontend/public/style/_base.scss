@@ -33,3 +33,15 @@
     background-color: var(--pf-t--global--background--color--secondary--default);
   }
 }
+
+:where(.pf-v6-theme-glass) {
+  #app, .co-fullscreen {
+    background: var(--co-glass-background-light) center / cover no-repeat fixed;
+  }
+}
+
+:where(.pf-v6-theme-glass.pf-v6-theme-dark) {
+  #app, .co-fullscreen {
+    background-image: var(--co-glass-background-dark);
+  }
+}
