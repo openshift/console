@@ -3,7 +3,7 @@ import { Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { GitProvider, ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { hasSampleQueryParameter } from '../../utils/samples';
 import PipelineSection from '../pipeline-section/pipeline/PipelineSection';

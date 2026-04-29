@@ -6,7 +6,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import GiteaIcon from '../GiteaIcon';
 import { GitReadableTypes } from '../import-types';
 

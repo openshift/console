@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useClusterBuildStrategy } from '@console/dev-console/src/utils/shipwright-build-hook';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { LoadingInline } from '@console/internal/components/utils';
 import type { SelectInputOption } from '@console/shared/src';
 import { SingleDropdownField } from '@console/shared/src';

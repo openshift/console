@@ -1,6 +1,6 @@
 // import { Delays, greeter } from '../src/main';
 
-import { GitProvider } from '../../types';
+import { GitProvider } from '../../types/git';
 import { BitbucketService } from '../bitbucket-service';
 import { getGitService } from '../git-service';
 import { GithubService } from '../github-service';

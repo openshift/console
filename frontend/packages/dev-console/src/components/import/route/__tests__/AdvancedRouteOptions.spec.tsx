@@ -8,7 +8,7 @@ jest.mock('@console/internal/module/k8s', () => ({
   modelFor: () => ({ kind: 'Deployment', crd: false }),
 }));
 
-jest.mock('@console/git-service/src', () => ({
+jest.mock('@console/git-service/src/types/git', () => ({
   GitProvider: {},
 }));
 

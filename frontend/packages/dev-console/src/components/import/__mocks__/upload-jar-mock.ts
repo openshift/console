@@ -1,4 +1,4 @@
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import type { UploadJarFormData } from '../import-types';

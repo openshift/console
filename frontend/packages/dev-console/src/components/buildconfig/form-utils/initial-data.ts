@@ -1,4 +1,4 @@
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import type { BuildConfigFormikValues } from './types';
 import { BuildStrategyType } from './types';

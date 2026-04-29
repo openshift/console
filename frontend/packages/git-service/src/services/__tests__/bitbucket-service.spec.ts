@@ -1,7 +1,9 @@
 import * as nock from 'nock';
-import type { GitSource, RepoFileList, BuildType, BranchList, RepoLanguageList } from '../../types';
-import { RepoStatus } from '../../types';
-import { DockerFileParser } from '../../utils';
+import type { BuildType } from '../../types/build-tools';
+import type { GitSource } from '../../types/git';
+import type { RepoFileList, BranchList, RepoLanguageList } from '../../types/repo';
+import { RepoStatus } from '../../types/repo';
+import { DockerFileParser } from '../../utils/dockerfile-parser';
 import { BitbucketService } from '../bitbucket-service';
 
 describe('Bitbucket Service', () => {

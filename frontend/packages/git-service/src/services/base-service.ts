@@ -1,12 +1,12 @@
+import type { BuildType } from '../types/build-tools';
+import type { GitSource } from '../types/git';
 import type {
   BranchList,
-  BuildType,
-  GitSource,
   RepoFileList,
   RepoLanguageList,
   RepoMetadata,
   RepoStatus,
-} from '../types';
+} from '../types/repo';
 import { detectBuildTypes, isModernWebApp } from '../utils/build-tool-detector';
 
 export abstract class BaseService {

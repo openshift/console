@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';

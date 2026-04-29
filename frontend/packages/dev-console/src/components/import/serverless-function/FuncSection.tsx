@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { BuilderImage } from '@console/dev-console/src/utils/imagestream-utils';
-import { getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
 import { evaluateFunc } from '@console/git-service/src/utils/serverless-strategy-detector';
 import { Loading } from '@console/internal/components/utils';
 import type { SupportedRuntime } from '../../../utils/serverless-functions';

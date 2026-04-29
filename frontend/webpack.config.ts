@@ -139,9 +139,9 @@ const config: Configuration = {
     chunkFilename: '[name]-[chunkhash].js',
   },
   performance: {
-    // The maximum size of the entry point and generated files permitted by analyze.sh
-    maxEntrypointSize: 10.5 * 1048576, // ~10.5 MiB
-    maxAssetSize: 5 * 1048576, // ~5 MiB
+    // The maximum size in MiB of the entrypoint and generated files permitted by analyze.sh
+    maxEntrypointSize: 9.33 * 1048576,
+    maxAssetSize: 5 * 1048576,
   },
   devServer: {
     hot: HOT_RELOAD !== 'false',

@@ -1,5 +1,5 @@
-import { RepoStatus } from '../..';
 import { ImportStrategy } from '../../types/git';
+import { RepoStatus } from '../../types/repo';
 import { detectImportStrategies } from '../import-strategy-detector';
 import * as serverlessFxUtils from '../serverless-strategy-detector';
 

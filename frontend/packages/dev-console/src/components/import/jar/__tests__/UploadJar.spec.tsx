@@ -60,7 +60,7 @@ jest.mock('@console/topology/src/utils', () => ({
   sanitizeApplicationValue: jest.fn((value) => value),
 }));
 
-jest.mock('@console/git-service/src', () => ({
+jest.mock('@console/git-service/src/types/git', () => ({
   GitProvider: {},
 }));
 

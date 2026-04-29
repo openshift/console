@@ -54,7 +54,7 @@ jest.mock('../../../../../models/pipelines', () => ({
   },
 }));
 
-jest.mock('@console/git-service/src/types', () => ({
+jest.mock('@console/git-service/src/types/git', () => ({
   ImportStrategy: {
     DEVFILE: 'DEVFILE',
   },

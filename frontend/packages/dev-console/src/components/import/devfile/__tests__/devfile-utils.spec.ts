@@ -1,4 +1,4 @@
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { convertURItoInlineYAML, getParsedComponent, getResourceContent } from '../devfile-utils';
 
 const mockDevfile = `schemaVersion: 2.2.0
@@ -285,8 +285,8 @@ const git = {
   dir: '/',
 };
 
-jest.mock('@console/git-service', () => ({
-  ...jest.requireActual('@console/git-service'),
+jest.mock('@console/git-service/src/services/git-service', () => ({
+  ...jest.requireActual('@console/git-service/src/services/git-service'),
   getGitService: function mockedGetGitService() {
     return {
       getFileContent: (path: string) =>

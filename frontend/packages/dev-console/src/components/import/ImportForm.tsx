@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
-import { GitProvider, ImportStrategy } from '@console/git-service/src';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import { AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { RouteModel } from '@console/internal/models';
 import type { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';

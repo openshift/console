@@ -11,7 +11,8 @@ import {
   ReadableResourcesNames,
 } from '@console/dev-console/src/components/import/import-types';
 import type { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
-import { GitProvider, getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { BlueInfoCircleIcon, CheckboxField, DropdownField, RadioGroupField } from '@console/shared';

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import { ExpandCollapse, Loading } from '@console/internal/components/utils';
 import ConfigTypeSection from './ConfigTypeSection';
 import { usePacInfo } from './pac-hook';

@@ -4,7 +4,8 @@ import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core'
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getGitService, ImportStrategy, GitProvider } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import { InputField } from '@console/shared/src';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';

@@ -3,7 +3,7 @@ import { List, ListItem } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { GitProvider } from '@console/git-service';
+import { GitProvider } from '@console/git-service/src/types/git';
 import type { RepositoryFormValues } from '../../import/import-types';
 
 type PermissionsSectionProps = {

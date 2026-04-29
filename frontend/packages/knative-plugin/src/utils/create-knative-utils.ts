@@ -7,7 +7,7 @@ import type {
 } from '@console/dev-console/src/components/import/import-types';
 import { CUSTOM_ICON_ANNOTATION } from '@console/dev-console/src/const';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ImagePullPolicy,

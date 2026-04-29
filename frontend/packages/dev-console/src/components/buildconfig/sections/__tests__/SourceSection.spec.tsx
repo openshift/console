@@ -5,7 +5,7 @@ import type { FormikConfig } from 'formik';
 import { Formik } from 'formik';
 import { Provider } from 'react-redux';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
-import { GitProvider } from '@console/git-service/src';
+import { GitProvider } from '@console/git-service/src/types/git';
 import * as serverlessFxUtils from '@console/git-service/src/utils/serverless-strategy-detector';
 import store from '@console/internal/redux';
 import { BuildStrategyType } from '../../types';
@@ -13,8 +13,8 @@ import type { SourceSectionFormData } from '../SourceSection';
 import SourceSection from '../SourceSection';
 
 // Skip network calls to any external git service
-jest.mock('@console/git-service', () => ({
-  ...jest.requireActual('@console/git-service'),
+jest.mock('@console/git-service/src/services/git-service', () => ({
+  ...jest.requireActual('@console/git-service/src/services/git-service'),
   getGitService: function mockedGetGitService() {
     return null;
   },

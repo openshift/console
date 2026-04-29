@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import * as _ from 'lodash';
-import type { GitProvider } from '@console/git-service/src';
-import { getGitService } from '@console/git-service/src';
+import { getGitService } from '@console/git-service/src/services/git-service';
+import type { GitProvider } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { safeYAMLToJS, safeJSToYAML } from '@console/shared/src/utils/yaml';

@@ -12,7 +12,7 @@ import { PencilAltIcon, UndoIcon } from '@patternfly/react-icons';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ImportStrategy } from '@console/git-service/src';
+import { ImportStrategy } from '@console/git-service/src/types/git';
 import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import BuilderSection from './builder/BuilderSection';
 import DevfileStrategySection from './devfile/DevfileStrategySection';

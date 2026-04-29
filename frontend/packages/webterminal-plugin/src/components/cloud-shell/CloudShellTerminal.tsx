@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { getUser } from '@console/dynamic-plugin-sdk';
+import { AsyncComponent } from '@console/internal/components/utils';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import type { UserInfo } from '@console/internal/module/k8s';
@@ -14,7 +15,6 @@ import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../../models';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../const';
 import type { TerminalInitData } from './cloud-shell-utils';
 import { initTerminal, startWorkspace, CLOUD_SHELL_PHASE } from './cloud-shell-utils';
-import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE_CONFIG_USER_PREFERENCE_KEY } from './const';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
@@ -210,7 +210,12 @@ const CloudShellTerminal: FC<CloudShellTerminalInternalProps & WithUserPreferenc
 
   if (initData && workspaceNamespace) {
     return (
-      <CloudshellExec
+      <AsyncComponent
+        loader={() =>
+          import('./CloudShellExec' /* webpackChunkName: "cloud-shell-exec" */).then(
+            (m) => m.default,
+          )
+        }
         workspaceName={workspaceName}
         namespace={workspaceNamespace}
         workspaceId={workspaceId}

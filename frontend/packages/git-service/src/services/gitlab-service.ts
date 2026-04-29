@@ -4,8 +4,10 @@ import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { DevConsoleEndpointResponse } from '@console/shared/src';
-import type { GitSource, RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types';
-import { SecretType, RepoStatus } from '../types';
+import type { GitSource } from '../types/git';
+import { SecretType } from '../types/git';
+import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';
+import { RepoStatus } from '../types/repo';
 import { BaseService } from './base-service';
 
 type GitlabRepo = {
