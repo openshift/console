@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, startTransition } from 'react';
 import {
   TextInputTypes,
   Alert,
@@ -261,10 +261,13 @@ const ImageSearch: FC = () => {
         helpTextInvalid={helpText}
         validated={validated}
         onChange={(e: KeyboardEvent) => {
-          resetFields();
-          setFieldValue('isi', {});
+          const { value } = e.target as HTMLInputElement;
+          startTransition(() => {
+            resetFields();
+            setFieldValue('isi', {});
+          });
           setValidated(ValidatedOptions.default);
-          debouncedHandleSearch((e.target as HTMLInputElement).value);
+          debouncedHandleSearch(value);
         }}
         aria-label={t('devconsole~Image name')}
         data-test-id="deploy-image-search-term"

@@ -4,7 +4,10 @@ import { topologyPO } from '@console/topology/integration-tests/support/page-obj
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 
 export const topologyHelper = {
-  search: (name: string) => cy.get(topologyPO.search).clear().type(name),
+  search: (name: string) => {
+    cy.get(topologyPO.search).clear();
+    cy.get(topologyPO.search).type(name);
+  },
   verifyWorkloadInTopologyPage: (appName: string, options?: { timeout: number }) => {
     topologyPage.verifyToplogyPageNotEmpty();
     topologyHelper.search(appName);
