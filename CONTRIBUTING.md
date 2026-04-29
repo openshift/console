@@ -13,7 +13,7 @@ This document outlines some of the conventions on development workflow.
 
 This is a rough outline of what a contributor's workflow looks like:
 
-- Create a topic branch from where you want to base your work (usually master).
+- Create a topic branch from where you want to base your work (usually main).
 - Make commits of logical units.
 - Make sure your commit messages are in the proper format (see below).
 - Push your changes to a topic branch in your fork of the repository.
@@ -60,7 +60,7 @@ a link to the issue in the commit description to make it easy to get to the issu
 ### Backporting Fixes
 
 Branches for previous releases follow the format `release-X.Y`, for example,
-`release-4.1`. Typically, bugs are fixed in the master branch first then
+`release-4.1`. Typically, bugs are fixed in the main branch first then
 backported to the appropriate release branches. Fixes backported to previous
 releases should have a Bugzilla bug for each version fixed.
 

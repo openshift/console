@@ -33,7 +33,7 @@
 - Scope all classes with a recognizable prefix to avoid collisions with any imported CSS (this project uses `co-` by convention).
 - Class names should be all lowercase and dash-separated.
 - All SCSS variables should be scoped within their component.
-- We use [BEM](http://getbem.com) naming conventions.
+- We use [BEM](https://getbem.com/) naming conventions.
 
 ## TypeScript and JavaScript
 
