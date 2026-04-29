@@ -60,7 +60,15 @@
       "Bash(docker ps:*)",
       "Bash(docker images:*)",
 
-      "Bash(claude --version)"
+      "Bash(claude --version)",
+
+      "mcp__jira__jira_auth_status",
+      "mcp__jira__jira_search_issues_summary",
+      "mcp__jira__jira_create_issue",
+      "mcp__jira__jira_get_create_metadata",
+      "mcp__jira__jira_update_issue",
+      "mcp__jira__jira_create_issue_link",
+      "mcp__google-docs__drive_files_create"
     ],
 
     "deny": [
