@@ -15,7 +15,7 @@ import (
 )
 
 func TestNewOLMHandler(t *testing.T) {
-	handler := NewOLMHandler("test-url", &http.Client{}, &CatalogService{})
+	handler := NewOLMHandler("test-url", &http.Client{}, &CatalogService{}, nil)
 	assert.NotNil(t, handler)
 }
 
@@ -29,7 +29,7 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		service.LastModified = lastModified.UTC().Format(http.TimeFormat)
 		service.index["test-catalog"] = struct{}{}
 
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-items/", nil)
 		rr := httptest.NewRecorder()
@@ -48,7 +48,7 @@ func TestOLMHandler_catalogItemsHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := NewCatalogService(&http.Client{}, nil, c)
 		service.LastModified = lastModified.UTC().Format(http.TimeFormat)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-items/", nil)
 		req.Header.Set("If-Modified-Since", lastModified.Add(1*time.Second).UTC().Format(http.TimeFormat))
@@ -75,7 +75,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/test-catalog", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -90,7 +90,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 	t.Run("should return 404 when catalog name is missing from URL", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/", nil)
 		// Don't set catalogName path value - URL doesn't match pattern so router returns 404
@@ -105,7 +105,7 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		// Don't set base URL in cache, which will cause an error
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalogd/metas/test-catalog", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -129,7 +129,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -156,7 +156,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -179,7 +179,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -204,7 +204,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c.Set(getCatalogIconKey("test-catalog", "test-package"), icon, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -240,7 +240,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 		c.Set(getCatalogBaseURLKey("test-catalog"), catalogdServer.URL, cache.NoExpiration)
 
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog/test-package", nil)
 		req.SetPathValue("catalogName", "test-catalog")
@@ -259,7 +259,7 @@ func TestOLMHandler_catalogIconHandler(t *testing.T) {
 	t.Run("should return 404 when URL does not match pattern", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)
 		service := NewCatalogService(&http.Client{}, nil, c)
-		handler := NewOLMHandler("", nil, service)
+		handler := NewOLMHandler("", nil, service, nil)
 
 		// URL with missing package name doesn't match the route pattern
 		req := httptest.NewRequest("GET", "/api/olm/catalog-icons/test-catalog", nil)

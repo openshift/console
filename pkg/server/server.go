@@ -497,12 +497,23 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		})),
 	)
 
+	var lifecycleClient *http.Client
+	if s.ServiceClient != nil {
+		lifecycleClient = &http.Client{
+			Transport: olm.NewBearerTokenRoundTripper(
+				"/var/run/secrets/kubernetes.io/serviceaccount/token",
+				s.ServiceClient.Transport,
+			),
+		}
+	}
+
 	olmHandler := olm.NewOLMHandler(
 		k8sProxyURL,
 		&http.Client{
 			Transport: internalProxiedK8SRT,
 		},
 		s.CatalogService,
+		lifecycleClient,
 	)
 
 	handle("/api/olm/", authHandler(olmHandler.ServeHTTP))

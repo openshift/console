@@ -35,7 +35,8 @@
       "catalogSourceActionsProvider": "src/actions/providers/catalog-source-provider.ts",
       "useOperatorCatalogCategories": "src/hooks/useOperatorCatalogCategories.ts",
       "useOperatorCatalogItems": "src/hooks/useOperatorCatalogItems.tsx",
-      "utils": "src/components/dashboard/utils.ts"
+      "utils": "src/components/dashboard/utils.ts",
+      "features": "src/features.ts"
     }
   }
 }

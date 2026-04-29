@@ -11,6 +11,12 @@
     }
   },
   {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "features.detectLifecycleMetadata" }
+    }
+  },
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
