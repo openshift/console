@@ -2,7 +2,6 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
@@ -62,7 +61,7 @@ export const getPluginTabPages = (
   });
 };
 
-const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) => {
+const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoaded }) => {
   const { t } = useTranslation();
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
@@ -97,7 +96,7 @@ const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) 
     titlePrefix: title,
   };
 
-  return kindsInFlight && k8sModels.size === 0 ? (
+  return kindsInFlight && !k8sModelsLoaded ? (
     <LoadingBox />
   ) : (
     <>
@@ -111,12 +110,12 @@ const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModels }) 
 
 export const mapStateToProps = (state: RootState) => ({
   kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
-  k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
+  k8sModelsLoaded: state.k8s.getIn(['RESOURCES', 'loaded']),
 });
 
 export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
 
 export type DashboardsPageProps = {
   kindsInFlight: boolean;
-  k8sModels: ImmutableMap<string, any>;
+  k8sModelsLoaded: boolean;
 };

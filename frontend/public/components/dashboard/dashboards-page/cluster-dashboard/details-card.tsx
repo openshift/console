@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardBody, CardHeader, CardTitle, DescriptionList } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
@@ -97,7 +97,7 @@ const clusterVersionResource: WatchK8sResource = {
   isList: false,
 };
 
-export const DetailsCard: React.FC = () => {
+export const DetailsCard = memo(() => {
   const { t } = useTranslation();
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
   const { infrastructure, infrastructureLoaded, infrastructureError } = useContext(
@@ -287,7 +287,7 @@ export const DetailsCard: React.FC = () => {
       </CardBody>
     </Card>
   );
-};
+});
 
 type ClusterVersionProps = {
   cv: ClusterVersionKind;

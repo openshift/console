@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { useMemo, memo } from 'react';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { FLAGS } from '@console/shared/src/constants/common';
@@ -20,7 +20,7 @@ const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-export const ClusterDashboard: FC<{}> = () => {
+export const ClusterDashboard = memo(() => {
   const [infrastructure, infrastructureLoaded, infrastructureError] = useK8sGet<K8sResourceKind>(
     InfrastructureModel,
     'cluster',
@@ -30,11 +30,11 @@ export const ClusterDashboard: FC<{}> = () => {
     FLAGS.CONSOLE_CAPABILITY_GETTINGSTARTEDBANNER_IS_ENABLED,
   );
 
-  const context = {
+  const context = useMemo(() => ({ infrastructure, infrastructureLoaded, infrastructureError }), [
     infrastructure,
     infrastructureLoaded,
     infrastructureError,
-  };
+  ]);
 
   return (
     <ClusterDashboardContext.Provider value={context}>
@@ -46,4 +46,4 @@ export const ClusterDashboard: FC<{}> = () => {
       </Dashboard>
     </ClusterDashboardContext.Provider>
   );
-};
+});

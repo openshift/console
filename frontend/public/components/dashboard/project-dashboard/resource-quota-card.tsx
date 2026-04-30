@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Card, CardBody, CardHeader, CardTitle, Stack, StackItem } from '@patternfly/react-core';
@@ -10,7 +10,7 @@ import { AppliedClusterResourceQuotaModel, ResourceQuotaModel } from '../../../m
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceQuotaKind, AppliedClusterResourceQuotaKind } from '../../../module/k8s';
 
-export const ResourceQuotaCard = () => {
+export const ResourceQuotaCard = memo(() => {
   const { obj } = useContext(ProjectDashboardContext);
 
   const [quotas, rqLoaded, rqLoadError] = useK8sWatchResource<ResourceQuotaKind[]>({
@@ -79,4 +79,4 @@ export const ResourceQuotaCard = () => {
       </CardBody>
     </Card>
   );
-};
+});

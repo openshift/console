@@ -91,7 +91,7 @@ const ClusterInventoryItem = memo<ClusterInventoryItemProps>(
   },
 );
 
-export const InventoryCard = () => {
+export const InventoryCard = memo(() => {
   const [itemExtensions] = useResolvedExtensions<DashboardsOverviewInventoryItem>(
     isDashboardsOverviewInventoryItem,
   );
@@ -138,7 +138,7 @@ export const InventoryCard = () => {
       </CardBody>
     </Card>
   );
-};
+});
 
 type ClusterInventoryItemProps = {
   model: K8sKind;

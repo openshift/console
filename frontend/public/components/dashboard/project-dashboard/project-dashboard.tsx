@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,7 @@ export const getNamespaceDashboardConsoleLinks = (
   });
 };
 
-export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
+export const ProjectDashboard = memo<ProjectDashboardProps>(({ obj }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
@@ -58,11 +57,11 @@ export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const namespaceLinks = getNamespaceDashboardConsoleLinks(obj, consoleLinks);
-  const context = {
+  const namespaceLinks = useMemo(() => getNamespaceDashboardConsoleLinks(obj, consoleLinks), [
     obj,
-    namespaceLinks,
-  };
+    consoleLinks,
+  ]);
+  const context = useMemo(() => ({ obj, namespaceLinks }), [obj, namespaceLinks]);
 
   const hasNamespaceLinks = !!namespaceLinks.length;
 
@@ -88,7 +87,7 @@ export const ProjectDashboard: FC<ProjectDashboardProps> = ({ obj }) => {
       </ProjectDashboardContext.Provider>
     </>
   );
-};
+});
 
 type ProjectDashboardProps = {
   obj: K8sResourceKind;
