@@ -155,7 +155,7 @@ export const ConsoleDataView = <
     }
 
     return additionalFilterNodes?.length > 0
-      ? [...additionalFilterNodes, ...basicFilters]
+      ? [...basicFilters, ...additionalFilterNodes]
       : basicFilters;
 
     // Can't use data in the deps array as it will recompute the filters and will cause the selected category to reset

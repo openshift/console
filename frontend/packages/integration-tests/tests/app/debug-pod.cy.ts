@@ -98,7 +98,7 @@ describe('Debug pod', () => {
   it('Debug pod should be terminated after leaving debug container page', () => {
     cy.visit(`/k8s/ns/${testName}/pods`);
     listPage.dvRows.shouldExist(POD_NAME);
-    listPage.dvFilter.by('Running');
+    listPage.dvFilter.by('Status', 'Running');
     cy.exec(
       `oc get pods -n ${testName} -o jsonpath='{.items[0].metadata.name}{"#"}{.items[1].metadata.name}'`,
     ).then((result) => {
