@@ -522,13 +522,19 @@ Build all distributable [SDK packages](#sdk-packages) into `dist` directory:
 yarn build
 ```
 
+Set the version in all dist packages (the source `package.json` uses a placeholder version):
+
+```sh
+yarn set-dist-version <version>
+```
+
 Finally, publish relevant packages to [npm registry](https://www.npmjs.com/):
 
 ```sh
-yarn publish dist/<pkg> --no-git-tag-version --new-version <version>
+npm publish ./dist/<pkg>
 ```
 
-If the given package doesn't exist in npm registry, add `--access public` to `yarn publish` command.
+If the given package doesn't exist in npm registry, add `--access public` to `npm publish`.
 
 If the newly published version comes before the latest published version in terms of semver rules
 (e.g. hotfix release 1.0.2 for an older minor version stream 1.0.x), ensure the `latest` dist-tag
