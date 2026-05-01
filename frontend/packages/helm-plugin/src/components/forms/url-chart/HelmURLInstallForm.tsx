@@ -74,7 +74,9 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
     ],
   );
 
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
+  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
+    readme: chartReadme,
+  });
 
   const isSubmitDisabled = isSubmitting || !_.isEmpty(errors) || !!chartError;
 
