@@ -13,9 +13,9 @@ const HelmReleaseDetailsPage: FC = () => {
   const handleNamespaceChange = useCallback(
     (newNamespace: string): void => {
       if (newNamespace === ALL_NAMESPACES_KEY) {
-        navigate('/helm-releases/all-namespaces');
+        navigate('/helm/all-namespaces');
       } else {
-        navigate(`/helm-releases/ns/${newNamespace}`);
+        navigate(`/helm/ns/${newNamespace}`);
       }
     },
     [navigate],
