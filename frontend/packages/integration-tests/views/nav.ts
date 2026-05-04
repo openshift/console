@@ -26,6 +26,19 @@ export const nav = {
       },
       changePerspectiveTo: (newPerspective: string) => {
         app.waitForDocumentLoad();
+        // Collapse any expanded nav groups (e.g., Favorites) to prevent overflow clipping
+        // of the perspective switcher
+        cy.get('body').then(($body) => {
+          const $expandedItems = $body.find('.pf-v6-c-nav__item.pf-m-expanded');
+          if ($expandedItems.length > 0) {
+            $expandedItems.each((_, el) => {
+              cy.wrap(el).find('button.pf-v6-c-nav__link').click();
+            });
+            // Wait for collapse animation to complete
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(300);
+          }
+        });
         switch (newPerspective) {
           case 'Core platform':
           case 'core platform':
