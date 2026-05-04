@@ -6,7 +6,7 @@ import {
   ResponsiveActions,
   SkeletonTableBody,
 } from '@patternfly/react-component-groups';
-import { Bullseye, Pagination, Tooltip } from '@patternfly/react-core';
+import { Bullseye, Pagination, PaginationVariant, Tooltip } from '@patternfly/react-core';
 import {
   DataView,
   DataViewFilters,
@@ -134,6 +134,19 @@ export const ConsoleDataView = <
     return undefined;
   }, [filteredData.length, loaded]);
 
+  const paginationTitles = useMemo(
+    () => ({
+      ofWord: t('public~of'),
+      itemsPerPage: t('public~Items per page'),
+      perPageSuffix: t('public~per page'),
+      toFirstPageAriaLabel: t('public~Go to first page'),
+      toPreviousPageAriaLabel: t('public~Go to previous page'),
+      toNextPageAriaLabel: t('public~Go to next page'),
+      toLastPageAriaLabel: t('public~Go to last page'),
+    }),
+    [t],
+  );
+
   const dataViewFilterNodes = useMemo<React.ReactNode[]>(() => {
     const basicFilters: ReactNode[] = [];
 
@@ -221,15 +234,7 @@ export const ConsoleDataView = <
             </ResponsiveActions>
           }
           pagination={
-            <Pagination
-              itemCount={filteredData.length}
-              titles={{
-                ofWord: t('public~of'),
-                itemsPerPage: t('public~Items per page'),
-                perPageSuffix: t('public~per page'),
-              }}
-              {...pagination}
-            />
+            <Pagination itemCount={filteredData.length} titles={paginationTitles} {...pagination} />
           }
         />
         <InnerScrollContainer>
@@ -246,6 +251,16 @@ export const ConsoleDataView = <
             isResizable={isResizable}
           />
         </InnerScrollContainer>
+        <DataViewToolbar
+          pagination={
+            <Pagination
+              itemCount={filteredData.length}
+              titles={paginationTitles}
+              variant={PaginationVariant.bottom}
+              {...pagination}
+            />
+          }
+        />
       </DataView>
     </StatusBox>
   );
