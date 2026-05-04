@@ -336,10 +336,14 @@ export const topologyPage = {
       .click({ force: true });
   },
   clickOnHelmGroup: (groupName: string) => {
-    return cy
-      .get(topologyPO.graph.helmGroupLabelText)
-      .should('be.visible')
+    // Search for the helm group to ensure it's loaded and highlighted
+    topologyHelper.search(groupName);
+    // Wait for the search to highlight the group
+    cy.get('[data-type="helm-release"] .is-filtered', { timeout: 10000 }).should('exist');
+    // Now click on the helm group label
+    cy.get(topologyPO.graph.helmGroupLabelText)
       .contains(groupName)
+      .should('be.visible')
       .click({ force: true });
   },
   clickOnDeploymentNode: (nodeName: string) => {

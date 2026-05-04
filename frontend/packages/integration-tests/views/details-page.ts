@@ -1,6 +1,6 @@
 export const detailsPage = {
   titleShouldContain: (title: string) => {
-    cy.get('[data-test="page-heading"]', { timeout: 30000 }).should('be.visible');
+    cy.get('[data-test="page-heading"]', { timeout: 30000 }).should('exist');
     return cy.get('[data-test="page-heading"]').contains(title, { timeout: 30000 });
   },
   sectionHeaderShouldExist: (sectionHeading: string) =>

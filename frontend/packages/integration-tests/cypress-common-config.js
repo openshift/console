@@ -169,7 +169,7 @@ const commonConfig = {
     ).replace(/\/$/, '')}`,
     testIsolation: false,
     experimentalMemoryManagement: true,
-    numTestsKeptInMemory: 5,
+    numTestsKeptInMemory: 50,
     injectDocumentDomain: true,
     userAgent: 'ConsoleIntegrationTestEnvironment',
   },
