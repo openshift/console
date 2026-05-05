@@ -2,7 +2,10 @@ import { renderHook } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
-import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import type { MachineKind } from '@console/internal/module/k8s';
 import {
   BAREMETAL_FLAG,
@@ -20,10 +23,12 @@ jest.mock('@console/dynamic-plugin-sdk/src/utils/flags', () => ({
 
 jest.mock('@console/dynamic-plugin-sdk/src/utils/k8s/hooks', () => ({
   useK8sWatchResource: jest.fn(),
+  useK8sWatchResources: jest.fn(),
 }));
 
 const useFlagMock = useFlag as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
+const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 
 describe('NodeBareMetalUtils', () => {
   describe('useIsBareMetalPluginActive', () => {
@@ -179,6 +184,7 @@ describe('NodeBareMetalUtils', () => {
     it('should not watch resources when bare metal plugin is not active', () => {
       useFlagMock.mockReturnValue(false);
       useK8sWatchResourceMock.mockReturnValue([[], false, undefined]);
+      useK8sWatchResourcesMock.mockReturnValue({});
 
       renderHook(() => useWatchBareMetalHost(node as NodeKind));
 
@@ -194,6 +200,7 @@ describe('NodeBareMetalUtils', () => {
       expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
         isList: true,
         groupVersionKind: BareMetalHostGroupVersionKind,
+        namespaced: true,
       });
     });
 
@@ -220,9 +227,16 @@ describe('NodeBareMetalUtils', () => {
         },
       ];
 
-      useK8sWatchResourceMock
-        .mockReturnValueOnce([hosts, true, undefined])
-        .mockReturnValueOnce([machines, true, undefined]);
+      useK8sWatchResourceMock.mockImplementation((initResource) => {
+        // useAccessibleResources calls useK8sWatchResource twice per resource: first with null (projects), then with initResource
+        if (!initResource) {
+          return [[], true, undefined];
+        }
+        if (initResource.groupVersionKind === BareMetalHostGroupVersionKind) {
+          return [hosts, true, undefined];
+        }
+        return [machines, true, undefined];
+      });
 
       const { result } = renderHook(() => useWatchBareMetalHost(node as NodeKind));
 
@@ -235,13 +249,12 @@ describe('NodeBareMetalUtils', () => {
       useFlagMock.mockReturnValue(true);
       const error = new Error('Failed to load');
 
-      useK8sWatchResourceMock
-        .mockReturnValueOnce([[], false, error])
-        .mockReturnValueOnce([[], false, undefined]);
+      useK8sWatchResourceMock.mockReturnValue([[], false, error]);
+      useK8sWatchResourcesMock.mockReturnValue({});
 
       const { result } = renderHook(() => useWatchBareMetalHost(node as NodeKind));
 
-      expect(result.current[0]).toBeUndefined();
+      expect(result.current[0]).toBe(undefined);
       expect(result.current[1]).toBe(false);
       expect(result.current[2]).toBe(error);
     });

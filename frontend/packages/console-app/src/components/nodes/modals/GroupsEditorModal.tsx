@@ -37,7 +37,7 @@ import { ExpandableAlert } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import type { GroupNameMap } from '../NodeGroupUtils';
+import type { GroupNameMap } from '../utils/NodeGroupUtils';
 import {
   GROUP_SEPARATOR,
   getGroupsByNameFromNodes,
@@ -46,7 +46,7 @@ import {
   getNodeGroupAnnotationFromGroups,
   getNodeGroups,
   GROUP_ANNOTATION,
-} from '../NodeGroupUtils';
+} from '../utils/NodeGroupUtils';
 
 import './node-group-editor-modal.scss';
 

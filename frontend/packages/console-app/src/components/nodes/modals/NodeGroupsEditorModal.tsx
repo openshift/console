@@ -41,7 +41,7 @@ import {
   getNodeGroups,
   GROUP_ANNOTATION,
   GROUP_SEPARATOR,
-} from '../NodeGroupUtils';
+} from '../utils/NodeGroupUtils';
 
 import './node-group-editor-modal.scss';
 

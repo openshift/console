@@ -40,44 +40,46 @@
 38.  [console.navigation/resource-ns](#consolenavigationresource-ns)
 39.  [console.navigation/section](#consolenavigationsection)
 40.  [console.navigation/separator](#consolenavigationseparator)
-41.  [console.page/resource/details](#consolepageresourcedetails)
-42.  [console.page/resource/list](#consolepageresourcelist)
-43.  [console.page/route](#consolepageroute)
-44.  [console.page/route/standalone](#consolepageroutestandalone)
-45.  [console.perspective](#consoleperspective)
-46.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
-47.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
-48.  [console.pvc/alert](#consolepvcalert)
-49.  [console.pvc/create-prop](#consolepvccreate-prop)
-50.  [console.pvc/delete](#consolepvcdelete)
-51.  [console.pvc/status](#consolepvcstatus)
-52.  [console.redux-reducer](#consoleredux-reducer)
-53.  [console.resource/create](#consoleresourcecreate)
-54.  [console.resource/details-item](#consoleresourcedetails-item)
-55.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
-56.  [console.storage-provider](#consolestorage-provider)
-57.  [console.tab](#consoletab)
-58.  [console.tab/horizontalNav](#consoletabhorizontalNav)
-59.  [console.telemetry/listener](#consoletelemetrylistener)
-60.  [console.topology/adapter/build](#consoletopologyadapterbuild)
-61.  [console.topology/adapter/network](#consoletopologyadapternetwork)
-62.  [console.topology/adapter/pod](#consoletopologyadapterpod)
-63.  [console.topology/component/factory](#consoletopologycomponentfactory)
-64.  [console.topology/create/connector](#consoletopologycreateconnector)
-65.  [console.topology/data/factory](#consoletopologydatafactory)
-66.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
-67.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
-68.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
-69.  [console.topology/details/tab](#consoletopologydetailstab)
-70.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
-71.  [console.topology/display/filters](#consoletopologydisplayfilters)
-72.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
-73.  [console.user-preference/group](#consoleuser-preferencegroup)
-74.  [console.user-preference/item](#consoleuser-preferenceitem)
-75.  [console.yaml-template](#consoleyaml-template)
-76.  [dev-console.add/action](#dev-consoleaddaction)
-77.  [dev-console.add/action-group](#dev-consoleaddaction-group)
-78.  [dev-console.import/environment](#dev-consoleimportenvironment)
+41.  [console.node/status](#consolenodestatus)
+42.  [console.node/sub-nav-tab](#consolenodesub-nav-tab)
+43.  [console.page/resource/details](#consolepageresourcedetails)
+44.  [console.page/resource/list](#consolepageresourcelist)
+45.  [console.page/route](#consolepageroute)
+46.  [console.page/route/standalone](#consolepageroutestandalone)
+47.  [console.perspective](#consoleperspective)
+48.  [console.project-overview/inventory-item](#consoleproject-overviewinventory-item)
+49.  [console.project-overview/utilization-item](#consoleproject-overviewutilization-item)
+50.  [console.pvc/alert](#consolepvcalert)
+51.  [console.pvc/create-prop](#consolepvccreate-prop)
+52.  [console.pvc/delete](#consolepvcdelete)
+53.  [console.pvc/status](#consolepvcstatus)
+54.  [console.redux-reducer](#consoleredux-reducer)
+55.  [console.resource/create](#consoleresourcecreate)
+56.  [console.resource/details-item](#consoleresourcedetails-item)
+57.  [console.storage-class/provisioner](#consolestorage-classprovisioner)
+58.  [console.storage-provider](#consolestorage-provider)
+59.  [console.tab](#consoletab)
+60.  [console.tab/horizontalNav](#consoletabhorizontalNav)
+61.  [console.telemetry/listener](#consoletelemetrylistener)
+62.  [console.topology/adapter/build](#consoletopologyadapterbuild)
+63.  [console.topology/adapter/network](#consoletopologyadapternetwork)
+64.  [console.topology/adapter/pod](#consoletopologyadapterpod)
+65.  [console.topology/component/factory](#consoletopologycomponentfactory)
+66.  [console.topology/create/connector](#consoletopologycreateconnector)
+67.  [console.topology/data/factory](#consoletopologydatafactory)
+68.  [console.topology/decorator/provider](#consoletopologydecoratorprovider)
+69.  [console.topology/details/resource-alert](#consoletopologydetailsresource-alert)
+70.  [console.topology/details/resource-link](#consoletopologydetailsresource-link)
+71.  [console.topology/details/tab](#consoletopologydetailstab)
+72.  [console.topology/details/tab-section](#consoletopologydetailstab-section)
+73.  [console.topology/display/filters](#consoletopologydisplayfilters)
+74.  [console.topology/relationship/provider](#consoletopologyrelationshipprovider)
+75.  [console.user-preference/group](#consoleuser-preferencegroup)
+76.  [console.user-preference/item](#consoleuser-preferenceitem)
+77.  [console.yaml-template](#consoleyaml-template)
+78.  [dev-console.add/action](#dev-consoleaddaction)
+79.  [dev-console.add/action-group](#dev-consoleaddaction-group)
+80.  [dev-console.import/environment](#dev-consoleimportenvironment)
 
 ---
 
@@ -764,6 +766,39 @@ This extension can be used to add a separator between navigation items in the na
 | `insertAfter` | `string \| string[]` | yes | Insert this item after the item referenced here. For arrays, the first one found in order is used. `insertBefore` takes precedence. |
 | `perspective` | `string` | yes | The perspective ID this item belongs to. If not specified, contributes to the default perspective. |
 | `dataAttributes` | `{ [key: string]: string; }` | yes | Adds data attributes to the DOM. |
+
+---
+
+## `console.node/status`
+
+### Summary 
+
+This extension can be used to add additional states to Node resource.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `isActive` | `CodeRef<IsNodeStatusActive<T>>` | no | Returns true if the additional state is active |
+| `PopoverContent` | `CodeRef<ComponentType<NodePopoverContentProps<T>>>` | no | React component that will be rendered in status popover |
+| `title` | `string` | no | Title of the additional Node state |
+| `resources` | `WatchK8sResources<T>` | yes | Additional resources that are needed to determine the additional state |
+
+---
+
+## `console.node/sub-nav-tab`
+
+### Summary 
+
+This extension can be used to add a tab on the sub-tabs for a Nodes details tab.<br/><br/>Notes:<br/>- The `tabId` must be unique across all tabs for the parent tab. If multiple plugins register<br/>  the same `tabId`, only the first one loaded will be displayed.<br/>- The `name` property supports i18n translation keys in the format `%namespace~key%`.<br/>- Tabs are sorted by priority in descending order (highest priority first). If two tabs have<br/>  the same priority, they are sorted alphabetically by name.<br/>- The component receives the Node resource as the `obj` prop via `SubPageComponentProps`.
+
+### Properties
+
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
+| `parentTab` | `'configuration'` | no | Which detail tab to add the sub-tab to. Currently only 'configuration' is supported. |
+| `page` | `{ tabId: string; name: string; priority: number; }` | no | The page to be shown in node sub tabs. It takes tab name as name and priority of the tab.<br/><br/>Notes:<br/>Tabs are shown in priority order from highest to lowest. Current built-in node tab priorities are:<br/>- **configuration:**<br/>  - Storage: 70<br/>  - Machine: 50 |
+| `component` | `CodeRef<ComponentType<SubPageComponentProps<K8sResourceCommon>>>` | no | The component to be rendered for the sub tab contents. Receives the Node resource as the `obj` prop. |
 
 ---
 

@@ -7,15 +7,15 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   BareMetalHostModel,
   metricsFromBareMetalHosts,
   useIsBareMetalPluginActive,
   useWatchBareMetalHost,
-} from '@console/app/src/components/nodes/NodeBareMetalUtils';
-import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { DASH } from '@console/shared/src/constants/ui';
+} from '../utils/NodeBareMetalUtils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 type BareMetalInventoryItemsProps = {
