@@ -26,8 +26,16 @@ jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
 
 jest.mock('@console/shared/src/hooks/useUser', () => ({
   useUser: jest.fn(() => ({
-    user: {},
-    userResource: {},
+    user: {
+      username: 'shadowman',
+    },
+    userResource: {
+      metadata: {
+        annotations: {
+          'toolchain.dev.openshift.com/sso-user-id': 'sandbox-user-id-123',
+        },
+      },
+    },
     userResourceLoaded: true,
     userResourceError: null,
     username: 'testuser',
@@ -36,21 +44,14 @@ jest.mock('@console/shared/src/hooks/useUser', () => ({
   })),
 }));
 
-const mockUserResource = {};
-
 const exampleReturnValue = {
-  accountMail: undefined,
+  accountMailDomain: '',
   clusterId: undefined,
   clusterType: undefined,
   consoleVersion: undefined,
   organizationId: undefined,
   path: undefined,
-  userResource: mockUserResource,
 };
-
-jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
-  useK8sGet: () => [mockUserResource, true],
-}));
 
 const mockUserSettings = useUserSettings as jest.Mock;
 
@@ -227,6 +228,7 @@ describe('useTelemetry', () => {
       ...exampleReturnValue,
       clusterType: 'DEVSANDBOX',
       consoleVersion: 'x.y.z',
+      sandboxUserId: 'sandbox-user-id-123',
     });
   });
 
@@ -352,5 +354,52 @@ describe('useTelemetry', () => {
     const fireTelemetryEvent = result.current;
     fireTelemetryEvent('test 11');
     expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('anonymizes email to only return the domain', () => {
+    const email = 'shadowman@redhat.com';
+    const expectedDomain = 'redhat.com';
+
+    window.SERVER_FLAGS = {
+      ...originServerFlags,
+      telemetry: {
+        ACCOUNT_MAIL: email,
+      },
+    };
+    updateClusterPropertiesFromTests();
+    const { result } = testHook(() => useTelemetry());
+    const fireTelemetryEvent = result.current;
+    fireTelemetryEvent('test 12');
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith('test 12', {
+      ...exampleReturnValue,
+      accountMailDomain: expectedDomain,
+    });
+
+    // assert PII is not sent
+    const callArgs = listener.mock.calls[0][1];
+    expect(callArgs.user).toBeUndefined();
+    expect(callArgs.userResource).toBeUndefined();
+    expect(callArgs.accountMail).toBeUndefined();
+    expect(callArgs.sandboxUserId).toBeUndefined();
+  });
+
+  ['invalid-email', 'shadowman@', 'red@hat@redhat.com', '@@', ''].forEach((email) => {
+    it(`should not extract domains from invalid emails (${email})`, () => {
+      window.SERVER_FLAGS = {
+        ...originServerFlags,
+        telemetry: {
+          ACCOUNT_MAIL: email,
+        },
+      };
+      updateClusterPropertiesFromTests();
+      const { result } = testHook(() => useTelemetry());
+      const fireTelemetryEvent = result.current;
+      fireTelemetryEvent('test 12');
+      expect(listener).toHaveBeenCalledWith('test 12', {
+        ...exampleReturnValue,
+        accountMailDomain: '',
+      });
+    });
   });
 });
