@@ -1184,6 +1184,12 @@ export type ExtPodKind = {
   status?: ExtPodStatus;
 } & K8sResourceKind;
 
+/** Describes `user.openshift.io~v1~User` */
+export type UserKind = {
+  fullName?: string;
+  identities: string[];
+} & K8sResourceCommon;
+
 export type PodControllerOverviewItem = {
   alerts: OverviewItemAlerts;
   revision: number;

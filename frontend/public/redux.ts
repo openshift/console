@@ -2,12 +2,10 @@ import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObje
 import { featureFlagMiddleware } from '@console/internal/plugins';
 import * as _ from 'lodash';
 import { thunk } from 'redux-thunk';
-import {
-  ResolvedExtension,
-  ReduxReducer,
-  SDKReducers,
-  SDKStoreState,
-} from '@console/dynamic-plugin-sdk';
+import type { ReduxReducer } from '@console/dynamic-plugin-sdk/src/extensions/redux';
+import { SDKReducers } from '@console/dynamic-plugin-sdk/src/app/redux';
+import type { SDKStoreState } from '@console/dynamic-plugin-sdk/src/app/redux-types';
+import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { FeatureSubStore } from '@console/dynamic-plugin-sdk/src/app/features';
 import { featureReducer, featureReducerName } from './reducers/features';
 import ObserveReducers, { ObserveState } from './reducers/observe';

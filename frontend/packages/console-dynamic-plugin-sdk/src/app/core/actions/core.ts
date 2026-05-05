@@ -1,7 +1,6 @@
 import type { ActionType as Action } from 'typesafe-actions';
 import { action } from 'typesafe-actions';
-import type { UserKind } from '@console/internal/module/k8s/types';
-import type { UserInfo } from '../../../extensions';
+import type { UserInfo, UserKind } from '../../../extensions';
 import type { AdmissionWebhookWarning } from '../../redux-types';
 
 export enum ActionType {
