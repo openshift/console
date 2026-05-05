@@ -1,5 +1,4 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router';
 import * as ConsoleShared from '@console/shared';
 import EventingListPage from '../EventingListPage';
@@ -10,19 +9,15 @@ jest.mock('react-router', () => ({
 }));
 
 jest.mock('@console/internal/components/namespace-bar', () => ({
-  NamespaceBar: 'NamespaceBar',
+  NamespaceBar: () => <div data-test="mock-NamespaceBar" />,
 }));
 
 jest.mock('@console/shared', () => ({
-  MultiTabListPage: jest.fn(() => 'MultiTabListPage'),
+  MultiTabListPage: jest.fn(() => <div data-test="mock-MultiTabListPage" />),
   isCatalogTypeEnabled: jest.fn(() => true),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('../brokers-list/BrokerListPage', () => ({
   __esModule: true,
@@ -60,9 +55,9 @@ describe('EventingListPage', () => {
   });
 
   it('should render NamespaceBar and MultiTabListPage', () => {
-    const { container } = render(<EventingListPage />);
-    expect(container.querySelector('NamespaceBar')).toBeInTheDocument();
-    expect(container.textContent).toContain('MultiTabListPage');
+    render(<EventingListPage />);
+    expect(screen.getByTestId('mock-NamespaceBar')).toBeVisible();
+    expect(screen.getByTestId('mock-MultiTabListPage')).toBeVisible();
   });
 
   it('should render MultiTabListPage with correct props', () => {
@@ -70,7 +65,7 @@ describe('EventingListPage', () => {
 
     expect(mockMultiTabListPage).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'knative-plugin~Eventing',
+        title: 'Eventing',
         pages: expect.arrayContaining([
           expect.objectContaining({
             component: expect.any(String),
@@ -84,15 +79,15 @@ describe('EventingListPage', () => {
         ]),
         menuActions: expect.objectContaining({
           eventSource: expect.objectContaining({
-            label: 'knative-plugin~Event Source',
+            label: 'Event Source',
             onSelection: expect.any(Function),
           }),
           brokers: expect.objectContaining({
-            label: 'knative-plugin~Broker',
+            label: 'Broker',
             onSelection: expect.any(Function),
           }),
           channels: expect.objectContaining({
-            label: 'knative-plugin~Channel',
+            label: 'Channel',
             onSelection: expect.any(Function),
           }),
         }),

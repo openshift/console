@@ -44,7 +44,7 @@ const RevisionsOverviewListItem: FC<RevisionsOverviewListItemProps> = ({ revisio
         )}
       </Grid>
       {deploymentData.name && (
-        <div className="odc-revision-deployment-list">
+        <div className="odc-revision-deployment-list" data-test="revision-deployment-list">
           <Grid hasGutter>
             <GridItem span={9} sm={8}>
               <ResourceLink

@@ -1,5 +1,5 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeRouteObj } from '../../../topology/__tests__/topology-knative-test-data';
@@ -7,12 +7,19 @@ import type { RouteKind } from '../../../types';
 import RouteRow from '../RouteRow';
 
 jest.mock('@console/internal/components/factory', () => ({
-  TableData: 'TableData',
+  TableData: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <td data-test="mock-TableData" className={className}>
+      {children}
+    </td>
+  ),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  ExternalLinkWithCopy: 'ExternalLinkWithCopy',
+  ResourceLink: jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .knativeInternalUtilsStubs.ResourceLink,
+  ExternalLinkWithCopy: ({ link }: { link?: string }) => (
+    <span data-test="mock-ExternalLinkWithCopy" data-link={link} />
+  ),
   Kebab: {
     columnClass: 'pf-c-table__action',
   },
@@ -51,38 +58,33 @@ describe('RouteRow', () => {
   });
 
   it('should render the route row with all TableData elements', () => {
-    const { container } = render(<RouteRow {...routeData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(7);
+    render(<RouteRow {...routeData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(7);
   });
 
   it('should show ExternalLinkWithCopy when route URL exists in status', () => {
-    const { container } = render(<RouteRow {...routeData} />);
-    const externalLinks = container.querySelectorAll('externallinkwithcopy');
-    expect(externalLinks.length).toBeGreaterThan(0);
+    render(<RouteRow {...routeData} />);
+    expect(screen.getAllByTestId('mock-ExternalLinkWithCopy').length).toBeGreaterThan(0);
   });
 
   it('should handle case when status is not present', () => {
     const { status, ...objWithoutStatus } = routeData.obj;
     const noStatusRouteData = {
       ...routeData,
-      // intentionally creating invalid object for testing
       obj: objWithoutStatus as RouteKind,
     };
-    const { container } = render(<RouteRow {...noStatusRouteData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(7);
+    render(<RouteRow {...noStatusRouteData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(7);
   });
 
   it('should render conditions when status is present', () => {
-    const { container } = render(<RouteRow {...routeData} />);
-    expect(container.querySelector('tabledata')).toBeInTheDocument();
+    render(<RouteRow {...routeData} />);
+    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
   });
 
   it('should show ResourceLink for traffic when traffic exists', () => {
-    const { container } = render(<RouteRow {...routeData} />);
-    const resourceLinks = container.querySelectorAll('resourcelink');
-    expect(resourceLinks.length).toBeGreaterThan(0);
+    render(<RouteRow {...routeData} />);
+    expect(screen.getAllByTestId('mock-ResourceLink').length).toBeGreaterThan(0);
   });
 
   it('should handle case when traffic is not present', () => {
@@ -93,8 +95,7 @@ describe('RouteRow', () => {
         status: _.omit(routeData.obj.status, 'traffic'),
       },
     };
-    const { container } = render(<RouteRow {...noTrafficRouteData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(7);
+    render(<RouteRow {...noTrafficRouteData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(7);
   });
 });

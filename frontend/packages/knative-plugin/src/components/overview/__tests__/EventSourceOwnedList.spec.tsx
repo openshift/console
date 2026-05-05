@@ -1,14 +1,15 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { EVENT_SOURCE_SINK_BINDING_KIND, KNATIVE_EVENT_SOURCE_APIGROUP } from '../../../const';
 import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import EventSourceOwnedList from '../EventSourceOwnedList';
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  SidebarSectionHeading: 'SidebarSectionHeading',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 describe('EventSourceOwnedList', () => {
   const mockData: K8sResourceKind = getEventSourceResponse(
@@ -18,8 +19,8 @@ describe('EventSourceOwnedList', () => {
   ).data[0];
 
   it('should render SidebarSectionHeading, ResourceLink', () => {
-    const { container } = render(<EventSourceOwnedList source={mockData} />);
-    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
-    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
+    render(<EventSourceOwnedList source={mockData} />);
+    expect(screen.getByTestId('mock-SidebarSectionHeading')).toBeVisible();
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
   });
 });

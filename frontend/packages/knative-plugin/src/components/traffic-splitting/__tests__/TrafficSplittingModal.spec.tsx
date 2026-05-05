@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import type { ComponentProps } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +23,11 @@ jest.mock('@patternfly/react-core', () => ({
       </button>
     ),
   ),
-  Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
+  Form: jest.fn(({ children, ...props }) => (
+    <form data-test={props.id} {...props}>
+      {children}
+    </form>
+  )),
 }));
 
 jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
@@ -36,11 +39,7 @@ jest.mock('../TrafficSplittingFields', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 type TrafficSplittingModalProps = ComponentProps<typeof TrafficSplittingModal>;
 
@@ -60,22 +59,23 @@ describe('TrafficSplittingModal', () => {
   });
 
   it('should render form with modal structure', () => {
-    const { container } = render(<TrafficSplittingModal {...formProps} />);
-    expect(container.querySelector('form')).toBeInTheDocument();
-    expect(container.querySelector('form')).toHaveAttribute('id', 'traffic-splitting-form');
+    render(<TrafficSplittingModal {...formProps} />);
+    const form = screen.getByTestId('traffic-splitting-form');
+    expect(form).toBeInTheDocument();
+    expect(form).toHaveAttribute('id', 'traffic-splitting-form');
   });
 
   it('should call handleSubmit on form submit', async () => {
     const user = userEvent.setup();
     render(<TrafficSplittingModal {...formProps} />);
-    await user.click(screen.getByRole('button', { name: 'knative-plugin~Save' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
     expect(formProps.handleSubmit).toHaveBeenCalled();
   });
 
   it('should call cancel when Cancel is clicked', async () => {
     const user = userEvent.setup();
     render(<TrafficSplittingModal {...formProps} />);
-    await user.click(screen.getByRole('button', { name: 'knative-plugin~Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(formProps.cancel).toHaveBeenCalled();
   });
 });

@@ -12,11 +12,7 @@ jest.mock('formik', () => ({
   },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sUpdate: jest.fn(),

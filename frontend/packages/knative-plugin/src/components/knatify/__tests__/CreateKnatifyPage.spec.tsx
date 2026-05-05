@@ -68,12 +68,7 @@ jest.mock('react-router', () => ({
   useNavigate: jest.fn(() => jest.fn()),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  withTranslation: () => (Component: any) => Component,
-}));
+jest.mock('react-i18next');
 
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 const useRelatedHPAMock = useRelatedHPA as jest.Mock;

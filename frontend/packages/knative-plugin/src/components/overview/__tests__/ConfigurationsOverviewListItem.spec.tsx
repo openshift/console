@@ -1,4 +1,4 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../../models';
@@ -6,27 +6,28 @@ import { sampleKnativeConfigurations } from '../../../topology/__tests__/topolog
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 
 jest.mock('@patternfly/react-core', () => ({
-  ListItem: 'ListItem',
+  ListItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-ListItem">{children}</div>
+  ),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 describe('ConfigurationsOverviewListItem', () => {
   it('should list the Configuration', () => {
-    const { container } = render(
-      <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
-    );
-    expect(container.querySelector('ListItem')).toBeInTheDocument();
+    render(<ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />);
+    expect(screen.getByTestId('mock-ListItem')).toBeVisible();
   });
 
   it('should have ResourceLink with proper kind', () => {
-    const { container } = render(
-      <ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />,
-    );
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    render(<ConfigurationsOverviewListItem configuration={sampleKnativeConfigurations.data[0]} />);
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', referenceForModel(ConfigurationModel));
   });
 
@@ -37,15 +38,12 @@ describe('ConfigurationsOverviewListItem', () => {
       status: { latestCreatedRevisionName },
     } = sampleKnativeConfigurations.data[0];
 
-    // Check for the labels and the revision names
     expect(screen.getByText('Latest created Revision name:')).toBeInTheDocument();
     expect(screen.getByText('Latest ready Revision name:')).toBeInTheDocument();
 
-    // Use getAllByText to handle duplicate revision names
     const revisionNameElements = screen.getAllByText(latestCreatedRevisionName);
-    expect(revisionNameElements).toHaveLength(2); // Should appear twice if they're the same
+    expect(revisionNameElements).toHaveLength(2);
 
-    // Or verify just that the text content includes both revision names
     expect(screen.getByText('Latest created Revision name:')).toBeInTheDocument();
     expect(screen.getByText('Latest ready Revision name:')).toBeInTheDocument();
   });

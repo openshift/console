@@ -1,6 +1,5 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import type { ComponentProps } from 'react';
-import { render } from '@testing-library/react';
+import type { ComponentProps, ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import {
   EventTriggerObj,
   EventSubscriptionObj,
@@ -8,14 +7,32 @@ import {
 import SinkPubsub from '../SinkPubsub';
 
 jest.mock('formik', () => ({
-  Formik: 'Formik',
+  Formik: ({
+    children,
+  }: {
+    children?: ((p: Record<string, unknown>) => ReactNode) | ReactNode;
+  }) => (
+    <div data-test="mock-Formik">
+      {typeof children === 'function'
+        ? children({
+            values: { ref: { name: '' } },
+            errors: {},
+            touched: {},
+            handleChange: jest.fn(),
+            handleBlur: jest.fn(),
+            handleSubmit: jest.fn(),
+            handleReset: jest.fn(),
+            setFieldValue: jest.fn(),
+            setStatus: jest.fn(),
+            status: { error: '' },
+            isSubmitting: false,
+          })
+        : children}
+    </div>
+  ),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sUpdate: jest.fn(),
@@ -44,7 +61,7 @@ jest.mock('../../pub-sub/pub-sub-utils', () => ({
 
 jest.mock('../SinkPubsubModal', () => ({
   __esModule: true,
-  default: 'SinkPubsubModal',
+  default: () => null,
 }));
 
 type SinkPubsubProps = ComponentProps<typeof SinkPubsub>;
@@ -56,23 +73,23 @@ describe('SinkPubsub', () => {
   };
 
   it('should render the component with Formik', () => {
-    const { container } = render(<SinkPubsub {...formProps} />);
-    expect(container.querySelector('formik')).toBeInTheDocument();
+    render(<SinkPubsub {...formProps} />);
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 
   it('should render properly for Subscription resource type', () => {
-    const { container } = render(<SinkPubsub {...formProps} />);
-    expect(container.querySelector('formik')).toBeInTheDocument();
+    render(<SinkPubsub {...formProps} />);
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 
   it('should render properly for Trigger resource type', () => {
     const triggerProps = { source: EventTriggerObj, resourceType: 'Trigger' };
-    const { container } = render(<SinkPubsub {...triggerProps} />);
-    expect(container.querySelector('formik')).toBeInTheDocument();
+    render(<SinkPubsub {...triggerProps} />);
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 
   it('should handle different source objects', () => {
-    const { container } = render(<SinkPubsub {...formProps} />);
-    expect(container.querySelector('formik')).toBeInTheDocument();
+    render(<SinkPubsub {...formProps} />);
+    expect(screen.getByTestId('mock-Formik')).toBeInTheDocument();
   });
 });

@@ -1,5 +1,4 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { FormikValues } from 'formik';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getDefaultEventingData } from '../../../../utils/__tests__/knative-serving-data';
@@ -10,12 +9,16 @@ const mockEventingData = getDefaultEventingData(EventSources.PingSource);
 
 jest.mock('@console/dev-console/src/components/import/app/AppSection', () => ({
   __esModule: true,
-  default: 'AppSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-AppSection'),
 }));
 
 jest.mock('../SinkSection', () => ({
   __esModule: true,
-  default: 'SinkSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-SinkSection'),
 }));
 
 jest.mock('formik', () => ({
@@ -36,8 +39,8 @@ describe('EventSource Section', () => {
 
   it('should render SinkSection, AppSection for CronjobSource', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
-    const { container } = render(<EventSourceSection namespace={namespace} />);
-    expect(container.querySelector('SinkSection')).toBeInTheDocument();
-    expect(container.querySelector('AppSection')).toBeInTheDocument();
+    render(<EventSourceSection namespace={namespace} />);
+    expect(screen.getByText('mock-SinkSection')).toBeVisible();
+    expect(screen.getByText('mock-AppSection')).toBeVisible();
   });
 });

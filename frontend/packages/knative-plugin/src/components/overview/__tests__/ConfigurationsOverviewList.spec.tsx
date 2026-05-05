@@ -1,11 +1,10 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import { render, screen } from '@testing-library/react';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 
 jest.mock('../ConfigurationsOverviewListItem', () => ({
   __esModule: true,
-  default: 'ConfigurationsOverviewListItem',
+  default: () => <span data-test="mock-ConfigurationsOverviewListItem" />,
 }));
 
 describe('ConfigurationsOverviewList', () => {
@@ -15,9 +14,7 @@ describe('ConfigurationsOverviewList', () => {
   });
 
   it('should render ConfigurationsOverviewListItem', () => {
-    const { container } = render(
-      <ConfigurationsOverviewList configurations={sampleKnativeConfigurations.data} />,
-    );
-    expect(container.querySelector('ConfigurationsOverviewListItem')).toBeInTheDocument();
+    render(<ConfigurationsOverviewList configurations={sampleKnativeConfigurations.data} />);
+    expect(screen.getByTestId('mock-ConfigurationsOverviewListItem')).toBeVisible();
   });
 });

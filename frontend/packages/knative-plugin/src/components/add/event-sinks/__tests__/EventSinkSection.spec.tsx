@@ -1,5 +1,4 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useFormikContext } from 'formik';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { mockKameletSink } from '../../__mocks__/Kamelet-data';
@@ -8,21 +7,29 @@ import EventSinkSection from '../EventSinkSection';
 
 jest.mock('../KafkaSinkSection', () => ({
   __esModule: true,
-  default: 'KafkaSinkSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-KafkaSinkSection'),
 }));
 
 jest.mock('../SourceSection', () => ({
   __esModule: true,
-  default: 'SourceSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-SourceSection'),
 }));
 
 jest.mock('@console/dev-console/src/components/import/app/AppSection', () => ({
   __esModule: true,
-  default: 'AppSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-AppSection'),
 }));
 
 jest.mock('@console/shared', () => ({
-  DynamicFormField: 'DynamicFormField',
+  DynamicFormField: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-DynamicFormField'),
   useFormikValidationFix: jest.fn(),
 }));
 
@@ -88,27 +95,25 @@ describe('EventSinkSection', () => {
 
   it('should render SourceSection, AppSection, DynamicFormField for Kamelet sink', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([[], true]);
-    const { container } = render(
-      <EventSinkSection namespace={namespace} kameletSink={mockKameletSink} />,
-    );
-    expect(container.querySelector('SourceSection')).toBeInTheDocument();
-    expect(container.querySelector('AppSection')).toBeInTheDocument();
-    expect(container.querySelector('DynamicFormField')).toBeInTheDocument();
+    render(<EventSinkSection namespace={namespace} kameletSink={mockKameletSink} />);
+    expect(screen.getByText('mock-SourceSection')).toBeVisible();
+    expect(screen.getByText('mock-AppSection')).toBeVisible();
+    expect(screen.getByText('mock-DynamicFormField')).toBeVisible();
   });
 
   it('should render AppSection and KafkaSinkSection for Kafka sink', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([[], true]);
     mockFormikContext.mockReturnValue(formikMockDataKafkaSink);
-    const { container } = render(<EventSinkSection namespace={namespace} />);
-    expect(container.querySelector('KafkaSinkSection')).toBeInTheDocument();
-    expect(container.querySelector('AppSection')).toBeInTheDocument();
+    render(<EventSinkSection namespace={namespace} />);
+    expect(screen.getByText('mock-KafkaSinkSection')).toBeVisible();
+    expect(screen.getByText('mock-AppSection')).toBeVisible();
   });
 
   it('should not render SourceSection and DynamicFormField for Kafka sink', () => {
     (useK8sWatchResource as jest.Mock).mockReturnValue([[], true]);
     mockFormikContext.mockReturnValue(formikMockDataKafkaSink);
-    const { container } = render(<EventSinkSection namespace={namespace} />);
-    expect(container.querySelector('SourceSection')).not.toBeInTheDocument();
-    expect(container.querySelector('DynamicFormField')).not.toBeInTheDocument();
+    render(<EventSinkSection namespace={namespace} />);
+    expect(screen.queryByText('mock-SourceSection')).not.toBeInTheDocument();
+    expect(screen.queryByText('mock-DynamicFormField')).not.toBeInTheDocument();
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import type { ComponentProps } from 'react';
 import { render } from '@testing-library/react';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';
@@ -16,11 +15,7 @@ jest.mock('formik', () => ({
   },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sUpdate: jest.fn(),
@@ -64,8 +59,9 @@ describe('SinkSource', () => {
   });
 
   it('should render Formik child with proper props', () => {
-    const { container } = render(<SinkSource {...formProps} />);
-    expect(container).toBeInTheDocument();
-    expect(mockCapturedFormikProps.children).toBeDefined();
+    render(<SinkSource {...formProps} />);
+    expect(mockCapturedFormikProps).toEqual(
+      expect.objectContaining({ children: expect.any(Function) }),
+    );
   });
 });

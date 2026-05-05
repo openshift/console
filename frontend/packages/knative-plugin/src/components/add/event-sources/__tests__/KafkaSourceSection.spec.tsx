@@ -1,23 +1,36 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import KafkaSourceSection from '../KafkaSourceSection';
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,
-  default: 'FormSection',
+  default: ({ children, title }: { children?: ReactNode; title?: ReactNode }) => (
+    <div>
+      {title != null ? <h2>{title}</h2> : null}
+      {children}
+    </div>
+  ),
 }));
 
 jest.mock('../KafkaSourceNetSection', () => ({
   __esModule: true,
-  default: 'KafkaSourceNetSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-KafkaSourceNetSection'),
 }));
 
 jest.mock('@console/shared', () => ({
-  MultiTypeaheadField: 'MultiTypeaheadField',
+  MultiTypeaheadField: ({ label, ...rest }: { label?: string; [k: string]: unknown }) => (
+    <input type="text" aria-label={label} {...(rest as ComponentPropsWithoutRef<'input'>)} />
+  ),
   ResourceDropdownField: 'ResourceDropdownField',
-  InputField: 'InputField',
+  InputField: ({ label, ...rest }: { label?: string; [k: string]: unknown }) => (
+    <input type="text" aria-label={label} {...(rest as ComponentPropsWithoutRef<'input'>)} />
+  ),
 }));
+
+jest.mock('react-i18next');
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
@@ -41,8 +54,8 @@ describe('KafkaSourceSection', () => {
       kafkatopics: { data: [], loaded: true },
       kafkaconnections: { data: [], loaded: true },
     });
-    const { container } = render(<KafkaSourceSection title={title} namespace="my-app" />);
-    expect(container.querySelector('FormSection')).toBeInTheDocument();
+    render(<KafkaSourceSection title={title} namespace="my-app" />);
+    expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
   });
 
   it('should render BootstrapServers and Topics fields with ', () => {
@@ -51,16 +64,16 @@ describe('KafkaSourceSection', () => {
       kafkatopics: { data: [], loaded: true },
       kafkaconnections: { data: [], loaded: true },
     });
-    const { container } = render(<KafkaSourceSection title={title} namespace="my-app" />);
-    const bootstrapServersField = container.querySelector(
-      '[data-test-id="kafkasource-bootstrapservers-field"]',
-    );
+    render(<KafkaSourceSection title={title} namespace="my-app" />);
+    const bootstrapServersField = screen.getByRole('textbox', {
+      name: 'Bootstrap servers',
+    });
     expect(bootstrapServersField).toBeInTheDocument();
-    expect(bootstrapServersField).toHaveAttribute('required');
+    expect(bootstrapServersField).toBeRequired();
 
-    const topicsField = container.querySelector('[data-test-id="kafkasource-topics-field"]');
+    const topicsField = screen.getByRole('textbox', { name: 'Topics' });
     expect(topicsField).toBeInTheDocument();
-    expect(topicsField).toHaveAttribute('required');
+    expect(topicsField).toBeRequired();
   });
 
   it('should render consumergroup, netsection', () => {
@@ -69,13 +82,13 @@ describe('KafkaSourceSection', () => {
       kafkatopics: { data: [], loaded: true },
       kafkaconnections: { data: [], loaded: true },
     });
-    const { container } = render(<KafkaSourceSection title={title} namespace="my-app" />);
-    const consumerGroupField = container.querySelector(
-      '[data-test-id="kafkasource-consumergroup-field"]',
-    );
+    render(<KafkaSourceSection title={title} namespace="my-app" />);
+    const consumerGroupField = screen.getByRole('textbox', {
+      name: 'Consumer group',
+    });
     expect(consumerGroupField).toBeInTheDocument();
-    expect(consumerGroupField).toHaveAttribute('required');
-    expect(container.querySelector('KafkaSourceNetSection')).toBeInTheDocument();
+    expect(consumerGroupField).toBeRequired();
+    expect(screen.getByText('mock-KafkaSourceNetSection')).toBeVisible();
   });
 
   it('should render BootstrapServers and Topics fields with even if kafkaconnections loaded failed', () => {
@@ -84,15 +97,15 @@ describe('KafkaSourceSection', () => {
       kafkatopics: { data: [], loaded: true },
       kafkaconnections: { data: null, loaded: false, loadError: 'Error' },
     });
-    const { container } = render(<KafkaSourceSection title={title} namespace="my-app" />);
-    const bootstrapServersField = container.querySelector(
-      '[data-test-id="kafkasource-bootstrapservers-field"]',
-    );
+    render(<KafkaSourceSection title={title} namespace="my-app" />);
+    const bootstrapServersField = screen.getByRole('textbox', {
+      name: 'Bootstrap servers',
+    });
     expect(bootstrapServersField).toBeInTheDocument();
-    expect(bootstrapServersField).toHaveAttribute('required');
+    expect(bootstrapServersField).toBeRequired();
 
-    const topicsField = container.querySelector('[data-test-id="kafkasource-topics-field"]');
+    const topicsField = screen.getByRole('textbox', { name: 'Topics' });
     expect(topicsField).toBeInTheDocument();
-    expect(topicsField).toHaveAttribute('required');
+    expect(topicsField).toBeRequired();
   });
 });

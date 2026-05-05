@@ -33,11 +33,7 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
   default: jest.fn(() => null),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 type SinkUriModalProps = ComponentProps<typeof SinkUriModal>;
 

@@ -1,10 +1,12 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import DynamicResourceLink from '../DynamicResourceLink';
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 type DynamicResourceLinkProps = React.ComponentProps<typeof DynamicResourceLink>;
 let sampleProps: DynamicResourceLinkProps;
@@ -20,8 +22,8 @@ describe('DynamicResourceLink', () => {
   });
 
   it('should render ResourceLink with proper kind based on model', () => {
-    const { container } = render(<DynamicResourceLink {...sampleProps} />);
-    expect(container.querySelector('resourcelink')).toBeInTheDocument();
+    render(<DynamicResourceLink {...sampleProps} />);
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
   });
 
   it('should render ResourceLink with proper kind based on refResource', () => {
@@ -33,7 +35,7 @@ describe('DynamicResourceLink', () => {
         name: 'ksvc-display0',
       },
     };
-    const { container } = render(<DynamicResourceLink {...sampleResourceRef} />);
-    expect(container.querySelector('resourcelink')).toBeInTheDocument();
+    render(<DynamicResourceLink {...sampleResourceRef} />);
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
   });
 });

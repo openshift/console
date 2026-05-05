@@ -1,44 +1,49 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import type { ComponentProps } from 'react';
-import { render } from '@testing-library/react';
+import type { ComponentProps, ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import KnatifyForm from '../KnatifyForm';
 
 jest.mock('@console/dev-console/src/components/import/advanced/AdvancedSection', () => ({
   __esModule: true,
-  default: 'AdvancedSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-AdvancedSection'),
 }));
 
 jest.mock('@console/dev-console/src/components/import/app/AppSection', () => ({
   __esModule: true,
-  default: 'AppSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-AppSection'),
 }));
 
 jest.mock('@console/dev-console/src/components/import/image-search/ImageSearchSection', () => ({
   __esModule: true,
-  default: 'ImageSearchSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-ImageSearchSection'),
 }));
 
 jest.mock('@console/dev-console/src/components/import/section/IconSection', () => ({
   __esModule: true,
-  default: 'IconSection',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-IconSection'),
 }));
 
 jest.mock('@console/shared/src/components/form-utils', () => ({
-  FormFooter: 'FormFooter',
-  FlexForm: 'FlexForm',
-  FormBody: 'FormBody',
+  FormFooter: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-FormFooter'),
+  FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
+  FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
   usePreventDataLossLock: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 let knatifyFormProps: ComponentProps<typeof KnatifyForm>;
 
@@ -54,11 +59,11 @@ describe('KnatifyForm', () => {
   });
 
   it('should render ImageSearchSection, IconSection, AppSection, AdvancedSection and FormFooter', () => {
-    const { container } = render(<KnatifyForm {...knatifyFormProps} />);
-    expect(container.querySelector('ImageSearchSection')).toBeInTheDocument();
-    expect(container.querySelector('IconSection')).toBeInTheDocument();
-    expect(container.querySelector('AppSection')).toBeInTheDocument();
-    expect(container.querySelector('AdvancedSection')).toBeInTheDocument();
-    expect(container.querySelector('FormFooter')).toBeInTheDocument();
+    render(<KnatifyForm {...knatifyFormProps} />);
+    expect(screen.getByText('mock-ImageSearchSection')).toBeVisible();
+    expect(screen.getByText('mock-IconSection')).toBeVisible();
+    expect(screen.getByText('mock-AppSection')).toBeVisible();
+    expect(screen.getByText('mock-AdvancedSection')).toBeVisible();
+    expect(screen.getByText('mock-FormFooter')).toBeVisible();
   });
 });

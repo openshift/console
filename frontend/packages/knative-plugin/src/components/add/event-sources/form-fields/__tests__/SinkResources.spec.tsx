@@ -1,9 +1,8 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
+import { screen } from '@testing-library/react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import SinkResources from '../SinkResources';
 
-// Mock PatternFly topology to prevent console warnings during tests
 jest.mock('@patternfly/react-topology', () => ({}));
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -15,7 +14,9 @@ jest.mock('../../../../../utils/fetch-dynamic-eventsources-utils', () => ({
 }));
 
 jest.mock('@console/shared', () => ({
-  ResourceDropdownField: 'ResourceDropdownField',
+  ResourceDropdownField: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-ResourceDropdownField'),
   getFieldId: jest.fn(() => 'mocked-field-id'),
 }));
 
@@ -46,14 +47,12 @@ describe('SinkResources', () => {
   });
 
   it('should be able to sink to k8s service', () => {
-    const { container } = renderWithProviders(<SinkResources isMoveSink namespace="test" />);
-    const resourceDropdownField = container.querySelector('ResourceDropdownField');
-    expect(resourceDropdownField).toBeInTheDocument();
+    renderWithProviders(<SinkResources isMoveSink namespace="test" />);
+    expect(screen.getByText('mock-ResourceDropdownField')).toBeVisible();
   });
 
   it('should be able to sink to knative service, broker, k8s service and channels', async () => {
-    const { container } = renderWithProviders(<SinkResources isMoveSink namespace="test" />);
-    const resourceDropdownField = container.querySelector('ResourceDropdownField');
-    expect(resourceDropdownField).toBeInTheDocument();
+    renderWithProviders(<SinkResources isMoveSink namespace="test" />);
+    expect(await screen.findByText('mock-ResourceDropdownField')).toBeVisible();
   });
 });
