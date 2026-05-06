@@ -12,6 +12,7 @@
   "No Image vulnerabilities found": "イメージの脆弱性が見つかりません",
   "Image Manifest Vulnerabilities": "イメージマニフェストの脆弱性",
   "Search by image name...": "イメージ名で検索...",
+  "Unable to load vulnerability data": "脆弱性データを読み込めません",
   "Container": "コンテナー",
   "Image": "イメージ",
   "Security scan": "セキュリティースキャン",
