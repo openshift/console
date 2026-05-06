@@ -15,6 +15,7 @@
     "generate-schema": "yarn ts-node scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node scripts/generate-doc.ts",
     "generate-pkg-assets": "yarn ts-node scripts/generate-pkg-assets.ts",
+    "set-dist-version": "sh -c 'for pkg in core internal webpack; do npm version --no-git-tag-version --prefix dist/$pkg $0; done'",
     "validate": "yarn ts-node scripts/validate-extensions.ts",
     "ts-node": "../../node_modules/.bin/ts-node -O '{\"module\":\"commonjs\"}'"
   },

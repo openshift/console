@@ -13,7 +13,7 @@ import { resolvePath } from './utils/path';
 type GeneratedPackage = {
   /** Package output directory. */
   outDir: string;
-  /** Package manifest. Note: `version` is updated via the publish script. */
+  /** Package manifest. Note: `version` must be set before publishing. */
   manifest: PackageJson;
   /** Additional files or directories to copy to the package output directory. */
   filesToCopy: Record<string, string>;
