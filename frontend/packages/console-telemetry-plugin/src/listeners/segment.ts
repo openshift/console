@@ -47,7 +47,7 @@ export const eventListener: TelemetryEventListener = async (
   switch (eventType) {
     case 'identify':
       {
-        const { user, userResource, ...otherProperties }: TelemetryEventProperties = properties;
+        const { user, sandboxUserId, ...otherProperties }: TelemetryEventProperties = properties;
         const clusterId = otherProperties?.clusterId;
         const organizationId = otherProperties?.organizationId;
         const username = user?.username;
@@ -67,8 +67,7 @@ export const eventListener: TelemetryEventListener = async (
 
           // anonymize user ID if cluster is not a DEVSANDBOX cluster
           if (getClusterProperties().clusterType === 'DEVSANDBOX') {
-            processedUserId =
-              userResource?.metadata?.annotations?.['toolchain.dev.openshift.com/sso-user-id'];
+            processedUserId = sandboxUserId;
           } else {
             processedUserId = await anonymizeId(userId);
           }
