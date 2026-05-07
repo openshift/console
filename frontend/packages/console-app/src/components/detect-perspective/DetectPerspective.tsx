@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { createPath, useLocation } from 'react-router';
+import { createPath, useLocation, useNavigate } from 'react-router';
 import type { Perspective } from '@console/dynamic-plugin-sdk';
 import { PerspectiveContext } from '@console/dynamic-plugin-sdk';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
@@ -27,11 +27,20 @@ const DetectPerspective: FC<DetectPerspectiveProps> = ({ children }) => {
   const perspectiveExtensions = usePerspectives();
   const perspectiveParam = getPerspectiveURLParam(perspectiveExtensions);
   const location = useLocation();
+  const navigate = useNavigate();
   useEffect(() => {
-    if (perspectiveParam && perspectiveParam !== activePerspective) {
-      setActivePerspective(perspectiveParam, createPath(location));
+    if (perspectiveParam) {
+      const params = new URLSearchParams(location.search);
+      params.delete('perspective');
+      const search = params.toString();
+      const cleanPath = createPath({ ...location, search: search ? `?${search}` : '' });
+      if (perspectiveParam !== activePerspective) {
+        setActivePerspective(perspectiveParam, cleanPath);
+      } else {
+        navigate(cleanPath, { replace: true });
+      }
     }
-  }, [perspectiveParam, activePerspective, setActivePerspective, location]);
+  }, [perspectiveParam, activePerspective, setActivePerspective, navigate, location]);
 
   return loaded ? (
     activePerspective ? (

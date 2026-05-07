@@ -20,7 +20,9 @@ jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
 }));
 
 jest.mock('react-router', () => ({
+  createPath: jest.fn((loc) => `${loc.pathname}${loc.search || ''}${loc.hash || ''}`),
   useLocation: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }));
 
 const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
