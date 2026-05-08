@@ -1,12 +1,14 @@
 import type { FC, ReactNode } from 'react';
-import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { PageSection } from '@patternfly/react-core';
 
 interface ListPageBodyProps {
   children?: ReactNode;
 }
 
-const ListPageBody: FC<ListPageBodyProps> = ({ children }) => {
-  return <PaneBody>{children}</PaneBody>;
-};
+const ListPageBody: FC<ListPageBodyProps> = ({ children }) => (
+  <PageSection className="co-m-pane__body" hasBodyWrapper={false}>
+    {children}
+  </PageSection>
+);
 
 export default ListPageBody;

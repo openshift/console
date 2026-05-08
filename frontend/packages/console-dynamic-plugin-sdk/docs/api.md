@@ -288,7 +288,7 @@ A promise that resolves to the response.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts)
 
 ---
 
@@ -319,7 +319,7 @@ A promise that resolves to the response as text or JSON object.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts)
 
 ---
 
@@ -349,7 +349,7 @@ A promise that resolves to the response as text or JSON object.
 
 ### Source
 
-[`frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/core-api.ts)
+[`frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts`](https://github.com/openshift/console/tree/main/frontend/packages/console-dynamic-plugin-sdk/src/api/console-fetch.ts)
 
 ---
 
