@@ -75,10 +75,9 @@ const HelmURLChartInstallPage: FunctionComponent = () => {
 
       try {
         const fullChartURL = getFullChartURL(chartURL, chartVersion);
-        let authParam = '';
-        if (basicAuthSecretName) {
-          authParam = `&basic_auth_secret_name=${encodeURIComponent(basicAuthSecretName)}`;
-        }
+        const authParam = basicAuthSecretName
+          ? `&basic_auth_secret_name=${encodeURIComponent(basicAuthSecretName)}`
+          : '';
         const apiUrl = `/api/helm/chart?url=${encodeURIComponent(
           fullChartURL,
         )}&noRepo=true&namespace=${namespace}${authParam}`;

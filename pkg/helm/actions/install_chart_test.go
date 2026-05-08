@@ -416,37 +416,38 @@ func TestInstallChartFromURL(t *testing.T) {
 		basicAuthSecretName string
 		basicAuthUser       string
 		basicAuthPass       string
-		expectError         bool
+		secretData          map[string][]byte
+		expectedErrMsg      string
 	}{
 		{
-			testName:      "valid HTTP chart URL",
-			releaseName:   "valid-chart-path",
-			chartPath:     "http://localhost:9181/charts/influxdb-3.0.2.tgz",
-			chartName:     "influxdb",
-			chartVersion:  "3.0.2",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   false,
+			testName:       "valid HTTP chart URL",
+			releaseName:    "valid-chart-path",
+			chartPath:      "http://localhost:9181/charts/influxdb-3.0.2.tgz",
+			chartName:      "influxdb",
+			chartVersion:   "3.0.2",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "",
 		},
 		{
-			testName:      "valid OCI chart URL",
-			releaseName:   "valid-chart-path",
-			chartPath:     "oci://localhost:5000/helm-charts/mychart:0.1.0",
-			chartName:     "mychart",
-			chartVersion:  "0.1.0",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   false,
+			testName:       "valid OCI chart URL",
+			releaseName:    "valid-chart-path",
+			chartPath:      "oci://localhost:5000/helm-charts/mychart:0.1.0",
+			chartName:      "mychart",
+			chartVersion:   "0.1.0",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "",
 		},
 		{
-			testName:      "invalid chart URL rejected synchronously",
-			releaseName:   "invalid-chart-path",
-			chartPath:     "http://localhost:9181/charts/influxdb/filename",
-			chartName:     "influxdb",
-			chartVersion:  "3.0.1",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   true,
+			testName:       "invalid chart URL rejected synchronously",
+			releaseName:    "invalid-chart-path",
+			chartPath:      "http://localhost:9181/charts/influxdb/filename",
+			chartName:      "influxdb",
+			chartVersion:   "3.0.1",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "invalid chart URL",
 		},
 		{
 			testName:            "OCI chart with basic auth",
@@ -459,7 +460,20 @@ func TestInstallChartFromURL(t *testing.T) {
 			basicAuthSecretName: "oci-auth-secret",
 			basicAuthUser:       "AzureDiamond",
 			basicAuthPass:       "hunter2",
-			expectError:         false,
+			expectedErrMsg:      "",
+		},
+		{
+			testName:            "HTTPS chart with basic auth",
+			releaseName:         "basicauth-http",
+			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "http-auth-secret",
+			basicAuthUser:       "AzureDiamond",
+			basicAuthPass:       "hunter2",
+			expectedErrMsg:      "",
 		},
 		{
 			testName:            "OCI chart with wrong basic auth credentials",
@@ -472,7 +486,55 @@ func TestInstallChartFromURL(t *testing.T) {
 			basicAuthSecretName: "bad-auth-secret",
 			basicAuthUser:       "wrong-user",
 			basicAuthPass:       "wrong-pass",
-			expectError:         true,
+			expectedErrMsg:      "error locating chart",
+		},
+		{
+			testName:            "HTTPS chart with wrong basic auth credentials",
+			releaseName:         "badauth-http",
+			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-auth-secret",
+			basicAuthUser:       "wrong-user",
+			basicAuthPass:       "wrong-pass",
+			expectedErrMsg:      "error locating chart",
+		},
+		{
+			testName:            "basic auth secret not found",
+			releaseName:         "missing-secret",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "nonexistent-secret",
+			expectedErrMsg:      "failed to get secret",
+		},
+		{
+			testName:            "secret missing username key",
+			releaseName:         "malformed-no-user",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-secret",
+			secretData:          map[string][]byte{"password": []byte("hunter2")},
+			expectedErrMsg:      "failed to find \"username\" key in secret",
+		},
+		{
+			testName:            "secret missing password key",
+			releaseName:         "malformed-no-pass",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-secret",
+			secretData:          map[string][]byte{"username": []byte("AzureDiamond")},
+			expectedErrMsg:      "failed to find \"password\" key in secret",
 		},
 	}
 	for _, tt := range tests {
@@ -489,7 +551,15 @@ func TestInstallChartFromURL(t *testing.T) {
 			require.NoError(t, err)
 
 			objs := []runtime.Object{}
-			if tt.basicAuthSecretName != "" {
+			if tt.secretData != nil {
+				objs = append(objs, &v1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      tt.basicAuthSecretName,
+						Namespace: "test-namespace",
+					},
+					Data: tt.secretData,
+				})
+			} else if tt.basicAuthSecretName != "" && tt.basicAuthUser != "" {
 				objs = append(objs, &v1.Secret{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      tt.basicAuthSecretName,
@@ -504,9 +574,10 @@ func TestInstallChartFromURL(t *testing.T) {
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
 
-			if tt.expectError {
+			if tt.expectedErrMsg != "" {
 				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion, tt.basicAuthSecretName)
 				require.Error(t, err)
+				require.ErrorContains(t, err, tt.expectedErrMsg)
 				require.Nil(t, rel)
 				return
 			}

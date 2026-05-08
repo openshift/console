@@ -157,7 +157,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
             <GridItem md={12}>
               <ResourceDropdownField
                 name="basicAuthSecretName"
-                label={t('helm-plugin~Secret for basic authentication.')}
+                label={t('helm-plugin~Secret for basic authentication')}
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth

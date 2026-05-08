@@ -12,7 +12,7 @@ import (
 // newRegistryClient is a package-level variable to allow mocking in tests
 var newRegistryClient = registry.NewClient
 
-// registryClientOptions returns the same options used by GetOCIRegistry for TLS / plain-HTTP behavior.
+// registryClientOptions adds the appropriate registry functions to the client options based on the skipTLSVerify and plainHTTP flags.
 func registryClientOptions(skipTLSVerify, plainHTTP bool) []registry.ClientOption {
 	opts := []registry.ClientOption{
 		registry.ClientOptDebug(false),

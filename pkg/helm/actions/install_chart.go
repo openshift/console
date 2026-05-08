@@ -262,18 +262,15 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 // applyBasicAuthFromSecret sets cmd.Username and cmd.Password from a Secret in ns with
 // keys "username" and "password" (same convention as HelmChartRepository connectionConfig).
 func applyBasicAuthFromSecret(cmd *action.Install, coreClient corev1client.CoreV1Interface, ns, secretName string) error {
-	if secretName == "" {
-		return nil
-	}
 	secret, err := coreClient.Secrets(ns).Get(context.TODO(), secretName, v1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get secret %q from namespace %q: %w", secretName, ns, err)
 	}
 	u, uok := secret.Data[username]
-	p, pok := secret.Data[password]
 	if !uok {
 		return fmt.Errorf("failed to find %q key in secret %q/%q", username, ns, secretName)
 	}
+	p, pok := secret.Data[password]
 	if !pok {
 		return fmt.Errorf("failed to find %q key in secret %q/%q", password, ns, secretName)
 	}
@@ -295,12 +292,12 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 
-	if err := applyBasicAuthFromSecret(cmd, coreClient, ns, basicAuthSecretName); err != nil {
-		return nil, err
-	}
 	// OCI pulls use conf.RegistryClient when set; the getter does not merge ChartPathOptions username/password
 	// onto that client (see helm ocigetter). Rebuild the client with basic auth when credentials are supplied.
 	if basicAuthSecretName != "" {
+		if err := applyBasicAuthFromSecret(cmd, coreClient, ns, basicAuthSecretName); err != nil {
+			return nil, err
+		}
 		rc, err := RegistryClientWithBasicAuth(false, false, cmd.Username, cmd.Password)
 		if err != nil {
 			return nil, fmt.Errorf("failed to configure OCI registry client: %w", err)

@@ -72,10 +72,10 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 	}
 	cmd := action.NewInstall(conf)
 	cmd.Namespace = namespace
-	if err := applyBasicAuthFromSecret(cmd, coreClient, namespace, basicAuthSecretName); err != nil {
-		return nil, err
-	}
 	if basicAuthSecretName != "" {
+		if err := applyBasicAuthFromSecret(cmd, coreClient, namespace, basicAuthSecretName); err != nil {
+			return nil, err
+		}
 		rc, err := RegistryClientWithBasicAuth(false, false, cmd.Username, cmd.Password)
 		if err != nil {
 			return nil, fmt.Errorf("failed to configure OCI registry client: %w", err)

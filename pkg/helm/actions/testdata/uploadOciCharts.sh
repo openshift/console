@@ -34,7 +34,7 @@ case $mode in
   "--basic-auth")
     REGISTRY="localhost:5001"
     echo "Logging in to oci://$REGISTRY with basic auth..."
-    echo "hunter2" | $HELM registry login $REGISTRY --username AzureDiamond --password-stdin --plain-http
+    $HELM registry login $REGISTRY --username AzureDiamond --password "hunter2" --plain-http
     echo "Pushing mychart-0.1.0.tgz to oci://$REGISTRY/helm-charts..."
     $HELM push $CHARTS_DIR/mychart-0.1.0.tgz oci://$REGISTRY/helm-charts --plain-http
   ;;
@@ -44,6 +44,7 @@ case $mode in
     $HELM push $CHARTS_DIR/mychart-0.1.0.tgz oci://$REGISTRY/helm-charts --plain-http
   ;;
   *)
+  echo "Unrecognized argument \"${mode}\"." >&2
   echo "Usage: uploadOciCharts.sh --tls | --no-tls | --basic-auth" >&2
   exit 2
   ;;
