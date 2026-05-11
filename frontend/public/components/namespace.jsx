@@ -27,14 +27,13 @@ import { getRequester, getDescription } from '@console/shared/src/selectors/name
 import {
   FLAGS,
   COLUMN_MANAGEMENT_USER_PREFERENCE_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY,
   REQUESTER_FILTER,
 } from '@console/shared/src/constants/common';
 import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { getName } from '@console/shared/src/selectors/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';
+import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { DASH } from '@console/shared/src/constants/ui';
@@ -689,9 +688,9 @@ const getProjectDataViewRows = (
   });
 };
 
-const ProjectLink = ({ project }) => {
+export const ProjectLink = ({ project }) => {
   const dispatch = useConsoleDispatch();
-  const [, setLastNamespace] = useUserPreference(LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY);
+  const [, setActiveNamespace] = useActiveNamespace();
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
   const basePath = url.pathname;
@@ -710,15 +709,10 @@ const ProjectLink = ({ project }) => {
     if (isModifiedEvent(e)) {
       return;
     }
-    setLastNamespace(project.metadata.name);
-    // update last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
-    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
-    // sidebar navigation
-    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, project.metadata.name);
-    // clear project-name filter when active namespace is changed
+
+    setActiveNamespace(project.metadata.name);
     dispatch(k8sActions.filterList(referenceForModel(ProjectModel), 'project-name', ''));
   };
-
   return (
     <span className="co-resource-item co-resource-item--truncate">
       <ResourceIcon kind="Project" />
