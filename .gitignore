@@ -40,3 +40,5 @@ cypress-a11y-report.json
 /dynamic-demo-plugin/**/dist
 **/.claude/settings.local.json
 **/chartstore-*/
+.artifacts/
+.playwright-mcp/
