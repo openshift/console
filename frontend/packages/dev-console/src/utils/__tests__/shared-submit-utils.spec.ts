@@ -22,16 +22,75 @@ describe('Shared submit utils', () => {
       expect(serviceObj.spec.ports[0].port).toEqual(8081);
     });
 
-    it('should match the previous snapshot created with git import data', () => {
+    it('should build the expected service object for git import data', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
       const serviceObj = createService(mockData);
-      expect(serviceObj).toMatchSnapshot();
+      expect(serviceObj).toStrictEqual({
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          annotations: {
+            'app.openshift.io/vcs-ref': '',
+            'app.openshift.io/vcs-uri': 'https://github.com/test/repo',
+            'openshift.io/generated-by': 'OpenShiftWebConsole',
+          },
+          labels: {
+            app: 'test-app',
+            'app.kubernetes.io/component': 'test-app',
+            'app.kubernetes.io/instance': 'test-app',
+            'app.kubernetes.io/name': 'test-app',
+            'app.kubernetes.io/part-of': 'mock-app',
+            'app.openshift.io/runtime-version': 'latest',
+          },
+          name: 'test-app',
+          namespace: 'mock-project',
+        },
+        spec: {
+          ports: [
+            {
+              name: '8080-tcp',
+              port: 8080,
+              protocol: 'TCP',
+              targetPort: 8080,
+            },
+          ],
+          selector: {
+            app: 'test-app',
+            deploymentconfig: 'test-app',
+          },
+        },
+      });
     });
 
-    it('should match the previous snapshot created with deploy image data', () => {
+    it('should build the expected service object for deploy image data', () => {
       const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
       const serviceObj = createService(mockDeployImageData);
-      expect(serviceObj).toMatchSnapshot();
+      expect(serviceObj).toStrictEqual({
+        apiVersion: 'v1',
+        kind: 'Service',
+        metadata: {
+          annotations: {
+            'openshift.io/generated-by': 'OpenShiftWebConsole',
+          },
+          labels: {
+            app: 'test-app',
+            'app.kubernetes.io/component': 'test-app',
+            'app.kubernetes.io/instance': 'test-app',
+            'app.kubernetes.io/name': 'test-app',
+            'app.kubernetes.io/part-of': 'mock-app',
+            'app.openshift.io/runtime-version': 'latest',
+          },
+          name: 'test-app',
+          namespace: 'mock-project',
+        },
+        spec: {
+          ports: [],
+          selector: {
+            app: 'test-app',
+            deploymentconfig: 'test-app',
+          },
+        },
+      });
     });
 
     it('should expose only the custom port as TargetPort when it is set', () => {
@@ -122,18 +181,82 @@ describe('Shared submit utils', () => {
       });
     });
 
-    it('should match the previous snapshot with git import data', () => {
+    it('should build the expected route object for git import data', () => {
       const mockData: GitImportFormData = _.cloneDeep(mockFormData);
       mockData.route.targetPort = '8080-tcp';
       const routeObj = createRoute(mockData);
-      expect(routeObj).toMatchSnapshot();
+      expect(routeObj).toStrictEqual({
+        apiVersion: 'route.openshift.io/v1',
+        kind: 'Route',
+        metadata: {
+          annotations: {
+            'app.openshift.io/vcs-ref': '',
+            'app.openshift.io/vcs-uri': 'https://github.com/test/repo',
+            'openshift.io/generated-by': 'OpenShiftWebConsole',
+          },
+          labels: {
+            app: 'test-app',
+            'app.kubernetes.io/component': 'test-app',
+            'app.kubernetes.io/instance': 'test-app',
+            'app.kubernetes.io/name': 'test-app',
+            'app.kubernetes.io/part-of': 'mock-app',
+            'app.openshift.io/runtime-version': 'latest',
+          },
+          name: 'test-app',
+          namespace: 'mock-project',
+        },
+        spec: {
+          host: '',
+          path: '',
+          port: {
+            targetPort: '8080-tcp',
+          },
+          tls: null,
+          to: {
+            kind: 'Service',
+            name: 'test-app',
+          },
+          wildcardPolicy: 'None',
+        },
+      });
     });
 
-    it('should match the previous snapshot deploy image data', () => {
+    it('should build the expected route object for deploy image data', () => {
       const mockDeployImageData: DeployImageFormData = _.cloneDeep(mockDeployImageFormData);
       mockDeployImageData.route.targetPort = '8080-tcp';
       const routeObj = createRoute(mockDeployImageData);
-      expect(routeObj).toMatchSnapshot();
+      expect(routeObj).toStrictEqual({
+        apiVersion: 'route.openshift.io/v1',
+        kind: 'Route',
+        metadata: {
+          annotations: {
+            'openshift.io/generated-by': 'OpenShiftWebConsole',
+          },
+          labels: {
+            app: 'test-app',
+            'app.kubernetes.io/component': 'test-app',
+            'app.kubernetes.io/instance': 'test-app',
+            'app.kubernetes.io/name': 'test-app',
+            'app.kubernetes.io/part-of': 'mock-app',
+            'app.openshift.io/runtime-version': 'latest',
+          },
+          name: 'test-app',
+          namespace: 'mock-project',
+        },
+        spec: {
+          host: '',
+          path: '',
+          port: {
+            targetPort: '8080-tcp',
+          },
+          tls: null,
+          to: {
+            kind: 'Service',
+            name: 'test-app',
+          },
+          wildcardPolicy: 'None',
+        },
+      });
     });
   });
 });
