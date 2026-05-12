@@ -73,14 +73,13 @@ func GetChartFromURL(url string, conf *action.Configuration, namespace string, c
 	cmd := action.NewInstall(conf)
 	cmd.Namespace = namespace
 	if basicAuthSecretName != "" {
-		if err := applyBasicAuthFromSecret(cmd, coreClient, namespace, basicAuthSecretName); err != nil {
+		userCredentials, err := GetUserCredentials(coreClient, namespace, basicAuthSecretName)
+		if err != nil {
 			return nil, err
 		}
-		rc, err := RegistryClientWithBasicAuth(false, false, cmd.Username, cmd.Password)
-		if err != nil {
-			return nil, fmt.Errorf("failed to configure OCI registry client: %w", err)
+		if err := applyBasicAuthFromUserCredentials(cmd, userCredentials); err != nil {
+			return nil, err
 		}
-		cmd.SetRegistryClient(rc)
 	}
 	chartLocation, err := cmd.ChartPathOptions.LocateChart(url, settings)
 	if err != nil {

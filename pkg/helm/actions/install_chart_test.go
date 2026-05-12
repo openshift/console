@@ -463,7 +463,7 @@ func TestInstallChartFromURL(t *testing.T) {
 			expectedErrMsg:      "",
 		},
 		{
-			testName:            "HTTPS chart with basic auth",
+			testName:            "HTTP chart with basic auth",
 			releaseName:         "basicauth-http",
 			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
 			chartName:           "mychart",
@@ -489,7 +489,7 @@ func TestInstallChartFromURL(t *testing.T) {
 			expectedErrMsg:      "error locating chart",
 		},
 		{
-			testName:            "HTTPS chart with wrong basic auth credentials",
+			testName:            "HTTP chart with wrong basic auth credentials",
 			releaseName:         "badauth-http",
 			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
 			chartName:           "mychart",
@@ -547,8 +547,9 @@ func TestInstallChartFromURL(t *testing.T) {
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
-			err := GetOCIRegistry(actionConfig, tt.skipTLSVerify, tt.plainHTTP)
+			registryClient, err := GetOCIRegistry(tt.skipTLSVerify, tt.plainHTTP, nil)
 			require.NoError(t, err)
+			actionConfig.RegistryClient = registryClient
 
 			objs := []runtime.Object{}
 			if tt.secretData != nil {
@@ -582,6 +583,8 @@ func TestInstallChartFromURL(t *testing.T) {
 				return
 			}
 
+			// For valid URLs: create the release secret in a background goroutine
+			// to simulate what Helm's cmd.Run would do, unblocking getSecret's Watch.
 			secretName := fmt.Sprintf("sh.helm.release.v1.%v.v1", tt.releaseName)
 			go func() {
 				time.Sleep(2 * time.Second)

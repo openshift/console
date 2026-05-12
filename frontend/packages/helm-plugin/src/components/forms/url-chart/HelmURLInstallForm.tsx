@@ -6,9 +6,6 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { SecretModel } from '@console/internal/models';
-import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { getJSONSchemaOrder, prune } from '@console/shared/src/components/dynamic-form/utils';
 import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
@@ -21,6 +18,7 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { useHelmReadmeModalLauncher } from '../install-upgrade/HelmReadmeModal';
 import type { HelmURLInstallFormData } from './types';
+import { useSecretResources } from './useSecretResources';
 
 export interface HelmURLInstallFormProps {
   chartHasValues: boolean;
@@ -47,32 +45,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
 
   const autocompleteFilter = (strText: string, item: string): boolean => fuzzy(strText, item);
 
-  const watchedResources = useK8sWatchResources<{
-    secrets: K8sResourceKind[];
-  }>({
-    secrets: {
-      isList: true,
-      kind: SecretModel.kind,
-      namespace,
-      optional: true,
-    },
-  });
-
-  const secretResources = useMemo(
-    () => [
-      {
-        data: watchedResources.secrets?.data,
-        loaded: watchedResources.secrets?.loaded,
-        loadError: watchedResources.secrets?.loadError,
-        kind: SecretModel.kind,
-      },
-    ],
-    [
-      watchedResources.secrets?.data,
-      watchedResources.secrets?.loaded,
-      watchedResources.secrets?.loadError,
-    ],
-  );
+  const secretResources = useSecretResources(namespace);
 
   const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
     readme: chartReadme,

@@ -456,6 +456,7 @@ func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter,
 		namespace = "default"
 	}
 	chartUrl := params.Get("url")
+	basicAuthSecretName := params.Get("basic_auth_secret_name")
 
 	if chartUrl == "" {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: "chart URL is required"})
@@ -468,7 +469,7 @@ func (h *helmHandlers) HandleURLChartGet(user *auth.User, w http.ResponseWriter,
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: err.Error()})
 		return
 	}
-	resp, err := h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, params.Get("basic_auth_secret_name"))
+	resp, err := h.getChartFromURL(chartUrl, conf, namespace, handlerClients.DynamicClient, handlerClients.CoreClient, true, basicAuthSecretName)
 	if err != nil {
 		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: fmt.Sprintf("Failed to retrieve chart: %v", err)})
 		return
