@@ -70,6 +70,7 @@ export default abstract class BasePage {
         } catch (clickError) {
           const msg = clickError instanceof Error ? clickError.message : String(clickError);
           if (attempt < retries && (msg.includes('intercept') || msg.includes('not visible'))) {
+            // eslint-disable-next-line playwright/no-force-option
             await locator.click({ force: true, timeout: attemptTimeout });
             return;
           }
@@ -78,6 +79,7 @@ export default abstract class BasePage {
       } catch (error) {
         lastError = error;
         if (attempt < retries && retryDelay > 100) {
+          // eslint-disable-next-line playwright/no-wait-for-timeout
           await this.page.waitForTimeout(retryDelay);
         }
       }

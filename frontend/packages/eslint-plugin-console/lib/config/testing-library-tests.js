@@ -16,6 +16,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      excludedFiles: ['e2e/**'],
       plugins: ['testing-library'],
       extends: ['plugin:testing-library/react'],
       rules: {

@@ -13,6 +13,7 @@ module.exports = {
 
     // Augmenting configs: choose one or more
     jest: require('./lib/config/jest'),
+    playwright: require('./lib/config/playwright'),
 
     // React Testing Library (test/spec files only). Also merged into `react-typescript-prettier`.
     'testing-library-tests': require('./lib/config/testing-library-tests'),
