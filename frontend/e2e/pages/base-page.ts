@@ -61,6 +61,11 @@ export default abstract class BasePage {
     await this.waitForLoadingComplete();
   }
 
+  protected async retryOnError(): Promise<void> {
+    await this.page.reload({ waitUntil: 'domcontentloaded' });
+    await this.waitForLoadingComplete();
+  }
+
   protected locator(
     selector: string,
     options?: {
