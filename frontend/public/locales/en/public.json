@@ -1753,6 +1753,8 @@
   "Rebuild": "Rebuild",
   "Cancel build": "Cancel build",
   "Edit Pod count": "Edit Pod count",
+  "Non-scalable image": "Non-scalable image",
+  "This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.": "This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.",
   "{{resourceKinds}} maintain the desired number of healthy pods.": "{{resourceKinds}} maintain the desired number of healthy pods.",
   "Impersonate Group {{name}}": "Impersonate Group {{name}}",
   "Add Users": "Add Users",

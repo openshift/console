@@ -231,6 +231,7 @@
   "Project": "Project",
   "Namespace": "Namespace",
   "Enable Autoscale": "Enable Autoscale",
+  "This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.": "This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.",
   "Increase the Pod count": "Increase the Pod count",
   "Decrease the Pod count": "Decrease the Pod count",
   "No Pods found for this resource.": "No Pods found for this resource.",
