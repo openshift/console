@@ -40,6 +40,7 @@ const initialLoad = async (
       username: '',
       vcenter: '',
       vCenterCluster: '',
+      network: '',
       isInit: vCenterServer === 'vcenterplaceholder',
     };
   }
@@ -47,8 +48,13 @@ const initialLoad = async (
   const datacenter = vSphereFailureDomain.topology?.datacenter || '';
   const defaultDatastore = vSphereFailureDomain.topology?.datastore || '';
   const folder = vSphereFailureDomain.topology?.folder || '';
-  const vcenter = vSphereCfg.vcenters?.[0]?.server || '';
-  const vCenterCluster = vSphereFailureDomain.topology.networks[0] || '';
+
+  // Extract cluster name from computeCluster path (format: /{datacenter}/host/{cluster})
+  const computeCluster = vSphereFailureDomain.topology?.computeCluster || '';
+  const vCenterCluster = computeCluster.match(/\/.*?\/host\/(.+)/)?.[1] || '';
+
+  // Load the primary network (first network in the networks array)
+  const network = vSphereFailureDomain.topology?.networks?.[0] || '';
 
   let username = '';
   let password = '';
@@ -65,8 +71,8 @@ const initialLoad = async (
     }
 
     const secretKeyValues = secret.data || {};
-    username = decodeBase64(secretKeyValues[`${vcenter}.username`]);
-    password = decodeBase64(secretKeyValues[`${vcenter}.password`]);
+    username = decodeBase64(secretKeyValues[`${vCenterServer}.username`]);
+    password = decodeBase64(secretKeyValues[`${vCenterServer}.password`]);
   } catch (e) {
     // It should be there if referenced
     // eslint-disable-next-line no-console
@@ -80,8 +86,9 @@ const initialLoad = async (
     datacenter,
     defaultDatastore,
     folder,
-    vcenter,
+    vcenter: vCenterServer,
     vCenterCluster,
+    network,
     password,
     username,
   };
