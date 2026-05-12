@@ -17,8 +17,13 @@ const getISTFromDeploymentConfig = (resource: K8sResourceKind): ISTReference | n
   if (!Array.isArray(triggers)) {
     return null;
   }
-  const imageChangeTrigger = triggers.find((trigger) => trigger.type === 'ImageChange');
-  if (!imageChangeTrigger?.imageChangeParams?.from?.name) {
+  const imageChangeTrigger = triggers.find(
+    (trigger) =>
+      trigger.type === 'ImageChange' &&
+      trigger?.imageChangeParams?.from?.kind === 'ImageStreamTag' &&
+      !!trigger?.imageChangeParams?.from?.name,
+  );
+  if (!imageChangeTrigger) {
     return null;
   }
   const { name, namespace } = imageChangeTrigger.imageChangeParams.from;
@@ -35,8 +40,10 @@ const getISTFromTriggerAnnotation = (resource: K8sResourceKind): ISTReference | 
   }
   try {
     const triggers = JSON.parse(annotation);
-    const trigger = Array.isArray(triggers) ? triggers[0] : null;
-    if (!trigger?.from?.name || trigger.from.kind !== 'ImageStreamTag') {
+    const trigger = Array.isArray(triggers)
+      ? triggers.find((t) => t?.from?.kind === 'ImageStreamTag' && !!t?.from?.name)
+      : null;
+    if (!trigger) {
       return null;
     }
     return {
@@ -69,9 +76,11 @@ export const useNonScalableImageCheck = (
   const [loading, setLoading] = useState(true);
 
   const istRef = useMemo(() => getISTReference(resource), [resource]);
+  const istName = istRef?.name;
+  const istNamespace = istRef?.namespace;
 
   useEffect(() => {
-    if (!istRef) {
+    if (!istName || !istNamespace) {
       setIsNonScalable(false);
       setLoading(false);
       return undefined;
@@ -80,7 +89,7 @@ export const useNonScalableImageCheck = (
     let cancelled = false;
     setLoading(true);
 
-    k8sGet(ImageStreamTagModel, istRef.name, istRef.namespace)
+    k8sGet(ImageStreamTagModel, istName, istNamespace)
       .then((ist: K8sResourceKind) => {
         if (!cancelled) {
           const labels = _.get(ist, 'image.dockerImageMetadata.Config.Labels', {});
@@ -99,7 +108,7 @@ export const useNonScalableImageCheck = (
     return () => {
       cancelled = true;
     };
-  }, [istRef]);
+  }, [istName, istNamespace]);
 
   return { isNonScalable, loading };
 };
