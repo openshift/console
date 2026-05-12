@@ -3,10 +3,15 @@ import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { clusterVersionWithUpgradeableFalse } from '../../../mocks/cluster-version';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
+const CLUSTER_VERSION_WS_URL = /apis\/config\.openshift\.io\/v1\/clusterversions/;
 
 test.describe('Cluster Settings when ClusterVersion Upgradeable=False', { tag: ['@admin'] }, () => {
   test('displays alerts and badges for blocked updates', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
+
+    // Intercept WebSocket watch connections to prevent real cluster data
+    // from overriding the mocked HTTP responses
+    await page.routeWebSocket(CLUSTER_VERSION_WS_URL, () => {});
 
     await test.step('Setup: Mock cluster version with Upgradeable=False', async () => {
       await page.route(CLUSTER_VERSION_URL, async (route) => {

@@ -6,10 +6,15 @@ import {
 } from '../../../mocks/cluster-version';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
+const CLUSTER_VERSION_WS_URL = /apis\/config\.openshift\.io\/v1\/clusterversions/;
 
 test.describe('Cluster Settings channel modal', { tag: ['@admin', '@smoke'] }, () => {
   test('changes based on cluster version', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
+
+    // Intercept WebSocket watch connections to prevent real cluster data
+    // from overriding the mocked HTTP responses
+    await page.routeWebSocket(CLUSTER_VERSION_WS_URL, () => {});
 
     await test.step('Handle no channel configured scenario', async () => {
       // Mock the API response to return cluster version without channel

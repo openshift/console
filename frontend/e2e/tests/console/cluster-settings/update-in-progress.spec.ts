@@ -3,10 +3,15 @@ import { ClusterSettingsPage } from '../../../pages/cluster-settings-page';
 import { clusterVersionWithProgressing } from '../../../mocks/cluster-version';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
+const CLUSTER_VERSION_WS_URL = /apis\/config\.openshift\.io\/v1\/clusterversions/;
 
 test.describe('Cluster Settings while an update is in progress', { tag: ['@admin'] }, () => {
   test('displays information about the update', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
+
+    // Intercept WebSocket watch connections to prevent real cluster data
+    // from overriding the mocked HTTP responses
+    await page.routeWebSocket(CLUSTER_VERSION_WS_URL, () => {});
 
     await test.step('Setup: Mock cluster version with update in progress', async () => {
       // Mock the API response to return progressing cluster version

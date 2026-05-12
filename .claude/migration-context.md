@@ -262,11 +262,15 @@ Cypress per-test `retries: { runMode: N }` becomes Playwright `test.describe.con
 
 ### Strategy A: Fully Self-Contained (preferred)
 
-Each test creates its resources, runs assertions, and cleans up — even if the Cypress source had a shared `before` hook creating resources for multiple `it` blocks.
+Each test creates its resources, runs assertions, and cleans up via the `cleanup` fixture (`e2e/fixtures/cleanup-fixture.ts`) — even if the Cypress source had a shared `before` hook creating resources for multiple `it` blocks. The fixture is per-test and handles resource deletion automatically after the test completes (pass or fail). Always use it instead of manual `afterEach`/`afterAll` hooks.
+
+If the cleanup fixture doesn't support a resource type needed for a migration (e.g., the `executeCleanup` switch statement is missing a case), extend the cleanup fixture to handle it rather than using manual deletion in the test.
 
 Use when: tests are short enough that resource creation doesn't dominate runtime.
 
 ### Strategy B: Shared Resources via `test.describe` Setup
+
+The `cleanup` fixture **cannot** be used here because it is per-test — resources tracked in one test's cleanup would be deleted before other tests finish using them. Use manual `beforeAll`/`afterAll` with a `KubernetesClient` instance instead.
 
 When multiple tests need the same expensive resource (e.g., an installed operator):
 

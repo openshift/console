@@ -370,6 +370,7 @@ const LogControls: FC<LogControlsProps> = ({
             isSelected={isShowFullLog}
             hasCheckbox
             data-test-dropdown-menu="show-full-log"
+            data-test="show-full-log"
           >
             {t('Show full log')}
           </SelectOption>
@@ -380,6 +381,7 @@ const LogControls: FC<LogControlsProps> = ({
           isSelected={isWrapLines}
           hasCheckbox
           data-test-dropdown-menu="wrap-lines"
+          data-test="wrap-lines"
         >
           {t('Wrap lines')}
         </SelectOption>

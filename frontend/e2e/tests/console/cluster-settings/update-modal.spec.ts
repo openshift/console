@@ -11,65 +11,18 @@ import {
 } from '../../../mocks/machine-config-pool';
 
 const CLUSTER_VERSION_URL = '**/apis/config.openshift.io/v1/clusterversions/version';
+const CLUSTER_VERSION_WS_URL = /apis\/config\.openshift\.io\/v1\/clusterversions/;
 const MCP_LIST_URL = '**/apis/machineconfiguration.openshift.io/v1/machineconfigpools?*';
-
-/**
- * Stub MCP WebSocket to prevent watch from overwriting mocked GET responses
- * This only stubs MCP watch WebSockets - all other WebSockets work normally
- */
-async function stubMachineConfigPoolWebSocket(page: import('@playwright/test').Page) {
-  await page.addInitScript(() => {
-    const OriginalWebSocket = window.WebSocket;
-
-    // Override WebSocket constructor
-    (window as any).WebSocket = function (url: string | URL, protocols?: string | string[]) {
-      const urlString = typeof url === 'string' ? url : url.toString();
-
-      // Only stub MCP list watch WebSocket - let all others through
-      if (urlString.includes('machineconfiguration.openshift.io/v1/machineconfigpools')) {
-        // Return a fake closed WebSocket that does nothing
-        const stub = {
-          close: () => {},
-          send: () => {},
-          addEventListener: () => {},
-          removeEventListener: () => {},
-          dispatchEvent: () => true,
-          readyState: 3, // CLOSED
-          url: urlString,
-          protocol: '',
-          extensions: '',
-          bufferedAmount: 0,
-          binaryType: 'blob' as BinaryType,
-          onopen: null,
-          onerror: null,
-          onclose: null,
-          onmessage: null,
-          CONNECTING: 0,
-          OPEN: 1,
-          CLOSING: 2,
-          CLOSED: 3,
-        };
-        return stub;
-      }
-
-      // All other WebSockets use the original implementation
-      return new OriginalWebSocket(url, protocols);
-    };
-
-    // Copy static properties
-    (window as any).WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
-    (window as any).WebSocket.OPEN = OriginalWebSocket.OPEN;
-    (window as any).WebSocket.CLOSING = OriginalWebSocket.CLOSING;
-    (window as any).WebSocket.CLOSED = OriginalWebSocket.CLOSED;
-  });
-}
+const MCP_WS_URL = /machineconfiguration\.openshift\.io\/v1\/machineconfigpools/;
 
 test.describe('Cluster Settings cluster update modal', { tag: ['@admin'] }, () => {
   test('changes based on the cluster', async ({ page }) => {
     const clusterSettings = new ClusterSettingsPage(page);
 
-    // addInitScript must be called before any navigation — it persists for the page lifetime
-    await stubMachineConfigPoolWebSocket(page);
+    // Intercept WebSocket watch connections to prevent real cluster data
+    // from overriding the mocked HTTP responses
+    await page.routeWebSocket(CLUSTER_VERSION_WS_URL, () => {});
+    await page.routeWebSocket(MCP_WS_URL, () => {});
 
     await test.step('Scenario 1: With a paused Worker MCP', async () => {
       // Setup mocks
