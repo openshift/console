@@ -117,6 +117,82 @@ func TestOLMHandler_catalogdMetasHandler(t *testing.T) {
 	})
 }
 
+func TestOLMHandler_lifecycleHandler(t *testing.T) {
+	t.Run("should proxy lifecycle data from upstream", func(t *testing.T) {
+		upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Contains(t, r.URL.Path, "/api/v1alpha1/lifecycles/test-operator")
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"package":"test-operator","versions":[{"name":"1.0"}]}`))
+		}))
+		defer upstream.Close()
+
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		lifecycleClient := &http.Client{
+			Transport: &testTransport{upstream: upstream},
+		}
+		handler := NewOLMHandler("", nil, service, lifecycleClient)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.Contains(t, rr.Body.String(), "test-operator")
+	})
+
+	t.Run("should return 400 for invalid catalog namespace", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service, &http.Client{})
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/INVALID-NS/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("should return 400 for invalid catalog name", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service, &http.Client{})
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/INVALID-CATALOG/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("should return 503 when lifecycle client is nil", func(t *testing.T) {
+		c := cache.New(5*time.Minute, 10*time.Minute)
+		service := NewCatalogService(&http.Client{}, nil, c)
+		handler := NewOLMHandler("", nil, service, nil)
+
+		req := httptest.NewRequest("GET", "/api/olm/lifecycle/openshift-marketplace/redhat-operators/test-operator", nil)
+		rr := httptest.NewRecorder()
+		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusServiceUnavailable, rr.Code)
+	})
+}
+
+// testTransport redirects all requests to the upstream test server.
+type testTransport struct {
+	upstream *httptest.Server
+}
+
+func (t *testTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	upstreamURL := t.upstream.URL + req.URL.Path
+	newReq, err := http.NewRequestWithContext(req.Context(), req.Method, upstreamURL, req.Body)
+	if err != nil {
+		return nil, err
+	}
+	return http.DefaultTransport.RoundTrip(newReq)
+}
+
 func TestOLMHandler_catalogIconHandler(t *testing.T) {
 	t.Run("should return icon when found in cache", func(t *testing.T) {
 		c := cache.New(5*time.Minute, 10*time.Minute)

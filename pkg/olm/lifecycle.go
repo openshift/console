@@ -8,19 +8,17 @@ import (
 	"regexp"
 	"strings"
 
+	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/serverutils"
 )
 
-// k8sNameRegex validates strict DNS label names (namespaces, service names).
-var k8sNameRegex = regexp.MustCompile(`^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?$`)
-
 // catalogNameRegex allows dots and underscores since lifecycleServiceURL sanitizes them.
 var catalogNameRegex = regexp.MustCompile(`^[a-z0-9][a-z0-9.\-_]{0,61}[a-z0-9]$`)
 
 func isValidK8sName(s string) bool {
-	return k8sNameRegex.MatchString(s)
+	return len(validation.IsDNS1123Label(s)) == 0
 }
 
 func isValidCatalogName(s string) bool {

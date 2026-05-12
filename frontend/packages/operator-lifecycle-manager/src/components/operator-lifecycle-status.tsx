@@ -1,10 +1,12 @@
 import type { FC } from 'react';
 import { Label, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/dynamic-plugin-sdk/src/app/components/status/icons';
+import { ONE_DAY } from '@console/shared/src/constants/time';
 
 export type LifecyclePhase = {
   name: string;
@@ -25,8 +27,8 @@ export type LifecycleData = {
 };
 
 const parseMinorVersion = (version: string): string | undefined => {
-  const match = version.match(/(\d+\.\d+)/);
-  return match ? match[1] : undefined;
+  const parsed = semver.coerce(version);
+  return parsed ? `${parsed.major}.${parsed.minor}` : undefined;
 };
 
 const findVersionEntry = (
@@ -136,10 +138,13 @@ export const ClusterCompatibilityStatus: FC<{ compatible: CompatibilityResult }>
   );
 };
 
-const TWELVE_MONTHS_MS = 365 * 24 * 60 * 60 * 1000;
+const TWELVE_MONTHS_MS = 365 * ONE_DAY;
 
 const getLastPhaseEndDate = (phases: LifecyclePhase[]): Date => {
-  return new Date(phases[phases.length - 1].timeEnd);
+  const sorted = [...phases].sort(
+    (a, b) => new Date(a.timeEnd).getTime() - new Date(b.timeEnd).getTime(),
+  );
+  return new Date(sorted[sorted.length - 1].timeEnd);
 };
 
 const formatDate = (date: Date): string => {
