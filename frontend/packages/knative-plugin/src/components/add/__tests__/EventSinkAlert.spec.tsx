@@ -1,34 +1,29 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import EventSinkAlert from '../EventSinkAlert';
 
 jest.mock('@patternfly/react-core', () => ({
-  Alert: 'Alert',
+  Alert: () => 'mock-Alert',
 }));
 
 describe('EventSinkAlert', () => {
   it('should not alert if eventSinks are there', () => {
-    const { container } = render(
-      <EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess />,
-    );
-    expect(container.querySelector('Alert')).not.toBeInTheDocument();
+    render(<EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess />);
+    expect(screen.queryByText('mock-Alert')).not.toBeInTheDocument();
   });
 
   it('should show alert if eventSink is present but do not have create access', () => {
-    const { container } = render(
-      <EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess={false} />,
-    );
-    expect(container.querySelector('Alert')).toBeInTheDocument();
+    render(<EventSinkAlert isValidSink createSinkAccessLoading={false} createSinkAccess={false} />);
+    expect(screen.getByText('mock-Alert')).toBeVisible();
   });
 
   it('should show alert if eventSink is not present', () => {
-    const { container } = render(
+    render(
       <EventSinkAlert
         isValidSink={false}
         createSinkAccessLoading={false}
         createSinkAccess={false}
       />,
     );
-    expect(container.querySelector('Alert')).toBeInTheDocument();
+    expect(screen.getByText('mock-Alert')).toBeVisible();
   });
 });

@@ -1,5 +1,5 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../../models';
@@ -7,9 +7,13 @@ import { MockKnativeResources } from '../../../topology/__tests__/topology-knati
 import KSRoutesOverviewListItem from '../KSRoutesOverviewListItem';
 
 jest.mock('@patternfly/react-core', () => ({
-  ListItem: 'ListItem',
-  Grid: 'Grid',
-  GridItem: 'GridItem',
+  ListItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-ListItem">{children}</div>
+  ),
+  Grid: ({ children }: { children?: ReactNode }) => <div data-test="mock-Grid">{children}</div>,
+  GridItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-GridItem">{children}</div>
+  ),
 }));
 
 jest.mock('@patternfly/react-core/dist/dynamic/components/ClipboardCopy', () => ({
@@ -17,58 +21,58 @@ jest.mock('@patternfly/react-core/dist/dynamic/components/ClipboardCopy', () => 
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  ExternalLinkWithCopy: 'ExternalLinkWithCopy',
+  ResourceLink: jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .knativeInternalUtilsStubs.ResourceLink,
+  ExternalLinkWithCopy: ({ href, text }: { href?: string; text?: string }) => (
+    <a data-test="mock-ExternalLinkWithCopy" href={href ?? '#'}>
+      {text}
+    </a>
+  ),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 describe('KSRoutesOverviewListItem', () => {
   const [ksroute] = MockKnativeResources.ksroutes.data;
 
   it('should list the Route', () => {
-    const { container } = render(<KSRoutesOverviewListItem ksroute={ksroute} />);
-    expect(container.querySelector('ListItem')).toBeInTheDocument();
+    render(<KSRoutesOverviewListItem ksroute={ksroute} />);
+    expect(screen.getByTestId('mock-ListItem')).toBeVisible();
   });
 
   it('should have ResourceLink with proper kind', () => {
-    const { container } = render(<KSRoutesOverviewListItem ksroute={ksroute} />);
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    render(<KSRoutesOverviewListItem ksroute={ksroute} />);
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', referenceForModel(RouteModel));
   });
 
   it('should have route ExternalLink with proper href', () => {
-    const { container } = render(<KSRoutesOverviewListItem ksroute={ksroute} />);
-    const externalLink = container.querySelector('ExternalLinkWithCopy');
-    expect(externalLink).toBeInTheDocument();
+    render(<KSRoutesOverviewListItem ksroute={ksroute} />);
+    const externalLink = screen.getByTestId('mock-ExternalLinkWithCopy');
+    expect(externalLink).toBeVisible();
     expect(externalLink).toHaveAttribute(
       'href',
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
-    expect(externalLink).toHaveAttribute(
-      'text',
+    expect(externalLink).toHaveTextContent(
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     );
   });
 
   it('should not show the route url if it is not available', () => {
     const ksrouteNoUrl = { ...MockKnativeResources.ksroutes.data[0], status: { url: '' } };
-    const { container } = render(<KSRoutesOverviewListItem ksroute={ksrouteNoUrl} />);
-    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
-    expect(container.querySelector('ExternalLinkWithCopy')).not.toBeInTheDocument();
+    render(<KSRoutesOverviewListItem ksroute={ksrouteNoUrl} />);
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
+    expect(screen.queryByTestId('mock-ExternalLinkWithCopy')).not.toBeInTheDocument();
   });
 
   it('should have ResourceLink with proper kind and not external link if status is not preset on route', () => {
     const ksrouteNoStatus = _.omit(MockKnativeResources.ksroutes.data[0], 'status');
-    const { container } = render(<KSRoutesOverviewListItem ksroute={ksrouteNoStatus} />);
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    render(<KSRoutesOverviewListItem ksroute={ksrouteNoStatus} />);
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', referenceForModel(RouteModel));
-    expect(container.querySelector('ExternalLinkWithCopy')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-ExternalLinkWithCopy')).not.toBeInTheDocument();
   });
 });

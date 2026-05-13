@@ -1,17 +1,25 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 import KSRouteSplitListItem from '../KSRouteSplitListItem';
 
 jest.mock('@patternfly/react-core', () => ({
-  ListItem: 'ListItem',
-  Grid: 'Grid',
-  GridItem: 'GridItem',
+  ListItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-ListItem">{children}</div>
+  ),
+  Grid: ({ children }: { children?: ReactNode }) => <div data-test="mock-Grid">{children}</div>,
+  GridItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-GridItem">{children}</div>
+  ),
 }));
 
 jest.mock('@console/shared/src/components/links/ExternalLink', () => ({
-  ExternalLink: 'ExternalLink',
+  ExternalLink: ({ href, children }: { href?: string; children?: ReactNode }) => (
+    <a data-test="mock-ExternalLink" href={href}>
+      {children}
+    </a>
+  ),
 }));
 
 describe('KSRouteSplitListItem', () => {
@@ -25,15 +33,15 @@ describe('KSRouteSplitListItem', () => {
 
   it('should list the Route', () => {
     const route = getRouteData();
-    const { container } = render(<KSRouteSplitListItem route={route} />);
-    expect(container.querySelector('ListItem')).toBeInTheDocument();
+    render(<KSRouteSplitListItem route={route} />);
+    expect(screen.getByTestId('mock-ListItem')).toBeVisible();
   });
 
   it('should have route ExternalLink with proper href', () => {
     const route = getRouteData();
-    const { container } = render(<KSRouteSplitListItem route={route} />);
-    const externalLink = container.querySelector('ExternalLink');
-    expect(externalLink).toBeInTheDocument();
+    render(<KSRouteSplitListItem route={route} />);
+    const externalLink = screen.getByTestId('mock-ExternalLink');
+    expect(externalLink).toBeVisible();
     expect(externalLink).toHaveAttribute(
       'href',
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
@@ -56,8 +64,8 @@ describe('KSRouteSplitListItem', () => {
       },
     };
     const [route] = getKnativeRoutesLinks(mockRouteData, MockKnativeResources.revisions.data[0]);
-    const { container } = render(<KSRouteSplitListItem route={route} />);
-    expect(container.querySelector('ExternalLink')).not.toBeInTheDocument();
+    render(<KSRouteSplitListItem route={route} />);
+    expect(screen.queryByTestId('mock-ExternalLink')).not.toBeInTheDocument();
   });
 
   it('should not render if percent is not available', () => {
@@ -76,7 +84,7 @@ describe('KSRouteSplitListItem', () => {
       },
     };
     const [route] = getKnativeRoutesLinks(mockRouteData, MockKnativeResources.revisions.data[0]);
-    const { container } = render(<KSRouteSplitListItem route={route} />);
-    expect(container.querySelector('ExternalLink')).not.toBeInTheDocument();
+    render(<KSRouteSplitListItem route={route} />);
+    expect(screen.queryByTestId('mock-ExternalLink')).not.toBeInTheDocument();
   });
 });

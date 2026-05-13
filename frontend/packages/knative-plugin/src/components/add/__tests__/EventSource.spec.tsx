@@ -1,13 +1,27 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
+import type { ReactNode } from 'react';
+import { screen } from '@testing-library/react';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
 
-jest.mock('formik', () => ({
-  ...jest.requireActual('formik'),
-  Formik: 'Formik',
-}));
+global.ResizeObserver = class ResizeObserver {
+  observe = () => {};
+
+  unobserve = () => {};
+
+  disconnect = () => {};
+};
+
+jest.mock('@console/shared', () => {
+  const actual = jest.requireActual('@console/shared');
+  return {
+    ...actual,
+    SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) => (
+      <>{formContext?.editor}</>
+    ),
+  };
+});
 
 describe('EventSourceSpec', () => {
   const namespaceName = 'myApp';
@@ -24,31 +38,47 @@ describe('EventSourceSpec', () => {
       },
       type: 'EventSource',
       provider: 'Red hat',
-      cta: { label: 'knative-plugin~Create Event Source', href: '/' },
+      cta: { label: 'Create Event Source', href: '/' },
     },
   };
 
   it('should render form with proper initialvalues if contextSource is not passed', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}
         activeApplication={activeApplicationName}
+        sourceKind={EVENT_SOURCE_CONTAINER_KIND}
       />,
     );
-    expect(container.querySelector('Formik')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: EVENT_SOURCE_CONTAINER_KIND }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Target/ })).toBeInTheDocument();
+    expect(
+      screen.getByText(/This resource will be the sink for the Event source/),
+    ).toBeInTheDocument();
   });
 
   it('should render form with proper initialvalues for sink if contextSource is passed', () => {
     const contextSourceData = 'serving.knative.dev~v1~Service/svc-display';
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <EventSource
         namespace={namespaceName}
         normalizedSource={eventSourceStatusData.eventSource}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}
+        sourceKind={EVENT_SOURCE_CONTAINER_KIND}
       />,
     );
-    expect(container.querySelector('Formik')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: EVENT_SOURCE_CONTAINER_KIND }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /Target/ })).toBeInTheDocument();
+    expect(
+      screen.queryByText(/This resource will be the sink for the Event source/),
+    ).not.toBeInTheDocument();
   });
 });

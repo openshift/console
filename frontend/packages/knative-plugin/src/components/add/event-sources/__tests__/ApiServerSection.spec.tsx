@@ -1,25 +1,33 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import ApiServerSection from '../ApiServerSection';
 
 jest.mock('@console/dev-console/src/components/import/section/FormSection', () => ({
   __esModule: true,
-  default: 'FormSection',
+  default: ({ children }: { children?: ReactNode }) => children ?? null,
 }));
 
 jest.mock('@console/internal/components/utils/async', () => ({
-  AsyncComponent: 'AsyncComponent',
+  AsyncComponent: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-AsyncComponent'),
 }));
 
 jest.mock('../../../dropdowns/ServiceAccountDropdown', () => ({
   __esModule: true,
-  default: 'ServiceAccountDropdown',
+  default: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-ServiceAccountDropdown'),
 }));
 
 jest.mock('@console/shared', () => ({
-  DropdownField: 'DropdownField',
+  DropdownField: jest
+    .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .createKnativeTextStub('mock-DropdownField'),
   getFieldId: jest.fn(() => 'mocked-field-id'),
 }));
+
+jest.mock('react-i18next');
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{}, {}]),
@@ -39,17 +47,17 @@ describe('ApiServerSection', () => {
 
   it('should render FormSection', () => {
     render(<ApiServerSection title={title} />);
-    expect(screen.getByText('Resource')).toBeInTheDocument();
+    expect(screen.getByText('Resource')).toBeVisible();
   });
 
   it('should render NameValueEditor', () => {
     render(<ApiServerSection title={title} />);
-    expect(screen.getByText('The list of resources to watch.')).toBeInTheDocument();
+    expect(screen.getByText('The list of resources to watch.')).toBeVisible();
   });
 
   it('should render ServiceAccountDropdown', () => {
-    const { container } = render(<ApiServerSection title={title} />);
-    expect(container.querySelector('dropdownfield')).toBeInTheDocument();
-    expect(container.querySelector('serviceaccountdropdown')).toBeInTheDocument();
+    render(<ApiServerSection title={title} />);
+    expect(screen.getByText('mock-DropdownField')).toBeVisible();
+    expect(screen.getByText('mock-ServiceAccountDropdown')).toBeVisible();
   });
 });

@@ -1,18 +1,25 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
 
 jest.mock('@patternfly/react-core', () => ({
-  ListItem: 'ListItem',
-  Grid: 'Grid',
-  GridItem: 'GridItem',
+  ListItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-ListItem">{children}</div>
+  ),
+  Grid: ({ children }: { children?: ReactNode }) => <div data-test="mock-Grid">{children}</div>,
+  GridItem: ({ children }: { children?: ReactNode }) => (
+    <div data-test="mock-GridItem">{children}</div>
+  ),
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('@console/internal/module/k8s', () => ({
   referenceForModel: jest.fn(() => 'RouteModel'),
@@ -28,20 +35,15 @@ jest.mock('../../../utils/resource-overview-utils', () => ({
   getKnativeRoutesLinks: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
-// Variable to capture RoutesUrlLink props for testing
 let mockCapturedRoutesUrlLinkProps: any[] = [];
 
 jest.mock('../RoutesUrlLink', () => ({
   __esModule: true,
   default: (props: any) => {
     mockCapturedRoutesUrlLinkProps.push(props);
-    return 'RoutesUrlLink';
+    return <div data-test="mock-RoutesUrlLink" />;
   },
 }));
 
@@ -65,8 +67,8 @@ describe('RoutesOverviewListItem', () => {
       MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
-    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
-    expect(container.querySelector('ListItem')).toBeInTheDocument();
+    render(<RoutesOverviewListItem routeLink={routeLink} />);
+    expect(screen.getByTestId('mock-ListItem')).toBeVisible();
   });
 
   it('should have ResourceLink with proper kind', () => {
@@ -74,9 +76,9 @@ describe('RoutesOverviewListItem', () => {
       MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
-    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    render(<RoutesOverviewListItem routeLink={routeLink} />);
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', 'RouteModel');
   });
 
@@ -87,12 +89,11 @@ describe('RoutesOverviewListItem', () => {
     );
     render(<RoutesOverviewListItem routeLink={routeLink} />);
 
-    // Check that the mock was called
     expect(mockCapturedRoutesUrlLinkProps).toHaveLength(1);
     expect(mockCapturedRoutesUrlLinkProps[0].urls).toEqual([
       'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
     ]);
-    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('knative-plugin~Location');
+    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('Location');
   });
 
   it('should render with unique routes', () => {
@@ -119,10 +120,9 @@ describe('RoutesOverviewListItem', () => {
       />,
     );
 
-    // Should render two RoutesUrlLink components (location + unique route)
     expect(mockCapturedRoutesUrlLinkProps).toHaveLength(2);
-    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('knative-plugin~Location');
-    expect(mockCapturedRoutesUrlLinkProps[1].title).toEqual('knative-plugin~Unique Route');
+    expect(mockCapturedRoutesUrlLinkProps[0].title).toEqual('Location');
+    expect(mockCapturedRoutesUrlLinkProps[1].title).toEqual('Unique Route');
   });
 
   it('should render with total percent', () => {
@@ -131,7 +131,7 @@ describe('RoutesOverviewListItem', () => {
       MockKnativeResources.revisions.data[0],
     );
 
-    const { container } = render(
+    render(
       <RoutesOverviewListItem
         routeLink={routeLink}
         uniqueRoutes={['https://tag1.test.com', 'https://tag2.test.com']}
@@ -139,13 +139,9 @@ describe('RoutesOverviewListItem', () => {
       />,
     );
 
-    // Should render two RoutesUrlLink components (location + unique route)
     expect(mockCapturedRoutesUrlLinkProps).toHaveLength(2);
 
-    // Check percentage element
-    const percentElement = container.querySelector('[data-test="route-percent"]');
-    expect(percentElement).toBeInTheDocument();
-    expect(percentElement).toHaveTextContent('50%');
+    expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
   it('should not show route url when no data available', () => {
@@ -162,10 +158,10 @@ describe('RoutesOverviewListItem', () => {
       MockKnativeResources.ksroutes.data[0],
       MockKnativeResources.revisions.data[0],
     );
-    const { container } = render(<RoutesOverviewListItem routeLink={routeLink} />);
+    render(<RoutesOverviewListItem routeLink={routeLink} />);
 
-    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
-    expect(container.querySelector('routesurllink')).not.toBeInTheDocument();
-    expect(container.querySelector('[data-test="route-percent"]')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
+    expect(screen.queryByTestId('mock-RoutesUrlLink')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('route-percent')).not.toBeInTheDocument();
   });
 });

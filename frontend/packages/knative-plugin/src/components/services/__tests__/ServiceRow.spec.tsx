@@ -1,5 +1,5 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { render, screen } from '@testing-library/react';
 import * as _ from 'lodash';
 import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
@@ -7,11 +7,16 @@ import type { ServiceKind } from '../../../types';
 import ServiceRow from '../ServiceRow';
 
 jest.mock('@console/internal/components/factory', () => ({
-  TableData: 'TableData',
+  TableData: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <td data-test="mock-TableData" className={className}>
+      {children}
+    </td>
+  ),
 }));
 
 jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
+  ResourceLink: jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+    .knativeInternalUtilsStubs.ResourceLink,
   Kebab: {
     columnClass: 'pf-c-table__action',
   },
@@ -37,7 +42,11 @@ jest.mock('@console/shared/src/components/datetime/Timestamp', () => ({
 }));
 
 jest.mock('@console/shared/src/components/links/ExternalLink', () => ({
-  ExternalLink: 'ExternalLink',
+  ExternalLink: ({ href, children }: { href?: string; children?: ReactNode }) => (
+    <a data-test="mock-ExternalLink" href={href}>
+      {children}
+    </a>
+  ),
 }));
 
 jest.mock('../../../utils/condition-utils', () => ({
@@ -60,15 +69,13 @@ describe('ServiceRow', () => {
   });
 
   it('should render the service row with all TableData elements', () => {
-    const { container } = render(<ServiceRow {...svcData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(9);
+    render(<ServiceRow {...svcData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(9);
   });
 
   it('should show ExternalLink when service URL exists', () => {
-    const { container } = render(<ServiceRow {...svcData} />);
-    const externalLinks = container.querySelectorAll('externallink');
-    expect(externalLinks.length).toBeGreaterThan(0);
+    render(<ServiceRow {...svcData} />);
+    expect(screen.getAllByTestId('mock-ExternalLink').length).toBeGreaterThan(0);
   });
 
   it('should handle case when URL is not present', () => {
@@ -79,14 +86,13 @@ describe('ServiceRow', () => {
         status: _.omit(svcData.obj.status, 'url'),
       },
     };
-    const { container } = render(<ServiceRow {...noUrlSvcData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(9);
+    render(<ServiceRow {...noUrlSvcData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(9);
   });
 
   it('should render generation when present', () => {
-    const { container } = render(<ServiceRow {...svcData} />);
-    expect(container.querySelector('tabledata')).toBeInTheDocument();
+    render(<ServiceRow {...svcData} />);
+    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
   });
 
   it('should handle case when generation is not present', () => {
@@ -97,9 +103,8 @@ describe('ServiceRow', () => {
         metadata: _.omit(svcData.obj.metadata, 'generation'),
       },
     };
-    const { container } = render(<ServiceRow {...noGenerationSvcData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(9);
+    render(<ServiceRow {...noGenerationSvcData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(9);
   });
 
   it('should handle case when status is not present', () => {
@@ -107,14 +112,13 @@ describe('ServiceRow', () => {
       ...svcData,
       obj: _.omit(svcData.obj, 'status'),
     };
-    const { container } = render(<ServiceRow {...noStatusSvcData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(9);
+    render(<ServiceRow {...noStatusSvcData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(9);
   });
 
   it('should render ready status when conditions are present', () => {
-    const { container } = render(<ServiceRow {...svcData} />);
-    expect(container.querySelector('tabledata')).toBeInTheDocument();
+    render(<ServiceRow {...svcData} />);
+    expect(screen.getAllByTestId('mock-TableData')[0]).toBeVisible();
   });
 
   it('should render properly when conditions indicate not ready state', () => {
@@ -136,8 +140,7 @@ describe('ServiceRow', () => {
         },
       },
     };
-    const { container } = render(<ServiceRow {...notReadySvcData} />);
-    const tableDatas = container.querySelectorAll('tabledata');
-    expect(tableDatas).toHaveLength(9);
+    render(<ServiceRow {...notReadySvcData} />);
+    expect(screen.getAllByTestId('mock-TableData')).toHaveLength(9);
   });
 });

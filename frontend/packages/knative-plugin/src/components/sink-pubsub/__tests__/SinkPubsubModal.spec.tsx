@@ -23,10 +23,8 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
 }));
 
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  Trans: jest.fn(() => null),
+  ...jest.requireActual('../../../../../../__mocks__/react-i18next'),
+  Trans: () => null,
 }));
 
 describe('SinkPubsubModal', () => {

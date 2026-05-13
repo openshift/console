@@ -1,27 +1,29 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import type { ComponentProps } from 'react';
+import { render, screen } from '@testing-library/react';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 import {
   EventSubscriptionObj,
   EventIMCObj,
   knativeServiceObj,
   EventBrokerObj,
   EventTriggerObj,
-} from '../../../topology/__tests__/topology-knative-test-data';
+} from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
+import type { Subscriber } from '@console/knative-plugin/src/topology/topology-types';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-  SidebarSectionHeading: 'SidebarSectionHeading',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('../EventPubSubSubscribers', () => ({
   __esModule: true,
-  default: 'PubSubSubscribers',
+  default: () => <div data-test="mock-PubSubSubscribers" />,
 }));
 
-type EventPubSubResourcesProps = React.ComponentProps<typeof EventPubSubResources>;
+type EventPubSubResourcesProps = ComponentProps<typeof EventPubSubResources>;
 let sampleItemData: EventPubSubResourcesProps;
 
 const sampleSubscribers: Subscriber[] = [
@@ -50,14 +52,11 @@ describe('EventPubSubResources', () => {
   };
 
   it('should render related resources for the Subscription', () => {
-    const { container } = render(<EventPubSubResources item={sampleItemData.item} />);
-    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
-    expect(sidebarHeadings).toHaveLength(3);
-    expect(
-      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
-    ).toBeInTheDocument();
-    expect(container.querySelector('SidebarSectionHeading[text="Channel"]')).toBeInTheDocument();
-    expect(container.querySelector('SidebarSectionHeading[text="Subscriber"]')).toBeInTheDocument();
+    render(<EventPubSubResources item={sampleItemData.item} />);
+    expect(screen.getAllByTestId('mock-SidebarSectionHeading')).toHaveLength(3);
+    expect(screen.getByRole('heading', { name: 'Event Sources' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Channel' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Subscriber' })).toBeInTheDocument();
   });
 
   it('should render related resources for channel without subscribers', () => {
@@ -67,12 +66,9 @@ describe('EventPubSubResources', () => {
       ksservices: [knativeServiceObj],
       eventingsubscription: [EventSubscriptionObj],
     };
-    const { container } = render(<EventPubSubResources item={channelItemData} />);
-    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
-    expect(sidebarHeadings).toHaveLength(1); // Only Event Sources
-    expect(
-      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
-    ).toBeInTheDocument();
+    render(<EventPubSubResources item={channelItemData} />);
+    expect(screen.getAllByTestId('mock-SidebarSectionHeading')).toHaveLength(1);
+    expect(screen.getByRole('heading', { name: 'Event Sources' })).toBeInTheDocument();
   });
 
   it('should render related resources for channel with subscribers', () => {
@@ -83,14 +79,10 @@ describe('EventPubSubResources', () => {
       eventingsubscription: [EventSubscriptionObj],
       subscribers: sampleSubscribers,
     };
-    const { container } = render(<EventPubSubResources item={channelItemData} />);
-    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
-    const pubSubSubscribers = container.querySelectorAll('PubSubSubscribers');
-    expect(sidebarHeadings).toHaveLength(1); // Only Event Sources (PubSubSubscribers doesn't add SidebarSectionHeading to the count)
-    expect(
-      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
-    ).toBeInTheDocument();
-    expect(pubSubSubscribers).toHaveLength(1);
+    render(<EventPubSubResources item={channelItemData} />);
+    expect(screen.getAllByTestId('mock-SidebarSectionHeading')).toHaveLength(1);
+    expect(screen.getByRole('heading', { name: 'Event Sources' })).toBeInTheDocument();
+    expect(screen.getAllByTestId('mock-PubSubSubscribers')).toHaveLength(1);
   });
 
   it('should render broker section if the kind is Broker and  without subscribers ', () => {
@@ -100,16 +92,11 @@ describe('EventPubSubResources', () => {
       ksservices: [knativeServiceObj],
       triggers: [EventTriggerObj],
     };
-    const { container } = render(<EventPubSubResources item={brokerItemData} />);
-    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
-    expect(sidebarHeadings).toHaveLength(3); // Event Sources + Pods + Deployments
-    expect(
-      container.querySelector('SidebarSectionHeading[text="Event Sources"]'),
-    ).toBeInTheDocument();
-    expect(container.querySelector('SidebarSectionHeading[text="Pods"]')).toBeInTheDocument();
-    expect(
-      container.querySelector('SidebarSectionHeading[text="Deployments"]'),
-    ).toBeInTheDocument();
+    render(<EventPubSubResources item={brokerItemData} />);
+    expect(screen.getAllByTestId('mock-SidebarSectionHeading')).toHaveLength(3);
+    expect(screen.getByRole('heading', { name: 'Event Sources' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Pods' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Deployments' })).toBeInTheDocument();
   });
 
   it('should render broker section with Subscribers if the kind is Broker and subscribers available ', () => {
@@ -120,11 +107,9 @@ describe('EventPubSubResources', () => {
       triggers: [EventTriggerObj],
       subscribers: sampleSubscribers,
     };
-    const { container } = render(<EventPubSubResources item={brokerItemData} />);
-    const pubSubSubscribers = container.querySelectorAll('PubSubSubscribers');
-    const sidebarHeadings = container.querySelectorAll('SidebarSectionHeading');
-    expect(sidebarHeadings).toHaveLength(3); // Event Sources + Pods + Deployments (PubSubSubscribers doesn't add to count)
-    expect(pubSubSubscribers).toHaveLength(1);
+    render(<EventPubSubResources item={brokerItemData} />);
+    expect(screen.getAllByTestId('mock-PubSubSubscribers')).toHaveLength(1);
+    expect(screen.getAllByTestId('mock-SidebarSectionHeading')).toHaveLength(3);
   });
 });
 
@@ -132,20 +117,18 @@ describe('PubSubResourceOverviewList', () => {
   const itemsData: K8sResourceKind[] = [EventIMCObj, knativeServiceObj];
 
   it('should render ResourceLink respective for each resources, SidebarSectionHeading and no span', () => {
-    const { container } = render(
-      <PubSubResourceOverviewList items={itemsData} title="Connections" />,
-    );
-    const resourceLinks = container.querySelectorAll('ResourceLink');
+    render(<PubSubResourceOverviewList items={itemsData} title="Connections" />);
+    const resourceLinks = screen.getAllByTestId('mock-ResourceLink');
     expect(resourceLinks).toHaveLength(2);
     expect(resourceLinks[0]).toHaveAttribute('name', 'testchannel');
-    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
-    expect(container.querySelector('.pf-v6-u-text-color-subtle')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mock-SidebarSectionHeading')).toBeVisible();
+    expect(screen.queryByText('No Connections found for this resource.')).not.toBeInTheDocument();
   });
 
   it('should render SidebarSectionHeading, pf-v6-u-text-color-subtle and not ResourceLink if no resources exists', () => {
-    const { container } = render(<PubSubResourceOverviewList items={[]} title="Connections" />);
-    expect(container.querySelector('ResourceLink')).not.toBeInTheDocument();
-    expect(container.querySelector('SidebarSectionHeading')).toBeInTheDocument();
-    expect(container.querySelector('.pf-v6-u-text-color-subtle')).toBeInTheDocument();
+    render(<PubSubResourceOverviewList items={[]} title="Connections" />);
+    expect(screen.queryByTestId('mock-ResourceLink')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mock-SidebarSectionHeading')).toBeVisible();
+    expect(screen.getByText('No Connections found for this resource.')).toBeInTheDocument();
   });
 });

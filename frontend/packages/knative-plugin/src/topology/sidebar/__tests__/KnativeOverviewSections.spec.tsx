@@ -71,11 +71,7 @@ jest.mock('@console/internal/module/k8s', () => ({
   },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 describe('KnativeOverview', () => {
   let item: OverviewItem;

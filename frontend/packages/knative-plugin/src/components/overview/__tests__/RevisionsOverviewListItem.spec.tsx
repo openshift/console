@@ -1,5 +1,4 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
@@ -37,22 +36,37 @@ jest.mock('@patternfly/react-charts/victory', () => ({
 }));
 
 jest.mock('@patternfly/react-core', () => ({
-  ListItem: 'ListItem',
-  Grid: 'Grid',
-  GridItem: 'GridItem',
+  ListItem: ({ children, ...rest }: any) => (
+    <div data-test="mock-ListItem" {...rest}>
+      {children}
+    </div>
+  ),
+  Grid: ({ children, ...rest }: any) => (
+    <div data-test="mock-Grid" {...rest}>
+      {children}
+    </div>
+  ),
+  GridItem: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
 }));
 
-jest.mock('@console/internal/components/utils', () => ({
-  ResourceLink: 'ResourceLink',
-}));
+jest.mock(
+  '@console/internal/components/utils',
+  () =>
+    jest.requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
+      .knativeInternalUtilsStubs,
+);
 
 jest.mock('@console/shared', () => ({
-  PodStatus: 'PodStatus',
+  PodStatus: ({ title }: { title?: string }) => (
+    <div data-test="mock-PodStatus" title={title}>
+      {title}
+    </div>
+  ),
 }));
 
 jest.mock('../RoutesUrlLink', () => ({
   __esModule: true,
-  default: 'RoutesUrlLink',
+  default: () => <div data-test="mock-RoutesUrlLink" />,
 }));
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
@@ -77,47 +91,47 @@ describe('RevisionsOverviewListItem', () => {
   });
 
   it('should list the Revision', () => {
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    expect(container.querySelector('ListItem')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-ListItem')).toBeVisible();
   });
 
   it('should have ResourceLink with proper kind', () => {
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    const resourceLink = container.querySelector('ResourceLink');
-    expect(resourceLink).toBeInTheDocument();
+    const resourceLink = screen.getByTestId('mock-ResourceLink');
+    expect(resourceLink).toBeVisible();
     expect(resourceLink).toHaveAttribute('kind', 'RevisionModel');
   });
 
   it('should show traffic percent', () => {
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    const trafficPercent = container.querySelector('[data-test="revision-traffic-percent"]');
+    const trafficPercent = screen.getByTestId('revision-traffic-percent');
     expect(trafficPercent).toBeInTheDocument();
     expect(trafficPercent).toHaveTextContent('100%');
   });
 
   it('should not show deployments if not present', () => {
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={MockKnativeResources.ksservices.data[0]}
       />,
     );
-    expect(container.querySelector('.odc-revision-deployment-list')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('revision-deployment-list')).not.toBeInTheDocument();
   });
 
   it('should sum the traffic percentage for the same revision', () => {
@@ -132,14 +146,14 @@ describe('RevisionsOverviewListItem', () => {
         ],
       },
     };
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={mockServiceData}
       />,
     );
-    expect(container.querySelector('ResourceLink')).toBeInTheDocument();
-    const trafficPercent = container.querySelector('[data-test="revision-traffic-percent"]');
+    expect(screen.getByTestId('mock-ResourceLink')).toBeVisible();
+    const trafficPercent = screen.getByTestId('revision-traffic-percent');
     expect(trafficPercent).toHaveTextContent('100%');
   });
 
@@ -191,14 +205,14 @@ describe('RevisionsOverviewListItem', () => {
         },
       };
       const mockRevisionsDepData = { ...MockKnativeResources.revisions.data[0], resources };
-      const { container } = render(
+      render(
         <RevisionsOverviewListItem
           revision={mockRevisionsDepData}
           service={MockKnativeResources.ksservices.data[0]}
         />,
       );
-      expect(container.querySelector('.odc-revision-deployment-list')).toBeInTheDocument();
-      const resourceLinks = container.querySelectorAll('ResourceLink');
+      expect(screen.getByTestId('revision-deployment-list')).toBeInTheDocument();
+      const resourceLinks = screen.getAllByTestId('mock-ResourceLink');
       expect(resourceLinks).toHaveLength(2);
       expect(resourceLinks[1]).toHaveAttribute('kind', 'Deployment');
     });
@@ -224,14 +238,14 @@ describe('RevisionsOverviewListItem', () => {
         },
       };
       const mockRevisionsDepData = { ...MockKnativeResources.revisions.data[0], resources };
-      const { container } = render(
+      render(
         <RevisionsOverviewListItem
           revision={mockRevisionsDepData}
           service={MockKnativeResources.ksservices.data[0]}
         />,
       );
-      const podStatus = container.querySelector('PodStatus');
-      expect(podStatus).toBeInTheDocument();
+      const podStatus = screen.getByTestId('mock-PodStatus');
+      expect(podStatus).toBeVisible();
       expect(podStatus).toHaveAttribute('title', '1');
     });
   });
@@ -241,12 +255,12 @@ describe('RevisionsOverviewListItem', () => {
       ...MockKnativeResources.ksservices.data[0],
     };
     delete mockKsvc.status;
-    const { container } = render(
+    render(
       <RevisionsOverviewListItem
         revision={MockKnativeResources.revisions.data[0]}
         service={mockKsvc}
       />,
     );
-    expect(container.querySelector('RoutesUrlLink')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-RoutesUrlLink')).not.toBeInTheDocument();
   });
 });

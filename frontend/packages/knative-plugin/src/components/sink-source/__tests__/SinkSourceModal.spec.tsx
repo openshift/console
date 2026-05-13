@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-container, testing-library/no-node-access -- Mocked components require container queries */
 import type { ComponentProps } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +20,11 @@ jest.mock('@patternfly/react-core', () => ({
       </button>
     ),
   ),
-  Form: jest.fn(({ children, ...props }) => <form {...props}>{children}</form>),
+  Form: jest.fn(({ children, ...props }) => (
+    <form data-test={props.id} {...props}>
+      {children}
+    </form>
+  )),
 }));
 
 jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => ({
@@ -39,10 +42,8 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
 }));
 
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  Trans: jest.fn(() => null),
+  ...jest.requireActual('../../../../../../__mocks__/react-i18next'),
+  Trans: () => null,
 }));
 
 type SinkSourceModalProps = ComponentProps<typeof SinkSourceModal>;
@@ -74,8 +75,8 @@ describe('SinkSourceModal Form', () => {
   });
 
   it('should render form with id', () => {
-    const { container } = render(<SinkSourceModal {...formProps} />);
-    const form = container.querySelector('form');
+    render(<SinkSourceModal {...formProps} />);
+    const form = screen.getByTestId('sink-source-form');
     expect(form).toBeInTheDocument();
     expect(form).toHaveAttribute('id', 'sink-source-form');
   });
@@ -94,14 +95,14 @@ describe('SinkSourceModal Form', () => {
       },
     };
     render(<SinkSourceModal {...formProps} values={dirtyValues} initialValues={formValues} />);
-    await user.click(screen.getByRole('button', { name: 'knative-plugin~Save' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
     expect(formProps.handleSubmit).toHaveBeenCalled();
   });
 
   it('should call cancel when Cancel is clicked', async () => {
     const user = userEvent.setup();
     render(<SinkSourceModal {...formProps} />);
-    await user.click(screen.getByRole('button', { name: 'knative-plugin~Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(formProps.cancel).toHaveBeenCalled();
   });
 

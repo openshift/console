@@ -16,11 +16,7 @@ jest.mock('../TrafficModalRevisionsDropdownField', () => ({
   default: jest.fn(() => null),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+jest.mock('react-i18next');
 
 const formProps = {
   ...formikFormProps,
