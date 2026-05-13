@@ -1,11 +1,12 @@
 import type { FC, ReactElement, ComponentType } from 'react';
-import { useMemo, lazy, useEffect } from 'react';
+import { useMemo, lazy, useEffect, Suspense } from 'react';
 import type { RouteProps } from 'react-router';
 import { createPath, Route, useLocation } from 'react-router';
 import { RoutePage, isRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 
 const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePerspective) =>
   (extension.properties.perspective ?? activePerspective) === activePerspective;
@@ -14,7 +15,7 @@ const isRoutePageExtensionActive: IsRouteExtensionActive = (extension, activePer
 const lazyComponentCache = new Map<string, React.LazyExoticComponent<ComponentType<any>>>();
 
 const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
-  const { uid, properties } = extension;
+  const { pluginName, uid, properties } = extension;
   const { component } = properties;
   const LazyComponent = useMemo(() => {
     if (!lazyComponentCache.has(uid)) {
@@ -29,7 +30,11 @@ const LazyRoutePage: FC<LazyRoutePageProps> = ({ extension }) => {
     return lazyComponentCache.get(uid);
   }, [uid, component]);
 
-  return <LazyComponent />;
+  return (
+    <Suspense fallback={<LoadingBox blame={`${pluginName}: ${extension.uid}`} />}>
+      <LazyComponent />
+    </Suspense>
+  );
 };
 
 const InactiveRoutePage: FC<InactiveRoutePageProps> = ({
