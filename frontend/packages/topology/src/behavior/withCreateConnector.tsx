@@ -236,7 +236,7 @@ const CreateConnectorWidget: React.FunctionComponent<CreateConnectorWidgetProps>
 
     return (
       <>
-        {active ? <Layer id={TOP_LAYER}>{connector}</Layer> : connector}
+        <Layer id={TOP_LAYER}>{connector}</Layer>
         {prompt && (
           <ContextMenu
             reference={{ x: prompt.event.pageX, y: prompt.event.pageY }}

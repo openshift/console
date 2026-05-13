@@ -347,6 +347,8 @@ export interface PodSetProps {
 }
 
 export type BaseNodeProps = {
+  /** When set, use with Tooltip triggerRef so Popper anchors to this node (Layer portals break firstElementChild). */
+  tooltipTriggerRef?: React.Ref<SVGGElement>;
   className?: string;
   innerRadius?: number;
   icon?: string;

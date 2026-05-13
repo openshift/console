@@ -30,6 +30,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
   kind,
   element,
   hoverRef,
+  tooltipTriggerRef,
   children,
   onShowCreateConnector,
   onContextMenu,
@@ -41,7 +42,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
 }) => {
   const [hoverChange, setHoverChange] = React.useState<boolean>(false);
   const [hover, internalHoverRef] = useHover(200, 200, [hoverChange]);
-  const nodeHoverRefs = useCombineRefs(internalHoverRef, hoverRef);
+  const nodeHoverRefs = useCombineRefs(tooltipTriggerRef, internalHoverRef, hoverRef);
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
