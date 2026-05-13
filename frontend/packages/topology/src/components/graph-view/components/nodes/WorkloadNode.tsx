@@ -150,6 +150,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
   ...rest
 }) {
   const { t } = useTranslation();
+  const dropTooltipTriggerRef = React.useRef<SVGGElement>(null);
   const { width, height } = element.getDimensions();
   const workloadData = element.getData().data;
   const filters = useDisplayFilters();
@@ -186,9 +187,11 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(function Work
         trigger="manual"
         isVisible={dropTarget && canDrop}
         animationDuration={0}
+        triggerRef={dropTooltipTriggerRef}
       >
         <BaseNode
           className="odc-workload-node"
+          tooltipTriggerRef={dropTooltipTriggerRef}
           hoverRef={hoverRef}
           innerRadius={podSetInnerRadius(size, donutStatus)}
           icon={showDetails && !showPodCount ? iconImageUrl : undefined}
