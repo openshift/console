@@ -135,6 +135,7 @@
   "Complete the form to create a Helm release. The Helm chart authors might have provided some default values.": "Complete the form to create a Helm release. The Helm chart authors might have provided some default values.",
   "Configure Helm release": "Configure Helm release",
   "Version": "Version",
+  "None": "None",
   "Install": "Install",
   "Back": "Back",
   "Display Name": "Display Name",

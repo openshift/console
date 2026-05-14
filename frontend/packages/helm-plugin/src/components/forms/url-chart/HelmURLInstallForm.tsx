@@ -157,7 +157,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
-                placeholder={t('helm-plugin~Select a secret')}
+                placeholder={t('helm-plugin~None')}
                 showBadge
                 autocompleteFilter={autocompleteFilter}
                 disabled
