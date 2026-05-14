@@ -10,22 +10,11 @@ Shared reference for migrating Console's Cypress e2e tests to Playwright. Used b
 4. **Leverage the framework.** Use existing page objects, and clients. Create new ones only when needed — always search first.
 5. **Live verification.** Use Playwright MCP browser tools to verify selectors, navigation flows, and element presence against the live UI before finalizing code.
 
-## Console Custom Selector Commands
+## Test Selectors
 
-All 10 custom commands from `packages/integration-tests/support/selectors.ts`. Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getByTestId('x')` queries `[data-test="x"]`.
+Config: `testIdAttribute: 'data-test'` in `playwright.config.ts` — `page.getByTestId('x')` queries `[data-test="x"]`.
 
-| Cypress Command                | CSS Selector                             | Playwright Equivalent                                          |
-| :----------------------------- | :--------------------------------------- | :------------------------------------------------------------- |
-| `cy.byTestID('x')`             | `[data-test="x"]`                        | `page.getByTestId('x')`                                        |
-| `cy.byLegacyTestID('x')`       | `[data-test-id="x"]`                     | Change source to `data-test="x"`, then `page.getByTestId('x')` |
-| `cy.byTestActionID('x')`       | `[data-test-action="x"]:not([disabled])` | `page.locator('[data-test-action="x"]:not([disabled])')`       |
-| `cy.byButtonText('x')`         | `button` containing text                 | `page.getByRole('button', { name: 'x' })`                      |
-| `cy.byDataID('x')`             | `[data-id="x"]`                          | `page.locator('[data-id="x"]')`                                |
-| `cy.byTestSelector('x')`       | `[data-test-selector="x"]`               | `page.locator('[data-test-selector="x"]')`                     |
-| `cy.byTestDropDownMenu('x')`   | `[data-test-dropdown-menu="x"]`          | `page.locator('[data-test-dropdown-menu="x"]')`                |
-| `cy.byTestOperatorRow('x')`    | `[data-test-operator-row="x"]`           | `page.locator('[data-test-operator-row="x"]')`                 |
-| `cy.byTestSectionHeading('x')` | `[data-test-section-heading="x"]`        | `page.locator('[data-test-section-heading="x"]')`              |
-| `cy.byTestOperandLink('x')`    | `[data-test-operand-link="x"]`           | `page.locator('[data-test-operand-link="x"]')`                 |
+**Always use `page.getByTestId('x')`** for element selection. If a React element only has a legacy test attribute (`data-test-id`, `data-test-selector`, `data-test-action`, `data-test-dropdown-menu`, etc.), add `data-test="x"` to the element. Never remove legacy `data-test-*` attributes — external consumers may depend on them.
 
 ---
 
