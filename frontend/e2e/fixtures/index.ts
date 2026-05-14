@@ -24,6 +24,15 @@ type WorkerFixtures = {
 };
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
+  context: async ({ context }, use) => {
+    await context.addInitScript(() => {
+      Object.defineProperty(navigator, 'userAgent', {
+        get: () => 'ConsoleIntegrationTestEnvironment',
+      });
+    });
+    await use(context);
+  },
+
   testConfig: [
     async ({}, use) => {
       const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');
