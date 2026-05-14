@@ -26,7 +26,7 @@ type WorkerFixtures = {
 export const test = base.extend<TestFixtures, WorkerFixtures>({
   testConfig: [
     async ({}, use) => {
-      const configPath = path.resolve(__dirname, '..', '.test-config.json');
+      const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');
       let config: SharedTestConfig = {
         testNamespace: 'default',
       };

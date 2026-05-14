@@ -4,7 +4,7 @@ import { test as setup } from '@playwright/test';
 
 import { performLogin, saveStorageState } from './login-helper';
 
-const developerStorageState = path.resolve(__dirname, '..', '.auth', 'developer.json');
+const developerStorageState = path.resolve(import.meta.dirname, '..', '.auth', 'developer.json');
 
 setup('login as developer', async ({ page }) => {
   setup.skip(process.env.SKIP_GLOBAL_SETUP === 'true', 'SKIP_GLOBAL_SETUP is set');

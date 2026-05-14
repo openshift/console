@@ -5,7 +5,7 @@ import { test as teardown, expect } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
-const CONFIG_FILE = path.resolve(__dirname, '..', '.test-config.json');
+const CONFIG_FILE = path.resolve(import.meta.dirname, '..', '.test-config.json');
 
 teardown('delete test namespace', async () => {
   teardown.skip(

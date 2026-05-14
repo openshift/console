@@ -37,7 +37,7 @@ export function createCleanupFixture(testName: string): CleanupFixture {
 
   function getClient(): KubernetesClient | null {
     try {
-      const configPath = path.resolve(__dirname, '..', '.test-config.json');
+      const configPath = path.resolve(import.meta.dirname, '..', '.test-config.json');
       let kubeConfigPath: string | undefined;
       let authToken: string | undefined;
       if (fs.existsSync(configPath)) {
