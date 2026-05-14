@@ -9,6 +9,7 @@ import {
 } from '../dashboards';
 import { defaults } from '../../reducers/dashboards';
 import { RESULTS_TYPE } from '../../reducers/dashboard-results';
+import { MIN_POLL_DELAY } from '../../components/utils/adaptive-polling';
 
 const testStopWatch = (stopAction, type: RESULTS_TYPE, key: string) => {
   expect(stopAction(key)).toEqual({
@@ -102,4 +103,73 @@ describe('dashboards-actions', () => {
 
   it('stopWatchPrometheusQuery stops watching Prometheus', () =>
     testStopWatch(stopWatchPrometheusQuery, RESULTS_TYPE.PROMETHEUS, 'fooQuery'));
+
+  describe('adaptive polling', () => {
+    let setTimeoutSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+    });
+
+    afterEach(() => {
+      setTimeoutSpy.mockRestore();
+      jest.restoreAllMocks();
+    });
+
+    const flushPromises = () => new Promise(process.nextTick);
+
+    const setupWatchURL = (fetchMock: jest.Mock) => {
+      const activeState = ImmutableMap(defaults).setIn([RESULTS_TYPE.URL, 'testURL', 'active'], 1);
+      const getState = jest
+        .fn()
+        .mockReturnValueOnce({ dashboards: ImmutableMap(defaults) })
+        .mockReturnValue({ dashboards: activeState });
+      const dispatch = jest.fn();
+
+      watchURL('testURL', fetchMock)(dispatch, getState);
+      return { dispatch, getState };
+    };
+
+    it('uses MIN_POLL_DELAY for fast responses', async () => {
+      const now = 1000;
+      jest
+        .spyOn(Date, 'now')
+        .mockReturnValueOnce(now)
+        .mockReturnValueOnce(now + 100);
+
+      const fetchMock = jest.fn().mockResolvedValueOnce({ data: 'test' });
+      setupWatchURL(fetchMock);
+
+      await flushPromises();
+
+      const lastSetTimeout = setTimeoutSpy.mock.calls[setTimeoutSpy.mock.calls.length - 1];
+      expect(lastSetTimeout[1]).toBe(MIN_POLL_DELAY);
+    });
+
+    it('increases delay for slow responses', async () => {
+      const now = 1000;
+      jest
+        .spyOn(Date, 'now')
+        .mockReturnValueOnce(now)
+        .mockReturnValueOnce(now + 3000);
+
+      const fetchMock = jest.fn().mockResolvedValueOnce({ data: 'test' });
+      setupWatchURL(fetchMock);
+
+      await flushPromises();
+
+      const lastSetTimeout = setTimeoutSpy.mock.calls[setTimeoutSpy.mock.calls.length - 1];
+      expect(lastSetTimeout[1]).toBe(30000);
+    });
+
+    it('does not jump to MAX_POLL_DELAY on first fetch error', async () => {
+      const fetchMock = jest.fn().mockRejectedValueOnce(new Error('network error'));
+      setupWatchURL(fetchMock);
+
+      await flushPromises();
+
+      const lastSetTimeout = setTimeoutSpy.mock.calls[setTimeoutSpy.mock.calls.length - 1];
+      expect(lastSetTimeout[1]).toBe(MIN_POLL_DELAY);
+    });
+  });
 });
