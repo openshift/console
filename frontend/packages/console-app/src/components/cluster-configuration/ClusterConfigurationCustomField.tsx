@@ -21,7 +21,9 @@ const ClusterConfigurationCustomField: FC<ClusterConfigurationCustomFieldProps> 
   return (
     <ErrorBoundaryInline>
       <FormLayout>
-        <CustomComponent {...field.props} readonly={item.readonly} />
+        <div role="group" aria-label={item.label} data-readonly={String(item.readonly)}>
+          <CustomComponent {...field.props} readonly={item.readonly} />
+        </div>
       </FormLayout>
     </ErrorBoundaryInline>
   );
