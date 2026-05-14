@@ -69,6 +69,7 @@ class ListInput_ extends Component<ListInputProps, ListInputState> {
                   required={missingValues && i === 0}
                   aria-describedby={helpText ? this.helpID : undefined}
                   data-test-list-input-for={label}
+                  data-test={`list-input-${label}`}
                   aria-label={label}
                 />
               </span>

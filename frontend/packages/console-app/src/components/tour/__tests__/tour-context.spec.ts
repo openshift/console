@@ -95,7 +95,9 @@ describe('guided-tour-context', () => {
     it('should return context values from the hook', () => {
       useSelectorMock
         .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce({ A: true, B: false });
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce(false);
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference to return { completed: false } for the tour state
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
@@ -116,7 +118,9 @@ describe('guided-tour-context', () => {
     it('should return tour null from the hook', () => {
       useSelectorMock
         .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce({ A: true, B: false });
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce(false);
       useResolvedExtensionsMock.mockReturnValue([[]]);
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, true]);
       const { result } = renderHook(() => useTourValuesForContext());
@@ -129,7 +133,9 @@ describe('guided-tour-context', () => {
     it('should return null from the hook if tour is available but data isnot loaded', () => {
       useSelectorMock
         .mockReturnValueOnce({ A: true, B: false })
-        .mockReturnValueOnce({ A: true, B: false });
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce({ A: true, B: false })
+        .mockReturnValueOnce(false);
       useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
       // Mock useUserPreference with loaded: false
       useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, false]);

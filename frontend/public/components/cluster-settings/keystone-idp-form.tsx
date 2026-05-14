@@ -245,7 +245,7 @@ export const AddKeystonePage = () => {
           </div>
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-v6-c-form">
-              <Button type="submit" variant="primary" data-test-id="add-idp">
+              <Button type="submit" variant="primary" data-test-id="add-idp" data-test="add-idp">
                 {t('public~Add')}
               </Button>
               <Button type="button" variant="secondary" onClick={() => navigate(-1)}>

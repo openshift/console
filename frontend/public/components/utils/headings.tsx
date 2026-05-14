@@ -174,7 +174,11 @@ export const ConnectedPageHeading = connectToModel(
             (kind || resourceTitle || resourceStatus) && (
               <div className="co-m-pane__heading co-resource-item">
                 {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-                <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                <span
+                  data-test-id="resource-title"
+                  data-test="resource-title"
+                  className="co-resource-item__resource-name"
+                >
                   {resourceTitle}
                   {data?.metadata?.namespace && data?.metadata?.ownerReferences?.length && (
                     <ManagedByOperatorLink obj={data} />

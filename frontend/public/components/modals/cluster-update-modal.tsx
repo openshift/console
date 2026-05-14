@@ -212,6 +212,7 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
       <ModalHeader
         title={t('public~Update cluster')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="cluster-update-modal-title"
       />
       <ModalBody>
@@ -356,7 +357,13 @@ const ClusterUpdateModal = (props: ClusterUpdateModalProps) => {
         >
           {t('public~Update')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

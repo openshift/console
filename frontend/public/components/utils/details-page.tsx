@@ -215,6 +215,7 @@ export const UpstreamConfigDetailsItem: FC<UpstreamConfigDetailsItemProps> = ({ 
           type="button"
           isInline
           data-test-id="cv-upstream-server-url"
+          data-test="cv-upstream-server-url"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

@@ -55,7 +55,7 @@ const ItemRow = ({ item, showAPIGroup }) => {
   return (
     <Tr data-test-action={item.label}>
       <Td width={30}>
-        <Link to={item.path} data-test-id={item.label}>
+        <Link to={item.path} data-test-id={item.label} data-test={item.label}>
           {item.label}
         </Link>
         {showAPIGroup && (

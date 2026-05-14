@@ -76,6 +76,7 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
       <ModalHeader
         title={t('public~Edit upstream configuration')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="configure-cluster-upstream-modal-title"
       />
       <ModalBody>
@@ -183,7 +184,12 @@ export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamMod
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

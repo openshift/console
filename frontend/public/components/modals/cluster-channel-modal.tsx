@@ -59,6 +59,7 @@ export const ClusterChannelModal = (props: ClusterChannelModalProps) => {
       <ModalHeader
         title={channelsExist ? t('public~Select channel') : t('public~Input channel')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="cluster-channel-modal-title"
       />
       <ModalBody>

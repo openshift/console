@@ -179,6 +179,7 @@ export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
       type="button"
       isInline
       data-test-id="current-channel-update-link"
+      data-test="current-channel-update-link"
       onClick={() => launchModal(LazyClusterChannelModalOverlay, { cv: cv as ClusterVersionKind })}
       variant="link"
     >
@@ -253,6 +254,7 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
         type="button"
         onClick={() => launchModal(LazyClusterUpdateModalOverlay, { cv })}
         data-test-id="cv-update-button"
+        data-test="cv-update-button"
       >
         {t('public~Select a version')}
       </Button>
@@ -1241,7 +1243,16 @@ export const ClusterSettingsPage: FC = () => {
 
   return (
     <PageTitleContext.Provider value={titleProviderValues}>
-      <PageHeading title={<div data-test-id="cluster-settings-page-heading">{title}</div>} />
+      <PageHeading
+        title={
+          <div
+            data-test-id="cluster-settings-page-heading"
+            data-test="cluster-settings-page-heading"
+          >
+            {title}
+          </div>
+        }
+      />
       <HorizontalNav {...horizontalNavProps} />
     </PageTitleContext.Provider>
   );

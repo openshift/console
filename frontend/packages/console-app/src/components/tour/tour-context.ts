@@ -136,10 +136,13 @@ export const useTourValuesForContext = (): TourContextType => {
     (state) => getRequiredFlagsByTour(state, selectorSteps),
     isEqual,
   );
+  const isIntegrationTest = useConsoleSelector(
+    (state: RootState) => getFlagsObject(state).INTEGRATION_TEST,
+  );
   const [tourCompletionState, setTourCompletionState, loaded] = useTourStateForPerspective(
     activePerspective,
   );
-  const completed = tourCompletionState?.completed;
+  const completed = tourCompletionState?.completed || isIntegrationTest;
   const onComplete = () => {
     if (completed === false) {
       setTourCompletionState(true);
