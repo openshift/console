@@ -5,8 +5,11 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+	"sync"
 	"text/template"
 
 	"gopkg.in/yaml.v3"
@@ -55,6 +58,8 @@ type DownloadsServerConfig struct {
 	Spec         []ArtifactSpec
 	TempDir      string
 	TemplateHTML *template.Template
+	// archivesReady is closed once all background archive creation goroutines complete.
+	archivesReady chan struct{}
 }
 
 const indexFileName = "index.html"
@@ -210,6 +215,18 @@ func addFileToZip(zw *zip.Writer, filename string) error {
 	return nil
 }
 
+// displayName returns a human-readable label like "amd64 linux" or "amd64 linux - RHEL 8".
+func displayName(arch, os, basename string) string {
+	name := fmt.Sprintf("%s %s", arch, os)
+	base := strings.TrimSuffix(basename, ".exe")
+	if strings.HasSuffix(base, ".rhel8") {
+		name += " - RHEL 8"
+	} else if strings.HasSuffix(base, ".rhel9") {
+		name += " - RHEL 9"
+	}
+	return name
+}
+
 func configureArchivePath(pathToTargetFile string) string {
 	if filepath.Ext(pathToTargetFile) == ".exe" {
 		// Remove the .exe extension from the path
@@ -323,27 +340,64 @@ func (downloadsConfig *DownloadsServerConfig) generateDirFileContents() ([]ListI
 			return nil, err
 		}
 
-		err = createArchive(artifactPath, ".tar")
-		if err != nil {
-			return nil, err
-		}
-		err = createArchive(artifactPath, ".zip")
-		if err != nil {
-			return nil, err
-		}
-
-		pathToArchive := configureArchivePath(artifactPath)
-		// append new entry in the list of links to artifacts
+		relPath := filepath.Join(spec.Arch, spec.OperatingSystem, basename)
+		relArchivePath := configureArchivePath(relPath)
 		content = append(content, ListItemLink{
 			Type:   Binary,
-			URL:    artifactPath,
-			Name:   fmt.Sprintf("%s %s", spec.Arch, spec.OperatingSystem),
-			TarURL: fmt.Sprintf("%s.tar", pathToArchive),
-			ZipURL: fmt.Sprintf("%s.zip", pathToArchive),
+			URL:    relPath,
+			Name:   displayName(spec.Arch, spec.OperatingSystem, basename),
+			TarURL: fmt.Sprintf("%s.tar", relArchivePath),
+			ZipURL: fmt.Sprintf("%s.zip", relArchivePath),
 		})
 	}
 
 	return content, nil
+}
+
+// CreateArchivesInBackground spawns goroutines to create tar and zip archives
+// for every artifact concurrently. It closes archivesReady when all archives
+// have been written so that Handler() can unblock waiting requests.
+func (c *DownloadsServerConfig) CreateArchivesInBackground() {
+	c.archivesReady = make(chan struct{})
+	var wg sync.WaitGroup
+
+	for _, spec := range c.Spec {
+		basename := filepath.Base(spec.Path)
+		artifactPath := filepath.Join(c.TempDir, spec.Arch, spec.OperatingSystem, basename)
+
+		wg.Add(2)
+		go func(p string) {
+			defer wg.Done()
+			if err := createArchive(p, ".tar"); err != nil {
+				klog.Errorf("Failed to create tar archive for %s: %v", p, err)
+			}
+		}(artifactPath)
+		go func(p string) {
+			defer wg.Done()
+			if err := createArchive(p, ".zip"); err != nil {
+				klog.Errorf("Failed to create zip archive for %s: %v", p, err)
+			}
+		}(artifactPath)
+	}
+
+	go func() {
+		wg.Wait()
+		close(c.archivesReady)
+		klog.Info("All archives created successfully")
+	}()
+}
+
+// Handler returns an http.Handler that serves files from TempDir. Requests for
+// .tar or .zip archives block until background archive creation is complete.
+func (c *DownloadsServerConfig) Handler() http.Handler {
+	fs := http.FileServer(http.Dir(c.TempDir))
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ext := filepath.Ext(r.URL.Path)
+		if ext == ".tar" || ext == ".zip" {
+			<-c.archivesReady
+		}
+		fs.ServeHTTP(w, r)
+	})
 }
 
 // setupArtifactsDirectory creates the root HTML file and directories, files and archives for artifacts
