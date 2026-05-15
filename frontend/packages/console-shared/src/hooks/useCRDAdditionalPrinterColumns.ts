@@ -7,12 +7,16 @@ import type {
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 
 export const useCRDAdditionalPrinterColumns = (
-  model: K8sModel,
+  model: K8sModel | undefined,
 ): [CRDAdditionalPrinterColumn[], boolean] => {
   const [CRDAPC, setCRDAPC] = useState<CRDAdditionalPrinterColumns>({});
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    if (!model) {
+      setLoaded(true);
+      return;
+    }
     coFetchJSON(`/api/console/crd-columns/${model.plural}.${model.apiGroup}`)
       .then((response) => {
         setCRDAPC(response);
@@ -23,7 +27,7 @@ export const useCRDAdditionalPrinterColumns = (
         // eslint-disable-next-line no-console
         console.log(e.message);
       });
-  }, [model.plural, model.apiGroup]);
+  }, [model]);
 
-  return [CRDAPC?.[model.apiVersion] ?? [], loaded];
+  return [CRDAPC?.[model?.apiVersion] ?? [], loaded];
 };
