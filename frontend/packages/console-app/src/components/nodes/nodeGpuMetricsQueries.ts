@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export enum GpuMetricQuery {
   GPU_COUNT = 'GPU_COUNT',
   GPU_UTILIZATION = 'GPU_UTILIZATION',
@@ -31,36 +29,18 @@ const buildNodeSelectors = (nodeName: string): { hn: string; nd: string } => {
   };
 };
 
-const gpuQueries = {
-  [GpuMetricQuery.GPU_COUNT]: _.template(
-    `count(DCGM_FI_DEV_GPU_UTIL{<%= hn %>} or DCGM_FI_DEV_GPU_UTIL{<%= nd %>})`,
-  ),
-  [GpuMetricQuery.GPU_UTILIZATION]: _.template(
-    `DCGM_FI_DEV_GPU_UTIL{<%= hn %>} or DCGM_FI_DEV_GPU_UTIL{<%= nd %>}`,
-  ),
-  [GpuMetricQuery.GPU_TEMPERATURE]: _.template(
-    `DCGM_FI_DEV_GPU_TEMP{<%= hn %>} or DCGM_FI_DEV_GPU_TEMP{<%= nd %>}`,
-  ),
-  [GpuMetricQuery.GPU_POWER_USAGE]: _.template(
-    `DCGM_FI_DEV_POWER_USAGE{<%= hn %>} or DCGM_FI_DEV_POWER_USAGE{<%= nd %>}`,
-  ),
-  [GpuMetricQuery.GPU_FB_USED]: _.template(
-    `DCGM_FI_DEV_FB_USED{<%= hn %>} or DCGM_FI_DEV_FB_USED{<%= nd %>}`,
-  ),
-  [GpuMetricQuery.GPU_FB_FREE]: _.template(
-    `DCGM_FI_DEV_FB_FREE{<%= hn %>} or DCGM_FI_DEV_FB_FREE{<%= nd %>}`,
-  ),
-};
+const buildQuery = (metric: string, hn: string, nd: string): string =>
+  `${metric}{${hn}} or ${metric}{${nd}}`;
 
 export const getGpuMetricQueries = (nodeName: string): Record<GpuMetricQuery, string> => {
-  const selectors = buildNodeSelectors(nodeName);
+  const { hn, nd } = buildNodeSelectors(nodeName);
   return {
-    [GpuMetricQuery.GPU_COUNT]: gpuQueries[GpuMetricQuery.GPU_COUNT](selectors),
-    [GpuMetricQuery.GPU_UTILIZATION]: gpuQueries[GpuMetricQuery.GPU_UTILIZATION](selectors),
-    [GpuMetricQuery.GPU_TEMPERATURE]: gpuQueries[GpuMetricQuery.GPU_TEMPERATURE](selectors),
-    [GpuMetricQuery.GPU_POWER_USAGE]: gpuQueries[GpuMetricQuery.GPU_POWER_USAGE](selectors),
-    [GpuMetricQuery.GPU_FB_USED]: gpuQueries[GpuMetricQuery.GPU_FB_USED](selectors),
-    [GpuMetricQuery.GPU_FB_FREE]: gpuQueries[GpuMetricQuery.GPU_FB_FREE](selectors),
+    [GpuMetricQuery.GPU_COUNT]: `count(${buildQuery('DCGM_FI_DEV_GPU_UTIL', hn, nd)})`,
+    [GpuMetricQuery.GPU_UTILIZATION]: buildQuery('DCGM_FI_DEV_GPU_UTIL', hn, nd),
+    [GpuMetricQuery.GPU_TEMPERATURE]: buildQuery('DCGM_FI_DEV_GPU_TEMP', hn, nd),
+    [GpuMetricQuery.GPU_POWER_USAGE]: buildQuery('DCGM_FI_DEV_POWER_USAGE', hn, nd),
+    [GpuMetricQuery.GPU_FB_USED]: buildQuery('DCGM_FI_DEV_FB_USED', hn, nd),
+    [GpuMetricQuery.GPU_FB_FREE]: buildQuery('DCGM_FI_DEV_FB_FREE', hn, nd),
   };
 };
 
