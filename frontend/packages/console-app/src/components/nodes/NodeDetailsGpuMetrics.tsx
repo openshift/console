@@ -47,6 +47,9 @@ const resultsByGpu = (
   return response.data.result.reduce<Record<string, GpuMetricResult>>(
     (acc, r: PrometheusResult) => {
       const gpu = r.metric?.gpu ?? r.metric?.GPU_I_ID ?? r.metric?.UUID ?? r.metric?.device ?? '';
+      if (!gpu) {
+        return acc;
+      }
       acc[gpu] = {
         value: r.value?.[1] ?? '',
         modelName: r.metric?.modelName,
@@ -162,10 +165,11 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
   }
 
   const gpuCountValue = countResponse?.data?.result?.[0]?.value?.[1];
-  const gpuCountStr =
-    gpuCountValue !== undefined && gpuCountValue !== ''
-      ? String(Math.round(parseFloat(gpuCountValue)))
-      : undefined;
+  const gpuCountStr = (() => {
+    if (gpuCountValue === undefined || gpuCountValue === '') return undefined;
+    const parsed = parseFloat(gpuCountValue);
+    return Number.isNaN(parsed) ? undefined : String(Math.round(parsed));
+  })();
 
   const gpuCapacityStr = GPU_RESOURCE_KEYS.map((key) => node.status?.capacity?.[key])
     .filter(Boolean)
