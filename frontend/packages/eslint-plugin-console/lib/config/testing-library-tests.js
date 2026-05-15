@@ -18,6 +18,7 @@ module.exports = {
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
       plugins: ['testing-library'],
       extends: ['plugin:testing-library/react'],
+      excludedFiles: ['e2e/**'],
       rules: {
         'testing-library/prefer-explicit-assert': 'error',
         'testing-library/prefer-user-event': 'error',

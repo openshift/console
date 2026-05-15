@@ -467,6 +467,163 @@ export default class KubernetesClient {
     }
   }
 
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    const response = await this.coApi.createClusterCustomObject({
+      body,
+      group,
+      plural,
+      version,
+    });
+    return response;
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
+    return response;
+  }
+
+  async listClusterCustomResources(
+    group: string,
+    version: string,
+    plural: string,
+  ): Promise<unknown[]> {
+    try {
+      const response = await this.coApi.listClusterCustomObject({ group, plural, version });
+      return (response as any)?.items || [];
+    } catch {
+      return [];
+    }
+  }
+
+  private async mergePatch(apiPath: string, patch: Record<string, unknown>): Promise<unknown> {
+    const cluster = this.kubeConfig.getCurrentCluster();
+    if (!cluster?.server) {
+      throw new Error('No cluster configured in kubeconfig');
+    }
+    const url = new URL(apiPath, cluster.server);
+    const opts: https.RequestOptions = {
+      hostname: url.hostname,
+      port: url.port || 443,
+      path: url.pathname,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/merge-patch+json', Accept: 'application/json' },
+      rejectUnauthorized: false,
+    };
+    await this.kubeConfig.applyToHTTPSOptions(opts);
+    return new Promise((resolve, reject) => {
+      const req = https.request(opts, (res) => {
+        let body = '';
+        res.on('data', (chunk) => {
+          body += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(JSON.parse(body));
+          } else {
+            const msg = `Merge patch failed: HTTP ${res.statusCode} ${body.substring(0, 500)}`;
+            reject(new Error(msg));
+          }
+        });
+      });
+      req.on('error', reject);
+      req.write(JSON.stringify(patch));
+      req.end();
+    });
+  }
+
+  async patchCustomResource(
+    group: string,
+    version: string,
+    namespace: string,
+    plural: string,
+    name: string,
+    patch: Record<string, unknown>,
+  ): Promise<unknown> {
+    const apiPath = `/apis/${group}/${version}/namespaces/${namespace}/${plural}/${name}`;
+    return this.mergePatch(apiPath, patch);
+  }
+
+  async patchClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+    patch: Record<string, unknown>,
+  ): Promise<unknown> {
+    const apiPath = `/apis/${group}/${version}/${plural}/${name}`;
+    return this.mergePatch(apiPath, patch);
+  }
+
+  async waitForCustomResourceCondition(
+    group: string,
+    version: string,
+    namespace: string,
+    plural: string,
+    name: string,
+    conditionFn: (resource: any) => boolean,
+    timeoutMs: number,
+  ): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const resource = await this.getCustomResource(group, version, namespace, plural, name);
+          return conditionFn(resource);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async waitForClusterCustomResourceCondition(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+    conditionFn: (resource: any) => boolean,
+    timeoutMs: number,
+  ): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const resource = await this.getClusterCustomResource(group, version, plural, name);
+          return conditionFn(resource);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
   async getPods(namespace: string): Promise<k8s.V1Pod[]> {
     const response = await this.k8sApi.listNamespacedPod({ namespace });
     return response.items || [];
