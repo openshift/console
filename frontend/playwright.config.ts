@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 
-dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env') });
+dotenv.config({ path: path.resolve(__dirname, 'e2e', '.env'), quiet: true });
 
 import { defineConfig, devices } from '@playwright/test';
 
