@@ -10,6 +10,7 @@
 #   ./contrib/check-md-links.sh CONTRIBUTING.md
 #   ./contrib/check-md-links.sh README.md TESTING.md STYLEGUIDE.md
 #   ./contrib/check-md-links.sh -o report.csv README.md
+#   ./contrib/check-md-links.sh --all
 #
 # Output:
 #   link-markdown-check.csv (or custom path via -o) in the current directory.
@@ -21,6 +22,7 @@ set -uo pipefail
 
 OUTPUT="link-markdown-check.csv"
 FILES=()
+ALL=false
 
 usage() {
   cat <<'EOF'
@@ -31,10 +33,13 @@ Usage:
   ./contrib/check-md-links.sh CONTRIBUTING.md
   ./contrib/check-md-links.sh README.md TESTING.md STYLEGUIDE.md
   ./contrib/check-md-links.sh -o report.csv README.md
+  ./contrib/check-md-links.sh --all
 
-Output:
-  link-markdown-check.csv (or custom path via -o) in the current directory.
-  Only problematic links (404, redirects, errors) are written.
+Options:
+  -o, --output FILE   Write results to FILE (default: link-markdown-check.csv)
+  -a, --all           Find and check every .md file in the repo (excludes
+                      node_modules, vendor, and .yarn directories)
+  -h, --help          Show this help
 EOF
 }
 
@@ -49,6 +54,10 @@ while [[ $# -gt 0 ]]; do
       OUTPUT="$2"
       shift 2
       ;;
+    -a|--all)
+      ALL=true
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -60,8 +69,21 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Require at least one markdown file argument
-if [ ${#FILES[@]} -eq 0 ]; then
+# Collect files from --all or require explicit arguments
+if [ "$ALL" = true ]; then
+  while IFS= read -r -d '' f; do
+    FILES+=("$f")
+  done < <(find . -name '*.md' \
+    -not -path '*/node_modules/*' \
+    -not -path '*/vendor/*' \
+    -not -path '*/.yarn/*' \
+    -print0)
+  if [ ${#FILES[@]} -eq 0 ]; then
+    echo "ERROR: --all found no .md files" >&2
+    exit 1
+  fi
+  echo "Found ${#FILES[@]} markdown file(s) to check."
+elif [ ${#FILES[@]} -eq 0 ]; then
   echo "ERROR: please provide at least one markdown file to check." >&2
   echo "Usage: ./contrib/check-md-links.sh <file.md> [more.md ...]" >&2
 	echo ""
