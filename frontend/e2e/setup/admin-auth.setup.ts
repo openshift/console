@@ -4,7 +4,7 @@ import { test as setup } from '@playwright/test';
 
 import { performLogin, saveStorageState } from './login-helper';
 
-const adminStorageState = path.resolve(__dirname, '..', '.auth', 'kubeadmin.json');
+const adminStorageState = path.resolve(import.meta.dirname, '..', '.auth', 'kubeadmin.json');
 
 setup('login as kubeadmin', async ({ page }) => {
   setup.skip(process.env.SKIP_GLOBAL_SETUP === 'true', 'SKIP_GLOBAL_SETUP is set');

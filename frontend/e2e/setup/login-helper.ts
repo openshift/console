@@ -4,7 +4,7 @@ import * as path from 'path';
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-const STORAGE_STATE_DIR = path.resolve(__dirname, '..', '.auth');
+const STORAGE_STATE_DIR = path.resolve(import.meta.dirname, '..', '.auth');
 
 export async function performLogin(
   page: Page,

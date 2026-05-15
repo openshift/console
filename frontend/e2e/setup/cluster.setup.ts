@@ -5,7 +5,7 @@ import { test as setup } from '@playwright/test';
 
 import KubernetesClient from '../clients/kubernetes-client';
 
-const CONFIG_FILE = path.resolve(__dirname, '..', '.test-config.json');
+const CONFIG_FILE = path.resolve(import.meta.dirname, '..', '.test-config.json');
 
 let k8sClient: KubernetesClient | null = null;
 let clusterAvailable = false;
