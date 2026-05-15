@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import type { ComponentType, FC, ReactNode } from 'react';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
+import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useParams, useNavigate } from 'react-router';
 import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -106,6 +107,22 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
     }
   }, [dispatch, nameFilter, memoizedIds]);
 
+  const rawFilters = useConsoleSelector((state) => {
+    if (!memoizedIds?.length) {
+      return undefined;
+    }
+    return memoizedIds.reduce((acc, id) => {
+      const idFilters = state.k8s.getIn([id, 'filters']);
+      if (idFilters) {
+        idFilters.forEach((value, key) => {
+          acc[key] = value;
+        });
+      }
+      return acc;
+    }, {});
+  });
+  const filters = useDeepCompareMemoize(rawFilters);
+
   const data = flatten ? flatten(watchedResources) : [];
   const Filter = (
     <FilterToolbar
@@ -128,7 +145,7 @@ export const ListPageWrapper: FC<ListPageWrapperProps> = (props) => {
       {!omitFilterToolbar && !_.isEmpty(data) && Filter}
       <Grid>
         <GridItem>
-          <ListComponent {...props} {...watchedResources} data={data} />
+          <ListComponent {...props} {...watchedResources} filters={filters} data={data} />
         </GridItem>
       </Grid>
     </div>

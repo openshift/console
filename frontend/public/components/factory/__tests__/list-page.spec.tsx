@@ -1,6 +1,8 @@
+import type { FC } from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TextFilter } from '@console/internal/components/factory/text-filter';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import {
   ListPageWrapper,
   FireMan,
@@ -149,6 +151,49 @@ describe('ListPageWrapper component', () => {
     renderWithProviders(<ListPageWrapper {...defaultProps} />);
 
     expect(screen.getByText('List Content')).toBeVisible();
+  });
+
+  it('filters visible items when user types in the search field', async () => {
+    const user = userEvent.setup();
+    const items = [
+      { metadata: { name: 'alpha-pod' } },
+      { metadata: { name: 'beta-pod' } },
+      { metadata: { name: 'gamma-node' } },
+    ];
+
+    const FilteredList: FC<{ data: any[]; filters: any }> = ({ data, filters }) => {
+      const filtered = getFilteredRows(filters, [], data);
+      return (
+        <ul>
+          {filtered.map((item) => (
+            <li key={item.metadata.name}>{item.metadata.name}</li>
+          ))}
+        </ul>
+      );
+    };
+
+    renderWithProviders(
+      <ListPageWrapper
+        {...defaultProps}
+        flatten={() => items}
+        ListComponent={FilteredList}
+        reduxIDs={['test-id']}
+        textFilter="name"
+      />,
+    );
+
+    expect(screen.getByText('alpha-pod')).toBeVisible();
+    expect(screen.getByText('beta-pod')).toBeVisible();
+    expect(screen.getByText('gamma-node')).toBeVisible();
+
+    const searchInput = screen.getByPlaceholderText('Search by name...');
+    await user.type(searchInput, 'alpha');
+
+    await waitFor(() => {
+      expect(screen.getByText('alpha-pod')).toBeVisible();
+      expect(screen.queryByText('beta-pod')).not.toBeInTheDocument();
+      expect(screen.queryByText('gamma-node')).not.toBeInTheDocument();
+    });
   });
 });
 
