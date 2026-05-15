@@ -1,199 +1,161 @@
-import { type Locator, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Locator } from '@playwright/test';
 
 import BasePage from './base-page';
 
 export class ListPage extends BasePage {
-  private readonly pageHeading: Locator = this.page.getByTestId('page-heading').locator('h1');
-  private readonly dataViewTable: Locator = this.page.getByTestId('data-view-table');
-  private readonly dataViewCells: Locator = this.page.locator('[data-test^="data-view-cell-"]');
-  private readonly nameFilterInput = this.page.getByRole('textbox', { name: 'Filter by name' });
-  private readonly dataViewFilters = this.page.locator(
-    '[data-ouia-component-id="DataViewFilters"]',
-  );
-  private readonly singleFilterGroup: Locator = this.page.locator(
-    '.co-console-data-view-single-filter .pf-v6-c-toolbar__group.pf-m-filter-group',
-  );
-  private readonly namespaceDropdown = this.page.getByTestId('namespace-bar-dropdown');
-  private readonly resourceRows = this.page.getByTestId('resource-row');
-  private readonly nameFilter = this.page.getByTestId('name-filter-input');
-  private readonly createButton = this.page.getByTestId('item-create');
+  private readonly heading = this.page.locator('[data-test="page-heading"] h1');
 
-  get heading(): Locator {
-    return this.pageHeading;
+  async titleShouldHaveText(title: string): Promise<void> {
+    await expect(this.heading).toContainText(title);
   }
 
-  get table(): Locator {
-    return this.dataViewTable;
+  // --- Resource row helpers (older VirtualizedTable) ---
+
+  async rowsShouldExist(resourceName: string): Promise<void> {
+    await expect(
+      this.page.locator('[data-test-rows="resource-row"]').filter({ hasText: resourceName }),
+    ).toBeVisible({ timeout: 60_000 });
   }
 
-  get cells(): Locator {
-    return this.dataViewCells;
+  async rowsShouldNotExist(resourceName: string): Promise<void> {
+    await expect(this.page.locator(`[data-test-id="${resourceName}"]`)).toBeHidden({
+      timeout: 90_000,
+    });
   }
 
-  get filterGroupToggles(): Locator {
-    return this.singleFilterGroup.locator('.pf-v6-c-menu-toggle');
-  }
-
-  cell(resourceName: string, cellName = 'name'): Locator {
-    return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
-  }
-
-  resourceLink(name: string): Locator {
-    return this.page.getByTestId(name);
-  }
-
-  async waitForRows(): Promise<void> {
-    try {
-      await expect(this.dataViewTable).toBeVisible({ timeout: 15_000 });
-    } catch {
-      await this.retryOnError();
-      await expect(this.dataViewTable).toBeVisible({ timeout: 30_000 });
-    }
-  }
-
-  async filterByName(name: string): Promise<void> {
-    const filterToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
-    await this.robustClick(filterToggle, { timeout: 60_000 });
-    await this.page.locator('.pf-v6-c-menu__list-item', { hasText: 'Name' }).click();
-    await this.nameFilterInput.fill(name);
-  }
-
-  async filterByNameInput(name: string): Promise<void> {
-    await this.nameFilter.fill(name);
-  }
-
-  getCell(resourceName: string, cellName = 'name'): Locator {
-    return this.page.getByTestId(`data-view-cell-${resourceName}-${cellName}`);
-  }
-
-  async clickRowByName(resourceName: string): Promise<void> {
-    const dataViewLink = this.getCell(resourceName).locator('a').first();
-    const standardLink = this.page.getByTestId(resourceName);
-    await this.robustClick(dataViewLink.or(standardLink).first());
-  }
-
-  getNamespaceDropdown(): Locator {
-    return this.namespaceDropdown;
-  }
-
-  getDataViewTable(): Locator {
-    return this.dataViewTable;
-  }
-
-  getResourceRows(): Locator {
-    return this.resourceRows;
-  }
-
-  getCreateButton(): Locator {
-    return this.createButton;
-  }
-
-  async clickCreateButton(): Promise<void> {
-    await this.robustClick(this.createButton);
-  }
-
-  async clickCreateDropdownItem(itemName: string): Promise<void> {
-    await this.robustClick(this.createButton);
-    await this.page.getByRole('menuitem', { name: itemName }).click();
-  }
-
-  async clickCreateYAMLDropdownButton(): Promise<void> {
-    await this.robustClick(this.createButton);
-    const yamlMenuItem = this.page.getByTestId('dropdown-menu-yaml');
-    if ((await yamlMenuItem.count()) > 0) {
-      await this.robustClick(yamlMenuItem);
-    }
-  }
-
-  async clickKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const dataViewCell = this.getCell(resourceName);
-    const standardCell = this.page.getByTestId(resourceName);
-    const cell = dataViewCell.or(standardCell).first();
-    const row = cell.locator('xpath=ancestor::tr');
-    const kebab = row.getByTestId('kebab-button');
+  async rowsClickKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const row = this.page
+      .locator('[data-test-rows="resource-row"]')
+      .filter({ hasText: resourceName });
+    const kebab = row.locator('[data-test-id="kebab-button"]');
     await this.robustClick(kebab);
-    await this.robustClick(this.page.getByTestId(actionName));
+    const action = this.page.locator(`[data-test-action="${actionName}"]:not([disabled])`);
+    await this.robustClick(action);
   }
 
-  async clickResourceRowKebabAction(resourceName: string, actionName: string): Promise<void> {
-    const row = this.resourceRows
-      .filter({ hasText: resourceName })
-      .first();
-    const kebab = row.getByTestId('kebab-button');
-    await this.robustClick(kebab);
-    await this.robustClick(this.page.getByTestId(actionName));
+  async rowsClickStatusButton(resourceName: string): Promise<void> {
+    const row = this.page
+      .locator('[data-test-rows="resource-row"]')
+      .filter({ hasText: resourceName });
+    const statusButton = row.getByTestId('popover-status-button');
+    await this.robustClick(statusButton, { timeout: 60_000 });
   }
 
-  async filterByCheckbox(filterName: string, checkboxLabel: string): Promise<void> {
-    const dataViewToggle = this.dataViewFilters.locator('.pf-v6-c-menu-toggle').first();
-    const standardToggle = this.page.getByTestId('filter-dropdown-toggle').locator('button');
-    const toggle = dataViewToggle.or(standardToggle).first();
-    await this.robustClick(toggle);
-
-    if (await this.dataViewFilters.isVisible()) {
-      await this.page.locator('.pf-v6-c-menu__list-item', { hasText: filterName }).click();
-      const checkboxFilter = this.page.locator(
-        '[data-ouia-component-id="DataViewCheckboxFilter"]',
-      );
-      await this.robustClick(checkboxFilter);
+  async filterByStatus(status: string): Promise<void> {
+    const filterToggle = this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]');
+    if (await filterToggle.isVisible().catch(() => false)) {
+      await this.robustClick(filterToggle);
       const filterItem = this.page.locator(
-        `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
+        `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${status}"]`,
       );
       await this.robustClick(filterItem);
-      await this.robustClick(checkboxFilter);
+      await this.robustClick(filterToggle);
     } else {
-      const filterItem = this.page.locator(`[data-test-row-filter="${checkboxLabel}"]`);
-      await this.robustClick(filterItem);
-    }
-  }
-
-  async clickFirstRowLink(): Promise<void> {
-    const firstLink = this.dataViewCells.first().locator('a').first();
-    await this.robustClick(firstLink);
-  }
-
-  async clickFirstRowLinkMatching(pattern: RegExp): Promise<void> {
-    const safeFlags = pattern.flags.replace(/[gy]/g, '');
-    const safePattern = new RegExp(pattern.source, safeFlags);
-    const links = this.dataViewCells.locator('a');
-    const count = await links.count();
-    for (let i = 0; i < count; i++) {
-      const text = await links.nth(i).textContent();
-      if (text && safePattern.test(text)) {
-        await this.robustClick(links.nth(i));
-        return;
+      const filterDropdownToggle = this.page.locator(
+        '[data-test-id="filter-dropdown-toggle"] button',
+      );
+      if (await filterDropdownToggle.isVisible().catch(() => false)) {
+        await this.robustClick(filterDropdownToggle);
+        await this.page.locator(`#${status}`).click();
+        await this.robustClick(filterDropdownToggle);
       }
     }
-    throw new Error(`No row link matching ${pattern} found`);
   }
 
-  async getFirstCellText(): Promise<string> {
-    const link = this.page.locator('[data-test^="data-view-cell-"]').first().locator('a').first();
-    return (await link.textContent()) ?? '';
+  // --- DataView row helpers (ConsoleDataView) ---
+  // These use generic table locators that work even if data-test attributes
+  // are not forwarded to the DOM by PatternFly DataView components.
+
+  private dvCell(resourceName: string, cellName = 'name'): Locator {
+    return this.page.locator(`[data-test="data-view-cell-${resourceName}-${cellName}"]`);
   }
 
-  async selectProject(projectName: string): Promise<void> {
-    const dropdownButton = this.namespaceDropdown.getByRole('button');
-    await this.robustClick(dropdownButton);
+  private dvRow(resourceName: string): Locator {
+    return this.page.locator('table tbody tr').filter({
+      has: this.page.getByRole('link', { name: resourceName, exact: true }),
+    });
+  }
 
-    const searchInput = this.page.getByRole('searchbox', { name: 'Select project...' });
-    // eslint-disable-next-line no-restricted-syntax
-    await searchInput.waitFor({ state: 'visible' });
+  async dvRowsShouldBeLoaded(): Promise<void> {
+    await expect(this.page.getByTestId('data-view-table')).toBeVisible({ timeout: 60_000 });
+  }
 
-    const systemSwitch = this.page.getByTestId('showSystemSwitch');
-    if ((await systemSwitch.count()) > 0 && !(await systemSwitch.isChecked())) {
-      await systemSwitch.check();
+  private async resolveRow(resourceName: string): Promise<Locator> {
+    const cell = this.dvCell(resourceName);
+    if (await cell.isVisible({ timeout: 5_000 }).catch(() => false)) {
+      return cell.locator('xpath=ancestor::tr');
     }
-
-    await searchInput.fill(projectName);
-    const item = this.page.getByRole('menuitem', { name: projectName, exact: true });
-    await this.robustClick(item);
+    return this.dvRow(resourceName);
   }
 
-  async selectAllProjects(): Promise<void> {
-    const dropdownButton = this.namespaceDropdown.getByRole('button');
-    await this.robustClick(dropdownButton);
-    const item = this.page.getByRole('menuitem', { name: 'All Projects', exact: true });
-    await this.robustClick(item);
+  async dvRowsShouldExist(resourceName: string, cellName = 'name'): Promise<void> {
+    const cell = this.dvCell(resourceName, cellName);
+    const row = this.dvRow(resourceName);
+    try {
+      await expect(cell).toBeVisible({ timeout: 30_000 });
+    } catch {
+      await this.page.reload({ waitUntil: 'domcontentloaded' });
+      try {
+        await expect(cell).toBeVisible({ timeout: 30_000 });
+      } catch {
+        await expect(row).toBeVisible({ timeout: 30_000 });
+      }
+    }
+  }
+
+  async dvRowsShouldNotExist(resourceName: string): Promise<void> {
+    const cell = this.dvCell(resourceName);
+    await expect(cell).toBeHidden({ timeout: 90_000 });
+  }
+
+  async dvRowsCountShouldBe(count: number): Promise<void> {
+    await expect(this.page.locator('table tbody tr')).toHaveCount(count, { timeout: 60_000 });
+  }
+
+  async dvRowsClickKebabAction(resourceName: string, actionName: string): Promise<void> {
+    const row = await this.resolveRow(resourceName);
+    const kebab = row.locator('[data-test-id="kebab-button"]');
+    await this.robustClick(kebab);
+    const action = this.page.locator(`[data-test-action="${actionName}"]:not([disabled])`);
+    await this.robustClick(action);
+  }
+
+  async dvRowsClickStatusButton(resourceName: string): Promise<void> {
+    const row = await this.resolveRow(resourceName);
+    const statusButton = row.getByTestId('popover-status-button');
+    await this.robustClick(statusButton, { timeout: 60_000 });
+  }
+
+  async dvFilterByName(name: string): Promise<void> {
+    const filters = this.page.locator('[data-ouia-component-id="DataViewFilters"]');
+    await this.robustClick(filters.locator('.pf-v6-c-menu-toggle').first());
+    await this.robustClick(
+      this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: 'Name' }),
+    );
+    const input = this.page.locator('[aria-label="Filter by name"]');
+    await input.clear();
+    await input.fill(name);
+  }
+
+  async dvFilterBy(filterName: string, checkboxLabel: string): Promise<void> {
+    await this.dvRowsShouldBeLoaded();
+    const filters = this.page.locator('[data-ouia-component-id="DataViewFilters"]');
+    await this.robustClick(filters.locator('.pf-v6-c-menu-toggle').first());
+    await this.robustClick(
+      this.page.locator('.pf-v6-c-menu__list-item').filter({ hasText: filterName }),
+    );
+    await this.robustClick(this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]'));
+    const filterItem = this.page.locator(
+      `[data-ouia-component-id="DataViewCheckboxFilter-filter-item-${checkboxLabel}"]`,
+    );
+    await expect(filterItem).toBeVisible();
+    await this.robustClick(filterItem);
+    await expect(this.page).toHaveURL(new RegExp(`=${checkboxLabel}`), { timeout: 10_000 });
+    await this.robustClick(this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]'));
+  }
+
+  get clickCreateYAMLButton(): Locator {
+    return this.page.getByTestId('item-create');
   }
 }
