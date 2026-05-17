@@ -6,7 +6,7 @@ import { useCloudShellAvailable } from '@console/webterminal-plugin/src/componen
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 import './markdown-extension.scss';
 
-const useInlineExecuteCommandExtension = () => {
+export const useInlineExecuteCommandExtension = () => {
   const { t } = useTranslation();
   const showExecuteButton = useCloudShellAvailable();
   return useMemo(
@@ -56,5 +56,3 @@ const useInlineExecuteCommandExtension = () => {
     [showExecuteButton, t],
   );
 };
-
-export default useInlineExecuteCommandExtension;

@@ -19,7 +19,7 @@ interface MultiTabListPageProps {
   telemetryPrefix?: string;
 }
 
-const MultiTabListPage: FC<MultiTabListPageProps> = ({
+export const MultiTabListPage: FC<MultiTabListPageProps> = ({
   title,
   badge,
   pages,
@@ -112,5 +112,3 @@ const MultiTabListPage: FC<MultiTabListPageProps> = ({
     </PageTitleContext.Provider>
   );
 };
-
-export default MultiTabListPage;

@@ -8,7 +8,7 @@ import { PopoverFooter } from '@patternfly/react-core/dist/esm/components/Popove
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { useTranslation } from 'react-i18next';
-import { Popper } from '../popper';
+import { Popper } from '../popper/Popper';
 import type { PopoverPlacement } from './const';
 import './Popover.scss';
 
@@ -25,7 +25,7 @@ type PopoverProps = {
   id?: string;
 };
 
-const Popover: FC<PopoverProps> = ({
+export const Popover: FC<PopoverProps> = ({
   open,
   headerContent,
   placement,
@@ -72,5 +72,3 @@ const Popover: FC<PopoverProps> = ({
 };
 
 Popover.displayName = 'Popover';
-
-export default Popover;

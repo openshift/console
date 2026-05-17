@@ -44,7 +44,7 @@ const podStatusIsNumeric = (podStatusValue: string) => {
   );
 };
 
-const PodStatus: FC<PodStatusProps> = ({
+const PodStatusBase: FC<PodStatusProps> = ({
   innerRadius = podStatusInnerRadius,
   outerRadius = podStatusOuterRadius,
   x,
@@ -176,4 +176,4 @@ const PodStatus: FC<PodStatusProps> = ({
   return chartDonut;
 };
 
-export default memo<PodStatusProps>((props) => <PodStatus {...props} />);
+export const PodStatus = memo<PodStatusProps>((props) => <PodStatusBase {...props} />);

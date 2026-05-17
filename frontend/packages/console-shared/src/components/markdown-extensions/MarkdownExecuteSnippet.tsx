@@ -57,7 +57,10 @@ type MarkdownExecuteCommandProps = {
   rootSelector: string;
 };
 
-const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({ docContext, rootSelector }) => {
+export const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({
+  docContext,
+  rootSelector,
+}) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_EXECUTE_BUTTON_ID}]`);
   const showExecuteButton = useCloudShellAvailable();
   return elements.length > 0 && showExecuteButton ? (
@@ -76,5 +79,3 @@ const MarkdownExecuteSnippet: FC<MarkdownExecuteCommandProps> = ({ docContext, r
     </>
   ) : null;
 };
-
-export default MarkdownExecuteSnippet;

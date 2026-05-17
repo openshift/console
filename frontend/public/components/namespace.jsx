@@ -89,7 +89,7 @@ import {
   isCurrentUser,
   isOtherUser,
   isSystemNamespace,
-} from '@console/shared/src/components/namespace';
+} from '@console/shared/src/components/namespace/filters';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {

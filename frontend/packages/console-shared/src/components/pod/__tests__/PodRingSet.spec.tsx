@@ -5,7 +5,7 @@ import * as usePodsWatcherModule from '../../../hooks/usePodsWatcher';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import type { PodRCData } from '../../../types';
 import { samplePods } from '../../../utils/__tests__/test-resource-data';
-import PodRing from '../PodRing';
+import { PodRing } from '../PodRing';
 import PodRingSet from '../PodRingSet';
 
 jest.mock('../PodRing', () => ({

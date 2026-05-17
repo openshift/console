@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions';
-import { VirtualizedGrid } from '../../virtualized-grid';
+import { VirtualizedGrid } from '../../virtualized-grid/VirtualizedGrid';
 
 type CatalogGridProps = {
   items: CatalogItem[] | { [key: string]: CatalogItem[] };

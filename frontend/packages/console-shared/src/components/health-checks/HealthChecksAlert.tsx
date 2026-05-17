@@ -32,7 +32,7 @@ const addHealthChecksRefs = [
   referenceForModel(KnativeServiceModel),
 ];
 
-const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
+export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
   const {
     kind,
     metadata: { name, namespace, uid },
@@ -104,5 +104,3 @@ const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     </>
   );
 };
-
-export default HealthChecksAlert;

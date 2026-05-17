@@ -76,7 +76,7 @@ type PopperProps = {
 
 const DEFAULT_POPPER_OPTIONS: PopperOptions = {};
 
-const Popper: FC<PopperProps> = ({
+export const Popper: FC<PopperProps> = ({
   children,
   container,
   className,
@@ -230,5 +230,3 @@ const Popper: FC<PopperProps> = ({
     </Portal>
   ) : null;
 };
-
-export default Popper;

@@ -7,7 +7,7 @@ import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_I
 
 import './markdown-extension.scss';
 
-const useMultilineExecuteCommandExtension = () => {
+export const useMultilineExecuteCommandExtension = () => {
   const { t } = useTranslation();
   const showExecuteButton = useCloudShellAvailable();
   return useMemo(
@@ -58,5 +58,3 @@ const useMultilineExecuteCommandExtension = () => {
     [showExecuteButton, t],
   );
 };
-
-export default useMultilineExecuteCommandExtension;

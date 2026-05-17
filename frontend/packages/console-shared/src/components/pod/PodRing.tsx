@@ -10,7 +10,7 @@ import { k8sPatch } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '../../hooks/useRelatedHPA';
 import type { ExtPodKind } from '../../types';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils/pod-ring-utils';
-import PodStatus from './PodStatus';
+import { PodStatus } from './PodStatus';
 import './PodRing.scss';
 
 interface PodRingProps {
@@ -23,7 +23,7 @@ interface PodRingProps {
   enableScaling?: boolean;
 }
 
-const PodRing: FC<PodRingProps> = ({
+export const PodRing: FC<PodRingProps> = ({
   pods,
   obj,
   resourceKind,
@@ -152,5 +152,3 @@ const PodRing: FC<PodRingProps> = ({
     </Split>
   );
 };
-
-export default PodRing;

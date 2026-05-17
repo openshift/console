@@ -1,5 +1,5 @@
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import MarkdownCopyClipboard from '../MarkdownCopyClipboard';
+import { MarkdownCopyClipboard } from '../MarkdownCopyClipboard';
 import { htmlDocumentForCopyClipboard } from './test-data';
 
 describe('MarkdownCopyClipboard', () => {
