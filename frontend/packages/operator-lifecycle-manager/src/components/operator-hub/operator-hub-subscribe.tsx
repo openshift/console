@@ -61,6 +61,7 @@ import { PageHeading } from '@console/shared/src/components/heading/PageHeading'
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { isClusterExternallyManaged } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import type { OperatorGroupKind, PackageManifestKind, SubscriptionKind } from '../../types';
 import { InstallPlanApproval, InstallModeType } from '../../types';
@@ -541,6 +542,13 @@ export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (prop
         break;
       default:
         break;
+    }
+
+    if (isClusterExternallyManaged()) {
+      subscription.spec.config = {
+        ...subscription.spec.config,
+        nodeSelector: { 'kubernetes.io/os': 'linux' },
+      };
     }
 
     try {
