@@ -6,7 +6,7 @@ import type { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { usePoll } from '@console/shared/src/hooks/usePoll';
 import { FLAG_OPENSHIFT_HELM } from '../const';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../models/helm';
 
 export const hasEnabledHelmCharts = (helmChartRepositories: K8sResourceKind[]): boolean =>
   helmChartRepositories?.some((hcr) => !hcr?.spec?.disabled) || false;

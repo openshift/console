@@ -6,7 +6,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { LazyDeleteResourceModalOverlay } from '@console/shared/src/components/modals/LazyDeleteResourceModal';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { ProjectHelmChartRepositoryModel } from '../models';
+import { ProjectHelmChartRepositoryModel } from '../models/helm';
 import type { HelmActionsScope } from './types';
 
 export const useHelmDeleteAction = (scope: HelmActionsScope, t: TFunction): Action | null => {

@@ -14,7 +14,7 @@ import { LoadingBox } from '@console/internal/components/utils';
 import type { MenuActions } from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
 import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';

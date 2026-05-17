@@ -6,7 +6,7 @@ import { useAccessReview } from '@console/dynamic-plugin-sdk/src';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import RepositoriesList from './RepositoriesList';
 
 type RepositoriesPageProps = {

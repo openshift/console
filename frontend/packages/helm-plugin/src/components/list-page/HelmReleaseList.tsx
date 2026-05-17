@@ -26,7 +26,7 @@ import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/uti
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';
-import { HelmReleaseModel } from '../../models';
+import { HelmReleaseModel } from '../../models/helm';
 import type { HelmRelease } from '../../types/helm-types';
 import {
   fetchHelmReleases,

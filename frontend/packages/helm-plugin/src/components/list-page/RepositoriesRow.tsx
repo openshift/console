@@ -9,7 +9,7 @@ import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DASH } from '@console/shared/src/constants/ui';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { tableColumnInfo } from './RepositoriesHeader';
 
 const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);

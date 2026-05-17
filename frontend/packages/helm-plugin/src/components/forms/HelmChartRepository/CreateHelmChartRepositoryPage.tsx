@@ -9,7 +9,7 @@ import { useAccessReview, useActivePerspective } from '@console/dynamic-plugin-s
 import {
   HelmChartRepositoryModel,
   ProjectHelmChartRepositoryModel,
-} from '@console/helm-plugin/src/models';
+} from '@console/helm-plugin/src/models/helm';
 import { kindForReference } from '@console/internal/module/k8s';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';

@@ -9,7 +9,7 @@ import { referenceFor } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { DASH } from '@console/shared/src/constants/ui';
-import { ProjectHelmChartRepositoryModel } from '../../models';
+import { ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { tableColumnInfo } from './RepositoriesHeader';
 
 const ProjectNamespaceCell: FC<{ kind: string; namespace: string }> = ({ kind, namespace }) => {

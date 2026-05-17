@@ -19,7 +19,7 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartRepositoryData, HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryForm from './CreateHelmChartRepositoryForm';
 import {
