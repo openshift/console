@@ -1,5 +1,5 @@
 export * from './badges';
-export * from './text';
+export { ClampedText } from './text/ClampedText';
 export * from './dropdown';
 export * from './form-utils';
 export * from './formik-fields';
