@@ -9,7 +9,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { MultiTypeaheadField } from '@console/shared/src/components/formik-fields/MultiTypeaheadField';
-import { useBootstrapServers } from '../../../hooks';
+import { useBootstrapServers } from '../../../hooks/useBootstrapServers';
 import { kafkaTopicsResourcesWatcher } from '../../../utils/get-knative-resources';
 import { EventSources } from '../import-types';
 import KafkaSourceNetSection from './KafkaSourceNetSection';

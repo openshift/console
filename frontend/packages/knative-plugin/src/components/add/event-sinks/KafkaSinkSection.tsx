@@ -12,7 +12,7 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import { MultiTypeaheadField } from '@console/shared/src/components/formik-fields/MultiTypeaheadField';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { EVENT_SINK_KAFKA_KIND } from '../../../const';
-import { useBootstrapServers } from '../../../hooks';
+import { useBootstrapServers } from '../../../hooks/useBootstrapServers';
 
 interface KafkaSinkSectionProps {
   title: string;

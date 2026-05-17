@@ -1,6 +1,6 @@
 import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';

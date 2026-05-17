@@ -14,11 +14,9 @@ import type { DetectedBuildType } from '@console/git-service/src/utils/build-too
 import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { BuildStrategyType } from '@console/internal/components/utils/build-utils';
-import {
-  FLAG_KNATIVE_SERVING_SERVICE,
-  ServerlessBuildStrategyType,
-  ServiceModel as ksvcModel,
-} from '@console/knative-plugin';
+import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const';
+import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
+import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';

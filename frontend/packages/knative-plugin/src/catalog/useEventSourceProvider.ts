@@ -16,7 +16,7 @@ import {
   FLAG_KNATIVE_EVENTING_BROKER,
   FLAG_EVENT_SOURCE_PING,
 } from '../const';
-import { useEventSourceModelsWithAccess } from '../hooks';
+import { useEventSourceModelsWithAccess } from '../hooks/useEventSourceModelsWithAccess';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
 

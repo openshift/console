@@ -1,6 +1,6 @@
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin/src';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import type { AutoscaleWindowType } from '../import-types';
 
 export const getAutoscaleWindow = (autoscaleValue: string): AutoscaleWindowType => {
