@@ -12,7 +12,7 @@ import { ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
-import ResourceDropdownField from '@console/shared/src/components/formik-fields/ResourceDropdownField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ServiceModel as KnativeServiceModel, KafkaSinkModel } from '../../../models';
 import { craftResourceKey } from '../pub-sub-utils';
 

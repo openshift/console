@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Suspense } from 'react';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PodRing } from '@console/shared/src/components/pod/PodRing';

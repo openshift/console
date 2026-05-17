@@ -45,7 +45,8 @@ import {
   k8sPatch,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';

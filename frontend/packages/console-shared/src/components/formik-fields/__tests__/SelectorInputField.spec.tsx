@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { useFormikContext, useField } from 'formik';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import SelectorInputField from '../SelectorInputField';
+import { SelectorInputField } from '../SelectorInputField';
 
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({})),

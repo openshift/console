@@ -9,7 +9,7 @@ import { CONSOLE_OPERATOR_CONFIG_NAME } from '../../constants/resource';
  *
  * See https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-json-merge-patch-to-update-a-deployment
  */
-const patchConsoleOperatorConfig = <R extends K8sResourceKind>(resource: R): Promise<R> => {
+export const patchConsoleOperatorConfig = <R extends K8sResourceKind>(resource: R): Promise<R> => {
   const url = resourceURL(ConsoleOperatorConfigModel, { name: CONSOLE_OPERATOR_CONFIG_NAME });
   return coFetchJSON(url, 'PATCH', {
     headers: {
@@ -19,5 +19,3 @@ const patchConsoleOperatorConfig = <R extends K8sResourceKind>(resource: R): Pro
     body: JSON.stringify(resource),
   });
 };
-
-export default patchConsoleOperatorConfig;

@@ -10,7 +10,7 @@ import type { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
 
-const FormFooter: FC<FormFooterProps> = ({
+export const FormFooter: FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
   handleCancel,
@@ -111,4 +111,3 @@ const FormFooter: FC<FormFooterProps> = ({
     </div>
   );
 };
-export default FormFooter;

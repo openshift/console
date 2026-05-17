@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
-import { CheckboxField, InputField } from '@console/shared/src/components/formik-fields';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import KeyValueFileInputField from '@console/shared/src/components/formik-fields/key-value-file-input-field/KeyValueFileInputField';
 import { isBase64 } from './configmap-utils';
 

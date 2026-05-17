@@ -17,7 +17,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { FLAGS, getName, getNamespace } from '../../..';
 import { useDashboardResources } from '../../../hooks/useDashboardResources';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import Status from '../status-card/StatusPopup';
 
 import './top-consumer-popover.scss';

@@ -2,7 +2,7 @@ import type { FC, ChangeEvent } from 'react';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
+export const ConsolePluginRadioInputs: FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
   enabled,
   onChange: setEnabled,
@@ -45,5 +45,3 @@ type ConsolePluginRadioInputsProps = {
   onChange: (enabled: boolean) => void;
   name: string;
 };
-
-export default ConsolePluginRadioInputs;

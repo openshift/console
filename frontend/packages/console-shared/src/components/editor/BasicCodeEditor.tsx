@@ -6,7 +6,7 @@ import * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
 import type { BasicCodeEditorProps } from '@console/dynamic-plugin-sdk';
 import { useTheme } from '@console/internal/components/ThemeProvider';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import './BasicCodeEditor.scss';
 
 // Avoid using monaco from CDN

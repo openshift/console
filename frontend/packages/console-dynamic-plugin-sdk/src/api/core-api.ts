@@ -836,7 +836,7 @@ export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = require
  * />
  * ```
  */
-export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser')
+export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser/QueryBrowser')
   .QueryBrowser;
 
 /**

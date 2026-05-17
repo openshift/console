@@ -12,7 +12,7 @@ import type {
   NodeKind,
 } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getMachineNode, getMachineNodeName } from '@console/shared/src/selectors/machine';

@@ -62,7 +62,7 @@ import {
   getNamespace,
 } from '@console/shared';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
-import ErrorAlert from '@console/shared/src/components/alerts/error';
+import { ErrorAlert } from '@console/shared/src/components/alerts/error';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';

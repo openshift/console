@@ -13,7 +13,8 @@ import { useColumnWidthSettings } from '@console/app/src/components/data-view/us
 import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';

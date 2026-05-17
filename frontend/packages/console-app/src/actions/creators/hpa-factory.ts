@@ -13,7 +13,7 @@ import type {
 import { referenceForModel } from '@console/internal/module/k8s';
 import type { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { LazyDeleteHPAModalOverlay } from '@console/shared/src/components/hpa';
+import { LazyDeleteHPAModalOverlay } from '@console/shared/src/components/hpa/LazyDeleteHPAModal';
 import { isHelmResource } from '@console/shared/src/utils/helm-utils';
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { isOperatorBackedService } from '@console/shared/src/utils/operator-utils';

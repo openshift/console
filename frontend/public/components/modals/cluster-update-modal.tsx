@@ -16,7 +16,7 @@ import {
   Radio,
 } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { DropdownWithSwitch } from '@console/shared/src/components/dropdown';
+import { DropdownWithSwitch } from '@console/shared/src/components/dropdown/dropdown-with-switch/DropdownWithSwitch';
 
 import { ClusterVersionModel, MachineConfigPoolModel, NodeModel } from '../../models';
 import { FieldLevelHelp } from '../utils/field-level-help';

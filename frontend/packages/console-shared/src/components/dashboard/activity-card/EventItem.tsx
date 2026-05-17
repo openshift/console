@@ -8,7 +8,7 @@ import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import type { EventKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '../../status';
+import { YellowExclamationTriangleIcon } from '../../status/icons';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&

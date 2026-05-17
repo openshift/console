@@ -33,7 +33,7 @@ import type {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { usePluginInfo } from '@console/plugin-sdk/src/api/usePluginInfo';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
+import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals/LazyConsolePluginModal';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,

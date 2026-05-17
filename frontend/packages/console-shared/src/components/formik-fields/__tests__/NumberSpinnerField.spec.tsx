@@ -1,7 +1,7 @@
 import { screen, configure, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mockFormikRenderer } from '../../../test-utils/unit-test-utils';
-import NumberSpinnerField from '../NumberSpinnerField';
+import { NumberSpinnerField } from '../NumberSpinnerField';
 
 const getInput = () => screen.getByTestId('number-spinner-field') as HTMLInputElement;
 

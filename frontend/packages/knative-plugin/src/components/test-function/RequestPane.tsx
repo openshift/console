@@ -12,7 +12,7 @@ import {
   SingleTypeaheadField,
   CodeEditorField,
 } from '@console/shared/src/components';
-import { FormLayout } from '@console/shared/src/components/cluster-configuration';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
 import { InvokeFormat } from './types';
 import { getcurrentLanguage } from './utils';
 

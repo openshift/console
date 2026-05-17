@@ -6,10 +6,8 @@ import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
-import {
-  GettingStartedLink,
-  GettingStartedCard,
-} from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 
 export const DeveloperFeaturesGettingStartedCard: FC = () => {

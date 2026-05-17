@@ -50,8 +50,8 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import { ActionMenuVariant } from '@console/shared/src/components/actions';
 import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';

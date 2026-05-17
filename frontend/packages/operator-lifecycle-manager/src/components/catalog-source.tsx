@@ -30,11 +30,12 @@ import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import type { K8sKind, K8sModel } from '@console/internal/module/k8s';
 import { referenceForModel, k8sPatch } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { withFallback } from '@console/shared/src/components/error';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {

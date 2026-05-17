@@ -21,10 +21,10 @@ import { useColumnWidthSettings } from '@console/app/src/components/data-view/us
 import { TableColumn } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useTranslation } from 'react-i18next';
 import { StorageClassModel } from '@console/internal/models';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';

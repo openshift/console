@@ -5,7 +5,7 @@ import type {
   ToastOptions,
   ToastContextValues,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import ToastContext from './ToastContext';
+import { ToastContext } from './ToastContext';
 
 interface ToastProviderProps {
   children?: ReactNode;
@@ -14,7 +14,7 @@ interface ToastProviderProps {
 /** Stable reference to append toast alerts to the document body */
 const appendTo = () => document.body;
 
-const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
+export const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastOptions[]>([]);
 
   const removeToast = useCallback((id: string) => {
@@ -111,4 +111,3 @@ const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
     </ToastContext.Provider>
   );
 };
-export default ToastProvider;

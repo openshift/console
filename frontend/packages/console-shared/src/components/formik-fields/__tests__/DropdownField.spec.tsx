@@ -1,6 +1,6 @@
 import { ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { mockFormikRenderer } from '../../../test-utils/unit-test-utils';
-import DropdownField from '../DropdownField';
+import { DropdownField } from '../DropdownField';
 
 jest.mock('@console/internal/components/utils/console-select', () => ({
   ConsoleSelect: jest.fn(() => null),

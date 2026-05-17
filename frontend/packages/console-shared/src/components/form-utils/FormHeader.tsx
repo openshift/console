@@ -10,7 +10,7 @@ type FormHeaderProps = {
   marginBottom?: SpacerSize;
 };
 
-const FormHeader: FC<FormHeaderProps> = ({ title, helpText, marginTop, marginBottom }) => {
+export const FormHeader: FC<FormHeaderProps> = ({ title, helpText, marginTop, marginBottom }) => {
   const marginStyles = {
     ...(marginTop ? { marginTop: `var(--pf-t--global--spacer--${marginTop})` } : {}),
     ...(marginBottom ? { marginBottom: `var(--pf-t--global--spacer--${marginBottom})` } : {}),
@@ -27,5 +27,3 @@ const FormHeader: FC<FormHeaderProps> = ({ title, helpText, marginTop, marginBot
     </div>
   );
 };
-
-export default FormHeader;

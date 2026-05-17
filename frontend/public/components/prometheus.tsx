@@ -10,7 +10,7 @@ import { Selector } from './utils/selector';
 import { LoadingBox } from './utils/status-box';
 import { PrometheusModel } from '../models';
 import { referenceForModel, referenceFor, K8sResourceKind } from '../module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import {
   ConsoleDataView,
   getNameCellProps,

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import type { StatusComponentProps } from '@console/dynamic-plugin-sdk';
 import { WarningStatus } from './statuses';
 
-const NodeUnschedulableStatus: FC<NodeUnschedulableStatusProps> = ({
+export const NodeUnschedulableStatus: FC<NodeUnschedulableStatusProps> = ({
   status,
   title,
   iconOnly,
@@ -16,5 +16,3 @@ const NodeUnschedulableStatus: FC<NodeUnschedulableStatusProps> = ({
 type NodeUnschedulableStatusProps = StatusComponentProps & {
   status: string;
 };
-
-export default NodeUnschedulableStatus;

@@ -1,8 +1,8 @@
 import * as Router from 'react-router';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { testClusterServiceVersion, testModel, testCRD } from '../../../../mocks';

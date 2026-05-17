@@ -31,7 +31,8 @@ import type { TopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/e
 import { isTopologyComponentFactory } from '@console/dynamic-plugin-sdk/src/extensions/topology';
 import type { RootState } from '@console/internal/redux';
 import { SyncPubSubModalLauncher } from '@console/knative-plugin/src/components/pub-sub/PubSubController';
-import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPreference';
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';

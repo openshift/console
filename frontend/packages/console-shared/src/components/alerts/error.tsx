@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ErrorAlert: FC<Props> = ({ message, title }) => {
+export const ErrorAlert: FC<Props> = ({ message, title }) => {
   const { t } = useTranslation();
 
   return (
@@ -21,5 +21,3 @@ type Props = {
   message: string;
   title?: string;
 };
-
-export default ErrorAlert;

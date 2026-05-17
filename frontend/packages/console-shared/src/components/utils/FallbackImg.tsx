@@ -7,7 +7,7 @@ type FallbackImgProps = {
   fallback?: ReactNode;
 } & ImgHTMLAttributes<HTMLImageElement>;
 
-const FallbackImg: FC<FallbackImgProps> = ({ src, alt, fallback, ...props }) => {
+export const FallbackImg: FC<FallbackImgProps> = ({ src, alt, fallback, ...props }) => {
   const [isSrcValid, setIsSrcValid] = useState<boolean>(true);
 
   if (src && isSrcValid) {
@@ -16,5 +16,3 @@ const FallbackImg: FC<FallbackImgProps> = ({ src, alt, fallback, ...props }) => 
 
   return <>{fallback}</>;
 };
-
-export default FallbackImg;

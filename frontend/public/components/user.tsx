@@ -35,7 +35,7 @@ import { useColumnWidthSettings } from '@console/app/src/components/data-view/us
 import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import { DASH } from '@console/shared/src/constants/ui';
 import { useTranslation } from 'react-i18next';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [

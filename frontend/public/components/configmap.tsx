@@ -24,10 +24,10 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
-import { LoadingBox } from '@console/shared/src/components/loading';
+import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const kind = referenceForModel(ConfigMapModel);
 const tableColumnInfo = [

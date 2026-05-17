@@ -39,7 +39,7 @@ import { Selector } from './utils/selector';
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {

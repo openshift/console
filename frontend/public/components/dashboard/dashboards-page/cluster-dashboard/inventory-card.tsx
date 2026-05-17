@@ -5,7 +5,7 @@ import {
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { ErrorBoundary } from '@console/shared/src/components/error';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import {
   useResolvedExtensions,

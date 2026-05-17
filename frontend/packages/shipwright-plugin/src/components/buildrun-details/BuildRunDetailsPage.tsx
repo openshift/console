@@ -4,11 +4,9 @@ import { DetailsPage } from '@console/internal/components/factory';
 import type { Page } from '@console/internal/components/utils';
 import { navFactory } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-} from '@console/shared/src/components/actions';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { useShipwrightBreadcrumbsFor } from '../../utils';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import BuildRunDetailsTab from './BuildRunDetailsTab';

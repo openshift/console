@@ -15,7 +15,7 @@ import type { RouteKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

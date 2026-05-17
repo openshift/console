@@ -9,8 +9,8 @@ import { Button, Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { LinkTo } from '@console/shared/src/components/links/LinkTo';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
-import withFallback from '@console/shared/src/components/error/fallbacks/withFallback';
-import ErrorBoundaryFallbackPage from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
 import {
   ColumnLayout,
   K8sResourceCommon,

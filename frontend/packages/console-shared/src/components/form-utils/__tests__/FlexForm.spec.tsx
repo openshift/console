@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import FlexForm from '../FlexForm';
+import { FlexForm } from '../FlexForm';
 
 describe('FlexForm', () => {
   it('should render a form element', () => {

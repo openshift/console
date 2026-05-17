@@ -7,7 +7,8 @@ import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
 import { SecretData } from './configmap-and-secret-data';
 import { DASH } from '@console/shared/src/constants/ui';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import {
   referenceFor,
   SecretKind,

@@ -4,7 +4,7 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { InputField, FormBody } from '@console/shared';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import type { BuilderImage } from '../../utils/imagestream-utils';
 import BuilderImageTagSelector from './builder/BuilderImageTagSelector';
 import FormSection from './section/FormSection';

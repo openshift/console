@@ -7,7 +7,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { ResourceLimitFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
+export const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
   label,
   unitName,
   unitOptions,
@@ -53,5 +53,3 @@ const ResourceLimitField: FC<ResourceLimitFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default ResourceLimitField;

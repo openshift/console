@@ -10,7 +10,7 @@ import type { Page } from '@console/internal/components/utils';
 import { useAccessReview } from '@console/internal/components/utils';
 import { ProjectModel, RoleBindingModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';

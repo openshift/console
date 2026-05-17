@@ -19,7 +19,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, ButtonVariant } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import {

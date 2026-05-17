@@ -5,8 +5,8 @@ import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { CatalogServiceProvider, isCatalogTypeEnabled, ALL_NAMESPACES_KEY } from '@console/shared';
-import type { GettingStartedLink } from '@console/shared/src/components/getting-started';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 interface SampleGettingStartedCardProps {

@@ -7,11 +7,9 @@ import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import type { PageComponentProps } from '@console/internal/components/utils/horizontal-nav';
 import type { K8sModel, NodeKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ActionMenu,
-  ActionMenuVariant,
-  ActionServiceProvider,
-} from '@console/shared/src/components/actions';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { isWindowsNode } from '@console/shared/src/selectors/node';
 import { nodeStatus } from '../../status/node';
 import NodeDashboard from './node-dashboard/NodeDashboard';

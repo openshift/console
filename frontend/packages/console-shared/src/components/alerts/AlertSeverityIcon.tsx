@@ -33,5 +33,3 @@ export const AlertSeverityIcon: FC<AlertSeverityIconProps> = ({
       );
   }
 };
-
-export default AlertSeverityIcon;

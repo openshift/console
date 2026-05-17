@@ -7,7 +7,8 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { TableData, Table } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu, {
+import {
+  LazyActionMenu,
   KEBAB_COLUMN_CLASS,
 } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useFlag } from '@console/shared/src/hooks/useFlag';

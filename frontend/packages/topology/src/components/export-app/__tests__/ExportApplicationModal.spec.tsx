@@ -39,7 +39,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: jest.fn(() => jest.fn()),
 }));
 
-const spyUseToast = useToastModule.default as jest.Mock;
+const spyUseToast = useToastModule.useToast as jest.Mock;
 const spyUseUserPreference = useUserPreferenceModule.useUserPreference as jest.Mock;
 const spyk8sCreate = k8sResourceModule.k8sCreate as jest.Mock;
 const spyk8sKill = k8sResourceModule.k8sKill as jest.Mock;

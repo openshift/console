@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react';
 import { ModelBadge } from '@console/dynamic-plugin-sdk/src/extensions/resource-metadata';
-import DevPreviewBadge from './DevPreviewBadge';
+import { DevPreviewBadge } from './DevPreviewBadge';
 import { InlineDevPreviewBadge, InlineTechPreviewBadge } from './InlineBadge';
-import TechPreviewBadge from './TechPreviewBadge';
+import { TechPreviewBadge } from './TechPreviewBadge';
 
 export enum BadgeType {
   DEV = 'Dev Preview',

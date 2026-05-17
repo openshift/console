@@ -18,7 +18,7 @@ type ActionMenuProps = {
   appendTo?: ComponentProps<typeof Popper>['appendTo'];
 };
 
-const ActionMenu: FC<ActionMenuProps> = ({
+export const ActionMenu: FC<ActionMenuProps> = ({
   actions,
   options,
   isDisabled,
@@ -112,5 +112,3 @@ const ActionMenu: FC<ActionMenuProps> = ({
     )
   );
 };
-
-export default ActionMenu;

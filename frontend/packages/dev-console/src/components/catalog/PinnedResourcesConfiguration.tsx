@@ -22,14 +22,12 @@ import {
 } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-  patchConsoleOperatorConfig,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import type {
   Perspective,
   PerspectivePinnedResource,

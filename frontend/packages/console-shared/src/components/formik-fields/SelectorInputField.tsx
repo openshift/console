@@ -17,7 +17,7 @@ interface SelectorInputFieldProps extends FieldProps {
  *
  * Values are saved as string dictionary (Record<string, string>).
  */
-const SelectorInputField: FC<SelectorInputFieldProps> = ({
+export const SelectorInputField: FC<SelectorInputFieldProps> = ({
   name,
   label,
   helpText,
@@ -52,5 +52,3 @@ const SelectorInputField: FC<SelectorInputFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default SelectorInputField;

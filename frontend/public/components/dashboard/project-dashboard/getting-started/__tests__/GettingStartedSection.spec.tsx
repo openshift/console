@@ -6,7 +6,7 @@ import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   GettingStartedShowState,
   useGettingStartedShowState,
-} from '@console/shared/src/components/getting-started';
+} from '@console/shared/src/components/getting-started/useGettingStartedShowState';
 import { expectTextsNotInDocument } from '../../../getting-started-test-utils';
 
 import { GettingStartedSection } from '../GettingStartedSection';
