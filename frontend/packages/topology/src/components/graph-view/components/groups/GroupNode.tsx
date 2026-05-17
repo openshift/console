@@ -20,11 +20,11 @@ import {
 import type { TruncateOptions } from '@console/internal/components/utils';
 import { truncateMiddle, shouldTruncate } from '@console/internal/components/utils';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
-import { useSearchFilter } from '../../../../filters';
+import { useSearchFilter } from '../../../../filters/useSearchFilter';
 import type { OdcNodeModel } from '../../../../topology-types';
-import SvgCircledIcon from '../../../svg/SvgCircledIcon';
-import GroupNodeAnchor from './GroupNodeAnchor';
-import ResourceKindsInfo from './ResourceKindsInfo';
+import { SvgCircledIcon } from '../../../svg/SvgCircledIcon';
+import { GroupNodeAnchor } from './GroupNodeAnchor';
+import { ResourceKindsInfo } from './ResourceKindsInfo';
 
 import './GroupNode.scss';
 
@@ -53,7 +53,7 @@ type GroupNodeProps = {
   hover?: boolean;
 } & Partial<WithSelectionProps & WithDndDropProps & WithContextMenuProps & WithDragNodeProps>;
 
-const GroupNode: FC<GroupNodeProps> = ({
+const GroupNodeComponent: FC<GroupNodeProps> = ({
   element,
   bgClassName,
   badge,
@@ -158,4 +158,4 @@ const GroupNode: FC<GroupNodeProps> = ({
   );
 };
 
-export default observer(GroupNode);
+export const GroupNode = observer(GroupNodeComponent);

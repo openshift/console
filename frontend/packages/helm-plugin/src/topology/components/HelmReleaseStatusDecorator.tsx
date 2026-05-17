@@ -4,7 +4,7 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
-import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
+import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view/components/nodes/decorators/BuildDecoratorBubble';
 import { releaseStatus } from '../../utils/helm-utils';
 
 type HelmReleaseStatusDecoratorProps = {

@@ -15,7 +15,7 @@ type ResourceKindsInfoProps = {
   emptyValue?: ReactNode;
 };
 
-const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
+export const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyValue }) => {
   const resourcesData = {};
   _.forEach(groupResources, (node: OdcNodeModel) => {
     if (!node) {
@@ -72,5 +72,3 @@ const ResourceKindsInfo: FC<ResourceKindsInfoProps> = ({ groupResources, emptyVa
     </foreignObject>
   );
 };
-
-export default ResourceKindsInfo;

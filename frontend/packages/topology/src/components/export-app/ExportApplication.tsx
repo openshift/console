@@ -8,7 +8,7 @@ import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
-import { ExportModel } from '../../models';
+import { ExportModel } from '../../models/gitops-primer';
 import { handleExportApplication } from './ExportApplicationModal';
 
 type ExportApplicationProps = {

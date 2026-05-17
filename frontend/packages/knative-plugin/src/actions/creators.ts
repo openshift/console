@@ -8,7 +8,7 @@ import { truncateMiddle } from '@console/internal/components/utils/truncate-midd
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
-import { cleanUpWorkload } from '@console/topology/src/utils';
+import { cleanUpWorkload } from '@console/topology/src/utils/application-utils';
 import { usePubSubModalLauncher } from '../components/pub-sub/PubSubController';
 import { useDeleteRevisionModalLauncher } from '../components/revisions/DeleteRevisionModalController';
 import { useSinkPubsubModalLauncher } from '../components/sink-pubsub/SinkPubsubController';

@@ -7,7 +7,11 @@ import {
   withSelection,
   withDndDrop,
 } from '@patternfly/react-topology';
-import { contextMenuActions, graphActionContext, groupActionContext } from '../../../actions';
+import {
+  contextMenuActions,
+  graphActionContext,
+  groupActionContext,
+} from '../../../actions/contextMenuActions';
 import { withCreateConnector } from '../../../behavior/withCreateConnector';
 import {
   TYPE_WORKLOAD,
@@ -29,10 +33,13 @@ import {
   withContextMenu,
   createConnectorCallback,
 } from './componentUtils';
-import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
+import { AggregateEdge } from './edges/AggregateEdge';
+import { ConnectsTo } from './edges/ConnectsTo';
+import { CreateConnector } from './edges/CreateConnector';
+import { TrafficConnector } from './edges/TrafficConnector';
 import GraphComponent from './GraphComponent';
-import { Application } from './groups';
-import { WorkloadNode } from './nodes';
+import { Application } from './groups/Application';
+import { WorkloadNode } from './nodes/WorkloadNode';
 
 import './ContextMenu.scss';
 

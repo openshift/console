@@ -30,7 +30,7 @@ jest.mock('@console/shared/src/components/formik-fields/MultiTypeaheadField', ()
 
 jest.mock('react-i18next');
 
-jest.mock('../../../../hooks', () => ({
+jest.mock('../../../../hooks/useBootstrapServers', () => ({
   useBootstrapServers: jest.fn(() => [[], 'placeholder']),
 }));
 

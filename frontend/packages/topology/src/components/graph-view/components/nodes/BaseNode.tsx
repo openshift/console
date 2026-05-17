@@ -15,8 +15,8 @@ import type { BaseNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/t
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
-import useHover from '../../../../behavior/useHover';
-import { useSearchFilter } from '../../../../filters';
+import { useHover } from '../../../../behavior/useHover';
+import { useSearchFilter } from '../../../../filters/useSearchFilter';
 import { useShowLabel } from '../../../../filters/useShowLabel';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { getKindStringAndAbbreviation } from './nodeUtils';
@@ -24,7 +24,7 @@ import { getKindStringAndAbbreviation } from './nodeUtils';
 import '../../../svg/SvgResourceIcon.scss';
 import './BaseNode.scss';
 
-const BaseNode: FC<BaseNodeProps> = ({
+const BaseNodeComponent: FC<BaseNodeProps> = ({
   className,
   innerRadius,
   icon,
@@ -120,4 +120,4 @@ const BaseNode: FC<BaseNodeProps> = ({
   );
 };
 
-export default observer(BaseNode);
+export const BaseNode = observer(BaseNodeComponent);

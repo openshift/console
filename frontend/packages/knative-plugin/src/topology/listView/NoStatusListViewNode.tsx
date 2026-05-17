@@ -1,8 +1,8 @@
 import type { FC } from 'react';
-import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
-import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
-import type { OdcBaseNode } from '@console/topology/src/elements';
-import { getResourceKind } from '@console/topology/src/utils';
+import { TypedResourceBadgeCell } from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
+import { TopologyListViewNode } from '@console/topology/src/components/list-view/TopologyListViewNode';
+import type { OdcBaseNode } from '@console/topology/src/elements/OdcBaseNode';
+import { getResourceKind } from '@console/topology/src/utils/topology-utils';
 import { EventSourceIcon } from '../../utils/icons';
 import { NodeType } from '../topology-types';
 

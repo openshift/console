@@ -6,7 +6,7 @@ import type {
   Edge,
 } from '@patternfly/react-topology';
 import { observer, EdgeTerminalType } from '@patternfly/react-topology';
-import BaseEdge from './BaseEdge';
+import { BaseEdge } from './BaseEdge';
 
 import './ConnectsTo.scss';
 
@@ -16,7 +16,7 @@ type ConnectsToProps = {
 } & WithSourceDragProps &
   WithTargetDragProps &
   WithContextMenuProps;
-const ConnectsTo: FC<ConnectsToProps> = (props) => (
+const ConnectsToComponent: FC<ConnectsToProps> = (props) => (
   <BaseEdge
     className="odc-connects-to"
     endTerminalType={EdgeTerminalType.directionalAlt}
@@ -24,4 +24,4 @@ const ConnectsTo: FC<ConnectsToProps> = (props) => (
   />
 );
 
-export default observer(ConnectsTo);
+export const ConnectsTo = observer(ConnectsToComponent);

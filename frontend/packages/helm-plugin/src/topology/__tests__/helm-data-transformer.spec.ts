@@ -12,11 +12,11 @@ import {
 import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
 import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
 import { updateModelFromFilters } from '@console/topology/src/data-transforms/updateModelFromFilters';
-import { getFilterById } from '@console/topology/src/filters';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
 } from '@console/topology/src/filters/const';
+import { getFilterById } from '@console/topology/src/filters/filter-utils';
 import type { TopologyDataResources } from '@console/topology/src/topology-types';
 import { TopologyDisplayFilterType } from '@console/topology/src/topology-types';
 import { WORKLOAD_TYPES } from '@console/topology/src/utils/topology-utils';

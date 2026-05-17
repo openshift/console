@@ -10,7 +10,7 @@ import type {
 } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { GroupNode } from '../../components/graph-view';
+import { GroupNode } from '../../components/graph-view/components/groups/GroupNode';
 
 type OperatorBackedServiceNodeProps = {
   element: Node;

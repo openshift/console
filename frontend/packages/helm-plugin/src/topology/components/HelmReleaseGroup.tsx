@@ -17,16 +17,16 @@ import {
   NodeLabel,
 } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { noRegroupDragSourceSpec } from '@console/topology/src/components/graph-view/components/componentUtils';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
-  noRegroupDragSourceSpec,
-} from '@console/topology/src/components/graph-view';
-import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
-import { useSearchFilter } from '@console/topology/src/filters';
+} from '@console/topology/src/components/graph-view/components/NodeShadows';
+import { useSearchFilter } from '@console/topology/src/filters/useSearchFilter';
 import { useShowLabel } from '@console/topology/src/filters/useShowLabel';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 
 type HelmReleaseGroupProps = {
   element: Node;

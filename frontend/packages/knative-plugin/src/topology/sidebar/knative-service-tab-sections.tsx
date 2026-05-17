@@ -4,7 +4,7 @@ import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk
 import type { BuildConfigData } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import RevisionsOverviewList from '../../components/overview/RevisionsOverviewList';
 import { getSubscriberByType } from '../knative-topology-utils';
 import { NodeType } from '../topology-types';

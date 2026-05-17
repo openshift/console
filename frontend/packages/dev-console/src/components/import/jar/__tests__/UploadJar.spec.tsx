@@ -59,7 +59,8 @@ jest.mock('@console/internal/components/utils', () => ({
   },
 }));
 
-jest.mock('@console/topology/src/utils', () => ({
+jest.mock('@console/topology/src/utils/application-utils', () => ({
+  ...jest.requireActual('@console/topology/src/utils/application-utils'),
   sanitizeApplicationValue: jest.fn((value) => value),
 }));
 

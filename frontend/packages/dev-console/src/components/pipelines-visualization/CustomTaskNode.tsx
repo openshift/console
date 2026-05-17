@@ -13,7 +13,7 @@ import type { K8sResourceKind, WatchK8sResults } from '@console/dynamic-plugin-s
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { resourcePathFromModel, truncateMiddle } from '@console/internal/components/utils';
-import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
+import { SvgDropShadowFilter } from '@console/topology/src/components/svg/SvgDropShadowFilter';
 import { CustomRunModelV1Beta1 } from '../../models/pipelines';
 import type { CustomRunKind, TaskKind } from '../../types/pipeline';
 import type { TaskNodeModelData } from './types';

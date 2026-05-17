@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Edge } from '@patternfly/react-topology';
 import { observer, ScaleDetailsLevel } from '@patternfly/react-topology';
-import { BaseEdge } from '@console/topology/src/components/graph-view';
+import { BaseEdge } from '@console/topology/src/components/graph-view/components/edges/BaseEdge';
 
 type TrafficLinkProps = {
   element: Edge;

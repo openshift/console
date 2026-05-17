@@ -10,7 +10,7 @@ import type { Node } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getChildKinds } from './list-view-utils';
-import TopologyListViewKindGroup from './TopologyListViewKindGroup';
+import { TopologyListViewKindGroup } from './TopologyListViewKindGroup';
 
 interface TopologyListViewUnassignedGroupProps {
   items: Node[];
@@ -19,7 +19,7 @@ interface TopologyListViewUnassignedGroupProps {
   onSelect: (ids: string[]) => void;
 }
 
-const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> = ({
+const TopologyListViewUnassignedGroupComponent: FC<TopologyListViewUnassignedGroupProps> = ({
   items,
   showCategory,
   selectedIds,
@@ -77,4 +77,4 @@ const TopologyListViewUnassignedGroup: FC<TopologyListViewUnassignedGroupProps> 
   );
 };
 
-export default observer(TopologyListViewUnassignedGroup);
+export const TopologyListViewUnassignedGroup = observer(TopologyListViewUnassignedGroupComponent);

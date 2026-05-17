@@ -46,7 +46,7 @@ export const podSetInnerRadius = (size: number, data?: PodRCData) => {
   return radius - innerStrokeWidth - podStatusInset;
 };
 
-const PodSet = memo<PodSetProps>(({ size, data, x = 0, y = 0, showPodCount }) => {
+export const PodSet = memo<PodSetProps>(({ size, data, x = 0, y = 0, showPodCount }) => {
   const { t } = useTranslation();
   const { podStatusOuterRadius, podStatusInnerRadius, podStatusStrokeWidth } = calculateRadius(
     size,
@@ -102,5 +102,3 @@ const PodSet = memo<PodSetProps>(({ size, data, x = 0, y = 0, showPodCount }) =>
     </>
   );
 });
-
-export default PodSet;

@@ -18,12 +18,14 @@ import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import type { PodRCData } from '@console/shared/src/types/pod';
 import { getFiringAlerts, getSeverityAlertType } from '@console/shared/src/utils/alert-utils';
 import { calculateRadius, getPodStatus } from '@console/shared/src/utils/pod-utils';
-import { getFilterById, SHOW_POD_COUNT_FILTER_ID, useDisplayFilters } from '../../../../filters';
+import { SHOW_POD_COUNT_FILTER_ID } from '../../../../filters/const';
+import { getFilterById } from '../../../../filters/filter-utils';
+import { useDisplayFilters } from '../../../../filters/useDisplayFilters';
 import { getResource, getTopologyResourceObject } from '../../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../../workload/resource-alert';
-import BaseNode from './BaseNode';
+import { BaseNode } from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
-import PodSet, { podSetInnerRadius } from './PodSet';
+import { PodSet, podSetInnerRadius } from './PodSet';
 
 import './WorkloadNode.scss';
 

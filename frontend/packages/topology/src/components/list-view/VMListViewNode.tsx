@@ -3,10 +3,13 @@ import { useMemo } from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
-import { getPodMetricStats, getTopologyResourceObject, useOverviewMetrics } from '../../utils';
+import { getPodMetricStats } from '../../utils/metricStats';
+import { getTopologyResourceObject } from '../../utils/topology-utils';
+import { useOverviewMetrics } from '../../utils/useOverviewMetrics';
 import { usePodsForVm } from '../../utils/usePodsForVM';
-import { CpuCellComponent, MemoryCellComponent } from './cells';
-import TopologyListViewNode from './TopologyListViewNode';
+import { CpuCellComponent } from './cells/CpuCell';
+import { MemoryCellComponent } from './cells/MemoryCell';
+import { TopologyListViewNode } from './TopologyListViewNode';
 
 interface VMListViewNodeProps {
   item: Node;

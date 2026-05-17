@@ -11,7 +11,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
-import { sanitizeApplicationValue } from '@console/topology/src/utils';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import type { BuilderImage } from '../../../utils/imagestream-utils';
 import { getBaseInitialValues } from '../form-initial-values';
 import { filterDeployedResources, handleRedirect } from '../import-submit-utils';

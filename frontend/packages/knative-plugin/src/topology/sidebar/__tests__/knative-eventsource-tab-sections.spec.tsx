@@ -1,4 +1,4 @@
-import { OdcBaseNode } from '@console/topology/src/elements';
+import { OdcBaseNode } from '@console/topology/src/elements/OdcBaseNode';
 import type { OdcNodeModel } from '@console/topology/src/topology-types';
 import {
   kameletBindingSinkRes,

@@ -11,7 +11,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import {
   FLAG_HELM_CHARTS_CATALOG_TYPE,
   HELM_CHART_ACTION_ID,

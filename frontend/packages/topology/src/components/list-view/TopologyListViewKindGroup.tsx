@@ -21,7 +21,7 @@ interface TopologyListViewKindGroupProps {
   onSelect: (ids: string[]) => void;
 }
 
-const TopologyListViewKindGroup: FC<TopologyListViewKindGroupProps> = ({
+const TopologyListViewKindGroupComponent: FC<TopologyListViewKindGroupProps> = ({
   groupLabel,
   kind,
   childElements,
@@ -77,4 +77,4 @@ const TopologyListViewKindGroup: FC<TopologyListViewKindGroupProps> = ({
   );
 };
 
-export default observer(TopologyListViewKindGroup);
+export const TopologyListViewKindGroup = observer(TopologyListViewKindGroupComponent);

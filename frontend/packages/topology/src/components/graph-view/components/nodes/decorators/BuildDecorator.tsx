@@ -7,8 +7,8 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
 import { Status } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
-import { getResource } from '../../../../../utils';
-import BuildDecoratorBubble from './BuildDecoratorBubble';
+import { getResource } from '../../../../../utils/topology-utils';
+import { BuildDecoratorBubble } from './BuildDecoratorBubble';
 
 interface BuildDecoratorProps {
   element: Node;
@@ -17,7 +17,7 @@ interface BuildDecoratorProps {
   y: number;
 }
 
-const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
+export const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
   const { t } = useTranslation();
   const resource = getResource(element);
@@ -46,5 +46,3 @@ const BuildDecorator: FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
     </Tooltip>
   );
 };
-
-export default BuildDecorator;

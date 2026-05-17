@@ -13,7 +13,7 @@ import {
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared/src/utils/alert-utils';
-import Decorator from './Decorator';
+import { Decorator } from './Decorator';
 
 type DispatchProps = {
   showMonitoringOverview?: () => void;
@@ -32,7 +32,7 @@ interface MonitoringAlertsDecoratorProps {
 
 type MonitoringAlertsDecoratorType = MonitoringAlertsDecoratorProps & DispatchProps;
 
-const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
+const MonitoringAlertsDecoratorComponent: FC<MonitoringAlertsDecoratorType> = ({
   element,
   radius,
   x,
@@ -68,7 +68,11 @@ const MonitoringAlertsDecorator: FC<MonitoringAlertsDecoratorType> = ({
   );
 };
 
-export default connect<null, DispatchProps, MonitoringAlertsDecoratorProps>(
+export const MonitoringAlertsDecorator = connect<
+  null,
+  DispatchProps,
+  MonitoringAlertsDecoratorProps
+>(
   null,
   dispatchToProps,
-)(MonitoringAlertsDecorator);
+)(MonitoringAlertsDecoratorComponent);

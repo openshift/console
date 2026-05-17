@@ -6,7 +6,7 @@ import * as useToastModule from '@console/shared/src/components/toast/useToast';
 import * as useUserPreferenceModule from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
-import { ExportModel } from '../../../models';
+import { ExportModel } from '../../../models/gitops-primer';
 import { ExportApplicationModal } from '../ExportApplicationModal';
 import { mockExportData } from './export-data';
 

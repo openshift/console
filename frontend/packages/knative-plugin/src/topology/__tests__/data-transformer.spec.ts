@@ -12,15 +12,16 @@ import { updateModelFromFilters } from '@console/topology/src/data-transforms/up
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
-  getFilterById,
-} from '@console/topology/src/filters';
+} from '@console/topology/src/filters/const';
+import { getFilterById } from '@console/topology/src/filters/filter-utils';
 import type {
   OdcNodeModel,
   TopologyDataModelDepicted,
   TopologyDataResources,
   WorkloadData,
 } from '@console/topology/src/topology-types';
-import { cleanUpWorkload, WORKLOAD_TYPES } from '@console/topology/src/utils';
+import { cleanUpWorkload } from '@console/topology/src/utils/application-utils';
+import { WORKLOAD_TYPES } from '@console/topology/src/utils/topology-utils';
 import { ServiceModel, EventingBrokerModel } from '../../models';
 import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 import { TYPE_EVENT_PUB_SUB, TYPE_EVENT_PUB_SUB_LINK, TYPE_KNATIVE_SERVICE } from '../const';

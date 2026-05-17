@@ -6,7 +6,7 @@ import type {
   WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
-import GroupNode from './GroupNode';
+import { GroupNode } from './GroupNode';
 
 type ApplicationGroupProps = {
   element: Node;

@@ -3,7 +3,7 @@ import type { Edge, GraphElement } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_WORKLOAD, TYPE_CONNECTS_TO } from '../const';
-import { getResource } from '../utils';
+import { getResource } from '../utils/topology-utils';
 import { useDeleteConnectorAction, useMoveConnectorAction } from './edgeActions';
 import { useGetModifyApplicationAction } from './modify-application';
 

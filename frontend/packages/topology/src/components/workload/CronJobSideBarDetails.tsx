@@ -7,7 +7,7 @@ import { CronJobModel } from '@console/internal/models';
 import type { CronJobKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 type CronJobSideBarDetailsProps = {
   cronjob: CronJobKind;

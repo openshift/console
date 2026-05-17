@@ -1,9 +1,9 @@
 import type { ElementFactory, GraphElement } from '@patternfly/react-topology';
 import { ModelKind, BaseGraph } from '@patternfly/react-topology';
-import OdcBaseEdge from './OdcBaseEdge';
-import OdcBaseNode from './OdcBaseNode';
+import { OdcBaseEdge } from './OdcBaseEdge';
+import { OdcBaseNode } from './OdcBaseNode';
 
-const odcElementFactory: ElementFactory = (kind: ModelKind): GraphElement | undefined => {
+export const odcElementFactory: ElementFactory = (kind: ModelKind): GraphElement | undefined => {
   switch (kind) {
     case ModelKind.graph:
       return new BaseGraph();
@@ -15,5 +15,3 @@ const odcElementFactory: ElementFactory = (kind: ModelKind): GraphElement | unde
       return undefined;
   }
 };
-
-export default odcElementFactory;

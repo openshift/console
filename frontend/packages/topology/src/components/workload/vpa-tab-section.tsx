@@ -9,7 +9,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import type { K8sResourceCommon } from '@console/internal/module/k8s';
 import { getVerticalPodAutoscalersForResource } from '@console/shared/src/utils/resource-utils';
 import { TYPE_WORKLOAD } from '@console/topology/src/const';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 
 type VPATabSectionProps = {

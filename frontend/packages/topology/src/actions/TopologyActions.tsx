@@ -6,7 +6,7 @@ import { referenceFor } from '@console/internal/module/k8s';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { getResource } from '../utils';
+import { getResource } from '../utils/topology-utils';
 
 type TopologyActionsProps = {
   element: GraphElement;

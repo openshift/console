@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import HelmReleaseOverview from '../../../components/details-page/overview/HelmReleaseOverview';
 import { TYPE_HELM_RELEASE } from '../../components/const';
 import TopologyHelmReleaseNotesPanel from '../../TopologyHelmReleaseNotesPanel';

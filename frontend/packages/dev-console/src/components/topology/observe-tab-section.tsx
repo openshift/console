@@ -6,7 +6,7 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import MonitoringTab from '../monitoring/overview/MonitoringTab';
 
 export const useObserveSideBarTabSection: DetailsTabSectionExtensionHook = (

@@ -7,7 +7,7 @@ import { DaemonSetModel } from '@console/internal/models';
 import type { DaemonSetKind } from '@console/internal/module/k8s';
 import { PodRing } from '@console/shared/src/components/pod/PodRing';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 type DaemonSetOverviewDetailsProps = {
   ds: DaemonSetKind;

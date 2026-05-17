@@ -10,9 +10,8 @@ import { TYPE_AGGREGATE_EDGE, TYPE_APPLICATION_GROUP } from '../const';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,
   EXPAND_APPLICATION_GROUPS_FILTER_ID,
-  isExpanded,
-  showKind,
-} from '../filters';
+} from '../filters/const';
+import { isExpanded, showKind } from '../filters/filter-utils';
 import type { DisplayFilters, OdcNodeModel, TopologyApplyDisplayOptions } from '../topology-types';
 import { getTopologyResourceObject } from '../utils/topology-utils';
 

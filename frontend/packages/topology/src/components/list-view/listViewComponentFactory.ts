@@ -7,7 +7,7 @@ import { TYPE_WORKLOAD } from '../../const';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import OperatorGroupListViewNode from '../../operators/listView/OperatorGroupListViewNode';
 import { kubevirtListViewNodeComponentFactory } from './kubevirtListViewComponentFactory';
-import TopologyListViewNode from './TopologyListViewNode';
+import { TopologyListViewNode } from './TopologyListViewNode';
 
 export const listViewNodeComponentFactory = (
   type,

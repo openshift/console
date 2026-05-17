@@ -9,7 +9,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useToast } from '@console/shared/src/components/toast/useToast';
 import { USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
-import { ExportModel } from '../../models';
+import { ExportModel } from '../../models/gitops-primer';
 import type { ExportAppUserSettings } from './types';
 
 export const ExportAppContext = createContext({});

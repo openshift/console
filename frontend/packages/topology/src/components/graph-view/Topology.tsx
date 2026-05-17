@@ -37,11 +37,11 @@ import type { WithUserPreferenceProps } from '@console/shared/src/hoc/withUserPr
 import { withUserPreference } from '@console/shared/src/hoc/withUserPreference';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY } from '../../const';
-import { odcElementFactory } from '../../elements';
+import { odcElementFactory } from '../../elements/odcElementFactory';
 import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
 import type { ShowGroupingHintEventListener } from '../../topology-types';
 import { SHOW_GROUPING_HINT_EVENT } from '../../topology-types';
-import { componentFactory } from './components';
+import { componentFactory } from './components/componentFactory';
 import { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory } from './layouts/layoutFactory';
 import TopologyControlBar from './TopologyControlBar';
 
@@ -130,7 +130,7 @@ interface TopologyProps {
   setVisualization: (vis: Visualization) => void;
 }
 
-const Topology: FC<
+const TopologyComponent: FC<
   TopologyProps & StateProps & DispatchProps & WithUserPreferenceProps<object>
 > = ({
   model,
@@ -380,7 +380,7 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-export default withFallback(
+export const Topology = withFallback(
   connect<StateProps, DispatchProps, TopologyProps>(
     TopologyStateToProps,
     TopologyDispatchToProps,
@@ -388,7 +388,7 @@ export default withFallback(
     withUserPreference<TopologyProps & WithUserPreferenceProps<object>, object>(
       TOPOLOGY_LAYOUT_CONFIG_USER_PREFERENCE_KEY,
       {},
-    )(memo(Topology)),
+    )(memo(TopologyComponent)),
   ),
   ErrorBoundaryFallbackPage,
 );

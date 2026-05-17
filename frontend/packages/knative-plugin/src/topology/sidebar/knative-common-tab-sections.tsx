@@ -13,7 +13,7 @@ import type { PodKind } from '@console/internal/module/k8s';
 import { podPhase, referenceForModel } from '@console/internal/module/k8s';
 import { AllPodStatus } from '@console/shared/src/constants/pod';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';
 import { RevisionModel } from '../../models';
 import type { RevisionKind } from '../../types';

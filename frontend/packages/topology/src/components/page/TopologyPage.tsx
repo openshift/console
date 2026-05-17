@@ -19,7 +19,7 @@ import {
   TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY,
 } from '../../const';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters/filter-utils';
 import { FilterProvider } from '../../filters/FilterProvider';
 import { TopologyViewType } from '../../topology-types';
 import { usePreferredTopologyView } from '../../user-preferences/usePreferredTopologyView';
