@@ -11,7 +11,7 @@ import {
   isTranslatableString,
   translateExtension,
 } from '@console/plugin-sdk/src/utils/extension-i18n';
-import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
+import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
 import { fetchURL } from '../../graphql/client';
 import { pluginStore } from '../../plugins';
 import { loading as i18nLoading } from '../../i18n';

@@ -4,7 +4,7 @@ import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
 import { t } from '../../../../../__mocks__/i18next';
-import type { ExtPodKind } from '../../types';
+import type { ExtPodKind } from '../../types/pod';
 import {
   deployment,
   deploymentConfig,

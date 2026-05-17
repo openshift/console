@@ -3,7 +3,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ClusterVersionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s/k8s-ref';
 import type { ClusterVersionKind } from '@console/internal/module/k8s/types';
-import { FLAGS } from '../constants';
+import { FLAGS } from '../constants/common';
 import { useFlag } from './useFlag';
 
 export const useClusterVersion = (): ClusterVersionKind => {

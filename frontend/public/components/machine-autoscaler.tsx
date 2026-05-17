@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import {
   actionsCellProps,

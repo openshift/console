@@ -1,5 +1,5 @@
 import { k8sGet } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { checkNamespaceExists } from '../checkNamespaceExists';
 
 jest.mock('@console/internal/module/k8s', () => ({

@@ -2,7 +2,7 @@ import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/mo
 import type { MachineKind, MachineSetKind, SecretKind } from '@console/internal/module/k8s';
 import { k8sPatch, k8sCreate, k8sKill } from '@console/internal/module/k8s';
 import { getAnnotations } from '@console/shared/src';
-import { PatchBuilder } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import type { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { BareMetalHostModel } from '../../models';

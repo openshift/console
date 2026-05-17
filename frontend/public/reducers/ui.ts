@@ -3,7 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import type { UIAction } from '../actions/ui';
 import { ActionType } from '../actions/common';
-import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import type { RootState } from '../redux';

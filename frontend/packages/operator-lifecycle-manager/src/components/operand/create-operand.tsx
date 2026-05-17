@@ -26,7 +26,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import type { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';

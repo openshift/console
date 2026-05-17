@@ -51,7 +51,8 @@ import type {
 import { k8sCreate, referenceFor } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
-import { getName, getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors';
+import { getName } from '@console/shared/src/selectors/common';
+import { getRequestedPVCSize, onlyPvcSCs } from '@console/shared/src/selectors/storage';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { isCephProvisioner } from '@console/shared/src/utils/storage-utils';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';

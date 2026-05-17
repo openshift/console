@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { setFlag } from '@console/internal/actions/flags';
 import { receivedResources } from '../../actions/k8s';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
   featureReducer,
   featureReducerName,

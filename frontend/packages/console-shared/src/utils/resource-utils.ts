@@ -26,6 +26,7 @@ import type {
 } from '@console/internal/module/k8s';
 import { LabelSelector, apiVersionForModel } from '@console/internal/module/k8s';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
+import { AllPodStatus } from '../constants/pod';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
   DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
@@ -34,16 +35,9 @@ import {
   CONTAINER_WAITING_STATE_ERROR_REASONS,
   DEPLOYMENT_STRATEGY,
   DEPLOYMENT_PHASE,
-  AllPodStatus,
-} from '../constants';
-import type {
-  BuildConfigOverviewItem,
-  OverviewItemAlerts,
-  PodControllerOverviewItem,
-  OverviewItem,
-  ExtPodKind,
-  LimitsData,
-} from '../types';
+} from '../constants/resource';
+import type { OverviewItemAlerts, PodControllerOverviewItem, ExtPodKind } from '../types/pod';
+import type { BuildConfigOverviewItem, OverviewItem, LimitsData } from '../types/resource';
 import { doesHpaMatch } from './hpa-utils';
 import { isKnativeServing, isIdled } from './pod-utils';
 

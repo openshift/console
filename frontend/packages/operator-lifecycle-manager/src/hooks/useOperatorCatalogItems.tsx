@@ -9,7 +9,7 @@ import type {
   CatalogExtensionHookOptions,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { parseList, strConcat } from '@console/shared/src/utils/utils';
 import { iconFor } from '../components';
 import { subscriptionFor } from '../components/operator-group';

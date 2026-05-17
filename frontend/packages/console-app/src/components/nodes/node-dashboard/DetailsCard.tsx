@@ -24,7 +24,7 @@ import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/us
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { NodeModel } from '@console/internal/models';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeGroupsEditorModal from '../modals/NodeGroupsEditorModal';

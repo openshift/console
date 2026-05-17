@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon, TableColumn } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
   getNameCellProps,

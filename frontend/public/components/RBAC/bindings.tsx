@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { ListPageBody } from '@console/dynamic-plugin-sdk';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';

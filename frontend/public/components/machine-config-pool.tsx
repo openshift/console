@@ -38,7 +38,7 @@ import {
 } from '../module/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import { DetailsItem } from './utils/details-item';
 import { LoadingBox, LoadingInline } from './utils/status-box';
 import { navFactory } from './utils/horizontal-nav';

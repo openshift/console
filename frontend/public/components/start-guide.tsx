@@ -4,7 +4,7 @@ import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector
 import { Button, ButtonVariant, Divider, EmptyStateVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { openshiftHelpBase } from './utils/documentation';

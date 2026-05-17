@@ -71,7 +71,7 @@ import { ExternalLink } from '@console/shared/src/components/links/ExternalLink'
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals/LazyConsolePluginModal';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';

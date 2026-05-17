@@ -1,4 +1,4 @@
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { checkNamespaceExists } from './checkNamespaceExists';
 
 export const getValueForNamespace = async (

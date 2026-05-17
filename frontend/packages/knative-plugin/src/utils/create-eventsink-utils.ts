@@ -6,7 +6,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s/types';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getEventSinkCatalogProviderData } from '../catalog/event-sink-data';
 import type {
