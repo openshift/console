@@ -5,7 +5,7 @@ import { CertificationRequest } from 'pkijs';
 import { stringToArrayBuffer, fromBase64 } from 'pvutils';
 import type { NodeKind } from '@console/internal/module/k8s';
 import type { CSRBundle } from '../components/types';
-import type { CertificateSigningRequestKind } from '../types';
+import type { CertificateSigningRequestKind } from '../types/host';
 
 const getNodeCSRs = (
   csrs: CertificateSigningRequestKind[],

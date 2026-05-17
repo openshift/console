@@ -43,16 +43,16 @@ import {
   getHostPowerStatus,
   getHostVendorInfo,
   getHostMachine,
-  findNodeMaintenance,
   getHostBios,
   getHostProvisioningState,
   getHostBootMACAddress,
   isHostScheduledForRestart,
   hasPowerManagement,
   isDetached,
-} from '../../selectors';
+} from '../../selectors/baremetal-hosts';
+import { findNodeMaintenance } from '../../selectors/node-maintenance';
 import { getHostStatus } from '../../status/host-status';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';

@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
 import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { getNodeMaintenancePhase } from '../../selectors';
+import { getNodeMaintenancePhase } from '../../selectors/node-maintenance';
 import StartingMaintenancePopoverContent from './StartingMaintenancePopoverContent';
 import UnderMaintenancePopoverContent from './UnderMaintenancePopoverContent';
 

@@ -4,8 +4,8 @@ import { MachineModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getNamespace } from '@console/shared/src/selectors/common';
-import { getHostMachineName } from '../../selectors';
-import type { BareMetalHostKind } from '../../types';
+import { getHostMachineName } from '../../selectors/baremetal-hosts';
+import type { BareMetalHostKind } from '../../types/host';
 
 interface MachineLinkProps {
   host: BareMetalHostKind;

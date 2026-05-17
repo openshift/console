@@ -8,7 +8,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import BareMetalHostRole from '../BareMetalHostRole';
 import NodeLink from '../NodeLink';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';

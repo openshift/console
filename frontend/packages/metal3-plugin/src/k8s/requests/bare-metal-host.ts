@@ -7,7 +7,7 @@ import type { AddBareMetalHostFormValues } from '../../components/baremetal-host
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { BareMetalHostModel } from '../../models';
 import { getReplicas } from '../../selectors/machine-set';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import {
   buildBareMetalHostObject,
   buildBareMetalHostSecret,

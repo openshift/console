@@ -1,15 +1,18 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SecondaryStatus } from '@console/shared/src/components/status/SecondaryStatus';
-import { HOST_POWER_STATUS_POWERED_ON, HOST_REGISTERING_STATES } from '../../constants';
+import {
+  HOST_POWER_STATUS_POWERED_ON,
+  HOST_REGISTERING_STATES,
+} from '../../constants/bare-metal-host';
 import {
   getHostPowerStatus,
   getHostProvisioningState,
   isHostScheduledForRestart,
   hasPowerManagement,
   isDetached,
-} from '../../selectors';
-import type { BareMetalHostKind } from '../../types';
+} from '../../selectors/baremetal-hosts';
+import type { BareMetalHostKind } from '../../types/host';
 
 type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;

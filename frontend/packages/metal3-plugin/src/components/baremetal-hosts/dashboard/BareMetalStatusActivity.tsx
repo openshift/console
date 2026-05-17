@@ -4,8 +4,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
-import { getHostPowerStatus } from '../../../selectors';
-import type { BareMetalHostKind } from '../../../types';
+import { getHostPowerStatus } from '../../../selectors/baremetal-hosts';
+import type { BareMetalHostKind } from '../../../types/host';
 
 import './status-activity.scss';
 

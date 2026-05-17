@@ -6,8 +6,8 @@ import type { RowFunctionArgs } from '@console/internal/components/factory';
 import { Table, TableData } from '@console/internal/components/factory';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { getHostStorage } from '../../selectors';
-import type { BareMetalHostDisk, BareMetalHostKind } from '../../types';
+import { getHostStorage } from '../../selectors/baremetal-hosts';
+import type { BareMetalHostDisk, BareMetalHostKind } from '../../types/host';
 
 const DisksTableHeader = (t: TFunction) => () => [
   { title: t('metal3-plugin~Name'), sortField: 'name', transforms: [sortable] },

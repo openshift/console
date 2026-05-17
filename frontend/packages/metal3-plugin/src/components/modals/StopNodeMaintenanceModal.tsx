@@ -8,7 +8,10 @@ import {
   NodeMaintenanceKubevirtBetaModel,
   NodeMaintenanceKubevirtAlphaModel,
 } from '../../models';
-import { getNodeMaintenanceReason, getNodeMaintenanceNodeName } from '../../selectors';
+import {
+  getNodeMaintenanceReason,
+  getNodeMaintenanceNodeName,
+} from '../../selectors/node-maintenance';
 
 const getMaintenanceModel = (nodeMaintenance: K8sResourceKind) => {
   if (

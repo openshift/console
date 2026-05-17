@@ -7,7 +7,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import { PowerOffWarning } from './PowerOffHostModal';
 
 export type RestartHostModalProps1 = {

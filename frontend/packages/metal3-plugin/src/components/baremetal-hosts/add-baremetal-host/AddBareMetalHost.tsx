@@ -22,9 +22,9 @@ import {
   getHostDisableCertificateVerification,
   getHostDescription,
   isHostOnline,
-} from '../../../selectors';
+} from '../../../selectors/baremetal-hosts';
 import { getSecretPassword, getSecretUsername } from '../../../selectors/secret';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import { MAC_REGEX, BMC_ADDRESS_REGEX } from '../../../validations/regex';
 import { nameValidationSchema } from '../../../validations/validations';
 import AddBareMetalHostForm from './AddBareMetalHostForm';

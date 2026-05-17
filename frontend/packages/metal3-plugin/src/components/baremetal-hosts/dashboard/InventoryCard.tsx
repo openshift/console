@@ -14,7 +14,7 @@ import {
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
-import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
+import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors/baremetal-hosts';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const PodInventoryItem: FC = () => {

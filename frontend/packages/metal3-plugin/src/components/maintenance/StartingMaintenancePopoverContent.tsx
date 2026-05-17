@@ -19,7 +19,7 @@ import {
   getNodeMaintenanceProgressPercent,
   getNodeMaintenanceLastError,
   getNodeMaintenancePendingPods,
-} from '../../selectors';
+} from '../../selectors/node-maintenance';
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 import MaintenancePopoverPodList from './MaintenancePopoverPodList';
 

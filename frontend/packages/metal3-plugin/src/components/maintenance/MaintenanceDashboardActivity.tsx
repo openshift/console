@@ -4,7 +4,7 @@ import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { NodeModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { ActivityProgress } from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import { getNodeMaintenanceProgressPercent } from '../../selectors';
+import { getNodeMaintenanceProgressPercent } from '../../selectors/node-maintenance';
 
 const MaintenanceActivity: FC<MaintenanceActivityProps> = ({ resource }) => {
   const { t } = useTranslation();

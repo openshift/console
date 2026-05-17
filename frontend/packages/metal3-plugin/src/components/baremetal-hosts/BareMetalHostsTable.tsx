@@ -16,7 +16,7 @@ import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
+import { getHostBMCAddress, getHostVendorInfo } from '../../selectors/baremetal-hosts';
 import type { BareMetalHostBundle } from '../types';
 import BareMetalHostRole from './BareMetalHostRole';
 import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';

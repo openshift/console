@@ -30,7 +30,7 @@ import {
   HOST_HARDWARE_ERROR_STATES,
   HOST_STATUS_UNMANAGED,
   HOST_REGISTERING_STATES,
-} from '../../../constants';
+} from '../../../constants/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {
   getHostPowerStatus,
@@ -38,9 +38,9 @@ import {
   hasPowerManagement,
   isDetached,
   isHostScheduledForRestart,
-} from '../../../selectors';
+} from '../../../selectors/baremetal-hosts';
 import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from '../BareMetalHostStatus';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';

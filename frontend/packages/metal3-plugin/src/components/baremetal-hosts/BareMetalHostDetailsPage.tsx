@@ -19,9 +19,10 @@ import { getMachineNode, getMachineNodeName } from '@console/shared/src/selector
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { findNodeMaintenance, getHostMachine } from '../../selectors';
+import { getHostMachine } from '../../selectors/baremetal-hosts';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
+import { findNodeMaintenance } from '../../selectors/node-maintenance';
 import { getHostStatus } from '../../status/host-status';
 import type { BareMetalHostKind } from '../../types/host';
 import BareMetalHostDetails from './BareMetalHostDetails';

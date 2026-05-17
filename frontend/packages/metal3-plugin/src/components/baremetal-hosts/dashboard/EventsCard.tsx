@@ -17,7 +17,7 @@ import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const matchesInvolvedObject = (
