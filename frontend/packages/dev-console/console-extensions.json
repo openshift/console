@@ -1225,7 +1225,7 @@
     "properties": {
       "exact": true,
       "path": ["/workload-hpa/ns/:ns/:resourceRef/:name"],
-      "component": { "$codeRef": "HPAPage" }
+      "component": { "$codeRef": "HPAPage.HPAPage" }
     }
   },
   {

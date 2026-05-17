@@ -14,7 +14,8 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import BuildConfigFormEditor from './BuildConfigFormEditor';
-import { convertBuildConfigToFormData, convertFormDataToYAML } from './form-utils';
+import { convertFormDataToYAML } from './form-utils/convert-to-buildconfig';
+import { convertBuildConfigToFormData } from './form-utils/convert-to-form';
 import type { BuildConfigFormikValues } from './form-utils/types';
 import type { BuildConfig } from './types';
 import { BuildConfigModel } from './types';
