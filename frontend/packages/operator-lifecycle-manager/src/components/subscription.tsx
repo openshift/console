@@ -40,22 +40,23 @@ import {
 import type { K8sKind, K8sModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
-  BlueArrowCircleUpIcon,
-  BlueInfoCircleIcon,
-  getName,
-  getNamespace,
-  GreenCheckCircleIcon,
+  KEBAB_COLUMN_CLASS,
   LazyActionMenu,
-  RedExclamationCircleIcon,
-  WarningStatus,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+} from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
+import {
+  BlueArrowCircleUpIcon,
+  BlueInfoCircleIcon,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
+import { WarningStatus } from '@console/shared/src/components/status/statuses';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,

@@ -12,11 +12,11 @@ import {
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { PodModel, ProjectModel } from '@console/internal/models';
-import { getMachineNodeName } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { UtilizationBody } from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import {
   getUtilizationQueries,

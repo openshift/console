@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ResourceLimitField } from '@console/shared';
+import { ResourceLimitField } from '@console/shared/src/components/formik-fields/ResourceLimitField';
 
 const TimeoutSection: FC = () => {
   const { t } = useTranslation();

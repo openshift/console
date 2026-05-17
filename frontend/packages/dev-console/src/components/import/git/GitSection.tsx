@@ -19,7 +19,7 @@ import {
   ServerlessBuildStrategyType,
   ServiceModel as ksvcModel,
 } from '@console/knative-plugin';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';

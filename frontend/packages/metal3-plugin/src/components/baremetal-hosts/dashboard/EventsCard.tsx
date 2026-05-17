@@ -8,12 +8,13 @@ import { ResourceLink, resourcePathFromModel } from '@console/internal/component
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
 import type { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
   Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import { getMachineNodeName } from '@console/shared/src/selectors/machine';
 import { BareMetalHostModel } from '../../../models';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
 import type { BareMetalHostKind } from '../../../types';

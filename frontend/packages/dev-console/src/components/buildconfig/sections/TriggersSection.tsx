@@ -8,12 +8,10 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  DropdownField,
-  MultiColumnField,
-  ResourceDropdownField,
-  CheckboxField,
-} from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import FormSection from '../../import/section/FormSection';
 import type { ImageOptionType } from './ImagesSection';
 

@@ -7,7 +7,8 @@ import {
   TextInputTypes,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InputField, getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 
 const SinkUri: FC = () => {
   const { t } = useTranslation();

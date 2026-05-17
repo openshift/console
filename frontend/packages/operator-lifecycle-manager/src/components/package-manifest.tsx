@@ -15,8 +15,8 @@ import {
 import i18n from '@console/internal/i18n';
 import type { MatchExpression } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { OPERATOR_HUB_LABEL } from '@console/shared/src/constants/common';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import type { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo } from './cluster-service-version-logo';

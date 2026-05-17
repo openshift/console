@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import {
   NODE_STATUS_STARTING_MAINTENANCE,
   HOST_STATUS_UNKNOWN,

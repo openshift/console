@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import * as _ from 'lodash';
-import type { OverviewItem } from '@console/shared';
+import type { OverviewItem } from '@console/shared/src/types/resource';
 import {
   revisionObj,
   knativeServiceObj,

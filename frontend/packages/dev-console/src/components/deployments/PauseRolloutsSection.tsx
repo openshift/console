@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared/src';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
 import { Resources } from '../import/import-types';
 import FormSection from '../import/section/FormSection';
 

@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { useFormikContext, useField } from 'formik';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { CREATE_NAMESPACE_KEY } from '../cloud-shell-setup-utils';
 import { InternalNamespaceSection } from '../NamespaceSection';

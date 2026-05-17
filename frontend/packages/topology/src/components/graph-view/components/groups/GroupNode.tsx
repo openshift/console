@@ -19,7 +19,7 @@ import {
 } from '@patternfly/react-topology';
 import type { TruncateOptions } from '@console/internal/components/utils';
 import { truncateMiddle, shouldTruncate } from '@console/internal/components/utils';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
 import { useSearchFilter } from '../../../../filters';
 import type { OdcNodeModel } from '../../../../topology-types';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';

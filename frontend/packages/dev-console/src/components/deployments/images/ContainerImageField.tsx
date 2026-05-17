@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField, InputField } from '@console/shared/src';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import ImageStream from '../../import/image-search/ImageStream';
 
 const ContainerImageField: FC = () => {

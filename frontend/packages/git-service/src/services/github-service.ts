@@ -2,7 +2,7 @@ import * as Octokit from '@octokit/rest';
 import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
-import type { DevConsoleEndpointResponse } from '@console/shared/src';
+import type { DevConsoleEndpointResponse } from '@console/shared/src/types/backend-api';
 import type { GitSource } from '../types/git';
 import { SecretType } from '../types/git';
 import type { RepoMetadata, BranchList, RepoLanguageList, RepoFileList } from '../types/repo';

@@ -3,7 +3,9 @@ import { useMemo } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import { referenceFor } from '@console/internal/module/k8s';
-import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { getResource } from '../utils';
 
 type TopologyActionsProps = {

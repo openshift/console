@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils';
 import type { K8sResourceKind, JobKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { PodStatus } from '@console/shared';
+import { PodStatus } from '@console/shared/src/components/pod/PodStatus';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import './JobsOverview.scss';
 

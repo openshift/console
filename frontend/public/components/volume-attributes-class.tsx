@@ -25,7 +25,7 @@ import {
 } from '../module/k8s';
 import { DescriptionList, Grid, GridItem } from '@patternfly/react-core';
 import { VolumeAttributesClassModel } from '../models';
-import { DASH } from '@console/shared';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
   getNameCellProps,

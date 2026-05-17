@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SecondaryStatus } from '@console/shared';
+import { SecondaryStatus } from '@console/shared/src/components/status/SecondaryStatus';
 import { HOST_POWER_STATUS_POWERED_ON, HOST_REGISTERING_STATES } from '../../constants';
 import {
   getHostPowerStatus,

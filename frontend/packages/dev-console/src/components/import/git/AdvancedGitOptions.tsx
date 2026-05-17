@@ -4,7 +4,7 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import FormSection from '../section/FormSection';
 import SourceSecretSelector from './SourceSecretSelector';

@@ -10,7 +10,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { descriptorsToUISchema } from '@console/operator-lifecycle-manager/src/components/operand/utils';
-import { DynamicFormField } from '@console/shared';
+import { DynamicFormField } from '@console/shared/src/components/formik-fields/DynamicFormField';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { EVENT_SINK_KAFKA_KIND } from '../../../const';
 import { formDescriptorData } from '../../../utils/create-eventsources-utils';

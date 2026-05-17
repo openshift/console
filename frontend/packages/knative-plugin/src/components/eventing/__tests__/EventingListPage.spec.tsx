@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as Router from 'react-router';
-import * as ConsoleShared from '@console/shared';
+import * as MultiTabListPageModule from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import EventingListPage from '../EventingListPage';
 
 jest.mock('react-router', () => ({
@@ -12,8 +12,12 @@ jest.mock('@console/internal/components/namespace-bar', () => ({
   NamespaceBar: () => <div data-test="mock-NamespaceBar" />,
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/multi-tab-list/MultiTabListPage', () => ({
   MultiTabListPage: jest.fn(() => <div data-test="mock-MultiTabListPage" />),
+}));
+
+jest.mock('@console/shared/src/components/catalog/utils/catalog-utils', () => ({
+  ...jest.requireActual('@console/shared/src/components/catalog/utils/catalog-utils'),
   isCatalogTypeEnabled: jest.fn(() => true),
 }));
 
@@ -45,7 +49,7 @@ jest.mock('../triggers-list/TriggerListPage', () => ({
 }));
 
 describe('EventingListPage', () => {
-  const mockMultiTabListPage = ConsoleShared.MultiTabListPage as jest.Mock;
+  const mockMultiTabListPage = MultiTabListPageModule.MultiTabListPage as jest.Mock;
 
   beforeEach(() => {
     mockMultiTabListPage.mockClear();

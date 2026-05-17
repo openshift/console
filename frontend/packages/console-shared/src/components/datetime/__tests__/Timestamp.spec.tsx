@@ -1,8 +1,8 @@
 import { act, screen } from '@testing-library/react';
 import { updateTimestamps } from '@console/internal/actions/ui';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
-import { ONE_MINUTE } from '@console/shared/src';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { ONE_MINUTE } from '@console/shared/src/constants/time';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 
 const NOW = new Date('2000-01-01T00:00:00Z').getTime();

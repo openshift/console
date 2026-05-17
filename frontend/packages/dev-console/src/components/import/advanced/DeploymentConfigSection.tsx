@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { ImportStrategy } from '@console/git-service/src/types/git';
 import { LoadingBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { CheckboxField, EnvironmentField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { EnvironmentField } from '@console/shared/src/components/formik-fields/EnvironmentField';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
 

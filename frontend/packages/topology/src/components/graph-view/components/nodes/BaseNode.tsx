@@ -14,7 +14,7 @@ import {
 import type { BaseNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
 import useHover from '../../../../behavior/useHover';
 import { useSearchFilter } from '../../../../filters';
 import { useShowLabel } from '../../../../filters/useShowLabel';

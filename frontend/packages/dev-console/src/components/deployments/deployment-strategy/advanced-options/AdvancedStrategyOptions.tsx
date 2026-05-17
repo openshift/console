@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { InputField } from '@console/shared/src';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { DeploymentStrategyType } from '../utils/types';
 import LifecycleHookField from './LifecycleHookField';
 

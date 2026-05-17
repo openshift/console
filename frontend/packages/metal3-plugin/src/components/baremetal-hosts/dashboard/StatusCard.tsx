@@ -16,7 +16,6 @@ import type { Alert } from '@console/dynamic-plugin-sdk';
 import { StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BlueInfoCircleIcon } from '@console/shared';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
@@ -24,6 +23,7 @@ import AlertsBody from '@console/shared/src/components/dashboard/status-card/Ale
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { BlueInfoCircleIcon } from '@console/shared/src/components/status/icons';
 import { useNotificationAlerts } from '@console/shared/src/hooks/useNotificationAlerts';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,

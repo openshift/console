@@ -8,7 +8,7 @@ import { ImportStrategy } from '@console/git-service/src/types/git';
 import { ResourceName } from '@console/internal/components/utils';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { BuilderImage } from '../../../utils/imagestream-utils';
 import { getTagDataWithDisplayName, getPorts } from '../../../utils/imagestream-utils';
 import { useSafeK8s } from '../../../utils/safe-k8s-hook';

@@ -4,9 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { CatalogServiceProvider, isCatalogTypeEnabled, ALL_NAMESPACES_KEY } from '@console/shared';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 
 interface SampleGettingStartedCardProps {

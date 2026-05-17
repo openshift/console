@@ -22,7 +22,7 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import type { K8sResourceKind, TableColumn } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { HELM_CHART_CATALOG_TYPE_ID } from '../../const';

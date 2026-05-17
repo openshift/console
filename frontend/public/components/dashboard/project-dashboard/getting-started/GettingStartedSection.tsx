@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { GettingStartedExpandableGrid } from '@console/shared/src/components/getting-started/GettingStartedExpandableGrid';
 import { QuickStartGettingStartedCard } from '@console/shared/src/components/getting-started/QuickStartGettingStartedCard';

@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PodSetProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { RevisionModel } from '@console/knative-plugin/src/models';
-import { PodStatus } from '@console/shared';
+import { PodStatus } from '@console/shared/src/components/pod/PodStatus';
 import { useRelatedHPA } from '@console/shared/src/hooks/useRelatedHPA';
 import type { PodRCData } from '@console/shared/src/types/pod';
 import { usePodRingLabel } from '@console/shared/src/utils/pod-ring-utils';

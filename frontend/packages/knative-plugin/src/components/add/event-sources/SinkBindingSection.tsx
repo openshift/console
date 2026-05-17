@@ -7,7 +7,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { DropdownField, InputField, getFieldId } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 

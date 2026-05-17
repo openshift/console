@@ -5,8 +5,10 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import type { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { ResourceIcon, ResourceLink } from '@console/internal/components/utils';
-import { DASH, LazyActionMenu, Status } from '@console/shared';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import type { HelmRelease } from '../../types/helm-types';
 import { HelmActionOrigins } from '../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../utils/helm-utils';

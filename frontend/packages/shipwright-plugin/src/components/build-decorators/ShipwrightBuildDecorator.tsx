@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { BUILDRUN_TO_RESOURCE_MAP_LABEL } from '../../const';
 import { BuildRunModel, BuildRunModelV1Alpha1 } from '../../models';

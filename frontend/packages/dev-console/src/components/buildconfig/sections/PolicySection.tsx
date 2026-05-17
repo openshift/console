@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import FormSection from '../../import/section/FormSection';
 import { BuildConfigRunPolicy } from '../types';
 

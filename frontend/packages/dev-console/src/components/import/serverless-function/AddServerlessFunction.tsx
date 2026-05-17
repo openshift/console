@@ -12,7 +12,7 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY } from '@console/shared/src';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';

@@ -6,9 +6,9 @@ import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { DASH } from '@console/shared/src/constants/ui';
 import { ProjectHelmChartRepositoryModel } from '../../models';
 import { tableColumnInfo } from './RepositoriesHeader';
 

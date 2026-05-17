@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as rbacModule from '@console/dynamic-plugin-sdk/src/app/components/utils/rbac';
 import * as k8sResourceModule from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-resource';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
 import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';

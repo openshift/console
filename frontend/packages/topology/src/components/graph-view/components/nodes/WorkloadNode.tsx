@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertSeverity } from '@console/dynamic-plugin-sdk';
 import type { WorkloadNodeProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { AllPodStatus } from '@console/shared';
+import { AllPodStatus } from '@console/shared/src/constants/pod';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
 import type { PodRCData } from '@console/shared/src/types/pod';

@@ -7,7 +7,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import type { EventKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import './MonitoringOverviewEvents.scss';
 
 interface MonitoringOverviewEventsProps {

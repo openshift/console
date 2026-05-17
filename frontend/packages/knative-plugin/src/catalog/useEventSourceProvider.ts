@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook, SetFeatureFlag } from '@console/dynamic-plugin-sdk';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   EVENT_SINK_CATALOG_TYPE_ID,

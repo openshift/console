@@ -5,7 +5,7 @@ import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';

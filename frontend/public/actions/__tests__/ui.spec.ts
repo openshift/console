@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import '../../../__mocks__/localStorage';
 import store from '../../redux';

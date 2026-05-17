@@ -3,8 +3,10 @@ import { memo } from 'react';
 import type { QuickStart } from '@patternfly/quickstarts';
 import { useTranslation } from 'react-i18next';
 import { QuickStartsLoader } from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import type { QuickSearchProviders, CatalogService } from '@console/shared';
-import { QuickSearchController, CatalogServiceProvider } from '@console/shared';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
+import type { CatalogService } from '@console/shared/src/components/catalog/utils/types';
+import { QuickSearchController } from '@console/shared/src/components/quick-search/QuickSearchController';
+import type { QuickSearchProviders } from '@console/shared/src/components/quick-search/utils/quick-search-types';
 import { useTransformedQuickStarts } from './topology-quick-search-utils';
 
 interface QuickSearchProps {

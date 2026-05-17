@@ -11,13 +11,13 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { CLUSTER_TELEMETRY_ANALYTICS } from '@console/shared/src';
 import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
 import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
 import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
 import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
 import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
 import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { CLUSTER_TELEMETRY_ANALYTICS } from '@console/shared/src/constants/common';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 

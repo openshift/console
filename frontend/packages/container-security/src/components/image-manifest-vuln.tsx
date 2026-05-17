@@ -37,9 +37,10 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { PodKind, ContainerStatus } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
+import { EmptyStateResourceBadge } from '@console/shared/src/components/badges/EmptyStateResourceBadge';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import type { ImageManifestVuln } from '../types';

@@ -4,7 +4,10 @@ import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { EnvironmentField } from '@console/shared/src/components/formik-fields/EnvironmentField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import { getContainerNames } from '../../utils/deployment-utils';
 
 interface ExecNewPodFormProps {

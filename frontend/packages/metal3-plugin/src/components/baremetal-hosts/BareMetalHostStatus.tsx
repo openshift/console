@@ -5,7 +5,13 @@ import { Link } from 'react-router';
 import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ProgressStatus, SuccessStatus, ErrorStatus, Status, InfoStatus } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import {
+  ProgressStatus,
+  SuccessStatus,
+  ErrorStatus,
+  InfoStatus,
+} from '@console/shared/src/components/status/statuses';
 import {
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,

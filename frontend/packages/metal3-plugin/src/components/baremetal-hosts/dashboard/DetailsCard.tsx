@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { OverviewDetailItem } from '@console/internal/components/overview/OverviewDetailItem';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
 import type { BareMetalHostKind } from '../../../types';
 import BareMetalHostRole from '../BareMetalHostRole';

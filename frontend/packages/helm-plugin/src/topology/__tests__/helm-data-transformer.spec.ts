@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import {
   MockResources,
   sampleDeploymentConfigs,

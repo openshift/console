@@ -2,7 +2,10 @@ import type { Model, NodeModel } from '@patternfly/react-topology';
 import { createAggregateEdges } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { referenceFor } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY, UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src';
+import {
+  ALL_APPLICATIONS_KEY,
+  UNASSIGNED_APPLICATIONS_KEY,
+} from '@console/shared/src/constants/common';
 import { TYPE_AGGREGATE_EDGE, TYPE_APPLICATION_GROUP } from '../const';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,

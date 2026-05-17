@@ -11,7 +11,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
 import { podPhase, referenceForModel } from '@console/internal/module/k8s';
-import { AllPodStatus } from '@console/shared/src';
+import { AllPodStatus } from '@console/shared/src/constants/pod';
 import TopologySideBarTabSection from '@console/topology/src/components/side-bar/TopologySideBarTabSection';
 import { getResource } from '@console/topology/src/utils';
 import KSRoutesOverviewList from '../../components/overview/RoutesOverviewList';

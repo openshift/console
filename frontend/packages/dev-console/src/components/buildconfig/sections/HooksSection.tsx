@@ -1,7 +1,9 @@
 import type { FC } from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField, DropdownField, TextColumnField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import FormSection from '../../import/section/FormSection';
 import EditorField from './EditorField';
 

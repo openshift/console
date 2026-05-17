@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
 import type { CapabilityProps, SpecCapability, StatusCapability } from './types';
 

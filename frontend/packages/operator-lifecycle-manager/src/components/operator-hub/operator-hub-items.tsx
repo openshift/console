@@ -19,11 +19,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import i18n from '@console/internal/i18n';
-import {
-  GreenCheckCircleIcon,
-  COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
-} from '@console/shared';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { GreenCheckCircleIcon } from '@console/shared/src/components/status/icons';
+import { COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey } from '@console/shared/src/constants/common';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';

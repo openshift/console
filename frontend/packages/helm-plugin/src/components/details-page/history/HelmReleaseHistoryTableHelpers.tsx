@@ -6,8 +6,10 @@ import type {
 } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
 import type { SortByDirection, ThProps } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
-import { ActionMenu, Status, DASH } from '@console/shared';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { HelmRelease } from '../../../types/helm-types';

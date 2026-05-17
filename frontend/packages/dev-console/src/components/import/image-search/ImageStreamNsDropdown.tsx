@@ -8,7 +8,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';

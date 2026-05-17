@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { releaseStatus } from '../../utils/helm-utils';
 

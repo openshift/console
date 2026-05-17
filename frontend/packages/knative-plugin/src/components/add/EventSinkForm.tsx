@@ -4,13 +4,11 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FormFooter,
-  SyncedEditorField,
-  CodeEditorField,
-  FlexForm,
-  FormBody,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {

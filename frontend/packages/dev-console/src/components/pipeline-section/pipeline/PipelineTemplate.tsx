@@ -15,7 +15,10 @@ import { getGitService } from '@console/git-service/src/services/git-service';
 import { GitProvider } from '@console/git-service/src/types/git';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
-import { BlueInfoCircleIcon, CheckboxField, DropdownField, RadioGroupField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
+import { BlueInfoCircleIcon } from '@console/shared/src/components/status/icons';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import {
   CLUSTER_PIPELINE_NS,

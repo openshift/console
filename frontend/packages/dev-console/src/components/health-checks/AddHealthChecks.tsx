@@ -15,8 +15,8 @@ import {
 import { ContainerModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor, modelFor } from '@console/internal/module/k8s';
-import { FormFooter } from '@console/shared';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { ExternalLinkButton } from '@console/shared/src/components/links/ExternalLinkButton';
 import { getResourcesType } from '../edit-application/edit-application-utils';

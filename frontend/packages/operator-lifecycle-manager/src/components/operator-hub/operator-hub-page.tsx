@@ -13,7 +13,10 @@ import type {
 } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { isCatalogTypeEnabled, useIsSoftwareCatalogEnabled } from '@console/shared';
+import {
+  isCatalogTypeEnabled,
+  useIsSoftwareCatalogEnabled,
+} from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';

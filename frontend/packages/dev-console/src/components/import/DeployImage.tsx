@@ -9,7 +9,7 @@ import { ImportStrategy } from '@console/git-service/src/types/git';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';

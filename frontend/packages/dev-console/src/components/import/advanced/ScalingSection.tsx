@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField } from '@console/shared';
+import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
 import FormSection from '../section/FormSection';
 
 const ScalingSection: FC<{ name: string }> = ({ name }) => {

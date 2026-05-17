@@ -4,7 +4,7 @@ import { ToolbarItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 import { useAccessReview } from '@console/internal/components/utils';
-import { useToast } from '@console/shared/src';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';

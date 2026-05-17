@@ -1,7 +1,10 @@
 import type { FC } from 'react';
 import * as _ from 'lodash';
 import type { K8sResourceCondition } from '@console/internal/module/k8s';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared/';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+} from '@console/shared/src/components/status/icons';
 import { getConditionOKCount } from '../../utils/condition-utils';
 
 export type GetConditionsForStatusProps = {

@@ -24,7 +24,7 @@ import {
 import i18next from 'i18next';
 import { action } from 'mobx';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { ActionContext } from '@console/shared';
+import type { ActionContext } from '@console/shared/src/components/actions/types';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
 import { createConnection, moveNodeToGroup } from '../../../utils';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';

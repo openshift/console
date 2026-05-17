@@ -4,7 +4,7 @@ import { DataListCell, Tooltip } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Status as TooltipStatus } from '@console/shared';
+import { Status as TooltipStatus } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';

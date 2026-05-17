@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { NSDropdownField } from '@console/shared/src';
+import { NSDropdownField } from '@console/shared/src/components/formik-fields/NSDropdownField';
 
 const NamespaceSection = () => {
   const { t } = useTranslation();

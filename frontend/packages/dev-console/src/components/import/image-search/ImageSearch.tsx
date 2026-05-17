@@ -15,7 +15,8 @@ import { SecretFormType } from '@console/internal/components/secrets/create-secr
 import { ImageStreamImportsModel } from '@console/internal/models';
 import type { ContainerPort } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { InputField, CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { isContainerImportSource } from '../../../types/samples';

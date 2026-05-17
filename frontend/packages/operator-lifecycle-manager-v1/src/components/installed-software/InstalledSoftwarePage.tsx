@@ -6,7 +6,7 @@ import { useParams } from 'react-router';
 import { NamespaceBar } from '@console/internal/components/namespace-bar';
 import { AsyncComponent } from '@console/internal/components/utils';
 import type { Page } from '@console/internal/components/utils';
-import { MultiTabListPage } from '@console/shared';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import ClusterExtensionListPage from '../cluster-extension/ClusterExtensionListPage';
 import { OLMv1TechPreviewBadge } from '../OLMv1TechPreviewBadge';
 
