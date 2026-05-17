@@ -4,8 +4,8 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import BuilderImageEnvironments from '../BuilderImageEnvironments';
 import { useBuilderImageEnvironments } from '../builderImageHooks';
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/InputField'),
   InputField: (props) =>
     `InputField ${props.name} label="${props.label}" helpText="${props.helpText}" placeholder="${props.placeholder}"`,
 }));

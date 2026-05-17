@@ -3,11 +3,11 @@ import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-ut
 import TourStepComponent from '../TourStepComponent';
 
 jest.mock('@console/shared/src/components/popover/Popover', () => ({
-  default: () => 'POPOVER_RENDERED',
+  Popover: () => 'POPOVER_RENDERED',
 }));
 
 jest.mock('@console/shared/src/components/spotlight/Spotlight', () => ({
-  default: () => 'SPOTLIGHT_RENDERED',
+  Spotlight: () => 'SPOTLIGHT_RENDERED',
 }));
 
 describe('TourStepComponent', () => {

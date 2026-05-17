@@ -2,11 +2,26 @@ import { render, screen } from '@testing-library/react';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import ProjectAccessForm from '../ProjectAccessForm';
 
-jest.mock('@console/shared', () => ({
-  MultiColumnField: (props) => props.children,
+jest.mock(
+  '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField',
+  () => ({
+    MultiColumnField: (props) => props.children,
+  }),
+);
+
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: () => 'InputField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/DropdownField', () => ({
   DropdownField: () => 'DropdownField',
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => ({
   FormFooter: () => 'FormFooter',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/NSDropdownField', () => ({
   NSDropdownField: () => 'NSDropdownField',
 }));
 

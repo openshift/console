@@ -13,8 +13,11 @@ jest.mock('@console/internal/components/utils/async', () => ({
     .createKnativeTextStub('mock-AsyncComponent'),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/text-column-field/TextColumnField', () => ({
   TextColumnField: ({ label }: { label?: string }) => label ?? null,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: ({ label, ...rest }: { label?: string; [k: string]: unknown }) => (
     <input type="text" aria-label={label} {...(rest as ComponentPropsWithoutRef<'input'>)} />
   ),

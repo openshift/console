@@ -21,8 +21,7 @@ jest.mock('@console/internal/components/utils', () => ({
 }));
 
 jest.mock('@console/shared/src/components/formik-fields/SelectorInputField', () => ({
-  __esModule: true,
-  default: (props) =>
+  SelectorInputField: (props) =>
     `SelectorInputField name=${props.name} label="${props.label}" helpText="${props.helpText}" placeholder="${props.placeholder}" dataTest=${props.dataTest}`,
 }));
 

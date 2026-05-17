@@ -20,7 +20,7 @@ jest.mock('react-i18next', () => {
 
 jest.mock('@console/shared/src/components/toast/useToast', () => ({
   ...jest.requireActual('@console/shared/src/components/toast/useToast'),
-  default: jest.fn(),
+  useToast: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({

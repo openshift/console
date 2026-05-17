@@ -19,12 +19,16 @@ jest.mock('../../synced-editor/useEditorType', () => ({
   useEditorType: jest.fn(),
 }));
 
-jest.mock('../CodeEditorField', () => () => 'Form Editor');
+jest.mock('../CodeEditorField', () => ({
+  CodeEditorField: () => 'Form Editor',
+}));
 
-jest.mock('../DynamicFormField', () => () => 'YAML Editor');
+jest.mock('../DynamicFormField', () => ({
+  DynamicFormField: () => 'YAML Editor',
+}));
 
 jest.mock('../RadioGroupField', () => ({
-  default: jest.fn(() => null),
+  RadioGroupField: jest.fn(() => null),
 }));
 
 jest.mock('@console/internal/components/utils/status-box', () => ({

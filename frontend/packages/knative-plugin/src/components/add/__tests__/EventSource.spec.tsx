@@ -13,15 +13,11 @@ global.ResizeObserver = class ResizeObserver {
   disconnect = () => {};
 };
 
-jest.mock('@console/shared', () => {
-  const actual = jest.requireActual('@console/shared');
-  return {
-    ...actual,
-    SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) => (
-      <>{formContext?.editor}</>
-    ),
-  };
-});
+jest.mock('@console/shared/src/components/formik-fields/SyncedEditorField', () => ({
+  SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) => (
+    <>{formContext?.editor}</>
+  ),
+}));
 
 describe('EventSourceSpec', () => {
   const namespaceName = 'myApp';

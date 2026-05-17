@@ -4,10 +4,19 @@ import { CREATE_APPLICATION_KEY } from '../../../const';
 import ApplicationDropdown from '../ApplicationDropdown';
 import ApplicationSelector from '../ApplicationSelector';
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: jest.fn(() => 'Mock Input Field'),
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: () => 'application-name-dropdown',
+}));
+
+jest.mock('@console/shared/src/hooks/useFormikValidationFix', () => ({
   useFormikValidationFix: () => {},
+}));
+
+jest.mock('@console/shared/src/components/status/icons', () => ({
   RedExclamationCircleIcon: () => 'Mock Red Exclamation Icon',
 }));
 

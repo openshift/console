@@ -33,10 +33,13 @@ jest.mock('@console/shared/src/hooks/useResourceConnectionHandler', () => ({
   useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/constants/common', () => ({
+  ...jest.requireActual('@console/shared/src/constants/common'),
   ALL_APPLICATIONS_KEY: '',
+}));
+
+jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectives: jest.fn(() => []),
-  useResourceConnectionHandler: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('../useUploadJarFormToast', () => ({

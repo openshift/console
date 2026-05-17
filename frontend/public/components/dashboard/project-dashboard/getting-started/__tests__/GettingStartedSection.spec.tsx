@@ -29,9 +29,14 @@ jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
   useUserPreference: jest.fn(() => [true, jest.fn()]),
 }));
 
-jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...jest.requireActual('@console/shared/src/components/getting-started'),
+jest.mock('@console/shared/src/components/getting-started/useGettingStartedShowState', () => ({
+  ...jest.requireActual(
+    '@console/shared/src/components/getting-started/useGettingStartedShowState',
+  ),
   useGettingStartedShowState: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/components/getting-started/QuickStartGettingStartedCard', () => ({
   QuickStartGettingStartedCard: () => 'Quick start tutorials',
 }));
 

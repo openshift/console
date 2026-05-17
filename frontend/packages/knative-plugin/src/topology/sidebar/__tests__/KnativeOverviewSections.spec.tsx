@@ -21,8 +21,12 @@ jest.mock('@console/internal/components/utils', () => ({
   },
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/pod/PodRing', () => ({
   PodRing: jest.fn(() => null),
+}));
+
+jest.mock('@console/shared/src/utils/pod-ring-utils', () => ({
+  ...jest.requireActual('@console/shared/src/utils/pod-ring-utils'),
   usePodScalingAccessStatus: jest.fn(() => false),
 }));
 

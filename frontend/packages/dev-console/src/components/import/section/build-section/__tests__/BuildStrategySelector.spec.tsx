@@ -14,8 +14,12 @@ jest.mock('formik', () => ({
   useFormikContext: jest.fn(),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/formik-fields/SingleDropdownField', () => ({
   SingleDropdownField: () => 'SingleDropdownField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-types', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/field-types'),
   SelectInputOption: {},
 }));
 

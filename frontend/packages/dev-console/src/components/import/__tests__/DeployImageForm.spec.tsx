@@ -41,11 +41,15 @@ jest.mock('../advanced/AdvancedSection', () => ({
   default: () => 'Advanced Section',
 }));
 
-jest.mock('@console/shared/src/components/form-utils', () => ({
-  __esModule: true,
-  ...jest.requireActual('@console/shared/src/components/form-utils'),
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => ({
   FormFooter: () => 'Form Footer',
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
   FlexForm: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
   FormBody: (props) => props.children,
 }));
 

@@ -20,9 +20,12 @@ jest.mock('@console/git-service/src/services/git-service', () => ({
   },
 }));
 
-jest.mock('../EditorField', () =>
-  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
-);
+jest.mock('../EditorField', () => {
+  const { TextAreaField } = jest.requireActual(
+    '@console/shared/src/components/formik-fields/TextAreaField',
+  );
+  return { __esModule: true, default: TextAreaField };
+});
 
 jest.mock('@console/dynamic-plugin-sdk/src/app/components/utils/rbac', () => ({
   ...jest.requireActual('@console/dynamic-plugin-sdk/src/app/components/utils/rbac'),

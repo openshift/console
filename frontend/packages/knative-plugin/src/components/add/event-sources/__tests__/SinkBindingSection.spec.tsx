@@ -18,9 +18,15 @@ jest.mock('@console/internal/components/utils/async', () => ({
     .createKnativeTextStub('mock-AsyncComponent'),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: () => <span data-test="mock-InputField" />,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/DropdownField', () => ({
   DropdownField: 'DropdownField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: jest.fn(() => 'mocked-field-id'),
 }));
 

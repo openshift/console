@@ -31,11 +31,17 @@ jest.mock('@console/dev-console/src/components/import/section/IconSection', () =
     .createKnativeTextStub('mock-IconSection'),
 }));
 
-jest.mock('@console/shared/src/components/form-utils', () => ({
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => ({
   FormFooter: jest
     .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
     .createKnativeTextStub('mock-FormFooter'),
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
   FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
   FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
 }));
 

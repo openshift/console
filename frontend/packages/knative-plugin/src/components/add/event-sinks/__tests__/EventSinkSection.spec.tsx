@@ -26,10 +26,13 @@ jest.mock('@console/dev-console/src/components/import/app/AppSection', () => ({
     .createKnativeTextStub('mock-AppSection'),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/DynamicFormField', () => ({
   DynamicFormField: jest
     .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
     .createKnativeTextStub('mock-DynamicFormField'),
+}));
+
+jest.mock('@console/shared/src/hooks/useFormikValidationFix', () => ({
   useFormikValidationFix: jest.fn(),
 }));
 

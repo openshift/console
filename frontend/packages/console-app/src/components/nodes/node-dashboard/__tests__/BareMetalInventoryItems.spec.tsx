@@ -31,7 +31,7 @@ jest.mock('@console/internal/components/utils/resource-link', () => ({
   ),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/constants/ui', () => ({
   DASH: '-',
 }));
 

@@ -30,9 +30,11 @@ const mockCallbacks = {
   actionItems: null as { actionKey: string }[] | undefined | null,
 };
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: ({ name }: { name: string }) => `InputField ${name}`,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: ({
     onChange,
     onLoad,
@@ -49,6 +51,9 @@ jest.mock('@console/shared', () => ({
     mockCallbacks.actionItems = actionItems;
     return `ResourceDropdownField ${name}`;
   },
+}));
+
+jest.mock('@console/shared/src/hooks/useFormikValidationFix', () => ({
   useFormikValidationFix: jest.fn(),
 }));
 

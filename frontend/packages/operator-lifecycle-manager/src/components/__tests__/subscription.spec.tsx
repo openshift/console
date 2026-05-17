@@ -39,8 +39,8 @@ jest.mock('@console/internal/components/utils', () => ({
   ResourceLink: jest.fn(() => null),
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
+  ...jest.requireActual('@console/shared/src/components/actions/LazyActionMenu'),
   LazyActionMenu: jest.fn(() => null),
 }));
 

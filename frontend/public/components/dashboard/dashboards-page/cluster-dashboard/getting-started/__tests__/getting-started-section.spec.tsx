@@ -26,12 +26,14 @@ jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn<boolean, []>(),
 }));
 
-jest.mock('@console/shared/src/components/getting-started', () => ({
-  GettingStartedExpandableGrid: jest.requireActual('@console/shared/src/components/getting-started')
-    .GettingStartedExpandableGrid,
-  GettingStartedShowState: jest.requireActual('@console/shared/src/components/getting-started')
-    .GettingStartedShowState,
+jest.mock('@console/shared/src/components/getting-started/useGettingStartedShowState', () => ({
+  ...jest.requireActual(
+    '@console/shared/src/components/getting-started/useGettingStartedShowState',
+  ),
   useGettingStartedShowState: jest.fn(),
+}));
+
+jest.mock('@console/shared/src/components/getting-started/QuickStartGettingStartedCard', () => ({
   QuickStartGettingStartedCard: () => 'Learn with guided tours',
 }));
 

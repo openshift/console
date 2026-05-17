@@ -9,7 +9,7 @@ import { PodRing } from '../PodRing';
 import PodRingSet from '../PodRingSet';
 
 jest.mock('../PodRing', () => ({
-  default: jest.fn(() => null),
+  PodRing: jest.fn(() => null),
 }));
 
 jest.mock('@patternfly/react-icons', () => ({

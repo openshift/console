@@ -32,8 +32,11 @@ jest.mock('@console/internal/module/k8s', () => ({
   },
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/text/ClampedText', () => ({
   ClampedText: 'ClampedText',
+}));
+
+jest.mock('@console/shared/src/components/actions/LazyActionMenu', () => ({
   LazyActionMenu: 'LazyActionMenu',
 }));
 

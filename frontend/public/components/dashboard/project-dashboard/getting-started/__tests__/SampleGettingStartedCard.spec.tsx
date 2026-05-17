@@ -12,7 +12,7 @@ jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
 }));
 
 jest.mock('@console/shared/src/components/catalog/service/CatalogServiceProvider', () => ({
-  default: jest.fn(),
+  CatalogServiceProvider: jest.fn(),
 }));
 
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;

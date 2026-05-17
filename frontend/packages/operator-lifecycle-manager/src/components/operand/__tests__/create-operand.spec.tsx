@@ -24,7 +24,7 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
   useActivePerspective: jest.fn(() => ['admin']),
 }));
 
-jest.mock('@console/shared/src/components/synced-editor', () => ({
+jest.mock('@console/shared/src/components/synced-editor/SyncedEditor', () => ({
   SyncedEditor: jest.fn(() => null),
 }));
 

@@ -16,9 +16,15 @@ jest.mock('@console/dev-console/src/components/import/section/FormSection', () =
   ),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: 'InputField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: 'ResourceDropdownField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/MultiTypeaheadField', () => ({
   MultiTypeaheadField: 'MultiTypeaheadField',
 }));
 

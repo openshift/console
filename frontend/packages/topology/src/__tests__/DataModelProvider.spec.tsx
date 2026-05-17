@@ -8,13 +8,10 @@ import { TopologyViewType } from '../topology-types';
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    useQueryParams: () => new Map(),
-  };
-});
+jest.mock('@console/shared/src/hooks/useQueryParams', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/useQueryParams'),
+  useQueryParams: () => new Map(),
+}));
 
 jest.mock('../components/page/TopologyView', () => () => 'Mocked Topology View');
 

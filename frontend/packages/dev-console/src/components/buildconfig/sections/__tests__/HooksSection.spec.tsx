@@ -8,9 +8,12 @@ import store from '@console/internal/redux';
 import type { HooksSectionFormData } from '../HooksSection';
 import HooksSection from '../HooksSection';
 
-jest.mock('../EditorField', () =>
-  jest.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
-);
+jest.mock('../EditorField', () => {
+  const { TextAreaField } = jest.requireActual(
+    '@console/shared/src/components/formik-fields/TextAreaField',
+  );
+  return { __esModule: true, default: TextAreaField };
+});
 
 interface WrapperProps extends FormikConfig<HooksSectionFormData> {
   children?: ReactNode;
