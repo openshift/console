@@ -14,7 +14,10 @@ interface CatalogTypeSelectorProps {
   catalogTypeCounts: CatalogTypeCounts;
 }
 
-const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catalogTypeCounts }) => {
+export const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({
+  catalogTypes,
+  catalogTypeCounts,
+}) => {
   const { t } = useTranslation();
   const { pathname, search } = useLocation();
 
@@ -58,5 +61,3 @@ const CatalogTypeSelector: FC<CatalogTypeSelectorProps> = ({ catalogTypes, catal
     </>
   );
 };
-
-export default CatalogTypeSelector;

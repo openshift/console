@@ -23,7 +23,7 @@ import {
   GreenCheckCircleIcon,
   COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY as ignoreWarningPreferenceKey,
 } from '@console/shared';
-import { getURLWithParams } from '@console/shared/src/components/catalog/utils';
+import { getURLWithParams } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';

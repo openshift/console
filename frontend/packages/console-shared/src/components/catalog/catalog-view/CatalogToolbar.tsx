@@ -29,7 +29,7 @@ type CatalogToolbarProps = {
   onSortOrderChange: (sortOrder: CatalogSortOrder) => void;
 };
 
-const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
+export const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
   (
     {
       title,
@@ -122,5 +122,3 @@ const CatalogToolbar = forwardRef<HTMLInputElement, CatalogToolbarProps>(
     );
   },
 );
-
-export default CatalogToolbar;

@@ -15,7 +15,7 @@ type CatalogCategoriesProp = {
   onSelectCategory: (category: string) => void;
 };
 
-const CatalogCategories: FC<CatalogCategoriesProp> = ({
+export const CatalogCategories: FC<CatalogCategoriesProp> = ({
   categories,
   categorizedIds,
   selectedCategory,
@@ -70,5 +70,3 @@ const CatalogCategories: FC<CatalogCategoriesProp> = ({
     </VerticalTabs>
   );
 };
-
-export default CatalogCategories;

@@ -10,7 +10,7 @@ type CatalogGridProps = {
   isGrouped: boolean;
 };
 
-const CatalogGrid: FC<CatalogGridProps> = ({ items, renderTile, isGrouped }) => {
+export const CatalogGrid: FC<CatalogGridProps> = ({ items, renderTile, isGrouped }) => {
   const renderGroupHeader = (heading) => (
     <Title className="co-catalog-page__group-title" headingLevel="h2" size="lg">
       {heading} ({_.size(items[heading])})
@@ -26,5 +26,3 @@ const CatalogGrid: FC<CatalogGridProps> = ({ items, renderTile, isGrouped }) => 
     />
   );
 };
-
-export default CatalogGrid;

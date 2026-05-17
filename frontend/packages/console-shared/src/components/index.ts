@@ -152,7 +152,25 @@ export {
 export { NamespaceDropdown } from './namespace/NamespaceDropdown';
 
 // catalog
-export * from './catalog';
+export { CatalogCategories } from './catalog/catalog-view/CatalogCategories';
+export { CatalogEmptyState } from './catalog/catalog-view/CatalogEmptyState';
+export { CatalogGrid } from './catalog/catalog-view/CatalogGrid';
+export { CatalogToolbar } from './catalog/catalog-view/CatalogToolbar';
+export { CatalogTypeSelector } from './catalog/catalog-view/CatalogTypeSelector';
+export { CatalogView } from './catalog/catalog-view/CatalogView';
+export { CatalogDetailsModal } from './catalog/details/CatalogDetailsModal';
+export { CatalogDetailsPanel } from './catalog/details/CatalogDetailsPanel';
+export { useCatalogExtensions } from './catalog/hooks/useCatalogExtensions';
+export { useCtaLink } from './catalog/hooks/useCtaLink';
+export { CatalogExtensionHookResolver } from './catalog/service/CatalogExtensionHookResolver';
+export { CatalogServiceProvider } from './catalog/service/CatalogServiceProvider';
+export * from './catalog/utils/catalog-utils';
+export * from './catalog/utils/category-utils';
+export * from './catalog/utils/filter-utils';
+export * from './catalog/utils/types';
+export { CatalogBadges } from './catalog/CatalogBadges';
+export { CatalogController } from './catalog/CatalogController';
+export { CatalogTile } from './catalog/CatalogTile';
 
 // progressive-list
 export { ProgressiveList } from './progressive-list/ProgressiveList';

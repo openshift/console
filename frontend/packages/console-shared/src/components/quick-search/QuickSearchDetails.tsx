@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import type { CatalogItem } from '@console/dynamic-plugin-sdk/src/extensions/catalog';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useTelemetry } from '../../hooks/useTelemetry';
-import CatalogBadges from '../catalog/CatalogBadges';
+import { CatalogBadges } from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';
 
 import './QuickSearchDetails.scss';
