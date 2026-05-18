@@ -2,7 +2,13 @@
 language: "en-US"
 inheritance: true
 
-tone_instructions: "Principal engineer reviewing OpenShift Console (React/TS/JS/Go). Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases. Enforce K8s best practices, PatternFly, a11y/i18n."
+tone_instructions: >-
+  Principal engineer reviewing OpenShift Console (React/TS/JS/Go).
+  Focus: architecture, security (RBAC/SCC), performance, maintainability, backward-compatible APIs, testing/edge cases.
+  Enforce K8s best practices, PatternFly, a11y/i18n.
+  For every changed or new component, hook, or utility, check whether the PR includes corresponding test coverage.
+  Flag specific untested code paths, edge cases, and error conditions that should have tests.
+  Reference TESTING.md conventions when suggesting test approaches.
 
 early_access: false
 reviews:
@@ -37,6 +43,28 @@ reviews:
   related_prs: false
   suggested_labels: false
   review_details: true
+  pre_merge_checks:
+    custom_checks:
+      - name: "Test coverage for new source files"
+        instruction: |
+          For every new TypeScript/TSX source file added under frontend/ (excluding test files,
+          type definition files, index files, and SCSS/CSS files), verify that a corresponding
+          test file exists or is added in this PR.
+
+          Pass: All new source files have corresponding test files in the PR or pre-existing
+          in the repository.
+          Fail: A new source file is added with no corresponding test file.
+          Inconclusive: Unable to determine test file presence (e.g., file patterns don't
+          match conventions).
+
+          Skip: Files matching these patterns are exempt from this check:
+          - **/types.ts, **/types.tsx (type-only files)
+          - **/index.ts, **/index.tsx (barrel exports)
+          - **/*.scss, **/*.css (stylesheets)
+          - **/constants.ts (static values)
+          - **/__mocks__/** (mock files)
+          - **/console-extensions.json (plugin manifests)
+
 knowledge_base:
   code_guidelines:
     enabled: true
