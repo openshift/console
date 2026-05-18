@@ -38,7 +38,7 @@ import {
   isProjectOverviewInventoryItem,
 } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { ErrorBoundary } from '@console/shared/src/components/error';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 
 const createWatchResource = (
   model: K8sKind,

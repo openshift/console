@@ -8,9 +8,11 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { InputField, ResourceDropdownField, MultiTypeaheadField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiTypeaheadField } from '@console/shared/src/components/formik-fields/MultiTypeaheadField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { EVENT_SINK_KAFKA_KIND } from '../../../const';
-import { useBootstrapServers } from '../../../hooks';
+import { useBootstrapServers } from '../../../hooks/useBootstrapServers';
 
 interface KafkaSinkSectionProps {
   title: string;

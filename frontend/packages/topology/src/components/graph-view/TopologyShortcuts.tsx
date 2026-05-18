@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import type { TFunction } from 'i18next';
-import { Shortcut, ShortcutTable } from '@console/shared';
+import { Shortcut } from '@console/shared/src/components/shortcuts/Shortcut';
+import { ShortcutTable } from '@console/shared/src/components/shortcuts/ShortcutTable';
 import { TopologyViewType } from '../../topology-types';
 
 export type Options = {

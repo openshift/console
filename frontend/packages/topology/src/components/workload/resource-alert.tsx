@@ -15,9 +15,9 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceCondition } from '@console/internal/module/k8s';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 const addHealthChecksRefs = [
   referenceForModel(DeploymentConfigModel),

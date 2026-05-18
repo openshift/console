@@ -14,7 +14,7 @@ type CatalogEmptyStateProps = {
   onClear: () => void;
 };
 
-const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
+export const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
   const { t } = useTranslation();
   return (
     <EmptyState
@@ -38,5 +38,3 @@ const CatalogEmptyState: FC<CatalogEmptyStateProps> = ({ onClear }) => {
     </EmptyState>
   );
 };
-
-export default CatalogEmptyState;

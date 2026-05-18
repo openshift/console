@@ -39,7 +39,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { referenceForModel, referenceFor } from '../../module/k8s';
 

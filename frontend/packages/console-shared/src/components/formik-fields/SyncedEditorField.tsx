@@ -10,7 +10,7 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 import { EditorType } from '../synced-editor/editor-toggle';
 import { useEditorType } from '../synced-editor/useEditorType';
-import RadioGroupField from './RadioGroupField';
+import { RadioGroupField } from './RadioGroupField';
 
 import './SyncedEditorField.scss';
 
@@ -38,7 +38,7 @@ type SyncedEditorFieldProps = {
   noMargin?: boolean;
 };
 
-const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
+export const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
   name,
   formContext,
   yamlContext,
@@ -207,5 +207,3 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     <LoadingBox />
   );
 };
-
-export default SyncedEditorField;

@@ -1,11 +1,15 @@
 import * as _ from 'lodash';
 import { referenceFor } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { topologyDataModel, dataModel, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_WORKLOAD } from '../../const';
-import { EXPAND_GROUPS_FILTER_ID, getFilterById } from '../../filters';
-import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../../filters/const';
+import {
+  EXPAND_GROUPS_FILTER_ID,
+  DEFAULT_TOPOLOGY_FILTERS,
+  EXPAND_APPLICATION_GROUPS_FILTER_ID,
+} from '../../filters/const';
+import { getFilterById } from '../../filters/filter-utils';
 import type { DisplayFilters } from '../../topology-types';
 import { TopologyDisplayFilterType } from '../../topology-types';
 import { WORKLOAD_TYPES } from '../../utils/topology-utils';

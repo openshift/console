@@ -8,7 +8,7 @@ import { ProjectRequestModel } from '@console/internal/models';
 import type { K8sKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
 import type { RootState } from '@console/internal/redux';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import type { CloudShellSetupFormData } from './cloud-shell-setup-utils';
 import {

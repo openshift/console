@@ -20,8 +20,11 @@ import type {
   NodeComponentProps,
   EdgeComponentProps,
   EditableDragOperationType,
-} from '@console/topology/src/components/graph-view';
-import { NODE_DRAG_TYPE, EDGE_DRAG_TYPE } from '@console/topology/src/components/graph-view';
+} from '@console/topology/src/components/graph-view/components/componentUtils';
+import {
+  NODE_DRAG_TYPE,
+  EDGE_DRAG_TYPE,
+} from '@console/topology/src/components/graph-view/components/componentUtils';
 import { EventingBrokerModel } from '../../models';
 import {
   TYPE_EVENT_SOURCE_LINK,

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { GettingStartedLink } from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
 
 import { OAuthModel } from '@console/internal/models';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';

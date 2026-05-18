@@ -3,7 +3,7 @@ import { SimpleListItem, Title, Content } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import type { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
-import { useToast } from '@console/shared/src';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { resolvedHref } from '../../utils/add-page-utils';
 import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';

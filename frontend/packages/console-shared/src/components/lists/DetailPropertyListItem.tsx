@@ -8,11 +8,9 @@ type DetailPropertyListItemProps = {
   children?: ReactNode;
 };
 
-const DetailPropertyListItem: FC<DetailPropertyListItemProps> = ({ title, children }) => (
+export const DetailPropertyListItem: FC<DetailPropertyListItemProps> = ({ title, children }) => (
   <ListItem>
     {title && <span className="co-detail-property-list__item-title">{title}: </span>}
     {children}
   </ListItem>
 );
-
-export default DetailPropertyListItem;

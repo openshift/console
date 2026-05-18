@@ -4,7 +4,7 @@ import type { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import type { DetailsTabSectionExtensionHook } from '@console/dynamic-plugin-sdk/src/extensions/topology-details';
 import { CronJobModel } from '@console/internal/models';
 import { useJobsForCronJobWatcher } from '@console/shared/src/hooks/useJobsForCronJobWatcher';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { JobsOverview } from './JobsOverview';
 

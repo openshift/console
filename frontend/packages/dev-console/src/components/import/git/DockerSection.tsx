@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { getGitService } from '@console/git-service/src/services/git-service';
 import { ImportStrategy } from '@console/git-service/src/types/git';
 import { DockerFileParser } from '@console/git-service/src/utils/dockerfile-parser';
-import { InputField } from '@console/shared/src/components/formik-fields';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import type { GitImportFormData } from '../import-types';
 import FormSection from '../section/FormSection';

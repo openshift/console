@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import type { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import CloseButton from '@console/shared/src/components/close-button';
+import { CloseButton } from '@console/shared/src/components/close-button/CloseButton';
 
 import { definitionFor, K8sKind } from '../../module/k8s';
 import {

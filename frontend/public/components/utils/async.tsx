@@ -1,6 +1,6 @@
 import { ComponentType, lazy, ComponentProps, Suspense, useRef, FC } from 'react';
 import { LoadingBox } from './status-box';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 
 /** A function that lazily loads a component. */
 export type LazyLoader<C extends ComponentType> = () => Promise<C>;

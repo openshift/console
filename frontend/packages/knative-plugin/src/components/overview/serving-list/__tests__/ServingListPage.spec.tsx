@@ -11,7 +11,7 @@ jest.mock('@console/internal/components/namespace-bar', () => ({
   NamespaceBar: () => <div data-test="mock-NamespaceBar" />,
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/multi-tab-list/MultiTabListPage', () => ({
   MultiTabListPage: () => <div data-test="mock-MultiTabListPage" />,
 }));
 

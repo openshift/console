@@ -9,7 +9,7 @@ import { referenceFor } from '@console/internal/module/k8s';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
 import { getMenuOptionType } from '@console/shared/src/components/actions/utils';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
-import { getResource } from '../utils';
+import { getResource } from '../utils/topology-utils';
 
 export const createContextMenuItems = (actions: MenuOption[]) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(actions);

@@ -21,7 +21,7 @@ import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import type { VolumeSnapshotClassKind, Selector } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { DASH } from '@console/shared/src/constants/ui';
 import { getAnnotations } from '@console/shared/src/selectors/common';

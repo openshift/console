@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { PluginCSPViolations } from '@console/internal/actions/ui';
 import { setPluginCSPViolations } from '@console/internal/actions/ui';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { IS_PRODUCTION } from '@console/shared/src/constants/common';
 import { ONE_DAY } from '@console/shared/src/constants/time';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';

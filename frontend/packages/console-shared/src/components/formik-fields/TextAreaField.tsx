@@ -10,7 +10,7 @@ import { useField } from 'formik';
 import type { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ label, helpText, required, onChange, ...props }, ref) => {
     const [field, { touched, error }] = useField(props.name);
     const fieldId = getFieldId(props.name, 'input');
@@ -47,5 +47,3 @@ const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     );
   },
 );
-
-export default TextAreaField;

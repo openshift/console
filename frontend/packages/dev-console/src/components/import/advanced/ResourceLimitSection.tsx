@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
-import ResourceLimitField from '@console/shared/src/components/formik-fields/ResourceLimitField';
+import { ResourceLimitField } from '@console/shared/src/components/formik-fields/ResourceLimitField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { MemoryUnits, CPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';

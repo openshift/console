@@ -23,9 +23,9 @@ import {
   modelFor,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import type { RouteParams } from '@console/shared/src/types';
+import { Status } from '@console/shared/src/components/status/Status';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import type { CRDDescription, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';

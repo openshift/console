@@ -4,19 +4,32 @@ import { formikFormProps } from '@console/shared/src/test-utils/formik-props-uti
 import { kameletSourceTelegram } from '../../../utils/__tests__/knative-eventing-data';
 import EventSourceForm from '../EventSourceForm';
 
-jest.mock('@console/shared', () => {
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => {
   const { createKnativeTextStub: createTextStub } = jest.requireActual(
     '@console/knative-plugin/src/__tests__/rtl-stub-components',
   );
-  return {
-    FormFooter: createTextStub('mock-FormFooter'),
-    SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) =>
-      formContext?.editor ?? null,
-    FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
-    CodeEditorField: createTextStub('mock-CodeEditorField'),
-    FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
-  };
+  return { FormFooter: createTextStub('mock-FormFooter') };
 });
+
+jest.mock('@console/shared/src/components/formik-fields/SyncedEditorField', () => ({
+  SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) =>
+    formContext?.editor ?? null,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
+  FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/CodeEditorField', () => {
+  const { createKnativeTextStub: createTextStub } = jest.requireActual(
+    '@console/knative-plugin/src/__tests__/rtl-stub-components',
+  );
+  return { CodeEditorField: createTextStub('mock-CodeEditorField') };
+});
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
+  FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
+}));
 
 jest.mock('../event-sources/EventSourceSection', () => ({
   __esModule: true,

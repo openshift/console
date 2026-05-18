@@ -54,9 +54,13 @@ jest.mock('../DeploymentConfigSection', () => ({
   default: () => 'Deployment Config Section',
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...jest.requireActual('@console/shared/src'),
+jest.mock('@console/shared/src/components/progressive-list/ProgressiveList', () => ({
+  ...jest.requireActual('@console/shared/src/components/progressive-list/ProgressiveList'),
   ProgressiveList: ({ children }) => children,
+}));
+
+jest.mock('@console/shared/src/components/progressive-list/ProgressiveListItem', () => ({
+  ...jest.requireActual('@console/shared/src/components/progressive-list/ProgressiveListItem'),
   ProgressiveListItem: ({ children }) => children,
 }));
 

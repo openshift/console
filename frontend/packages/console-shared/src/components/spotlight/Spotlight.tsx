@@ -23,7 +23,7 @@ type SpotlightProps = {
   interactive?: boolean;
 };
 
-const Spotlight: FC<SpotlightProps> = ({ expandableSelector, selector, interactive }) => {
+export const Spotlight: FC<SpotlightProps> = ({ expandableSelector, selector, interactive }) => {
   useEffect(() => {
     if (expandableSelector) {
       const expandableElement = document.querySelector(expandableSelector);
@@ -53,5 +53,3 @@ const Spotlight: FC<SpotlightProps> = ({ expandableSelector, selector, interacti
     <StaticSpotlight element={element} />
   );
 };
-
-export default Spotlight;

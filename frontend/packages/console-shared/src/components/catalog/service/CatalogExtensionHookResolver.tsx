@@ -10,7 +10,7 @@ type CatalogExtensionHookResolverProps<T> = {
   onValueError?: (error: any, id: string) => void;
 };
 
-const CatalogExtensionHookResolver = function <T>({
+export const CatalogExtensionHookResolver = function <T>({
   id,
   useValue,
   options,
@@ -33,5 +33,3 @@ const CatalogExtensionHookResolver = function <T>({
 
   return null;
 };
-
-export default CatalogExtensionHookResolver;

@@ -6,7 +6,7 @@ import { useParams, useLocation } from 'react-router';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
+import { DevPreviewBadge } from '@console/shared/src/components/badges/DevPreviewBadge';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { QUERY_PROPERTIES } from '../../const';

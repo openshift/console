@@ -11,9 +11,9 @@ import type {
 import { observer, useAnchor, AnchorEnd, RectAnchor } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
+import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes/BaseNode';
 import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
-import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
 import eventPubSubImg from '../../../imgs/event-pub-sub.svg';
 import { TYPE_EVENT_SINK_LINK } from '../../const';
 import EventSinkSourceAnchor from '../anchors/EventSinkSourceAnchor';

@@ -7,7 +7,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 

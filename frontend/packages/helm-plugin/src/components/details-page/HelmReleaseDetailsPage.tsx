@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import HelmReleaseDetails from './HelmReleaseDetails';
 
 const HelmReleaseDetailsPage: FC = () => {

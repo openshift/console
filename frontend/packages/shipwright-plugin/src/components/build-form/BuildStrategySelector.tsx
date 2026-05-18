@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import type { SelectInputOption } from '@console/shared/src';
-import { SingleDropdownField } from '@console/shared/src';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleDropdownField } from '@console/shared/src/components/formik-fields/SingleDropdownField';
 import { BuildStrategyModel, ClusterBuildStrategyModel } from '../../models';
 import type { BuildStrategyKind, ClusterBuildStrategyKind } from '../../types';
 

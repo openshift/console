@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
 import type { Resources, RouteData } from '../import-types';
 import AdvancedRouteOptions from '../route/AdvancedRouteOptions';
 import PortInputField from '../route/PortInputField';

@@ -8,7 +8,7 @@ import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { useEventSourceStatus } from '../../hooks';
+import { useEventSourceStatus } from '../../hooks/useEventSourceStatus';
 import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';

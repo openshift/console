@@ -19,8 +19,8 @@ import {
 } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ANNOTATIONS } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],

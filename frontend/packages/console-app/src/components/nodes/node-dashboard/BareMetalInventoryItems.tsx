@@ -14,8 +14,8 @@ import {
   useWatchBareMetalHost,
 } from '@console/app/src/components/nodes/NodeBareMetalUtils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { DASH } from '@console/shared/src';
 import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { DASH } from '@console/shared/src/constants/ui';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 type BareMetalInventoryItemsProps = {

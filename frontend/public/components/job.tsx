@@ -3,11 +3,11 @@ import { useMemo, Suspense } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared/src/components/status/Status';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { DASH } from '@console/shared/src/constants/ui';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getJobTypeAndCompletions,

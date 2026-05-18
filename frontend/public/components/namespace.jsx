@@ -89,7 +89,7 @@ import {
   isCurrentUser,
   isOtherUser,
   isSystemNamespace,
-} from '@console/shared/src/components/namespace';
+} from '@console/shared/src/components/namespace/filters';
 import { useCreateNamespaceModal } from '@console/shared/src/hooks/useCreateNamespaceModal';
 import { useCreateProjectModal } from '@console/shared/src/hooks/useCreateProjectModal';
 import {
@@ -103,7 +103,7 @@ import {
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
 import { DataViewCheckboxFilter } from '@patternfly/react-data-view';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const getDisplayName = (obj) =>

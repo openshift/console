@@ -9,7 +9,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import { getNodeMaintenanceReason, getNodeMaintenanceCreationTimestamp } from '../../selectors';
+import {
+  getNodeMaintenanceReason,
+  getNodeMaintenanceCreationTimestamp,
+} from '../../selectors/node-maintenance';
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 
 type UnderMaintenancePopoverContentProps = {

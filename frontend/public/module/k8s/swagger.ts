@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { STORAGE_PREFIX } from '@console/shared/src/constants';
+import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';

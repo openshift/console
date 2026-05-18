@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useField } from 'formik';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { RevisionItems } from '../../utils/traffic-splitting-utils';
 
 type TrafficModalRevisionsDropdownFieldProps = {

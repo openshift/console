@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import PaneBodyGroup from '@console/shared/src/components/layout/PaneBodyGroup';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import { TableColumn } from '@console/dynamic-plugin-sdk';
 import {
   actionsCellProps,
@@ -39,7 +39,7 @@ import { Selector } from './utils/selector';
 import { ResourceEventStream } from './events';
 import { MachinePage, machineReference } from './machine';
 import { MachineTabPageProps } from './machine-set';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const controlPlaneMachineSetReference = referenceForModel(ControlPlaneMachineSetModel);
 const getDesiredReplicas = (resource: ControlPlaneMachineSetKind) => {

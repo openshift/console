@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router';
 import { resourcePathFromModel, useScrollToTopOnMount } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { DynamicForm } from '@console/shared/src/components/dynamic-form';
+import { DynamicForm } from '@console/shared/src/components/dynamic-form/DynamicForm';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
 import { useResourceConnectionHandler } from '@console/shared/src/hooks/useResourceConnectionHandler';

@@ -20,8 +20,9 @@ import {
   useK8sWatchResource,
 } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import type { ClusterOperator } from '@console/internal/module/k8s';
-import { CONSOLE_PREFIX_CLUSTER_OPERATOR, getCondition } from '../resources';
+import { CONSOLE_PREFIX_CLUSTER_OPERATOR } from '../resources/clusterOperator';
 import type { K8sResourceConditionStatus } from '../resources/k8sResource';
+import { getCondition } from '../resources/statusCondition';
 
 let ohlCounter = 0;
 const OperatorHealthLevel: { [key: string]: number } = {

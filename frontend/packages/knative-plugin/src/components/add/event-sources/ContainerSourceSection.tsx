@@ -14,7 +14,8 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { InputField, TextColumnField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 

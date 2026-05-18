@@ -13,7 +13,7 @@ import { k8sGet } from '@console/internal/module/k8s';
 import type { EnvironmentFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const EnvironmentField: FC<EnvironmentFieldProps> = ({
+export const EnvironmentField: FC<EnvironmentFieldProps> = ({
   label,
   helpText,
   required,
@@ -101,5 +101,3 @@ const EnvironmentField: FC<EnvironmentFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default EnvironmentField;

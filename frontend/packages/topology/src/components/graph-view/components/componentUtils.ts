@@ -24,9 +24,10 @@ import {
 import i18next from 'i18next';
 import { action } from 'mobx';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { ActionContext } from '@console/shared';
+import type { ActionContext } from '@console/shared/src/components/actions/types';
 import { launchErrorModal } from '@console/shared/src/utils/error-modal-handler';
-import { createConnection, moveNodeToGroup } from '../../../utils';
+import { createConnection } from '../../../utils/createConnection';
+import { moveNodeToGroup } from '../../../utils/moveNodeToGroup';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';
 import withTopologyContextMenu from './withTopologyContextMenu';
 import './GraphComponent.scss';

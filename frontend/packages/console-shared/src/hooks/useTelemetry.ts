@@ -10,7 +10,7 @@ import {
   CLUSTER_TELEMETRY_ANALYTICS,
   PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
   USER_TELEMETRY_ANALYTICS,
-} from '../constants';
+} from '../constants/common';
 import { useUser } from './useUser';
 import { useUserPreference } from './useUserPreference';
 

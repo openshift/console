@@ -3,7 +3,8 @@ import { TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import { pickBy, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { MultiColumnField, InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
 import type { RevisionItems } from '../../utils/traffic-splitting-utils';
 import TrafficModalRevisionsDropdownField from './TrafficModalRevisionsDropdownField';
 

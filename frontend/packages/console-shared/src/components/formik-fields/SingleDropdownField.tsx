@@ -17,7 +17,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { SingleDropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
+export const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -110,5 +110,3 @@ const SingleDropdownField: FC<SingleDropdownFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default SingleDropdownField;

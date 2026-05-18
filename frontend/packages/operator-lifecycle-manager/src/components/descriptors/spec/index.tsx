@@ -21,7 +21,7 @@ import {
 } from '@console/internal/components/utils';
 import type { Selector as SelectorType } from '@console/internal/module/k8s';
 import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { DASH } from '@console/shared/src/constants/ui';
 import { DefaultCapability, K8sResourceLinkCapability, SecretCapability } from '../common';
 import type { CapabilityProps, Error } from '../types';

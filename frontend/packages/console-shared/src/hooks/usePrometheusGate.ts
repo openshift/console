@@ -1,4 +1,4 @@
-import { FLAGS } from '../constants';
+import { FLAGS } from '../constants/common';
 import { useFlag } from './useFlag';
 
 export const usePrometheusGate = (): boolean => {

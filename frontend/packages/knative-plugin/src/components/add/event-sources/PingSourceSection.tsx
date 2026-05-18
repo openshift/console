@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { EventSources } from '../import-types';
 
 interface PingSourceSectionProps {

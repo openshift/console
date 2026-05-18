@@ -79,7 +79,7 @@ class ErrorBoundaryInner extends Component<ErrorBoundaryInnerProps, ErrorBoundar
 }
 
 // Functional wrapper to handle location changes
-const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) => {
+export const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) => {
   const location = useLocation();
 
   return (
@@ -88,5 +88,3 @@ const ErrorBoundary: FC<ErrorBoundaryProps> = ({ children, FallbackComponent }) 
     </ErrorBoundaryInner>
   );
 };
-
-export default ErrorBoundary;

@@ -10,7 +10,7 @@ import { ExpandCollapse } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared/src';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 const AdvancedImageOptions: FC = () => {
   const { t } = useTranslation();

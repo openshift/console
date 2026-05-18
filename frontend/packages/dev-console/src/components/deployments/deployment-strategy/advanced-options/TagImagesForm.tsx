@@ -3,7 +3,7 @@ import { FormSection } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared/src';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import ImageStream from '../../../import/image-search/ImageStream';
 import { getContainerNames } from '../../utils/deployment-utils';
 

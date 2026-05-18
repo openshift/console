@@ -11,7 +11,7 @@ import {
   isGroupVersionKind,
   kindForReference,
 } from '@console/internal/module/k8s';
-import { getBadgeFromType } from '@console/shared/src';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 

@@ -13,13 +13,13 @@ import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { kindForReference, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { isCatalogTypeEnabled } from '@console/shared';
+import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartRepositoryData, HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryForm from './CreateHelmChartRepositoryForm';
 import {

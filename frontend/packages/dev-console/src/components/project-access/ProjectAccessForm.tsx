@@ -4,13 +4,11 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  MultiColumnField,
-  InputField,
-  DropdownField,
-  FormFooter,
-  NSDropdownField,
-} from '@console/shared';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { MultiColumnField } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnField';
+import { NSDropdownField } from '@console/shared/src/components/formik-fields/NSDropdownField';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { Roles } from './project-access-form-utils';
 import { ignoreRoleBindingName } from './project-access-form-utils';

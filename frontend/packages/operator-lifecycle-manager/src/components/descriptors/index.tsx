@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
 import type { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { withFallback } from '@console/shared/src/components/error';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import { getSchemaAtPath } from '@console/shared/src/utils/utils';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';

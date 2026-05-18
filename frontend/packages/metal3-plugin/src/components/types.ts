@@ -4,7 +4,7 @@ import type {
   MachineSetKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import type { BareMetalHostKind, CertificateSigningRequestKind } from '../types';
+import type { BareMetalHostKind, CertificateSigningRequestKind } from '../types/host';
 
 export type StatusProps = {
   status: string;

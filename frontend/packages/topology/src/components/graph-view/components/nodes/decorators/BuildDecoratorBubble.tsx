@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode, FC } from 'react';
-import Decorator from './Decorator';
+import { Decorator } from './Decorator';
 
 type BuildDecoratorBubbleProps = ComponentProps<typeof Decorator> & {
   children: ReactNode;
@@ -8,7 +8,7 @@ type BuildDecoratorBubbleProps = ComponentProps<typeof Decorator> & {
   y: number;
 };
 
-const BuildDecoratorBubble: FC<BuildDecoratorBubbleProps> = ({
+export const BuildDecoratorBubble: FC<BuildDecoratorBubbleProps> = ({
   children,
   radius,
   x,
@@ -23,5 +23,3 @@ const BuildDecoratorBubble: FC<BuildDecoratorBubbleProps> = ({
     </g>
   </Decorator>
 );
-
-export default BuildDecoratorBubble;

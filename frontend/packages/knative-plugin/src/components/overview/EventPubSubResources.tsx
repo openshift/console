@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import type { OverviewItem } from '@console/shared';
+import type { OverviewItem } from '@console/shared/src/types/resource';
 import { EventingSubscriptionModel, EventingTriggerModel, EventingBrokerModel } from '../../models';
 import type { Subscriber } from '../../topology/topology-types';
 import PubSubSubscribers from './EventPubSubSubscribers';

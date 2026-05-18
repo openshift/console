@@ -17,7 +17,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
-import { BadgeType, getBadgeFromType } from '@console/shared';
+import { BadgeType, getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';

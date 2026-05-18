@@ -68,10 +68,10 @@ export const UtilizationDurationDropdown: FC<UtilizationDurationDropdownProps> =
   .UtilizationDurationDropdown;
 
 export const VirtualizedGrid: FC<VirtualizedGridProps> = require('@console/shared/src/components/virtualized-grid/VirtualizedGrid')
-  .default;
+  .VirtualizedGrid;
 
 export const LazyActionMenu: FC<LazyActionMenuProps> = require('@console/shared/src/components/actions/LazyActionMenu')
-  .default;
+  .LazyActionMenu;
 
 export const QuickStartsLoader: FC<QuickStartsLoaderProps> = require('@console/app/src/components/quick-starts/loader/QuickStartsLoader')
   .QuickStartsLoader;

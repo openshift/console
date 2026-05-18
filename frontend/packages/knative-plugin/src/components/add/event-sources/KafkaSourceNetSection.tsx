@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { EventSources } from '../import-types';
 import SecretKeySelector from '../SecretKeySelector';

@@ -1,9 +1,9 @@
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants/common';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { sanitizeApplicationValue } from '@console/topology/src/utils';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { EventingBrokerModel } from '../../../models';
 import { LABEL_PART_OF, EVENT_BROKER_APP, DEFAULT_BROKER_NAME } from '../const';
 import type { AddBrokerFormYamlValues, BrokerFormData } from '../import-types';

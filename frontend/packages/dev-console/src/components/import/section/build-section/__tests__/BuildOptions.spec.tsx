@@ -24,8 +24,12 @@ const spyShipwrightBuilds = shipwrightBuildHook.useShipwrightBuilds as jest.Mock
 const spyUseFlag = useFlag as jest.Mock;
 const spyUsePipelineAccessReview = usePipelineAccessReview as jest.Mock;
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/SingleDropdownField', () => ({
   SingleDropdownField: (props) => `SingleDropdownField options=${JSON.stringify(props.options)}`,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-types', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/field-types'),
   SelectInputOption: {},
 }));
 

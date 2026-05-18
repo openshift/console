@@ -54,12 +54,27 @@ jest.mock('@console/shared/src/utils/yaml', () => ({
   safeJSToYAML: jest.fn().mockReturnValue('mock-yaml'),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
   FlexForm: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
   FormBody: (props) => props.children,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => ({
   FormFooter: () => 'FormFooter',
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormHeader', () => ({
   FormHeader: (props) => props.title || props.children,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/SyncedEditorField', () => ({
   SyncedEditorField: () => 'Mock Synced Editor',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/CodeEditorField', () => ({
   CodeEditorField: () => 'Mock Code Editor',
 }));
 

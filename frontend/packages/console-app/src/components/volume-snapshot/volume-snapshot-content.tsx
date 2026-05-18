@@ -28,7 +28,7 @@ import {
 } from '@console/internal/models';
 import type { VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { LoadingBox } from '@console/shared/src/components/loading/LoadingBox';
 import { Status } from '@console/shared/src/components/status/Status';

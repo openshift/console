@@ -7,7 +7,10 @@ import type { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
-import { InputField, CheckboxField, getFieldId, TextColumnField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import { Resources } from '../import/import-types';
 import { HealthCheckContext } from './health-checks-utils';
 

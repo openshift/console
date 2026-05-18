@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk';
-import { ErrorBoundary } from '@console/shared/src/components/error';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';
 import {

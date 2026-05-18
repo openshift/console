@@ -15,9 +15,10 @@ import { resourcePathFromModel } from '@console/internal/components/utils/resour
 import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS, getName, getNamespace } from '../../..';
+import { FLAGS } from '../../../constants/common';
 import { useDashboardResources } from '../../../hooks/useDashboardResources';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import { getName, getNamespace } from '../../../selectors/common';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import Status from '../status-card/StatusPopup';
 
 import './top-consumer-popover.scss';

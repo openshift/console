@@ -16,7 +16,7 @@ import {
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { DASH } from '@console/shared/src/constants/ui';
 import { referenceForModel } from '../module/k8s';
 import { ServiceAccountModel } from '../models';

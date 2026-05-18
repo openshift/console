@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { TRIGGERS_ANNOTATION } from '@console/shared';
+import { TRIGGERS_ANNOTATION } from '@console/shared/src/constants/resource';
 import { ROUTE_DISABLED_ANNOTATION } from '@console/topology/src/const';
 import type { Resources } from '../components/import/import-types';
 import { ResourcesKinds } from '../components/import/import-types';

@@ -10,16 +10,16 @@ import {
   HOST_POWER_STATUS_POWERING_ON,
   HOST_PROGRESS_STATES,
   HOST_SUCCESS_STATES,
-} from '../../../constants';
+} from '../../../constants/bare-metal-host';
 import {
   getHostMachine,
   getHostPowerStatus,
-  getNodeMaintenanceNodeName,
   hasPowerManagement,
   isDetached,
-} from '../../../selectors';
+} from '../../../selectors/baremetal-hosts';
+import { getNodeMaintenanceNodeName } from '../../../selectors/node-maintenance';
 import { getHostStatus } from '../../../status/host-status';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import { getHostFilterStatus } from '../table-filters';
 
 export { BareMetalHostModel } from '../../../models';

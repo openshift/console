@@ -20,9 +20,9 @@ import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsM
 import { useFlag } from '../../hooks/useFlag';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import PageBody from '../layout/PageBody';
-import CatalogView from './catalog-view/CatalogView';
-import CatalogTile from './CatalogTile';
-import CatalogDetailsModal from './details/CatalogDetailsModal';
+import { CatalogView } from './catalog-view/CatalogView';
+import { CatalogTile } from './CatalogTile';
+import { CatalogDetailsModal } from './details/CatalogDetailsModal';
 import { getURLWithParams, useGetAllDisabledSubCatalogs } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import type {
@@ -42,7 +42,7 @@ type CatalogControllerProps = CatalogService & {
   categories?: CatalogCategory[];
 };
 
-const CatalogController: FC<CatalogControllerProps> = ({
+export const CatalogController: FC<CatalogControllerProps> = ({
   type,
   items,
   itemsMap,
@@ -230,5 +230,3 @@ const CatalogController: FC<CatalogControllerProps> = ({
     </>
   );
 };
-
-export default CatalogController;

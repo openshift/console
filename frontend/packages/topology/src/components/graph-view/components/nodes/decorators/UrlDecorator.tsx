@@ -5,8 +5,8 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { useRoutesURL } from '../../../../../data-transforms/useRoutesURL';
-import { getResource } from '../../../../../utils';
-import Decorator from './Decorator';
+import { getResource } from '../../../../../utils/topology-utils';
+import { Decorator } from './Decorator';
 
 interface DefaultDecoratorProps {
   element: Node;
@@ -15,7 +15,7 @@ interface DefaultDecoratorProps {
   y: number;
 }
 
-const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
+export const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
   const ref = useRef();
   const { t } = useTranslation();
   const resourceObj = getResource(element);
@@ -36,5 +36,3 @@ const UrlDecorator: FC<DefaultDecoratorProps> = ({ element, radius, x, y }) => {
     </Tooltip>
   );
 };
-
-export default UrlDecorator;

@@ -13,7 +13,7 @@ import type {
 } from '@console/internal/module/k8s';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/shared/src/components/utils/routes';
-import OdcBaseNode from '../elements/OdcBaseNode';
+import { OdcBaseNode } from '../elements/OdcBaseNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
 import { updateResourceApplication } from './application-utils';
 import { createResourceConnection, removeResourceConnection } from './connector-utils';

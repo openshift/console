@@ -4,7 +4,7 @@ import BaseInputField from './BaseInputField';
 import type { GroupInputProps } from './field-types';
 import { GroupTextType } from './field-types';
 
-const InputGroupField: FC<GroupInputProps> = ({
+export const InputGroupField: FC<GroupInputProps> = ({
   beforeInput,
   afterInput,
   groupTextType,
@@ -30,5 +30,3 @@ const InputGroupField: FC<GroupInputProps> = ({
     </BaseInputField>
   );
 };
-
-export default InputGroupField;

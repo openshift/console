@@ -1,7 +1,7 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import {
   isModelFeatureFlag,
   ModelFeatureFlag,

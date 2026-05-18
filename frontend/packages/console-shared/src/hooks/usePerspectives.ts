@@ -7,7 +7,7 @@ import type {
 import { isPerspective, checkAccess } from '@console/dynamic-plugin-sdk';
 import type { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { USER_PREFERENCE_PREFIX } from '../constants';
+import { USER_PREFERENCE_PREFIX } from '../constants/common';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
 

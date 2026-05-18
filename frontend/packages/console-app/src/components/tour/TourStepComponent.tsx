@@ -11,8 +11,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@console/internal/components/ThemeProvider';
 import type { PopoverPlacement } from '@console/shared/src/components/popover/const';
-import Popover from '@console/shared/src/components/popover/Popover';
-import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
+import { Popover } from '@console/shared/src/components/popover/Popover';
+import { Spotlight } from '@console/shared/src/components/spotlight/Spotlight';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';

@@ -8,7 +8,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { ClusterConfigurationTextField } from '@console/dynamic-plugin-sdk/src';
-import { FormLayout } from '@console/shared/src/components/cluster-configuration';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
 import { useDebounceCallback } from './hooks';
 import type { ResolvedClusterConfigurationItem } from './types';
 

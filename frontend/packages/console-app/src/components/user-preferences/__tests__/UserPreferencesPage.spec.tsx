@@ -14,8 +14,8 @@ jest.mock('@console/shared/src/components/document-title/DocumentTitle', () => (
   DocumentTitle: () => null,
 }));
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/spotlight/Spotlight', () => ({
+  ...jest.requireActual('@console/shared/src/components/spotlight/Spotlight'),
   Spotlight: () => null,
 }));
 

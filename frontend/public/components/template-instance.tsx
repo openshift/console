@@ -48,7 +48,7 @@ import {
 import type { DataViewFilterOption } from '@patternfly/react-data-view/dist/esm/DataViewFilters';
 import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { sortResourceByValue } from './factory/Table/sort';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const templateInstanceReference = referenceForModel(TemplateInstanceModel);
 

@@ -5,11 +5,11 @@ import { css } from '@patternfly/react-styles';
 import { useField } from 'formik';
 import type { RadioGroupFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import RadioButtonField from './RadioButtonField';
+import { RadioButtonField } from './RadioButtonField';
 
 import './RadioGroupField.scss';
 
-const RadioGroupField: FC<RadioGroupFieldProps> = ({
+export const RadioGroupField: FC<RadioGroupFieldProps> = ({
   label,
   labelIcon,
   options,
@@ -71,5 +71,3 @@ const RadioGroupField: FC<RadioGroupFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default RadioGroupField;

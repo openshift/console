@@ -1,10 +1,8 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp } from '@console/internal/components/utils';
-import {
-  ConsolePluginRadioInputs,
-  ConsolePluginWarning,
-} from '@console/shared/src/components/utils';
+import { ConsolePluginRadioInputs } from '@console/shared/src/components/utils/ConsolePluginRadioInputs';
+import { ConsolePluginWarning } from '@console/shared/src/components/utils/ConsolePluginWarning';
 import { isCatalogSourceTrusted } from '../utils';
 
 export const ConsolePluginFormGroup: FC<ConsolePluginFormGroupProps> = ({

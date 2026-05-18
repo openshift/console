@@ -1,7 +1,7 @@
 import type { SyntheticEvent } from 'react';
 import type { NavigateFunction } from 'react-router';
 import type { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import type { AddGroup } from '../components/types';
 
 export const getAddGroups = (

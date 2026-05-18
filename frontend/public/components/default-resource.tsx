@@ -49,9 +49,9 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useCommonResourceActions } from '@console/app/src/actions/hooks/useCommonResourceActions';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 
 const tableColumnInfo = [{ id: 'name' }, { id: 'namespace' }, { id: 'created' }, { id: 'actions' }];

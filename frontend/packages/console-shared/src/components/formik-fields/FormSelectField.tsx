@@ -13,7 +13,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const FormSelectField: FC<FormSelectFieldProps> = ({
+export const FormSelectField: FC<FormSelectFieldProps> = ({
   label,
   helpText,
   required,
@@ -71,5 +71,3 @@ const FormSelectField: FC<FormSelectFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default FormSelectField;

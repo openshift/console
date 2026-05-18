@@ -8,13 +8,13 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import CatalogPageOverlay from '../catalog-view/CatalogPageOverlay';
 import CatalogPageOverlayDescription from '../catalog-view/CatalogPageOverlayDescription';
-import { customPropertyPresent } from '../utils';
+import { customPropertyPresent } from '../utils/catalog-utils';
 
 type CatalogDetailsPanelProps = {
   item: CatalogItem;
 };
 
-const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
+export const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
   const { t } = useTranslation();
   const { description, provider, creationTimestamp, supportUrl, documentationUrl, details } = item;
   const created = Date.parse(creationTimestamp) ? (
@@ -92,5 +92,3 @@ const CatalogDetailsPanel: FC<CatalogDetailsPanelProps> = ({ item }) => {
     </CatalogPageOverlay>
   );
 };
-
-export default CatalogDetailsPanel;

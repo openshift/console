@@ -2,7 +2,7 @@ import type { ComponentProps, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { HelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel } from '../../models/helm';
 import ProjectHelmChartRepositoryList from './ProjectHelmChartRepositoryList';
 
 const HelmChartRepositoryListPage: FC<ComponentProps<typeof ListPage>> = (props) => {

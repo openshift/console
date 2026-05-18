@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { FLAGS } from '../constants';
+import { FLAGS } from '../constants/common';
 import { useFlag } from './useFlag';
 
 const COPY_LOGIN_COMMANDS_ENDPOINT = '/api/copy-login-commands';

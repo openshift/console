@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { k8sGet } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   getImageStreamTags,

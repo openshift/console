@@ -3,7 +3,8 @@ import { Alert, AlertActionCloseButton, Flex, Grid, GridItem } from '@patternfly
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import type { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
-import { InputField, NumberSpinnerField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
 import { getMetricByType } from './hpa-utils';
 import HPAUtilizationField from './HPAUtilizationField';
 import type { HPAFormValues, SupportedMetricTypes } from './types';

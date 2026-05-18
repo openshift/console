@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
-import { ErrorBoundary, withFallback } from '..';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
+import { ErrorBoundary } from '../error-boundary';
+import { withFallback } from '../fallbacks/withFallback';
 
 const Child = () => <span>Child</span>;
 const ProblemChild = () => {

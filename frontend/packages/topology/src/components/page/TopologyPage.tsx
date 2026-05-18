@@ -9,7 +9,8 @@ import CreateProjectListPage, {
   CreateAProjectButton,
 } from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import { ErrorBoundaryFallbackPage, withFallback } from '@console/shared/src/components/error';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
@@ -18,7 +19,7 @@ import {
   TOPOLOGY_VIEW_CONFIG_USER_PREFERENCE_KEY,
 } from '../../const';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters/filter-utils';
 import { FilterProvider } from '../../filters/FilterProvider';
 import { TopologyViewType } from '../../topology-types';
 import { usePreferredTopologyView } from '../../user-preferences/usePreferredTopologyView';

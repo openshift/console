@@ -50,7 +50,7 @@ import {
   FLAGS,
   LOG_WRAP_LINES_USER_PREFERENCE_KEY,
   SHOW_FULL_LOG_USER_PREFERENCE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { useTheme } from '@console/internal/components/ThemeProvider';
 import { Loading } from '@console/shared/src/components/loading/Loading';

@@ -10,8 +10,8 @@ import {
 import { TemplateModel } from '@console/internal/models';
 import type { PartialObjectMetadata } from '@console/internal/module/k8s';
 import { k8sListPartialMetadata } from '@console/internal/module/k8s';
-import type { APIError } from '@console/shared';
-import { ANNOTATIONS } from '@console/shared';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
+import type { APIError } from '@console/shared/src/types/resource';
 
 const normalizeTemplates = (
   templates: PartialObjectMetadata[],

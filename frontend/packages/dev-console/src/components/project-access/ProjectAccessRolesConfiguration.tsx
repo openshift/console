@@ -12,14 +12,12 @@ import {
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks/useK8sWatchResource';
 import { ClusterRoleModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const defaultClusterRoleNames = ['admin', 'edit', 'view'];

@@ -19,19 +19,18 @@ import {
 import { NodeModel } from '@console/internal/models';
 import type { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  getName,
-  getMachineNode,
-  getMachineNodeName,
-  getNamespace,
-  getMachineRole,
-  DetailPropertyList,
-  DetailPropertyListItem,
-  SecondaryStatus,
-  DASH,
-} from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
+import { DetailPropertyList } from '@console/shared/src/components/lists/DetailPropertyList';
+import { DetailPropertyListItem } from '@console/shared/src/components/lists/DetailPropertyListItem';
+import { SecondaryStatus } from '@console/shared/src/components/status/SecondaryStatus';
+import { DASH } from '@console/shared/src/constants/ui';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import {
+  getMachineNode,
+  getMachineNodeName,
+  getMachineRole,
+} from '@console/shared/src/selectors/machine';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,
@@ -44,16 +43,16 @@ import {
   getHostPowerStatus,
   getHostVendorInfo,
   getHostMachine,
-  findNodeMaintenance,
   getHostBios,
   getHostProvisioningState,
   getHostBootMACAddress,
   isHostScheduledForRestart,
   hasPowerManagement,
   isDetached,
-} from '../../selectors';
+} from '../../selectors/baremetal-hosts';
+import { findNodeMaintenance } from '../../selectors/node-maintenance';
 import { getHostStatus } from '../../status/host-status';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
 import MachineLink from './MachineLink';

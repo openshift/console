@@ -4,7 +4,11 @@ import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField, FormFooter, FormBody, FormHeader, FlexForm } from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import type { HelmURLChartFormData } from './types';
 
 export interface HelmURLChartFormProps {

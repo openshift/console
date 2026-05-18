@@ -18,12 +18,9 @@ import type { ToastContextValues } from '@console/dynamic-plugin-sdk/src/extensi
 import { getGroupVersionKindForResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  USER_PREFERENCE_PREFIX,
-  TOAST_TIMEOUT_DEFAULT,
-  TOAST_TIMEOUT_LONG,
-} from '@console/shared/src';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
+import { USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
+import { TOAST_TIMEOUT_DEFAULT, TOAST_TIMEOUT_LONG } from '@console/shared/src/constants/duration';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';

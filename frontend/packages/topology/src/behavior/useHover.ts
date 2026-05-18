@@ -8,7 +8,7 @@ import { useCallbackRef } from '@patternfly/react-topology';
 
 const EMPTY: any[] = [];
 
-const useHover = <T extends Element>(
+export const useHover = <T extends Element>(
   delayIn: number = 200,
   delayOut: number = 200,
   dependencies: any[] = EMPTY,
@@ -90,5 +90,3 @@ const useHover = <T extends Element>(
 
   return [hover, callbackRef];
 };
-
-export default useHover;

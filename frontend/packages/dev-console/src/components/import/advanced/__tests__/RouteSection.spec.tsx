@@ -23,8 +23,8 @@ jest.mock('../../route/PortInputField', () => ({
   default: (props) => `Port Input Field defaultPort=${props.defaultPort}`,
 }));
 
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/CheckboxField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/CheckboxField'),
   CheckboxField: (props) => `CheckboxField ${props.name}`,
 }));
 

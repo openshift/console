@@ -16,7 +16,7 @@ import {
 import { DeploymentModel } from '@console/internal/models';
 import type { DeploymentKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 type DeploymentSideBarDetailsProps = {
   deployment: DeploymentKind;

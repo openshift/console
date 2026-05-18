@@ -23,7 +23,7 @@ import { LoadingBox } from '@console/internal/components/utils/status-box';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import Spotlight from '@console/shared/src/components/spotlight/Spotlight';
+import { Spotlight } from '@console/shared/src/components/spotlight/Spotlight';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/src/utils/order-extensions';
 import { isModifiedEvent } from '@console/shared/src/utils/utils';

@@ -5,17 +5,33 @@ import { CamelKameletBindingModel } from '../../../models';
 import { mockKameletSink } from '../__mocks__/Kamelet-data';
 import EventSinkForm from '../EventSinkForm';
 
-jest.mock('@console/shared', () => {
+jest.mock('@console/shared/src/components/form-utils/FormFooter', () => {
   const { createKnativeTextStub: createTextStub } = jest.requireActual(
     '@console/knative-plugin/src/__tests__/rtl-stub-components',
   );
-  return {
-    FormFooter: createTextStub('mock-FormFooter'),
-    SyncedEditorField: createTextStub('mock-SyncedEditorField'),
-    FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
-    FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
-    CodeEditorField: createTextStub('mock-CodeEditorField'),
-  };
+  return { FormFooter: createTextStub('mock-FormFooter') };
+});
+
+jest.mock('@console/shared/src/components/formik-fields/SyncedEditorField', () => {
+  const { createKnativeTextStub: createTextStub } = jest.requireActual(
+    '@console/knative-plugin/src/__tests__/rtl-stub-components',
+  );
+  return { SyncedEditorField: createTextStub('mock-SyncedEditorField') };
+});
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
+  FlexForm: ({ children }: { children?: ReactNode }) => children ?? null,
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FormBody', () => ({
+  FormBody: ({ children }: { children?: ReactNode }) => children ?? null,
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/CodeEditorField', () => {
+  const { createKnativeTextStub: createTextStub } = jest.requireActual(
+    '@console/knative-plugin/src/__tests__/rtl-stub-components',
+  );
+  return { CodeEditorField: createTextStub('mock-CodeEditorField') };
 });
 
 jest.mock('../event-sinks/EventSinkSection', () => ({

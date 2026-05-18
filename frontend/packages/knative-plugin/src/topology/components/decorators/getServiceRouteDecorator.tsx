@@ -1,6 +1,6 @@
 import type { Node } from '@patternfly/react-topology/src/types';
 import { ROUTE_DISABLED_ANNOTATION, ROUTE_URL_ANNOTATION } from '@console/topology/src/const';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { PRIVATE_KNATIVE_SERVING_LABEL } from '../../../const';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import ServiceRouteDecorator from './ServiceRouteDecorator';

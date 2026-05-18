@@ -5,7 +5,7 @@ import {
   fetchOverviewMetrics,
   METRICS_FAILURE_CODES,
 } from '@console/internal/components/overview/metricUtils';
-import { METRICS_POLL_INTERVAL } from '@console/shared/src';
+import { METRICS_POLL_INTERVAL } from '@console/shared/src/constants/resource';
 
 type UnsubscribeCallback = () => void;
 

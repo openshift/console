@@ -31,7 +31,7 @@ import {
   isUpstream,
 } from '../utils/documentation';
 import { useTranslation } from 'react-i18next';
-import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants';
+import { CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER } from '@console/shared/src/constants/common';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 
 export const ConfigureClusterUpstreamModal = (props: ConfigureClusterUpstreamModalProps) => {

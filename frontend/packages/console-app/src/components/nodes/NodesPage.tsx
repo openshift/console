@@ -62,7 +62,7 @@ import type {
   ControlPlaneMachineSetKind,
 } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, LabelSelector } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { DASH } from '@console/shared/src/constants/ui';

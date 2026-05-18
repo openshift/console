@@ -37,7 +37,7 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { PersistentVolumeModel } from '../models';
 import { PersistentVolumeKind, referenceForModel } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const { kind } = PersistentVolumeModel;
 const persistentVolumeReference = referenceForModel(PersistentVolumeModel);

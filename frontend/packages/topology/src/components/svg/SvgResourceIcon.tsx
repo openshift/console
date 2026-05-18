@@ -12,7 +12,7 @@ interface ResourceIconProps {
   leftJustified?: boolean;
 }
 
-function getKindStringAndAbbreviation(kind: string) {
+export function getKindStringAndAbbreviation(kind: string) {
   const kindObj = modelFor(kind);
   const kindStr = get(kindObj, 'kind', kind);
   const kindColor = get(kindObj, 'color', undefined);
@@ -20,7 +20,7 @@ function getKindStringAndAbbreviation(kind: string) {
   return { kindStr, kindAbbr, kindColor };
 }
 
-const SvgResourceIcon = forwardRef<SVGRectElement, ResourceIconProps>(
+export const SvgResourceIcon = forwardRef<SVGRectElement, ResourceIconProps>(
   ({ x, y, kind, leftJustified }, iconRef) => {
     const { kindAbbr, kindStr, kindColor } = getKindStringAndAbbreviation(kind);
     const [textSize, textRef] = useSize([]);
@@ -72,5 +72,3 @@ const SvgResourceIcon = forwardRef<SVGRectElement, ResourceIconProps>(
     );
   },
 );
-
-export { SvgResourceIcon as default, getKindStringAndAbbreviation };

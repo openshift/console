@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const ConsolePluginWarning: FC<ConsolePluginWarningProps> = ({
+export const ConsolePluginWarning: FC<ConsolePluginWarningProps> = ({
   enabled,
   previouslyEnabled,
   trusted,
@@ -28,5 +28,3 @@ type ConsolePluginWarningProps = {
   previouslyEnabled: boolean;
   trusted: boolean;
 };
-
-export default ConsolePluginWarning;

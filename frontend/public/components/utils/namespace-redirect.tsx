@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { createPath, Navigate, useLocation } from 'react-router';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 const appendActiveNamespace = (namespace: string, pathname: string): string => {
   const basePath = pathname.replace(/\/$/, '');

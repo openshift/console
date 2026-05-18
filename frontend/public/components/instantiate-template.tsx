@@ -23,7 +23,7 @@ import { CompressIcon, ExpandIcon } from '@patternfly/react-icons';
 /* eslint-disable import/named */
 import { useTranslation } from 'react-i18next';
 
-import { ANNOTATIONS } from '@console/shared';
+import { ANNOTATIONS } from '@console/shared/src/constants/common';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { Perspective, isPerspective, useActivePerspective } from '@console/dynamic-plugin-sdk';

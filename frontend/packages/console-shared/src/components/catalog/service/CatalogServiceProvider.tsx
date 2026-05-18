@@ -8,15 +8,15 @@ import type {
   CatalogItemMetadataProviderFunction,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import { IncompleteDataError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import useCatalogExtensions from '../hooks/useCatalogExtensions';
-import type { CatalogService } from '../utils';
+import { useCatalogExtensions } from '../hooks/useCatalogExtensions';
 import {
   keywordCompare,
   applyCatalogItemMetadata,
   useGetAllDisabledSubCatalogs,
 } from '../utils/catalog-utils';
+import type { CatalogService } from '../utils/types';
 import CatalogCategoryProviderResolver from './CatalogCategoryProviderResolver';
-import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
+import { CatalogExtensionHookResolver } from './CatalogExtensionHookResolver';
 
 type CatalogServiceProviderProps = {
   namespace: string;
@@ -39,7 +39,7 @@ const useTimeout = (timeout: number) => {
   return timeIsUp;
 };
 
-const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
+export const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
   namespace,
   catalogId,
   catalogType,
@@ -219,5 +219,3 @@ const CatalogServiceProvider: FC<CatalogServiceProviderProps> = ({
     </>
   );
 };
-
-export default CatalogServiceProvider;

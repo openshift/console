@@ -7,7 +7,7 @@ import { getActiveNamespace } from '@console/internal/actions/ui';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
-import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
 import { OperatorGroupModel } from '../models';
 import type { OperatorGroupKind, SubscriptionKind, PackageManifestKind } from '../types';

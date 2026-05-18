@@ -49,7 +49,7 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/perspective';
 import { useActiveNamespace, useK8sModel } from '@console/dynamic-plugin-sdk/src/lib-core';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 interface ResourceListProps {
   kind: string;

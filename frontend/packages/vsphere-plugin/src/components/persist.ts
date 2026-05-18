@@ -10,7 +10,10 @@ import {
   VSPHERE_CREDS_SECRET_NAME,
   VSPHERE_CREDS_SECRET_NAMESPACE,
 } from '../constants';
-import type { ConfigMap, Infrastructure, KubeControllerManager, Secret } from '../resources';
+import type { ConfigMap } from '../resources/configMap';
+import type { Infrastructure } from '../resources/infrastructure';
+import type { KubeControllerManager } from '../resources/kubeControllerManager';
+import type { Secret } from '../resources/secret';
 import type { ConnectionFormFormikValues, PersistOp, ProviderCM } from './types';
 import { encodeBase64, getErrorMessage } from './utils';
 

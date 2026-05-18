@@ -9,7 +9,7 @@ import { useCreateSecretModal } from '@console/dev-console/src/components/import
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';

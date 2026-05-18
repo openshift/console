@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { BlueInfoCircleIcon, TableColumn } from '@console/dynamic-plugin-sdk';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import {
   actionsCellProps,
   getNameCellProps,
@@ -40,7 +40,7 @@ import { ResourceSummary } from './utils/details-page';
 import { SectionHeading } from './utils/headings';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ResourceEventStream } from './events';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
 

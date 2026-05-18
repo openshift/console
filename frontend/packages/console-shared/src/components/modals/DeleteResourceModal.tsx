@@ -19,7 +19,7 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { usePromiseHandler } from '../../hooks/usePromiseHandler';
-import { InputField } from '../formik-fields';
+import { InputField } from '../formik-fields/InputField';
 import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
 const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProps> = ({

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCopyButton } from '@patternfly/react-core';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { css } from '@patternfly/react-styles';
 

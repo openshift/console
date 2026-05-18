@@ -26,7 +26,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { MultiTypeaheadFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
+export const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -375,5 +375,3 @@ const MultiTypeaheadField: FC<MultiTypeaheadFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default MultiTypeaheadField;

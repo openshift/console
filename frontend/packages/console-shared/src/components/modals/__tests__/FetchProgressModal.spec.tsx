@@ -6,7 +6,7 @@ import { FetchProgressModal } from '../FetchProgressModal';
 
 const addToastMock = jest.fn();
 
-jest.mock('../../toast', () => ({
+jest.mock('../../toast/useToast', () => ({
   useToast: () => ({
     addToast: addToastMock,
   }),

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import type { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
-import type { APIError } from '@console/shared';
+import type { APIError } from '@console/shared/src/types/resource';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../import/devfile/devfile-types';
 

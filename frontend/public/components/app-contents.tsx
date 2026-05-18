@@ -10,7 +10,7 @@ import {
   getPerspectiveVisitedKey,
   usePerspectives,
 } from '@console/shared/src/hooks/usePerspectives';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import { getReferenceForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, FlagsObject } from '../reducers/features';

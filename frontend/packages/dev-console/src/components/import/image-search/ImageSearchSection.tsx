@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
-import { RadioGroupField } from '@console/shared';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
 import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHeading';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import { hasSampleQueryParameter } from '../../../utils/samples';

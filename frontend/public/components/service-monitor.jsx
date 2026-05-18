@@ -15,7 +15,7 @@ import {
   actionsCellProps,
   cellIsStickyProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const serviceMonitorTableColumnInfo = [
   { id: 'name' },

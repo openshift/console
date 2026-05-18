@@ -9,7 +9,7 @@ import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
 import { DetailsPage } from './factory/details';
 import { ListPage } from './factory/list-page';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import { DetailsItem } from './utils/details-item';
 import { ResourceSummary } from './utils/details-page';
 import { EmptyBox, LoadingBox } from './utils/status-box';
@@ -29,7 +29,7 @@ import {
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { GetDataViewRows } from '@console/app/src/components/data-view/types';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 

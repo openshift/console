@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import SvgResourceIcon, { getKindStringAndAbbreviation } from '../SvgResourceIcon';
+import { SvgResourceIcon, getKindStringAndAbbreviation } from '../SvgResourceIcon';
 
 jest.mock('@patternfly/react-topology', () => ({
   useSize: jest.fn(() => {

@@ -8,9 +8,9 @@ import {
 } from '@patternfly/quickstarts';
 import Pseudo from 'i18next-pseudo/es';
 import { useTranslation } from 'react-i18next';
-import useInlineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
-import MarkdownExecuteSnippet from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
-import useMultilineExecuteCommandExtension from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
+import { useInlineExecuteCommandExtension } from '@console/shared/src/components/markdown-extensions/inline-execute-extension';
+import { MarkdownExecuteSnippet } from '@console/shared/src/components/markdown-extensions/MarkdownExecuteSnippet';
+import { useMultilineExecuteCommandExtension } from '@console/shared/src/components/markdown-extensions/multiline-execute-extension';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';

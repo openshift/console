@@ -1,7 +1,7 @@
 import type { Model } from '@patternfly/react-topology';
 import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk';
 import type { EventKind } from '@console/internal/module/k8s';
-import { CamelKameletBindingModel, KafkaSinkModel } from '@console/knative-plugin';
+import { CamelKameletBindingModel, KafkaSinkModel } from '@console/knative-plugin/src/models';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../const';
 import { WorkloadModelProps } from '../data-transforms/transform-utils';

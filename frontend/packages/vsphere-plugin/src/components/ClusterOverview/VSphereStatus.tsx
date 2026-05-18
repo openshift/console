@@ -7,7 +7,7 @@ import type {
   ConsoleTFunction,
 } from '@console/dynamic-plugin-sdk';
 import { HealthState } from '@console/dynamic-plugin-sdk';
-import type { ConfigMap } from '../../resources';
+import type { ConfigMap } from '../../resources/configMap';
 import { getVSphereHealth } from '../getVSphereHealth';
 import { VSphereConnectionModal } from '../VSphereConnectionModal';
 import { VSphereOperatorStatuses } from '../VSphereOperatorStatuses';

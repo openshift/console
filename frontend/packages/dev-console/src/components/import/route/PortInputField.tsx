@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import type { SelectInputOption } from '@console/shared';
-import { SingleTypeaheadField } from '@console/shared';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { SingleTypeaheadField } from '@console/shared/src/components/formik-fields/SingleTypeaheadField';
 import type { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 
 interface PortInputFieldProps {

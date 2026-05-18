@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { getAPIVersionForModel } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import type { ContainerSpec, EnvVar, K8sResourceKind } from '@console/internal/module/k8s';
-import { TRIGGERS_ANNOTATION } from '@console/shared';
+import { TRIGGERS_ANNOTATION } from '@console/shared/src/constants/resource';
 import { getTriggerAnnotation } from '../../../utils/resource-label-utils';
 import {
   checkIfTriggerExists,

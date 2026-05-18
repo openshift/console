@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
 import FormSection from '../section/FormSection';
 
 export interface BuildConfigSectionProps {

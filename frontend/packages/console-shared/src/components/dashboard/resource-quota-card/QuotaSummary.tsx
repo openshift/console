@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getUsedPercentage } from '@console/app/src/components/resource-quota/utils';
-import { YellowExclamationTriangleIcon } from '../../status';
+import { YellowExclamationTriangleIcon } from '../../status/icons';
 
 import './quota-summary.scss';
 

@@ -5,7 +5,7 @@ import formStyles from '@patternfly/react-styles/css/components/Form/form';
 
 export type FormLayoutProps = Pick<FormProps, 'children' | 'isHorizontal' | 'isWidthLimited'>;
 
-const FormLayout: FC<FormLayoutProps> = ({
+export const FormLayout: FC<FormLayoutProps> = ({
   children,
   isHorizontal = false,
   isWidthLimited = true,
@@ -22,5 +22,3 @@ const FormLayout: FC<FormLayoutProps> = ({
     </div>
   );
 };
-
-export default FormLayout;

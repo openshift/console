@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { Decorator } from '@console/topology/src/components/graph-view';
+import { Decorator } from '@console/topology/src/components/graph-view/components/nodes/decorators/Decorator';
 
 type ServiceRouteDecoratorProps = {
   url: string;

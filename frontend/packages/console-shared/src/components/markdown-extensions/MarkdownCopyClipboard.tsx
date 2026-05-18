@@ -54,7 +54,10 @@ type MarkdownCopyClipboardProps = {
   rootSelector: string;
 };
 
-const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({ docContext, rootSelector }) => {
+export const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({
+  docContext,
+  rootSelector,
+}) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_COPY_BUTTON_ID}]`);
   return elements.length > 0 ? (
     <>
@@ -72,5 +75,3 @@ const MarkdownCopyClipboard: FC<MarkdownCopyClipboardProps> = ({ docContext, roo
     </>
   ) : null;
 };
-
-export default MarkdownCopyClipboard;

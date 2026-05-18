@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { Link } from 'react-router';
 import { css } from '@patternfly/react-styles';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { ResourceLinkProps } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from './resource-icon';
 import { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';

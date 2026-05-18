@@ -1,8 +1,9 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
+import { ProgressiveList } from '@console/shared/src/components/progressive-list/ProgressiveList';
+import { ProgressiveListItem } from '@console/shared/src/components/progressive-list/ProgressiveListItem';
 import FormSection from '../import/section/FormSection';
 import EnvironmentVariablesSection from './sections/EnvironmentVariablesSection';
 import HooksSection from './sections/HooksSection';

@@ -2,7 +2,8 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { ProgressiveList, ProgressiveListItem } from '@console/shared/src';
+import { ProgressiveList } from '@console/shared/src/components/progressive-list/ProgressiveList';
+import { ProgressiveListItem } from '@console/shared/src/components/progressive-list/ProgressiveListItem';
 import ImageSection from './ImageSection';
 import TimeoutSection from './TimeoutSection';
 

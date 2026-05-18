@@ -4,8 +4,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ToastContextValues } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import ToastContext from '../ToastContext';
-import ToastProvider from '../ToastProvider';
+import { ToastContext } from '../ToastContext';
+import { ToastProvider } from '../ToastProvider';
 
 describe('ToastProvider', () => {
   let toastContext: ToastContextValues;

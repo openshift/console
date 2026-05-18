@@ -3,13 +3,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk/src';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
-import {
-  CatalogQueryParams,
-  CatalogServiceProvider,
-  CatalogController,
-  ALL_NAMESPACES_KEY,
-} from '@console/shared';
+import { CatalogController } from '@console/shared/src/components/catalog/CatalogController';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
+import { CatalogQueryParams } from '@console/shared/src/components/catalog/utils/types';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';

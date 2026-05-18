@@ -753,7 +753,7 @@ export type { OverlayComponent } from '../app/modal-support/OverlayProvider';
  * ```
  */
 export const ActionServiceProvider: FC<ActionServiceProviderProps> = require('@console/shared/src/components/actions/ActionServiceProvider')
-  .default;
+  .ActionServiceProvider;
 
 /**
  * A component that renders a horizontal toolbar with a namespace dropdown menu in the leftmost position. Additional components can be passed in as children and will be rendered to the right of the namespace dropdown. This component is designed to be used at the top of the page. It should be used on pages where the user needs to be able to change the active namespace, such as on pages with k8s resources.
@@ -800,7 +800,7 @@ export const NamespaceBar: FC<NamespaceBarProps> = require('@console/internal/co
  * ```
  */
 export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = require('@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage')
-  .default;
+  .ErrorBoundaryFallbackPage;
 
 /**
  * A component that renders a graph of the results from a Prometheus PromQL query along with controls for interacting with the graph.
@@ -836,7 +836,7 @@ export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = require
  * />
  * ```
  */
-export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser')
+export const QueryBrowser: FC<QueryBrowserProps> = require('@console/shared/src/components/query-browser/QueryBrowser')
   .QueryBrowser;
 
 /**
@@ -1000,6 +1000,6 @@ export const useActivePerspective: UseActivePerspective = require('@console/dyna
  * };
  * ```
  */
-export const useToast: UseToast = require('@console/shared/src/components/toast/useToast').default;
+export const useToast: UseToast = require('@console/shared/src/components/toast/useToast').useToast;
 
 export * from '../perspective/perspective-context';

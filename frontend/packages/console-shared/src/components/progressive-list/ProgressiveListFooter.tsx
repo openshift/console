@@ -9,7 +9,11 @@ export interface ProgressiveListFooterProps {
   Footer: FC<{ children?: ReactNode }>;
 }
 
-const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({ items, onShowItem, Footer }) => {
+export const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({
+  items,
+  onShowItem,
+  Footer,
+}) => {
   if (!items || items.length === 0) {
     return null;
   }
@@ -45,5 +49,3 @@ const ProgressiveListFooter: FC<ProgressiveListFooterProps> = ({ items, onShowIt
     </Footer>
   );
 };
-
-export default ProgressiveListFooter;

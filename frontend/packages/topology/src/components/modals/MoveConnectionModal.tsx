@@ -34,7 +34,7 @@ import {
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { TYPE_CONNECTS_TO } from '../../const';
-import { createConnection } from '../../utils';
+import { createConnection } from '../../utils/createConnection';
 
 type MoveConnectionModalProps = {
   edge: Edge;

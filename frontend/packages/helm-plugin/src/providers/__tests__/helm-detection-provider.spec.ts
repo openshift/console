@@ -6,7 +6,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { mockHelmChartRepositories } from '../../components/__tests__/helm-release-mock-data';
 import { FLAG_OPENSHIFT_HELM } from '../../const';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { hasEnabledHelmCharts, useDetectHelmChartRepositories } from '../helm-detection-provider';
 
 const ns: string = 'ns';

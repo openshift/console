@@ -6,8 +6,11 @@ import type { K8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types'
 import { DefaultPage } from '@console/internal/components/default-resource';
 import type { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { MenuAction, MenuActions } from '@console/shared';
-import { MultiTabListPage } from '@console/shared';
+import type {
+  MenuAction,
+  MenuActions,
+} from '@console/shared/src/components/multi-tab-list/multi-tab-list-page-types';
+import { MultiTabListPage } from '@console/shared/src/components/multi-tab-list/MultiTabListPage';
 import {
   useBuildModel,
   useBuildRunModel,

@@ -13,10 +13,13 @@ jest.mock('../../../../../utils/fetch-dynamic-eventsources-utils', () => ({
   useChannelModels: jest.fn(() => ({ loaded: true, eventSourceChannels: [] })),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: jest
     .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
     .createKnativeTextStub('mock-ResourceDropdownField'),
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: jest.fn(() => 'mocked-field-id'),
 }));
 

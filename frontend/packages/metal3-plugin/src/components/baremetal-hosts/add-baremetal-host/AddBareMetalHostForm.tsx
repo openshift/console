@@ -5,14 +5,12 @@ import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import {
-  InputField,
-  TextAreaField,
-  SwitchField,
-  FormFooter,
-  CheckboxField,
-  FormSelectField,
-} from '@console/shared/src';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { FormSelectField } from '@console/shared/src/components/formik-fields/FormSelectField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SwitchField } from '@console/shared/src/components/formik-fields/SwitchField';
+import { TextAreaField } from '@console/shared/src/components/formik-fields/TextAreaField';
 import type { AddBareMetalHostFormValues } from './types';
 
 type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues> & {

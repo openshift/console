@@ -1,5 +1,5 @@
 import type { PodKind } from '@console/internal/module/k8s';
-import { getNamespace, getOwnerReferences, getUID } from '@console/shared';
+import { getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors/common';
 import type { VMIKind } from './kubevirt-types';
 
 const isPodReady = (pod: PodKind): boolean =>

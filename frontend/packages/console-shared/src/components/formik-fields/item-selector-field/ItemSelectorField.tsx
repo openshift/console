@@ -48,7 +48,7 @@ interface ItemSelectorFieldProps {
   emptyStateMessage?: string;
 }
 
-const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
+export const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
   itemList,
   name,
   loadingItems,
@@ -204,5 +204,3 @@ const ItemSelectorField: FC<ItemSelectorFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default ItemSelectorField;

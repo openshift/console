@@ -7,7 +7,7 @@ import {
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
 } from './utils/resource-log';
-import { ConsoleEmptyState } from '@console/shared/src/components/empty-state';
+import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './utils/build-utils';

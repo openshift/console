@@ -20,7 +20,7 @@ import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { CertificateSigningRequestModel } from '@console/internal/models';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
-import SecondaryStatus from '@console/shared/src/components/status/SecondaryStatus';
+import { SecondaryStatus } from '@console/shared/src/components/status/SecondaryStatus';
 import { getNodeServerCSR } from '../csr';
 import { approveCSR, denyCSR } from '../menu-actions';
 

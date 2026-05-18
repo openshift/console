@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import type { PopoverProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ShortcutTable, Shortcut } from '../shortcuts';
-import { isMac } from '../shortcuts/Shortcut';
+import { Shortcut, isMac } from '../shortcuts/Shortcut';
+import { ShortcutTable } from '../shortcuts/ShortcutTable';
 
 export const useShortcutPopover = (shortcutsPopoverProps?: Partial<PopoverProps>): PopoverProps => {
   const { t } = useTranslation('console-shared');

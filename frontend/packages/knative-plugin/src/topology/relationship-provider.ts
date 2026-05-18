@@ -1,5 +1,5 @@
 import type { Node } from '@patternfly/react-topology';
-import { getResource } from '@console/topology/src/utils';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { TYPE_KNATIVE_SERVICE } from './const';
 
 export const providerProvidesServiceBinding = (source: Node, target: Node) => {

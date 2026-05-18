@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
-import { getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 
 const formatFilterData = (filters) => {
   let filterPairs = [];

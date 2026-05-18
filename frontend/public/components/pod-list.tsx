@@ -18,7 +18,7 @@ import {
   TableColumn,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { Status } from '@console/shared/src/components/status/Status';
 import { COLUMN_MANAGEMENT_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';

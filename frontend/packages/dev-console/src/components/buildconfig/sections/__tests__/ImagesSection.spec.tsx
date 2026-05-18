@@ -7,7 +7,7 @@ import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import store from '@console/internal/redux';
-import DropdownField from '@console/shared/src/components/formik-fields/DropdownField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import { BuildStrategyType } from '../../types';
 import type { ImagesSectionFormData } from '../ImagesSection';
 import ImagesSection from '../ImagesSection';

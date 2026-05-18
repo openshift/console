@@ -32,8 +32,7 @@ import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { ALLOW_EXPORT_APP } from '../const';
 import { TopologyViewType } from '../topology-types';
-import { getResource } from '../utils';
-import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
+import { getResource, getNamespaceDashboardKialiLink } from '../utils/topology-utils';
 import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,

@@ -6,7 +6,7 @@ import * as useToastModule from '@console/shared/src/components/toast/useToast';
 import * as useUserPreferenceModule from '@console/shared/src/hooks/useUserPreference';
 import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import { getExportAppData } from '@console/topology/src/utils/export-app-utils';
-import { ExportModel } from '../../../models';
+import { ExportModel } from '../../../models/gitops-primer';
 import { ExportApplicationModal } from '../ExportApplicationModal';
 import { mockExportData } from './export-data';
 
@@ -20,7 +20,7 @@ jest.mock('react-i18next', () => {
 
 jest.mock('@console/shared/src/components/toast/useToast', () => ({
   ...jest.requireActual('@console/shared/src/components/toast/useToast'),
-  default: jest.fn(),
+  useToast: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
@@ -39,7 +39,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: jest.fn(() => jest.fn()),
 }));
 
-const spyUseToast = useToastModule.default as jest.Mock;
+const spyUseToast = useToastModule.useToast as jest.Mock;
 const spyUseUserPreference = useUserPreferenceModule.useUserPreference as jest.Mock;
 const spyk8sCreate = k8sResourceModule.k8sCreate as jest.Mock;
 const spyk8sKill = k8sResourceModule.k8sKill as jest.Mock;

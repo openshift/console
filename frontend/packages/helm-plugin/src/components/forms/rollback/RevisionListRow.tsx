@@ -1,7 +1,9 @@
 import type { DataViewTd } from '@patternfly/react-data-view';
 import type { TdProps } from '@patternfly/react-table';
-import { Status, RadioButtonField, DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
+import { RadioButtonField } from '@console/shared/src/components/formik-fields/RadioButtonField';
+import { Status } from '@console/shared/src/components/status/Status';
+import { DASH } from '@console/shared/src/constants/ui';
 import type { HelmRelease } from '../../../types/helm-types';
 import { HelmReleaseStatusLabels, releaseStatus } from '../../../utils/helm-utils';
 

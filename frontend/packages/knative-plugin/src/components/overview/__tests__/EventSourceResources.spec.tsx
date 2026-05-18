@@ -40,13 +40,10 @@ jest.mock('@patternfly/react-core', () => ({
 
 jest.mock('react-i18next');
 
-jest.mock('@console/shared', () => {
-  const ActualShared = jest.requireActual('@console/shared');
-  return {
-    ...ActualShared,
-    usePodsWatcher: jest.fn(),
-  };
-});
+jest.mock('@console/shared/src/hooks/usePodsWatcher', () => ({
+  ...jest.requireActual('@console/shared/src/hooks/usePodsWatcher'),
+  usePodsWatcher: jest.fn(),
+}));
 
 describe('EventSinkServicesOverviewList', () => {
   it('should show error info if no sink present or sink,kind is incorrect', () => {

@@ -2,19 +2,19 @@ import type { ComponentType } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { withDragNode, withSelection, withDndDrop } from '@patternfly/react-topology';
 import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
-import { withCreateConnector } from '@console/topology/src/behavior';
-import type { NodeComponentProps } from '@console/topology/src/components/graph-view';
+import { withCreateConnector } from '@console/topology/src/behavior/withCreateConnector';
+import type { NodeComponentProps } from '@console/topology/src/components/graph-view/components/componentUtils';
 import {
-  WorkloadNode,
   createConnectorCallback,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   withContextMenu,
   withNoDrop,
-  CreateConnector,
   noRegroupDragSourceSpec,
-} from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess } from '@console/topology/src/utils';
+} from '@console/topology/src/components/graph-view/components/componentUtils';
+import { CreateConnector } from '@console/topology/src/components/graph-view/components/edges/CreateConnector';
+import { WorkloadNode } from '@console/topology/src/components/graph-view/components/nodes/WorkloadNode';
+import { withEditReviewAccess } from '@console/topology/src/utils/withEditReviewAccess';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
 import HelmRelease from './HelmRelease';
 

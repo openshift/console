@@ -11,7 +11,7 @@ import {
   documentationURLs,
   getDocumentationURL,
 } from '@console/internal/components/utils/documentation';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 

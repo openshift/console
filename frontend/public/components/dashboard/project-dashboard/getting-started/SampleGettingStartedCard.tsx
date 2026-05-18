@@ -3,12 +3,10 @@ import { CatalogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import CatalogServiceProvider from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
+import { CatalogServiceProvider } from '@console/shared/src/components/catalog/service/CatalogServiceProvider';
 import { isCatalogTypeEnabled } from '@console/shared/src/components/catalog/utils/catalog-utils';
-import {
-  GettingStartedLink,
-  GettingStartedCard,
-} from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { SAMPLE_CATALOG_TYPE_ID } from '@console/dev-console/src/const';
 import { getDisabledAddActions } from '@console/dev-console/src/utils/useAddActionExtensions';
