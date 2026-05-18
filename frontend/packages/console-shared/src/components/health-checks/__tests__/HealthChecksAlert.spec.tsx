@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import * as rbacModule from '@console/internal/components/utils/rbac';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { sampleDeployments } from '../../../utils/__tests__/test-resource-data';
-import HealthChecksAlert from '../HealthChecksAlert';
+import { HealthChecksAlert } from '../HealthChecksAlert';
 
 jest.mock('@console/shared/src/hooks/useUserPreference', () => ({
   useUserPreference: () => [[], jest.fn(), true],

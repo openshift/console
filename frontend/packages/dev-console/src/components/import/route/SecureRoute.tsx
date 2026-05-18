@@ -4,7 +4,9 @@ import { FormHelperText, Title } from '@patternfly/react-core';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { DroppableFileInputField } from '@console/shared/src/components/formik-fields/DroppableFileInputField';
 import { usePreferredRoutingOptions } from '../../user-preferences/usePreferredRoutingOptions';
 import {
   TerminationType,

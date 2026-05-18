@@ -1,7 +1,7 @@
 import type { FC, CSSProperties } from 'react';
 import { useState, useEffect } from 'react';
 import type { PopperOptions } from 'popper.js';
-import { Popper } from '../popper';
+import { Popper } from '../popper/Popper';
 import './spotlight.scss';
 
 type InteractiveSpotlightProps = {

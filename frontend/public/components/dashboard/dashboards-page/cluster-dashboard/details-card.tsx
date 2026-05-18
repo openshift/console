@@ -12,7 +12,7 @@ import {
 } from '@console/shared/src/selectors/infrastructure';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
-import { ErrorBoundaryInline } from '@console/shared/src/components/error';
+import { ErrorBoundaryInline } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryInline';
 import {
   useResolvedExtensions,
   isCustomOverviewDetailItem,

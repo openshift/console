@@ -7,13 +7,11 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  FormFooter,
-  FlexForm,
-  FormBody,
-  CodeEditorField,
-  SyncedEditorField,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {

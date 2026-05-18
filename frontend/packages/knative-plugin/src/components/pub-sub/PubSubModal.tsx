@@ -4,7 +4,7 @@ import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import InputField from '@console/shared/src/components/formik-fields/InputField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import PubSubFilter from './form-fields/PubSubFilter';
 import PubSubSubscriber from './form-fields/PubSubSubscriber';

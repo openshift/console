@@ -5,7 +5,7 @@ import type { BaseInputFieldProps } from './field-types';
 
 import './InputField.scss';
 
-const InputField = forwardRef<HTMLInputElement, BaseInputFieldProps>(
+export const InputField = forwardRef<HTMLInputElement, BaseInputFieldProps>(
   ({ type = TextInputTypes.text, ...baseProps }, ref) => (
     <BaseInputField type={type} {...baseProps}>
       {(props) => (
@@ -24,5 +24,3 @@ const InputField = forwardRef<HTMLInputElement, BaseInputFieldProps>(
     </BaseInputField>
   ),
 );
-
-export default InputField;

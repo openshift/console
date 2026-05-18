@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { Status } from '@console/shared/src/components/status/Status';

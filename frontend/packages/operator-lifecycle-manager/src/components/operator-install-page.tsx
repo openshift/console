@@ -34,7 +34,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
-import type { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,

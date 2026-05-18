@@ -14,8 +14,8 @@ import type {
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin/src/models';
-import { AllPodStatus } from '../constants';
-import type { ExtPodKind } from '../types';
+import { AllPodStatus } from '../constants/pod';
+import type { ExtPodKind } from '../types/pod';
 import { checkPodEditAccess, getPodStatus } from './pod-utils';
 
 import './pod-ring-text.scss';

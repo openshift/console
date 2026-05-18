@@ -10,13 +10,12 @@ jest.mock('react-router', () => ({
   useParams: jest.fn(),
 }));
 
-jest.mock('@console/shared', () => {
-  return {
-    FLAGS: {
-      OPENSHIFT: 'OPENSHIFT',
-    },
-  };
-});
+jest.mock('@console/shared/src/constants/common', () => ({
+  ...jest.requireActual('@console/shared/src/constants/common'),
+  FLAGS: {
+    OPENSHIFT: 'OPENSHIFT',
+  },
+}));
 
 jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn(),

@@ -21,7 +21,7 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import { VirtualizedGrid } from '@console/shared';
+import { VirtualizedGrid } from '@console/shared/src/components/virtualized-grid/VirtualizedGrid';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { getURLWithParams } from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { Link, useSearchParams } from 'react-router';

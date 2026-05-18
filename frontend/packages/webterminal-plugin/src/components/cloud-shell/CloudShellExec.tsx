@@ -12,7 +12,7 @@ import { resourceURL } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import type { WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
 import type { CloudShellResource } from './cloud-shell-utils';

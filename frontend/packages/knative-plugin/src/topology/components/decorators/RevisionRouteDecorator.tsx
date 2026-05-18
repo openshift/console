@@ -4,8 +4,8 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import type { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { Decorator } from '@console/topology/src/components/graph-view';
-import { getResource } from '@console/topology/src/utils';
+import { Decorator } from '@console/topology/src/components/graph-view/components/nodes/decorators/Decorator';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { useRoutesURL } from '../../../utils/useRoutesURL';
 
 interface RevisionRouteDecoratorProps {

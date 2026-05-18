@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import { ConsoleEmptyState } from '../empty-state';
+import { ConsoleEmptyState } from '../empty-state/ConsoleEmptyState';
 import { Loading } from './Loading';
 
 // We do not use react-router here as LoadingBox may be used outside the router context scope

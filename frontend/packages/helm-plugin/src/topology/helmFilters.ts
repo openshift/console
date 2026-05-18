@@ -1,5 +1,5 @@
 import type { Model } from '@patternfly/react-topology';
-import { isExpanded } from '@console/topology/src/filters';
+import { isExpanded } from '@console/topology/src/filters/filter-utils';
 import type { DisplayFilters } from '@console/topology/src/topology-types';
 import { TopologyDisplayFilterType } from '@console/topology/src/topology-types';
 import { TYPE_HELM_RELEASE } from './components/const';

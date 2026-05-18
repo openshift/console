@@ -5,7 +5,7 @@ import {
   useGetAllDisabledSubCatalogs,
   isCatalogTypeEnabled,
   useIsSoftwareCatalogEnabled,
-} from '@console/shared';
+} from '@console/shared/src/components/catalog/utils/catalog-utils';
 import { mockExtensions } from './catalogTypeExtensions.data';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({

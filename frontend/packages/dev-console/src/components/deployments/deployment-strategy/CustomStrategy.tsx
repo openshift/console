@@ -2,7 +2,9 @@ import type { FC } from 'react';
 import type { FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
+import { EnvironmentField } from '@console/shared/src/components/formik-fields/EnvironmentField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import type { StrategyFieldProps } from './utils/types';
 
 const CustomStrategy: FC<StrategyFieldProps> = ({ resourceObj }) => {

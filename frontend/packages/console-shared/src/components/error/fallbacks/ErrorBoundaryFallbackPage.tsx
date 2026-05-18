@@ -18,7 +18,7 @@ const reloadPage = () => {
 /**
  * Standard fallback catch -- expected to take up the whole page.
  */
-const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
+export const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
   const { t } = useTranslation();
   return (
     <ErrorState
@@ -43,5 +43,3 @@ const ErrorBoundaryFallbackPage: FC<ErrorBoundaryFallbackProps> = (props) => {
     />
   );
 };
-
-export default ErrorBoundaryFallbackPage;

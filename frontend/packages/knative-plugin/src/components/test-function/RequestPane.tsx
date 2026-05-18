@@ -5,14 +5,12 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import type { FormikProps, FormikValues } from 'formik/dist/types';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import type { SelectInputOption } from '@console/shared/src/components';
-import {
-  DropdownField,
-  InputField,
-  SingleTypeaheadField,
-  CodeEditorField,
-} from '@console/shared/src/components';
-import { FormLayout } from '@console/shared/src/components/cluster-configuration';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import type { SelectInputOption } from '@console/shared/src/components/formik-fields/field-types';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SingleTypeaheadField } from '@console/shared/src/components/formik-fields/SingleTypeaheadField';
 import { InvokeFormat } from './types';
 import { getcurrentLanguage } from './utils';
 

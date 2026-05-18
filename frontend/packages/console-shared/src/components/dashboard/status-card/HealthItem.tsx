@@ -4,7 +4,7 @@ import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import type { HealthItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
-import { SecondaryStatus } from '../../status';
+import { SecondaryStatus } from '../../status/SecondaryStatus';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
 const HealthItemIcon: FC<HealthItemIconProps> = ({ state, dataTest }) => {

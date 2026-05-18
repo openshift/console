@@ -7,7 +7,7 @@ import { usePoll } from '@console/shared/src/hooks/usePoll';
 import type { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';
 import { settleAllPromises } from '@console/dynamic-plugin-sdk/src/utils/promise';
 import { URL_POLL_DEFAULT_DELAY } from '@console/internal/components/utils/url-poll-hook';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { AlertVariant } from '@patternfly/react-core';
 
 interface CheckUpdatesApiResult {

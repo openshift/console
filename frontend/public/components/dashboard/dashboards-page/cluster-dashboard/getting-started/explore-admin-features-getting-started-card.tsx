@@ -7,10 +7,8 @@ import { FLAGS } from '@console/shared/src/constants/common';
 import { useOpenShiftVersion } from '@console/shared/src/hooks/useClusterVersion';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 
-import {
-  GettingStartedCard,
-  GettingStartedLink,
-} from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 import { lightspeedOperatorURL } from '@console/app/src/components/lightspeed/Lightspeed';
 import { DOC_URL_OPENSHIFT_WHATS_NEW } from '../../../../utils/documentation';
 

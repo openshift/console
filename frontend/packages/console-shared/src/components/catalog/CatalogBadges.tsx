@@ -22,12 +22,10 @@ const Badge = ({ color, icon, variant, text, tooltip }: CatalogItemBadge) => {
   return tooltip ? <Tooltip content={tooltip}>{badge}</Tooltip> : badge;
 };
 
-const CatalogBadges: FC<CatalogBadgesProps> = ({ badges }) => (
+export const CatalogBadges: FC<CatalogBadgesProps> = ({ badges }) => (
   <div className="odc-catalog-badges">
     {badges?.map((badge) => (
       <Badge key={badge.text} {...badge} />
     ))}
   </div>
 );
-
-export default CatalogBadges;

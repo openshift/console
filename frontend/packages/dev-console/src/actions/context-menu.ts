@@ -6,9 +6,9 @@ import type { TopologyApplicationObject } from '@console/dynamic-plugin-sdk/src/
 import { LazyDeleteModalOverlay } from '@console/internal/components/modals';
 import { asAccessReview } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { LazyDeleteResourceModalOverlay } from '@console/shared';
-import { ApplicationModel } from '@console/topology/src/models';
-import { cleanUpWorkload } from '@console/topology/src/utils';
+import { LazyDeleteResourceModalOverlay } from '@console/shared/src/components/modals/LazyDeleteResourceModal';
+import { ApplicationModel } from '@console/topology/src/models/application';
+import { cleanUpWorkload } from '@console/topology/src/utils/application-utils';
 
 export const useDeleteApplicationAction = (
   application: TopologyApplicationObject,

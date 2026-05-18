@@ -1,5 +1,8 @@
 import type { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
-import type { NameValueFromPair, NameValuePair } from '@console/shared';
+import type {
+  NameValueFromPair,
+  NameValuePair,
+} from '@console/shared/src/components/formik-fields/field-types';
 
 export { BuildConfigModel } from '@console/internal/models';
 export { BuildStrategyType } from '@console/internal/components/utils/build-utils';

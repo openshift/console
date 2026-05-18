@@ -28,13 +28,12 @@ jest.mock('../MonitoringOverview', () => ({
   default: () => 'MonitoringOverview',
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/hooks/usePodsWatcher', () => ({
   usePodsWatcher: () => ({
     loaded: true,
     loadError: '',
     podData: {},
   }),
-  OverviewItem: {},
 }));
 
 describe('Monitoring Tab', () => {

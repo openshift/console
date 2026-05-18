@@ -22,16 +22,15 @@ import type { PodKind } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
+import { HOST_STATUS_READY, HOST_STATUS_AVAILABLE } from '../../constants/bare-metal-host';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
-  HOST_STATUS_READY,
-  HOST_STATUS_AVAILABLE,
   NODE_STATUS_STARTING_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
-} from '../../constants';
+} from '../../constants/node-maintenance';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { powerOffHost } from '../../k8s/requests/bare-metal-host';
-import type { BareMetalHostKind } from '../../types';
+import type { BareMetalHostKind } from '../../types/host';
 import type { StatusProps } from '../types';
 import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
 import { useStartNodeMaintenanceModalLauncher } from './StartNodeMaintenanceModal';

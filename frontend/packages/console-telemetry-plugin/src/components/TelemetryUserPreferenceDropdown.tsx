@@ -12,7 +12,10 @@ import {
   MenuToggle,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PREFERRED_TELEMETRY_USER_PREFERENCE_KEY, USER_TELEMETRY_ANALYTICS } from '@console/shared';
+import {
+  PREFERRED_TELEMETRY_USER_PREFERENCE_KEY,
+  USER_TELEMETRY_ANALYTICS,
+} from '@console/shared/src/constants/common';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 

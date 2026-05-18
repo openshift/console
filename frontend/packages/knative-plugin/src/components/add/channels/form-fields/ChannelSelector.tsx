@@ -4,8 +4,8 @@ import { useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import type { DropdownFieldProps } from '@console/shared';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import type { DropdownFieldProps } from '@console/shared/src/components/formik-fields/field-types';
 import { EVENTING_CHANNEL_KIND } from '../../../../const';
 import { getChannelKind } from '../../../../utils/create-channel-utils';
 

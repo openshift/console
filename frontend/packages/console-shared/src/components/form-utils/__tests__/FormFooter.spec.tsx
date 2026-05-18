@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import type { FormFooterProps } from '../form-utils-types';
-import FormFooter from '../FormFooter';
+import { FormFooter } from '../FormFooter';
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {

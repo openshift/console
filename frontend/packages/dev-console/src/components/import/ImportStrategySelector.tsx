@@ -14,7 +14,7 @@ import { FLAG_KNATIVE_SERVING_SERVICE } from '@console/knative-plugin/src/const'
 import { ServiceModel as ksvcModel } from '@console/knative-plugin/src/models';
 import { ServerlessBuildStrategyType } from '@console/knative-plugin/src/types';
 import { ServerlessFunctionIcon } from '@console/knative-plugin/src/utils/icons';
-import { getFieldId } from '@console/shared/src';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useFormikValidationFix } from '@console/shared/src/hooks/useFormikValidationFix';
 

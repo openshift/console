@@ -5,7 +5,7 @@ import { getSvgFromPfIconConfig } from '@console/shared/src/utils/icon-utils';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 import './markdown-extension.scss';
 
-const useInlineCopyClipboardExtension = () => {
+export const useInlineCopyClipboardExtension = () => {
   const { t } = useTranslation();
   return useMemo(
     () => ({
@@ -43,5 +43,3 @@ const useInlineCopyClipboardExtension = () => {
     [t],
   );
 };
-
-export default useInlineCopyClipboardExtension;

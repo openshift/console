@@ -9,7 +9,7 @@ type FormBodyProps = {
   disablePaneBody?: boolean;
 };
 
-const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
+export const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
   children,
   className,
   style,
@@ -29,5 +29,3 @@ const FormBody: FC<FormBodyProps & HTMLProps<HTMLDivElement>> = ({
     {children}
   </div>
 );
-
-export default FormBody;

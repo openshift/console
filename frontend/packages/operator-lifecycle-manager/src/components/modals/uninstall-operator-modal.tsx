@@ -40,7 +40,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { useOperands } from '@console/shared/src/hooks/useOperands';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';

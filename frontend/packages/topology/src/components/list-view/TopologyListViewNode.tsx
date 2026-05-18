@@ -23,22 +23,20 @@ import {
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared/src/utils/alert-utils';
-import { useSearchFilter } from '../../filters';
+import { useSearchFilter } from '../../filters/useSearchFilter';
 import { getResource, getResourceKind } from '../../utils/topology-utils';
-import {
-  AlertsCell,
-  GroupResourcesCell,
-  CpuCell,
-  MemoryCell,
-  StatusCell,
-  TypedResourceBadgeCell,
-} from './cells';
+import { AlertsCell } from './cells/AlertsCell';
+import { CpuCell } from './cells/CpuCell';
+import { GroupResourcesCell } from './cells/GroupResourcesCell';
+import { MemoryCell } from './cells/MemoryCell';
+import { StatusCell } from './cells/StatusCell';
+import { TypedResourceBadgeCell } from './cells/TypedResourceBadgeCell';
 
 type DispatchProps = {
   onSelectTab?: (name: string) => void;
 };
 
-const TopologyListViewNode: FC<TopologyListViewNodeProps & DispatchProps> = ({
+const TopologyListViewNodeComponent: FC<TopologyListViewNodeProps & DispatchProps> = ({
   item,
   selectedIds,
   onSelect,
@@ -155,7 +153,7 @@ const TopologyListViewNodeDispatchToProps = (dispatch): DispatchProps => ({
   onSelectTab: (name) => dispatch(selectOverviewDetailsTab(name)),
 });
 
-export default connect<{}, DispatchProps, TopologyListViewNodeProps>(
+export const TopologyListViewNode = connect<{}, DispatchProps, TopologyListViewNodeProps>(
   null,
   TopologyListViewNodeDispatchToProps,
-)(observer(TopologyListViewNode));
+)(observer(TopologyListViewNodeComponent));

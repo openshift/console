@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 
 const CreateRoute: FC = () => {
   const { t } = useTranslation();

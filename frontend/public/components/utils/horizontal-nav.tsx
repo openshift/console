@@ -15,7 +15,7 @@ import {
 import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { PageTitleContext } from '@console/shared/src/components/pagetitle/PageTitleContext';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
-import { ErrorBoundaryPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryPage';
 import PageBody from '@console/shared/src/components/layout/PageBody';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceFor, referenceForExtensionModel } from '../../module/k8s/k8s';

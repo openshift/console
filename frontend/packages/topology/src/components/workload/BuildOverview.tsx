@@ -19,8 +19,8 @@ import { BuildConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { BuildPhase, startBuild } from '@console/internal/module/k8s/builds';
-import type { BuildConfigOverviewItem } from '@console/shared';
-import { Status } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import type { BuildConfigOverviewItem } from '@console/shared/src/types/resource';
 import './BuildOverview.scss';
 
 const MAX_VISIBLE = 3;

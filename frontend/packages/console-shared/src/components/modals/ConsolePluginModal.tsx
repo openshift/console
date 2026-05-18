@@ -14,10 +14,8 @@ import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
-import {
-  ConsolePluginRadioInputs,
-  ConsolePluginWarning,
-} from '@console/shared/src/components/utils';
+import { ConsolePluginRadioInputs } from '@console/shared/src/components/utils/ConsolePluginRadioInputs';
+import { ConsolePluginWarning } from '@console/shared/src/components/utils/ConsolePluginWarning';
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils/console-plugin';

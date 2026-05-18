@@ -8,7 +8,7 @@ import type {
 } from '@console/dynamic-plugin-sdk/src';
 import { consoleFetchJSON } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-error';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import type { TaskRunKind } from '../../types';
 
 // REST API spec

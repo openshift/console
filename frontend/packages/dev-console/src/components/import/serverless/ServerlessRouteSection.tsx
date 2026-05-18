@@ -8,8 +8,8 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { DomainMappingModel } from '@console/knative-plugin/src';
-import { MultiTypeaheadField } from '@console/shared';
+import { DomainMappingModel } from '@console/knative-plugin/src/models';
+import { MultiTypeaheadField } from '@console/shared/src/components/formik-fields/MultiTypeaheadField';
 import type { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import {
   getAllOtherDomainMappingInUse,

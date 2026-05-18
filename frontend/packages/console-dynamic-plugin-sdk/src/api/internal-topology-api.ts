@@ -34,7 +34,7 @@ export const MemoryCellComponent: FC<MemoryCellComponentProps> = require('@conso
   .MemoryCellComponent;
 
 export const TopologyListViewNode: FC<TopologyListViewNodeProps> = require('@console/topology/src/components/list-view/TopologyListViewNode')
-  .default;
+  .TopologyListViewNode;
 
 export const useOverviewMetrics: UseOverviewMetrics = require('@console/topology/src/utils/useOverviewMetrics')
   .useOverviewMetrics;
@@ -75,28 +75,28 @@ export const getWorkloadResources: GetWorkloadResources = require('@console/topo
 export const contextMenuActions: ContextMenuActions = require('@console/topology/src/actions/contextMenuActions')
   .contextMenuActions;
 
-export const CreateConnector: CreateConnectorProps = require('@console/topology/src/components/graph-view')
+export const CreateConnector: CreateConnectorProps = require('@console/topology/src/components/graph-view/components/edges/CreateConnector')
   .CreateConnector;
 
-export const createConnectorCallback = require('@console/topology/src/components/graph-view')
+export const createConnectorCallback = require('@console/topology/src/components/graph-view/components/componentUtils')
   .createConnectorCallback;
 
-export const WorkloadNode: FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view')
+export const WorkloadNode: FC<WorkloadNodeProps> = require('@console/topology/src/components/graph-view/components/nodes/WorkloadNode')
   .WorkloadNode;
 
-export const PodSet: FC<PodSetProps> = require('@console/topology/src/components/graph-view')
+export const PodSet: FC<PodSetProps> = require('@console/topology/src/components/graph-view/components/nodes/PodSet')
   .PodSet;
 
-export const BaseNode: FC<BaseNodeProps> = require('@console/topology/src/components/graph-view')
+export const BaseNode: FC<BaseNodeProps> = require('@console/topology/src/components/graph-view/components/nodes/BaseNode')
   .BaseNode;
 
-export const withContextMenu: WithContextMenu = require('@console/topology/src/components/graph-view')
+export const withContextMenu: WithContextMenu = require('@console/topology/src/components/graph-view/components/componentUtils')
   .withContextMenu;
 
-export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior')
+export const withCreateConnector: WithCreateConnector = require('@console/topology/src/behavior/withCreateConnector')
   .withCreateConnector;
 
-export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements')
+export const OdcBaseNode: OdcBaseNodeConstructor = require('@console/topology/src/elements/OdcBaseNode')
   .OdcBaseNode;
 
 export const PodRingSet: FC<PodRingSetProps> = require('@console/shared/src/components/pod/PodRingSet')

@@ -19,7 +19,7 @@ type BaseEdgeProps = ComponentProps<typeof DefaultEdge> &
   Partial<WithTargetDragProps> &
   Partial<WithContextMenuProps>;
 
-const BaseEdge: FC<BaseEdgeProps> = ({
+const BaseEdgeComponent: FC<BaseEdgeProps> = ({
   className,
   element,
   endTerminalType = EdgeTerminalType.directional,
@@ -57,4 +57,4 @@ const BaseEdge: FC<BaseEdgeProps> = ({
   );
 };
 
-export default observer<typeof BaseEdge>(BaseEdge);
+export const BaseEdge = observer<typeof BaseEdgeComponent>(BaseEdgeComponent);

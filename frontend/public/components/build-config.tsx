@@ -43,7 +43,7 @@ import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/uti
 import { sortResourceByValue } from './factory/Table/sort';
 import { sorts } from './factory/table';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 

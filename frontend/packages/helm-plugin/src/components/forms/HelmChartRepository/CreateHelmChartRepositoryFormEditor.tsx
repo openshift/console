@@ -11,12 +11,10 @@ import { ExpandCollapse } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  InputField,
-  ResourceDropdownField,
-  CheckboxField,
-  RadioGroupField,
-} from '@console/shared/src';
+import { CheckboxField } from '@console/shared/src/components/formik-fields/CheckboxField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 export type FormData = {
   formData: {

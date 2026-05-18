@@ -12,7 +12,7 @@ import { JobModel } from '@console/internal/models';
 import type { JobKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
-import { getResource } from '../../utils';
+import { getResource } from '../../utils/topology-utils';
 
 type JobSideBarDetailsProps = {
   job: JobKind;

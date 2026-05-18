@@ -28,7 +28,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { NamespaceModel, ServiceAccountModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
-import { SchemaFieldHelp } from '@console/shared/src/components/utils';
+import { SchemaFieldHelp } from '@console/shared/src/components/utils/SchemaFieldHelp';
 import { useTextInputModal } from '@console/shared/src/hooks/useTextInputModal';
 import { CATALOG_LABEL_KEY } from '../../const';
 import { ClusterExtensionModel } from '../../models';

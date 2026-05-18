@@ -19,7 +19,8 @@ import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getGroupVersionKindForModel } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s-ref';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import {
   K8sResourceKindReference,
   referenceFor,

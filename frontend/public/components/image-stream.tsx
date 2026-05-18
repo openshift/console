@@ -48,7 +48,7 @@ import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ImageStreamTimeline, getImageStreamTagName } from './image-stream-timeline';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { LoadingBox } from './utils/status-box';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';

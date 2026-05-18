@@ -9,15 +9,16 @@ import type { Alert } from '@console/dynamic-plugin-sdk';
 import { alertingLoaded } from '@console/internal/actions/observe';
 import * as UIActions from '@console/internal/actions/ui';
 import type { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
-import { withFallback, ErrorBoundaryFallbackPage } from '@console/shared/src/components/error';
+import { ErrorBoundaryFallbackPage } from '@console/shared/src/components/error/fallbacks/ErrorBoundaryFallbackPage';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import { useQueryParams } from '@console/shared/src/hooks/useQueryParams';
 import { TYPE_APPLICATION_GROUP } from '../../const';
-import { odcElementFactory } from '../../elements';
+import { odcElementFactory } from '../../elements/odcElementFactory';
 import { subscribeOverviewAlerts } from '../utils/subscribeOverviewAlerts';
 import { subscribeOverviewMetrics } from '../utils/subscribeOverviewMetrics';
 import { getChildKinds, sortGroupChildren } from './list-view-utils';
-import TopologyListViewAppGroup from './TopologyListViewAppGroup';
-import TopologyListViewUnassignedGroup from './TopologyListViewUnassignedGroup';
+import { TopologyListViewAppGroup } from './TopologyListViewAppGroup';
+import { TopologyListViewUnassignedGroup } from './TopologyListViewUnassignedGroup';
 
 import './TopologyListView.scss';
 

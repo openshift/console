@@ -23,8 +23,8 @@ import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/e
 import { DeploymentModel } from '@console/internal/models';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
-import { PodSet } from '@console/topology/src/components/graph-view';
-import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
+import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes/BaseNode';
+import { PodSet } from '@console/topology/src/components/graph-view/components/nodes/PodSet';
 import { KafkaSinkModel } from '../../../models';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSinkIcon } from '../../../utils/icons';

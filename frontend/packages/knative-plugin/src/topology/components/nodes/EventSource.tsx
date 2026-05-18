@@ -9,7 +9,7 @@ import type {
 } from '@patternfly/react-topology';
 import { observer } from '@patternfly/react-topology';
 import type { WithCreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
-import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes';
+import { BaseNode } from '@console/topology/src/components/graph-view/components/nodes/BaseNode';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceIcon } from '../../../utils/icons';
 import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';

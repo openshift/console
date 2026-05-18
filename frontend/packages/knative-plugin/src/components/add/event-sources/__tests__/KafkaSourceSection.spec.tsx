@@ -20,11 +20,17 @@ jest.mock('../KafkaSourceNetSection', () => ({
     .createKnativeTextStub('mock-KafkaSourceNetSection'),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/MultiTypeaheadField', () => ({
   MultiTypeaheadField: ({ label, ...rest }: { label?: string; [k: string]: unknown }) => (
     <input type="text" aria-label={label} {...(rest as ComponentPropsWithoutRef<'input'>)} />
   ),
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: 'ResourceDropdownField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/InputField', () => ({
   InputField: ({ label, ...rest }: { label?: string; [k: string]: unknown }) => (
     <input type="text" aria-label={label} {...(rest as ComponentPropsWithoutRef<'input'>)} />
   ),

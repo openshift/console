@@ -13,7 +13,7 @@ jest.mock('@console/shared/src/components/modals/ModalFooterWithAlerts', () => (
   ModalFooterWithAlerts: jest.fn(({ children }) => <div>{children}</div>),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/ResourceDropdownField', () => ({
   ResourceDropdownField: jest.fn(() => null),
 }));
 

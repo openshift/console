@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Language } from '@patternfly/react-code-editor';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { GitSectionFormData } from '../../import/git/GitSection';
 import GitSection from '../../import/git/GitSection';
 import FormSection from '../../import/section/FormSection';

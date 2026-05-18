@@ -75,8 +75,11 @@ jest.mock('../operator-group', () => ({
   requireOperatorGroup: jest.fn((component) => component),
 }));
 
-jest.mock('@console/shared/src/components/error', () => ({
+jest.mock('@console/shared/src/components/error/error-boundary', () => ({
   ErrorBoundary: jest.fn(({ children }) => children),
+}));
+
+jest.mock('@console/shared/src/components/error/fallbacks/withFallback', () => ({
   withFallback: jest.fn((successComponent) => (props) => successComponent(props)),
 }));
 

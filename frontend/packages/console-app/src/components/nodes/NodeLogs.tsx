@@ -25,7 +25,7 @@ import type { NodeKind } from '@console/internal/module/k8s';
 import { modelFor, resourceURL } from '@console/internal/module/k8s';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
+import { LOG_WRAP_LINES_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { useQueryParamsMutator } from '@console/shared/src/hooks/useQueryParamsMutator';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { coFetch } from '@console/shared/src/utils/console-fetch';

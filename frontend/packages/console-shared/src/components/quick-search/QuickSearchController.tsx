@@ -19,7 +19,7 @@ type QuickSearchControllerProps = {
   detailsRenderer?: DetailsRendererFunction;
 };
 
-const QuickSearchController: FC<QuickSearchControllerProps> = ({
+export const QuickSearchController: FC<QuickSearchControllerProps> = ({
   namespace,
   quickSearchProviders,
   searchPlaceholder,
@@ -105,5 +105,3 @@ const QuickSearchController: FC<QuickSearchControllerProps> = ({
     />
   );
 };
-
-export default QuickSearchController;

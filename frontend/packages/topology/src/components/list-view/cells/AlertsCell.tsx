@@ -4,7 +4,7 @@ import { DataListCell, Tooltip } from '@patternfly/react-core';
 import type { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Status as TooltipStatus } from '@console/shared';
+import { Status as TooltipStatus } from '@console/shared/src/components/status/Status';
 import { useBuildConfigsWatcher } from '@console/shared/src/hooks/useBuildConfigsWatcher';
 import { useIsMobile } from '@console/shared/src/hooks/useIsMobile';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
@@ -15,7 +15,7 @@ import {
   getResourcePausedAlert,
   getReplicationControllerAlerts,
 } from '@console/shared/src/utils/resource-utils';
-import { getResource } from '../../../utils';
+import { getResource } from '../../../utils/topology-utils';
 import { useResourceQuotaAlert } from '../../workload/resource-alert';
 
 import './AlertsCell.scss';
@@ -56,7 +56,7 @@ const AlertTooltip = ({ alerts, severity, isMobile }) => {
   );
 };
 
-const AlertsCell: FC<AlertsProps> = ({ item }) => {
+export const AlertsCell: FC<AlertsProps> = ({ item }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const resource = getResource(item);
@@ -153,5 +153,3 @@ const AlertsCell: FC<AlertsProps> = ({ item }) => {
     </DataListCell>
   );
 };
-
-export default AlertsCell;

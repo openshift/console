@@ -1,4 +1,4 @@
-import { OdcBaseNode } from '@console/topology/src/elements';
+import { OdcBaseNode } from '@console/topology/src/elements/OdcBaseNode';
 import { TYPE_HELM_RELEASE } from '../components/const';
 
 export const mockManifest = [

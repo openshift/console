@@ -4,7 +4,7 @@ import { Banner, Flex } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { KUBE_ADMIN_USERNAMES } from '@console/shared';
+import { KUBE_ADMIN_USERNAMES } from '@console/shared/src/constants/common';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';

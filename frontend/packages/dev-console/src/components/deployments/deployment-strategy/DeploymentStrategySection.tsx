@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared/src';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import type { Resources } from '../../import/import-types';
 import FormSection from '../../import/section/FormSection';
 import { getStrategyData } from '../utils/deployment-utils';

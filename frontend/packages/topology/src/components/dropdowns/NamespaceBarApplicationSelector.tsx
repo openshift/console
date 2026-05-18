@@ -11,7 +11,7 @@ import {
   ALL_APPLICATIONS_KEY,
   UNASSIGNED_APPLICATIONS_KEY,
   APPLICATION_USER_PREFERENCE_PREFIX,
-} from '@console/shared';
+} from '@console/shared/src/constants/common';
 import ApplicationDropdown from './ApplicationDropdown';
 
 interface NamespaceBarApplicationSelectorProps {

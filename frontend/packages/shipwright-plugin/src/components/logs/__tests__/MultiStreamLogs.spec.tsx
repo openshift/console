@@ -8,7 +8,7 @@ import { podData } from './logs-test-data';
 Element.prototype.scrollIntoView = jest.fn();
 
 // Mock useScrollDirection
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/hooks/useScrollDirection', () => ({
   useScrollDirection: jest.fn(() => [null, jest.fn()]),
   ScrollDirection: {
     scrolledToBottom: 'scrolledToBottom',

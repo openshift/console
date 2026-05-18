@@ -5,7 +5,8 @@ import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
-import { InputField, TextColumnField } from '@console/shared';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import type { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
 export const paramIsRequired = (param: BuildParam): boolean => {

@@ -6,16 +6,14 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  CodeEditorField,
-  FlexForm,
-  FormBody,
-  FormFooter,
-  InputField,
-  SyncedEditorField,
-} from '@console/shared';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import {

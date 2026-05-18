@@ -23,8 +23,8 @@ import {
 } from '@console/internal/models';
 import type { VolumeSnapshotKind } from '@console/internal/module/k8s';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { Status } from '@console/shared/src/components/status/Status';

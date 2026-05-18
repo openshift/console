@@ -8,14 +8,12 @@ import type { CatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions
 import { isCatalogItemType } from '@console/dynamic-plugin-sdk/src/extensions';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/lib-core';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type Types = {

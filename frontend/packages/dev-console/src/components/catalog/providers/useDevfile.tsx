@@ -7,8 +7,8 @@ import type {
   CatalogItemDetailsProperty,
   ExtensionHook,
 } from '@console/dynamic-plugin-sdk';
-import type { APIError } from '@console/shared';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
+import type { APIError } from '@console/shared/src/types/resource';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import type { DevfileSample } from '../../import/devfile/devfile-types';
 

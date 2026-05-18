@@ -7,7 +7,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { DropdownField, getFieldId } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 import { EventSources } from '../import-types';
 

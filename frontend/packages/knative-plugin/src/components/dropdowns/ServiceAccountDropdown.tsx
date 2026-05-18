@@ -8,8 +8,8 @@ import { ServiceAccountModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import type { RootState } from '@console/internal/redux';
-import { ResourceDropdownField } from '@console/shared';
 import type { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 interface ServiceAccountDropdownProps {
   name: string;

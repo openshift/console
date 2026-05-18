@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import CatalogDetailsPanel from '../details/CatalogDetailsPanel';
+import { CatalogDetailsPanel } from '../details/CatalogDetailsPanel';
 import { eventSourceCatalogItems } from './catalog-item-data';
 
 jest.mock('react-router', () => ({

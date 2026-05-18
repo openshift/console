@@ -20,10 +20,13 @@ jest.mock('../../../dropdowns/ServiceAccountDropdown', () => ({
     .createKnativeTextStub('mock-ServiceAccountDropdown'),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/formik-fields/DropdownField', () => ({
   DropdownField: jest
     .requireActual('@console/knative-plugin/src/__tests__/rtl-stub-components')
     .createKnativeTextStub('mock-DropdownField'),
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/field-utils', () => ({
   getFieldId: jest.fn(() => 'mocked-field-id'),
 }));
 

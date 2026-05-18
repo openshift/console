@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RadioGroupField } from '@console/shared';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
 import { sourceSinkType } from '../../import-types';
 import type { SinkResourcesProps } from './SinkResources';
 import SinkResources from './SinkResources';

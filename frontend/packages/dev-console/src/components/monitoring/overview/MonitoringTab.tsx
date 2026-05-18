@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { EventKind, PodKind } from '@console/internal/module/k8s';
-import type { OverviewItem } from '@console/shared';
 import { usePodsWatcher } from '@console/shared/src/hooks/usePodsWatcher';
+import type { OverviewItem } from '@console/shared/src/types/resource';
 import MonitoringOverview from './MonitoringOverview';
 
 type MonitoringTabProps = {

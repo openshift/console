@@ -13,7 +13,7 @@ import {
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
-import { USER_PREFERENCE_PREFIX } from '../../constants';
+import { USER_PREFERENCE_PREFIX } from '../../constants/common';
 import { useUserPreference } from '../../hooks/useUserPreference';
 
 import './HealthChecksAlert.scss';
@@ -32,7 +32,7 @@ const addHealthChecksRefs = [
   referenceForModel(KnativeServiceModel),
 ];
 
-const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
+export const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
   const {
     kind,
     metadata: { name, namespace, uid },
@@ -104,5 +104,3 @@ const HealthChecksAlert: FC<HealthChecksAlertProps> = ({ resource }) => {
     </>
   );
 };
-
-export default HealthChecksAlert;

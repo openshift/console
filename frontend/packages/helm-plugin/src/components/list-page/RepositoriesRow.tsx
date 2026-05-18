@@ -6,10 +6,10 @@ import { LazyActionMenu } from '@console/dynamic-plugin-sdk/src/lib-internal';
 import { ResourceLink } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { DASH } from '@console/shared';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { DASH } from '@console/shared/src/constants/ui';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import { tableColumnInfo } from './RepositoriesHeader';
 
 const helmChartRepositoryReference = referenceForModel(HelmChartRepositoryModel);

@@ -60,7 +60,8 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/utils/alert-utils', () => ({
+  ...jest.requireActual('@console/shared/src/utils/alert-utils'),
   getFiringAlerts: jest.fn((alerts) => alerts.filter((alert) => alert.state === 'firing')),
 }));
 

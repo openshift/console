@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import ProgressiveListFooter from '../ProgressiveListFooter';
+import { ProgressiveListFooter } from '../ProgressiveListFooter';
 
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();

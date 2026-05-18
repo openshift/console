@@ -8,7 +8,7 @@ import { LoadingInline } from '@console/internal/components/utils/status-box';
 import { modelFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '../../hooks/usePodsWatcher';
 import { getPodData } from '../../utils/pod-utils';
-import PodRing from './PodRing';
+import { PodRing } from './PodRing';
 
 const PodRingSet: FC<PodRingSetProps> = ({ obj, path }) => {
   const { podData, loadError, loaded } = usePodsWatcher(obj);

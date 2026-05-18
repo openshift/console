@@ -1,6 +1,6 @@
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 export const checkNamespaceExists = async (ns: string, useProjects: boolean): Promise<boolean> => {
   if (!ns) {

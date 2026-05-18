@@ -6,7 +6,7 @@ import type { K8sResourceKind, K8sResourceKindReference } from '@console/interna
 import { referenceFor } from '@console/internal/module/k8s';
 import type { OdcNodeModel } from '../topology-types';
 
-class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
+export class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
   public resource?: K8sResourceKind | undefined = undefined;
 
   public resourceKind?: K8sResourceKindReference | undefined = undefined;
@@ -51,5 +51,3 @@ class OdcBaseNode extends BaseNode implements OdcBaseNodeInterface {
     }
   }
 }
-
-export default OdcBaseNode;

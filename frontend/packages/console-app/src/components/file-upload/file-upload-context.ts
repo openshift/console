@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { FileUpload } from '@console/dynamic-plugin-sdk';
 import { isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { useToast } from '@console/shared/src/components/toast';
+import { useToast } from '@console/shared/src/components/toast/useToast';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
 

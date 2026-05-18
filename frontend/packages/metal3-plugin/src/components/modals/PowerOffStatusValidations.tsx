@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
 import type { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+import { HOST_STATUS_UNKNOWN, HOST_STATUS_ERROR } from '../../constants/bare-metal-host';
 import {
   NODE_STATUS_STARTING_MAINTENANCE,
-  HOST_STATUS_UNKNOWN,
-  HOST_STATUS_ERROR,
   NODE_STATUS_STOPPING_MAINTENANCE,
-} from '../../constants';
+} from '../../constants/node-maintenance';
 
 type StatusValidationProps = {
   status: string;

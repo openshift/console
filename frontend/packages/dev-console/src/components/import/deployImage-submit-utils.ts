@@ -8,7 +8,7 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
 import { k8sCreate, k8sUpdate, k8sWaitForUpdate } from '@console/internal/module/k8s';
-import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin/src/models';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,

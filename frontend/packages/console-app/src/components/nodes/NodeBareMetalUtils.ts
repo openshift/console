@@ -8,7 +8,8 @@ import { useFlag } from '@console/dynamic-plugin-sdk/src/utils/flags';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { MachineModel } from '@console/internal/models';
 import type { K8sKind, MachineKind } from '@console/internal/module/k8s';
-import { getName, getNodeMachineNameAndNamespace } from '@console/shared/src';
+import { getName } from '@console/shared/src/selectors/common';
+import { getNodeMachineNameAndNamespace } from '@console/shared/src/selectors/node';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';
 

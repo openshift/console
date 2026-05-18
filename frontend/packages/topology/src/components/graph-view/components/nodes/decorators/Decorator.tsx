@@ -16,7 +16,7 @@ type DecoratorTypes = {
   children?: ReactNode;
 };
 
-const Decorator: FC<DecoratorTypes> = ({
+export const Decorator: FC<DecoratorTypes> = ({
   x,
   y,
   radius,
@@ -55,5 +55,3 @@ const Decorator: FC<DecoratorTypes> = ({
   }
   return decorator;
 };
-
-export default Decorator;

@@ -2,18 +2,16 @@ import type { FC } from 'react';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  FormFooter,
-  FormBody,
-  FormHeader,
-  FlexForm,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartRepositoryType } from '../../../types/helm-types';
 import CreateHelmChartRepositoryFormEditor from './CreateHelmChartRepositoryFormEditor';
 import { convertToForm, convertToHelmChartRepository } from './helmchartrepository-create-utils';

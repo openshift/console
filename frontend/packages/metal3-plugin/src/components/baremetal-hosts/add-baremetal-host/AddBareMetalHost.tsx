@@ -12,8 +12,8 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { SecretModel } from '@console/internal/models';
 import type { SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import { usePrevious } from '@console/shared/src/hooks/usePrevious';
+import { getName } from '@console/shared/src/selectors/common';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {
@@ -22,9 +22,9 @@ import {
   getHostDisableCertificateVerification,
   getHostDescription,
   isHostOnline,
-} from '../../../selectors';
+} from '../../../selectors/baremetal-hosts';
 import { getSecretPassword, getSecretUsername } from '../../../selectors/secret';
-import type { BareMetalHostKind } from '../../../types';
+import type { BareMetalHostKind } from '../../../types/host';
 import { MAC_REGEX, BMC_ADDRESS_REGEX } from '../../../validations/regex';
 import { nameValidationSchema } from '../../../validations/validations';
 import AddBareMetalHostForm from './AddBareMetalHostForm';

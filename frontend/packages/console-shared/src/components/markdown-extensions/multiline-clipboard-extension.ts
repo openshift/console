@@ -6,7 +6,7 @@ import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
 import './markdown-extension.scss';
 
-const useMultilineCopyClipboardExtension = () => {
+export const useMultilineCopyClipboardExtension = () => {
   const { t } = useTranslation();
   return useMemo(
     () => ({
@@ -44,5 +44,3 @@ const useMultilineCopyClipboardExtension = () => {
     [t],
   );
 };
-
-export default useMultilineCopyClipboardExtension;

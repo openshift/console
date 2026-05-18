@@ -9,13 +9,13 @@ import type {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { DefaultGroup, observer, useCombineRefs, useHover } from '@patternfly/react-topology';
-import { useSearchFilter } from '../../../../filters';
+import { useSearchFilter } from '../../../../filters/useSearchFilter';
 import { useShowLabel } from '../../../../filters/useShowLabel';
-import { ApplicationModel } from '../../../../models';
+import { ApplicationModel } from '../../../../models/application';
 import { SHOW_GROUPING_HINT_EVENT } from '../../../../topology-types';
 import { getKindStringAndAbbreviation } from '../nodes/nodeUtils';
 import RegroupHint from '../RegroupHint';
-import GroupNode from './GroupNode';
+import { GroupNode } from './GroupNode';
 
 import './Application.scss';
 
@@ -31,7 +31,7 @@ type ApplicationProps = {
   WithDragNodeProps &
   WithContextMenuProps;
 
-const Application: FC<ApplicationProps> = ({
+const ApplicationComponent: FC<ApplicationProps> = ({
   element,
   dragNodeRef,
   canDrop,
@@ -98,4 +98,4 @@ const Application: FC<ApplicationProps> = ({
   );
 };
 
-export default observer(Application);
+export const Application = observer(ApplicationComponent);

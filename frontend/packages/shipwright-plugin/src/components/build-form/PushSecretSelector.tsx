@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useCreateSecretModal } from '@console/dev-console/src/components/import/CreateSecretModal';
 import { SecretFormType } from '@console/internal/components/secrets/create-secret';
-import { getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
 import PushSecretDropdown from './PushSecretDropdown';
 
 const CREATE_PULL_SECRET = 'create-pull-secret';

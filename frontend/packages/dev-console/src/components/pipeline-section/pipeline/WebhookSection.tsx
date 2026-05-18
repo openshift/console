@@ -29,7 +29,9 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { SecretModel } from '@console/internal/models';
 import type { ConfigMapKind, SecretKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { RadioGroupField, InputField, ResourceDropdownField } from '@console/shared/src';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import PermissionsSection from './PermissionsSection';

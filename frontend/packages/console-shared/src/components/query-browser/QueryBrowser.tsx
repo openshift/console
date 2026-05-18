@@ -67,7 +67,7 @@ import {
   parsePrometheusDuration,
 } from '@console/shared/src/utils/datetime';
 import { usePoll } from '../../hooks/usePoll';
-import withFallback from '../error/fallbacks/withFallback';
+import { withFallback } from '../error/fallbacks/withFallback';
 import { queryBrowserTheme } from './theme';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];

@@ -1,4 +1,4 @@
-import { STORAGE_PREFIX, USER_PREFERENCE_PREFIX } from '@console/shared';
+import { STORAGE_PREFIX, USER_PREFERENCE_PREFIX } from '@console/shared/src/constants/common';
 
 const STORAGE_CLOUDSHELL = 'terminal';
 

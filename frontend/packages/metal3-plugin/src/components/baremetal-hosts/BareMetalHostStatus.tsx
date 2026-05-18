@@ -5,20 +5,28 @@ import { Link } from 'react-router';
 import { PopoverStatus } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { ProgressStatus, SuccessStatus, ErrorStatus, Status, InfoStatus } from '@console/shared';
+import { Status } from '@console/shared/src/components/status/Status';
+import {
+  ProgressStatus,
+  SuccessStatus,
+  ErrorStatus,
+  InfoStatus,
+} from '@console/shared/src/components/status/statuses';
 import {
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
   HOST_SUCCESS_STATES,
+  HOST_STATUS_UNMANAGED,
+  HOST_INFO_STATES,
+} from '../../constants/bare-metal-host';
+import {
   NODE_STATUS_UNDER_MAINTENANCE,
   NODE_STATUS_STARTING_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
-  HOST_STATUS_UNMANAGED,
-  HOST_INFO_STATES,
-} from '../../constants';
+} from '../../constants/node-maintenance';
 import { BareMetalHostModel } from '../../models';
-import { getHostErrorMessage } from '../../selectors';
-import type { BareMetalHostKind } from '../../types';
+import { getHostErrorMessage } from '../../selectors/baremetal-hosts';
+import type { BareMetalHostKind } from '../../types/host';
 import MaintenancePopover from '../maintenance/MaintenancePopover';
 import type { StatusProps } from '../types';
 

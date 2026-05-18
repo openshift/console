@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { FlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import type { GettingStartedLink } from '@console/shared/src/components/getting-started';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 
 export const FunctionsDocsGettingStartedCard: FC = () => {
   const { t } = useTranslation();

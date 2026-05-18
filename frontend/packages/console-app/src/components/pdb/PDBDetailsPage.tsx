@@ -9,7 +9,7 @@ import { SectionHeading } from '@console/internal/components/utils/headings';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import type { K8sModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { PodDisruptionBudgetKind } from './types';

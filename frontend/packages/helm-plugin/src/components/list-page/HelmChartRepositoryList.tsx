@@ -5,7 +5,7 @@ import { ConsoleDataView } from '@console/app/src/components/data-view/ConsoleDa
 import type { TableProps } from '@console/internal/components/factory';
 import { LoadingBox } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { HelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel } from '../../models/helm';
 import { getDataViewRows } from './HelmChartRepositoryRow';
 import { useRepositoriesColumns } from './RepositoriesHeader';
 

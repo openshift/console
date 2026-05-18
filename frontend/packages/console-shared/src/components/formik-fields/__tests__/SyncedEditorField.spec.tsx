@@ -4,8 +4,8 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import { EditorType } from '../../synced-editor/editor-toggle';
 import { useEditorType } from '../../synced-editor/useEditorType';
-import RadioGroupField from '../RadioGroupField';
-import SyncedEditorField from '../SyncedEditorField';
+import { RadioGroupField } from '../RadioGroupField';
+import { SyncedEditorField } from '../SyncedEditorField';
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{ value: 'form' }, {}]),
@@ -19,12 +19,16 @@ jest.mock('../../synced-editor/useEditorType', () => ({
   useEditorType: jest.fn(),
 }));
 
-jest.mock('../CodeEditorField', () => () => 'Form Editor');
+jest.mock('../CodeEditorField', () => ({
+  CodeEditorField: () => 'Form Editor',
+}));
 
-jest.mock('../DynamicFormField', () => () => 'YAML Editor');
+jest.mock('../DynamicFormField', () => ({
+  DynamicFormField: () => 'YAML Editor',
+}));
 
 jest.mock('../RadioGroupField', () => ({
-  default: jest.fn(() => null),
+  RadioGroupField: jest.fn(() => null),
 }));
 
 jest.mock('@console/internal/components/utils/status-box', () => ({

@@ -39,15 +39,15 @@ import type {
   CatalogTypeCounts,
 } from '../utils/types';
 import { CatalogQueryParams, CatalogSortOrder } from '../utils/types';
-import CatalogCategories from './CatalogCategories';
-import CatalogEmptyState from './CatalogEmptyState';
+import { CatalogCategories } from './CatalogCategories';
+import { CatalogEmptyState } from './CatalogEmptyState';
 import CatalogFilters from './CatalogFilters';
-import CatalogGrid from './CatalogGrid';
+import { CatalogGrid } from './CatalogGrid';
 import CatalogPage from './CatalogPage';
 import CatalogPageContent from './CatalogPageContent';
 import CatalogPageTabs from './CatalogPageTabs';
-import CatalogToolbar from './CatalogToolbar';
-import CatalogTypeSelector from './CatalogTypeSelector';
+import { CatalogToolbar } from './CatalogToolbar';
+import { CatalogTypeSelector } from './CatalogTypeSelector';
 
 type CatalogViewProps = {
   items: CatalogItem[];
@@ -63,7 +63,7 @@ type CatalogViewProps = {
   sortFilterGroups: boolean;
 };
 
-const CatalogView: FC<CatalogViewProps> = ({
+export const CatalogView: FC<CatalogViewProps> = ({
   items,
   catalogType,
   catalogTypes,
@@ -370,5 +370,3 @@ const CatalogView: FC<CatalogViewProps> = ({
     </PaneBody>
   );
 };
-
-export default CatalogView;

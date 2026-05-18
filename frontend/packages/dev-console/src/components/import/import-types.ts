@@ -6,7 +6,11 @@ import type { DetectedStrategy } from '@console/git-service/src/utils/import-str
 import type { LazyLoader } from '@console/internal/components/utils/async';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import type { K8sResourceKind, ContainerPort, SecretKind } from '@console/internal/module/k8s';
-import type { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
+import type {
+  NameValuePair,
+  NameValueFromPair,
+} from '@console/shared/src/components/formik-fields/field-types';
+import type { LimitsData } from '@console/shared/src/types/resource';
 import type { ClusterBuildStrategy } from '@console/shipwright-plugin/src/types';
 import type { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import type { HealthCheckFormProbe } from '../health-checks/health-checks-types';

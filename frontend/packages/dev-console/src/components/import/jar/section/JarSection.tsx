@@ -7,7 +7,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import type { FileUploadContextType } from '@console/app/src/components/file-upload/file-upload-context';
 import { FileUploadContext } from '@console/app/src/components/file-upload/file-upload-context';
-import { InputField } from '@console/shared/src';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';

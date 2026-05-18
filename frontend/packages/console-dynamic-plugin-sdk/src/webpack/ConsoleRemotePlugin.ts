@@ -135,15 +135,17 @@ export const validateConsoleExtensionsFileSchema = (
   return new SchemaValidator(description).validate(schema, extensions);
 };
 
-const getDeprecatedSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
+const getCompileTimeSharedModuleWarnings = (pkg: ConsolePluginPackageJSON): string[] => {
   const warnings: string[] = [];
 
   sharedPluginModules.forEach((moduleName) => {
-    const { deprecated } = getSharedModuleMetadata(moduleName);
+    const { deprecated, aliased } = getSharedModuleMetadata(moduleName);
 
-    if (deprecated && hasPackageDependency(pkg, moduleName)) {
+    if ((deprecated || aliased) && hasPackageDependency(pkg, moduleName)) {
       warnings.push(
-        `[DEPRECATION WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`,
+        deprecated
+          ? `[WARNING] Console provided shared module ${moduleName} has been deprecated: ${deprecated}`
+          : `[WARNING] Console provided shared module ${moduleName} is aliased, beware of potential skew between aliased vs actual module code`,
       );
     }
   });
@@ -476,7 +478,7 @@ export class ConsoleRemotePlugin implements WebpackPluginInstance {
         }
       }
 
-      getDeprecatedSharedModuleWarnings(this.pkg).forEach((message) => {
+      getCompileTimeSharedModuleWarnings(this.pkg).forEach((message) => {
         compilation.warnings.push(new compiler.webpack.WebpackError(message));
       });
     });

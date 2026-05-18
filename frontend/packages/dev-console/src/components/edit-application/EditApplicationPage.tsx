@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
+import { ServiceModel } from '@console/knative-plugin/src/models';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import { BuildModel as ShipwrightBuildModel } from '@console/shipwright-plugin/src/models';
 import { INSTANCE_LABEL, NAME_LABEL } from '../../const';

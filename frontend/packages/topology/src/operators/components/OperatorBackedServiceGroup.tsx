@@ -21,13 +21,13 @@ import {
   NodeLabel,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { noRegroupDragSourceSpec } from '../../components/graph-view/components/componentUtils';
 import {
-  noRegroupDragSourceSpec,
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
-} from '../../components/graph-view';
-import { useSearchFilter } from '../../filters';
+} from '../../components/graph-view/components/NodeShadows';
+import { useSearchFilter } from '../../filters/useSearchFilter';
 import { useShowLabel } from '../../filters/useShowLabel';
 import { getResource } from '../../utils/topology-utils';
 

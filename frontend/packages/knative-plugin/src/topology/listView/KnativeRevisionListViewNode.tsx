@@ -6,12 +6,10 @@ import { observer } from '@patternfly/react-topology';
 import { CpuCellComponent } from '@console/topology/src/components/list-view/cells/CpuCell';
 import { MemoryCellComponent } from '@console/topology/src/components/list-view/cells/MemoryCell';
 import { StatusCellResourceStatus } from '@console/topology/src/components/list-view/cells/StatusCell';
-import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
-import {
-  getTopologyResourceObject,
-  useOverviewMetrics,
-  getPodMetricStats,
-} from '@console/topology/src/utils';
+import { TopologyListViewNode } from '@console/topology/src/components/list-view/TopologyListViewNode';
+import { getPodMetricStats } from '@console/topology/src/utils/metricStats';
+import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
+import { useOverviewMetrics } from '@console/topology/src/utils/useOverviewMetrics';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 
 interface KnativeRevisionListViewNodeProps {

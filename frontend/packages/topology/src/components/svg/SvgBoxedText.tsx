@@ -2,10 +2,10 @@ import type { ReactNode, MouseEventHandler, FC } from 'react';
 import type { WithDndDragProps } from '@patternfly/react-topology';
 import { useSize, useHover, useCombineRefs, createSvgIdUrl } from '@patternfly/react-topology';
 import { truncateMiddle } from '@console/internal/components/utils';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
-import SvgCircledIcon from './SvgCircledIcon';
-import SvgDropShadowFilter from './SvgDropShadowFilter';
-import SvgResourceIcon from './SvgResourceIcon';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants/common';
+import { SvgCircledIcon } from './SvgCircledIcon';
+import { SvgDropShadowFilter } from './SvgDropShadowFilter';
+import { SvgResourceIcon } from './SvgResourceIcon';
 
 interface SvgBoxedTextProps {
   children?: string;
@@ -31,7 +31,7 @@ const FILTER_ID = 'SvgBoxedTextDropShadowFilterId';
 /**
  * Renders a `<text>` component with a `<rect>` box behind.
  */
-const SvgBoxedText: FC<SvgBoxedTextProps> = ({
+export const SvgBoxedText: FC<SvgBoxedTextProps> = ({
   children,
   className,
   paddingX = 0,
@@ -111,5 +111,3 @@ const SvgBoxedText: FC<SvgBoxedTextProps> = ({
     </g>
   );
 };
-
-export default SvgBoxedText;

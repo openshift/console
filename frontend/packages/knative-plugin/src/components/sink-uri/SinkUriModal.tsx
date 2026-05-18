@@ -13,7 +13,8 @@ import {
 import type { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField, getFieldId } from '@console/shared';
+import { getFieldId } from '@console/shared/src/components/formik-fields/field-utils';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 export interface SinkUriModalProps {

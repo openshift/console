@@ -17,7 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { units } from '@console/internal/components/utils/units';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
-import { useToast } from '../toast';
+import { useToast } from '../toast/useToast';
 
 export interface FetchProgressModalProps {
   /** URL to fetch */

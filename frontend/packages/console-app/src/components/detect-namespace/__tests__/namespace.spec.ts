@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import { k8sGet } from '@console/dynamic-plugin-sdk/src/utils/k8s';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { usePreferredNamespace } from '../../user-preferences/namespace/usePreferredNamespace';

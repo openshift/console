@@ -1,4 +1,4 @@
-import { LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY } from '@console/shared/src/constants';
+import { LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY } from '@console/shared/src/constants/common';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 
 export const useLastNamespace = (): [

@@ -5,10 +5,8 @@ import { ClipboardCheckIcon } from '@patternfly/react-icons';
 import { useCanClusterUpgrade } from '@console/shared/src/hooks/useCanClusterUpgrade';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
-import {
-  GettingStartedCard,
-  GettingStartedLink,
-} from '@console/shared/src/components/getting-started';
+import type { GettingStartedLink } from '@console/shared/src/components/getting-started/GettingStartedCard';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started/GettingStartedCard';
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';

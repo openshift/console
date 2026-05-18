@@ -8,7 +8,7 @@ import {
   useModelFinder,
 } from '../../module/k8s';
 import { ResourceLink } from '../utils/resource-link';
-import { DASH } from '@console/shared/src/constants';
+import { DASH } from '@console/shared/src/constants/ui';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import {
   getNameCellProps,

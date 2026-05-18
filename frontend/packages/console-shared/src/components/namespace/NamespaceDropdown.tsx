@@ -27,7 +27,7 @@ import {
   ALL_NAMESPACES_KEY,
   NAMESPACE_USER_PREFERENCE_PREFIX,
   FLAGS,
-} from '@console/shared/src/constants';
+} from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { alphanumericCompare } from '@console/shared/src/utils/utils';

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField, ResourceLimitField } from '@console/shared';
+import { NumberSpinnerField } from '@console/shared/src/components/formik-fields/NumberSpinnerField';
+import { ResourceLimitField } from '@console/shared/src/components/formik-fields/ResourceLimitField';
 import FormSection from '../section/FormSection';
 
 const ServerlessScalingSection: FC = () => {

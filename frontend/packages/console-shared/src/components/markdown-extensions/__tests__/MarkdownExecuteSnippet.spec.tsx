@@ -1,6 +1,6 @@
 import { useCloudShellAvailable } from '@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable';
 import { renderWithProviders } from '../../../test-utils/unit-test-utils';
-import MarkdownExecuteSnippet from '../MarkdownExecuteSnippet';
+import { MarkdownExecuteSnippet } from '../MarkdownExecuteSnippet';
 import { htmlDocumentForExecuteButton } from './test-data';
 
 jest.mock('@console/webterminal-plugin/src/components/cloud-shell/useCloudShellAvailable', () => ({

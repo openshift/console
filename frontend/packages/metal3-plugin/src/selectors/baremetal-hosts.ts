@@ -7,7 +7,7 @@ import {
   HOST_POWER_STATUS_POWERING_ON,
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_STATUS_UNMANAGED,
-} from '../constants';
+} from '../constants/bare-metal-host';
 import type {
   BareMetalHostDisk,
   BareMetalHostNIC,
@@ -15,7 +15,7 @@ import type {
   BareMetalHostSystemVendor,
   BareMetalHostBios,
   BareMetalHostKind,
-} from '../types';
+} from '../types/host';
 
 const ANNOTATION_HOST_RESTART = 'reboot.metal3.io';
 

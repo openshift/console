@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { WorkspaceModel } from '../../../../models';
 import type { CloudShellExecProps } from '../CloudShellExec';
 import { InternalCloudShellExec } from '../CloudShellExec';

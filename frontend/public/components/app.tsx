@@ -58,7 +58,7 @@ import { GuidedTour } from '@console/app/src/components/tour';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
 import { OverlayProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { ToastProvider } from '@console/shared/src/components/toast/ToastProvider';
 import { SyncModalLaunchers } from '@console/shared/src/utils/error-modal-handler';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';

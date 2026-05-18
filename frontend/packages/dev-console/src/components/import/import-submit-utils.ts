@@ -18,12 +18,12 @@ import {
 } from '@console/internal/models';
 import type { K8sResourceKind, K8sVerb } from '@console/internal/module/k8s';
 import { k8sCreate, k8sGet, k8sUpdate } from '@console/internal/module/k8s';
-import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { ServiceModel as KnServiceModel } from '@console/knative-plugin/src/models';
 import {
   getDomainMappingRequests,
   getKnativeServiceDepResource,
 } from '@console/knative-plugin/src/utils/create-knative-utils';
-import type { LimitsData } from '@console/shared/src/types';
+import type { LimitsData } from '@console/shared/src/types/resource';
 import { getResourceLimitsData } from '@console/shared/src/utils/resource-utils';
 import { getRandomChars } from '@console/shared/src/utils/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';

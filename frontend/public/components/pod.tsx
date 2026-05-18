@@ -1,5 +1,5 @@
-import ActionServiceProvider from '@console/shared/src/components/actions/ActionServiceProvider';
-import ActionMenu from '@console/shared/src/components/actions/menu/ActionMenu';
+import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
+import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';

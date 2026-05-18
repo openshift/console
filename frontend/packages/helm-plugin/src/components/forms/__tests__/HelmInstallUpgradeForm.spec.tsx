@@ -11,11 +11,18 @@ import { HelmActionType } from '../../../types/helm-types';
 import type { HelmInstallUpgradeFormData } from '../install-upgrade/HelmInstallUpgradeForm';
 import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
 
-// Mock the barrel import from @console/shared
-jest.mock('@console/shared', () => ({
-  ...jest.requireActual('@console/shared'),
+jest.mock('@console/shared/src/components/formik-fields/CodeEditorField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/CodeEditorField'),
   CodeEditorField: () => 'CodeEditorField',
+}));
+
+jest.mock('@console/shared/src/components/formik-fields/DynamicFormField', () => ({
+  ...jest.requireActual('@console/shared/src/components/formik-fields/DynamicFormField'),
   DynamicFormField: () => 'DynamicFormField',
+}));
+
+jest.mock('@console/shared/src/components/form-utils/FlexForm', () => ({
+  ...jest.requireActual('@console/shared/src/components/form-utils/FlexForm'),
   FlexForm: ({ children }: any) => children,
 }));
 

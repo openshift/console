@@ -1,7 +1,7 @@
 import { MachineSetModel } from '@console/internal/models';
 import type { MachineKind } from '@console/internal/module/k8s';
 import { apiVersionForModel } from '@console/internal/module/k8s';
-import { getOwnerReferences } from '@console/shared/src';
+import { getOwnerReferences } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 
 export const getMachineMachineSetOwner = (machine: MachineKind) => {

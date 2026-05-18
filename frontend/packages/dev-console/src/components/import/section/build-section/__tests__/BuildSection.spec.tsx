@@ -35,7 +35,7 @@ jest.mock('@console/shared/src/hooks/useFlag', () => ({
   useFlag: jest.fn(() => false),
 }));
 
-jest.mock('@console/shared/src', () => ({
+jest.mock('@console/shared/src/components/formik-fields/EnvironmentField', () => ({
   EnvironmentField: (props) => `EnvironmentField envs=${JSON.stringify(props.envs)}`,
 }));
 

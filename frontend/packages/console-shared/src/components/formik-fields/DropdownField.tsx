@@ -7,7 +7,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const DropdownField: FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
+export const DropdownField: FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
   const [field, { touched, error }] = useField(props.name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'dropdown');
@@ -45,5 +45,3 @@ const DropdownField: FC<DropdownFieldProps> = ({ label, helpText, required, ...p
     </FormGroup>
   );
 };
-
-export default DropdownField;

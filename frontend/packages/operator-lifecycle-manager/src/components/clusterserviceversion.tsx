@@ -56,21 +56,26 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import type { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
-import { ALL_NAMESPACES_KEY, Status, getNamespace } from '@console/shared';
-import { LazyActionMenu, ActionMenuVariant } from '@console/shared/src/components/actions';
-import { KEBAB_COLUMN_CLASS } from '@console/shared/src/components/actions/LazyActionMenu';
+import {
+  LazyActionMenu,
+  KEBAB_COLUMN_CLASS,
+} from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Timestamp } from '@console/shared/src/components/datetime/Timestamp';
 import { DescriptionListTermHelp } from '@console/shared/src/components/description-list/DescriptionListTermHelp';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
-import { withFallback } from '@console/shared/src/components/error';
+import { withFallback } from '@console/shared/src/components/error/fallbacks/withFallback';
 import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { MarkdownView } from '@console/shared/src/components/markdown/MarkdownView';
-import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals';
+import { LazyConsolePluginModalOverlay } from '@console/shared/src/components/modals/LazyConsolePluginModal';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { Status } from '@console/shared/src/components/status/Status';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants/resource';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { getNamespace } from '@console/shared/src/selectors/common';
 import { isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { GLOBAL_OPERATOR_NAMESPACES, GLOBAL_COPIED_CSV_NAMESPACE } from '../const';
 import {

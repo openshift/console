@@ -30,7 +30,7 @@ export const ShortcutCommand: FC<ShortcutCommandProps> = ({ children }) => (
 
 export const isMac = window.navigator.platform.includes('Mac');
 
-const Shortcut: FC<ShortcutProps> = ({
+export const Shortcut: FC<ShortcutProps> = ({
   children,
   alt,
   click,
@@ -92,5 +92,3 @@ const Shortcut: FC<ShortcutProps> = ({
     </tr>
   );
 };
-
-export default Shortcut;

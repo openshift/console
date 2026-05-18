@@ -56,7 +56,7 @@ import {
   nameCellProps,
 } from '@console/app/src/components/data-view/ConsoleDataView';
 import { useColumnWidthSettings } from '@console/app/src/components/data-view/useResizableColumnProps';
-import LazyActionMenu from '@console/shared/src/components/actions/LazyActionMenu';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 
 const isClusterQuota = (quota) => !quota.metadata.namespace;

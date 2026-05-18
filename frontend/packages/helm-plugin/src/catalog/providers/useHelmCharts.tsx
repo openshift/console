@@ -5,9 +5,9 @@ import type { ExtensionHook, CatalogItem, WatchK8sResults } from '@console/dynam
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import type { APIError } from '@console/shared';
+import type { APIError } from '@console/shared/src/types/resource';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
-import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models';
+import { HelmChartRepositoryModel, ProjectHelmChartRepositoryModel } from '../../models/helm';
 import type { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
 

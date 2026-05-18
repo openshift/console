@@ -5,8 +5,10 @@ import {
   ResourceStatus,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
-import { ActionMenuVariant, LazyActionMenu } from '@console/shared/src/components/actions';
-import { Status, YellowExclamationTriangleIcon } from '@console/shared/src/components/status';
+import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
+import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
+import { Status } from '@console/shared/src/components/status/Status';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';

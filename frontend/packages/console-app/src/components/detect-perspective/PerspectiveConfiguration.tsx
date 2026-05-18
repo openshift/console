@@ -21,15 +21,13 @@ import type {
 import { isPerspective } from '@console/dynamic-plugin-sdk/src';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration';
-import {
-  useDebounceCallback,
-  useConsoleOperatorConfig,
-  patchConsoleOperatorConfig,
-  FormLayout,
-  LoadError,
-  SaveStatus,
-} from '@console/shared/src/components/cluster-configuration';
+import { FormLayout } from '@console/shared/src/components/cluster-configuration/FormLayout';
+import { LoadError } from '@console/shared/src/components/cluster-configuration/LoadError';
+import { patchConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/patchConsoleOperatorConfig';
+import type { SaveStatusProps } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { SaveStatus } from '@console/shared/src/components/cluster-configuration/SaveStatus';
+import { useConsoleOperatorConfig } from '@console/shared/src/components/cluster-configuration/useConsoleOperatorConfig';
+import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallback';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 enum PerspectiveVisibilityState {

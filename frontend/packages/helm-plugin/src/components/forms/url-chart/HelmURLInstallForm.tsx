@@ -5,17 +5,15 @@ import type { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import {
-  InputField,
-  FormFooter,
-  FormBody,
-  CodeEditorField,
-  DynamicFormField,
-  SyncedEditorField,
-  FormHeader,
-  FlexForm,
-} from '@console/shared';
 import { getJSONSchemaOrder, prune } from '@console/shared/src/components/dynamic-form/utils';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { DynamicFormField } from '@console/shared/src/components/formik-fields/DynamicFormField';
+import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { useHelmReadmeModalLauncher } from '../install-upgrade/HelmReadmeModal';
 import type { HelmURLInstallFormData } from './types';
 

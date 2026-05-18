@@ -4,7 +4,7 @@ import type { Action, ExtensionHook, K8sResourceCommon } from '@console/dynamic-
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
-import { findNodeMaintenance } from '../../selectors';
+import { findNodeMaintenance } from '../../selectors/node-maintenance';
 import { useStartNodeMaintenanceModalLauncher } from '../modals/StartNodeMaintenanceModal';
 import { useStopNodeMaintenanceModal } from '../modals/StopNodeMaintenanceModal';
 

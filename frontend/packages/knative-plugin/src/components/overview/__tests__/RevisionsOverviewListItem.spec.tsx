@@ -56,7 +56,7 @@ jest.mock(
       .knativeInternalUtilsStubs,
 );
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/shared/src/components/pod/PodStatus', () => ({
   PodStatus: ({ title }: { title?: string }) => (
     <div data-test="mock-PodStatus" title={title}>
       {title}

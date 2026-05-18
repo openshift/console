@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode, ReactElement, FC } from 'react';
 import { Children, Fragment } from 'react';
-import ProgressiveListFooter from './ProgressiveListFooter';
-import ProgressiveListItem from './ProgressiveListItem';
+import { ProgressiveListFooter } from './ProgressiveListFooter';
+import { ProgressiveListItem } from './ProgressiveListItem';
 
 type ProgressiveListProps = {
   children?: ReactNode;
@@ -10,7 +10,7 @@ type ProgressiveListProps = {
   Footer: ComponentProps<typeof ProgressiveListFooter>['Footer'];
 };
 
-const ProgressiveList: FC<ProgressiveListProps> = ({
+export const ProgressiveList: FC<ProgressiveListProps> = ({
   visibleItems,
   children,
   onVisibleItemChange,
@@ -35,5 +35,3 @@ const ProgressiveList: FC<ProgressiveListProps> = ({
     </>
   );
 };
-
-export default ProgressiveList;

@@ -14,7 +14,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import type { K8sResourceKind, CustomResourceDefinitionKind } from '@console/internal/module/k8s';
 import { kindForReference, nameForModel, definitionFor } from '@console/internal/module/k8s';
-import { getBadgeFromType } from '@console/shared/src/components/badges';
+import { getBadgeFromType } from '@console/shared/src/components/badges/badge-factory';
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import {
   getSchemaErrors,
@@ -22,11 +22,11 @@ import {
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { SyncedEditor } from '@console/shared/src/components/synced-editor/SyncedEditor';
 import { useCreateResourceExtension } from '@console/shared/src/hooks/useCreateResourceExtension';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import type { RouteParams } from '@console/shared/src/types';
+import type { RouteParams } from '@console/shared/src/types/route-params';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import type { ClusterServiceVersionKind, ProvidedAPI } from '../../types';

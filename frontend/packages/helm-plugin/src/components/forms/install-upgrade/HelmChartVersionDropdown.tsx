@@ -12,11 +12,11 @@ import type { ModalCallback } from '@console/internal/components/modals/types';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/shared/src/components/formik-fields/DropdownField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { useWarningModal } from '@console/shared/src/hooks/useWarningModal';
 import { coFetchJSON, coFetch } from '@console/shared/src/utils/console-fetch';
-import { HelmChartRepositoryModel } from '../../../models';
+import { HelmChartRepositoryModel } from '../../../models/helm';
 import type { HelmChartMetaData, HelmChart, HelmChartEntries } from '../../../types/helm-types';
 import { HelmActionType } from '../../../types/helm-types';
 import {

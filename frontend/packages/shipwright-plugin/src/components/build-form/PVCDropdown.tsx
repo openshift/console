@@ -6,7 +6,7 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import type { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
 interface PVCDropdownProps {
   name: string;

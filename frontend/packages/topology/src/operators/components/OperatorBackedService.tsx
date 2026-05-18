@@ -19,12 +19,12 @@ import {
 import { connect } from 'react-redux';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import type { NodeComponentProps } from '../../components/graph-view/components';
+import type { NodeComponentProps } from '../../components/graph-view/components/componentUtils';
 import {
   canDropEdgeOnNode,
   highlightNode,
   nodesEdgeIsDragging,
-} from '../../components/graph-view/components';
+} from '../../components/graph-view/components/componentUtils';
 import { getKindStringAndAbbreviation } from '../../components/graph-view/components/nodes/nodeUtils';
 import { getResource } from '../../utils/topology-utils';
 import OperatorBackedServiceGroup from './OperatorBackedServiceGroup';

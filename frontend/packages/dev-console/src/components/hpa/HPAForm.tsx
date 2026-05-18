@@ -5,13 +5,11 @@ import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import type { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import {
-  FlexForm,
-  FormBody,
-  FormFooter,
-  SyncedEditorField,
-  CodeEditorField,
-} from '@console/shared';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
+import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
+import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
+import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
+import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { sanitizeHPAToForm } from './hpa-utils';
 import HPADetailsForm from './HPADetailsForm';

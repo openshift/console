@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Edge } from '@patternfly/react-topology';
 import { EdgeTerminalType, observer } from '@patternfly/react-topology';
-import BaseEdge from './BaseEdge';
+import { BaseEdge } from './BaseEdge';
 
 import './AggregateEdge.scss';
 
@@ -9,7 +9,7 @@ type AggregateEdgeProps = {
   element: Edge;
 };
 
-const AggregateEdge: FC<AggregateEdgeProps> = ({ element, ...others }) => {
+const AggregateEdgeComponent: FC<AggregateEdgeProps> = ({ element, ...others }) => {
   const { bidirectional } = element.getData();
 
   const endTerminalType =
@@ -28,4 +28,4 @@ const AggregateEdge: FC<AggregateEdgeProps> = ({ element, ...others }) => {
   );
 };
 
-export default observer(AggregateEdge);
+export const AggregateEdge = observer(AggregateEdgeComponent);

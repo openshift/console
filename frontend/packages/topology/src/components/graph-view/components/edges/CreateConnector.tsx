@@ -3,7 +3,7 @@ import { DefaultCreateConnector } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import type { CreateConnectorProps } from '@console/dynamic-plugin-sdk/src/extensions/topology-types';
 
-const CreateConnector: FC<CreateConnectorProps> = ({
+export const CreateConnector: FC<CreateConnectorProps> = ({
   startPoint,
   endPoint,
   dragging,
@@ -22,5 +22,3 @@ const CreateConnector: FC<CreateConnectorProps> = ({
     />
   );
 };
-
-export default CreateConnector;

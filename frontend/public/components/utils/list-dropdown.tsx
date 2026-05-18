@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared/src/constants/common';
 import { ActionItem, ConsoleSelect } from '@console/internal/components/utils/console-select';
 import { LoadingInline } from './status-box';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';

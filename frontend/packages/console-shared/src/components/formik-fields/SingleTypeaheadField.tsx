@@ -9,7 +9,7 @@ import { useFormikValidationFix } from '../../hooks/useFormikValidationFix';
 import type { SingleTypeaheadFieldProps, SelectInputOption } from './field-types';
 import { getFieldId } from './field-utils';
 
-const SingleTypeaheadField: FC<SingleTypeaheadFieldProps> = ({
+export const SingleTypeaheadField: FC<SingleTypeaheadFieldProps> = ({
   name,
   label,
   ariaLabel,
@@ -105,5 +105,3 @@ const SingleTypeaheadField: FC<SingleTypeaheadFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default SingleTypeaheadField;

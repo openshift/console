@@ -7,7 +7,7 @@ import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter
 import type { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
 import TextColumnItem from './TextColumnItem';
 
-const TextColumnField: FC<TextColumnFieldProps> = (props) => {
+export const TextColumnField: FC<TextColumnFieldProps> = (props) => {
   const { required, name, label, addLabel, helpText, isReadOnly, onChange, children } = props;
   const [field, { touched, error }] = useField<string[]>(name);
   useFormikValidationFix(field.value);
@@ -61,4 +61,3 @@ const TextColumnField: FC<TextColumnFieldProps> = (props) => {
     />
   );
 };
-export default TextColumnField;
