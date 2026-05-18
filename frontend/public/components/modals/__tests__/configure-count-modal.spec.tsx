@@ -1,4 +1,5 @@
 import { screen, configure } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { ConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { DeploymentConfigModel } from '@console/internal/models';
@@ -17,7 +18,7 @@ jest.mock('@console/shared/src/hooks/usePromiseHandler', () => ({
 const mockUseNonScalableImageCheck = useNonScalableImageCheck as jest.Mock;
 
 const baseProps = {
-  defaultValue: 0,
+  defaultValue: 1,
   titleKey: 'public~Edit Pod count',
   messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
   messageVariables: { resourceKinds: 'Deployments' },
@@ -103,5 +104,18 @@ describe('ConfigureCountModal - Non-scalable image warning', () => {
     );
 
     expect(screen.queryByText('Non-scalable image')).toBeNull();
+  });
+
+  it('should show warning when user increments from 1 to 2 for a non-scalable image', async () => {
+    mockUseNonScalableImageCheck.mockReturnValue({ isNonScalable: true, loading: false });
+
+    renderWithProviders(<ConfigureCountModal {...baseProps} />);
+    expect(screen.queryByText('Non-scalable image')).toBeNull();
+
+    const user = userEvent.setup();
+    const incrementButton = screen.getByRole('button', { name: 'Increment' });
+    await user.click(incrementButton);
+
+    expect(screen.getByText('Non-scalable image')).toBeVisible();
   });
 });

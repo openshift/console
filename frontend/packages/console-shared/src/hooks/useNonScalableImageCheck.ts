@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
-import * as _ from 'lodash';
+import { useMemo } from 'react';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ImageStreamTagModel } from '@console/internal/models';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
-import { k8sGet } from '@console/internal/module/k8s';
 
 const NON_SCALABLE_LABEL = 'io.openshift.non-scalable';
 const IMAGE_TRIGGER_ANNOTATION = 'image.openshift.io/triggers';
@@ -65,50 +64,45 @@ const getISTReference = (resource: K8sResourceKind): ISTReference | null => {
 /**
  * Checks if a workload's container image has the `io.openshift.non-scalable` label.
  * Resolves the ImageStreamTag reference from the workload's triggers or annotations,
- * fetches the IST, and inspects `image.dockerImageMetadata.Config.Labels`.
+ * watches the IST via `useK8sWatchResource`, and inspects
+ * `image.dockerImageMetadata.Config.Labels`.
  *
+ * Pass `null` to skip the watch (e.g. for non-replica paths).
  * Returns `{ isNonScalable: false }` silently on any error (missing IST, permissions, etc.).
  */
 export const useNonScalableImageCheck = (
-  resource: K8sResourceKind,
+  resource: K8sResourceKind | null,
 ): { isNonScalable: boolean; loading: boolean } => {
-  const [isNonScalable, setIsNonScalable] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const triggerAnnotation = resource?.metadata?.annotations?.[IMAGE_TRIGGER_ANNOTATION];
+  const resourceKind = resource?.kind;
+  const resourceNamespace = resource?.metadata?.namespace;
+  const dcTriggers = resource?.spec?.triggers;
 
-  const istRef = useMemo(() => getISTReference(resource), [resource]);
+  const istRef = useMemo(
+    () => (resource ? getISTReference(resource) : null),
+    // Depend on stable primitives to avoid recomputing on every watch cycle
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [resourceKind, resourceNamespace, triggerAnnotation, dcTriggers],
+  );
+
   const istName = istRef?.name;
   const istNamespace = istRef?.namespace;
 
-  useEffect(() => {
-    if (!istName || !istNamespace) {
-      setIsNonScalable(false);
-      setLoading(false);
-      return undefined;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-
-    k8sGet(ImageStreamTagModel, istName, istNamespace)
-      .then((ist: K8sResourceKind) => {
-        if (!cancelled) {
-          const labels = _.get(ist, 'image.dockerImageMetadata.Config.Labels', {});
-          const nonScalableValue = labels[NON_SCALABLE_LABEL];
-          setIsNonScalable(nonScalableValue === true || nonScalableValue === 'true');
-          setLoading(false);
+  const [ist, loaded, error] = useK8sWatchResource<K8sResourceKind>(
+    istName && istNamespace
+      ? {
+          kind: ImageStreamTagModel.kind,
+          name: istName,
+          namespace: istNamespace,
+          isList: false,
         }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setIsNonScalable(false);
-          setLoading(false);
-        }
-      });
+      : null,
+  );
 
-    return () => {
-      cancelled = true;
-    };
-  }, [istName, istNamespace]);
+  const isNonScalable =
+    loaded && !error
+      ? (ist as any)?.image?.dockerImageMetadata?.Config?.Labels?.[NON_SCALABLE_LABEL] === 'true'
+      : false;
 
-  return { isNonScalable, loading };
+  return { isNonScalable, loading: !loaded };
 };

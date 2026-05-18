@@ -44,7 +44,7 @@ export const ConfigureCountModal: OverlayComponent<ConfigureCountModalProps> = (
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const isReplicaPath = path === '/spec/replicas';
-  const { isNonScalable } = useNonScalableImageCheck(resource);
+  const { isNonScalable } = useNonScalableImageCheck(isReplicaPath ? resource : null);
 
   const submit = useCallback(
     (e) => {

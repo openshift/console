@@ -1,13 +1,12 @@
-import { renderHook, waitFor } from '@testing-library/react';
-import { k8sGet } from '@console/internal/module/k8s';
+import { renderHook } from '@testing-library/react';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useNonScalableImageCheck } from '../useNonScalableImageCheck';
 
-jest.mock('@console/internal/module/k8s', () => ({
-  ...jest.requireActual('@console/internal/module/k8s'),
-  k8sGet: jest.fn(),
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
 }));
 
-const mockK8sGet = k8sGet as jest.Mock;
+const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
 
 const makeDeploymentConfig = (istName?: string, namespace = 'test-ns') => ({
   kind: 'DeploymentConfig',
@@ -45,102 +44,112 @@ const makeDeployment = (istName?: string, namespace = 'test-ns') => ({
   spec: { replicas: 1 },
 });
 
-const makeIST = (nonScalable?: string | boolean) => {
-  const labels: Record<string, string | boolean> = {};
-  if (nonScalable !== undefined) {
-    labels['io.openshift.non-scalable'] = nonScalable;
-  }
-  return {
-    image: {
-      dockerImageMetadata: {
-        Config: {
-          Labels: labels,
-        },
+const makeIST = (nonScalable?: string) => ({
+  image: {
+    dockerImageMetadata: {
+      Config: {
+        Labels: nonScalable !== undefined ? { 'io.openshift.non-scalable': nonScalable } : {},
       },
     },
-  };
-};
+  },
+});
 
 describe('useNonScalableImageCheck', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should return isNonScalable=true when IST has io.openshift.non-scalable=true (string)', async () => {
-    mockK8sGet.mockResolvedValue(makeIST('true'));
+  it('should return isNonScalable=true when IST has io.openshift.non-scalable=true', () => {
+    mockUseK8sWatchResource.mockReturnValue([makeIST('true'), true, null]);
     const resource = makeDeploymentConfig('myapp:latest');
 
     const { result } = renderHook(() => useNonScalableImageCheck(resource));
 
-    await waitFor(() => {
-      expect(result.current.isNonScalable).toBe(true);
-      expect(result.current.loading).toBe(false);
-    });
+    expect(result.current.isNonScalable).toBe(true);
+    expect(result.current.loading).toBe(false);
   });
 
-  it('should return isNonScalable=true when IST has io.openshift.non-scalable=true (boolean)', async () => {
-    mockK8sGet.mockResolvedValue(makeIST(true));
+  it('should return isNonScalable=false when IST does not have the label', () => {
+    mockUseK8sWatchResource.mockReturnValue([makeIST(), true, null]);
     const resource = makeDeploymentConfig('myapp:latest');
 
     const { result } = renderHook(() => useNonScalableImageCheck(resource));
 
-    await waitFor(() => {
-      expect(result.current.isNonScalable).toBe(true);
-    });
+    expect(result.current.isNonScalable).toBe(false);
+    expect(result.current.loading).toBe(false);
   });
 
-  it('should return isNonScalable=false when IST does not have the label', async () => {
-    mockK8sGet.mockResolvedValue(makeIST());
-    const resource = makeDeploymentConfig('myapp:latest');
-
-    const { result } = renderHook(() => useNonScalableImageCheck(resource));
-
-    await waitFor(() => {
-      expect(result.current.isNonScalable).toBe(false);
-      expect(result.current.loading).toBe(false);
-    });
-  });
-
-  it('should return isNonScalable=false when there are no triggers', () => {
+  it('should pass null to useK8sWatchResource when there are no triggers', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, true, null]);
     const resource = makeDeploymentConfig();
 
     const { result } = renderHook(() => useNonScalableImageCheck(resource));
 
     expect(result.current.isNonScalable).toBe(false);
-    expect(result.current.loading).toBe(false);
-    expect(mockK8sGet).not.toHaveBeenCalled();
+    expect(mockUseK8sWatchResource).toHaveBeenCalledWith(null);
   });
 
-  it('should handle Deployment with image.openshift.io/triggers annotation', async () => {
-    mockK8sGet.mockResolvedValue(makeIST('true'));
+  it('should handle Deployment with image.openshift.io/triggers annotation', () => {
+    mockUseK8sWatchResource.mockReturnValue([makeIST('true'), true, null]);
     const resource = makeDeployment('myapp:latest');
 
     const { result } = renderHook(() => useNonScalableImageCheck(resource));
 
-    await waitFor(() => {
-      expect(result.current.isNonScalable).toBe(true);
-    });
+    expect(result.current.isNonScalable).toBe(true);
+    expect(mockUseK8sWatchResource).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: 'ImageStreamTag',
+        name: 'myapp:latest',
+        namespace: 'test-ns',
+      }),
+    );
   });
 
-  it('should return isNonScalable=false when k8sGet fails', async () => {
-    mockK8sGet.mockRejectedValue(new Error('Forbidden'));
+  it('should return isNonScalable=false when useK8sWatchResource returns an error', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, true, new Error('Forbidden')]);
     const resource = makeDeploymentConfig('myapp:latest');
-
-    const { result } = renderHook(() => useNonScalableImageCheck(resource));
-
-    await waitFor(() => {
-      expect(result.current.isNonScalable).toBe(false);
-      expect(result.current.loading).toBe(false);
-    });
-  });
-
-  it('should return isNonScalable=false for Deployment without trigger annotation', () => {
-    const resource = makeDeployment();
 
     const { result } = renderHook(() => useNonScalableImageCheck(resource));
 
     expect(result.current.isNonScalable).toBe(false);
     expect(result.current.loading).toBe(false);
-    expect(mockK8sGet).not.toHaveBeenCalled();
+  });
+
+  it('should pass null to useK8sWatchResource for Deployment without trigger annotation', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, true, null]);
+    const resource = makeDeployment();
+
+    const { result } = renderHook(() => useNonScalableImageCheck(resource));
+
+    expect(result.current.isNonScalable).toBe(false);
+    expect(mockUseK8sWatchResource).toHaveBeenCalledWith(null);
+  });
+
+  it('should return loading=true while useK8sWatchResource has not loaded', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, false, null]);
+    const resource = makeDeploymentConfig('myapp:latest');
+
+    const { result } = renderHook(() => useNonScalableImageCheck(resource));
+
+    expect(result.current.isNonScalable).toBe(false);
+    expect(result.current.loading).toBe(true);
+  });
+
+  it('should pass null to useK8sWatchResource when resource is null', () => {
+    mockUseK8sWatchResource.mockReturnValue([null, true, null]);
+
+    const { result } = renderHook(() => useNonScalableImageCheck(null));
+
+    expect(result.current.isNonScalable).toBe(false);
+    expect(mockUseK8sWatchResource).toHaveBeenCalledWith(null);
+  });
+
+  it('should return isNonScalable=false when label value is not "true"', () => {
+    mockUseK8sWatchResource.mockReturnValue([makeIST('false'), true, null]);
+    const resource = makeDeploymentConfig('myapp:latest');
+
+    const { result } = renderHook(() => useNonScalableImageCheck(resource));
+
+    expect(result.current.isNonScalable).toBe(false);
   });
 });

@@ -128,12 +128,8 @@ export const PodRing: FC<PodRingProps> = ({
         <SplitItem>
           <Bullseye>
             <div>
-              {isNonScalable && clickCount >= 1 ? (
-                <Tooltip
-                  content={t(
-                    'console-shared~This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.',
-                  )}
-                >
+              {(() => {
+                const scaleUpButton = (
                   <Button
                     icon={<AngleUpIcon style={{ fontSize: '20' }} />}
                     type="button"
@@ -143,18 +139,21 @@ export const PodRing: FC<PodRingProps> = ({
                     onClick={() => handleClick(1)}
                     isBlock
                   />
-                </Tooltip>
-              ) : (
-                <Button
-                  icon={<AngleUpIcon style={{ fontSize: '20' }} />}
-                  type="button"
-                  variant="plain"
-                  aria-label={t('console-shared~Increase the Pod count')}
-                  title={t('console-shared~Increase the Pod count')}
-                  onClick={() => handleClick(1)}
-                  isBlock
-                />
-              )}
+                );
+                // Show tooltip preemptively at >= 1 replica so users see
+                // the non-scalable warning before attempting to scale up
+                return isNonScalable && clickCount >= 1 ? (
+                  <Tooltip
+                    content={t(
+                      'console-shared~This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.',
+                    )}
+                  >
+                    {scaleUpButton}
+                  </Tooltip>
+                ) : (
+                  scaleUpButton
+                );
+              })()}
               <Button
                 icon={<AngleDownIcon style={{ fontSize: '20' }} />}
                 type="button"
