@@ -80,6 +80,16 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 fi
 
+function copyArtifacts {
+  local exit_code=$?
+  if [ -d "$ARTIFACT_DIR" ] && [ -d "test-results" ]; then
+    echo "Copying Playwright artifacts from $(pwd)/test-results..."
+    cp -r test-results "${ARTIFACT_DIR}/playwright-test-results" 2>/dev/null || echo "Warning: failed to copy Playwright artifacts" >&2
+  fi
+  exit "$exit_code"
+}
+trap copyArtifacts EXIT
+
 FRONTEND_ABS="$(pwd)"
 playwright_bin="${FRONTEND_ABS}/node_modules/.bin/playwright"
 if [ ! -f "$playwright_bin" ]; then
@@ -90,4 +100,4 @@ fi
 
 export CI=true
 
-exec "$playwright_bin" test "$@"
+"$playwright_bin" test "$@"
