@@ -153,4 +153,130 @@ describe('NodeDetailsGpuMetrics', () => {
     render(<NodeDetailsGpuMetrics node={baseNode} />);
     expect(screen.getByText(/GPU metrics are not available/)).toBeInTheDocument();
   });
+
+  it('does not show GPU count when the Prometheus count value is non-numeric', () => {
+    const countResp = makeScalarResponse('not-a-number');
+    const utilResp = makeResponse([{ gpu: '0', value: '50' }]);
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([countResp, null, false])
+      .mockReturnValueOnce([utilResp, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false]);
+
+    render(<NodeDetailsGpuMetrics node={baseNode} />);
+    expect(screen.queryByText('GPU count')).not.toBeInTheDocument();
+  });
+
+  it('ignores Prometheus results without a GPU identifier', () => {
+    const respWithMissing = {
+      status: 'success',
+      data: {
+        resultType: 'vector' as const,
+        result: [
+          { metric: { gpu: '0' }, value: [Date.now() / 1000, '30'] },
+          { metric: {}, value: [Date.now() / 1000, '99'] },
+        ],
+      },
+    };
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([respWithMissing, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false]);
+
+    render(<NodeDetailsGpuMetrics node={baseNode} />);
+    expect(screen.getByText('30 %')).toBeInTheDocument();
+    expect(screen.queryByText('99 %')).not.toBeInTheDocument();
+  });
+
+  it('renders metrics when the node has DCGM data but no GPU capacity keys', () => {
+    const utilResp = makeResponse([{ gpu: '0', value: '55' }]);
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([utilResp, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false]);
+
+    render(<NodeDetailsGpuMetrics node={nonGpuNode} />);
+    expect(screen.getByText('GPU metrics')).toBeInTheDocument();
+    expect(screen.getByText('55 %')).toBeInTheDocument();
+  });
+
+  it('shows capacity and unavailable message for an AMD-only GPU node', () => {
+    const amdNode: NodeKind = {
+      apiVersion: 'v1',
+      kind: 'Node',
+      metadata: { name: 'amd-node-1', uid: 'uid-3' },
+      spec: {},
+      status: {
+        capacity: { 'amd.com/gpu': '1', cpu: '16', memory: '64Gi' },
+        allocatable: { 'amd.com/gpu': '1', cpu: '15', memory: '62Gi' },
+        conditions: [],
+        images: [],
+      },
+    };
+
+    mockUsePrometheusPoll.mockReturnValue([emptyResponse, null, false]);
+    render(<NodeDetailsGpuMetrics node={amdNode} />);
+    expect(screen.getByText('GPU metrics')).toBeInTheDocument();
+    expect(screen.getByText('GPU capacity')).toBeInTheDocument();
+    expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/GPU metrics are not available/)).toBeInTheDocument();
+  });
+
+  it('shows the metrics table when some polls fail but utilization data is present', () => {
+    const utilResp = makeResponse([{ gpu: '0', value: '80' }]);
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([utilResp, null, false])
+      .mockReturnValueOnce([undefined, new Error('fetch failed'), false])
+      .mockReturnValueOnce([undefined, new Error('fetch failed'), false])
+      .mockReturnValueOnce([undefined, new Error('fetch failed'), false])
+      .mockReturnValueOnce([undefined, new Error('fetch failed'), false]);
+
+    render(<NodeDetailsGpuMetrics node={baseNode} />);
+    expect(screen.getByText('GPU device')).toBeInTheDocument();
+    expect(screen.getByText('80 %')).toBeInTheDocument();
+    expect(screen.getAllByText('-').length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('maps GPU metrics using GPU_I_ID, UUID, or device when gpu label is absent', () => {
+    const respWithAltLabels = {
+      status: 'success',
+      data: {
+        resultType: 'vector' as const,
+        result: [
+          { metric: { GPU_I_ID: 'mig-0' }, value: [Date.now() / 1000, '40'] },
+          { metric: { UUID: 'GPU-abc-123' }, value: [Date.now() / 1000, '60'] },
+          { metric: { device: 'nvidia1' }, value: [Date.now() / 1000, '75'] },
+        ],
+      },
+    };
+
+    mockUsePrometheusPoll
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([respWithAltLabels, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false])
+      .mockReturnValueOnce([emptyResponse, null, false]);
+
+    render(<NodeDetailsGpuMetrics node={baseNode} />);
+    expect(screen.getByText('40 %')).toBeInTheDocument();
+    expect(screen.getByText('60 %')).toBeInTheDocument();
+    expect(screen.getByText('75 %')).toBeInTheDocument();
+    expect(screen.getByText(/GPU mig-0/)).toBeInTheDocument();
+    expect(screen.getByText(/GPU GPU-abc-123/)).toBeInTheDocument();
+    expect(screen.getByText(/GPU nvidia1/)).toBeInTheDocument();
+  });
 });

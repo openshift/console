@@ -426,6 +426,7 @@
   "Power usage": "Power usage",
   "FB memory used": "FB memory used",
   "FB memory free": "FB memory free",
+  "GPU metrics per device": "GPU metrics per device",
   "GPU metrics are not available. Ensure DCGM exporter metrics are being scraped and labeled with the node name.": "GPU metrics are not available. Ensure DCGM exporter metrics are being scraped and labeled with the node name.",
   "Node details": "Node details",
   "External ID": "External ID",

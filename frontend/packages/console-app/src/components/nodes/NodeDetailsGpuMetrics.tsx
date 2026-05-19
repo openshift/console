@@ -235,7 +235,10 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
 
       {!isLoading && hasMetrics && (
         <div className="co-table-container pf-v6-u-mt-md">
-          <table className="pf-v6-c-table pf-m-compact pf-m-border-rows">
+          <table
+            className="pf-v6-c-table pf-m-compact pf-m-border-rows"
+            aria-label={t('console-app~GPU metrics per device')}
+          >
             <thead className="pf-v6-c-table__thead">
               <tr className="pf-v6-c-table__tr">
                 <th className="pf-v6-c-table__th">{t('console-app~GPU device')}</th>
