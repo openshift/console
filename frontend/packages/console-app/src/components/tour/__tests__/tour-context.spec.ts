@@ -139,6 +139,21 @@ describe('guided-tour-context', () => {
       expect(tour).toEqual(null);
       expect(totalSteps).toEqual(undefined);
     });
+
+    it('should not flash startTour when loaded transitions to true with completed tour', () => {
+      useSelectorMock.mockReturnValue({ A: true, B: false });
+      useResolvedExtensionsMock.mockReturnValue(mockTourExtension);
+      // Start with loaded: false (async ConfigMap fetch in progress)
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: false } }, () => null, false]);
+      const { result, rerender } = renderHook(() => useTourValuesForContext());
+      expect(result.current.tour).toEqual(null);
+
+      // Simulate ConfigMap load completing with completed: true
+      useUserPreferenceMock.mockReturnValue([{ dev: { completed: true } }, () => null, true]);
+      rerender();
+      const { tourState } = result.current;
+      expect(tourState?.startTour).not.toBe(true);
+    });
   });
 
   describe('useTourStatePerspective', () => {

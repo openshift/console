@@ -1,5 +1,5 @@
 import type { Reducer, Dispatch, ReducerAction } from 'react';
-import { createContext, useReducer, useState, useEffect, useCallback } from 'react';
+import { createContext, useReducer, useRef, useState, useEffect, useCallback } from 'react';
 import { pick, union, isEqual } from 'lodash';
 import { createSelector } from 'reselect';
 import { useActivePerspective } from '@console/dynamic-plugin-sdk';
@@ -151,14 +151,18 @@ export const useTourValuesForContext = (): TourContextType => {
     startTour: !completed,
   });
 
+  const initializedWithLoadedData = useRef(false);
   useEffect(() => {
     tourDispatch({ type: TourActions.initialize, payload: { completed } });
     setPerspective(activePerspective);
+    if (loaded) {
+      initializedWithLoadedData.current = true;
+    }
     // only run effect when the active perspective changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePerspective, loaded]);
 
-  if (!tour || !loaded) return { tour: null };
+  if (!tour || !loaded || !initializedWithLoadedData.current) return { tour: null };
   const {
     properties: {
       tour: { intro, steps: unfilteredSteps, end },
