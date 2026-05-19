@@ -86,12 +86,26 @@ if [ "$RUN_CREATE_USER" = true ]; then
 fi
 
 copy_playwright_artifacts_to_dir() {
+  # Validate ARTIFACT_DIR is set and is an absolute path
+  if [ -z "$ARTIFACT_DIR" ]; then
+    echo "Error: ARTIFACT_DIR is not set" >&2
+    return 1
+  fi
+  case "$ARTIFACT_DIR" in
+    /) echo "Error: ARTIFACT_DIR must not be '/'" >&2; return 1 ;;
+    /*) ;; # absolute path, OK
+    *) echo "Error: ARTIFACT_DIR must be an absolute path, got: $ARTIFACT_DIR" >&2; return 1 ;;
+  esac
+
   mkdir -p "$ARTIFACT_DIR"
   local copied=false
 
   if [ -d test-results ]; then
     local dest="${ARTIFACT_DIR}/playwright-test-results"
-    rm -rf "$dest"
+    # Safety check before rm -rf to prevent accidental deletion
+    if [ -n "$dest" ] && [ "$dest" != "/" ]; then
+      rm -rf "$dest"
+    fi
     mkdir -p "$dest"
     if cp -a test-results/. "$dest/"; then
       copied=true
@@ -107,7 +121,10 @@ copy_playwright_artifacts_to_dir() {
 
   if [ -d playwright-report ]; then
     local report_dest="${ARTIFACT_DIR}/playwright-report"
-    rm -rf "$report_dest"
+    # Safety check before rm -rf to prevent accidental deletion
+    if [ -n "$report_dest" ] && [ "$report_dest" != "/" ]; then
+      rm -rf "$report_dest"
+    fi
     if cp -a playwright-report "$report_dest"; then
       copied=true
       echo "Copied Playwright HTML report to ${report_dest} (open index.html)"
@@ -124,11 +141,19 @@ copy_playwright_artifacts_to_dir() {
 }
 
 copyArtifacts() {
-  local exit_code=$?
+  local test_exit_code=$?
+  local copy_exit_code=0
   set +e
   copy_playwright_artifacts_to_dir
+  copy_exit_code=$?
   set -e
-  exit "$exit_code"
+  if [ "$test_exit_code" -ne 0 ]; then
+    exit "$test_exit_code"
+  fi
+  if [ "$copy_exit_code" -ne 0 ]; then
+    exit "$copy_exit_code"
+  fi
+  exit 0
 }
 trap copyArtifacts EXIT
 

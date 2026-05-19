@@ -24,6 +24,18 @@ cd "${REPO_ROOT}"
 
 ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
 INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
+
+# Validate ARTIFACT_DIR is set and is an absolute path
+if [ -z "$ARTIFACT_DIR" ]; then
+  echo "Error: ARTIFACT_DIR is not set" >&2
+  exit 1
+fi
+case "$ARTIFACT_DIR" in
+  /) echo "Error: ARTIFACT_DIR must not be '/'" >&2; exit 1 ;;
+  /*) ;; # absolute path, OK
+  *) echo "Error: ARTIFACT_DIR must be an absolute path, got: $ARTIFACT_DIR" >&2; exit 1 ;;
+esac
+
 export ARTIFACT_DIR INSTALLER_DIR
 mkdir -p "${ARTIFACT_DIR}"
 
