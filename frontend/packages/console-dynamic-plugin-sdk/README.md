@@ -516,22 +516,16 @@ Before publishing, it's recommended to log into your npm user account:
 npm login
 ```
 
-Build all distributable [SDK packages](#sdk-packages) into `dist` directory:
+Build all distributable SDK packages into `dist` directory and set their version:
 
 ```sh
-yarn build
-```
-
-Set the version in all dist packages (the source `package.json` uses a placeholder version):
-
-```sh
-yarn set-dist-version <version>
+yarn build && yarn set-dist-version <version>
 ```
 
 Finally, publish relevant packages to [npm registry](https://www.npmjs.com/):
 
 ```sh
-npm publish ./dist/<pkg>
+(cd ./dist/<pkg> && npm publish)
 ```
 
 If the given package doesn't exist in npm registry, add `--access public` to `npm publish`.
