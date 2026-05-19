@@ -15,12 +15,17 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
+#   ARTIFACT_DIR — Prow/OpenShift CI artifact root (default: /tmp/artifacts). On EXIT, copies
+#     frontend/test-results → $ARTIFACT_DIR/playwright-test-results
+#     frontend/playwright-report → $ARTIFACT_DIR/playwright-report (CI HTML report)
+#     junit → $ARTIFACT_DIR/junit-playwright.xml
 #
 
 set -euo pipefail
 
 ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
 INSTALLER_DIR=${INSTALLER_DIR:-${ARTIFACT_DIR}/installer}
+export ARTIFACT_DIR
 
 if [ "$(basename "$(pwd)")" != "frontend" ]; then
   echo "This script must be run from the frontend folder" >&2
@@ -80,12 +85,49 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 fi
 
-function copyArtifacts {
-  local exit_code=$?
-  if [ -d "$ARTIFACT_DIR" ] && [ -d "test-results" ]; then
-    echo "Copying Playwright artifacts from $(pwd)/test-results..."
-    cp -r test-results "${ARTIFACT_DIR}/playwright-test-results" 2>/dev/null || echo "Warning: failed to copy Playwright artifacts" >&2
+copy_playwright_artifacts_to_dir() {
+  mkdir -p "$ARTIFACT_DIR"
+  local copied=false
+
+  if [ -d test-results ]; then
+    local dest="${ARTIFACT_DIR}/playwright-test-results"
+    rm -rf "$dest"
+    mkdir -p "$dest"
+    if cp -a test-results/. "$dest/"; then
+      copied=true
+      echo "Copied Playwright test-results (traces, screenshots, videos) to ${dest}"
+    else
+      echo "Warning: failed to copy test-results to ${dest}" >&2
+    fi
+    if [ -f test-results/junit-results.xml ]; then
+      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
+        echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml"
+    fi
   fi
+
+  if [ -d playwright-report ]; then
+    local report_dest="${ARTIFACT_DIR}/playwright-report"
+    rm -rf "$report_dest"
+    if cp -a playwright-report "$report_dest"; then
+      copied=true
+      echo "Copied Playwright HTML report to ${report_dest} (open index.html)"
+    else
+      echo "Warning: failed to copy playwright-report to ${report_dest}" >&2
+    fi
+  fi
+
+  if [ "$copied" = false ]; then
+    echo "Warning: no test-results/ or playwright-report/ under $(pwd); nothing copied to ${ARTIFACT_DIR}" >&2
+  else
+    echo "Playwright artifacts root: ${ARTIFACT_DIR}"
+  fi
+}
+
+copyArtifacts() {
+  local exit_code=$?
+  set +e
+  copy_playwright_artifacts_to_dir
+  set -e
   exit "$exit_code"
 }
 trap copyArtifacts EXIT

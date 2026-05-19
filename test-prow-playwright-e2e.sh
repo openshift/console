@@ -24,6 +24,8 @@ cd "${REPO_ROOT}"
 
 ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
 INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
+export ARTIFACT_DIR INSTALLER_DIR
+mkdir -p "${ARTIFACT_DIR}"
 
 # don't log kubeadmin-password
 set +x

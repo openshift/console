@@ -55,6 +55,7 @@ export default defineConfig({
     ? [
         ['dot'],
         ['junit', { outputFile: path.resolve(__dirname, 'test-results', 'junit-results.xml') }],
+        ['html', { outputFolder: path.resolve(__dirname, 'playwright-report'), open: 'never' }],
       ]
     : [['list']],
 
