@@ -11,6 +11,16 @@ type ISTReference = {
   namespace: string;
 };
 
+type ImageStreamTagResource = K8sResourceKind & {
+  image?: {
+    dockerImageMetadata?: {
+      Config?: {
+        Labels?: Record<string, string>;
+      };
+    };
+  };
+};
+
 const getISTFromDeploymentConfig = (resource: K8sResourceKind): ISTReference | null => {
   const triggers = resource?.spec?.triggers;
   if (!Array.isArray(triggers)) {
@@ -76,19 +86,20 @@ export const useNonScalableImageCheck = (
   const triggerAnnotation = resource?.metadata?.annotations?.[IMAGE_TRIGGER_ANNOTATION];
   const resourceKind = resource?.kind;
   const resourceNamespace = resource?.metadata?.namespace;
-  const dcTriggers = resource?.spec?.triggers;
+  const dcISTName = resource?.spec?.triggers?.find(
+    (t) => t?.type === 'ImageChange' && t?.imageChangeParams?.from?.kind === 'ImageStreamTag',
+  )?.imageChangeParams?.from?.name;
 
   const istRef = useMemo(
     () => (resource ? getISTReference(resource) : null),
-    // Depend on stable primitives to avoid recomputing on every watch cycle
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [resourceKind, resourceNamespace, triggerAnnotation, dcTriggers],
+    [resourceKind, resourceNamespace, triggerAnnotation, dcISTName],
   );
 
   const istName = istRef?.name;
   const istNamespace = istRef?.namespace;
 
-  const [ist, loaded, error] = useK8sWatchResource<K8sResourceKind>(
+  const [ist, loaded, error] = useK8sWatchResource<ImageStreamTagResource>(
     istName && istNamespace
       ? {
           kind: ImageStreamTagModel.kind,
@@ -101,7 +112,7 @@ export const useNonScalableImageCheck = (
 
   const isNonScalable =
     loaded && !error
-      ? (ist as any)?.image?.dockerImageMetadata?.Config?.Labels?.[NON_SCALABLE_LABEL] === 'true'
+      ? ist?.image?.dockerImageMetadata?.Config?.Labels?.[NON_SCALABLE_LABEL] === 'true'
       : false;
 
   return { isNonScalable, loading: !loaded };
