@@ -26,11 +26,12 @@ let cachedETag: string;
 
 export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
   try {
-    const headers: HeadersInit = { Accept: 'application/json' };
-    if (cachedETag) {
-      headers['If-None-Match'] = cachedETag;
-    }
-    const response = await coFetch('api/kubernetes/openapi/v2', { headers });
+    const response = await coFetch('api/kubernetes/openapi/v2', {
+      headers: {
+        Accept: 'application/json',
+        'If-None-Match': cachedETag,
+      },
+    });
     if (response.status === 304) {
       return swaggerDefinitions;
     }
