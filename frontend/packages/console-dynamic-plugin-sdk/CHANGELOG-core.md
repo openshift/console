@@ -10,7 +10,7 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
-## 4.23.0-prerelease.1 - TBD
+## 4.23.0-prerelease.1 - 2026-05-19
 
 - Add `useToast` hook for showing toast notifications ([CONSOLE-5273], [#16400])
 
