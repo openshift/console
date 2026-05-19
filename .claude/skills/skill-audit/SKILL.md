@@ -26,9 +26,9 @@ For each skill file, find references to files/directories. Look for:
 
 For each path found:
 1. Resolve relative to the repo root
-3. If not found, try resolving relative to `frontend/`
-4. Check if the file exists on disk
-5. Record any missing paths with the skill name, file, and line number
+2. If not found, try resolving relative to `frontend/`
+3. Check if the file exists on disk
+4. Record any missing paths with the skill name, file, and line number
 
 **Skip**:
 - URLs (http/https)
@@ -151,7 +151,7 @@ Output a summary grouped by skill, using **severity levels** to help prioritize 
 | **WARN** | Likely stale but not immediately breaking | `/deprecated` PatternFly import, `@console/internal` path that may be alias-resolved, orphaned skill not referenced in config |
 | **INFO** | Worth noting but low priority | Unresolvable `$codeRef` in a generic example, self-referencing skill name |
 
-```
+```markdown
 ## Skill Audit Report
 
 ### skill-name (SKILL.md)

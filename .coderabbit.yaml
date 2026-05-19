@@ -46,16 +46,12 @@ reviews:
   pre_merge_checks:
     custom_checks:
       - name: "Test coverage for new source files"
-        instruction: |
-          For every new TypeScript/TSX source file added under frontend/ (excluding test files,
-          type definition files, index files, and SCSS/CSS files), verify that a corresponding
-          test file exists or is added in this PR.
-
-          Pass: All new source files have corresponding test files in the PR or pre-existing
-          in the repository.
-          Fail: A new source file is added with no corresponding test file.
-          Inconclusive: Unable to determine test file presence (e.g., file patterns don't
-          match conventions).
+        mode: error
+        instructions: |
+          For every new TypeScript/TSX source file added under frontend/ or Go source file
+          added under pkg/ or cmd/ (excluding test files, type definition files, index files,
+          and SCSS/CSS files), verify that a corresponding test file exists or is added in
+          this PR.
 
           Skip: Files matching these patterns are exempt from this check:
           - **/types.ts, **/types.tsx (type-only files)
@@ -64,6 +60,12 @@ reviews:
           - **/constants.ts (static values)
           - **/__mocks__/** (mock files)
           - **/console-extensions.json (plugin manifests)
+
+          Pass: All remaining new source files have corresponding test files in the PR
+          or pre-existing in the repository.
+          Fail: A new source file is added with no corresponding test file.
+          Inconclusive: Unable to determine test file presence (e.g., file patterns don't
+          match conventions).
 
 knowledge_base:
   code_guidelines:
