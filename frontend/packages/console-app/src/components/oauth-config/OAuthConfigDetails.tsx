@@ -73,6 +73,7 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
         component="button"
         id={key}
         data-test-id={key}
+        data-test={key}
         onClick={(e) => navigate(`/settings/idp/${e.currentTarget.id}`)}
       >
         {getAddIDPItemLabels(value)}
@@ -130,6 +131,7 @@ export const OAuthConfigDetails: FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthK
               <MenuToggle
                 id="idp-dropdown"
                 data-test-id="dropdown-button"
+                data-test="dropdown-button"
                 ref={toggleRef}
                 onClick={() => setIDPOpen(!isIDPOpen)}
                 isExpanded={isIDPOpen}

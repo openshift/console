@@ -214,6 +214,7 @@ export const Kebab: KebabComponent = (props) => {
           <MenuToggle
             ref={toggleRef}
             data-test-id="kebab-button"
+            data-test="kebab-button"
             onClick={toggle}
             onFocus={onHover}
             onMouseEnter={onHover}

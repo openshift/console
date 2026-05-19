@@ -86,6 +86,7 @@ const ActionMenuToggle: FC<ActionMenuToggleProps> = ({
       aria-label={toggleLabel}
       aria-haspopup="true"
       data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
+      data-test={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
       onClick={handleToggleClick}
       onFocus={onToggleHover}
       onMouseOver={onToggleHover}

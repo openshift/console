@@ -35,6 +35,7 @@ export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ canc
       <ModalHeader
         title={t('public~Other available paths')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="cluster-more-updates-modal-title"
       />
       <ModalBody>

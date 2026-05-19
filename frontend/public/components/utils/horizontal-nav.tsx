@@ -205,6 +205,7 @@ export const NavBar: FC<NavBarProps> = ({ pages }) => {
                 navigate(to);
               }}
               data-test-id={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
+              data-test={`horizontal-link-${nameKey ? nameKey.split('~')[1] : name}`}
               title={<TabTitleText>{nameKey ? t(nameKey) : name}</TabTitleText>}
               aria-controls={undefined} // there is no corresponding tab content to control, so this ID is invalid
               {...(badge ? { actions: badge } : {})}

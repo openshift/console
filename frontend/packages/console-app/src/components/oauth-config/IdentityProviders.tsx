@@ -46,16 +46,32 @@ export const IdentityProviders: FC<IdentityProvidersProps> = ({ identityProvider
         <tbody className="pf-v6-c-table__tbody">
           {_.map(identityProviders, (idp, index) => (
             <tr className="pf-v6-c-table__tr" key={idp.name}>
-              <td className="pf-v6-c-table__td" data-test-idp-name={idp.name}>
+              <td
+                className="pf-v6-c-table__td"
+                data-test-idp-name={idp.name}
+                data-test={`idp-name-${idp.name}`}
+              >
                 {idp.name}
               </td>
-              <td className="pf-v6-c-table__td" data-test-idp-type-for={idp.name}>
+              <td
+                className="pf-v6-c-table__td"
+                data-test-idp-type-for={idp.name}
+                data-test={`idp-type-${idp.name}`}
+              >
                 {idp.type}
               </td>
-              <td className="pf-v6-c-table__td" data-test-idp-mapping-for={idp.name}>
+              <td
+                className="pf-v6-c-table__td"
+                data-test-idp-mapping-for={idp.name}
+                data-test={`idp-mapping-${idp.name}`}
+              >
                 {idp.mappingMethod || 'claim'}
               </td>
-              <td className="pf-v6-c-table__td" data-test-idp-kebab-for={idp.name}>
+              <td
+                className="pf-v6-c-table__td"
+                data-test-idp-kebab-for={idp.name}
+                data-test={`idp-kebab-${idp.name}`}
+              >
                 <Kebab
                   options={[
                     {
