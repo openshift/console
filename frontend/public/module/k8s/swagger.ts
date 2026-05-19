@@ -29,7 +29,7 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
     const response = await coFetch('api/kubernetes/openapi/v2', {
       headers: {
         Accept: 'application/json',
-        'If-None-Match': cachedETag,
+        ...(cachedETag && { 'If-None-Match': cachedETag }),
       },
     });
     if (response.status === 304) {
