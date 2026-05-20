@@ -52,19 +52,9 @@ export const topologyPage = {
     cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
     cy.get('[data-surface="true"]').should('exist');
   },
-  verifyTopologyPage: (retries: number = 3) => {
+  verifyTopologyPage: () => {
     app.waitForDocumentLoad();
-    if (retries === 0) {
-      throw new Error(`URL does not contain 'topology'`);
-    }
-    if (retries > 0) {
-      cy.url().then(($url) => {
-        if (!$url.includes('topology')) {
-          cy.wait(20000);
-          topologyPage.verifyTopologyPage(retries - 1);
-        }
-      });
-    }
+    cy.url({ timeout: 60000 }).should('include', 'topology');
   },
   verifyTopologyGraphView: () => {
     // eslint-disable-next-line promise/catch-or-return
@@ -289,10 +279,7 @@ export const topologyPage = {
     cy.get(`[data-test-action="${action}"] button`).click();
   },
   getNode: (nodeName: string) => {
-    return cy
-      .get(topologyPO.graph.nodeLabel, { timeout: 30000 })
-      .should('be.visible')
-      .contains(nodeName);
+    return cy.contains(topologyPO.graph.nodeLabel, nodeName, { timeout: 30000 }).should('exist');
   },
   getNodeLabel: (nodeName: string) => {
     return cy.get(topologyPO.graph.selectNodeLabel).should('be.visible').contains(nodeName);
