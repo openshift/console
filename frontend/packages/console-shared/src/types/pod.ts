@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type {
   ExtPodKind,
   K8sResourceCommon,

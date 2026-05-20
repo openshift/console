@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 /* eslint-disable @typescript-eslint/naming-convention */
 
 export { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/constants';

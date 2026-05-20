@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export * from './add-page';
 export * from './catalog-page';
 export * from './container-image-page';

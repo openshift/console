@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export { PodModel } from '@console/internal/models';
 
 export const podData = {

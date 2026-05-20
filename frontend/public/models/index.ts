@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { K8sModel as K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 export const PrometheusModel: K8sKind = {

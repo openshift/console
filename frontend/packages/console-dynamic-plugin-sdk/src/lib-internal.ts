@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 /**
  * @file Entrypoint for the `@openshift-console/dynamic-plugin-sdk-internal` package published to npmjs.
  *

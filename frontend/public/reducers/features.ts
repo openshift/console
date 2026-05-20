@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 

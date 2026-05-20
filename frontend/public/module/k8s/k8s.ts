@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import {
   GroupVersionKind,

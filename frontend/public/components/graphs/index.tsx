@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { createContainer } from '@patternfly/react-charts/victory';
 import { AsyncComponent } from '../utils/async';
 

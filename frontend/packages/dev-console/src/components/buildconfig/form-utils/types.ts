@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import type { EnvironmentVariablesSectionFormData } from '../sections/EnvironmentVariablesSection';
 import type { HooksSectionFormData } from '../sections/HooksSection';
