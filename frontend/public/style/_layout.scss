@@ -1,3 +1,5 @@
+@use './vars';
+
 html,
 body,
 #app,
@@ -10,6 +12,11 @@ body,
 
 #content-scrollable {
   overflow: auto;
+}
+
+.co-page-skeleton__masthead-spacer {
+  height: vars.$co-button-height;
+  visibility: hidden;
 }
 
 .co-p-has-sidebar {

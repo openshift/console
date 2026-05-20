@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { useLocation } from 'react-router';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
-import DetectPerspective from '../DetectPerspective';
+import { DetectContext } from '../DetectContext';
 import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
 const MockApp = () => <h1>App</h1>;
@@ -15,19 +15,48 @@ jest.mock('../useValuesForPerspectiveContext', () => ({
   useValuesForPerspectiveContext: jest.fn(),
 }));
 
+jest.mock('../namespace', () => ({
+  NamespaceContext: { Provider: ({ children }) => children, Consumer: () => null },
+  useValuesForNamespaceContext: jest.fn().mockReturnValue({
+    namespace: 'default',
+    setNamespace: jest.fn(),
+    loaded: true,
+  }),
+}));
+
+jest.mock('../../user-preferences/language/usePreferredLanguage', () => ({
+  usePreferredLanguage: jest.fn().mockReturnValue(['en', jest.fn(), true]),
+}));
+
+jest.mock('../../user-preferences/language/useLanguage', () => ({
+  useLanguage: jest.fn(),
+}));
+
 jest.mock('@console/shared/src/hooks/usePerspectives', () => ({
   usePerspectives: jest.fn(),
 }));
 
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  PerspectiveContext: { Provider: ({ children }) => children, Consumer: () => null },
+  useResolvedExtensions: jest.fn().mockReturnValue([[], true]),
+  isContextProvider: jest.fn(),
+  isReduxReducer: jest.fn(),
+}));
+
+jest.mock('@console/internal/redux', () => ({
+  applyReduxExtensions: jest.fn(),
+}));
+
 jest.mock('react-router', () => ({
   useLocation: jest.fn(),
+  createPath: jest.fn((loc) => loc.pathname),
 }));
 
 const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
 const usePerspectivesMock = usePerspectives as jest.Mock;
 const useLocationMock = useLocation as jest.Mock;
 
-describe('DetectPerspective', () => {
+describe('DetectContext', () => {
   beforeEach(() => {
     useValuesForPerspectiveContextMock.mockClear();
     usePerspectivesMock.mockClear();
@@ -44,9 +73,9 @@ describe('DetectPerspective', () => {
     ]);
 
     render(
-      <DetectPerspective>
+      <DetectContext>
         <MockApp />
-      </DetectPerspective>,
+      </DetectContext>,
     );
 
     expect(screen.getByRole('heading', { name: 'App' })).toBeVisible();
@@ -61,9 +90,9 @@ describe('DetectPerspective', () => {
     ]);
 
     render(
-      <DetectPerspective>
+      <DetectContext>
         <MockApp />
-      </DetectPerspective>,
+      </DetectContext>,
     );
 
     expect(screen.getByText('PerspectiveDetector')).toBeVisible();

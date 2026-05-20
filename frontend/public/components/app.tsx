@@ -10,7 +10,7 @@ import {
   Suspense,
   useMemo,
 } from 'react';
-import type { FC, Provider as ProviderComponent, ReactNode } from 'react';
+import type { FC } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { linkify } from 'react-linkify';
@@ -19,9 +19,8 @@ import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { mapExtensionToRoutes } from '@console/app/src/hooks/usePluginRoutes';
 import { BrowserRouter, useParams, useLocation, Routes, Route } from 'react-router';
-import store, { applyReduxExtensions } from '../redux';
+import store from '../redux';
 import { useTranslation } from 'react-i18next';
-import type { LoadedAndResolvedExtension } from '@openshift/dynamic-plugin-sdk';
 import { PluginStoreProvider } from '@openshift/dynamic-plugin-sdk';
 import { detectFeatures } from '../actions/features';
 import { setFlag } from '../actions/flags';
@@ -39,21 +38,14 @@ import { receivedResources, startAPIDiscovery } from '../actions/k8s';
 import { pluginStore } from '../plugins';
 // cloud shell imports must come later than features
 import CloudShellDrawer from '@console/webterminal-plugin/src/components/cloud-shell/CloudShell';
-import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
-import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
-import DetectLanguage from '@console/app/src/components/detect-language/DetectLanguage';
+import {
+  ContextProviderExtensionWrapper,
+  DetectContext,
+  PageSkeleton,
+} from '@console/app/src/components/detect-context/DetectContext';
 import { FeatureFlagExtensionLoader } from '@console/app/src/components/flags/FeatureFlagExtensionLoader';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import {
-  useResolvedExtensions,
-  isContextProvider,
-  isReduxReducer,
-  isStandaloneRoutePage,
-  getUser,
-  useActivePerspective,
-  ReduxReducer,
-  ContextProvider,
-} from '@console/dynamic-plugin-sdk';
+import { isStandaloneRoutePage, getUser, useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
 import { QuickStartDrawer } from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import { ModalProvider } from '@console/dynamic-plugin-sdk/src/app/modal-support/ModalProvider';
@@ -93,18 +85,7 @@ initI18n();
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-const EnhancedProvider: FC<{
-  provider: ProviderComponent<any>;
-  useValueHook: () => any;
-  children: ReactNode;
-}> = ({ provider: Component, useValueHook, children }) => {
-  const value = useValueHook();
-  return <Component value={value}>{children}</Component>;
-};
-
-const App: FC<{
-  contextProviderExtensions: LoadedAndResolvedExtension<ContextProvider>[];
-}> = ({ contextProviderExtensions }) => {
+const App: FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const params = useParams();
@@ -253,7 +234,7 @@ const App: FC<{
   };
 
   const content = (
-    <Suspense fallback={<LoadingBox blame="App content suspense" />}>
+    <Suspense fallback={<PageSkeleton blame="AppContent" />}>
       <ConsoleNotifier location="BannerTop" />
       <QuickStartDrawer>
         <CloudShellDrawer>
@@ -312,44 +293,16 @@ const App: FC<{
   );
 
   return (
-    <DetectPerspective>
+    <DetectContext>
       <CaptureTelemetry />
-      <DetectNamespace>
-        <ModalProvider>
-          <OverlayProvider>
-            <SyncModalLaunchers />
-            <Suspense fallback={<LoadingBox blame="contextProviderExtensions suspense" />}>
-              {contextProviderExtensions.reduce(
-                (children, e) => (
-                  <EnhancedProvider key={e.uid} {...e.properties}>
-                    {children}
-                  </EnhancedProvider>
-                ),
-                content,
-              )}
-            </Suspense>
-          </OverlayProvider>
-        </ModalProvider>
-      </DetectNamespace>
-      <DetectLanguage />
-    </DetectPerspective>
+      <ModalProvider>
+        <OverlayProvider>
+          <SyncModalLaunchers />
+          <ContextProviderExtensionWrapper>{content}</ContextProviderExtensionWrapper>
+        </OverlayProvider>
+      </ModalProvider>
+    </DetectContext>
   );
-};
-
-const AppWithExtensions: FC = () => {
-  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions<ReduxReducer>(
-    isReduxReducer,
-  );
-  const [contextProviderExtensions, providersResolved] = useResolvedExtensions<ContextProvider>(
-    isContextProvider,
-  );
-
-  if (reducersResolved && providersResolved) {
-    applyReduxExtensions(reduxReducerExtensions);
-    return <App contextProviderExtensions={contextProviderExtensions} />;
-  }
-
-  return <LoadingBox blame="AppWithExtensions" />;
 };
 
 const root = createRoot(document.getElementById('app')!);
@@ -382,7 +335,7 @@ const AppRouter: FC = () => {
         */}
         <Route path={LOGIN_ERROR_PATH} element={<AuthenticationErrorPage />} />
         {standaloneRoutes}
-        <Route path="/*" element={<AppWithExtensions />} />
+        <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>
   );
