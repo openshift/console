@@ -1,11 +1,8 @@
 import * as _ from 'lodash';
 
-import { STORAGE_PREFIX } from '@console/shared/src/constants';
-import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { K8sKind } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-
-const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
 
 export const getDefinitionKey = _.memoize(
   (model: K8sKind, definitions: SwaggerDefinitions): string => {
@@ -25,18 +22,27 @@ export const getDefinitionKey = _.memoize(
 let swaggerDefinitions: SwaggerDefinitions;
 export const getSwaggerDefinitions = (): SwaggerDefinitions => swaggerDefinitions;
 
+let cachedETag: string;
+
 export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
-  // Remove any old definitions from `localSotrage`. We rely on the browser cache now.
-  // TODO: We should be able to remove this in a future release.
-  localStorage.removeItem(SWAGGER_LOCAL_STORAGE_KEY);
   try {
-    const response: SwaggerAPISpec = await coFetchJSON('api/kubernetes/openapi/v2');
-    if (!response.definitions) {
+    const response = await coFetch('api/kubernetes/openapi/v2', {
+      headers: {
+        Accept: 'application/json',
+        ...(cachedETag && { 'If-None-Match': cachedETag }),
+      },
+    });
+    if (response.status === 304) {
+      return swaggerDefinitions;
+    }
+    const data: SwaggerAPISpec = await response.json();
+    if (!data.definitions) {
       // eslint-disable-next-line no-console
       console.error('Definitions missing in OpenAPI response.');
       return null;
     }
-    swaggerDefinitions = response.definitions;
+    cachedETag = response.headers.get('ETag');
+    swaggerDefinitions = data.definitions;
     window.dispatchEvent(new Event('console_swagger_refresh'));
     return swaggerDefinitions;
   } catch (e) {
