@@ -317,6 +317,7 @@
     "esbuild": "^0.27.3",
     "glob-parent": "^5.1.2",
     "hosted-git-info": "^3.0.8",
+    "immutable": "^3.8.3",
     "lodash-es": "^4.17.23",
     "postcss": "^8.2.13",
     "minimatch@^3.0.2": "^3.1.3",
