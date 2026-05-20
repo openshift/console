@@ -15,12 +15,17 @@
 # Environment:
 #   BRIDGE_BASE_ADDRESS, BRIDGE_BASE_PATH, WEB_CONSOLE_URL
 #   INSTALLER_DIR, ARTIFACT_DIR, KUBEADMIN_PASSWORD_FILE
+#   ARTIFACT_DIR — Prow/OpenShift CI artifact root (default: /tmp/artifacts). On EXIT, copies
+#     frontend/test-results → $ARTIFACT_DIR/playwright-test-results
+#     frontend/playwright-report → $ARTIFACT_DIR/playwright-report (CI HTML report)
+#     junit → $ARTIFACT_DIR/junit-playwright.xml
 #
 
 set -euo pipefail
 
 ARTIFACT_DIR=${ARTIFACT_DIR:-/tmp/artifacts}
 INSTALLER_DIR=${INSTALLER_DIR:-${ARTIFACT_DIR}/installer}
+export ARTIFACT_DIR
 
 if [ "$(basename "$(pwd)")" != "frontend" ]; then
   echo "This script must be run from the frontend folder" >&2
@@ -80,13 +85,75 @@ if [ "$RUN_CREATE_USER" = true ]; then
   export BRIDGE_HTPASSWD_PASSWORD="${BRIDGE_HTPASSWD_PASSWORD:-test}"
 fi
 
-function copyArtifacts {
-  local exit_code=$?
-  if [ -d "$ARTIFACT_DIR" ] && [ -d "test-results" ]; then
-    echo "Copying Playwright artifacts from $(pwd)/test-results..."
-    cp -r test-results "${ARTIFACT_DIR}/playwright-test-results" 2>/dev/null || echo "Warning: failed to copy Playwright artifacts" >&2
+copy_playwright_artifacts_to_dir() {
+  # Validate ARTIFACT_DIR is set and is an absolute path
+  if [ -z "$ARTIFACT_DIR" ]; then
+    echo "Error: ARTIFACT_DIR is not set" >&2
+    return 1
   fi
-  exit "$exit_code"
+  case "$ARTIFACT_DIR" in
+    /) echo "Error: ARTIFACT_DIR must not be '/'" >&2; return 1 ;;
+    /*) ;; # absolute path, OK
+    *) echo "Error: ARTIFACT_DIR must be an absolute path, got: $ARTIFACT_DIR" >&2; return 1 ;;
+  esac
+
+  mkdir -p "$ARTIFACT_DIR"
+  local copied=false
+
+  if [ -d test-results ]; then
+    local dest="${ARTIFACT_DIR}/playwright-test-results"
+    # Safety check before rm -rf to prevent accidental deletion
+    if [ -n "$dest" ] && [ "$dest" != "/" ]; then
+      rm -rf "$dest"
+    fi
+    mkdir -p "$dest"
+    if cp -a test-results/. "$dest/"; then
+      copied=true
+      echo "Copied Playwright test-results (traces, screenshots, videos) to ${dest}"
+    else
+      echo "Warning: failed to copy test-results to ${dest}" >&2
+    fi
+    if [ -f test-results/junit-results.xml ]; then
+      cp -a test-results/junit-results.xml "${ARTIFACT_DIR}/junit-playwright.xml" && \
+        echo "Copied JUnit report to ${ARTIFACT_DIR}/junit-playwright.xml"
+    fi
+  fi
+
+  if [ -d playwright-report ]; then
+    local report_dest="${ARTIFACT_DIR}/playwright-report"
+    # Safety check before rm -rf to prevent accidental deletion
+    if [ -n "$report_dest" ] && [ "$report_dest" != "/" ]; then
+      rm -rf "$report_dest"
+    fi
+    if cp -a playwright-report "$report_dest"; then
+      copied=true
+      echo "Copied Playwright HTML report to ${report_dest} (open index.html)"
+    else
+      echo "Warning: failed to copy playwright-report to ${report_dest}" >&2
+    fi
+  fi
+
+  if [ "$copied" = false ]; then
+    echo "Warning: no test-results/ or playwright-report/ under $(pwd); nothing copied to ${ARTIFACT_DIR}" >&2
+  else
+    echo "Playwright artifacts root: ${ARTIFACT_DIR}"
+  fi
+}
+
+copyArtifacts() {
+  local test_exit_code=$?
+  local copy_exit_code=0
+  set +e
+  copy_playwright_artifacts_to_dir
+  copy_exit_code=$?
+  set -e
+  if [ "$test_exit_code" -ne 0 ]; then
+    exit "$test_exit_code"
+  fi
+  if [ "$copy_exit_code" -ne 0 ]; then
+    exit "$copy_exit_code"
+  fi
+  exit 0
 }
 trap copyArtifacts EXIT
 
