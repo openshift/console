@@ -122,6 +122,7 @@ export const ColumnManagementModal: FC<
       <ModalHeader
         title={t('public~Manage columns')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="column-management-modal-title"
       />
       <ModalBody>
@@ -194,7 +195,13 @@ export const ColumnManagementModal: FC<
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
         <Button variant="link" onClick={resetColumns} type="button">

@@ -57,6 +57,7 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
       <ModalHeader
         title={t('olm~Change Subscription update channel')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="subscription-channel-modal-title"
       />
       <ModalBody>
@@ -110,7 +111,12 @@ export const SubscriptionChannelModal: FC<SubscriptionChannelModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

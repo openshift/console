@@ -91,6 +91,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
           titleIconVariant="danger"
           labelId="delete-revision-modal-title"
           data-test-id="modal-title"
+          data-test="modal-title"
         />
         <ModalBody>
           <p>
@@ -105,6 +106,7 @@ const DeleteRevisionModalController: FC<DeleteRevisionModalControllerProps> = ({
             type="button"
             variant="secondary"
             data-test-id="modal-cancel-action"
+            data-test="modal-cancel-action"
             onClick={close}
           >
             {t('knative-plugin~OK')}

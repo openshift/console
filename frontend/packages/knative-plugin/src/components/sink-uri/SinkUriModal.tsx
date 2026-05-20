@@ -40,6 +40,7 @@ const SinkUriModal: FC<Props> = ({
         title={t('knative-plugin~Edit URI')}
         labelId="sink-uri-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form id="sink-uri-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
@@ -74,7 +75,13 @@ const SinkUriModal: FC<Props> = ({
         >
           {t('knative-plugin~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('knative-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

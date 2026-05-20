@@ -278,7 +278,12 @@ const RestorePVCModal: FC<RestorePVCModalProps> = ({ close, cancel, resource }) 
         >
           {t('console-app~Restore')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('console-app~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

@@ -129,7 +129,12 @@ const MoveConnectionForm: FC<FormikProps<FormikValues> & MoveConnectionModalProp
         >
           {t('topology~Move')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('topology~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

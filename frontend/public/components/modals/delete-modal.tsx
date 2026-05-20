@@ -103,6 +103,7 @@ export const DeleteModal = (props: DeleteModalProps) => {
           </>
         }
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <form id="delete-modal-form">
@@ -181,7 +182,12 @@ export const DeleteModal = (props: DeleteModalProps) => {
         >
           {props.btnText || t('public~Delete')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

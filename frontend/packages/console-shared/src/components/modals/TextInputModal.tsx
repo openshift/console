@@ -116,6 +116,7 @@ export const TextInputModal: OverlayComponent<TextInputModalProps> = ({
           variant="link"
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {cancelButtonText || t('console-shared~Cancel')}
         </Button>

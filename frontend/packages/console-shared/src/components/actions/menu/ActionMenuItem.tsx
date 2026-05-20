@@ -66,6 +66,7 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
     className: classes,
     onClick: handleClick,
     'data-test-action': label,
+    'data-test': label,
     translate: 'no' as 'no',
   };
 

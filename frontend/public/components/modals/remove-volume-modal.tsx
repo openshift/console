@@ -122,7 +122,12 @@ export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
         >
           {t('public~Remove volume')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

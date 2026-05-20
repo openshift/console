@@ -76,6 +76,7 @@ const KebabItem_: FC<KebabItemProps & { isAllowed: boolean }> = ({
       autoFocus={autoFocus}
       isDisabled={isDisabled}
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
+      data-test={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
       icon={option.icon}
     >
       {option.labelKey ? t(option.labelKey, option.labelKind) : option.label}

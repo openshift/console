@@ -60,6 +60,7 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         title={t('public~Delete PersistentVolumeClaim')}
         titleIconVariant="warning"
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="delete-pvc-modal-title"
       />
       <ModalBody>
@@ -87,7 +88,13 @@ const DeletePVCModal = (props: DeletePVCModalProps) => {
         >
           {t('public~Delete')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

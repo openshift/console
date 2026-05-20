@@ -119,6 +119,7 @@ export const TableRow: FC<TableRowProps> = ({ id, index, trKey, style, className
       data-id={id}
       data-index={index}
       data-test-rows="resource-row"
+      data-test="resource-row"
       data-key={trKey}
       style={style}
       className={css('pf-v6-c-table__tr', className)}

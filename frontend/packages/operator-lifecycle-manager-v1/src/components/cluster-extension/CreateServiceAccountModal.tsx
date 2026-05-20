@@ -129,6 +129,7 @@ export const CreateServiceAccountModal: OverlayComponent<CreateServiceAccountMod
           isDisabled={inProgress}
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('olm-v1~Cancel')}
         </Button>

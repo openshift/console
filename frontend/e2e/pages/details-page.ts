@@ -6,11 +6,16 @@ export class DetailsPage extends BasePage {
   private readonly pageHeading = this.page.getByTestId('page-heading');
   private readonly resourceTitle = this.page.getByTestId('resource-title');
   private readonly skeletonLoader = this.page.getByTestId('skeleton-detail-view');
+  private readonly actionsMenuButton: Locator = this.page.getByTestId('actions-menu-button');
   readonly nodeTerminalError: Locator = this.page.getByTestId('node-terminal-error');
   readonly xtermViewport: Locator = this.page.locator('.xterm-viewport');
 
   get title(): Locator {
     return this.resourceTitle;
+  }
+
+  get heading(): Locator {
+    return this.pageHeading;
   }
 
   getPageHeading(): Locator {
@@ -33,17 +38,25 @@ export class DetailsPage extends BasePage {
     await this.navigateToTab(this.tab(name));
   }
 
+  async navigateTo(url: string): Promise<void> {
+    await this.goTo(url);
+  }
+
+  async clickPageActionFromDropdown(actionName: string): Promise<void> {
+    await this.robustClick(this.actionsMenuButton);
+    const action = this.page.getByTestId(actionName);
+    await this.robustClick(action);
+  }
+
   async clickKebabAction(actionId: string): Promise<void> {
-    const action = this.page.locator(`[data-test-action="${actionId}"]`);
+    const action = this.page.getByTestId(actionId);
     await action.waitFor({ state: 'visible', timeout: 10_000 });
     await this.robustClick(action);
   }
 
   getResourceRow(resourceId: string): Locator {
     const link = this.page.locator(`a[data-test="${resourceId}"]`);
-    const fallback = this.page.locator(
-      `[data-test="${resourceId}"], [data-test-action="${resourceId}"]`,
-    );
+    const fallback = this.page.getByTestId(resourceId);
     return link.or(fallback).first();
   }
 
@@ -57,11 +70,11 @@ export class DetailsPage extends BasePage {
   }
 
   getResourceByAction(actionName: string): Locator {
-    return this.page.locator(`[data-test-action="${actionName}"]`);
+    return this.page.getByTestId(actionName);
   }
 
   async openResourceKebabMenu(actionName: string): Promise<void> {
-    const resourceRow = this.getResourceByAction(actionName);
+    const resourceRow = this.page.getByTestId(`${actionName}-resource-row`);
     const kebabButton = resourceRow.getByTestId('kebab-button');
     await this.robustClick(kebabButton);
   }

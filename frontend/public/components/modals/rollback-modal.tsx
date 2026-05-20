@@ -202,6 +202,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
       <ModalHeader
         title={t('public~Rollback')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="rollback-modal-title"
       />
       <ModalBody>
@@ -236,6 +237,7 @@ const BaseRollbackModal: FC<RollbackModalProps> = (props) => {
           onClick={props.cancel}
           type="button"
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('public~Cancel')}
         </Button>

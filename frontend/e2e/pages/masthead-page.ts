@@ -56,4 +56,9 @@ export class MastheadPage extends BasePage {
   async clickLogOut(): Promise<void> {
     await this.robustClick(this.logOutItem);
   }
+
+  async clickMastheadLink(testId: string): Promise<void> {
+    const link = this.page.getByTestId(testId);
+    await this.robustClick(link);
+  }
 }

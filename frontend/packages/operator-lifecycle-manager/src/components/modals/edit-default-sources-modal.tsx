@@ -72,6 +72,7 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
       <ModalHeader
         title={t('olm~Edit default sources')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="edit-default-sources-modal-title"
       />
       <ModalBody>
@@ -119,7 +120,12 @@ const EditDefaultSourcesModal: FC<EditDefaultSourcesModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

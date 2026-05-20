@@ -238,6 +238,7 @@ export const CreateNamespaceModal: OverlayComponent<CreateProjectModalProps> = (
           isDisabled={inProgress}
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('console-shared~Cancel')}
         </Button>

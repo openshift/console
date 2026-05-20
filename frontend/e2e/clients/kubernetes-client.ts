@@ -532,4 +532,53 @@ export default class KubernetesClient {
       2_000,
     );
   }
+
+  async createService(namespace: string, body: k8s.V1Service): Promise<void> {
+    await this.k8sApi.createNamespacedService({ namespace, body });
+  }
+
+  async deleteService(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedService({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    const response = await this.coApi.createClusterCustomObject({ body, group, plural, version });
+    return response;
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
+    return response;
+  }
 }

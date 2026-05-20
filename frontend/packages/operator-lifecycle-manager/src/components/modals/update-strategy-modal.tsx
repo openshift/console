@@ -62,7 +62,12 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
 
   return (
     <>
-      <ModalHeader title={title} data-test-id="modal-title" labelId="update-strategy-modal-title" />
+      <ModalHeader
+        title={title}
+        data-test-id="modal-title"
+        data-test="modal-title"
+        labelId="update-strategy-modal-title"
+      />
       <ModalBody>
         <Form id="update-strategy-form" onSubmit={submit}>
           <ConfigureUpdateStrategy
@@ -87,7 +92,12 @@ export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

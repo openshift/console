@@ -54,6 +54,7 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
         titleIconVariant="warning"
         labelId="delete-resource-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Content component={ContentVariants.p}>
@@ -86,7 +87,12 @@ const DeleteResourceForm: FC<FormikProps<FormikValues> & DeleteResourceModalProp
         >
           {submitLabel}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('console-shared~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

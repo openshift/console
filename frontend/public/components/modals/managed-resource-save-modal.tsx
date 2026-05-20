@@ -60,7 +60,12 @@ const ManagedResourceSaveModal: FC<ManagedResourceSaveModalProps> = (props) => {
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={props.close} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.close}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

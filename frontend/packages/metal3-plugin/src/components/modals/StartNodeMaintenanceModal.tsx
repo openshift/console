@@ -68,6 +68,7 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
       <ModalHeader
         title={t('metal3-plugin~Start Maintenance')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="start-node-maintenance-modal-title"
       />
       <ModalBody>
@@ -119,7 +120,12 @@ export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceMod
         >
           {t('metal3-plugin~Start Maintenance')}
         </Button>
-        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={closeOverlay}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('metal3-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

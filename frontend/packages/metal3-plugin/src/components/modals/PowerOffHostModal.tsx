@@ -211,6 +211,7 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
       <ModalHeader
         title={t('metal3-plugin~Power Off Host')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="power-off-host-modal-title"
       />
       <ModalBody>
@@ -249,7 +250,12 @@ const PowerOffHostModal: OverlayComponent<PowerOffHostModalProps> = (props) => {
         >
           {t('metal3-plugin~Power Off')}
         </Button>
-        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={closeOverlay}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('metal3-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

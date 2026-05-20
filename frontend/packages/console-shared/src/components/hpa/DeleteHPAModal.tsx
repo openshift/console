@@ -31,6 +31,7 @@ const DeleteHPAModal: FC<DeleteHPAModalProps> = ({ close, cancel, hpa, workload 
         titleIconVariant="warning"
         labelId="delete-hpa-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form id="delete-hpa-modal-form">

@@ -30,6 +30,7 @@ const DeleteRevisionModal: FC<Props> = (props) => {
         titleIconVariant="warning"
         labelId="delete-revision-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form id="delete-revision-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
@@ -65,7 +66,13 @@ const DeleteRevisionModal: FC<Props> = (props) => {
         >
           {t('knative-plugin~Delete')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('knative-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

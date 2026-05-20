@@ -396,6 +396,7 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
         title={t('olm~Uninstall Operator?')}
         titleIconVariant="warning"
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="uninstall-operator-modal-title"
       />
       <ModalBody>
@@ -445,7 +446,12 @@ export const UninstallOperatorModal: FC<UninstallOperatorModalProps> = ({
         >
           {isSubmitFinished ? t('olm~OK') : t('olm~Uninstall')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
