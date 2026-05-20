@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { useWatchVirtualMachineInstances } from '@console/app/src/components/nodes/NodeVmUtils';
+import { useWatchVirtualMachineInstances } from '@console/app/src/components/nodes/utils/NodeVmUtils';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
 import type { NodeKind } from '@console/internal/module/k8s';
 import { NodeDashboardContext } from '../NodeDashboardContext';
 import VirtualMachinesInventoryItems from '../VirtualMachinesInventoryItems';
 
-jest.mock('@console/app/src/components/nodes/NodeVmUtils', () => ({
+jest.mock('@console/app/src/components/nodes/utils/NodeVmUtils', () => ({
   VirtualMachineModel: {
     apiGroup: 'kubevirt.io',
     apiVersion: 'v1',

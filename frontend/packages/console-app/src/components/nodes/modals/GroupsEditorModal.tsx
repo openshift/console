@@ -29,15 +29,15 @@ import {
 import { OutlinedTrashAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import type { NodeKind } from '@console/dynamic-plugin-sdk/src';
 import type { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
+import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { k8sPatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { useK8sWatchResource } from '@console/dynamic-plugin-sdk/src/utils/k8s/hooks';
 import { ExpandableAlert } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/useDeepCompareMemoize';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
-import type { GroupNameMap } from '../NodeGroupUtils';
+import type { GroupNameMap } from '../utils/NodeGroupUtils';
 import {
   GROUP_SEPARATOR,
   getGroupsByNameFromNodes,
@@ -46,7 +46,7 @@ import {
   getNodeGroupAnnotationFromGroups,
   getNodeGroups,
   GROUP_ANNOTATION,
-} from '../NodeGroupUtils';
+} from '../utils/NodeGroupUtils';
 
 import './node-group-editor-modal.scss';
 

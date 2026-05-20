@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import {
   useWatchVirtualMachineInstances,
   VirtualMachineModel,
-} from '@console/app/src/components/nodes/NodeVmUtils';
+} from '@console/app/src/components/nodes/utils/NodeVmUtils';
 import { useIsKubevirtPluginActive } from '@console/app/src/utils/kubevirt';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';

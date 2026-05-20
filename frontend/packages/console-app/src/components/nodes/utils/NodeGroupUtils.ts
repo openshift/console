@@ -1,4 +1,4 @@
-import type { NodeKind } from '@console/dynamic-plugin-sdk/src';
+import type { NodeKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export const GROUP_ANNOTATION = 'node.openshift.io/group';
 export const GROUP_SEPARATOR = ',';
