@@ -179,12 +179,15 @@ export const ConsoleSelect: FC<ConsoleSelectProps> = ({
     [autocompleteFilter],
   );
 
-  // Update state when props change
+  // One-way prop→state sync. Do NOT include `selectedKey` in deps — it
+  // creates a feedback loop under React 18 createRoot where the effect
+  // reverts user selections before the prop update from onChange propagates.
   useEffect(() => {
-    if (props.selectedKey && props.selectedKey !== selectedKey) {
+    if (props.selectedKey !== undefined) {
       setSelectedKey(props.selectedKey);
     }
-  }, [props.selectedKey, selectedKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedKey]);
 
   useEffect(() => {
     applyTextFilter(autocompleteText, props.items);
