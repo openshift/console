@@ -61,7 +61,6 @@ if [ $# -eq 0 ]; then
     echo "  test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev-Console tests"
     echo "  test-cypress.sh -p knative                            // opens Cypress Test Runner for knative tests"
     echo "  test-cypress.sh -p shipwright                         // opens Cypress Test Runner for shipwright tests"
-    echo "  test-cypress.sh -p webterminal                        // opens Cypress Test Runner for webterminal tests"
     echo "  test-cypress.sh -h true                               // runs all packages in headless mode"
     echo "  test-cypress.sh -p olm -h true                        // runs OLM tests in headless mode"
     echo "  test-cypress.sh -p console -s 'tests/crud/*' -h true  // runs console CRUD tests in headless mode"
@@ -81,8 +80,6 @@ if [ -n "${nightly-}" ] && [ -z "${pkg-}" ]; then
   # yarn run test-cypress-shipwright-nightly
   yarn run test-cypress-topology-nightly
   yarn run test-cypress-knative-nightly
-  yarn run test-cypress-webterminal-nightly
-
   exit $err;
 fi
 
@@ -90,7 +87,6 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-console-headless
   yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
-  yarn run test-cypress-webterminal-headless
   yarn run test-cypress-helm-headless
   yarn run test-cypress-knative-headless
   yarn run test-cypress-topology-headless

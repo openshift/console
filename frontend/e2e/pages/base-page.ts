@@ -96,4 +96,28 @@ export default abstract class BasePage {
     const button = this.page.getByRole('button', { name: buttonText });
     await this.robustClick(button);
   }
+
+  async switchPerspective(target: 'Developer' | 'Administrator'): Promise<void> {
+    const labelMap: Record<string, string[]> = {
+      Administrator: ['Administrator', 'Core platform'],
+      Developer: ['Developer'],
+    };
+    const toggle = this.page.locator('[data-test-id="perspective-switcher-toggle"]');
+    const labels = labelMap[target] || [target];
+    const currentText = (await toggle.textContent()) || '';
+    if (labels.some((label) => currentText.includes(label))) {
+      return;
+    }
+    await this.robustClick(toggle);
+    const menuOption = this.page.locator('[data-test-id="perspective-switcher-menu-option"]');
+    for (const label of labels) {
+      const option = menuOption.filter({ hasText: label });
+      if ((await option.count()) > 0) {
+        await this.robustClick(option.first());
+        await this.waitForLoadingComplete();
+        return;
+      }
+    }
+    throw new Error(`Perspective "${target}" not found in switcher menu`);
+  }
 }
