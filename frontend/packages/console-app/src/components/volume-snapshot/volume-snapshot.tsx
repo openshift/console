@@ -310,6 +310,7 @@ const VolumeSnapshotTable: FC<VolumeSnapshotTableProps> = ({ data, loaded, ...pr
 
 export const VolumeSnapshotPage: FC<VolumeSnapshotPageProps> = ({
   canCreate = true,
+  mock,
   showTitle = true,
   namespace,
   selector,
@@ -318,29 +319,33 @@ export const VolumeSnapshotPage: FC<VolumeSnapshotPageProps> = ({
 
   const createPath = `/k8s/ns/${namespace || 'default'}/${VolumeSnapshotModel.plural}/~new/form`;
 
-  const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>({
-    groupVersionKind: {
-      group: VolumeSnapshotModel.apiGroup,
-      kind: VolumeSnapshotModel.kind,
-      version: VolumeSnapshotModel.apiVersion,
-    },
-    isList: true,
-    namespaced: true,
-    namespace,
-    selector,
-  });
+  const [resources, loaded, loadError] = useK8sWatchResource<VolumeSnapshotKind[]>(
+    mock
+      ? null
+      : {
+          groupVersionKind: {
+            group: VolumeSnapshotModel.apiGroup,
+            kind: VolumeSnapshotModel.kind,
+            version: VolumeSnapshotModel.apiVersion,
+          },
+          isList: true,
+          namespaced: true,
+          namespace,
+          selector,
+        },
+  );
 
   return (
     <>
       <ListPageHeader title={showTitle ? t(VolumeSnapshotModel.labelPluralKey || '') : ''}>
-        {canCreate && (
+        {canCreate && !mock && (
           <ListPageCreateLink to={createPath}>
             {t('console-app~Create VolumeSnapshot')}
           </ListPageCreateLink>
         )}
       </ListPageHeader>
       <ListPageBody>
-        <VolumeSnapshotTable data={resources} loaded={loaded} loadError={loadError} />
+        <VolumeSnapshotTable data={resources} loaded={loaded} loadError={loadError} mock={mock} />
       </ListPageBody>
     </>
   );
@@ -387,6 +392,7 @@ type VolumeSnapshotFilters = ResourceFilters & {
 };
 
 type VolumeSnapshotPageProps = {
+  mock?: boolean;
   namespace?: string;
   canCreate?: boolean;
   showTitle?: boolean;
@@ -402,6 +408,7 @@ type VolumeSnapshotTableProps = {
   data: VolumeSnapshotKind[];
   loaded: boolean;
   loadError: unknown;
+  mock?: boolean;
 };
 
 type VolumeSnapshotRowData = {
