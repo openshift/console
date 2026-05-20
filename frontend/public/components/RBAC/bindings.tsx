@@ -361,19 +361,26 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
   }`,
 }) => {
   const { t } = useTranslation();
-  const resources = useK8sWatchResources({
-    RoleBinding: {
-      kind: 'RoleBinding',
-      namespaced: true,
-      namespace,
-      isList: true,
-    },
-    ClusterRoleBinding: {
-      kind: 'ClusterRoleBinding',
-      namespaced: false,
-      isList: true,
-    },
-  });
+  const watchResources = useMemo(
+    () =>
+      mock
+        ? {}
+        : {
+            RoleBinding: {
+              kind: 'RoleBinding',
+              namespaced: true,
+              namespace,
+              isList: true,
+            },
+            ClusterRoleBinding: {
+              kind: 'ClusterRoleBinding',
+              namespaced: false,
+              isList: true,
+            },
+          },
+    [mock, namespace],
+  );
+  const resources = useK8sWatchResources(watchResources);
 
   // Only flatten when at least one resource has data to prevent undefined iteration
   const data = useMemo(() => {
@@ -406,6 +413,7 @@ export const RoleBindingsPage: FC<RoleBindingsPageProps> = ({
           data={data}
           loaded={loaded}
           loadError={loadError}
+          mock={mock}
           staticFilters={staticFilters}
         />
       </ListPageBody>

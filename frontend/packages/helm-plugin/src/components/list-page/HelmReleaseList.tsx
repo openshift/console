@@ -139,7 +139,7 @@ const getObjectMetadata = (release: HelmRelease) => ({
   name: release.name,
 });
 
-const HelmReleaseList: FC = () => {
+const HelmReleaseList: FC<{ mock?: boolean }> = ({ mock }) => {
   const { t } = useTranslation();
   const params = useParams();
   const namespace = params.ns;
@@ -163,7 +163,7 @@ const HelmReleaseList: FC = () => {
     [namespace],
   );
   const [secretsData, secretsLoaded, secretsLoadError] = useK8sWatchResource<K8sResourceKind[]>(
-    secretResource,
+    mock ? null : secretResource,
   );
   const newCount = secretsData?.length ?? 0;
 
@@ -274,7 +274,7 @@ const HelmReleaseList: FC = () => {
       <DocumentTitle>{t('helm-plugin~Helm Releases')}</DocumentTitle>
       <PaneBody>
         <Suspense fallback={<LoadingBox />}>
-          {hasNoReleases ? (
+          {!mock && hasNoReleases ? (
             emptyState()
           ) : (
             <ConsoleDataView<HelmRelease, { obj: HelmRelease }, HelmReleaseFilters>
@@ -292,6 +292,7 @@ const HelmReleaseList: FC = () => {
               hideColumnManagement
               isResizable
               resetAllColumnWidths={resetAllColumnWidths}
+              mock={mock}
             />
           )}
         </Suspense>
