@@ -7,13 +7,16 @@ import { referenceFor } from '@console/internal/module/k8s';
 import { ActionServiceProvider } from '@console/shared/src/components/actions/ActionServiceProvider';
 import { ActionMenu } from '@console/shared/src/components/actions/menu/ActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
-import { useShipwrightBreadcrumbsFor } from '../../utils';
+import { useBuildRunModel, useShipwrightBreadcrumbsFor } from '../../utils';
 import { getBuildRunStatus } from '../buildrun-status/BuildRunStatus';
 import BuildRunDetailsTab from './BuildRunDetailsTab';
 import BuildRunEventsTab from './BuildRunEventsTab';
 import BuildRunLogsTab from './BuildRunLogsTab';
 
 const BuildRunDetailsPage: FC<DetailsPageProps> = (props) => {
+  const model = useBuildRunModel();
+  const breadcrumbs = useShipwrightBreadcrumbsFor(model);
+
   const customActionMenu = (_, buildRun) => {
     const kindReference = referenceFor(buildRun);
     const context = { [kindReference]: buildRun };
@@ -41,7 +44,7 @@ const BuildRunDetailsPage: FC<DetailsPageProps> = (props) => {
       getResourceStatus={getBuildRunStatus}
       customActionMenu={customActionMenu}
       pages={pages}
-      breadcrumbsFor={useShipwrightBreadcrumbsFor}
+      breadcrumbsFor={() => breadcrumbs}
     />
   );
 };
