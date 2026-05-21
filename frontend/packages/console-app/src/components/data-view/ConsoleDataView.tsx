@@ -251,15 +251,11 @@ export const ConsoleDataView = <
             isResizable={isResizable}
           />
         </InnerScrollContainer>
-        <DataViewToolbar
-          pagination={
-            <Pagination
-              itemCount={filteredData.length}
-              titles={paginationTitles}
-              variant={PaginationVariant.bottom}
-              {...pagination}
-            />
-          }
+        <Pagination
+          itemCount={filteredData.length}
+          titles={paginationTitles}
+          variant={PaginationVariant.bottom}
+          {...pagination}
         />
       </DataView>
     </StatusBox>
