@@ -57,6 +57,7 @@ import { useDebounceCallback } from '@console/shared/src/hooks/useDebounceCallba
 import { LOGIN_ERROR_PATH } from '@console/internal/module/auth';
 import { FLAGS } from '@console/shared/src/constants/common';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
+import { coFetch } from '@console/shared/src/utils/console-fetch';
 import { addTestError } from '@console/shared/src/utils/test-errors';
 import Lightspeed from '@console/app/src/components/lightspeed/Lightspeed';
 import { ThemeProvider } from './ThemeProvider';
@@ -78,6 +79,14 @@ import { usePackageManifestCheck } from '@console/shared/src/hooks/usePackageMan
 import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationDetector';
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
+
+const root = createRoot(document.getElementById('app')!);
+root.render(<LoadingBox blame="Init" />);
+
+// Trigger an early authenticated fetch so unauthenticated users are redirected
+// to the login page immediately, before the app shell renders. coFetch's 401
+// interceptor calls authSvc.handle401() which handles the redirect.
+coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`).catch(() => {});
 
 initI18n();
 
@@ -304,9 +313,6 @@ const App: FC = () => {
     </DetectContext>
   );
 };
-
-const root = createRoot(document.getElementById('app')!);
-root.render(<LoadingBox blame="Init" />);
 
 const AppRouter: FC = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
