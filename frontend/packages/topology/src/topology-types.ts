@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 // re-export for convenience
 export type {
   Point,

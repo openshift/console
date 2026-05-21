@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { FC } from 'react';
 import { useCallback } from 'react';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';

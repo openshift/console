@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { JSONSchema7 } from 'json-schema';
 import {
   Selector,

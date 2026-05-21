@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
 import { Dispatch } from 'redux';
 import { ActionType as Action } from 'typesafe-actions';

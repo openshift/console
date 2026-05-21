@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 export { default as ClusterExtensionListPage } from './ClusterExtensionListPage';
 export { default as CreateClusterExtension } from './CreateClusterExtension';
 export { default as ClusterExtensionForm } from './ClusterExtensionForm';

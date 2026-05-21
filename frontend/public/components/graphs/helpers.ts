@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
 import {
   PROMETHEUS_BASE_PATH,

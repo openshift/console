@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactElement } from 'react';
 import { InProgressIcon } from '@patternfly/react-icons';
 import type { TFunction } from 'i18next';

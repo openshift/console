@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { getReference } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 
 // TODO(alecmerdler): Replace all manual string building with this function

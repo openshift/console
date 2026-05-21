@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import { Base64 } from 'js-base64';
 import { action, ActionType as Action } from 'typesafe-actions';
 import * as _ from 'lodash';

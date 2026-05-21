@@ -27,7 +27,7 @@ module.exports = {
     extraFileExtensions: ['.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc'],
+  plugins: ['react', 'react-hooks', '@typescript-eslint', 'graphql', 'eslint-plugin-tsdoc', 'no-barrel-files'],
   rules: {
     camelcase: [
       'error',
@@ -119,6 +119,7 @@ module.exports = {
     'no-constructor-return': 'off',
     'prefer-regex-literals': 'off',
     'no-restricted-exports': 'off',
+    'no-barrel-files/no-barrel-files': 'error',
   },
   settings: {
     'import/extensions': ['.js', '.jsx'],

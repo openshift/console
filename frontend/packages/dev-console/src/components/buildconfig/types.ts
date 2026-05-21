@@ -1,3 +1,4 @@
+/* eslint-disable no-barrel-files/no-barrel-files */
 import type { ObjectMetadata, ObjectReference } from '@console/dynamic-plugin-sdk';
 import type {
   NameValueFromPair,
