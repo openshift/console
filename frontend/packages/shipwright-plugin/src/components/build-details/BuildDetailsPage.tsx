@@ -9,12 +9,15 @@ import {
   ActionMenuVariant,
   ActionServiceProvider,
 } from '@console/shared/src/components/actions';
-import { useShipwrightBreadcrumbsFor } from '../../utils';
+import { useBuildModel, useShipwrightBreadcrumbsFor } from '../../utils';
 import BuildDetailsTab from './BuildDetailsTab';
 import BuildEventsTab from './BuildEventsTab';
 import BuildRunsTab from './BuildRunsTab';
 
 const BuildDetailsPage: FC<DetailsPageProps> = (props) => {
+  const model = useBuildModel();
+  const breadcrumbs = useShipwrightBreadcrumbsFor(model);
+
   const customActionMenu = (_, build) => {
     const kindReference = referenceFor(build);
     const context = { [kindReference]: build };
@@ -46,7 +49,7 @@ const BuildDetailsPage: FC<DetailsPageProps> = (props) => {
       {...props}
       customActionMenu={customActionMenu}
       pages={pages}
-      breadcrumbsFor={useShipwrightBreadcrumbsFor}
+      breadcrumbsFor={() => breadcrumbs}
     />
   );
 };
