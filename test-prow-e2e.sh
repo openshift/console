@@ -1,21 +1,34 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+# test-prow-e2e.sh - Wrapper script for running e2e tests in Prow CI
+# This script is called by the CI system and delegates to test-cypress.sh
 
-INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
+set -euo pipefail
 
-# don't log kubeadmin-password
-set +x
-export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
-set -x
-export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+# Check if parallel flag is passed
+PARALLEL_FLAG=""
+while getopts P: flag; do
+  case "${flag}" in
+    P) PARALLEL_FLAG="-P ${OPTARG}";;
+  esac
+done
 
-./contrib/create-user.sh
+echo "================================================"
+echo "Running OpenShift Console E2E Tests"
+echo "================================================"
+echo "Environment: ${OPENSHIFT_CI:-local}"
+echo "Parallel mode: ${PARALLEL_FLAG:-disabled (sequential)}"
+echo "================================================"
+echo ""
 
-pushd frontend
+# Navigate to frontend directory
+cd frontend || exit 1
 
-SCENARIO="${1:-e2e}"
+# Run Cypress tests
+# shellcheck disable=SC2086
+./integration-tests/test-cypress.sh -h true ${PARALLEL_FLAG}
 
+<<<<<<< Updated upstream
 if [ "$SCENARIO" == "nightly-cypress" ]; then
   PACKAGE=""
   if [ $# -gt 1 ]; then
@@ -39,3 +52,9 @@ fi
 env NO_SANDBOX=true yarn test-puppeteer-csp
 
 popd
+=======
+echo ""
+echo "================================================"
+echo "E2E Tests Completed"
+echo "================================================"
+>>>>>>> Stashed changes
