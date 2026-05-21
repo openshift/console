@@ -7,7 +7,13 @@ import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboard-results';
 import type { RootState } from '../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../components/graphs/helpers';
 import { PrometheusResponse } from '../components/graphs';
-import { URL_POLL_DEFAULT_DELAY } from '../components/utils/url-poll-hook';
+import {
+  computeAdaptiveDelay,
+  emaToDelay,
+  MIN_POLL_DELAY,
+  MAX_POLL_DELAY,
+  SCALE_FACTOR,
+} from '../components/utils/adaptive-polling';
 import { Fetch, RequestMap } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 
 export enum ActionType {
@@ -62,23 +68,32 @@ const fetchPeriodically: FetchPeriodically = async (
   getURL,
   getState,
   fetch,
+  responseTimeEma = 0,
 ) => {
   if (!isWatchActive(getState().dashboards, type, key)) {
     return;
   }
+  let nextEma = responseTimeEma;
   try {
     dispatch(updateWatchInFlight(type, key, true));
+    const startTime = Date.now();
     const data = await fetch(getURL());
+    const elapsed = Date.now() - startTime;
+    [, nextEma] = computeAdaptiveDelay(elapsed, responseTimeEma);
     dispatch(setData(type, key, data));
     dispatch(setError(type, key, null));
   } catch (error) {
+    // Feed a synthetic slow response into the EMA to gradually back off without jumping to max
+    const errorSeed =
+      responseTimeEma === 0 ? MIN_POLL_DELAY / SCALE_FACTOR : MAX_POLL_DELAY / SCALE_FACTOR;
+    [, nextEma] = computeAdaptiveDelay(errorSeed, responseTimeEma);
     dispatch(setError(type, key, error));
     dispatch(setData(type, key, null));
   } finally {
     dispatch(updateWatchInFlight(type, key, false));
     const timeout = setTimeout(
-      () => fetchPeriodically(dispatch, type, key, getURL, getState, fetch),
-      URL_POLL_DEFAULT_DELAY,
+      () => fetchPeriodically(dispatch, type, key, getURL, getState, fetch, nextEma),
+      emaToDelay(nextEma),
     );
     dispatch(updateWatchTimeout(type, key, timeout));
   }
@@ -146,6 +161,7 @@ type FetchPeriodically = (
   getURL: () => string,
   getState: () => RootState,
   fetch: Fetch,
+  responseTimeEma?: number,
 ) => void;
 
 export type DashboardsAction = Action<typeof dashboardsActions>;
