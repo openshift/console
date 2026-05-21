@@ -1486,6 +1486,7 @@
   "Select {{kindLabel}}": "Select {{kindLabel}}",
   "Managed by": "Managed by",
   "Prefix (optional)": "Prefix (optional)",
+  "Drag to reorder": "Drag to reorder",
   "Add from ConfigMap or Secret": "Add from ConfigMap or Secret",
   "ConfigMap/Secret": "ConfigMap/Secret",
   "Add all from ConfigMap or Secret": "Add all from ConfigMap or Secret",

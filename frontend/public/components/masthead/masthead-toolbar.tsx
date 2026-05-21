@@ -775,8 +775,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                  // this usage of the undocumented variant was approved by UX
                   variant="plain"
                   count={alertCount || 0}
                   data-quickstart-id="qs-masthead-notifications"
@@ -827,8 +825,6 @@ const MastheadToolbarContents: FC<MastheadToolbarContentsProps> = ({
               <NotificationBadge
                 aria-label={t('public~Notification drawer')}
                 onClick={drawerToggle}
-                // @ts-expect-error this prop is accepted as a button variant (but not documented).
-                // this usage of the undocumented variant was approved by UX
                 variant="plain"
                 count={alertCount}
                 data-quickstart-id="qs-masthead-notifications"

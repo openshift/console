@@ -21,7 +21,7 @@ loader.config({ monaco });
  */
 export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
   const { t } = useTranslation('console-shared');
-  const { theme } = useTheme();
+  const { theme, contrast } = useTheme();
 
   return (
     <ErrorBoundaryInline>
@@ -46,6 +46,7 @@ export const BasicCodeEditor: FC<BasicCodeEditorProps> = (props) => {
             window.monaco = monacoInstance; // for e2e tests
             props?.editorProps?.beforeMount?.(monacoInstance);
           },
+          ...(contrast === 'contrast' ? { theme: theme === 'dark' ? 'hc-black' : 'hc-light' } : {}),
         }}
         options={{
           fontFamily: 'var(--pf-t--global--font--family--mono)',

@@ -7,6 +7,7 @@ export const FLAG_DEVELOPER_PERSPECTIVE = 'DEVELOPER_PERSPECTIVE';
 export const FLAG_CAN_GET_CONSOLE_OPERATOR_CONFIG = 'CAN_GET_CONSOLE_OPERATOR_CONFIG';
 export const FLAG_TECH_PREVIEW = 'TECH_PREVIEW';
 export const FLAG_INTEGRATION_TEST = 'INTEGRATION_TEST';
+export const FLAG_OPENSHIFT_5 = 'FLAG_OPENSHIFT_5';
 
 export const ACM_PERSPECTIVE_ID = 'acm';
 /** User settings key for the node management v1 (node groups) toggle */

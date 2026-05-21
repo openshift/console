@@ -6,11 +6,6 @@
     var(--pf-t--global--z-index--xs) + 1
   ); // bump above --pf-v6-c-menu-toggle--border--ZIndex (100) to prevent menu borders from appearing in the footer
 
-  &__sticky {
-    position: sticky;
-    background-color: var(--pf-t--global--background--color--primary--default);
-    bottom: 0;
-  }
   &__shadow {
     box-shadow: var(--pf-t--global--box-shadow--sm--top);
   }

@@ -23,7 +23,7 @@ const PerspectiveNav: FC<{}> = () => {
   const allNavExtensions = useNavExtensionsForPerspective(activePerspective);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const [validPinnedResources, setValidPinnedResources] = useState<string[]>([]);
-  const { t } = useTranslation();
+  const { t } = useTranslation('console-app');
 
   useEffect(() => {
     const validResources = pinnedResources.filter((res) => !!modelFor(res));
@@ -38,7 +38,7 @@ const PerspectiveNav: FC<{}> = () => {
   const draggableItems = useMemo<DraggableObject[]>(() => {
     return validPinnedResources.map((res, idx) => ({
       id: res,
-      props: { className: 'co-pinned-resource-item' },
+      props: { dragButtonAriaLabel: t('Drag to reorder'), className: 'co-pinned-resource-item' },
       content: (
         <PinnedResource
           key={`${res}_${idx.toString()}`}
@@ -49,7 +49,7 @@ const PerspectiveNav: FC<{}> = () => {
         />
       ),
     }));
-  }, [validPinnedResources, setPinnedResources]);
+  }, [validPinnedResources, setPinnedResources, t]);
 
   const onDrop = useCallback<DragDropSortProps['onDrop']>(
     (_, newItems) => {
@@ -71,10 +71,7 @@ const PerspectiveNav: FC<{}> = () => {
         <PluginNavItem key={extension.uid} extension={extension} />
       ))}
       {pinnedResourcesLoaded && validPinnedResources?.length > 0 ? (
-        <section
-          className="pf-v6-c-nav__section no-title"
-          aria-label={t('console-app~Pinned resources')}
-        >
+        <section className="pf-v6-c-nav__section no-title" aria-label={t('Pinned resources')}>
           {draggableItems.length === 1 ? (
             draggableItems[0].content
           ) : (
@@ -89,7 +86,7 @@ const PerspectiveNav: FC<{}> = () => {
     <NavList
       className="oc-perspective-nav"
       title=""
-      aria-label={t('console-app~Main navigation')}
+      aria-label={t('Main navigation')}
       data-test-id={`${activePerspective}-perspective-nav`}
     >
       {content}

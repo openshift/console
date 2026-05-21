@@ -1,11 +1,8 @@
 import type { FC } from 'react';
-import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, ButtonVariant, PageSection } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
-import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
-import { useScrollContainer } from '../../hooks/useScrollContainer';
-import { Shadows, useScrollShadows } from '../../hooks/useScrollShadows';
 import type { FormFooterProps } from './form-utils-types';
 
 import './FormFooter.scss';
@@ -29,17 +26,12 @@ export const FormFooter: FC<FormFooterProps> = ({
   sticky,
 }) => {
   const { t } = useTranslation();
-  const [scrollContainer, footerElementRef] = useScrollContainer();
-  const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
   return (
-    <div
-      className={css('ocs-form-footer', {
-        'ocs-form-footer__sticky': sticky,
-        'ocs-form-footer__shadow':
-          sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
-      })}
+    <PageSection
+      className="ocs-form-footer"
+      isStickyStuck={sticky}
+      stickyBase="bottom"
       data-test="form-footer"
-      ref={footerElementRef}
     >
       <ButtonBar
         inProgress={isSubmitting && hideSubmit}
@@ -108,6 +100,6 @@ export const FormFooter: FC<FormFooterProps> = ({
           )}
         </ActionGroup>
       </ButtonBar>
-    </div>
+    </PageSection>
   );
 };
