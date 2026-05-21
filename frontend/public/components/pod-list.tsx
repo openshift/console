@@ -437,6 +437,7 @@ export const PodList: FC<PodListProps> = ({
   data,
   loaded,
   loadError,
+  mock,
   hideNameLabelFilters,
   hideLabelFilter,
   hideColumnManagement,
@@ -541,6 +542,7 @@ export const PodList: FC<PodListProps> = ({
         data={data}
         loaded={loaded}
         loadError={loadError}
+        mock={mock}
         columns={columns}
         columnLayout={columnLayout}
         columnManagementID={columnManagementID}
@@ -561,6 +563,7 @@ export const PodList: FC<PodListProps> = ({
 export const PodsPage: FC<PodPageProps> = ({
   canCreate = true,
   namespace,
+  mock,
   showNodes,
   showTitle = true,
   selector,
@@ -580,7 +583,7 @@ export const PodsPage: FC<PodPageProps> = ({
   );
 
   useEffect(() => {
-    if (showMetrics) {
+    if (showMetrics && !mock) {
       const updateMetrics = () =>
         fetchPodMetrics(namespace || '')
           .then((result) => dispatch(UIActions.setPodMetrics(result)))
@@ -597,16 +600,20 @@ export const PodsPage: FC<PodPageProps> = ({
       return () => clearInterval(id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace]);
+  }, [mock, namespace]);
 
-  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
-    kind: PodModel.kind,
-    isList: true,
-    namespaced: true,
-    namespace,
-    selector,
-    fieldSelector,
-  });
+  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>(
+    mock
+      ? null
+      : {
+          kind: PodModel.kind,
+          isList: true,
+          namespaced: true,
+          namespace,
+          selector,
+          fieldSelector,
+        },
+  );
 
   const resourceKind = referenceForModel(PodModel);
   const accessReview = {
@@ -620,7 +627,7 @@ export const PodsPage: FC<PodPageProps> = ({
   return (
     <>
       <ListPageHeader title={showTitle ? t('public~Pods') : ''}>
-        {canCreate && (
+        {canCreate && !mock && (
           <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
             {t('public~Create Pod')}
           </ListPageCreate>
@@ -631,6 +638,7 @@ export const PodsPage: FC<PodPageProps> = ({
           data={pods}
           loaded={loaded}
           loadError={loadError}
+          mock={mock}
           showNamespaceOverride={showNamespaceOverride}
           showNodes={showNodes}
           namespace={namespace}
@@ -672,6 +680,7 @@ type PodListProps = {
   data: PodKind[];
   loaded: boolean;
   loadError: unknown;
+  mock?: boolean;
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
   hideNameLabelFilters?: boolean;
@@ -684,6 +693,7 @@ type PodListProps = {
 type PodPageProps = {
   canCreate?: boolean;
   fieldSelector?: string;
+  mock?: boolean;
   namespace?: string;
   selector?: Selector;
   showTitle?: boolean;

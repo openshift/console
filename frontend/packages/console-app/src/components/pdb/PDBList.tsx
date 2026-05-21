@@ -167,4 +167,5 @@ type PodDisruptionBudgetsListProps = {
   data: PodDisruptionBudgetKind[];
   loaded: boolean;
   loadError?: any;
+  mock?: boolean;
 };

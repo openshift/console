@@ -10,20 +10,25 @@ import PodDisruptionBudgetList from './PDBList';
 import { PodDisruptionBudgetKind } from './types';
 
 export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> = ({
+  mock,
   namespace,
   showTitle = true,
 }) => {
   const { t } = useTranslation();
-  const [resources, loaded, loadError] = useK8sWatchResource<PodDisruptionBudgetKind[]>({
-    groupVersionKind: {
-      group: PodDisruptionBudgetModel.apiGroup,
-      kind: PodDisruptionBudgetModel.kind,
-      version: PodDisruptionBudgetModel.apiVersion,
-    },
-    isList: true,
-    namespaced: true,
-    namespace,
-  });
+  const [resources, loaded, loadError] = useK8sWatchResource<PodDisruptionBudgetKind[]>(
+    mock
+      ? null
+      : {
+          groupVersionKind: {
+            group: PodDisruptionBudgetModel.apiGroup,
+            kind: PodDisruptionBudgetModel.kind,
+            version: PodDisruptionBudgetModel.apiVersion,
+          },
+          isList: true,
+          namespaced: true,
+          namespace,
+        },
+  );
 
   const resourceKind = referenceForModel(PodDisruptionBudgetModel);
   const accessReview = {
@@ -33,18 +38,26 @@ export const PodDisruptionBudgetsPage: React.FC<PodDisruptionBudgetsPageProps> =
   return (
     <>
       <ListPageHeader title={showTitle ? t(PodDisruptionBudgetModel.labelPluralKey) : undefined}>
-        <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
-          {t('console-app~Create PodDisruptionBudget')}
-        </ListPageCreate>
+        {!mock && (
+          <ListPageCreate groupVersionKind={resourceKind} createAccessReview={accessReview}>
+            {t('console-app~Create PodDisruptionBudget')}
+          </ListPageCreate>
+        )}
       </ListPageHeader>
       <ListPageBody>
-        <PodDisruptionBudgetList data={resources} loaded={loaded} loadError={loadError} />
+        <PodDisruptionBudgetList
+          data={resources}
+          loaded={loaded}
+          loadError={loadError}
+          mock={mock}
+        />
       </ListPageBody>
     </>
   );
 };
 
 type PodDisruptionBudgetsPageProps = {
+  mock?: boolean;
   namespace: string;
   showTitle?: boolean;
 };
