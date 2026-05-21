@@ -344,6 +344,7 @@
   },
   "resolutions": {
     "dompurify": "3.2.7",
+    "fsevents": "2.3.3",
     "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
     "lodash-es": "^4.17.23",
