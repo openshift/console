@@ -1,5 +1,4 @@
-# Disabled due to createRoot concurrent rendering failures (OCPBUGS-82512)
-@knative @smoke @to-do
+@knative @smoke
 Feature: Perform actions on knative service and revision
               As a user, I want to perform edit or delete operations on knative revision in topology page
 

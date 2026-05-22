@@ -28,13 +28,21 @@ export const operatorsPage = {
   },
 
   navigateToEventingPage: () => {
-    cy.get(operatorsPO.nav.serverless).click();
-    cy.get(operatorsPO.nav.eventing).click({ force: true });
+    cy.get(operatorsPO.nav.eventing).then(($nav) => {
+      if (!$nav.is(':visible')) {
+        cy.get(operatorsPO.nav.serverless).click();
+      }
+      cy.get(operatorsPO.nav.eventing).click({ force: true });
+    });
     detailsPage.titleShouldContain(pageTitle.Eventing);
   },
   navigateToServingPage: () => {
-    cy.get(operatorsPO.nav.serverless).click();
-    cy.get(operatorsPO.nav.serving).click({ force: true });
+    cy.get(operatorsPO.nav.serving).then(($nav) => {
+      if (!$nav.is(':visible')) {
+        cy.get(operatorsPO.nav.serverless).click();
+      }
+      cy.get(operatorsPO.nav.serving).click({ force: true });
+    });
     detailsPage.titleShouldContain(pageTitle.Serving);
   },
   navigateToCustomResourceDefinitions: () => {
