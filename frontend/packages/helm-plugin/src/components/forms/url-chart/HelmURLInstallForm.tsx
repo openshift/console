@@ -2,6 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { useMemo } from 'react';
 import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
+import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -13,9 +14,11 @@ import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader
 import { CodeEditorField } from '@console/shared/src/components/formik-fields/CodeEditorField';
 import { DynamicFormField } from '@console/shared/src/components/formik-fields/DynamicFormField';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import { SyncedEditorField } from '@console/shared/src/components/formik-fields/SyncedEditorField';
 import { useHelmReadmeModalLauncher } from '../install-upgrade/HelmReadmeModal';
 import type { HelmURLInstallFormData } from './types';
+import { useSecretResources } from './useSecretResources';
 
 export interface HelmURLInstallFormProps {
   chartHasValues: boolean;
@@ -34,12 +37,19 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
   values,
   chartMetaDescription,
   chartError,
+  namespace,
   onBack,
 }) => {
   const { t } = useTranslation();
   const { chartReadme, formData, formSchema } = values;
 
-  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({ readme: chartReadme });
+  const autocompleteFilter = (strText: string, item: string): boolean => fuzzy(strText, item);
+
+  const secretResources = useSecretResources(namespace);
+
+  const helmReadmeModalLauncher = useHelmReadmeModalLauncher({
+    readme: chartReadme,
+  });
 
   const isSubmitDisabled = isSubmitting || !_.isEmpty(errors) || !!chartError;
 
@@ -138,6 +148,22 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
                 label={t('helm-plugin~Version')}
                 isDisabled
                 data-test="chart-version"
+              />
+            </GridItem>
+            <GridItem xl={3} lg={3} md={12}>
+              <ResourceDropdownField
+                name="basicAuthSecretName"
+                label={t('helm-plugin~Secret for basic authentication')}
+                resources={secretResources}
+                dataSelector={['metadata', 'name']}
+                fullWidth
+                placeholder={t('helm-plugin~None')}
+                showBadge
+                autocompleteFilter={autocompleteFilter}
+                disabled
+                helpText={t(
+                  'helm-plugin~A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                )}
               />
             </GridItem>
           </Grid>

@@ -5,21 +5,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/registry"
 )
 
 // newRegistryClient is a package-level variable to allow mocking in tests
 var newRegistryClient = registry.NewClient
 
-func GetDefaultOCIRegistry(conf *action.Configuration) error {
-	return GetOCIRegistry(conf, false, false)
+type UserCredentials struct {
+	Username string
+	Password string
 }
 
-func GetOCIRegistry(conf *action.Configuration, skipTLSVerify bool, plainHTTP bool) error {
-	if conf == nil {
-		return fmt.Errorf("action configuration cannot be nil")
-	}
+func GetOCIRegistry(skipTLSVerify bool, plainHTTP bool, userCredentials *UserCredentials) (*registry.Client, error) {
 	opts := []registry.ClientOption{
 		registry.ClientOptDebug(false),
 	}
@@ -33,10 +30,17 @@ func GetOCIRegistry(conf *action.Configuration, skipTLSVerify bool, plainHTTP bo
 		}
 		opts = append(opts, registry.ClientOptHTTPClient(&http.Client{Transport: transport}))
 	}
+	if userCredentials != nil {
+		opts = append(opts, registry.ClientOptBasicAuth(userCredentials.Username, userCredentials.Password))
+	}
 	registryClient, err := newRegistryClient(opts...)
 	if err != nil {
-		return fmt.Errorf("failed to create registry client: %w", err)
+		return nil, fmt.Errorf("failed to create registry client: %w", err)
 	}
-	conf.RegistryClient = registryClient
-	return nil
+	return registryClient, nil
+
+}
+
+func GetDefaultOCIRegistry() (*registry.Client, error) {
+	return GetOCIRegistry(false, false, nil)
 }

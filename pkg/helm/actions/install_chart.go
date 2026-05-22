@@ -259,9 +259,43 @@ func InstallChartAsync(ns, name, url string, vals map[string]interface{}, conf *
 	return &secret, nil
 }
 
+// GetUserCredentials gets the username and password from a Secret in namespace with keys "username" and "password"
+func GetUserCredentials(coreClient corev1client.CoreV1Interface, ns, secretName string) (*UserCredentials, error) {
+	secret, err := coreClient.Secrets(ns).Get(context.TODO(), secretName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get secret %q from namespace %q: %w", secretName, ns, err)
+	}
+	u, uok := secret.Data[username]
+	if !uok {
+		return nil, fmt.Errorf("failed to find %q key in secret %q/%q", username, ns, secretName)
+	}
+	p, pok := secret.Data[password]
+	if !pok {
+		return nil, fmt.Errorf("failed to find %q key in secret %q/%q", password, ns, secretName)
+	}
+
+	return &UserCredentials{
+		Username: string(u),
+		Password: string(p),
+	}, nil
+}
+
+// applyBasicAuthFromSecret sets cmd.Username and cmd.Password from a userCredentials and sets the registry client
+func applyBasicAuthFromUserCredentials(cmd *action.Install, userCredentials *UserCredentials) error {
+	cmd.Username = userCredentials.Username
+	cmd.Password = userCredentials.Password
+	rc, err := GetOCIRegistry(false, false, userCredentials)
+	if err != nil {
+		return fmt.Errorf("failed to configure OCI registry client: %w", err)
+	}
+	cmd.SetRegistryClient(rc)
+	return nil
+}
+
 // InstallChartFromURL installs a chart from an OCI or direct HTTP(S) chart URL.
 // If not provided, version is extracted from the OCI URL tag when applicable.
-func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version string) (*kv1.Secret, error) {
+// basicAuthSecretName names a Secret in ns containing username and password keys for registry auth.
+func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf *action.Configuration, coreClient corev1client.CoreV1Interface, version, basicAuthSecretName string) (*kv1.Secret, error) {
 
 	if !isValidChartURL(url) {
 		return nil, fmt.Errorf("invalid chart URL: %s, must be oci:// URL or http(s)://*.tgz", url)
@@ -271,9 +305,25 @@ func InstallChartFromURL(ns, name, url string, vals map[string]interface{}, conf
 	cmd.ReleaseName = name
 	cmd.Namespace = ns
 
+	// OCI pulls use conf.RegistryClient when set; the getter does not merge ChartPathOptions username/password
+	// onto that client. Rebuild the client with basic auth when credentials are supplied.
+	if basicAuthSecretName != "" {
+		userCredentials, err := GetUserCredentials(coreClient, ns, basicAuthSecretName)
+		if err != nil {
+			return nil, err
+		}
+		if err := applyBasicAuthFromUserCredentials(cmd, userCredentials); err != nil {
+			return nil, err
+		}
+	}
+
 	// Set version so LocateChart (and Helm OCI) resolve the correct chart tag; matches InstallChart behavior.
 	if version == "" {
 		version = chartVersionFromURL(url)
+	}
+	// Remove version from OCI URLs as LocateChart will use chartPathOptions.Version to resolve tag.
+	if strings.HasPrefix(url, "oci://") {
+		url = strings.TrimSuffix(url, ":"+version)
 	}
 	cmd.ChartPathOptions.Version = version
 

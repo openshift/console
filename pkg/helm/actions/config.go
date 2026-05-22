@@ -50,9 +50,10 @@ func GetActionConfigurations(host, ns, token string, transport *http.RoundTrippe
 	}
 	conf := new(action.Configuration)
 	conf.Init(confFlags, ns, "secrets", klog.Infof)
-	err = GetDefaultOCIRegistry(conf)
+	registryClient, err := GetDefaultOCIRegistry()
 	if err != nil {
 		klog.V(4).Infof("Failed to get default OCI registry: %v", err)
 	}
+	conf.RegistryClient = registryClient
 	return conf
 }

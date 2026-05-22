@@ -406,44 +406,135 @@ func TestInstallChartAsync(t *testing.T) {
 
 func TestInstallChartFromURL(t *testing.T) {
 	tests := []struct {
-		testName      string
-		releaseName   string
-		chartPath     string
-		chartName     string
-		chartVersion  string
-		plainHTTP     bool
-		skipTLSVerify bool
-		expectError   bool
+		testName            string
+		releaseName         string
+		chartPath           string
+		chartName           string
+		chartVersion        string
+		plainHTTP           bool
+		skipTLSVerify       bool
+		basicAuthSecretName string
+		basicAuthUser       string
+		basicAuthPass       string
+		secretData          map[string][]byte
+		expectedErrMsg      string
 	}{
 		{
-			testName:      "valid HTTP chart URL",
-			releaseName:   "valid-chart-path",
-			chartPath:     "http://localhost:9181/charts/influxdb-3.0.2.tgz",
-			chartName:     "influxdb",
-			chartVersion:  "3.0.2",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   false,
+			testName:       "valid HTTP chart URL",
+			releaseName:    "valid-chart-path",
+			chartPath:      "http://localhost:9181/charts/influxdb-3.0.2.tgz",
+			chartName:      "influxdb",
+			chartVersion:   "3.0.2",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "",
 		},
 		{
-			testName:      "valid OCI chart URL",
-			releaseName:   "valid-chart-path",
-			chartPath:     "oci://localhost:5000/helm-charts/mychart:0.1.0",
-			chartName:     "mychart",
-			chartVersion:  "0.1.0",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   false,
+			testName:       "valid OCI chart URL",
+			releaseName:    "valid-chart-path",
+			chartPath:      "oci://localhost:5000/helm-charts/mychart:0.1.0",
+			chartName:      "mychart",
+			chartVersion:   "0.1.0",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "",
 		},
 		{
-			testName:      "invalid chart URL rejected synchronously",
-			releaseName:   "invalid-chart-path",
-			chartPath:     "http://localhost:9181/charts/influxdb/filename",
-			chartName:     "influxdb",
-			chartVersion:  "3.0.1",
-			plainHTTP:     true,
-			skipTLSVerify: true,
-			expectError:   true,
+			testName:       "invalid chart URL rejected synchronously",
+			releaseName:    "invalid-chart-path",
+			chartPath:      "http://localhost:9181/charts/influxdb/filename",
+			chartName:      "influxdb",
+			chartVersion:   "3.0.1",
+			plainHTTP:      true,
+			skipTLSVerify:  true,
+			expectedErrMsg: "invalid chart URL",
+		},
+		{
+			testName:            "OCI chart with basic auth",
+			releaseName:         "basicauth-oci",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "oci-auth-secret",
+			basicAuthUser:       "AzureDiamond",
+			basicAuthPass:       "hunter2",
+			expectedErrMsg:      "",
+		},
+		{
+			testName:            "HTTP chart with basic auth",
+			releaseName:         "basicauth-http",
+			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "http-auth-secret",
+			basicAuthUser:       "AzureDiamond",
+			basicAuthPass:       "hunter2",
+			expectedErrMsg:      "",
+		},
+		{
+			testName:            "OCI chart with wrong basic auth credentials",
+			releaseName:         "badauth-oci",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-auth-secret",
+			basicAuthUser:       "wrong-user",
+			basicAuthPass:       "wrong-pass",
+			expectedErrMsg:      "error locating chart",
+		},
+		{
+			testName:            "HTTP chart with wrong basic auth credentials",
+			releaseName:         "badauth-http",
+			chartPath:           "http://localhost:8181/charts/mychart-0.1.0.tgz",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-auth-secret",
+			basicAuthUser:       "wrong-user",
+			basicAuthPass:       "wrong-pass",
+			expectedErrMsg:      "error locating chart",
+		},
+		{
+			testName:            "basic auth secret not found",
+			releaseName:         "missing-secret",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "nonexistent-secret",
+			expectedErrMsg:      "failed to get secret",
+		},
+		{
+			testName:            "secret missing username key",
+			releaseName:         "malformed-no-user",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-secret",
+			secretData:          map[string][]byte{"password": []byte("hunter2")},
+			expectedErrMsg:      "failed to find \"username\" key in secret",
+		},
+		{
+			testName:            "secret missing password key",
+			releaseName:         "malformed-no-pass",
+			chartPath:           "oci://localhost:5001/helm-charts/mychart:0.1.0",
+			chartName:           "mychart",
+			chartVersion:        "0.1.0",
+			plainHTTP:           true,
+			skipTLSVerify:       true,
+			basicAuthSecretName: "bad-secret",
+			secretData:          map[string][]byte{"username": []byte("AzureDiamond")},
+			expectedErrMsg:      "failed to find \"password\" key in secret",
 		},
 	}
 	for _, tt := range tests {
@@ -456,16 +547,38 @@ func TestInstallChartFromURL(t *testing.T) {
 				Capabilities:     chartutil.DefaultCapabilities,
 				Log:              func(format string, v ...interface{}) {},
 			}
-			err := GetOCIRegistry(actionConfig, tt.skipTLSVerify, tt.plainHTTP)
+			registryClient, err := GetOCIRegistry(tt.skipTLSVerify, tt.plainHTTP, nil)
 			require.NoError(t, err)
+			actionConfig.RegistryClient = registryClient
 
 			objs := []runtime.Object{}
+			if tt.secretData != nil {
+				objs = append(objs, &v1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      tt.basicAuthSecretName,
+						Namespace: "test-namespace",
+					},
+					Data: tt.secretData,
+				})
+			} else if tt.basicAuthSecretName != "" && tt.basicAuthUser != "" {
+				objs = append(objs, &v1.Secret{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      tt.basicAuthSecretName,
+						Namespace: "test-namespace",
+					},
+					Data: map[string][]byte{
+						"username": []byte(tt.basicAuthUser),
+						"password": []byte(tt.basicAuthPass),
+					},
+				})
+			}
 			clientInterface := k8sfake.NewSimpleClientset(objs...)
 			coreClient := clientInterface.CoreV1()
 
-			if tt.expectError {
-				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+			if tt.expectedErrMsg != "" {
+				rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion, tt.basicAuthSecretName)
 				require.Error(t, err)
+				require.ErrorContains(t, err, tt.expectedErrMsg)
 				require.Nil(t, rel)
 				return
 			}
@@ -495,7 +608,7 @@ func TestInstallChartFromURL(t *testing.T) {
 				secretsDriver.Create(secretName, &r)
 			}()
 
-			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion)
+			rel, err := InstallChartFromURL("test-namespace", tt.releaseName, tt.chartPath, nil, actionConfig, coreClient, tt.chartVersion, tt.basicAuthSecretName)
 			require.NoError(t, err)
 			require.NotNil(t, rel)
 			require.Equal(t, secretName, rel.ObjectMeta.Name)

@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useEffect } from 'react';
 import { TextInputTypes, Grid, GridItem } from '@patternfly/react-core';
 import type { FormikProps } from 'formik';
+import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
@@ -9,7 +10,9 @@ import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
 import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { FormHeader } from '@console/shared/src/components/form-utils/FormHeader';
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
+import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 import type { HelmURLChartFormData } from './types';
+import { useSecretResources } from './useSecretResources';
 
 export interface HelmURLChartFormProps {
   namespace: string;
@@ -21,6 +24,7 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
   status,
   isSubmitting,
   onNext,
+  namespace,
   isValid,
   dirty,
   values,
@@ -29,6 +33,10 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
 }) => {
   const { t } = useTranslation();
 
+  const autocompleteFilter = (strText: string, item: any): boolean =>
+    fuzzy(strText, item?.props?.name);
+
+  const secretResources = useSecretResources(namespace);
   const isNextDisabled = !isValid || !dirty || isSubmitting;
 
   // Auto-populate releaseName and chartVersion from URL
@@ -118,6 +126,21 @@ const HelmURLChartForm: FC<FormikProps<HelmURLChartFormData> & HelmURLChartFormP
                 placeholder="1.0.0"
                 required
                 data-test="oci-chart-version"
+              />
+            </GridItem>
+            <GridItem md={12}>
+              <ResourceDropdownField
+                name="basicAuthSecretName"
+                label={t('helm-plugin~Secret for basic authentication')}
+                resources={secretResources}
+                dataSelector={['metadata', 'name']}
+                fullWidth
+                placeholder={t('helm-plugin~Select a secret')}
+                showBadge
+                autocompleteFilter={autocompleteFilter}
+                helpText={t(
+                  'helm-plugin~A secret with "username" and "password" keys for OCI/HTTP(S) authentication',
+                )}
               />
             </GridItem>
           </Grid>
