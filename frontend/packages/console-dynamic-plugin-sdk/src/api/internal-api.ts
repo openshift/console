@@ -85,7 +85,7 @@ export const useDashboardResources: UseDashboardResources = require('@console/sh
 export const useURLPoll: UseURLPoll = require('@console/internal/components/utils/url-poll-hook')
   .useURLPoll;
 
-export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-namespace/useLastNamespace')
+export const useLastNamespace: UseLastNamespace = require('@console/app/src/components/detect-context/useLastNamespace')
   .useLastNamespace;
 
 export const ConsoleDataView: <

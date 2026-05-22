@@ -59,7 +59,7 @@
       "NamespaceDropdown": "src/components/user-preferences/namespace/NamespaceDropdown.tsx",
       "LanguageDropdown": "src/components/user-preferences/language/LanguageDropdown.tsx",
       "perspective": "src/utils/perspective.tsx",
-      "perspectiveConfiguration": "src/components/detect-perspective/PerspectiveConfiguration.tsx",
+      "perspectiveConfiguration": "src/components/detect-context/PerspectiveConfiguration.tsx",
       "DynamicPluginsPopover": "src/components/dashboards-page/dynamic-plugins-health-resource/DynamicPluginsPopover.tsx",
       "getDynamicPluginHealthState": "src/components/dashboards-page/dynamic-plugins-health-resource/status.ts",
       "k8sHealth": "src/components/dashboards-page/status.ts",
