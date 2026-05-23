@@ -28,6 +28,7 @@
   "consolePlugin": {
     "exposedModules": {
       "detectIntegrationTest": "src/features/integration-test.ts",
+      "isOpenShift5": "src/features/openshift5.ts",
       "tourContext": "src/components/tour/tour-context.ts",
       "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
       "quickStartConfiguration": "src/components/quick-starts/QuickStartConfiguration.tsx",

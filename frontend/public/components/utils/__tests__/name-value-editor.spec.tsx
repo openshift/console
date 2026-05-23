@@ -186,7 +186,7 @@ describe('NameValueEditor', () => {
       expect(screen.getByDisplayValue('name')).toBeDisabled();
       expect(screen.getByDisplayValue('value')).toBeDisabled();
       expect(screen.queryByRole('button', { name: /add more/i })).not.toBeInTheDocument();
-      expect(screen.queryByLabelText('Drag button')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();
     });
   });
 
@@ -203,7 +203,7 @@ describe('NameValueEditor', () => {
           allowSorting={true}
         />,
       );
-      expect(screen.getAllByLabelText('Drag button')).toHaveLength(2);
+      expect(screen.getAllByLabelText('Drag to reorder')).toHaveLength(2);
     });
 
     it('hides reorder button when allowSorting is false', () => {
@@ -214,7 +214,7 @@ describe('NameValueEditor', () => {
           allowSorting={false}
         />,
       );
-      expect(screen.queryByLabelText('Drag button')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();
     });
 
     it('does not show reorder button when only one pair exists', () => {
@@ -226,7 +226,7 @@ describe('NameValueEditor', () => {
           allowSorting={true}
         />,
       );
-      expect(screen.queryByLabelText('Drag button')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Drag to reorder')).not.toBeInTheDocument();
     });
   });
 

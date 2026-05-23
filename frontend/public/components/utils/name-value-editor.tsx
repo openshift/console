@@ -332,7 +332,10 @@ export const NameValueEditor: FC<NameValueEditorProps> = ({
               items={nameValuePairs.map(
                 (pair, i): DraggableObject => ({
                   id: `pair-${(pair[NameValueEditorPair.Index] as number) ?? i}`,
-                  props: { className: 'pf-v6-u-display-flex pf-v6-u-align-items-center' },
+                  props: {
+                    dragButtonAriaLabel: t('Drag to reorder'),
+                    className: 'pf-v6-u-display-flex pf-v6-u-align-items-center',
+                  },
                   content: makePairElement(pair, i),
                 }),
               )}

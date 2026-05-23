@@ -1,9 +1,10 @@
 import type { FC } from 'react';
-import { Flex, FlexItem, ValidatedOptions } from '@patternfly/react-core';
+import { ValidatedOptions } from '@patternfly/react-core';
 import type { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { GitProvider, ImportStrategy } from '@console/git-service/src/types/git';
+import { FlexForm } from '@console/shared/src/components/form-utils/FlexForm';
 import { FormBody } from '@console/shared/src/components/form-utils/FormBody';
 import { FormFooter } from '@console/shared/src/components/form-utils/FormFooter';
 import { hasSampleQueryParameter } from '../../utils/samples';
@@ -59,57 +60,53 @@ export const GitImportForm: FC<
     values?.devfile?.devfileSuggestedResources?.route?.spec?.tls;
 
   return (
-    <form onSubmit={handleSubmit} data-test-id="import-git-form">
-      <Flex direction={{ default: 'column', sm: 'row' }}>
-        <FlexItem flex={{ default: 'flex_1' }} alignSelf={{ default: 'alignSelfFlexStart' }}>
-          <FormBody>
-            <GitSection
-              builderImages={builderImages}
-              defaultSample={
-                gitRepositoryUrl && {
-                  url: gitRepositoryUrl,
-                  ref: gitRevision,
-                  dir: gitContextDir,
-                }
-              }
-              formType={formType}
-              importType={importType}
+    <FlexForm onSubmit={handleSubmit} data-test-id="import-git-form">
+      <FormBody flexLayout>
+        <GitSection
+          builderImages={builderImages}
+          defaultSample={
+            gitRepositoryUrl && {
+              url: gitRepositoryUrl,
+              ref: gitRevision,
+              dir: gitContextDir,
+            }
+          }
+          formType={formType}
+          importType={importType}
+        />
+        <NamespaceSection />
+        {showFullForm && (
+          <>
+            {importType === ImportTypes.devfile ? (
+              <DevfileStrategySection />
+            ) : (
+              <ImportStrategySection builderImages={builderImages} />
+            )}
+            <AppSection
+              project={values.project}
+              noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
             />
-            <NamespaceSection />
-            {showFullForm && (
+            {formType !== 'sample' && importType !== ImportTypes.devfile && (
+              <BuildSection values={values} />
+            )}
+            {showAdvancedSections && (
               <>
-                {importType === ImportTypes.devfile ? (
-                  <DevfileStrategySection />
-                ) : (
-                  <ImportStrategySection builderImages={builderImages} />
+                {buildOption === BuildOptions.PIPELINES && (
+                  <PipelineSection builderImages={builderImages} />
                 )}
-                <AppSection
-                  project={values.project}
-                  noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
-                />
-                {formType !== 'sample' && importType !== ImportTypes.devfile && (
-                  <BuildSection values={values} />
-                )}
-                {showAdvancedSections && (
-                  <>
-                    {buildOption === BuildOptions.PIPELINES && (
-                      <PipelineSection builderImages={builderImages} />
-                    )}
-                    {buildOption !== BuildOptions.DISABLED && <DeploySection values={values} />}
+                {buildOption !== BuildOptions.DISABLED && <DeploySection values={values} />}
 
-                    <AdvancedSection values={values} />
-                  </>
-                )}
-                {showSecureRouteSectionForDevfile && (
-                  <div className="pf-v6-c-form co-m-pane__form">
-                    <SecureRoute />
-                  </div>
-                )}
+                <AdvancedSection values={values} />
               </>
             )}
-          </FormBody>
-        </FlexItem>
-      </Flex>
+            {showSecureRouteSectionForDevfile && (
+              <div className="pf-v6-c-form co-m-pane__form">
+                <SecureRoute />
+              </div>
+            )}
+          </>
+        )}
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
@@ -119,6 +116,6 @@ export const GitImportForm: FC<
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('devconsole~Cancel')}
       />
-    </form>
+    </FlexForm>
   );
 };

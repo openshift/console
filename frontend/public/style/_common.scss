@@ -107,7 +107,7 @@
 
 .co-fullscreen {
   // so that the background colour isn't black
-  background-color: var(--pf-t--global--background--color--secondary--default);
+  background: var(--pf-t--global--background--image--default) var(--pf-t--global--background--color--secondary--default);
 }
 
 // Prefer `co-break-word` in most cases. `co-break-all` should generally be reserved for URLs and long,
