@@ -88,6 +88,9 @@ root.render(<LoadingBox blame="Init" />);
 // interceptor calls authSvc.handle401() which handles the redirect.
 coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`).catch(() => {});
 
+// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
+delete process.title;
+
 initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
