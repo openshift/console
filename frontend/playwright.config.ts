@@ -27,7 +27,7 @@ const packages = [
 ];
 
 // Packages that also have developer-persona tests
-const devPackages = ['smoke', 'dev-console', 'shipwright', 'topology'];
+const devPackages = ['smoke', 'dev-console', 'shipwright', 'topology', 'webterminal'];
 
 const chromeArgs = [
   '--ignore-certificate-errors',

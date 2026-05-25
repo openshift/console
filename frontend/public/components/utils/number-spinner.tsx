@@ -26,9 +26,9 @@ export const NumberSpinner: FC<NumberSpinnerProps> = ({
         inputProps={{ ...inputProps }}
         className={className}
         minusBtnAriaLabel={t('public~Decrement')}
-        minusBtnProps={{ 'data-test-id': 'Decrement' } as ButtonProps}
+        minusBtnProps={{ 'data-test-id': 'Decrement', 'data-test': 'Decrement' } as ButtonProps}
         plusBtnAriaLabel={t('public~Increment')}
-        plusBtnProps={{ 'data-test-id': 'Increment' } as ButtonProps}
+        plusBtnProps={{ 'data-test-id': 'Increment', 'data-test': 'Increment' } as ButtonProps}
         isDisabled={inputProps.disabled}
       />
     </div>

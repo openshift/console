@@ -5669,12 +5669,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webterminal-plugin/integration-tests@workspace:packages/webterminal-plugin/integration-tests":
-  version: 0.0.0-use.local
-  resolution: "@webterminal-plugin/integration-tests@workspace:packages/webterminal-plugin/integration-tests"
-  languageName: unknown
-  linkType: soft
-
 "@wry/context@npm:^0.4.0":
   version: 0.4.4
   resolution: "@wry/context@npm:0.4.4"

@@ -91,7 +91,11 @@ export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
   }
 
   return (
-    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+    <div
+      className="co-namespace-bar__items"
+      data-test-id="namespace-bar-dropdown"
+      data-test="namespace-bar-dropdown"
+    >
       <NamespaceDropdown
         onSelect={(event, newNamespace) => {
           onNamespaceChange?.(newNamespace);
@@ -139,7 +143,11 @@ export const NamespaceBar: FC<NamespaceBarProps & { hideProjects?: boolean }> = 
   return (
     <div className={css('co-namespace-bar', { 'co-namespace-bar--no-project': hideProjects })}>
       {hideProjects ? (
-        <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+        <div
+          className="co-namespace-bar__items"
+          data-test-id="namespace-bar-dropdown"
+          data-test="namespace-bar-dropdown"
+        >
           {children}
         </div>
       ) : (
