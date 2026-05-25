@@ -126,7 +126,7 @@
   "The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.": "The OCI URL or HTTP/HTTPS tar file for the Helm chart; for example - oci://registry.example.com/charts/mychart or https://example.com/chart-1.0.0.tgz.",
   "Unique name for Helm release.": "Unique name for Helm release.",
   "The version of chart to install.": "The version of chart to install.",
-  "Secret for basic authentication": "Secret for basic authentication",
+  "Secret for Basic authentication": "Secret for Basic authentication",
   "Select a secret": "Select a secret",
   "A secret with \"username\" and \"password\" keys for OCI/HTTP(S) authentication": "A secret with \"username\" and \"password\" keys for OCI/HTTP(S) authentication",
   "Next": "Next",

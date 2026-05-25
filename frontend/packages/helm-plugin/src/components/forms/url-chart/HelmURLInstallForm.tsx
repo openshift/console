@@ -153,7 +153,7 @@ const HelmURLInstallForm: FC<FormikProps<HelmURLInstallFormData> & HelmURLInstal
             <GridItem xl={3} lg={3} md={12}>
               <ResourceDropdownField
                 name="basicAuthSecretName"
-                label={t('helm-plugin~Secret for basic authentication')}
+                label={t('helm-plugin~Secret for Basic authentication')}
                 resources={secretResources}
                 dataSelector={['metadata', 'name']}
                 fullWidth
