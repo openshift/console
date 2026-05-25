@@ -131,8 +131,7 @@ describe('GroupsEditorModal', () => {
       const groupAButton = screen.getByRole('button', { name: 'group-a' });
       await user.click(groupAButton);
 
-      const groupAButton2 = screen.getByRole('button', { name: 'group-a' });
-      expect(groupAButton2).toHaveClass('pf-m-current');
+      expect(screen.getByText('Nodes for group group-a')).toBeVisible();
     });
 
     it('displays nodes for selected group', async () => {
@@ -250,8 +249,7 @@ describe('GroupsEditorModal', () => {
       const input = screen.getByPlaceholderText('Enter a group name');
       await user.type(input, 'auto-select{enter}');
 
-      const newGroupButton = screen.getByRole('button', { name: 'auto-select' });
-      expect(newGroupButton).toHaveClass('pf-m-current');
+      expect(screen.getByText('Nodes for group auto-select')).toBeVisible();
     });
 
     it('clears input after adding group', async () => {

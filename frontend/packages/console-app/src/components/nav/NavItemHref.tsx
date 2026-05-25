@@ -39,7 +39,12 @@ export const NavItemHref: FC<NavItemHrefProps> = ({
   }, [activeNamespace, href, namespaced, prefixNamespaced]);
   return (
     <NavItem isActive={isActive}>
-      <NavLink {...navLinkProps} {...dataAttributes} to={to()}>
+      <NavLink
+        {...navLinkProps}
+        {...dataAttributes}
+        to={to()}
+        aria-current={isActive ? 'page' : undefined}
+      >
         {children}
       </NavLink>
     </NavItem>

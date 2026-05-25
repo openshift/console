@@ -146,7 +146,9 @@ export const AccessModeSelector: FC<AccessModeSelectorProps> = (props) => {
           {description}
         </p>
       )}
-      {(!loaded || !allowedAccessModes) && <div className="skeleton-text" />}
+      {(!loaded || !allowedAccessModes) && (
+        <div className="skeleton-text" role="status" aria-busy="true" />
+      )}
     </FormGroup>
   );
 };
