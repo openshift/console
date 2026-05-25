@@ -159,7 +159,6 @@ const config: Configuration = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@patternfly/patternfly': path.resolve(__dirname, 'node_modules/@patternfly/patternfly/dist'),
       prettier: false,
       'prettier/parser-yaml': false,
     },
