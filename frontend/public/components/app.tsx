@@ -76,6 +76,9 @@ import { useCSPViolationDetector } from '@console/app/src/hooks/useCSPViolationD
 import { useNotificationPoller } from '@console/app/src/hooks/useNotificationPoller';
 import { useImpersonateRefreshFeatures } from './useImpersonateRefreshFeatures';
 
+// TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
+delete process.title;
+
 initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
