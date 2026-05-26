@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useEffect, useImperativeHandle, useCallback, useState } from 'react';
 import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import { getResizeObserver } from '@patternfly/react-core';
 import { useIsFullscreen } from '@console/shared/src/hooks/useFullscreen';
 
 const defaultOptions: ITerminalOptions = {
@@ -71,24 +72,26 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
       term.loadAddon(fit);
 
-      const resizeObserver = new ResizeObserver(() => {
-        window.requestAnimationFrame(() => {
-          if (!terminal.current) {
-            return;
-          }
-          fit.fit();
-          onResize(terminal.current.rows, terminal.current.cols);
-          // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
-          // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
-          // and https://github.com/xtermjs/xterm.js/issues/3390
-          terminal.current._core?._syncTextArea?.();
-        });
-      });
+      let unobserveResize: () => void;
 
       if (terminalRef.current) {
         term.open(terminalRef.current);
         term.focus();
-        resizeObserver.observe(terminalRef.current);
+        unobserveResize = getResizeObserver(
+          terminalRef.current,
+          () => {
+            if (!terminal.current) {
+              return;
+            }
+            fit.fit();
+            onResize(terminal.current.rows, terminal.current.cols);
+            // @ts-expect-error The internal xterm textarea was not repositioned when the window was resized.
+            // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+            // and https://github.com/xtermjs/xterm.js/issues/3390
+            terminal.current._core?._syncTextArea?.();
+          },
+          true,
+        );
         handleResize();
       }
 
@@ -97,7 +100,7 @@ export const Terminal = forwardRef<ImperativeTerminalType, TerminalProps>(
 
       return () => {
         term.dispose();
-        resizeObserver.disconnect();
+        unobserveResize?.();
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('sidebar_toggle', handleResize);
       };
