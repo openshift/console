@@ -228,6 +228,7 @@ func UpgradeReleaseAsync(
 			ch.Metadata.Annotations = make(map[string]string)
 		}
 		ch.Metadata.Annotations["chart_url"] = chartUrl
+		addAuthSecretAnnotation(ch, auth_secret)
 	}
 	if auth_secret != "" {
 		klog.Infof("Found persisted auth secret %s for release %s/%s, applying credentials for upgrade", auth_secret, releaseNamespace, releaseName)
@@ -241,7 +242,6 @@ func UpgradeReleaseAsync(
 				// Continue with upgrade but log the error - the upgrade may still work if auth is not required
 			}
 		}
-
 	}
 	go func() {
 		_, err := client.Run(releaseName, ch, vals)
