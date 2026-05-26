@@ -7,6 +7,10 @@ import ClusterConfigurationCustomField from '../ClusterConfigurationCustomField'
 import type { ResolvedClusterConfigurationItem } from '../types';
 
 describe('ClusterConfigurationCustomField', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   const MockCustomComponent = () => <div>Custom Component Content</div>;
 
   const createMockItem = (readonly: boolean): ResolvedClusterConfigurationItem => ({
@@ -39,13 +43,21 @@ describe('ClusterConfigurationCustomField', () => {
     expect(screen.getByText('Custom Component Content')).toBeVisible();
   });
 
-  it('should wrap content in error boundary', () => {
+  it('should catch errors and render error boundary fallback', () => {
+    const ThrowingComponent = () => {
+      throw new Error('test error');
+    };
     const item = createMockItem(false);
-    const field = createMockField();
+    const field: ResolvedCodeRefProperties<ClusterConfigurationCustomFieldType> = {
+      type: ClusterConfigurationFieldType.custom,
+      component: ThrowingComponent,
+    };
 
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     renderWithProviders(<ClusterConfigurationCustomField item={item} field={field} />);
 
-    expect(screen.getByRole('region', { name: 'Inline error boundary' })).toBeVisible();
+    expect(screen.getByText('Extension error')).toBeVisible();
+    expect(screen.queryByText('Custom Component Content')).not.toBeInTheDocument();
   });
 
   it('should wrap content in form layout', () => {
