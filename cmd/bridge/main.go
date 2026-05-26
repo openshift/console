@@ -34,6 +34,7 @@ import (
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	"github.com/patrickmn/go-cache"
+	"golang.org/x/net/http2"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	klog "k8s.io/klog/v2"
@@ -734,6 +735,13 @@ func main() {
 
 	httpsrv := &http.Server{Handler: handler}
 
+	if listenURL.Scheme == "https" {
+		if err := http2.ConfigureServer(httpsrv, &http2.Server{}); err != nil {
+			klog.Fatalf("failed to configure HTTP/2: %v", err)
+		}
+		klog.Info("HTTP/2 enabled")
+	}
+
 	listener, err := listen(listenURL.Scheme, listenURL.Host, *fTLSCertFile, *fTLSKeyFile)
 	if err != nil {
 		klog.Fatalf("error getting listener, %v", err)
@@ -781,7 +789,7 @@ func listen(scheme, host, certFile, keyFile string) (net.Listener, error) {
 	}
 	klog.Info("Using TLS")
 	tlsConfig := &tls.Config{
-		NextProtos: []string{"http/1.1"},
+		NextProtos: []string{"h2", "http/1.1"},
 		GetCertificate: func(_ *tls.ClientHelloInfo) (*tls.Certificate, error) {
 			klog.V(4).Infof("Getting TLS certs.")
 			cert, err := tls.LoadX509KeyPair(certFile, keyFile)

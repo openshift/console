@@ -1,10 +1,12 @@
 import type { FC, ReactNode } from 'react';
+import { useEffect, useId } from 'react';
 import { ConsoleEmptyState } from '../empty-state/ConsoleEmptyState';
 import { Loading } from './Loading';
 
-// We do not use react-router here as LoadingBox may be used outside the router context scope
-// This const will only be evaluated once on first load. We mess with the query params a lot
-// so this would be easily lost otherwise.
+// Enables critical rendering path (CRP) blame mode, which helps with debugging
+// performance issues related to the loading state. Adds extra profiling information
+// to the browser devtools Performance tab, and shows the loading component's `blame`
+// prop as the title of the loading box.
 const IS_BLAME_ENABLED = new URLSearchParams(window.location.search).has('crp-blame');
 
 interface LoadingBoxProps {
@@ -18,6 +20,20 @@ interface LoadingBoxProps {
 }
 
 export const LoadingBox: FC<LoadingBoxProps> = ({ blame = 'LoadingBox', children }) => {
+  const id = useId();
+
+  useEffect(() => {
+    if (!IS_BLAME_ENABLED) {
+      return undefined;
+    }
+    const markName = `LoadingBox:${blame}:${id}`;
+    performance.mark(`${markName}:start`);
+    return () => {
+      performance.mark(`${markName}:end`);
+      performance.measure(markName, `${markName}:start`, `${markName}:end`);
+    };
+  }, [blame, id]);
+
   return (
     <ConsoleEmptyState
       data-test="loading-box"
