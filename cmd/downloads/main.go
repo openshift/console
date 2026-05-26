@@ -16,7 +16,7 @@ func main() {
 	klog.InitFlags(fs)
 	defer klog.Flush()
 
-	fPort := fs.Int("port", 8081, "Port number used to start the downloads server.")
+	fPort := fs.Int("port", 8080, "Port number used to start the downloads server.")
 	fPathToArtifactsFileConfig := fs.String("config-path", "/opt/downloads/defaultArtifactsConfig.yaml", "Path to the configuration file of available 'oc' artifacts.")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
@@ -30,13 +30,15 @@ func main() {
 	}
 	defer os.RemoveAll(downloadsServerConfig.TempDir)
 
+	downloadsServerConfig.CreateArchivesInBackground()
+
 	// Listen for incoming connections
 	klog.Infof("Server started. Listening on http://0.0.0.0:%s", downloadsServerConfig.Port)
 
 	// Serve the files and listen for incoming connections
 	downlsrv := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%s", downloadsServerConfig.Port),
-		Handler: http.FileServer(http.Dir(downloadsServerConfig.TempDir)),
+		Handler: downloadsServerConfig.Handler(),
 	}
 	klog.Fatal(downlsrv.ListenAndServe())
 
