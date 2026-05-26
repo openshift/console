@@ -1,5 +1,4 @@
 import type { ReactNode, ComponentType, FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '../error-boundary';
 import { ErrorBoundaryFallbackInline } from './ErrorBoundaryFallbackInline';
 
@@ -17,7 +16,6 @@ export const ErrorBoundaryInline: FC<ErrorBoundaryInlineProps> = ({
   children,
   ...props
 }) => {
-  const { t } = useTranslation('console-shared');
   let fallback = ErrorBoundaryFallbackInline;
   if (Wrapper) {
     fallback = (innerProps) => (
@@ -28,10 +26,8 @@ export const ErrorBoundaryInline: FC<ErrorBoundaryInlineProps> = ({
   }
 
   return (
-    <div role="region" aria-label={t('console-shared~Inline error boundary')}>
-      <ErrorBoundary {...props} FallbackComponent={fallback}>
-        {children}
-      </ErrorBoundary>
-    </div>
+    <ErrorBoundary {...props} FallbackComponent={fallback}>
+      {children}
+    </ErrorBoundary>
   );
 };

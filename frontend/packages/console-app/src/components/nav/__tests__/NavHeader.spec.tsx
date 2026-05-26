@@ -87,8 +87,43 @@ describe('NavHeader', () => {
     });
   });
 
-  // Note: Edge cases for single/no perspectives are not tested here because
-  // static plugin data (loaded via renderWithProviders) always provides
-  // multiple perspectives. These edge cases would require mocking usePerspectives
-  // which is an antipattern per review feedback.
+  describe('when only one perspective is available', () => {
+    beforeEach(() => {
+      window.SERVER_FLAGS.perspectives = JSON.stringify([
+        { id: 'admin', visibility: { state: 'Enabled' } },
+        { id: 'dev', visibility: { state: 'Disabled' } },
+      ]);
+    });
+
+    afterEach(() => {
+      delete window.SERVER_FLAGS.perspectives;
+    });
+
+    it('should render static label instead of dropdown', () => {
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+
+      expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when all perspectives are disabled', () => {
+    beforeEach(() => {
+      window.SERVER_FLAGS.perspectives = JSON.stringify([
+        { id: 'admin', visibility: { state: 'Disabled' } },
+        { id: 'dev', visibility: { state: 'Disabled' } },
+      ]);
+    });
+
+    afterEach(() => {
+      delete window.SERVER_FLAGS.perspectives;
+    });
+
+    it('should fall back to static label for admin perspective', () => {
+      renderWithProviders(<NavHeader onPerspectiveSelected={mockOnPerspectiveSelected} />);
+
+      expect(screen.getByRole('heading', { name: 'Core platform' })).toBeVisible();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+  });
 });
