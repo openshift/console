@@ -235,17 +235,3 @@ export const AddRequestHeaderPage = () => {
     </div>
   );
 };
-
-export type AddRequestHeaderPageState = {
-  name: string;
-  loginURL: string;
-  challengeURL: string;
-  clientCommonNames: string[];
-  headers: string[];
-  preferredUsernameHeaders: string[];
-  nameHeaders: string[];
-  emailHeaders: string[];
-  caFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

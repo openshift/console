@@ -538,7 +538,7 @@
       "catalogId": "samples-catalog",
       "type": "ConsoleSample",
       "title": "%devconsole~Console sample%",
-      "provider": { "$codeRef": "useConsoleSamples" }
+      "provider": { "$codeRef": "useConsoleSamples.useConsoleSamplesCatalogProvider" }
     },
     "flags": {
       "required": ["CONSOLESAMPLE"]
@@ -1183,7 +1183,7 @@
       "perspective": "dev",
       "exact": false,
       "path": ["/project-details/all-namespaces", "/project-details/ns/:ns"],
-      "component": { "$codeRef": "ProjectDetailsPage" }
+      "component": { "$codeRef": "ProjectDetailsPage.ProjectDetailsPage" }
     }
   },
   {
@@ -1191,7 +1191,7 @@
     "properties": {
       "exact": false,
       "path": ["/dev-monitoring/all-namespaces", "/dev-monitoring/ns/:ns"],
-      "component": { "$codeRef": "MonitoringPage" }
+      "component": { "$codeRef": "MonitoringPage.MonitoringPage" }
     }
   },
   {
@@ -1242,7 +1242,7 @@
     "properties": {
       "catalogId": "dev-catalog",
       "provider": {
-        "$codeRef": "useDeveloperCatalogCategories"
+        "$codeRef": "useDeveloperCatalogCategories.useDeveloperCatalogCategories"
       }
     }
   }

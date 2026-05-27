@@ -798,12 +798,6 @@ export type SubscriptionUpdatesProps = {
   subscriptions: SubscriptionKind[];
 };
 
-export type SubscriptionUpdatesState = {
-  waitingForUpdate: boolean;
-  channel: string;
-  installPlanApproval: InstallPlanApproval;
-};
-
 export type SubscriptionDetailsProps = {
   clusterServiceVersions?: ClusterServiceVersionKind[];
   installPlans?: InstallPlanKind[];

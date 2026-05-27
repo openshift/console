@@ -16,10 +16,6 @@ import {
 
 import { handleError, retryFlagDetection, setFlag, ssarChecks } from './flags';
 
-export const defaults = _.mapValues(FLAGS, (flag) =>
-  flag === FLAGS.AUTH_ENABLED ? !window.SERVER_FLAGS.authDisabled : undefined,
-);
-
 // This config API contains the OpenShift Project, and other mandatory resources
 const openshiftPath = '/apis/config.openshift.io/v1';
 const detectOpenShift = (dispatch) =>

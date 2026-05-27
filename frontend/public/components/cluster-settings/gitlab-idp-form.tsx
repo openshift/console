@@ -224,13 +224,3 @@ export const AddGitLabPage = () => {
     </div>
   );
 };
-
-export type AddGitLabPageState = {
-  name: string;
-  url: string;
-  clientID: string;
-  clientSecret: string;
-  caFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

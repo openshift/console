@@ -16,13 +16,6 @@ import { units } from './utils/units';
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
 
-export type DroppedFile = {
-  error?: string;
-  id: string;
-  name: string;
-  size: number;
-};
-
 type DroppableEditYAMLProps = ResourceYAMLEditorProps & {
   allowMultiple?: boolean;
   isCodeImportRedirect?: boolean;

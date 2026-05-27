@@ -629,5 +629,3 @@ export const ResourcesEventStream: FC<InternalResourcesEventStreamProps> = ({
 export const WrappedResourceEventStream: FC<ResourceEventStreamProps> = ({ resource }) => (
   <ResourceEventStream_ obj={resource} />
 );
-
-export default ResourceEventStream_;

@@ -253,18 +253,6 @@ const QuotaScopesList = ({ scopes }) => {
   });
 };
 
-export const hasComputeResources = (resourceTypes) => {
-  const chartResourceTypes = [
-    'requests.cpu',
-    'cpu',
-    'limits.cpu',
-    'requests.memory',
-    'memory',
-    'limits.memory',
-  ];
-  return _.intersection(resourceTypes, chartResourceTypes).length > 0;
-};
-
 const Details = ({ obj: rq }) => {
   const { t } = useTranslation();
   const params = useParams();

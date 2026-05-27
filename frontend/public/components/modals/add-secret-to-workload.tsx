@@ -1,4 +1,4 @@
-import type { FC, ReactEventHandler, FormEvent, ReactNode } from 'react';
+import type { FC, ReactEventHandler, FormEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
@@ -339,18 +339,3 @@ export type AddSecretToWorkloadModalProps = {
   secretName: string;
   namespace: string;
 } & ModalComponentProps;
-
-export type AddSecretToWorkloadModalState = {
-  inProgress: boolean;
-  errorMessage: string;
-  workloadOptions: {
-    [uid: string]: ReactNode;
-  };
-  workloadsByUID: {
-    [uid: string]: WorkloadItem;
-  };
-  selectedWorkloadUID: string;
-  addAs: string;
-  prefix: string;
-  mountPath: string;
-};

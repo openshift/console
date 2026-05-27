@@ -47,10 +47,7 @@ export enum StatusCapability {
 }
 
 export enum CommonCapability {
-  podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
-  k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
   hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
-  password = 'urn:alm:descriptor:com.tectonic.ui:password',
 }
 
 export type Descriptor<T = any> = {
@@ -61,7 +58,6 @@ export type Descriptor<T = any> = {
   value?: any;
 };
 
-export type SpecDescriptor = Descriptor<SpecCapability>;
 export type StatusDescriptor = Descriptor<StatusCapability>;
 
 export type CapabilityProps<C extends SpecCapability | StatusCapability, V = any> = {

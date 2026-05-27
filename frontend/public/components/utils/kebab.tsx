@@ -15,12 +15,7 @@ import {
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router';
 import { impersonateStateToProps, ImpersonateKind } from '@console/dynamic-plugin-sdk';
-import {
-  AccessReviewResourceAttributes,
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-} from '../../module/k8s';
+import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ContextSubMenuItem } from '@patternfly/react-topology';
 import { useAccessReview, checkAccess } from './rbac';
 
@@ -257,16 +252,6 @@ export type KebabAction = (
   customData?: any,
 ) => KebabOption;
 
-export type ResourceKebabProps = {
-  kindObj: K8sKind;
-  actions: KebabAction[];
-  kind: K8sResourceKindReference;
-  resource: K8sResourceKind;
-  isDisabled?: boolean;
-  customData?: { [key: string]: any };
-  terminatingTooltip?: string;
-};
-
 type KebabSubMenuOption = {
   label?: string;
   labelKey?: string;
@@ -301,8 +286,6 @@ export type KebabItemsProps = {
   focusItem?: KebabOption;
   className?: string;
 };
-
-export type KebabFactory = { [name: string]: KebabAction } & { common?: KebabAction[] };
 
 type KebabComponent = FC<KebabProps>;
 KebabItems.displayName = 'KebabItems';

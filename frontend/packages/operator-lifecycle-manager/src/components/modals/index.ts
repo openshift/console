@@ -18,15 +18,6 @@ export const LazySubscriptionChannelModalOverlay = lazy(() =>
   ),
 );
 
-// Lazy-loaded OverlayComponent for Uninstall Operator Modal
-export const LazyUninstallOperatorModalOverlay = lazy(() =>
-  import('./uninstall-operator-modal' /* webpackChunkName: "uninstall-operator-modal" */).then(
-    (m) => ({
-      default: m.UninstallOperatorModalOverlay,
-    }),
-  ),
-);
-
 // Lazy-loaded OverlayComponent for Disable Default Source Modal
 export const LazyDisableDefaultSourceModalOverlay = lazy(() =>
   import(

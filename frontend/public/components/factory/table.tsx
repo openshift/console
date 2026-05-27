@@ -63,7 +63,7 @@ import { getTemplateInstanceStatus } from '../../module/k8s/template';
 import { podPhase, podReadiness, podRestarts } from '../../module/k8s/pods';
 import { displayDurationInWords } from '../utils/build-utils';
 import { useTableData } from './table-data-hook';
-import TableHeader from './Table/TableHeader';
+import { TableHeader } from './Table/TableHeader';
 
 export const sorts = {
   alertingRuleStateOrder,

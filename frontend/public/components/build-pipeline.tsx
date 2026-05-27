@@ -200,11 +200,6 @@ export type BuildPipelineLogLinkProps = {
   obj: K8sResourceKind;
 };
 
-export type BuildPipelineLinkProps = {
-  obj: K8sResourceKind;
-  title: string;
-};
-
 export type BuildSummaryTimestampProps = {
   timestamp: string | undefined;
 };

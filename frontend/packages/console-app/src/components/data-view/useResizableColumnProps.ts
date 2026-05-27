@@ -95,30 +95,3 @@ export const useColumnWidthSettings = (
 
   return { getResizableProps, getWidth, resetAllColumnWidths };
 };
-
-/**
- * Per-column hook for resizable props. Prefer {@link useColumnWidthSettings} for tables
- * with many columns so that one configMap entry holds all column widths and each resize
- * creates/updates only that column's entry.
- */
-export const useResizableColumnProps = (
-  model: K8sModel,
-  columnId: string,
-): {
-  isResizable: true;
-  width?: number;
-  onResize: ColumnResizeOnResize;
-  resizeButtonAriaLabel: string;
-  resetAllColumnWidths: () => void;
-} => {
-  const { getResizableProps, getWidth, resetAllColumnWidths } = useColumnWidthSettings(model);
-  const resizableProps = getResizableProps(columnId);
-  return useMemo(
-    () => ({
-      ...resizableProps,
-      width: getWidth(columnId),
-      resetAllColumnWidths,
-    }),
-    [resizableProps, getWidth, columnId, resetAllColumnWidths],
-  );
-};

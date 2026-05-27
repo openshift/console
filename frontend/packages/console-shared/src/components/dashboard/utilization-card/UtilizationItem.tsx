@@ -341,8 +341,6 @@ export const UtilizationItem = memo<UtilizationItemProps>(
   },
 );
 
-export default UtilizationItem;
-
 export type LimitRequested = {
   limit: LIMIT_STATE;
   requested: LIMIT_STATE;

@@ -1,9 +1,5 @@
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
-export enum Flags {
-  OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
-}
-
 export enum DefaultCatalogSource {
   RedHatOperators = 'redhat-operators',
   RedHatMarketPlace = 'redhat-marketplace',

@@ -151,10 +151,3 @@ export const AddHTPasswdPage = () => {
     </div>
   );
 };
-
-export type AddHTPasswdPageState = {
-  name: string;
-  htpasswdFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

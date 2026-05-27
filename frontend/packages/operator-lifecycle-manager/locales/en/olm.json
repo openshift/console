@@ -251,7 +251,6 @@
   "Create an OperatorGroup for this Namespace": "Create an OperatorGroup for this Namespace",
   "Namespace not enabled": "Namespace not enabled",
   "The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.": "The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.",
-  "Select OperatorGroup": "Select OperatorGroup",
   "Select a channel": "Select a channel",
   "Select a version": "Select a version",
   "Manual update approval is required when not installing the latest version for the selected channel.": "Manual update approval is required when not installing the latest version for the selected channel.",

@@ -149,7 +149,6 @@ export type WatchPrometheusQueryAction = (
   namespace?: string,
   timespan?: number,
 ) => ThunkAction;
-export type StopWatchURLAction = (url: string) => ReturnType<typeof stopWatch>;
 export type StopWatchPrometheusAction = (
   query: string,
   timespan?: number,

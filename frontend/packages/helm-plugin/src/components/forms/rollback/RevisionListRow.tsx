@@ -46,5 +46,3 @@ export const getRevisionRows = (releaseHistory: HelmRelease[]): DataViewTd[][] =
     ];
   });
 };
-
-export default getRevisionRows;

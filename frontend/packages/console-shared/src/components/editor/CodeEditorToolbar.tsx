@@ -39,4 +39,3 @@ export const CodeEditorToolbar: FC<CodeEditorToolbarProps> = ({ toolbarLinks }) 
     </>
   );
 };
-export default CodeEditorToolbar;

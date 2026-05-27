@@ -70,5 +70,3 @@ export const MonitoringPage = (props) => {
     </NamespacedPage>
   );
 };
-
-export default MonitoringPage;

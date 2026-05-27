@@ -1,10 +1,5 @@
 import { Alert, PrometheusLabels } from '@console/dynamic-plugin-sdk';
 
-export const enum AlertSource {
-  Platform = 'platform',
-  User = 'user',
-}
-
 export type MonitoringResource = {
   abbr: string;
   kind: string;

@@ -92,7 +92,7 @@ import {
 } from '@console/shared/src/sorts/nodes';
 import type { TableColumnsType } from '@console/shared/src/types/tableColumn';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { nodeStatus } from '../../status';
+import { nodeStatus } from '../../status/node';
 import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import GroupsEditorModal from './modals/GroupsEditorModal';

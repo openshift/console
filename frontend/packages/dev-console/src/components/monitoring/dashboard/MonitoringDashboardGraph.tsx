@@ -116,5 +116,3 @@ export const MonitoringDashboardGraph: FC<MonitoringDashboardGraphProps> = ({
     </Card>
   );
 };
-
-export default MonitoringDashboardGraph;
