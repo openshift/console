@@ -10,6 +10,18 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.22.0 - 2026-06-09
+
+> Initial release for OCP Console 4.22.
+
+> [!IMPORTANT]
+> This release includes breaking changes that impact all existing Console plugins.
+> Refer to [the release notes](https://github.com/openshift/console/blob/main/frontend/packages/console-dynamic-plugin-sdk/release-notes/4.22.md)
+> for details on how to adapt your plugins for Console 4.22.
+
+- Add `tooltipTriggerRef` prop to `BaseNodeProps` topology type ([OCPBUGS-84216], [#16241])
+- **Deprecated**: `VirtualizedTable`, `ListPageFilter`, and `useListPageFilter` components. Use PatternFly [Table](https://www.patternfly.org/components/table/) and [Data View](https://www.patternfly.org/extensions/data-view/overview/) components instead ([CONSOLE-4541], [#14967])
+
 ## 4.22.0-prerelease.3 - 2026-04-24
 
 - **Breaking**: The `dynamic-core-api`, `console-fetch`, and `console-fetch-utils` modules are no longer provided. Console plugin APIs should be imported from the package index. ([OCPBUGS-81319], [#15655])
@@ -17,11 +29,6 @@ table in [Console dynamic plugins README](./README.md).
 - **Type-breaking**: Update `K8sResourceCommon`, `ObjectMetadata`, `OwnerReference` types to interfaces ([CONSOLE-5108], [#16097])
 
 ## 4.22.0-prerelease.2 - 2026-03-26
-
-> [!IMPORTANT]
-> This release includes breaking changes that impact all existing Console plugins.
-> Refer to [the release notes](https://github.com/openshift/console/blob/main/frontend/packages/console-dynamic-plugin-sdk/release-notes/4.22.md)
-> for details on how to adapt your plugins for Console 4.22.
 
 - **Breaking**: Changed `AlertAction` extension to use `LaunchOverlay` instead of `LaunchModal`. The `action` callback parameter is now typed as `LaunchOverlay`, which does not support the optional `id` parameter that `LaunchModal` had. Plugins implementing `console.alert-action` extensions must update their action callbacks accordingly. ([CONSOLE-4447])
 - **Breaking**: Removed support for `console.page/resource/tab` and `console.dashboards/overview/detail/item`
@@ -191,6 +198,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4402]: https://issues.redhat.com/browse/CONSOLE-4402
 [CONSOLE-4407]: https://issues.redhat.com/browse/CONSOLE-4407
 [CONSOLE-4447]: https://issues.redhat.com/browse/CONSOLE-4447
+[CONSOLE-4541]: https://issues.redhat.com/browse/CONSOLE-4541
 [CONSOLE-4499]: https://issues.redhat.com/browse/CONSOLE-4499
 [CONSOLE-4576]: https://issues.redhat.com/browse/CONSOLE-4576
 [CONSOLE-4630]: https://issues.redhat.com/browse/CONSOLE-4630
@@ -229,6 +237,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [OCPBUGS-81319]: https://issues.redhat.com/browse/OCPBUGS-81319
+[OCPBUGS-84216]: https://issues.redhat.com/browse/OCPBUGS-84216
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -256,6 +265,7 @@ table in [Console dynamic plugins README](./README.md).
 [#14620]: https://github.com/openshift/console/pull/14620
 [#14663]: https://github.com/openshift/console/pull/14663
 [#14863]: https://github.com/openshift/console/pull/14863
+[#14967]: https://github.com/openshift/console/pull/14967
 [#14864]: https://github.com/openshift/console/pull/14864
 [#14869]: https://github.com/openshift/console/pull/14869
 [#14876]: https://github.com/openshift/console/pull/14876
@@ -284,3 +294,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16043]: https://github.com/openshift/console/pull/16043
 [#16057]: https://github.com/openshift/console/pull/16057
 [#16097]: https://github.com/openshift/console/pull/16097
+[#16241]: https://github.com/openshift/console/pull/16241
