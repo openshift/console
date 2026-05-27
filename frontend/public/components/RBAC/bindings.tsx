@@ -345,25 +345,34 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
   }`,
 }) => {
   const { t } = useTranslation();
-  const resources = useK8sWatchResources({
-    RoleBinding: {
-      kind: 'RoleBinding',
-      namespaced: true,
-      namespace,
-      isList: true,
-    },
-    ClusterRoleBinding: {
-      kind: 'ClusterRoleBinding',
-      namespaced: false,
-      isList: true,
-    },
-  });
+  const watchResources = React.useMemo(
+    () =>
+      mock
+        ? {}
+        : {
+            RoleBinding: {
+              kind: 'RoleBinding',
+              namespaced: true,
+              namespace,
+              isList: true,
+            },
+            ClusterRoleBinding: {
+              kind: 'ClusterRoleBinding',
+              namespaced: false,
+              isList: true,
+            },
+          },
+    [mock, namespace],
+  );
+  const resources = useK8sWatchResources(watchResources);
 
   const data = React.useMemo(() => flatten(resources), [resources]);
 
   const loaded = Object.values(resources)
     .filter((r) => !r.loadError)
     .every((r) => r.loaded);
+
+  const loadError = Object.values(resources).find((r) => r.loadError)?.loadError;
 
   return (
     <>
@@ -376,7 +385,8 @@ export const RoleBindingsPage: React.FCC<RoleBindingsPageProps> = ({
         <BindingsList
           data={data}
           loaded={loaded}
-          loadError={resources.RoleBinding.loadError}
+          loadError={loadError}
+          mock={mock}
           staticFilters={staticFilters}
         />
       </ListPageBody>
