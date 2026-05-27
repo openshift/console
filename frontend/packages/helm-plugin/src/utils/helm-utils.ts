@@ -3,7 +3,6 @@ import type { TFunction } from 'i18next';
 import { loadAll, safeDump, safeLoad, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import type { Flatten } from '@console/internal/components/factory/list-page';
-import type { RowFilter } from '@console/internal/components/filter-toolbar';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -55,20 +54,6 @@ export const releaseStatusReducer = (release: HelmRelease) => {
     return HelmReleaseStatus.Other;
   }
   return release.info.status;
-};
-
-export const helmReleasesRowFilters = (t: TFunction): RowFilter[] => {
-  return [
-    {
-      filterGroupName: t('helm-plugin~Status'),
-      type: 'helm-release-status',
-      reducer: releaseStatusReducer,
-      items: SelectedReleaseStatuses.map((status) => ({
-        id: status,
-        title: HelmReleaseStatusLabels[status],
-      })),
-    },
-  ];
 };
 
 export const filterHelmReleasesByStatus = (releases: HelmRelease[], filter: string | string[]) => {
@@ -347,29 +332,6 @@ export const isGoingToTopology = (resources: K8sResourceKind[]) =>
   !!resources.find((resource) =>
     WORKLOAD_TYPES.includes(_.lowerFirst(_.get(modelFor(referenceFor(resource)), 'labelPlural'))),
   );
-
-export const fetchChartFromURL = (chartURL: string): Promise<HelmChart> => {
-  return coFetchJSON(`/api/helm/chart?url=${encodeURIComponent(chartURL)}&noRepo=true`);
-};
-
-export const installChartFromURL = (
-  namespace: string,
-  releaseName: string,
-  chartURL: string,
-  chartVersion?: string,
-  values?: Record<string, unknown>,
-  basicAuthSecretName?: string,
-) => {
-  return coFetchJSON.post('/api/helm/release/async', {
-    namespace,
-    name: releaseName,
-    chart_url: chartURL, // eslint-disable-line @typescript-eslint/naming-convention
-    ...(chartVersion ? { chart_version: chartVersion } : {}), // eslint-disable-line @typescript-eslint/naming-convention
-    ...(values ? { values } : {}),
-    ...(basicAuthSecretName ? { basic_auth_secret_name: basicAuthSecretName } : {}), // eslint-disable-line @typescript-eslint/naming-convention
-    noRepo: true,
-  });
-};
 
 /**
  * Merges the new chart's default `values` with values already in use (release / user edits).

@@ -67,7 +67,3 @@ export const useCatalogSourceActionsProvider = (catalogSource: CatalogSourceKind
     [operatorHubLoaded, operatorHubLoadError, actions, inFlight],
   );
 };
-
-export const catalogSourceActionsProvider = {
-  useCatalogSourceActionsProvider,
-};

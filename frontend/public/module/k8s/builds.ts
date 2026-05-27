@@ -35,8 +35,6 @@ export const cloneBuild = (build) => {
   return createBuildRequest(build, BuildModel, 'clone');
 };
 
-export const isFinished = (build) => !!_.get(build, 'status.completionTimestamp');
-
 export const getBuildNumber = (build) => {
   const buildNumber = _.get(build, ['metadata', 'annotations', BUILD_NUMBER_ANNOTATION]);
   return !!buildNumber && parseInt(buildNumber, 10);

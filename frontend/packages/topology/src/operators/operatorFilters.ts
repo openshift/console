@@ -34,5 +34,3 @@ export const applyOperatorDisplayOptions = (model: Model, filters: DisplayFilter
   });
   return appliedFilters;
 };
-
-export const applyDisplayOptions = () => applyOperatorDisplayOptions;

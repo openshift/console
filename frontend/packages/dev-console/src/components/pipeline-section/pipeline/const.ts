@@ -5,8 +5,6 @@ export enum PipelineResourceType {
   storage = 'storage',
 }
 
-export const CREATE_PIPELINE_RESOURCE = '#CREATE_PIPELINE_RESOURCE#';
-
 export const initialResourceFormValues = {
   [PipelineResourceType.git]: {
     params: {

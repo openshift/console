@@ -181,7 +181,7 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ),
   )
   .set(referenceForModel(ClusterRoleModel), () =>
-    import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.ClusterRolesDetailsPage),
+    import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RolesDetailsPage),
   )
   .set(referenceForModel(RoleModel), () =>
     import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RolesDetailsPage),

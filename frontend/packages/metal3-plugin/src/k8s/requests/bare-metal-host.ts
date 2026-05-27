@@ -17,9 +17,6 @@ import {
 export const powerOffHost = (host: BareMetalHostKind) =>
   k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: false }]);
 
-export const powerOnHost = (host: BareMetalHostKind) =>
-  k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: true }]);
-
 export const restartHost = (host: BareMetalHostKind) =>
   k8sPatch(BareMetalHostModel, host, [
     {

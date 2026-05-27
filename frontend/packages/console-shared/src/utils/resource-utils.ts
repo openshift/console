@@ -664,9 +664,6 @@ export const validPod = (pod: K8sResourceKind) => {
 const isStandaloneJob = (job: K8sResourceKind) =>
   !_.find(job.metadata?.ownerReferences, (owner) => owner.kind === 'CronJob');
 
-export const getStandaloneJobs = (jobs: K8sResourceKind[]) =>
-  jobs.filter((job) => isStandaloneJob(job));
-
 export const getOverviewItemForResource = (
   obj: K8sResourceKind,
   resources: any,

@@ -1,5 +1,5 @@
 import type { FC, MouseEvent } from 'react';
-import { isValidElement, memo } from 'react';
+import { isValidElement } from 'react';
 import {
   CatalogTileBadge,
   CatalogTile as PfCatalogTile,
@@ -63,5 +63,3 @@ export const CatalogTile: FC<CatalogTileProps> = ({ item, catalogTypes, onClick,
     </PfCatalogTile>
   );
 };
-
-export default memo<CatalogTileProps>(CatalogTile);

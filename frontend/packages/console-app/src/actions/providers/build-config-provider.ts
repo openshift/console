@@ -91,7 +91,3 @@ export const useBuildConfigActionsProvider = (providerArgs: {
   );
   return [actions, !inFlight, false];
 };
-
-export const buildConfigProvider = {
-  useBuildConfigActionsProvider,
-};

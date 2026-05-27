@@ -137,15 +137,6 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?, langArg?:
 
 export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
 
-const zeroPad = (number: number) => (number < 10 ? `0${number}` : number);
-
-export const twentyFourHourTime = (date: Date, showSeconds?: boolean): string => {
-  const hours = zeroPad(date.getHours() ?? 0);
-  const minutes = `:${zeroPad(date.getMinutes() ?? 0)}`;
-  const seconds = showSeconds ? `:${zeroPad(date.getSeconds() ?? 0)}` : '';
-  return `${hours}${minutes}${seconds}`;
-};
-
 export const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, language: string) => {
   if (!isValid(mdate)) {
     return '-';

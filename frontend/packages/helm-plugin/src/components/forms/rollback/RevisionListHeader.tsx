@@ -21,12 +21,6 @@ export const getColumnIndexById = (columnId: string): number => {
   return column?.index ?? 1; // Default to revision column
 };
 
-// Helper function to get column ID by index
-export const getColumnIdByIndex = (index: number): string => {
-  const column = tableColumnInfo.find((col) => col.index === index);
-  return column?.id ?? 'revision'; // Default to revision column
-};
-
 export const useRevisionListColumns = (
   sortBy: { index: number; direction: SortByDirection },
   onSort: (event: MouseEvent, columnId: string, direction: SortByDirection) => void,

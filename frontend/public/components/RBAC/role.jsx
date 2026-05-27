@@ -369,8 +369,6 @@ export const RolesDetailsPage = (props) => {
   );
 };
 
-export const ClusterRolesDetailsPage = RolesDetailsPage;
-
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
   const location = useLocation();

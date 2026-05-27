@@ -3,20 +3,14 @@ import type { WatchK8sResources, WatchK8sResourcesGeneric } from '@console/dynam
 import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { GLOBAL_OPERATOR_NS, KNATIVE_SERVING_LABEL } from '../const';
+import { KNATIVE_SERVING_LABEL } from '../const';
 import {
-  CamelKameletModel,
   ServiceModel,
   RevisionModel,
   ConfigurationModel,
   RouteModel,
-  EventingSubscriptionModel,
-  EventingBrokerModel,
-  EventingTriggerModel,
   KafkaModel,
   KafkaTopicModel,
-  CamelIntegrationModel,
-  CamelKameletBindingModel,
   DomainMappingModel,
   KafkaSinkModel,
   KafkaConnectionModel,
@@ -205,160 +199,6 @@ export const knativeKafkaSinks = (
   return knativeResource;
 };
 
-export const knativeEventingResourcesSubscription = (
-  namespace: string,
-): WatchK8sResourceWithProp[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventingSubscriptionModel),
-      namespace,
-      prop: 'eventingsubscription',
-      optional: true,
-    },
-  ];
-  return knativeResource;
-};
-
-export const knativeEventingResourcesBroker = (
-  namespace: string,
-  limit?: number,
-): WatchK8sResourceWithProp[] => {
-  const knativeResource = [
-    {
-      isList: true,
-      kind: referenceForModel(EventingBrokerModel),
-      namespace,
-      prop: EventingBrokerModel.plural,
-      optional: true,
-      ...(limit && { limit }),
-    },
-  ];
-  return knativeResource;
-};
-
-export const knativeServingResourcesRevisionWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    revisions: {
-      isList: true,
-      kind: referenceForModel(RevisionModel),
-      namespace,
-      optional: true,
-    },
-  };
-  return knativeResource;
-};
-
-export const knativeServingResourcesConfigurationsWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    configurations: {
-      isList: true,
-      kind: referenceForModel(ConfigurationModel),
-      namespace,
-      optional: true,
-    },
-  };
-  return knativeResource;
-};
-
-export const knativeServingResourcesRoutesWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    ksroutes: {
-      isList: true,
-      kind: referenceForModel(RouteModel),
-      namespace,
-      optional: true,
-    },
-  };
-  return knativeResource;
-};
-
-export const knativeServingResourcesServicesWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    ksservices: {
-      isList: true,
-      kind: referenceForModel(ServiceModel),
-      namespace,
-      optional: true,
-    },
-  };
-  return knativeResource;
-};
-
-export const knativeEventingResourcesSubscriptionWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  const knativeResource = {
-    eventingsubscription: {
-      isList: true,
-      kind: referenceForModel(EventingSubscriptionModel),
-      namespace,
-      optional: true,
-    },
-  };
-  return knativeResource;
-};
-
-export const knativeEventingBrokerResourceWatchers = (namespace: string) => {
-  return {
-    [EventingBrokerModel.plural]: {
-      isList: true,
-      kind: referenceForModel(EventingBrokerModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
-export const knativeEventingTriggerResourceWatchers = (namespace: string) => {
-  return {
-    [EventingTriggerModel.plural]: {
-      isList: true,
-      kind: referenceForModel(EventingTriggerModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
-export const knativeCamelIntegrationsResourceWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  return {
-    [CamelIntegrationModel.plural]: {
-      isList: true,
-      kind: referenceForModel(CamelIntegrationModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
-export const knativeCamelKameletResourceWatchers = (namespace: string) => {
-  return {
-    [CamelKameletModel.plural]: {
-      isList: true,
-      kind: referenceForModel(CamelKameletModel),
-      namespace,
-      optional: true,
-    },
-    kameletGlobalNS: {
-      isList: true,
-      kind: referenceForModel(CamelKameletModel),
-      namespace: GLOBAL_OPERATOR_NS,
-      optional: true,
-    },
-  };
-};
-
 export const kafkaBootStrapServerResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
   return {
     [KafkaModel.plural]: {
@@ -380,19 +220,6 @@ export const kafkaTopicsResourcesWatcher = (): WatchK8sResources<any> => {
     [KafkaTopicModel.plural]: {
       isList: true,
       kind: referenceForModel(KafkaTopicModel),
-      optional: true,
-    },
-  };
-};
-
-export const knativeCamelKameletBindingResourceWatchers = (
-  namespace: string,
-): WatchK8sResources<any> => {
-  return {
-    [CamelKameletBindingModel.plural]: {
-      isList: true,
-      kind: referenceForModel(CamelKameletBindingModel),
-      namespace,
       optional: true,
     },
   };

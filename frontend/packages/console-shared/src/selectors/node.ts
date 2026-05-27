@@ -1,7 +1,6 @@
 import type {
   NodeAddress,
   NodeKind,
-  Taint,
 } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
@@ -13,12 +12,6 @@ export const getNodeRoles = (node: NodeKind): string[] =>
     }
     return acc;
   }, []);
-
-export const getNodeRole = (node: NodeKind): string =>
-  getNodeRoles(node).includes('control-plane') ? 'control-plane' : 'worker';
-
-export const getNodeRoleMatch = (node: NodeKind, role: string): boolean =>
-  getNodeRoles(node).filter((elem) => elem === role).length > 0;
 
 export const getNodeAddresses = (node: NodeKind): NodeAddress[] => node?.status?.addresses ?? [];
 
@@ -39,13 +32,6 @@ export const isNodeReady = (node: NodeKind): boolean => {
     false
   );
 };
-
-export const getNodeCPUCapacity = (node: NodeKind): string => node?.status?.capacity?.cpu ?? '';
-
-export const getNodeAllocatableMemory = (node: NodeKind): string =>
-  node?.status?.allocatable?.memory ?? '';
-
-export const getNodeTaints = (node: NodeKind): Taint[] => node?.spec?.taints;
 
 export const isWindowsNode = (node): boolean =>
   node?.metadata?.labels?.['node.openshift.io/os_id'] === 'Windows' ||

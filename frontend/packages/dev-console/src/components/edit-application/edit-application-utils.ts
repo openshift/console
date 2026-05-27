@@ -69,7 +69,6 @@ export const getFlowTypePageTitle = (flowType: ApplicationFlowType): string => {
 };
 
 export enum BuildSourceType {
-  Git = 'Git',
   Binary = 'Binary',
 }
 

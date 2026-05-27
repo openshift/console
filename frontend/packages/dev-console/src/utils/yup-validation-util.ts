@@ -4,5 +4,3 @@ export const isInteger = (message) => ({
   },
   message,
 });
-
-export const bitBucketUserNameRegex = /^[a-z]([a-z0-9_]-?)*[a-z0-9]$/;

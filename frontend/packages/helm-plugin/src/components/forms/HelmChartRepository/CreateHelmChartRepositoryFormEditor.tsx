@@ -16,18 +16,6 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import { RadioGroupField } from '@console/shared/src/components/formik-fields/RadioGroupField';
 import { ResourceDropdownField } from '@console/shared/src/components/formik-fields/ResourceDropdownField';
 
-export type FormData = {
-  formData: {
-    repoName?: string;
-    repoUrl?: string;
-    repoDescription?: string;
-    ca?: string;
-    tlsClientConfig?: string;
-    basicAuthConfig?: string;
-    disabled?: boolean;
-  };
-};
-
 type CreateHelmChartRepositoryFormEditorProps = {
   showScopeType: boolean;
   existingRepo: HelmChartRepositoryType;

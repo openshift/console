@@ -10,12 +10,6 @@ import { restartHost } from '../../k8s/requests/bare-metal-host';
 import type { BareMetalHostKind } from '../../types/host';
 import { PowerOffWarning } from './PowerOffHostModal';
 
-export type RestartHostModalProps1 = {
-  host: BareMetalHostKind;
-  cancel?: () => void;
-  close?: () => void;
-};
-
 export type RestartHostModalProps = {
   host: BareMetalHostKind;
 } & ModalComponentProps;

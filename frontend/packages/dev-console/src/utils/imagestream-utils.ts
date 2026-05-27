@@ -11,7 +11,7 @@ import {
   getMostRecentBuilderTag,
   getBuilderTagsSortedByVersion,
 } from '@console/internal/components/image-stream';
-import { ProjectModel, ImageStreamModel } from '@console/internal/models';
+import { ImageStreamModel } from '@console/internal/models';
 import type {
   ContainerPort,
   K8sResourceKind,
@@ -188,16 +188,6 @@ export const getImageStreamTags = (imageStream: K8sResourceKind) => {
     tags[tag] = tag;
     return tags;
   }, {});
-};
-
-export const getProjectResource = (): WatchK8sResourceWithProp[] => {
-  return [
-    {
-      isList: true,
-      kind: ProjectModel.kind,
-      prop: ProjectModel.id,
-    },
-  ];
 };
 
 export const getImageStreamResource = (namespace: string): WatchK8sResourceWithProp[] => {

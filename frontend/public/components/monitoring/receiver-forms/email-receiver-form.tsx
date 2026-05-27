@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import { FormProps } from './receiver-form-props';
+import type { FormProps, SubFormModule } from './receiver-form-props';
 import {
   Checkbox,
   FormGroup,
@@ -31,7 +31,7 @@ const SMTP_GLOBAL_FIELDS = [
 ];
 const GLOBAL_FIELDS = [...SMTP_GLOBAL_FIELDS, 'email_send_resolved', 'email_html'];
 
-export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   // disable saveAsDefault if all SMTP form fields match global values
   const disableSaveAsDefault = SMTP_GLOBAL_FIELDS.every(
     (propName) => formValues[propName] === globals[propName],
@@ -261,7 +261,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
 
 const getConfigFieldName = (fld) => fld.substring(fld.indexOf('_') + 1); //strip off leading 'email_' or 'smtp_' prefix
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = {
     emailSaveAsDefault: false,
     emailTo: receiverConfig?.to,
@@ -274,7 +274,7 @@ export const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-export const isFormInvalid = (formValues) => {
+const isFormInvalid = (formValues) => {
   return (
     !formValues.emailTo ||
     !formValues.smtp_from ||
@@ -283,7 +283,7 @@ export const isFormInvalid = (formValues) => {
   );
 };
 
-export const updateGlobals = (globals, formValues) => {
+const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (formValues.emailSaveAsDefault) {
     SMTP_GLOBAL_FIELDS.forEach((propName) => {
@@ -296,7 +296,7 @@ export const updateGlobals = (globals, formValues) => {
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'to', formValues.emailTo);
 
   // Only save these props in receiverConfig if different from global
@@ -315,4 +315,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   });
 
   return receiverConfig;
+};
+
+export const EmailForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

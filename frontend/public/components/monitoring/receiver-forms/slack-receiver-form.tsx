@@ -18,7 +18,7 @@ import {
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import { FormProps } from './receiver-form-props';
+import type { FormProps, SubFormModule } from './receiver-form-props';
 import { AdvancedConfiguration } from './advanced-configuration';
 
 const GLOBAL_FIELDS = [
@@ -32,7 +32,7 @@ const GLOBAL_FIELDS = [
   'slack_text',
 ];
 
-export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -279,7 +279,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
   );
 };
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = {
     slackSaveAsDefault: false,
     slackChannel: _.get(receiverConfig, 'channel'),
@@ -295,11 +295,11 @@ export const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-export const isFormInvalid = (formValues): boolean => {
+const isFormInvalid = (formValues): boolean => {
   return !formValues.slack_api_url || !formValues.slackChannel;
 };
 
-export const updateGlobals = (globals, formValues) => {
+const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (formValues.slackSaveAsDefault && formValues.slack_api_url) {
     _.set(updatedGlobals, 'slack_api_url', formValues.slack_api_url);
@@ -307,7 +307,7 @@ export const updateGlobals = (globals, formValues) => {
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'channel', formValues.slackChannel);
 
   // Only save these props in receiverConfig if different from global
@@ -328,4 +328,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.unset(receiverConfig, formValues.slackIconType === 'url' ? 'icon_emoji' : 'icon_url');
 
   return receiverConfig;
+};
+
+export const SlackForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

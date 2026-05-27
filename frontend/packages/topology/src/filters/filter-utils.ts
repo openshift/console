@@ -52,17 +52,6 @@ export const isExpanded = (id: string, filters: DisplayFilters): boolean => {
   return true;
 };
 
-export const isShown = (id: string, filters: DisplayFilters): boolean => {
-  if (!filters) {
-    return true;
-  }
-  const filter = getFilterById(id, filters);
-  if (filter && filter.type === TopologyDisplayFilterType.show) {
-    return filter.value;
-  }
-  return true;
-};
-
 export const showKind = (kind: K8sResourceKindReference, filters: DisplayFilters): boolean => {
   if (!filters || !kind) {
     return true;

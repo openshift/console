@@ -1,7 +1,5 @@
 import type { K8sResourceKind, K8sResourceCondition } from '@console/internal/module/k8s';
 
-export type ConfigurationKind = K8sResourceKind;
-
 export type RevisionKind = {
   status?: {
     conditions?: RevisionCondition[];
@@ -60,9 +58,6 @@ export type EventSourceKind = {
 
 export enum EventSourceConditionTypes {
   Ready = 'Ready',
-  Deployed = 'Deployed',
-  SinkProvided = 'SinkProvided',
-  ValidSchedule = 'ValidSchedule',
 }
 
 export type EventSourceCondition = {
@@ -109,10 +104,6 @@ export enum ChannelConditionTypes {
   Ready = 'Ready',
 }
 
-export type ChannelCondition = {
-  type: keyof typeof ChannelConditionTypes;
-} & K8sResourceCondition;
-
 export type EventBrokerKind = {
   metadata?: {
     generation?: number;
@@ -126,10 +117,6 @@ export type EventBrokerKind = {
 
 export enum TriggerConditionTypes {
   Ready = 'Ready',
-  BrokerReady = 'BrokerReady',
-  DependencyReady = 'DependencyReady',
-  SubscriptionReady = 'SubscriptionReady',
-  SubscriberResolved = 'SubscriberResolved',
 }
 
 export type TriggerCondition = {
@@ -138,26 +125,11 @@ export type TriggerCondition = {
 
 export enum BrokerConditionTypes {
   Ready = 'Ready',
-  Addressable = 'Addressable',
-  FilterReady = 'FilterReady',
-  IngressReady = 'IngressReady',
-  TriggerChannelReady = 'TriggerChannelReady',
 }
-
-export type BrokerCondition = {
-  type: keyof typeof BrokerConditionTypes;
-} & K8sResourceCondition;
 
 export enum SubscriptionConditionTypes {
   Ready = 'Ready',
-  ChannelReady = 'ChannelReady',
-  AddedToChannel = 'AddedToChannel',
-  ReferencesResolved = 'ReferencesResolved',
 }
-
-export type SubscriptionCondition = {
-  type: keyof typeof SubscriptionConditionTypes;
-} & K8sResourceCondition;
 
 export type EventTriggerKind = {
   metadata?: {

@@ -15,9 +15,7 @@ import type {
   SecretKind,
 } from '@console/internal/module/k8s/types';
 import { nameRegex } from '@console/shared/src/utils/yup-validations';
-import { PIPELINE_STRATEGY_LABEL } from '../../../const';
 import { RepositoryModel } from '../../../models/pipelines';
-import type { PipelineKind } from '../../../types/pipeline';
 import type { RepositoryFormValues } from '../../import/import-types';
 import { detectGitType } from '../../import/import-validation-utils';
 import { gitUrlRegex } from '../../import/validation-schema';
@@ -39,9 +37,6 @@ export const recommendRepositoryName = (url: string): string | undefined => {
   const name = url.replace(/\/$/, '').split('/').pop();
   return createRepositoryName(name);
 };
-
-export const isDockerPipeline = (template: PipelineKind): boolean =>
-  template?.metadata?.labels?.[PIPELINE_STRATEGY_LABEL] === 'docker';
 
 export const defaultRepositoryFormValues: RepositoryFormValues = {
   gitUrl: '',

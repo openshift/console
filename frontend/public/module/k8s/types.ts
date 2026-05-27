@@ -815,6 +815,7 @@ export type MachineConfigKind = {
   };
 } & K8sResourceCommon;
 
+/** @public Kubernetes API condition type */
 export enum MachineConfigPoolConditionType {
   Degraded = 'Degraded',
   NodeDegraded = 'NodeDegraded',
@@ -1014,12 +1015,6 @@ export type GroupKind = {
  * @deprecated migrated to new type K8sModel, use K8sModel from dynamic-plugin-sdk over K8sKind
  */
 export type K8sKind = K8sModel;
-
-export type Cause = {
-  field: string;
-  message: string;
-  reason: string;
-};
 
 export type SecretKind = {
   data?: { [key: string]: string };

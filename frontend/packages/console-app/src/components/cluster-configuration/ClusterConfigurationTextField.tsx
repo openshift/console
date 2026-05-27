@@ -53,5 +53,3 @@ const ClusterConfigurationTextField: FC<ClusterConfigurationTextFieldProps> = ({
     </FormGroup>
   );
 };
-
-export default ClusterConfigurationTextField;

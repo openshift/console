@@ -41,10 +41,10 @@ import {
   InitialReceivers,
 } from '../alertmanager/alertmanager-config';
 import { RoutingLabelEditor } from './routing-labels-editor';
-import * as PagerDutyForm from './pagerduty-receiver-form';
-import * as WebhookForm from './webhook-receiver-form';
-import * as EmailForm from './email-receiver-form';
-import * as SlackForm from './slack-receiver-form';
+import { PagerDutyForm } from './pagerduty-receiver-form';
+import { WebhookForm } from './webhook-receiver-form';
+import { EmailForm } from './email-receiver-form';
+import { SlackForm } from './slack-receiver-form';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
 import { PageHeading } from '@console/shared/src/components/heading/PageHeading';
 

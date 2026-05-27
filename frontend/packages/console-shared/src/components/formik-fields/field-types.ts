@@ -54,7 +54,6 @@ export interface TextAreaProps extends FieldProps {
 }
 
 export enum GroupTextType {
-  TextInput = 'text',
   TextArea = 'textArea',
 }
 
@@ -64,10 +63,6 @@ export interface CheckboxFieldProps extends FieldProps {
   onChange?: (val: boolean) => void;
   label?: ReactNode;
   helpText?: ReactNode;
-}
-
-export interface SearchInputFieldProps extends BaseInputFieldProps {
-  onSearch: (searchTerm: string) => void;
 }
 
 export interface DropdownFieldProps extends FieldProps {

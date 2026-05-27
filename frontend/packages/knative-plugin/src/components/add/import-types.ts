@@ -1,5 +1,4 @@
 import type { TFunction } from 'i18next';
-import type { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   EVENTING_KAFKA_CHANNEL_KIND,
   EVENTING_IMC_KIND,
@@ -95,11 +94,6 @@ export interface KnEventCatalogMetaData {
   provider?: string;
   iconUrl?: string;
 }
-export interface EventSourceListData {
-  loaded: boolean;
-  eventSourceList: CatalogItem[];
-}
-
 export enum SinkType {
   Resource = 'resource',
   Uri = 'uri',

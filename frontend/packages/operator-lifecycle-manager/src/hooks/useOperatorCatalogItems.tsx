@@ -65,7 +65,7 @@ const onValidSubscriptionAnnotationError = (error: Error, pkg: PackageManifestKi
     error,
   );
 
-export const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
+const useOperatorCatalogItems: ExtensionHook<CatalogItem[], CatalogExtensionHookOptions> = (
   options,
 ) => {
   const { t } = useTranslation('olm');

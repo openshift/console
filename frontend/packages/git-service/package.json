@@ -3,7 +3,6 @@
   "version": "0.0.0-fixed",
   "description": "Git Service Utility for Git Validation and Language Detection.",
   "private": true,
-  "main": "src/index.ts",
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/git-service/src/**\",\"!**/__tests__/**\"]'",
     "lint": "yarn --cwd ../.. eslint packages/git-service",

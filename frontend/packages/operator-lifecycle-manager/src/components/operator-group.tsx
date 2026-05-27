@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
+import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
 import { OPERATOR_NAMESPACE_ANNOTATION } from '../const';
@@ -139,12 +139,6 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
 
 type RequireOperatorGroupProps = {
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
-};
-
-export type OperatorGroupSelectorProps = {
-  onChange?: (name: string, kind: GroupVersionKind) => void;
-  excludeName?: string;
-  dataFilter?: (obj: OperatorGroupKind) => boolean;
 };
 
 NoOperatorGroupMsg.displayName = 'NoOperatorGroupMsg';

@@ -1,6 +1,5 @@
 import { screen, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
 import { ConfigureCountModal } from '@console/internal/components/modals/configure-count-modal';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { useNonScalableImageCheck } from '@console/shared/src/hooks/useNonScalableImageCheck';

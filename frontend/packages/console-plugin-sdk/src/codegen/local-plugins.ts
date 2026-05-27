@@ -160,6 +160,8 @@ export const getDynamicExtensions = (
 
 /**
  * Get Console local plugins virtual module data and diagnostics.
+ *
+ * @public Consumed by get-local-plugins.js and jest-transform-local-plugins.js via require().
  */
 export const getLocalPluginsModuleData = (
   pluginPackages: PluginPackage[],

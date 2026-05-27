@@ -68,15 +68,6 @@ export interface GitImportFormProps {
     loadError?: any;
   };
 }
-export interface DevfileImportFormProps {
-  builderImages?: NormalizedBuilderImages;
-  projects?: {
-    data: K8sResourceKind[];
-    loaded: boolean;
-    loadError?: any;
-  };
-}
-
 export interface DeployImageFormData {
   formType?: string;
   project: ProjectData;
@@ -310,7 +301,6 @@ export const GitReadableTypes = {
 export enum ImportTypes {
   git = 'git',
   devfile = 'devfile',
-  docker = 'docker',
   s2i = 's2i',
 }
 
@@ -327,6 +317,7 @@ export enum BuildOptions {
   DISABLED = 'DISABLED',
 }
 
+/** @public Members used as runtime key-value map via SampleRuntime[dynamicKey] */
 export enum SampleRuntime {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   'Node.js' = 'nodejs',
@@ -390,32 +381,17 @@ export interface AutoscaleWindowType {
   defaultAutoscalewindowUnit: string;
 }
 
+/** @public Passed as unitOptions prop to ResourceLimitField */
 export enum CPUUnits {
   m = 'millicores',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '' = 'cores',
 }
 
+/** @public Passed as unitOptions prop to ResourceLimitField */
 export enum MemoryUnits {
   Mi = 'Mi',
   Gi = 'Gi',
-}
-
-export enum ImportOptions {
-  GIT = 'GIT',
-  CONTAINER = 'CONTAINER',
-  CATALOG = 'CATALOG',
-  DOCKERFILE = 'DOCKERFILE',
-  DEVFILE = 'DEVFILE',
-  DATABASE = 'DATABASE',
-  EVENTSOURCE = 'EVENTSOURCE',
-  EVENTPUBSUB = 'EVENTPUBSUB',
-  OPERATORBACKED = 'OPERATORBACKED',
-  HELMCHARTS = 'HELMCHARTS',
-  SAMPLES = 'SAMPLES',
-  EVENTCHANNEL = 'EVENTCHANNEL',
-  EVENTBROKER = 'EVENTBROKER',
-  UPLOADJAR = 'UPLOADJAR',
 }
 
 export interface HealthChecksFormData {

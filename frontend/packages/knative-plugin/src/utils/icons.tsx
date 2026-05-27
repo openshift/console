@@ -40,8 +40,6 @@ export const eventSourceIconSVG = <EventSourceIcon />;
 
 export const eventSinkIconSVG = <EventSinkIcon />;
 
-export const serverlessFunctionSVG = <ServerlessFunctionIcon />;
-
 export const gitIconElement = <GitAltIcon />;
 
 export const samplesIconElement = <LaptopCodeIcon />;

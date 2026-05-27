@@ -20,7 +20,3 @@ export const useMachineSetActionsProvider = (
 
   return [actions, !inFlight, false];
 };
-
-export const machineSetProvider = {
-  useMachineSetActionsProvider,
-};

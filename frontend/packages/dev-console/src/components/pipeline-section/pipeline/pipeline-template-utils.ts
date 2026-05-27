@@ -608,19 +608,6 @@ export const submitStartPipeline = async (
   return Promise.resolve(pipelineRunResource);
 };
 
-export const createGitResource = (url: string, namespace: string, ref: string = 'master') => {
-  const params = { url, revision: ref };
-  return createPipelineResource(params, 'git', namespace);
-};
-
-export const createImageResource = (name: string, namespace: string) => {
-  const params = {
-    url: getImageUrl(name, namespace),
-  };
-
-  return createPipelineResource(params, 'image', namespace);
-};
-
 export const getPipelineParams = (
   params: TektonParam[],
   name: string,
