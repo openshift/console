@@ -6,6 +6,8 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Grid,
+  GridItem,
   Spinner,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
@@ -199,32 +201,40 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
       <SectionHeading text={t('console-app~GPU metrics')} />
 
       {(gpuCountStr || gpuCapacityStr || gpuAllocatableStr || gpuModelStr) && (
-        <DescriptionList className="co-m-pane__body-group" isHorizontal>
-          {gpuCountStr && (
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~GPU count')}</DescriptionListTerm>
-              <DescriptionListDescription>{gpuCountStr}</DescriptionListDescription>
-            </DescriptionListGroup>
-          )}
-          {gpuModelStr && (
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~GPU model')}</DescriptionListTerm>
-              <DescriptionListDescription>{gpuModelStr}</DescriptionListDescription>
-            </DescriptionListGroup>
-          )}
-          {gpuCapacityStr && (
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~GPU capacity')}</DescriptionListTerm>
-              <DescriptionListDescription>{gpuCapacityStr}</DescriptionListDescription>
-            </DescriptionListGroup>
-          )}
-          {gpuAllocatableStr && (
-            <DescriptionListGroup>
-              <DescriptionListTerm>{t('console-app~GPU allocatable')}</DescriptionListTerm>
-              <DescriptionListDescription>{gpuAllocatableStr}</DescriptionListDescription>
-            </DescriptionListGroup>
-          )}
-        </DescriptionList>
+        <Grid hasGutter>
+          <GridItem md={6}>
+            <DescriptionList isHorizontal>
+              {gpuCountStr && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~GPU count')}</DescriptionListTerm>
+                  <DescriptionListDescription>{gpuCountStr}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {gpuModelStr && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~GPU model')}</DescriptionListTerm>
+                  <DescriptionListDescription>{gpuModelStr}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </DescriptionList>
+          </GridItem>
+          <GridItem md={6}>
+            <DescriptionList isHorizontal>
+              {gpuCapacityStr && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~GPU capacity')}</DescriptionListTerm>
+                  <DescriptionListDescription>{gpuCapacityStr}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+              {gpuAllocatableStr && (
+                <DescriptionListGroup>
+                  <DescriptionListTerm>{t('console-app~GPU allocatable')}</DescriptionListTerm>
+                  <DescriptionListDescription>{gpuAllocatableStr}</DescriptionListDescription>
+                </DescriptionListGroup>
+              )}
+            </DescriptionList>
+          </GridItem>
+        </Grid>
       )}
 
       {isLoading && (
