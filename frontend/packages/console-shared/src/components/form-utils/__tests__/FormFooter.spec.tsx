@@ -4,15 +4,6 @@ import { renderWithProviders } from '../../../test-utils/unit-test-utils';
 import type { FormFooterProps } from '../form-utils-types';
 import { FormFooter } from '../FormFooter';
 
-// Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  observe = () => {};
-
-  unobserve = () => {};
-
-  disconnect = () => {};
-};
-
 describe('FormFooter', () => {
   let props: FormFooterProps;
 

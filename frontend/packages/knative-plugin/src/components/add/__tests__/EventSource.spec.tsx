@@ -5,14 +5,6 @@ import { EVENT_SOURCE_CONTAINER_KIND } from '../../../const';
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSource } from '../EventSource';
 
-global.ResizeObserver = class ResizeObserver {
-  observe = () => {};
-
-  unobserve = () => {};
-
-  disconnect = () => {};
-};
-
 jest.mock('@console/shared/src/components/formik-fields/SyncedEditorField', () => ({
   SyncedEditorField: ({ formContext }: { formContext?: { editor?: ReactNode } }) => (
     <>{formContext?.editor}</>
