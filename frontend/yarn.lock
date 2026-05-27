@@ -1645,8 +1645,6 @@ __metadata:
   dependencies:
     "@console/plugin-sdk": "npm:0.0.0-fixed"
     "@console/shared": "npm:0.0.0-fixed"
-    asn1js: "npm:^2.0.26"
-    pkijs: "npm:^2.1.90"
   languageName: unknown
   linkType: soft
 
@@ -6191,7 +6189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-link@npm:^1.0.0, apollo-link@npm:^1.2.14":
+"apollo-link@npm:^1.0.0, apollo-link@npm:^1.0.20, apollo-link@npm:^1.2.14":
   version: 1.2.14
   resolution: "apollo-link@npm:1.2.14"
   dependencies:
@@ -17761,6 +17759,7 @@ __metadata:
     "@graphql-codegen/typescript-graphql-files-modules": "npm:^1.15.1"
     "@graphql-codegen/typescript-operations": "npm:^1.15.1"
     "@kubernetes/client-node": "npm:^1.4.0"
+    "@monaco-editor/react": "npm:^4.7.0"
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
     "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.1"
     "@patternfly/patternfly": "npm:~6.5.2"
@@ -17809,8 +17808,10 @@ __metadata:
     ajv: "npm:^6.12.3"
     apollo-cache-inmemory: "npm:^1.6.5"
     apollo-client: "npm:^2.6.8"
+    apollo-link: "npm:^1.0.20"
     apollo-link-http: "npm:^1.0.20"
     apollo-link-ws: "npm:^1.0.20"
+    asn1js: "npm:^2.0.26"
     axe-core: "npm:^4.10.2"
     babel-loader: "npm:^9.2.1"
     chalk: "npm:2.4.x"
@@ -17864,6 +17865,8 @@ __metadata:
     marked: "npm:^15.0.6"
     mini-css-extract-plugin: "npm:^2.9.4"
     minimist: "npm:^1.2.8"
+    mobx: "npm:^6.9.0"
+    mobx-react: "npm:^7.6.0"
     mocha-junit-reporter: "npm:^1.23.3"
     mochawesome: "npm:^6.1.1"
     mochawesome-merge: "npm:^4.1.0"
@@ -17875,10 +17878,12 @@ __metadata:
     murmurhash-js: "npm:1.0.x"
     node-fetch: "npm:^2.3.0"
     node-polyfill-webpack-plugin: "npm:~4.0.0"
+    pkijs: "npm:^2.1.90"
     pluralize: "npm:^8.0.0"
     popper.js: "npm:^1.16.1"
     prettier: "npm:2.0.5"
     puppeteer-core: "npm:^23.9.0"
+    pvutils: "npm:^1.1.5"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-helmet-async: "npm:^2.0.5"
@@ -17911,6 +17916,7 @@ __metadata:
     webpack-bundle-analyzer: "npm:^5.1.1"
     webpack-cli: "npm:^6.0.1"
     webpack-dev-server: "npm:^5.2.2"
+    yaml-ast-parser: "npm:^0.0.43"
     yup: "npm:^1.7.1"
   dependenciesMeta:
     cypress:
@@ -19062,7 +19068,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pvutils@npm:^1.1.3, pvutils@npm:latest":
+"pvutils@npm:^1.1.3, pvutils@npm:^1.1.5, pvutils@npm:latest":
   version: 1.1.5
   resolution: "pvutils@npm:1.1.5"
   checksum: 10c0/e968b07b78a58fec9377fe7aa6342c8cfa21c8fb4afc4e51e1489bd42bec6dc71b8a52541d0aede0aea17adec7ca3f89f29f56efdc31d0083cc02e9bb5721bcf
@@ -24346,10 +24352,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml-ast-parser@npm:^0.0.40":
-  version: 0.0.40
-  resolution: "yaml-ast-parser@npm:0.0.40"
-  checksum: 10c0/62aaa52bf8c5888c865582cbf8de664b99b93021e30c51c9e9109b6e3bdc930f1ba5053da6488d9fb5e2bd12477081f26dc56d9186eb075eed2df5a18323ca31
+"yaml-ast-parser@npm:^0.0.40, yaml-ast-parser@npm:^0.0.43":
+  version: 0.0.43
+  resolution: "yaml-ast-parser@npm:0.0.43"
+  checksum: 10c0/4d2f1e761067b2c6abdd882279a406f879258787af470a6d4a659cb79cb2ab056b870b25f1f80f46ed556e8b499d611d247806376f53edf3412f72c0a8ea2e98
   languageName: node
   linkType: hard
 

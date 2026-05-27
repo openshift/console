@@ -5,7 +5,7 @@ import type { FC, CSSProperties } from 'react';
 
 import { cloneElement } from 'react';
 import { defaults } from 'lodash';
-import { Helpers } from 'victory-core';
+import { Helpers } from 'victory';
 import {
   ChartLegendTooltipContentProps,
   ChartLegendTooltipProps,
