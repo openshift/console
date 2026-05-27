@@ -10,6 +10,10 @@ For current development version of Console, use `4.x.0-prerelease.n` packages.
 For older 1.x plugin SDK packages, refer to "OpenShift Console Versions vs SDK Versions" compatibility
 table in [Console dynamic plugins README](./README.md).
 
+## 4.23.0-prerelease.2 - 2026-05-27
+
+- Updated `@patternfly/react-topology` peer dependency semver range to `~6.5.0` ([OCPBUGS-86488], [#16491])
+
 ## 4.23.0-prerelease.1 - 2026-05-19
 
 - Add `useToast` hook for showing toast notifications ([CONSOLE-5273], [#16400])
@@ -234,6 +238,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-58258]: https://issues.redhat.com/browse/OCPBUGS-58258
 [OCPBUGS-62126]: https://issues.redhat.com/browse/OCPBUGS-62126
 [OCPBUGS-81319]: https://issues.redhat.com/browse/OCPBUGS-81319
+[OCPBUGS-86488]: https://issues.redhat.com/browse/OCPBUGS-86488
 [ODC-7425]: https://issues.redhat.com/browse/ODC-7425
 [#12983]: https://github.com/openshift/console/pull/12983
 [#13233]: https://github.com/openshift/console/pull/13233
@@ -290,3 +295,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16057]: https://github.com/openshift/console/pull/16057
 [#16097]: https://github.com/openshift/console/pull/16097
 [#16400]: https://github.com/openshift/console/pull/16400
+[#16491]: https://github.com/openshift/console/pull/16491
