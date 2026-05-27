@@ -53,9 +53,4 @@ export type DownloadButtonProps = {
   className?: string;
 };
 
-export type DownloadButtonState = {
-  inFlight: boolean;
-  error: any;
-};
-
 DownloadButton.displayName = 'DownloadButton';

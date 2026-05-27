@@ -258,14 +258,3 @@ export const AddKeystonePage = () => {
     </div>
   );
 };
-
-export type AddKeystonePageState = {
-  name: string;
-  domainName: string;
-  url: string;
-  caFileContent: string;
-  certFileContent: string;
-  keyFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

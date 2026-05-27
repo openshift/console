@@ -79,5 +79,3 @@ export const getDataViewRows: GetDataViewRows<K8sResourceKind> = (data, columns)
     });
   });
 };
-
-export default getDataViewRows;

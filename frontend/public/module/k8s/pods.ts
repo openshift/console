@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import i18next from 'i18next';
 import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';
+import { ContainerStatus, PodKind, Volume } from './types';
 
 export type {
   PodPhase,
@@ -151,39 +151,6 @@ export const getVolumeLocation = (volume: Volume) => {
 };
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
-
-export const getVolumeMountPermissions = (v: VolumeMount) => {
-  if (!v) {
-    return null;
-  }
-
-  return v.readOnly ? 'Read-only' : 'Read/Write';
-};
-
-export const getVolumeMountsByPermissions = (pod: PodKind) => {
-  if (!pod || !pod.spec || !pod.spec.volumes) {
-    return [];
-  }
-  const m = {};
-
-  const volumes = (pod.spec.volumes || []).reduce((p, v: Volume) => {
-    p[v.name] = v;
-    return p;
-  }, {});
-
-  _.forEach(pod.spec.containers, (c: ContainerSpec) => {
-    _.forEach(c.volumeMounts, (v: VolumeMount) => {
-      const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
-      const mount = { container: c.name, mountPath: v.mountPath, subPath: v.subPath };
-      if (k in m) {
-        return m[k].mounts.push(mount);
-      }
-      m[k] = { mounts: [mount], name: v.name, readOnly: !!v.readOnly, volume: volumes[v.name] };
-    });
-  });
-
-  return _.values(m);
-};
 
 export const podRestarts = (pod: PodKind): number => {
   if (!pod || !pod.status) {

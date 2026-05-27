@@ -180,12 +180,3 @@ export const AddGooglePage = () => {
     </div>
   );
 };
-
-export type AddGooglePageState = {
-  name: string;
-  hostedDomain: string;
-  clientID: string;
-  clientSecret: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

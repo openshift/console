@@ -51,5 +51,3 @@ export const useHelmReleaseResourcesColumns = (): TableColumn<K8sResourceKind>[]
     [t],
   );
 };
-
-export default useHelmReleaseResourcesColumns;

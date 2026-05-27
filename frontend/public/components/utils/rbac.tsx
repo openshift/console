@@ -1,6 +1,5 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import type { ReactNode, FC } from 'react';
-import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import {
@@ -30,37 +29,6 @@ export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?: ImpersonateKind,
 ) => useAccessReviewAllowed(resourceAttributes, impersonate);
-
-export const useMultipleAccessReviews = (
-  multipleResourceAttributes: AccessReviewResourceAttributes[],
-  impersonate?: ImpersonateKind,
-): [AccessReviewsResult[], boolean] => {
-  const [loading, setLoading] = useState(true);
-  const [allowedArr, setAllowedArr] = useState<AccessReviewsResult[]>([]);
-
-  useEffect(() => {
-    const promises = multipleResourceAttributes.map((resourceAttributes) =>
-      checkAccess(resourceAttributes, impersonate),
-    );
-
-    Promise.all(promises)
-      .then((values) => {
-        setLoading(false);
-        const updatedAllowedArr = values.map<AccessReviewsResult>((result) => ({
-          resourceAttributes: result.spec.resourceAttributes,
-          allowed: result.status.allowed,
-        }));
-        setAllowedArr(updatedAllowedArr);
-      })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.warn('SelfSubjectAccessReview failed', e);
-        setLoading(false);
-      });
-  }, [impersonate, multipleResourceAttributes]);
-
-  return [allowedArr, loading];
-};
 
 type RequireCreatePermissionOwnProps = {
   model: K8sKind;
@@ -97,11 +65,6 @@ export const RequireCreatePermission = connect<
 >(impersonateStateToProps)(RequireCreatePermission_);
 
 RequireCreatePermission.displayName = 'RequireCreatePermission';
-
-type AccessReviewsResult = {
-  resourceAttributes: AccessReviewResourceAttributes;
-  allowed: boolean;
-};
 
 export const asAccessReview = (
   kindObj: K8sKind,

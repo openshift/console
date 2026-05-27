@@ -14,20 +14,11 @@ import {
 
 import { MonitoringResource } from './types';
 
-export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
-
 export const AlertResource: MonitoringResource = {
   kind: 'Alert',
   label: 'Alert',
   plural: '/monitoring/alerts',
   abbr: 'AL',
-};
-
-export const SilenceResource: MonitoringResource = {
-  kind: 'Silence',
-  label: 'Silence',
-  plural: '/monitoring/silences',
-  abbr: 'SL',
 };
 
 export const labelsToParams = (labels: PrometheusLabels) =>

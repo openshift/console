@@ -580,11 +580,6 @@ export type InstallPlanPreviewProps = {
   hideApprovalBlock?: boolean;
 };
 
-export type InstallPlanPreviewState = {
-  needsApproval: boolean;
-  error?: string;
-};
-
 export type NeedInstallPlanPermissionsProps = {
   installPlan: InstallPlanKind;
   user?: UserInfo;

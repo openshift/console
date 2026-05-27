@@ -120,5 +120,3 @@ export const BuildRunTable: FC<TableProps> = (props) => {
     />
   );
 };
-
-export default BuildRunTable;

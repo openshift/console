@@ -70,5 +70,3 @@ export const useConsoleSamplesCatalogProvider = ({ namespace }): [CatalogItem[],
 
   return [catalogItems, loaded, loadedError];
 };
-
-export default useConsoleSamplesCatalogProvider;

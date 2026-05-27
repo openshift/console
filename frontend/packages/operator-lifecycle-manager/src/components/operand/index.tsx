@@ -846,14 +846,6 @@ export type OperandStatusProps = {
   operand: K8sResourceKind;
 };
 
-export type OperandHeaderProps = {
-  data: K8sResourceKind[];
-};
-
-export type OperandRowProps = {
-  obj: K8sResourceKind;
-};
-
 export type ProvidedAPIsPageProps = {
   obj: ClusterServiceVersionKind;
   inFlight?: boolean;
@@ -890,13 +882,6 @@ export type OperandDetailsProps = {
 };
 
 type DefaultOperandDetailsPageProps = { customData: any; k8sModel: K8sModel };
-
-export type OperandResourceDetailsProps = {
-  csv?: { data: ClusterServiceVersionKind };
-  gvk: GroupVersionKind;
-  name: string;
-  namespace: string;
-};
 
 type Header = {
   title: string;

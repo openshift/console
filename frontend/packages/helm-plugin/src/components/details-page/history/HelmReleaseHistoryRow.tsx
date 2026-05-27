@@ -106,5 +106,3 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, HelmReleaseHistoryCus
     });
   });
 };
-
-export default getDataViewRows;

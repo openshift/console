@@ -24,7 +24,8 @@ import {
   Humanize,
   TopConsumerPopoverProps,
 } from '@console/dynamic-plugin-sdk';
-import UtilizationItem, {
+import {
+  UtilizationItem,
   MultilineUtilizationItem,
   QueryWithDescription,
   LimitRequested,

@@ -1,7 +1,6 @@
 /* eslint-disable no-barrel-files/no-barrel-files */
 import * as _ from 'lodash';
 import { Dispatch } from 'redux';
-import { ActionType as Action } from 'typesafe-actions';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 
 import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
@@ -101,10 +100,3 @@ export const startAPIDiscovery = () => (dispatch) => {
       console.warn('Error while start API discovery', e);
     });
 };
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
-const k8sActions = {
-  startAPIDiscovery,
-};
-
-export type K8sAction = Action<typeof k8sActions>;

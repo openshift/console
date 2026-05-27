@@ -124,5 +124,3 @@ export const ResourceQuotaAlert: FC<ResourceQuotaAlertProps> = ({ namespace }) =
     </>
   );
 };
-
-export default ResourceQuotaAlert;

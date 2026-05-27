@@ -35,6 +35,4 @@ export type Humanize = {
 export enum NotificationTypes {
   info = 'info',
   warning = 'warning',
-  critical = 'danger',
-  success = 'success',
 }

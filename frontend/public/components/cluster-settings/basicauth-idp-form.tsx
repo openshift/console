@@ -242,13 +242,3 @@ export const AddBasicAuthPage: FC = () => {
     </div>
   );
 };
-
-export type AddBasicAuthPageState = {
-  name: string;
-  url: string;
-  caFileContent: string;
-  certFileContent: string;
-  keyFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

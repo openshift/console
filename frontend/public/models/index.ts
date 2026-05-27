@@ -35,23 +35,6 @@ export const ServiceMonitorModel: K8sKind = {
   propagationPolicy: 'Foreground',
 };
 
-export const PodMonitorModel: K8sKind = {
-  kind: 'PodMonitor',
-  label: 'PodMonitor',
-  // t('public~PodMonitor')
-  labelKey: 'public~PodMonitor',
-  labelPlural: 'PodMonitors',
-  // t('public~PodMonitors')
-  labelPluralKey: 'public~PodMonitors',
-  apiGroup: 'monitoring.coreos.com',
-  apiVersion: 'v1',
-  abbr: 'PM',
-  namespaced: true,
-  crd: true,
-  plural: 'podmonitors',
-  propagationPolicy: 'Foreground',
-};
-
 export const AlertmanagerModel: K8sKind = {
   kind: 'Alertmanager',
   label: 'Alertmanager',
@@ -402,20 +385,6 @@ export const EventModel: K8sKind = {
   labelPluralKey: 'public~Events',
 };
 
-export const ComponentStatusModel: K8sKind = {
-  apiVersion: 'v1',
-  label: 'ComponentStatus',
-  // t('public~ComponentStatus')
-  labelKey: 'public~ComponentStatus',
-  labelPlural: 'ComponentStatuses',
-  // t('public~ComponentStatuses')
-  labelPluralKey: 'public~ComponentStatuses',
-  plural: 'componentstatuses',
-  abbr: 'CS',
-  kind: 'ComponentStatus',
-  id: 'componentstatus',
-};
-
 export const NamespaceModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Namespace',
@@ -458,22 +427,6 @@ export const ProjectRequestModel: K8sKind = {
   labelPlural: 'ProjectRequests',
   // t('public~ProjectRequests')
   labelPluralKey: 'public~ProjectRequests',
-};
-
-export const IngressModel: K8sKind = {
-  label: 'Ingress',
-  // t('public~Ingress')
-  labelKey: 'public~Ingress',
-  labelPlural: 'Ingresses',
-  // t('public~Ingresses')
-  labelPluralKey: 'public~Ingresses',
-  apiGroup: 'networking.k8s.io',
-  apiVersion: 'v1',
-  plural: 'ingresses',
-  abbr: 'I',
-  namespaced: true,
-  kind: 'Ingress',
-  id: 'ingress',
 };
 
 export const RouteModel: K8sKind = {
@@ -582,38 +535,6 @@ export const RoleModel: K8sKind = {
   labelPlural: 'Roles',
   // t('public~Roles')
   labelPluralKey: 'public~Roles',
-};
-
-export const SelfSubjectAccessReviewModel: K8sKind = {
-  label: 'SelfSubjectAccessReview',
-  // t('public~SelfSubjectAccessReview')
-  labelKey: 'public~SelfSubjectAccessReview',
-  apiGroup: 'authorization.k8s.io',
-  apiVersion: 'v1',
-  plural: 'selfsubjectaccessreviews',
-  abbr: 'SSAR',
-  namespaced: true,
-  kind: 'SelfSubjectAccessReview',
-  id: 'selfsubjectaccessreview',
-  labelPlural: 'SelfSubjectAccessReviews',
-  // t('public~SelfSubjectAccessReviews')
-  labelPluralKey: 'public~SelfSubjectAccessReviews',
-};
-
-export const SelfSubjectReviewModel: K8sKind = {
-  label: 'SelfSubjectReview',
-  // t('public~SelfSubjectReview')
-  labelKey: 'public~SelfSubjectReview',
-  apiGroup: 'authorization.k8s.io',
-  apiVersion: 'v1',
-  plural: 'selfsubjectreviews',
-  abbr: 'SSR',
-  namespaced: true,
-  kind: 'SelfSubjectReview',
-  id: 'selfsubjectreview',
-  labelPlural: 'SelfSubjectReviews',
-  // t('public~SelfSubjectReviews')
-  labelPluralKey: 'public~SelfSubjectReviews',
 };
 
 export const ResourceAccessReviewsModel: K8sKind = {
@@ -837,23 +758,6 @@ export const LimitRangeModel: K8sKind = {
   labelPlural: 'LimitRanges',
   // t('public~LimitRanges')
   labelPluralKey: 'public~LimitRanges',
-};
-
-export const APIServiceModel: K8sKind = {
-  label: 'APIService',
-  // t('public~APIService')
-  labelKey: 'public~APIService',
-  labelPlural: 'APIServices',
-  // t('public~APIServices')
-  labelPluralKey: 'APIServices',
-  apiVersion: 'v1',
-  apiGroup: 'apiregistration.k8s.io',
-  plural: 'apiservices',
-  abbr: 'APIS',
-  namespaced: false,
-  kind: 'APIService',
-  id: 'apiservice',
-  crd: true,
 };
 
 export const UserModel: K8sKind = {
@@ -1132,19 +1036,6 @@ export const InfrastructureModel: K8sKind = {
   crd: true,
 };
 
-export const NetworkOperatorConfigModel: K8sKind = {
-  label: 'Network',
-  labelPlural: 'Networks',
-  apiVersion: 'v1',
-  apiGroup: 'config.openshift.io',
-  plural: 'networks',
-  abbr: 'NO',
-  namespaced: false,
-  kind: 'Network',
-  id: 'network',
-  crd: true,
-};
-
 export const ConsoleOperatorConfigModel: K8sKind = {
   label: 'Console',
   labelPlural: 'Consoles',
@@ -1329,23 +1220,6 @@ export const AuthenticationModel: K8sKind = {
   apiVersion: 'v1',
   plural: 'authentications',
   abbr: 'AU',
-};
-
-export const MultiNetworkPolicyModel: K8sKind = {
-  abbr: 'MNP',
-  apiGroup: 'k8s.cni.cncf.io',
-  apiVersion: 'v1beta1',
-  id: 'multinetworkpolicy',
-  kind: 'MultiNetworkPolicy',
-  label: 'multi-networkpolicy',
-  // t('public~MultiNetworkPolicy')
-  labelKey: 'public~MultiNetworkPolicy',
-  labelPlural: 'MultiNetworkPolicies',
-  // t('MultiNetworkPolicies')
-  labelPluralKey: 'public~MultiNetworkPolicies',
-  namespaced: true,
-  plural: 'multi-networkpolicies',
-  crd: true,
 };
 
 // Export models which have legacy plural URLs that need to be maintained.

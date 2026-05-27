@@ -167,7 +167,6 @@ export type ContainerPort = {
 
 export enum ImagePullPolicy {
   Always = 'Always',
-  Never = 'Never',
   IfNotPresent = 'IfNotPresent',
 }
 
@@ -1022,30 +1021,10 @@ export type Cause = {
   reason: string;
 };
 
-export type Status = {
-  apiVersion: 'v1';
-  kind: 'Status';
-  details: {
-    causes: Cause[];
-    group: string;
-    kind: string;
-  };
-  message: string;
-  metadata: any;
-  reason: string;
-  status: string;
-};
-
 export type SecretKind = {
   data?: { [key: string]: string };
   stringData?: { [key: string]: string };
   type?: string;
-} & K8sResourceCommon;
-
-export type ServiceAccountKind = {
-  automountServiceAccountToken?: boolean;
-  imagePullSecrets?: { [key: string]: string };
-  secrets?: SecretKind[] | { [key: string]: string };
 } & K8sResourceCommon;
 
 export type ListKind<R extends K8sResourceCommon> = K8sResourceCommon & {

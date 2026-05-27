@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePrometheusGate } from '@console/shared/src/hooks/usePrometheusGate';
-import ConnectedMonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
+import { MonitoringDashboardGraph } from '../dashboard/MonitoringDashboardGraph';
 import { topWorkloadMetricsQueries } from '../queries';
 
 const WorkloadGraphs = ({ resource }) => {
@@ -18,7 +18,7 @@ const WorkloadGraphs = ({ resource }) => {
   return (
     <>
       {_.map(topWorkloadMetricsQueries(t), (q) => (
-        <ConnectedMonitoringDashboardGraph
+        <MonitoringDashboardGraph
           key={q.title}
           title={q.title}
           namespace={namespace}

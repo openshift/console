@@ -337,8 +337,6 @@ export const getReleaseNotesLink = (version: string): string => {
   return `https://access.redhat.com/documentation/en-us/openshift_container_platform/${major}.${minor}/html/release_notes/ocp-${major}-${minor}-release-notes#ocp-${major}-${minor}-${patch}_release-notes`;
 };
 
-export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;
-
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
 
 export const getOCMLink = (clusterID: string): string =>

@@ -292,17 +292,3 @@ export const AddLDAPPage = () => {
     </div>
   );
 };
-
-export type AddLDAPPageState = {
-  name: string;
-  url: string;
-  bindDN: string;
-  bindPassword: string;
-  attributesID: string[];
-  attributesPreferredUsername: string[];
-  attributesName: string[];
-  attributesEmail: string[];
-  caFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

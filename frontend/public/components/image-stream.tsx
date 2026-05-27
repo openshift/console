@@ -464,8 +464,6 @@ export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...p
 
 ImageStreamsList.displayName = 'ImageStreamsList';
 
-export const buildPhase = (build) => build.status.phase;
-
 export const ImageStreamsPage: FC<ImageStreamsPageProps> = (props) => {
   const { t } = useTranslation();
   return (

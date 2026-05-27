@@ -758,21 +758,6 @@ export type StorageClass = K8sResourceCommon & {
   allowVolumeExpansion?: boolean;
 };
 
-export type StorageClassFormState = {
-  newStorageClass: StorageClassData;
-  customParams: string[][];
-  validationSuccessful: boolean;
-  loading: boolean;
-  error: any;
-  fieldErrors: { [k: string]: any };
-};
-
-export type Resources = {
-  loaded: boolean;
-  data: any[];
-  loadError: string;
-};
-
 export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,

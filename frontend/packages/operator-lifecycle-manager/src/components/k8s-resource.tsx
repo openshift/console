@@ -197,8 +197,6 @@ export type ResourcesProps = {
   customData: any;
 };
 
-export type ResourceListProps = {};
-
 export type ResourceTableProps = {
   loaded: boolean;
   loadError?: string;

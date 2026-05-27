@@ -59,7 +59,7 @@ export const ResourceInventoryItem: FC<ResourceInventoryItemProps> = require('@c
   .ResourceInventoryItem;
 
 export const UtilizationItem: FC<UtilizationItemProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationItem')
-  .default;
+  .UtilizationItem;
 
 export const UtilizationBody: FC<UtilizationBodyProps> = require('@console/shared/src/components/dashboard/utilization-card/UtilizationBody')
   .UtilizationBody;

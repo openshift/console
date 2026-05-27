@@ -130,5 +130,3 @@ export const ProjectDetailsPage: FC<MonitoringPageProps> = (props) => {
     </>
   );
 };
-
-export default ProjectDetailsPage;

@@ -47,5 +47,3 @@ type TableHeaderProps = {
   onSort?: OnSort;
   sortBy?: ISortBy;
 };
-
-export default TableHeader;

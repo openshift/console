@@ -28,5 +28,3 @@ export const useDeveloperCatalogCategories = (): CatalogCategory[] =>
       return defaultCatalogCategories;
     }
   }, []);
-
-export default useDeveloperCatalogCategories;

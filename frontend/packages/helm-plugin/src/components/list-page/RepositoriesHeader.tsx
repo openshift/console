@@ -94,5 +94,3 @@ export const useRepositoriesColumns = (
 
   return { columns, resetAllColumnWidths };
 };
-
-export default useRepositoriesColumns;

@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { AsyncComponent } from '@console/internal/components/utils/async';
 import type { K8sResourceKind, GroupVersionKind } from '@console/internal/module/k8s';
 import { referenceForModel, referenceForGroupVersionKind } from '@console/internal/module/k8s';
 import { ConsoleEmptyState } from '@console/shared/src/components/empty-state/ConsoleEmptyState';
@@ -36,33 +35,6 @@ export const NoOperatorGroupMsg: FC = () => {
         'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
       )}
     </ConsoleEmptyState>
-  );
-};
-
-export const OperatorGroupSelector: FC<OperatorGroupSelectorProps> = (props) => {
-  const { t } = useTranslation();
-  return (
-    <AsyncComponent
-      loader={() =>
-        import('@console/internal/components/utils/list-dropdown').then((m) => m.ListDropdown)
-      }
-      onChange={
-        props.onChange ||
-        function () {
-          return null;
-        }
-      }
-      desc={OperatorGroupModel.plural}
-      placeholder={t('olm~Select OperatorGroup')}
-      selectedKeyKind={referenceForModel(OperatorGroupModel)}
-      dataFilter={props.dataFilter}
-      resources={[
-        {
-          kind: referenceForModel(OperatorGroupModel),
-          fieldSelector: `metadata.name!=${props.excludeName}`,
-        },
-      ]}
-    />
   );
 };
 
@@ -125,8 +97,6 @@ export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
 
 export const isGlobal = (obj: OperatorGroupKind) =>
   supports([{ type: InstallModeType.InstallModeTypeAllNamespaces, supported: true }])(obj);
-export const isSingle = (obj: OperatorGroupKind) =>
-  supports([{ type: InstallModeType.InstallModeTypeSingleNamespace, supported: true }])(obj);
 
 /**
  * Determines if a given Operator package has a `Subscription` that makes it available in the given namespace.

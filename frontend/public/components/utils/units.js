@@ -392,11 +392,6 @@ export const convertToBaseValue = (value) => {
   return null;
 };
 
-export const secondsToNanoSeconds = (value) => {
-  const val = Number(value);
-  return Number.isFinite(val) ? val * 1000 ** 3 : 0;
-};
-
 export const formatToFractionalDigits = (value, digits) =>
   Intl.NumberFormat(undefined, {
     minimumFractionDigits: digits,

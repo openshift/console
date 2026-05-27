@@ -1381,10 +1381,6 @@ export type CRDCardRowProps = {
   csv: ClusterServiceVersionKind;
 };
 
-export type CRDCardRowState = {
-  expand: boolean;
-};
-
 export type ClusterServiceVersionDetailsProps = {
   obj: ClusterServiceVersionKind;
   customData: {

@@ -12,9 +12,7 @@ export enum AppCatalog {
 }
 
 export enum ClusterServiceVersionPhase {
-  CSVPhaseNone = '',
   CSVPhasePending = 'Pending',
-  CSVPhaseInstallReady = 'InstallReady',
   CSVPhaseInstalling = 'Installing',
   CSVPhaseSucceeded = 'Succeeded',
   CSVPhaseFailed = 'Failed',
@@ -24,18 +22,7 @@ export enum ClusterServiceVersionPhase {
 }
 
 export enum CSVConditionReason {
-  CSVReasonRequirementsUnknown = 'RequirementsUnknown',
-  CSVReasonRequirementsNotMet = 'RequirementsNotMet',
-  CSVReasonRequirementsMet = 'AllRequirementsMet',
-  CSVReasonOwnerConflict = 'OwnerConflict',
-  CSVReasonComponentFailed = 'InstallComponentFailed',
-  CSVReasonInvalidStrategy = 'InvalidInstallStrategy',
-  CSVReasonWaiting = 'InstallWaiting',
   CSVReasonInstallSuccessful = 'InstallSucceeded',
-  CSVReasonInstallCheckFailed = 'InstallCheckFailed',
-  CSVReasonComponentUnhealthy = 'ComponentUnhealthy',
-  CSVReasonBeingReplaced = 'BeingReplaced',
-  CSVReasonReplaced = 'Replaced',
   CSVReasonCopied = 'Copied',
 }
 

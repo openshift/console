@@ -34,7 +34,7 @@ import {
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useFlag } from '@console/shared/src/hooks/useFlag';
 import { LazyManagedResourceSaveModalOverlay } from './modals';
-import ReplaceCodeModal from './modals/replace-code-modal';
+import { ReplaceCodeModal } from './modals/replace-code-modal';
 import { checkAccess } from './utils/rbac';
 import { Loading } from './utils/status-box';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';

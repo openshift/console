@@ -235,9 +235,6 @@ export const LimitRangeDetailsPage = (props) => {
   );
 };
 
-export type LimitRangeProps = {
-  obj: any;
-};
 export type LimitRangeListPageProps = {
   filterLabel: string;
 };
@@ -248,7 +245,4 @@ export type LimitRangeDetailsRowProps = {
   limitType: string;
   resource: string;
   limit: any;
-};
-export type LimitRangeHeaderProps = {
-  obj: any;
 };

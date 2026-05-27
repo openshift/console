@@ -93,5 +93,3 @@ export const getDataViewRows: GetDataViewRows<HelmRelease, { obj: HelmRelease }>
     });
   });
 };
-
-export default getDataViewRows;

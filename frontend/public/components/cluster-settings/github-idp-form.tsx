@@ -274,15 +274,3 @@ export const AddGitHubPage = () => {
     </div>
   );
 };
-
-export type AddGitHubPageState = {
-  name: string;
-  clientID: string;
-  clientSecret: string;
-  hostname: string;
-  organizations: string[];
-  teams: string[];
-  caFileContent: string;
-  inProgress: boolean;
-  errorMessage: string;
-};

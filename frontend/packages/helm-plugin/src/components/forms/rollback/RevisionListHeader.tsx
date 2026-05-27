@@ -118,5 +118,3 @@ export const useRevisionListColumns = (
     [t, sortBy, onSort],
   );
 };
-
-export default useRevisionListColumns;

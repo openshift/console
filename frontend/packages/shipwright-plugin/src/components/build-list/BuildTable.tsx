@@ -205,5 +205,3 @@ export const BuildTable: FC<BuildTableProps> = (props) => {
     />
   );
 };
-
-export default BuildTable;

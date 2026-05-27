@@ -563,10 +563,6 @@ type PodMetricsProps = {
   obj: PodKind;
 };
 
-export type PodStatusProps = {
-  pod: PodKind;
-};
-
 type PodResourceSummaryProps = {
   pod: PodKind;
 };

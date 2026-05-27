@@ -9,8 +9,6 @@ import { chart_color_yellow_400 as yellow400 } from '@patternfly/react-tokens/di
 import { Map as ImmutableMap } from 'immutable';
 import type { ImageManifestVuln } from './types';
 
-export const ContainerSecurityFlag = 'SECURITY_LABELLER';
-
 export enum Priority {
   Defcon1 = 'Defcon1',
   Critical = 'Critical',

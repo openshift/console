@@ -6,9 +6,6 @@ import { AsyncComponent } from '../utils/async';
 export {
   PROMETHEUS_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
-  ALERTMANAGER_BASE_PATH,
-  ALERTMANAGER_USER_WORKLOAD_BASE_PATH,
-  ALERTMANAGER_TENANCY_BASE_PATH,
   DEFAULT_PROMETHEUS_SAMPLES,
   DEFAULT_PROMETHEUS_TIMESPAN,
 } from './consts';
@@ -16,15 +13,6 @@ export {
 // Components
 export const Area = (props) => (
   <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Area)} {...props} />
-);
-export const Bar = (props) => (
-  <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Bar)} {...props} />
-);
-export const Gauge = (props) => (
-  <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Gauge)} {...props} />
-);
-export const Stack = (props) => (
-  <AsyncComponent loader={() => import('./graph-loader').then((c) => c.Stack)} {...props} />
 );
 
 export const CursorVoronoiContainer = createContainer('cursor', 'voronoi');
@@ -64,10 +52,3 @@ export type PrometheusResponse = {
   error?: string;
   warnings?: string[];
 };
-
-export type DomainPadding =
-  | number
-  | {
-      x?: number | [number, number];
-      y?: number | [number, number];
-    };

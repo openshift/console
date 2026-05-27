@@ -44,5 +44,3 @@ export const Timestamp = (props: TimestampProps) => {
     </div>
   );
 };
-
-export default Timestamp;

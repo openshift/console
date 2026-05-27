@@ -1,11 +1,5 @@
 import { K8sResourceCommon, QueryParams } from '@console/dynamic-plugin-sdk/src';
-import {
-  k8sPatch,
-  k8sKill,
-  k8sList,
-  resourceURL,
-  k8sWatch,
-} from '@console/dynamic-plugin-sdk/src/utils/k8s';
+import { k8sPatch, k8sKill, k8sList, k8sWatch } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { K8sKind, Patch } from './types';
 
 export type Options = {
@@ -13,14 +7,6 @@ export type Options = {
   name?: string;
   path?: string;
   queryParams?: QueryParams;
-};
-
-export const watchURL = (kind: K8sKind, options: Options): string => {
-  const opts = options || {};
-
-  opts.queryParams = opts.queryParams || {};
-  opts.queryParams.watch = 'true';
-  return resourceURL(kind, opts);
 };
 
 export const k8sPatchByName = (

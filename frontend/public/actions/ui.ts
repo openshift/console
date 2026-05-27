@@ -11,7 +11,6 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants/common';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
-import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
 import { clearSSARFlags } from './flags';
 import { OverviewSpecialGroup } from '../components/overview/constants';
@@ -58,27 +57,6 @@ export type PVCMetrics = {
 
 export type PluginCSPViolations = {
   [pluginName: string]: boolean;
-};
-
-// URL routes that can be namespaced
-let namespacedResources;
-
-export const getNamespacedResources = () => {
-  if (!namespacedResources) {
-    namespacedResources = new Set();
-    allModels().forEach((v, k) => {
-      if (!v.namespaced) {
-        return;
-      }
-      if (v.crd) {
-        namespacedResources.add(k);
-      }
-      if (!v.crd || v.legacyPluralURL) {
-        namespacedResources.add(v.plural);
-      }
-    });
-  }
-  return namespacedResources;
 };
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');

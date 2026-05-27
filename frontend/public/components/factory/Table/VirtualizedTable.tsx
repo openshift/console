@@ -19,7 +19,7 @@ import {
 import { StatusBox } from '@console/shared/src/components/status/StatusBox';
 import { EmptyBox } from '@console/shared/src/components/empty-state/EmptyBox';
 import VirtualizedTableBody from './VirtualizedTableBody';
-import TableHeader from './TableHeader';
+import { TableHeader } from './TableHeader';
 import { WithScrollContainer } from '../../utils/dom-utils';
 import { sortResourceByValue } from './sort';
 

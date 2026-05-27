@@ -686,10 +686,6 @@ export type PodStatusProps = {
   pod: PodKind;
 };
 
-export type PodDetailsListProps = {
-  pod: PodKind;
-};
-
 type PodFilters = ResourceFilters & { status: string[] };
 
 type PodRowData = {

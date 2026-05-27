@@ -285,17 +285,3 @@ export const AddOpenIDIDPPage = () => {
     </div>
   );
 };
-
-export type AddOpenIDIDPPageState = {
-  name: string;
-  clientID: string;
-  clientSecret: string;
-  claimPreferredUsernames: string[];
-  claimNames: string[];
-  claimEmails: string[];
-  issuer: string;
-  caFileContent: string;
-  extraScopes: string[];
-  inProgress: boolean;
-  errorMessage: string;
-};

@@ -59,5 +59,3 @@ export const ReplaceCodeModal = ({ handleCodeReplace }) => {
     </Modal>
   );
 };
-
-export default ReplaceCodeModal;

@@ -8,7 +8,6 @@ import {
 import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActionMenu';
 import { ActionMenuVariant } from '@console/shared/src/components/actions/types';
 import { Status } from '@console/shared/src/components/status/Status';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHeading';
 import { ActionListItem, Button, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -30,15 +29,6 @@ import type { WatchK8sResultsObject } from '@console/dynamic-plugin-sdk/src/exte
 import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
 import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
-
-export const ResourceItemDeleting = () => {
-  const { t } = useTranslation();
-  return (
-    <span className="co-resource-item__deleting">
-      <YellowExclamationTriangleIcon /> {t('public~Deleting')}
-    </span>
-  );
-};
 
 export const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
   <>

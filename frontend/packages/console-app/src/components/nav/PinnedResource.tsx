@@ -21,12 +21,6 @@ interface RemoveButtonProps {
   onChange: (pinnedResources: string[]) => void;
 }
 
-export type DragItem = {
-  idx: number;
-  id: string;
-  type: string;
-};
-
 const RemoveButton: FC<RemoveButtonProps> = ({ resourceRef, navResources, onChange }) => {
   const { t } = useTranslation();
   const confirmNavUnpinModal = useConfirmNavUnpinModal(navResources, onChange);

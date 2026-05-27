@@ -336,9 +336,3 @@ export type ImageStreamTagsDetailsPageProps = {
   namespace: string;
   name: string;
 };
-
-export type RowSupportedPlatformData = {
-  os: string;
-  architecture: string;
-  digest: string;
-};
