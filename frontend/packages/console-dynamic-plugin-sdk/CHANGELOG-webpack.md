@@ -15,6 +15,12 @@ table in [Console dynamic plugins README](./README.md).
 > [!NOTE]
 > Version bump only, no effective changes.
 
+## 4.22.0 - 2026-06-09
+
+> Initial release for OCP Console 4.22.
+
+- Fix `resolveDynamicModuleMaps` to skip unavailable packages ([OCPBUGS-84338], [#16340])
+
 ## 4.22.0-prerelease.3 - 2026-04-24
 
 - **Breaking**: `ConsoleRemotePlugin` shared dynamic module option `transformImports` renamed to `moduleFilter` ([CONSOLE-5065], [#16224])
@@ -137,6 +143,7 @@ table in [Console dynamic plugins README](./README.md).
 [OCPBUGS-61569]: https://issues.redhat.com/browse/OCPBUGS-61569
 [OCPBUGS-66345]: https://issues.redhat.com/browse/OCPBUGS-66345
 [OCPBUGS-83823]: https://issues.redhat.com/browse/OCPBUGS-83823
+[OCPBUGS-84338]: https://issues.redhat.com/browse/OCPBUGS-84338
 [#13188]: https://github.com/openshift/console/pull/13188
 [#13388]: https://github.com/openshift/console/pull/13388
 [#13521]: https://github.com/openshift/console/pull/13521
@@ -162,3 +169,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16178]: https://github.com/openshift/console/pull/16178
 [#16182]: https://github.com/openshift/console/pull/16182
 [#16224]: https://github.com/openshift/console/pull/16224
+[#16340]: https://github.com/openshift/console/pull/16340
