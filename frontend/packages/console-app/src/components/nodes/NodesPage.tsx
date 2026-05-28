@@ -1066,17 +1066,22 @@ export const NodesPage: FC<NodesPageProps> = ({ selector }) => {
     [machines],
   );
 
-  const [machineSets, machineSetsLoaded] = useWatchResourcesIfAllowed<MachineSetKind[]>(
+  const [machineSets, msLoaded, msLoadError] = useWatchResourcesIfAllowed<MachineSetKind[]>(
     MachineSetModel,
   );
 
-  const [controlPlaneMachineSets, controlPlaneMachineSetsLoaded] = useWatchResourcesIfAllowed<
+  const [controlPlaneMachineSets, cpmsLoaded, cpmsLoadError] = useWatchResourcesIfAllowed<
     ControlPlaneMachineSetKind[]
   >(ControlPlaneMachineSetModel);
 
-  const [machineConfigPools, machineConfigPoolsLoaded] = useWatchResourcesIfAllowed<
+  const [machineConfigPools, mcpsLoaded, mcpsLoadError] = useWatchResourcesIfAllowed<
     MachineConfigPoolKind[]
   >(MachineConfigPoolModel);
+
+  // if loading fails for any of these resource, continue without the info
+  const machineSetsLoaded = msLoaded || !!msLoadError;
+  const controlPlaneMachineSetsLoaded = cpmsLoaded || !!cpmsLoadError;
+  const machineConfigPoolsLoaded = mcpsLoaded || !!mcpsLoadError;
 
   const [csrs, csrsLoaded, csrsLoadError] = useWatchResourcesIfAllowed<
     CertificateSigningRequestKind[]
