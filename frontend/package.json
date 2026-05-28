@@ -126,6 +126,7 @@
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
       "./__mocks__/mutationObserver.js",
+      "./__mocks__/resizeObserver.js",
       "./__mocks__/serverFlags.js",
       "./__mocks__/textEncoderDecoder.ts",
       "./__mocks__/webpack.ts",

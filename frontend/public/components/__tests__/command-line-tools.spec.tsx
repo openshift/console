@@ -30,23 +30,7 @@ const obj = {
   loadError: null,
 };
 
-const nativeResizeObserver = window.ResizeObserver;
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
 describe('CommandLineTools', () => {
-  beforeAll(() => {
-    window.ResizeObserver = ResizeObserver;
-  });
-
-  afterAll(() => {
-    window.ResizeObserver = nativeResizeObserver;
-    jest.restoreAllMocks();
-  });
-
   describe('When ordering is correct', () => {
     it('shows oc CLI first in the displayed list', async () => {
       renderWithProviders(<CommandLineTools obj={obj} />);
