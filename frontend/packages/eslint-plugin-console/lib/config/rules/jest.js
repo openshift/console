@@ -11,11 +11,10 @@ module.exports = {
   'jest/no-identical-title': 'error',
   // Disallow Jasmine globals
   'jest/no-jasmine-globals': 'error',
-  // Limited snapshot sizes to keep snapshops manageable and reviewable.
-  'jest/no-large-snapshots': 'off',
+
   // For better failure messages, use `toHaveLength()` to on object lengths.
   'jest/prefer-to-have-length': 'error',
-  // Suggest using toMatchInlineSnapshot()
+  // Inline snapshots are disallowed via jest/no-restricted-matchers
   'jest/prefer-inline-snapshots': 'off',
   // For better failure messages, use `toBeNull()` to assert on null values.
   'jest/prefer-to-be-null': 'error',
@@ -65,4 +64,17 @@ module.exports = {
   'jest/no-mocks-import': 'error',
   // Disallow commented out tests
   'jest/no-commented-out-tests': 'error',
+  // Prefer explicit assertions over snapshots (aligns with gen-rtl-test / RTL hooks guidance)
+  'jest/no-restricted-matchers': [
+    'error',
+    {
+      toMatchSnapshot:
+        'Do not use toMatchSnapshot(); use explicit assertions (e.g. toStrictEqual on focused objects, getByRole, etc.).',
+      toMatchInlineSnapshot: 'Do not use toMatchInlineSnapshot(); use explicit assertions instead.',
+      toThrowErrorMatchingSnapshot:
+        'Do not use toThrowErrorMatchingSnapshot(); assert on error message or type explicitly.',
+      toThrowErrorMatchingInlineSnapshot:
+        'Do not use toThrowErrorMatchingInlineSnapshot(); assert on error message or type explicitly.',
+    },
+  ],
 };

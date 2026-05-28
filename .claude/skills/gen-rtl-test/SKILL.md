@@ -719,7 +719,9 @@ it('renders')
 
 ### Rule 18: Avoid Snapshot Tests
 
-**DO NOT** use `toMatchSnapshot()`. Snapshot tests are brittle, give false security, and test implementation details.
+**DO NOT** use `toMatchSnapshot()`, `toMatchInlineSnapshot()`, or error snapshot matchers. Snapshot tests are brittle, give false security, and test implementation details. Prefer **`toStrictEqual`**, **`toMatchObject`**, or RTL queries on user-visible output.
+
+**Enforcement:** `jest/no-restricted-matchers` from `eslint-plugin-console` **errors** on these matchers for paths matched by `plugin:console/testing-library-tests` (the same `**/*spec*` / `**/__tests__**` globs used for RTL lint).
 
 ### Rule 19: Render in Each Test by Default
 

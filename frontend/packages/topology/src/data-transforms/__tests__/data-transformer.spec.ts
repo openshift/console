@@ -82,10 +82,26 @@ describe('data transformer ', () => {
     expect(graphData.nodes.filter((n) => n.group)).toHaveLength(0);
   });
 
-  it('should match the previous snapshot', () => {
-    expect(
-      getTransformedTopologyData(mockResources, ['deployments', 'deploymentConfigs']),
-    ).toMatchSnapshot();
+  it('should return graph for deployments and deploymentConfigs with stable edges and nodes', () => {
+    const deploymentCount = mockResources.deployments.data.length;
+    const deploymentConfigCount = mockResources.deploymentConfigs.data.length;
+    const graphData = getTransformedTopologyData(mockResources, [
+      'deployments',
+      'deploymentConfigs',
+    ]);
+    const workloadNodes = graphData.nodes.filter((n) => !n.group);
+    const groupNodes = graphData.nodes.filter((n) => n.group);
+    expect(workloadNodes).toHaveLength(deploymentCount + deploymentConfigCount);
+    expect(groupNodes.length).toBeGreaterThan(0);
+    expect(graphData.edges).toStrictEqual([
+      {
+        id: '5ca9ae28-680d-11e9-8c69-5254003f9382_60a9b423-680d-11e9-8c69-5254003f9382',
+        label: 'Visual connector',
+        source: '5ca9ae28-680d-11e9-8c69-5254003f9382',
+        target: '60a9b423-680d-11e9-8c69-5254003f9382',
+        type: 'connects-to',
+      },
+    ]);
   });
 
   it('should return false for non knative resource', () => {
