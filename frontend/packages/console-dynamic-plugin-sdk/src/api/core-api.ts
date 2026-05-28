@@ -941,7 +941,8 @@ export const useUserPreference: UseUserPreference = require('@console/shared/src
 /**
  * @deprecated This hook has been renamed to {@link useUserPreference} for consistency.
  */
-export const useUserSettings: UseUserPreference = useUserPreference;
+export const useUserSettings: UseUserPreference = require('@console/shared/src/hooks/useUserPreference')
+  .useUserPreference;
 
 /**
  * Hook that provides the current quick start context values. This allows plugins to interop with Console
