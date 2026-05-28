@@ -10,14 +10,14 @@ import { handleCta } from './utils/quick-search-utils';
 
 import './QuickSearchDetails.scss';
 
-export type QuickSearchDetailsRendererProps = {
+type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
   navigate: (url: string) => void;
   removeQueryArgument: (key: string) => void;
 };
 export type DetailsRendererFunction = (props: QuickSearchDetailsRendererProps) => ReactNode;
-export interface QuickSearchDetailsProps {
+interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
   closeModal: () => void;
   detailsRenderer?: DetailsRendererFunction;

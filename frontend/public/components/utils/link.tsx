@@ -19,7 +19,7 @@ import { css } from '@patternfly/react-styles';
 //
 // And it's ok for users to make assumptions about capturing groups.
 
-export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
+const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 

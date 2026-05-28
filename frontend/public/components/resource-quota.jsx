@@ -75,7 +75,7 @@ const quotaActions = (quota) => {
   return null;
 };
 
-export const getQuotaResourceTypes = (quota) => {
+const getQuotaResourceTypes = (quota) => {
   const specHard = isClusterQuota(quota)
     ? _.get(quota, 'spec.quota.hard')
     : _.get(quota, 'spec.hard');
@@ -116,7 +116,7 @@ export const getACRQResourceUsage = (quota, resourceType, namespace) => {
   };
 };
 
-export const getResourceUsage = (quota, resourceType) => {
+const getResourceUsage = (quota, resourceType) => {
   const isCluster = isClusterQuota(quota);
   const statusPath = isCluster ? ['status', 'total', 'hard'] : ['status', 'hard'];
   const specPath = isCluster ? ['spec', 'quota', 'hard'] : ['spec', 'hard'];
@@ -591,7 +591,7 @@ const useResourceQuotaColumns = () => {
   return { columns, resetAllColumnWidths };
 };
 
-export const ResourceQuotasList = (props) => {
+const ResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
   const { columns, resetAllColumnWidths } = useResourceQuotaColumns();
 
@@ -673,7 +673,7 @@ const useAppliedClusterResourceQuotaColumns = () => {
   return { columns, resetAllColumnWidths };
 };
 
-export const AppliedClusterResourceQuotasList = (props) => {
+const AppliedClusterResourceQuotasList = (props) => {
   const { data, loaded, namespace } = props;
   const { columns, resetAllColumnWidths } = useAppliedClusterResourceQuotaColumns();
 
@@ -696,7 +696,7 @@ export const AppliedClusterResourceQuotasList = (props) => {
   );
 };
 
-export const quotaType = (quota) => {
+const quotaType = (quota) => {
   if (!quota) {
     return undefined;
   }
@@ -704,7 +704,7 @@ export const quotaType = (quota) => {
 };
 
 // Split each resource quota into one row per subject
-export const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
+const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
 
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
   ({ namespace, flags, mock, showTitle }) => {

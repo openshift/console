@@ -524,7 +524,7 @@ const PVCDetails: FC<PVCDetailsProps> = ({ obj: pvc }) => {
   );
 };
 
-export const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
+const PersistentVolumeClaimList: FC<PersistentVolumeClaimListProps> = ({
   data,
   loaded,
   ...props

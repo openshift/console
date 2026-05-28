@@ -29,7 +29,6 @@ import {
 import { DeprecatedOperatorWarning } from '@console/operator-lifecycle-manager/src/types';
 
 export type { NamespaceMetrics } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
-export { ActionType } from './common';
 
 type MetricValuesByNamespace = {
   [namespace: string]: MetricValuesByName;
@@ -249,21 +248,21 @@ export const sortList = (listId: string, field: string, func: string, orderBy: s
 
   return action(ActionType.SortList, { listId, field, func, orderBy });
 };
-export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
+const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, { uid });
 export const selectOverviewDetailsTab = (tab: string) =>
   action(ActionType.SelectOverviewDetailsTab, { tab });
 export const updateOverviewMetrics = (metrics: any) =>
   action(ActionType.UpdateOverviewMetrics, { metrics });
-export const updateOverviewResources = (resources: OverviewItem[]) =>
+const updateOverviewResources = (resources: OverviewItem[]) =>
   action(ActionType.UpdateOverviewResources, { resources });
 export const updateTimestamps = (lastTick: number) =>
   action(ActionType.UpdateTimestamps, { lastTick });
-export const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
-export const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) =>
+const dismissOverviewDetails = () => action(ActionType.DismissOverviewDetails);
+const updateOverviewSelectedGroup = (group: OverviewSpecialGroup | string) =>
   action(ActionType.UpdateOverviewSelectedGroup, { group });
-export const updateOverviewLabels = (labels: string[]) =>
+const updateOverviewLabels = (labels: string[]) =>
   action(ActionType.UpdateOverviewLabels, { labels });
-export const updateOverviewFilterValue = (value: string) =>
+const updateOverviewFilterValue = (value: string) =>
   action(ActionType.UpdateOverviewFilterValue, { value });
 export const notificationDrawerToggleExpanded = () =>
   action(ActionType.NotificationDrawerToggleExpanded);

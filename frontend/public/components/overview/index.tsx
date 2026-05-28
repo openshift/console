@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { AsyncComponent } from '../utils/async';
 
-export const OverviewListPageLoader = () =>
+const OverviewListPageLoader = () =>
   import('./OverviewListPage' /* webpackChunkName: "overview-list-page" */).then(
     (m) => m.OverviewListPage,
   );

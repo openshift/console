@@ -10,7 +10,7 @@ import { EditorType, EditorToggle } from './editor-toggle';
 import { useEditorType } from './useEditorType';
 
 const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
-export const YAML_TO_JS_OPTIONS = {
+const YAML_TO_JS_OPTIONS = {
   skipInvalid: true,
   sortKeys: (a, b) => _.indexOf(YAML_KEY_ORDER, a) - _.indexOf(YAML_KEY_ORDER, b),
 };

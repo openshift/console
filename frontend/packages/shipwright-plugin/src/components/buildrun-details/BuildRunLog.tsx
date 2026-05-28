@@ -8,7 +8,7 @@ import { TektonResourceLabel } from '../logs/TektonTaskRunLog';
 
 import './BuildRunLog.scss';
 
-export type TaskRunLogProps = {
+type TaskRunLogProps = {
   obj: TaskRunKind;
 };
 

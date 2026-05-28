@@ -22,7 +22,7 @@ import {
 } from '../../forms/rollback/RevisionListHeader';
 import { getRevisionRows } from '../../forms/rollback/RevisionListRow';
 
-export interface HelmReleaseHistoryTableProps {
+interface HelmReleaseHistoryTableProps {
   releaseHistory: HelmRelease[];
   isLoading?: boolean;
   customColumns?: (

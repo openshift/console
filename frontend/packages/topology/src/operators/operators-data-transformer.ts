@@ -51,7 +51,7 @@ export const getOperatorGroupResource = (
   return null;
 };
 
-export const getOperatorGroupResources = (resources: TopologyDataResources) => {
+const getOperatorGroupResources = (resources: TopologyDataResources) => {
   const obsGroups = [];
   WORKLOAD_TYPES.forEach((key) => {
     if (resources[key]?.data && resources[key].data.length) {

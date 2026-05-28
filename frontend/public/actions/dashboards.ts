@@ -35,7 +35,7 @@ export const updateWatchTimeout = (type: RESULTS_TYPE, key: string, timeout: Nod
   action(ActionType.UpdateWatchTimeout, { type, key, timeout });
 export const updateWatchInFlight = (type: RESULTS_TYPE, key: string, inFlight: boolean) =>
   action(ActionType.UpdateWatchInFlight, { type, key, inFlight });
-export const setError = (type: RESULTS_TYPE, key: string, error) =>
+const setError = (type: RESULTS_TYPE, key: string, error) =>
   action(ActionType.SetError, { type, key, error });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- used in typeof for type export
@@ -48,7 +48,7 @@ const dashboardsActions = {
   setError,
 };
 
-export const getQueryKey = (query: string, timespan?: number): string =>
+const getQueryKey = (query: string, timespan?: number): string =>
   timespan ? `${query}@${timespan}` : query;
 
 export const getPrometheusQueryResponse = (

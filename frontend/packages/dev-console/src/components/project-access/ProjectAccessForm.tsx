@@ -26,7 +26,7 @@ type SubjectNamespaceDropdownProps = {
   values: FormikValues;
 };
 
-export const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ name, values }) => {
+const SubjectNamespaceDropdown: FC<SubjectNamespaceDropdownProps> = ({ name, values }) => {
   const { t } = useTranslation();
   const arr = name.split('.');
   const showDropdown =

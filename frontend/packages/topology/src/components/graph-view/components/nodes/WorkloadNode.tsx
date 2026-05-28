@@ -89,7 +89,7 @@ const StatusSeverities = {
   ],
 };
 
-export const getNodePodStatus = (podStatus: AllPodStatus): number => {
+const getNodePodStatus = (podStatus: AllPodStatus): number => {
   switch (podStatus) {
     case AllPodStatus.Failed:
     case AllPodStatus.CrashLoopBackOff:
@@ -101,7 +101,7 @@ export const getNodePodStatus = (podStatus: AllPodStatus): number => {
   }
 };
 
-export const getAggregateStatus = (
+const getAggregateStatus = (
   donutStatus: PodRCData,
   alertSeverity: AlertSeverity,
   buildStatus: string,

@@ -7,7 +7,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import SinkUriResourcesGroup from '../add/event-sources/form-fields/SinkUriResourcesGroup';
 
-export interface SinkSourceModalProps {
+interface SinkSourceModalProps {
   resourceName: string;
   namespace: string;
   cancel?: () => void;

@@ -166,7 +166,7 @@ export const CatalogSourceDetails: FC<CatalogSourceDetailsProps> = ({
   );
 };
 
-export const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => {
+const CatalogSourceOperatorsPage: FC<CatalogSourceOperatorsPageProps> = (props) => {
   return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
 };
 
@@ -558,7 +558,7 @@ export type CatalogSourceListPageProps = {
   obj: OperatorHubKind;
 } & MultiListPageProps;
 
-export type CatalogSourceOperatorsPageProps = {
+type CatalogSourceOperatorsPageProps = {
   obj: CatalogSourceKind;
 } & MultiListPageProps;
 

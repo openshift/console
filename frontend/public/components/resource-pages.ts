@@ -69,7 +69,7 @@ const addDynamicResourcePage = (
 type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 
-export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ConfigMapModel), () =>
     import('./configmap' /* webpackChunkName: "configmap" */).then((m) => m.ConfigMapsDetailsPage),
   )
@@ -297,7 +297,7 @@ export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = [])
       });
     });
 
-export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ConfigMapModel), () =>
     import('./configmap' /* webpackChunkName: "configmap" */).then((m) => m.ConfigMapsPage),
   )

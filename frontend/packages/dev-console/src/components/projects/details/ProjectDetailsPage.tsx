@@ -18,7 +18,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../CreateProjectListPage';
 
-export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
+const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';
 
 interface MonitoringPageProps {
   noProjectsAvailable?: boolean;

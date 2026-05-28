@@ -26,23 +26,22 @@ export enum ActionType {
 
 type K8sEvent = { type: 'ADDED' | 'DELETED' | 'MODIFIED'; object: K8sResourceKind };
 
-export const updateListFromWS = (id: string, k8sObjects: K8sEvent[]) =>
+const updateListFromWS = (id: string, k8sObjects: K8sEvent[]) =>
   action(ActionType.UpdateListFromWS, { id, k8sObjects });
-export const loaded = (id: string, k8sObjects: K8sResourceKind | K8sResourceKind[]) =>
+const loaded = (id: string, k8sObjects: K8sResourceKind | K8sResourceKind[]) =>
   action(ActionType.Loaded, { id, k8sObjects });
 
-export const bulkAddToList = (id: string, k8sObjects: K8sResourceKind[]) =>
+const bulkAddToList = (id: string, k8sObjects: K8sResourceKind[]) =>
   action(ActionType.BulkAddToList, { id, k8sObjects });
 
-export const startWatchK8sObject = (id: string) => action(ActionType.StartWatchK8sObject, { id });
-export const startWatchK8sList = (id: string, query: { [key: string]: string }) =>
+const startWatchK8sObject = (id: string) => action(ActionType.StartWatchK8sObject, { id });
+const startWatchK8sList = (id: string, query: { [key: string]: string }) =>
   action(ActionType.StartWatchK8sList, { id, query });
-export const modifyObject = (id: string, k8sObjects: K8sResourceKind) =>
+const modifyObject = (id: string, k8sObjects: K8sResourceKind) =>
   action(ActionType.ModifyObject, { id, k8sObjects });
-export const stopWatchK8s = (id: string) => action(ActionType.StopWatchK8s, { id });
+const stopWatchK8s = (id: string) => action(ActionType.StopWatchK8s, { id });
 
-export const errored = (id: string, k8sObjects: any) =>
-  action(ActionType.Errored, { id, k8sObjects });
+const errored = (id: string, k8sObjects: any) => action(ActionType.Errored, { id, k8sObjects });
 export const filterList = (id: string, name: string, value: FilterValue) =>
   action(ActionType.FilterList, { id, name, value });
 
@@ -50,7 +49,7 @@ export const partialObjectMetadataListHeader = {
   Accept: 'application/json;as=PartialObjectMetadataList;v=v1;g=meta.k8s.io,application/json',
 };
 
-export const partialObjectMetadataHeader = {
+const partialObjectMetadataHeader = {
   Accept: 'application/json;as=PartialObjectMetadata;v=v1;g=meta.k8s.io,application/json',
 };
 

@@ -17,21 +17,21 @@ const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const rightCards = [{ Card: ActivityCard }];
 
-export enum ActionType {
+enum ActionType {
   CPU_LIMIT = 'CPU_LIMIT',
   MEMORY_LIMIT = 'MEMORY_LIMIT',
   HEALTH_CHECK = 'HEALTH_CHECK',
   OBJ = 'OBJ',
 }
 
-export const initialState = (obj: NodeKind): NodeDashboardState => ({
+const initialState = (obj: NodeKind): NodeDashboardState => ({
   obj,
   cpuLimit: undefined,
   memoryLimit: undefined,
   healthCheck: undefined,
 });
 
-export const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
+const reducer = (state: NodeDashboardState, action: NodeDashboardAction) => {
   switch (action.type) {
     case ActionType.CPU_LIMIT: {
       if (_.isEqual(action.payload, state.cpuLimit)) {

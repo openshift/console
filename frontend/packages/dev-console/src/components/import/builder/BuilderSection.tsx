@@ -10,7 +10,7 @@ import FormSection from '../section/FormSection';
 import BuilderImageSelector from './BuilderImageSelector';
 import BuilderImageTagSelector from './BuilderImageTagSelector';
 
-export interface ImageSectionProps {
+interface ImageSectionProps {
   builderImages: NormalizedBuilderImages;
   existingPipeline?: PipelineKind;
 }

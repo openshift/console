@@ -4,7 +4,7 @@ import { referenceFor } from '@console/internal/module/k8s';
 
 export const RESOURCE_KEY_SEPERATOR = '#';
 
-export const getResourceApiGroup = (apiVersion: string): string => apiVersion.split('/')[0];
+const getResourceApiGroup = (apiVersion: string): string => apiVersion.split('/')[0];
 
 export const getSinkableResourceOrder = (apiVersion: string): number => {
   const sortOrder = {

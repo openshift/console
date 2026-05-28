@@ -139,7 +139,7 @@ const useConfigMapsColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
+const ConfigMaps: FC<ConfigMapsProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useConfigMapsColumns();
 
   return (

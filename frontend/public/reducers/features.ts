@@ -46,7 +46,7 @@ export const defaults = _.mapValues(FLAGS, (flag) => {
   }
 });
 
-export const baseCRDs = {
+const baseCRDs = {
   [referenceForModel(ClusterAutoscalerModel)]: FLAGS.CLUSTER_AUTOSCALER,
   [referenceForModel(ConsoleLinkModel)]: FLAGS.CONSOLE_LINK,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,

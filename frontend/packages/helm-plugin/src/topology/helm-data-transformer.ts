@@ -189,7 +189,7 @@ const getHelmReleaseMap = (namespace: string) => {
     .catch(() => ({}));
 };
 
-export const getHelmTopologyDataModel = () => {
+const getHelmTopologyDataModel = () => {
   let secretCount = -1;
   let mapNamespace = '';
   let helmResourcesMap = {};

@@ -34,7 +34,7 @@ const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, Stateful
 const getContainers = (workload: K8sResourceKind) =>
   _.get(workload, 'spec.template.spec.containers') || [];
 
-export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
+const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (props) => {
   const { namespace, secretName } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -295,7 +295,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
   );
 };
 
-export const AddSecretToWorkloadModalOverlay: OverlayComponent<AddSecretToWorkloadModalProps> = (
+const AddSecretToWorkloadModalOverlay: OverlayComponent<AddSecretToWorkloadModalProps> = (
   props,
 ) => {
   const [isOpen, setIsOpen] = useState(true);

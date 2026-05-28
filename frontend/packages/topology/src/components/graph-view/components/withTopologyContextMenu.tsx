@@ -9,7 +9,7 @@ import { createContextMenuItems } from '../../../actions/contextMenuActions';
 
 type Reference = ComponentProps<typeof ContextMenu>['reference'];
 
-export interface WithContextMenuProps {
+interface WithContextMenuProps {
   onContextMenu: (e: MouseEvent) => void;
   contextMenuOpen: boolean;
 }

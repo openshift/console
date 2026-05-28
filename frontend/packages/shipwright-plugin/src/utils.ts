@@ -26,11 +26,11 @@ export type LatestBuildRunStatus = {
   status: ComputedBuildRunStatus;
 };
 
-export interface Runs {
+interface Runs {
   data?: BuildRun[];
 }
 
-export const getLatestRun = (runs: Runs, field: string): BuildRun => {
+const getLatestRun = (runs: Runs, field: string): BuildRun => {
   if (!runs || !runs.data || !(runs.data.length > 0) || !field) {
     return null;
   }

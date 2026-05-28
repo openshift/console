@@ -37,7 +37,7 @@ const sinkServiceSchema = (t: TFunction) =>
       otherwise: (schema) => schema,
     });
 
-export const sourceDataSpecSchema = (t: TFunction) =>
+const sourceDataSpecSchema = (t: TFunction) =>
   yup
     .object()
     .when('type', {

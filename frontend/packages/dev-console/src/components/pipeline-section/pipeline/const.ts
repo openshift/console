@@ -1,4 +1,4 @@
-export enum PipelineResourceType {
+enum PipelineResourceType {
   git = 'git',
   image = 'image',
   cluster = 'cluster',

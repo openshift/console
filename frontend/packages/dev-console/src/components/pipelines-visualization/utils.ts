@@ -47,7 +47,7 @@ import {
   DEFAULT_NODE_HEIGHT,
 } from './types';
 
-export const conditions = {
+const conditions = {
   hasFromDependency: (task: PipelineTask): boolean =>
     task.resources &&
     task.resources.inputs &&
@@ -62,7 +62,7 @@ export const conditions = {
  * @param pipelineRun
  * @param isFinallyTasks
  */
-export const appendPipelineRunStatus = (
+const appendPipelineRunStatus = (
   pipeline,
   pipelineRun,
   taskRuns: TaskRunKind[],
@@ -111,7 +111,7 @@ export const appendPipelineRunStatus = (
   });
 };
 
-export const getPipelineTasks = (
+const getPipelineTasks = (
   pipeline: PipelineKind,
   pipelineRun: PipelineRunKind = {
     apiVersion: '',
@@ -197,7 +197,7 @@ export const getPipelineTasks = (
   return out;
 };
 
-export const getWhenStatus = (status: RunStatus): WhenStatus => {
+const getWhenStatus = (status: RunStatus): WhenStatus => {
   switch (status) {
     case RunStatus.Succeeded:
     case RunStatus.Failed:
@@ -211,14 +211,14 @@ export const getWhenStatus = (status: RunStatus): WhenStatus => {
   }
 };
 
-export const getTaskWhenStatus = (task: PipelineTaskWithStatus): WhenStatus => {
+const getTaskWhenStatus = (task: PipelineTaskWithStatus): WhenStatus => {
   if (!task.when) {
     return undefined;
   }
   return getWhenStatus(task.status?.reason);
 };
 
-export const getSpacerNode = (node: PipelineMixedNodeModel): PipelineMixedNodeModel => ({
+const getSpacerNode = (node: PipelineMixedNodeModel): PipelineMixedNodeModel => ({
   ...node,
   height: 1,
   width: 1,
@@ -237,7 +237,7 @@ const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, da
 const createPipelineTaskNode = (type: NodeType, data: PipelineRunAfterNodeModelData) =>
   createGenericNode(type, data.width, data.height)(data.id || '', data);
 
-export const getTextWidth = (text: string, font: string = '0.8rem RedHatText'): number => {
+const getTextWidth = (text: string, font: string = '0.8rem RedHatText'): number => {
   if (!text || text.length === 0) {
     return 0;
   }
@@ -276,7 +276,7 @@ export const dagreViewerComponentFactory: ComponentFactory = (kind: ModelKind, t
   }
 };
 
-export const extractDepsFromContextVariables = (contextVariable: string) => {
+const extractDepsFromContextVariables = (contextVariable: string) => {
   const regex = /(?:(?:\$\(tasks.))([a-z0-9_-]+)(?:.results+)(?:[.^\w]+\))/g;
   let matches: RegExpExecArray | null;
   const deps: string[] = [];

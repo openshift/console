@@ -8,12 +8,9 @@ import { css } from '@patternfly/react-styles';
 import { useTranslation } from 'react-i18next';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
-import { usePrometheusPoll } from './prometheus-poll-hook';
-import { PrometheusEndpoint } from './helpers';
 import { humanizePercentage } from '../utils/units';
 import { useRefWidth } from '../utils/ref-width-hook';
 import type { Humanize } from '../utils/types';
-import { getInstantVectorStats } from './utils';
 import { DataPoint } from '.';
 
 const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
@@ -80,46 +77,6 @@ export const GaugeChart: FC<GaugeChartProps> = ({
   );
 };
 
-export const Gauge: FC<GaugeProps> = ({
-  humanize = humanizePercentage,
-  invert,
-  namespace,
-  percent = 0,
-  query,
-  remainderLabel,
-  secondaryTitle,
-  thresholds,
-  title,
-  usedLabel,
-}) => {
-  const { t } = useTranslation();
-
-  const [response, error, loading] = usePrometheusPoll({
-    endpoint: PrometheusEndpoint.QUERY,
-    namespace,
-    query,
-  });
-
-  const [data] = response
-    ? getInstantVectorStats(response, null, humanize).map(({ label, y }) => ({ x: label, y }))
-    : [{ x: humanize(percent).string, y: percent }];
-  return (
-    <GaugeChart
-      data={data}
-      error={!!error && t('No data')}
-      invert={invert}
-      label={data.x}
-      loading={loading}
-      query={query}
-      remainderLabel={remainderLabel}
-      secondaryTitle={secondaryTitle}
-      thresholds={thresholds}
-      title={title}
-      usedLabel={usedLabel}
-    />
-  );
-};
-
 type GaugeChartProps = {
   data: DataPoint;
   error?: string;
@@ -141,20 +98,4 @@ type GaugeChartProps = {
   ariaChartTitle?: string;
   usedLabel?: string;
   className?: string;
-};
-
-type GaugeProps = {
-  humanize?: Humanize;
-  invert?: boolean;
-  namespace?: string;
-  percent?: number;
-  query?: string;
-  remainderLabel?: string;
-  secondaryTitle?: string;
-  thresholds?: {
-    value: number;
-    color?: string;
-  }[];
-  title?: string;
-  usedLabel?: string;
 };

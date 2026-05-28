@@ -10,7 +10,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { DomainMappingModel } from '../../../models';
 
-export type DomainMappingOverviewListProps = {
+type DomainMappingOverviewListProps = {
   title: string;
   domainMappings: K8sResourceKind[];
 };

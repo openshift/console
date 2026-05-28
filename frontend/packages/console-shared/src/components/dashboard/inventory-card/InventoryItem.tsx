@@ -135,7 +135,7 @@ export const InventoryItem = memo<InventoryItemProps>(
   },
 );
 
-export const Status: FC<StatusProps> = ({ groupID, count }) => {
+const Status: FC<StatusProps> = ({ groupID, count }) => {
   const [groupExtensions] = useResolvedExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );

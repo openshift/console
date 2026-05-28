@@ -18,7 +18,7 @@ import {
 } from './utils/deployment-strategy-utils';
 import { DeploymentStrategyType } from './utils/types';
 
-export type DeploymentStrategySectionProps = {
+type DeploymentStrategySectionProps = {
   resourceType: Resources;
   resourceObj: K8sResourceKind;
 };

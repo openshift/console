@@ -190,7 +190,7 @@ const MetricsTable: FC<MetricsTableProps> = ({ obj: hpa }) => {
   );
 };
 
-export const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> = ({
+const HorizontalPodAutoscalersDetails: FC<HorizontalPodAutoscalersDetailsProps> = ({
   obj: hpa,
 }) => {
   const { t } = useTranslation();
@@ -402,7 +402,7 @@ const useHorizontalPodAutoscalersColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
+const HorizontalPodAutoscalersList: FC<HorizontalPodAutoscalersListProps> = ({
   data,
   loaded,
   ...props
@@ -438,11 +438,11 @@ export const HorizontalPodAutoscalersPage: FC<HorizontalPodAutoscalersPageProps>
 );
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';
 
-export type HorizontalPodAutoscalersDetailsProps = {
+type HorizontalPodAutoscalersDetailsProps = {
   obj: HorizontalPodAutoscalerKind;
 };
 
-export type HorizontalPodAutoscalersListProps = {
+type HorizontalPodAutoscalersListProps = {
   data: HorizontalPodAutoscalerKind[];
   loaded: boolean;
 };

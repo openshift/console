@@ -151,7 +151,7 @@ export const knativeServingResourcesRoutes = (namespace: string): WatchK8sResour
   return knativeResource;
 };
 
-export const k8sServices = (namespace: string, limit?: number): WatchK8sResourceWithProp[] => {
+const k8sServices = (namespace: string, limit?: number): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,
@@ -182,10 +182,7 @@ export const knativeServingResourcesServices = (
   return knativeResource;
 };
 
-export const knativeKafkaSinks = (
-  namespace: string,
-  limit?: number,
-): WatchK8sResourceWithProp[] => {
+const knativeKafkaSinks = (namespace: string, limit?: number): WatchK8sResourceWithProp[] => {
   const knativeResource = [
     {
       isList: true,

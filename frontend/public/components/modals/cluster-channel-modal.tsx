@@ -33,7 +33,7 @@ import {
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const ClusterChannelModal = (props: ClusterChannelModalProps) => {
+const ClusterChannelModal = (props: ClusterChannelModalProps) => {
   const { cancel, close, cv } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [channel, setChannel] = useState(cv.spec.channel);

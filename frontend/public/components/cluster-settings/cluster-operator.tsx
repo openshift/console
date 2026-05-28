@@ -63,9 +63,7 @@ import { RowProps, TableColumn } from '@console/dynamic-plugin-sdk/src/extension
 import { sortResourceByValue } from '../factory/Table/sort';
 import { sorts } from '../factory/table';
 
-export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(
-  ClusterOperatorModel,
-);
+const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
 const getIcon = (status: OperatorStatus) => {
   return {
@@ -178,7 +176,7 @@ const useClusterOperatorColumns = (): TableColumn<ClusterOperator>[] => {
   return columns;
 };
 
-export const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...props }) => {
+const ClusterOperatorList: FC<ClusterOperatorListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useClusterOperatorColumns();
 

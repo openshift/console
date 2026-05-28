@@ -1,6 +1,6 @@
 import type { K8sResourceKind, PodPhase } from '@console/internal/module/k8s';
 
-export enum AllPodStatus {
+enum AllPodStatus {
   Running = 'Running',
   NotReady = 'Not Ready',
   Warning = 'Warning',
@@ -17,7 +17,7 @@ export enum AllPodStatus {
   CrashLoopBackOff = 'CrashLoopBackOff',
 }
 
-export type ExtPodPhase =
+type ExtPodPhase =
   | AllPodStatus.Empty
   | AllPodStatus.Warning
   | AllPodStatus.Idle
@@ -27,22 +27,22 @@ export type ExtPodPhase =
   | AllPodStatus.Terminating
   | AllPodStatus.ScalingUp;
 
-export type ExtPodStatus = {
+type ExtPodStatus = {
   phase: ExtPodPhase | PodPhase;
 };
 
-export type ExtPodKind = {
+type ExtPodKind = {
   status?: ExtPodStatus;
 } & K8sResourceKind;
 
-export type OverviewItemAlerts = {
+type OverviewItemAlerts = {
   [key: string]: {
     message: string;
     severity: string;
   };
 };
 
-export type PodControllerOverviewItem = {
+type PodControllerOverviewItem = {
   alerts: OverviewItemAlerts;
   revision: number;
   obj: K8sResourceKind;

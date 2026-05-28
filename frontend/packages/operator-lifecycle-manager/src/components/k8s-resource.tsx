@@ -47,7 +47,7 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-export const ResourceTableRow: FC<RowFunctionArgs<
+const ResourceTableRow: FC<RowFunctionArgs<
   K8sResourceKind,
   {
     linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
@@ -66,7 +66,7 @@ export const ResourceTableRow: FC<RowFunctionArgs<
   </>
 );
 
-export const ResourceTable: FC<ResourceTableProps> = (props) => {
+const ResourceTable: FC<ResourceTableProps> = (props) => {
   const { t } = useTranslation();
   const ResourceTableHeader = () => [
     {
@@ -197,7 +197,7 @@ export type ResourcesProps = {
   customData: any;
 };
 
-export type ResourceTableProps = {
+type ResourceTableProps = {
   loaded: boolean;
   loadError?: string;
   data: K8sResourceKind[];

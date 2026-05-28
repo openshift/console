@@ -11,7 +11,7 @@ import { ConfigMapFormEditor } from './ConfigMapFormEditor';
 import { ConfigMap, ConfigMapFormInitialValues } from './types';
 import { getConfigmapData, getConfigMapInitialValues, validationSchema } from './configmap-utils';
 
-export interface ConfigMapProps {
+interface ConfigMapProps {
   title: string;
   namespace: string;
   name: string;

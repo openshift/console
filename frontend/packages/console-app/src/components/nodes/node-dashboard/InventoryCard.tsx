@@ -29,7 +29,7 @@ import { useIsKubevirtPluginActive } from '../../../utils/kubevirt';
 import { useWatchVirtualMachineInstances, VirtualMachineModel } from '../NodeVmUtils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
-export const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
+const NodeInventoryItem: FC<NodeInventoryItemProps> = ({ nodeName, model, mapper }) => {
   const resource = useMemo(
     () => ({
       kind: model.crd ? referenceForModel(model) : model.kind,

@@ -34,7 +34,7 @@ type VolumeFormProps = {
   namespace: string;
 };
 
-export const GetVolumeTypeFields = (volumeType, namePrefix: string, namespace: string) => {
+const GetVolumeTypeFields = (volumeType, namePrefix: string, namespace: string) => {
   const { values, setFieldValue } = useFormikContext<FormikValues>();
   const configMap: string = _.get(values, `${namePrefix}.resource`);
   const handleConfigMapChange = useCallback(

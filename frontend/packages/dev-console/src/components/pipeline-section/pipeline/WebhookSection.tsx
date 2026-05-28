@@ -41,14 +41,14 @@ type WebhoookSectionProps = {
   formContextField?: string;
 };
 
-export const AccessTokenDocLinks = {
+const AccessTokenDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token',
   [GitProvider.GITLAB]: 'https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html',
   [GitProvider.BITBUCKET]: 'https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/',
 };
 
-export const WebhookDocLinks = {
+const WebhookDocLinks = {
   [GitProvider.GITHUB]:
     'https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks',
   [GitProvider.GITLAB]:

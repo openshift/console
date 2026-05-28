@@ -1,10 +1,6 @@
 import type { StorageClassResourceKind } from '@console/internal/module/k8s/types';
 
-export const cephStorageProvisioners = [
-  'ceph.rook.io/block',
-  'cephfs.csi.ceph.com',
-  'rbd.csi.ceph.com',
-];
+const cephStorageProvisioners = ['ceph.rook.io/block', 'cephfs.csi.ceph.com', 'rbd.csi.ceph.com'];
 
 const objectStorageProvisioners = ['noobaa.io/obc', 'ceph.rook.io/bucket'];
 

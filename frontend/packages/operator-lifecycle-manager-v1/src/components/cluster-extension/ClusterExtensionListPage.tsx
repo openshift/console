@@ -20,7 +20,7 @@ import { DASH } from '@console/shared/src/constants/ui';
 import { ClusterExtensionModel } from '../../models';
 import type { ClusterExtensionKind } from '../../types';
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'name' },
   { id: 'status' },
   { id: 'version' },

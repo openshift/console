@@ -16,7 +16,7 @@ import { FieldSet, FormField } from './fields';
 import type { UiSchemaOptionsWithDependency } from './types';
 import { useSchemaLabel } from './utils';
 
-export const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
+const AtomicFieldTemplate: FC<FieldTemplateProps> = ({
   children,
   id,
   label,

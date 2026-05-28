@@ -135,7 +135,7 @@ export const AnnotationsModalOverlay: OverlayComponent<AnnotationsModalProps> = 
 
 TagsModal.displayName = 'TagsModal';
 
-export type TagsModalProps = {
+type TagsModalProps = {
   kind: K8sModel;
   path: string;
   resource: K8sResourceCommon;

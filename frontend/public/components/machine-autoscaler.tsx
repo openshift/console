@@ -266,6 +266,6 @@ type MachineAutoscalerTargetLinkProps = {
   obj: K8sResourceKind;
 };
 
-export type MachineAutoscalerDetailsProps = {
+type MachineAutoscalerDetailsProps = {
   obj: K8sResourceKind;
 };

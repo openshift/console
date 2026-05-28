@@ -61,9 +61,9 @@ import type {
 } from '../triggers';
 import { initialResourceFormValues } from './const';
 
-export const CREATE_PIPELINE_RESOURCE = '#CREATE_PIPELINE_RESOURCE#';
+const CREATE_PIPELINE_RESOURCE = '#CREATE_PIPELINE_RESOURCE#';
 const PIPELINE_GA_VERSION = '1.4.0';
-export interface ParamData {
+interface ParamData {
   [key: string]: any;
 }
 
@@ -73,7 +73,7 @@ export interface ParamData {
  * Note: Each check within this method should be driven by the apiVersion number if the API is properly up-versioned
  * for these breaking changes. (should be done moving from 0.10.x forward)
  */
-export const migratePipelineRun = (pipelineRun: PipelineRunKind): PipelineRunKind => {
+const migratePipelineRun = (pipelineRun: PipelineRunKind): PipelineRunKind => {
   // .spec.serviceAccount was removed for .spec.serviceAccountName in 0.9.x
   // Note: apiVersion was not updated for this change and thus we cannot gate this change behind a version number
   if (pipelineRun.spec.serviceAccount) {
@@ -84,7 +84,7 @@ export const migratePipelineRun = (pipelineRun: PipelineRunKind): PipelineRunKin
   return pipelineRun;
 };
 
-export const getPipelineName = (pipeline?: PipelineKind, latestRun?: PipelineRunKind): string => {
+const getPipelineName = (pipeline?: PipelineKind, latestRun?: PipelineRunKind): string => {
   if (pipeline) {
     return pipeline?.metadata?.name || '';
   }
@@ -98,7 +98,7 @@ export const getPipelineName = (pipeline?: PipelineKind, latestRun?: PipelineRun
   return null;
 };
 
-export const getPipelineRunGenerateName = (pipelineRun: PipelineRunKind): string => {
+const getPipelineRunGenerateName = (pipelineRun: PipelineRunKind): string => {
   if (pipelineRun?.metadata?.generateName) {
     return pipelineRun.metadata.generateName;
   }
@@ -106,7 +106,7 @@ export const getPipelineRunGenerateName = (pipelineRun: PipelineRunKind): string
   return `${pipelineRun?.metadata?.name?.replace(/-[a-z0-9]{5,6}$/, '')}-`;
 };
 
-export const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRunParam[] => {
+const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRunParam[] => {
   return (
     pipelineParams &&
     pipelineParams.map((param) => ({
@@ -116,7 +116,7 @@ export const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRun
   );
 };
 
-export const getPipelineRunWorkspaces = (
+const getPipelineRunWorkspaces = (
   pipelineWorkspaces: PipelineModalFormWorkspace[],
 ): PipelineRunWorkspace[] => {
   return (
@@ -128,11 +128,11 @@ export const getPipelineRunWorkspaces = (
   );
 };
 
-export enum StartedByAnnotation {
+enum StartedByAnnotation {
   user = 'pipeline.openshift.io/started-by',
 }
 
-export type VolumeClaimTemplateType = {
+type VolumeClaimTemplateType = {
   volumeClaimTemplate: VolumeTypeClaim;
 };
 
@@ -149,11 +149,11 @@ const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
 };
 
-export const getDefinedObj = (objData: ParamData): ParamData => {
+const getDefinedObj = (objData: ParamData): ParamData => {
   return _.omitBy(objData, (v) => _.isUndefined(v) || _.isNull(v) || v === '');
 };
 
-export type PipelineModalFormResource = {
+type PipelineModalFormResource = {
   name: string;
   selection: string;
   data: {
@@ -163,7 +163,7 @@ export type PipelineModalFormResource = {
   };
 };
 
-export type PipelineModalFormWorkspaceStructure =
+type PipelineModalFormWorkspaceStructure =
   | {
       type: VolumeTypes.NoWorkspace;
       data: {};
@@ -199,13 +199,13 @@ export type PipelineModalFormWorkspaceStructure =
       };
     };
 
-export type PipelineModalFormWorkspace = TektonWorkspace & PipelineModalFormWorkspaceStructure;
+type PipelineModalFormWorkspace = TektonWorkspace & PipelineModalFormWorkspaceStructure;
 
-export type ModalParameter = TektonParam & {
+type ModalParameter = TektonParam & {
   value?: string | string[];
 };
 
-export type CommonPipelineModalFormikValues = FormikValues & {
+type CommonPipelineModalFormikValues = FormikValues & {
   namespace: string;
   parameters: ModalParameter[];
   workspaces: PipelineModalFormWorkspace[];
@@ -218,11 +218,11 @@ export type AddTriggerFormValues = CommonPipelineModalFormikValues & {
   };
 };
 
-export type StartPipelineFormValues = CommonPipelineModalFormikValues & {
+type StartPipelineFormValues = CommonPipelineModalFormikValues & {
   secretOpen: boolean;
 };
 
-export const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {
+const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {
   const allCSVs: ClusterServiceVersionKind[] = await k8sList(ClusterServiceVersionModel, {
     ns: namespace,
   });
@@ -241,12 +241,12 @@ export const getPipelineOperatorVersion = async (namespace: string): Promise<Sem
   return null;
 };
 
-export const isGAVersionInstalled = (operator: SemVer): boolean => {
+const isGAVersionInstalled = (operator: SemVer): boolean => {
   if (!operator) return false;
   return gte(operator.version, PIPELINE_GA_VERSION);
 };
 
-export const getPipelineRunData = (
+const getPipelineRunData = (
   pipeline: PipelineKind = null,
   latestRun?: PipelineRunKind,
   options?: { generateName: boolean },
@@ -331,7 +331,7 @@ export const getPipelineRunData = (
   return migratePipelineRun(newPipelineRun);
 };
 
-export const getPipelineRunFromForm = (
+const getPipelineRunFromForm = (
   pipeline: PipelineKind,
   formValues: CommonPipelineModalFormikValues,
   labels?: { [key: string]: string },
@@ -387,7 +387,7 @@ const supportWorkspaceDefaults = (preselectPVC: string) => (
   };
 };
 
-export const convertPipelineToModalData = (
+const convertPipelineToModalData = (
   pipeline: PipelineKind,
   alwaysCreateResources: boolean = false,
   preselectPVC: string = '',
@@ -415,7 +415,7 @@ export const convertPipelineToModalData = (
   };
 };
 
-export const getServerlessFunctionDefaultPersistentVolumeClaim = async (
+const getServerlessFunctionDefaultPersistentVolumeClaim = async (
   pipelineName: string,
 ): Promise<VolumeClaimTemplateType> => {
   const storageClasses: K8sResourceCommon[] = await k8sListResourceItems<K8sResourceCommon>({
@@ -453,7 +453,7 @@ export const getServerlessFunctionDefaultPersistentVolumeClaim = async (
   };
 };
 
-export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaimTemplateType => {
+const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaimTemplateType => {
   return {
     volumeClaimTemplate: {
       metadata: {
@@ -471,7 +471,7 @@ export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaim
   };
 };
 
-export const convertMapToNameValueArray = (map: {
+const convertMapToNameValueArray = (map: {
   [key: string]: any;
 }): PipelineRunEmbeddedResourceParam[] => {
   return Object.keys(map).map((name) => {
@@ -491,7 +491,7 @@ const processWorkspaces = (values: StartPipelineFormValues): StartPipelineFormVa
   };
 };
 
-export const createSecretResource = (
+const createSecretResource = (
   secret: ParamData,
   type: string,
   namespace: string,
@@ -509,7 +509,7 @@ export const createSecretResource = (
   return k8sCreate(SecretModel, secretResource);
 };
 
-export const createPipelineResource = (
+const createPipelineResource = (
   params: ParamData,
   type: string,
   namespace: string,
@@ -541,7 +541,7 @@ export const createPipelineResource = (
   return k8sCreate(PipelineResourceModel, pipelineResource);
 };
 
-export const resourceSubmit = async (
+const resourceSubmit = async (
   resourceValues: PipelineModalFormResource,
   namespace: string,
 ): Promise<K8sResourceCommon> => {
@@ -590,7 +590,7 @@ const processResources = async (
   };
 };
 
-export const submitStartPipeline = async (
+const submitStartPipeline = async (
   values: StartPipelineFormValues,
   pipeline: PipelineKind,
   labels?: { [key: string]: string },
@@ -771,7 +771,7 @@ export const updatePipelineForImportFlow = async (
   return k8sUpdate(PipelineModel, updatedPipeline, namespace, name);
 };
 
-export const createEventListener = (
+const createEventListener = (
   triggerBindings: TriggerBindingKind[],
   triggerTemplate: TriggerTemplateKind,
   pipelineOperatorVersion: SemVer,
@@ -822,7 +822,7 @@ export const createEventListener = (
   };
 };
 
-export const createEventListenerRoute = (
+const createEventListenerRoute = (
   eventListener: EventListenerKind,
   generatedName?: string,
   targetPort: number | string = 8080,
@@ -855,7 +855,7 @@ export const createEventListenerRoute = (
   };
 };
 
-export const createTriggerTemplate = (
+const createTriggerTemplate = (
   pipeline: PipelineKind,
   pipelineRun: PipelineRunKind,
   params: TriggerTemplateKindParam[],
@@ -873,7 +873,7 @@ export const createTriggerTemplate = (
   };
 };
 
-export const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
+const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
   const elResource: EventListenerKind = await k8sGet(EventListenerModel, elName, ns);
   const serviceGeneratedName = elResource?.status?.configuration?.generatedName;
 
@@ -998,7 +998,7 @@ type KeyValuePair = {
   value: string;
 };
 
-export enum SecretAnnotationId {
+enum SecretAnnotationId {
   Git = 'git',
   Image = 'docker',
 }
@@ -1033,7 +1033,7 @@ export const getSecretAnnotations = (
   return { ...existingAnnotations, [annotationKey]: annotation?.value };
 };
 
-export const getAllNotStartedPipelines = (): { [ns: string]: string[] } => {
+const getAllNotStartedPipelines = (): { [ns: string]: string[] } => {
   try {
     return JSON.parse(sessionStorage.getItem('bridge/pipeline-run-auto-start-failed') ?? '{}');
   } catch (e) {

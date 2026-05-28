@@ -17,7 +17,7 @@ export interface MonitoringQuery {
   id?: string;
 }
 
-export enum GraphTypes {
+enum GraphTypes {
   area = 'Area',
   line = 'Line',
 }

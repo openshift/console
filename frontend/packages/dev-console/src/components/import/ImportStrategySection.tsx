@@ -22,7 +22,7 @@ import FormSection from './section/FormSection';
 import ServerlessFunctionSection from './serverless-function/ServerlessFunctionSection';
 import './ImportStrategySection.scss';
 
-export interface ImportStrategySectionProps {
+interface ImportStrategySectionProps {
   builderImages: NormalizedBuilderImages;
 }
 

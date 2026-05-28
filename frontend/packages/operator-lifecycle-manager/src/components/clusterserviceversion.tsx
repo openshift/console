@@ -438,7 +438,7 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   },
 );
 
-export const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
+const SubscriptionTableRow: FC<SubscriptionTableRowProps> = ({
   activeNamespace,
   catalogSourceMissing,
   obj,
@@ -576,7 +576,7 @@ const CSVListNoDataEmptyMsg = () => {
   return <ConsoleEmptyState title={t('olm~No Operators found')}>{detail}</ConsoleEmptyState>;
 };
 
-export const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
+const ClusterServiceVersionList: FC<ClusterServiceVersionListProps> = ({
   subscriptions,
   catalogSources,
   data,
@@ -879,7 +879,7 @@ export const CRDCard: FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
   );
 };
 
-export const CRDCardRow: FC<CRDCardRowProps> = ({ csv, providedAPIs }) => {
+const CRDCardRow: FC<CRDCardRowProps> = ({ csv, providedAPIs }) => {
   const { t } = useTranslation();
   return (
     <Flex className="pf-v6-u-mb-md" gap={{ default: 'gapXl' }}>
@@ -943,7 +943,7 @@ const InitializationResourceAlert: FC<InitializationResourceAlertProps> = (props
   return null;
 };
 
-export const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (props) => {
+const ClusterServiceVersionDetails: FC<ClusterServiceVersionDetailsProps> = (props) => {
   const { t } = useTranslation();
   const { spec, metadata, status } = props.obj ?? {};
   const { subscription } = props.customData;
@@ -1360,7 +1360,7 @@ export type ClusterServiceVersionsPageProps = {
   showTitle?: boolean;
 };
 
-export type ClusterServiceVersionListProps = {
+type ClusterServiceVersionListProps = {
   loaded: boolean;
   loadError?: unknown;
   data: ClusterServiceVersionKind[];
@@ -1376,12 +1376,12 @@ export type CRDCardProps = {
   required?: boolean;
 };
 
-export type CRDCardRowProps = {
+type CRDCardRowProps = {
   providedAPIs: (CRDDescription | APIServiceDefinition)[];
   csv: ClusterServiceVersionKind;
 };
 
-export type ClusterServiceVersionDetailsProps = {
+type ClusterServiceVersionDetailsProps = {
   obj: ClusterServiceVersionKind;
   customData: {
     subscriptions: SubscriptionKind[];

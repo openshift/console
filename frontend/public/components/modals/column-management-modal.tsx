@@ -27,9 +27,9 @@ import { OverlayComponent } from '@console/dynamic-plugin-sdk/src/app/modal-supp
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
-export const MAX_VIEW_COLS = 9;
+const MAX_VIEW_COLS = 9;
 
-export const NAME_COLUMN_ID = 'name';
+const NAME_COLUMN_ID = 'name';
 const readOnlyColumns = new Set([NAME_COLUMN_ID]);
 
 const DataListRow: FC<DataListRowProps> = ({

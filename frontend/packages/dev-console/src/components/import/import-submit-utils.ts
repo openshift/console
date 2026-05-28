@@ -183,7 +183,7 @@ export const createWebhookSecret = (
   return k8sCreate(SecretModel, webhookSecret, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateShipwrightBuild = (
+const createOrUpdateShipwrightBuild = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -282,7 +282,7 @@ export const createOrUpdateShipwrightBuild = (
     : k8sCreate(ShipwrightBuildModel, newShipwrightBuild, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateBuildConfig = (
+const createOrUpdateBuildConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -498,7 +498,7 @@ export const createOrUpdateDeployment = (
     : k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateDeploymentConfig = (
+const createOrUpdateDeploymentConfig = (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -583,7 +583,7 @@ export const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
-export const managePipelineResources = async (
+const managePipelineResources = async (
   formData: GitImportFormData,
   pipelineData: PipelineKind,
 ): Promise<K8sResourceKind[]> => {

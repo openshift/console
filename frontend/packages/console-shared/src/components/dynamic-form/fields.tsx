@@ -39,7 +39,7 @@ const Description = ({ id, description }) =>
     </span>
   ) : null;
 
-export const DescriptionField: FC<FieldProps> = ({ id, description }) => (
+const DescriptionField: FC<FieldProps> = ({ id, description }) => (
   <Description id={id} description={description} />
 );
 
@@ -260,7 +260,7 @@ export const PodAffinityField: FC<FieldProps> = ({
   );
 };
 
-export const MatchExpressionsField: FC<FieldProps> = ({
+const MatchExpressionsField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -287,7 +287,7 @@ export const MatchExpressionsField: FC<FieldProps> = ({
   );
 };
 
-export const LabelsField: FC<FieldProps> = ({
+const LabelsField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -311,7 +311,7 @@ export const LabelsField: FC<FieldProps> = ({
   </FormField>
 );
 
-export const DropdownField: FC<FieldProps> = ({
+const DropdownField: FC<FieldProps> = ({
   formData,
   idSchema,
   name,
@@ -336,7 +336,7 @@ export const DropdownField: FC<FieldProps> = ({
   );
 };
 
-export const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
+const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
   // If the provided schema will not generate any form field elements, return null.
   // To check that, it's required to resolving definition references ($ref) in the
   // JSON schema as it is implemented in the origin SchemaField:
@@ -363,7 +363,7 @@ export const CustomSchemaField: FC<SchemaFieldProps> = (props) => {
   return <SchemaField {...props} />;
 };
 
-export const NullField = () => null;
+const NullField = () => null;
 
 export default {
   DescriptionField,

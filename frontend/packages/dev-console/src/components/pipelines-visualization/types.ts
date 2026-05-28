@@ -13,11 +13,11 @@ export const NODE_PADDING = 12;
 export const DEFAULT_NODE_ICON_WIDTH = 30;
 export const DEFAULT_FINALLLY_GROUP_PADDING = 35;
 export const DEFAULT_NODE_HEIGHT = 32;
-export const NODE_SEPARATION_HORIZONTAL = 25;
-export const NODE_SEPARATION_VERTICAL = 20;
+const NODE_SEPARATION_HORIZONTAL = 25;
+const NODE_SEPARATION_VERTICAL = 20;
 export const DROP_SHADOW_SPACING = 5;
-export const BUILDER_NODE_ADD_RADIUS = 9;
-export const WHEN_EXPRESSION_SPACING = 25;
+const BUILDER_NODE_ADD_RADIUS = 9;
+const WHEN_EXPRESSION_SPACING = 25;
 export const TOOLBAR_HEIGHT = 40;
 export const GRAPH_MIN_WIDTH = 300;
 export const GRAPH_MAX_HEIGHT_PERCENT = 45;
@@ -101,7 +101,7 @@ type PipelineNodeModel<D extends PipelineRunAfterNodeModelData> = NodeModel & {
 export type PipelineMixedNodeModel = PipelineNodeModel<PipelineRunAfterNodeModelData>;
 
 // Node Creators
-export type NodeCreator<D extends PipelineRunAfterNodeModelData> = (
+type NodeCreator<D extends PipelineRunAfterNodeModelData> = (
   name: string,
   data: D,
 ) => PipelineNodeModel<D>;

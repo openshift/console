@@ -1,7 +1,7 @@
 import type { K8sResourceCommon, K8sResourceKind, Toleration } from '@console/internal/module/k8s';
 import type { PipelineRunKind } from '../../types/pipeline';
 
-export type TriggerBindingParam = {
+type TriggerBindingParam = {
   name: string;
   value: string;
 };
@@ -18,7 +18,7 @@ export type TriggerTemplateKindParam = {
   default?: string;
 };
 
-export type TriggerTemplateKindResource = PipelineRunKind;
+type TriggerTemplateKindResource = PipelineRunKind;
 export type TriggerTemplateKind = K8sResourceCommon & {
   spec: {
     params: TriggerTemplateKindParam[];
@@ -43,19 +43,19 @@ export type EventListenerKindBindingReference = {
   // value for the binding param
   value?: string;
 };
-export type WebhookHeader = {
+type WebhookHeader = {
   name: string;
   value: string | string[];
 };
 
-export type VCSInterceptor = {
+type VCSInterceptor = {
   secretRef: {
     secretKey: string;
     secretName: string;
   };
   eventTypes: string[];
 };
-export type TriggerInterceptor = {
+type TriggerInterceptor = {
   gitlab: VCSInterceptor;
   github: VCSInterceptor;
   bitbucket: VCSInterceptor;
@@ -71,7 +71,7 @@ export type TriggerInterceptor = {
     }[];
   };
 };
-export type EventListenerKindTrigger = {
+type EventListenerKindTrigger = {
   name?: string;
   bindings?: EventListenerKindBindingReference[];
   interceptors?: TriggerInterceptor;

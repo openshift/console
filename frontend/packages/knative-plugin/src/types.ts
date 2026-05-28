@@ -30,7 +30,7 @@ export enum ConditionTypes {
   ResourcesAvailable = 'ResourcesAvailable',
 }
 
-export type RevisionCondition = {
+type RevisionCondition = {
   type: keyof typeof ConditionTypes;
 } & K8sResourceCondition;
 
@@ -60,7 +60,7 @@ export enum EventSourceConditionTypes {
   Ready = 'Ready',
 }
 
-export type EventSourceCondition = {
+type EventSourceCondition = {
   type: keyof typeof EventSourceConditionTypes;
 } & K8sResourceCondition;
 
@@ -119,7 +119,7 @@ export enum TriggerConditionTypes {
   Ready = 'Ready',
 }
 
-export type TriggerCondition = {
+type TriggerCondition = {
   type: keyof typeof TriggerConditionTypes;
 } & K8sResourceCondition;
 

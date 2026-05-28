@@ -490,7 +490,7 @@ type NodeAffinityRule = {
   weight?: number;
 };
 
-export type NodeAffinityRuleProps = {
+type NodeAffinityRuleProps = {
   key: string;
   onChange?: (rule: NodeAffinityRule) => void;
   onClickRemove?: () => void;
@@ -510,7 +510,7 @@ type PodAffinityRule = {
   weight?: number;
 };
 
-export type PodAffinityRuleProps = {
+type PodAffinityRuleProps = {
   key: string;
   rule: PodAffinityRule;
   onChange?: (rule: PodAffinityRule) => void;

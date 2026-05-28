@@ -108,7 +108,7 @@ const DebugTerminalInner: FC<DebugTerminalInnerProps> = ({ debugPod, initialCont
   }
 };
 
-export const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
+const DebugTerminal: FC<DebugTerminalProps> = ({ podData, containerName }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [generatedDebugPodName, setGeneratedDebugPodName] = useState('');
   const { t } = useTranslation();

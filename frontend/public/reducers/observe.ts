@@ -18,7 +18,7 @@ const newQueryBrowserQuery = (): ImmutableMap<string, any> =>
     isExpanded: true,
   });
 
-export const silenceFiringAlerts = (firingAlerts, silences) => {
+const silenceFiringAlerts = (firingAlerts, silences) => {
   // For each firing alert, store a list of the Silences that are silencing it
   // and set its state to show it is silenced
   _.each(firingAlerts, (a) => {

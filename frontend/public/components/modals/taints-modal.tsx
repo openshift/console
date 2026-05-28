@@ -178,7 +178,7 @@ const TaintsModal = (props: TaintsModalProps) => {
   );
 };
 
-export type TaintsModalProps = {
+type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: NodeKind;
 } & ModalComponentProps;

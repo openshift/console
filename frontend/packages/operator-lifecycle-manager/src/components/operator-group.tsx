@@ -19,7 +19,7 @@ export const operatorNamespaceFor = (obj: K8sResourceKind) =>
 export const operatorGroupFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.operatorGroup']; // FIXME magic string
 
-export const NoOperatorGroupMsg: FC = () => {
+const NoOperatorGroupMsg: FC = () => {
   const { t } = useTranslation();
   const actions = [
     <Link

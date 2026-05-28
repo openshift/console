@@ -34,9 +34,7 @@ export type StartNodeMaintenanceModalProps = ModalComponentProps & {
   nodeName: string;
 };
 
-export const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (
-  props,
-) => {
+const StartNodeMaintenanceModal: OverlayComponent<StartNodeMaintenanceModalProps> = (props) => {
   const { t } = useTranslation();
   const { nodeName, closeOverlay } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();

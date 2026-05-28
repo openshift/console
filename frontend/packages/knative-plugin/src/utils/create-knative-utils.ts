@@ -251,7 +251,7 @@ const formDomainMappingStruct = (
   };
 };
 
-export const getDomainMappingResources = (
+const getDomainMappingResources = (
   knativeSvcResource: K8sResourceKind,
   selectedDomainMapping: string[],
 ): Promise<DomainMappingResponse[]> => {

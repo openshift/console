@@ -83,7 +83,7 @@ const componentsTableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-v6-c-table__td'),
 ];
 
-export const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
+const InstallPlanHint: FC<InstallPlanHintProps> = ({ title, body, footer }) => {
   return (
     <Hint>
       <HintTitle className="pf-v6-u-font-size-md">{title}</HintTitle>

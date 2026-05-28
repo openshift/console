@@ -28,7 +28,7 @@ type ProvisionerAccessModeMapping = {
 
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes and
 // https://docs.openshift.com/container-platform/4.15/storage/understanding-persistent-storage.html for more details
-export const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
+const provisionerAccessModeMapping: ProvisionerAccessModeMapping = Object.freeze({
   'kubernetes.io/no-provisioner': {
     Filesystem: ['ReadWriteOnce'],
     Block: ['ReadWriteOnce'],

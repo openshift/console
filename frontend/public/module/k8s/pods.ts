@@ -4,10 +4,7 @@ import i18next from 'i18next';
 import { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { ContainerStatus, PodKind, Volume } from './types';
 
-export type {
-  PodPhase,
-  PodReadiness,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+export type { PodPhase } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 const getRestartPolicy = (pod: PodKind) =>
   _.find(
@@ -42,7 +39,7 @@ const getRestartPolicy = (pod: PodKind) =>
     { id: _.get<any, string>(pod, 'spec.restartPolicy') },
   );
 
-export const VolumeSource = {
+const VolumeSource = {
   emptyDir: {
     id: 'emptyDir',
     label: i18next.t('public~Container volume'),

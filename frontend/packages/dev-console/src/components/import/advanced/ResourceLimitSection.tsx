@@ -9,7 +9,7 @@ import TertiaryHeading from '@console/shared/src/components/heading/TertiaryHead
 import { MemoryUnits, CPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';
 
-export type ResourceLimitSectionProps = {
+type ResourceLimitSectionProps = {
   hideTitle?: boolean;
 };
 

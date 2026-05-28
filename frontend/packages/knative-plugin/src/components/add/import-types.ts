@@ -23,24 +23,24 @@ export const defaultChannels = {
   InMemoryChannel: EVENTING_IMC_KIND,
   KafkaChannel: EVENTING_KAFKA_CHANNEL_KIND,
 };
-export interface ProjectData {
+interface ProjectData {
   name: string;
   displayName: string;
   description: string;
 }
 
-export interface ApplicationData {
+interface ApplicationData {
   initial: string;
   name: string;
   selectedKey: string;
   isInContext?: boolean;
 }
 
-export interface EventSourceData {
+interface EventSourceData {
   [x: string]: any;
 }
 
-export interface SinkResourceData {
+interface SinkResourceData {
   apiVersion: string;
   name: string;
   kind: string;

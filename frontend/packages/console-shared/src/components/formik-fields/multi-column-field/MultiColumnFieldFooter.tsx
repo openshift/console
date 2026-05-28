@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export interface MultiColumnFieldFooterProps {
+interface MultiColumnFieldFooterProps {
   addLabel?: string;
   disableAddRow?: boolean;
   hideAddRow?: boolean;

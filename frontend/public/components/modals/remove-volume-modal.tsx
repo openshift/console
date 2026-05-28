@@ -27,7 +27,7 @@ import { RowVolumeData } from '../volumes-table';
 import { ModalCallback } from './types';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
+const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -130,7 +130,7 @@ export const RemoveVolumeModal: FC<RemoveVolumeModalProps> = (props) => {
   );
 };
 
-export const RemoveVolumeModalProvider: OverlayComponent<RemoveVolumeModalProps> = (props) => {
+const RemoveVolumeModalProvider: OverlayComponent<RemoveVolumeModalProps> = (props) => {
   const [isOpen, setIsOpen] = useState(true);
   const handleClose = () => {
     setIsOpen(false);

@@ -6,7 +6,7 @@ import { SidebarSectionHeading } from '@console/internal/components/utils';
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 import ConfigurationsOverviewListItem from './ConfigurationsOverviewListItem';
 
-export type ConfigurationsOverviewListProps = {
+type ConfigurationsOverviewListProps = {
   configurations: K8sResourceKind[];
 };
 

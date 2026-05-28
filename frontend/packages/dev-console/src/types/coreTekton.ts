@@ -5,7 +5,7 @@ export type TektonParam = {
   type?: 'string' | 'array';
 };
 
-export type TektonTaskSteps = {
+type TektonTaskSteps = {
   // TODO: Figure out required fields
   name: string;
   args?: string[];
@@ -16,7 +16,7 @@ export type TektonTaskSteps = {
   script?: string[];
 };
 
-export type TaskResult = {
+type TaskResult = {
   name: string;
   description?: string;
 };

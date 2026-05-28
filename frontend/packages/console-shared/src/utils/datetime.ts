@@ -12,7 +12,7 @@ const units = {
 };
 
 // The maximum allowed clock skew in milliseconds where we show a date as "Just now" even if it is from the future.
-export const maxClockSkewMS = -60000;
+const maxClockSkewMS = -60000;
 const lang = getLastLanguage();
 
 // https://tc39.es/ecma402/#datetimeformat-objects
@@ -66,7 +66,7 @@ export const utcDateTimeFormatter = new Intl.DateTimeFormat(lang, {
   timeZoneName: 'short',
 });
 
-export const relativeTimeFormatter = (langArg?: string) =>
+const relativeTimeFormatter = (langArg?: string) =>
   Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(langArg ?? lang) : null;
 
 export const getDuration = (ms: number) => {

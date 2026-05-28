@@ -7,7 +7,7 @@ import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHe
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import { getSampleRepo } from '../../../utils/imagestream-utils';
 
-export type ImageStreamInfoProps = {
+type ImageStreamInfoProps = {
   displayName: string;
   tag: object;
 };

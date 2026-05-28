@@ -4,7 +4,7 @@ import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTa
 import type { ThProps, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'input', index: 0 },
   { id: 'revision', index: 1 },
   { id: 'updated', index: 2 },

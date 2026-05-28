@@ -10,7 +10,7 @@ import { getKnativeRoutesLinks, groupTrafficByRevision } from '../../utils/resou
 import KSRoutes from './KSRoutes';
 import RoutesOverviewListItem from './RoutesOverviewListItem';
 
-export type RoutesOverviewListProps = {
+type RoutesOverviewListProps = {
   ksroutes: K8sResourceKind[];
   resource: K8sResourceKind;
 };

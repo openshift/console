@@ -17,7 +17,7 @@ export type EventingContextType = {
   channelsData: DynamicChannelDataType;
 };
 
-export const EventingContext = createContext<EventingContextType>({
+const EventingContext = createContext<EventingContextType>({
   eventSourceData: { eventSourceModels: [], loaded: false },
   channelsData: { eventSourceChannels: [], loaded: false },
 });

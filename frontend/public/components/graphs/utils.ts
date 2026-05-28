@@ -5,8 +5,8 @@ import { chart_color_orange_300 as requestedColor } from '@patternfly/react-toke
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 import type { Humanize } from '../utils/types';
 
-export const defaultXMutator: XMutator = (x) => new Date(x * 1000);
-export const defaultYMutator: YMutator = (y) => parseFloat(y);
+const defaultXMutator: XMutator = (x) => new Date(x * 1000);
+const defaultYMutator: YMutator = (y) => parseFloat(y);
 
 export const getRangeVectorStats: GetRangeStats = (
   response,

@@ -26,7 +26,7 @@ import {
   createShipwrightBuildUsingCLI,
 } from './shipwrightSubscriptions';
 
-export const checkOperatorStatus = (operator: operators) => {
+const checkOperatorStatus = (operator: operators) => {
   switch (operator) {
     case operators.PipelinesOperator:
       checkPipelineOperatorStatus();
@@ -54,7 +54,7 @@ export const checkOperatorStatus = (operator: operators) => {
   }
 };
 
-export const performPostInstallationSteps = (operator: operators): void => {
+const performPostInstallationSteps = (operator: operators): void => {
   cy.log(`Performing ${operator} post-installation steps`);
   switch (operator) {
     case operators.PipelinesOperator:
@@ -86,7 +86,7 @@ export const performPostInstallationSteps = (operator: operators): void => {
   }
 };
 
-export const installOperatorUsingCLI = (operator: operators) => {
+const installOperatorUsingCLI = (operator: operators) => {
   let yamlFile;
   switch (operator) {
     case operators.PipelinesOperator:
@@ -133,7 +133,7 @@ export const installOperatorUsingCLI = (operator: operators) => {
   performPostInstallationSteps(operator);
 };
 
-export const checkSubscriptionStatus = (operator: operators) => {
+const checkSubscriptionStatus = (operator: operators) => {
   let namespace;
   let subscriptionName;
   let operatorPackageName;
@@ -197,7 +197,7 @@ export const checkSubscriptionStatus = (operator: operators) => {
   });
 };
 
-export const verifyAndInstallOperatorUsingCLI = (operator: operators) => {
+const verifyAndInstallOperatorUsingCLI = (operator: operators) => {
   checkSubscriptionStatus(operator);
 };
 

@@ -174,7 +174,7 @@ export const BindingName: FC<BindingProps> = ({ binding }) => (
   />
 );
 
-export const BindingKebab: FC<BindingProps> = ({ binding }) => {
+const BindingKebab: FC<BindingProps> = ({ binding }) => {
   const context = {
     [referenceFor(binding)]: binding,
   };
@@ -185,7 +185,7 @@ export const BindingKebab: FC<BindingProps> = ({ binding }) => {
   ) : null;
 };
 
-export const RoleLink: FC<BindingProps> = ({ binding }) => {
+const RoleLink: FC<BindingProps> = ({ binding }) => {
   const kind = binding.roleRef.kind;
 
   // Cluster Roles have no namespace and for Roles, the Role's namespace matches the Role Binding's namespace
@@ -245,7 +245,7 @@ const getDataViewRows: GetDataViewRows<BindingKind> = (data, columns) => {
   });
 };
 
-export const BindingsList: FC<BindingsListTableProps> = (props) => {
+const BindingsList: FC<BindingsListTableProps> = (props) => {
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = useRoleBindingsColumns();
 

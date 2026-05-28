@@ -17,7 +17,7 @@ import { getFieldId } from '@console/shared/src/components/formik-fields/field-u
 import { InputField } from '@console/shared/src/components/formik-fields/InputField';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export interface SinkUriModalProps {
+interface SinkUriModalProps {
   cancel?: () => void;
 }
 

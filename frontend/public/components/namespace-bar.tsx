@@ -27,7 +27,7 @@ import type {
 import { useCreateNamespaceOrProjectModal } from '@console/shared/src/hooks/useCreateNamespaceOrProjectModal';
 import { setActiveApplication } from '../actions/ui';
 
-export type NamespaceBarDropdownsProps = {
+type NamespaceBarDropdownsProps = {
   children: ReactNode;
   isDisabled: boolean;
   namespace?: WatchK8sResultsObject<K8sResourceCommon[]>;
@@ -37,7 +37,7 @@ export type NamespaceBarDropdownsProps = {
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 
-export const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
+const NamespaceBarDropdowns: FC<NamespaceBarDropdownsProps> = ({
   children,
   isDisabled,
   namespace,

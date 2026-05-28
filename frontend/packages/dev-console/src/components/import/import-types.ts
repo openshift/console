@@ -26,7 +26,7 @@ export interface DeployImageFormProps {
       }
     | WatchK8sResultsObject<K8sResourceKind[]>;
 }
-export type ImageStreamPayload = boolean | K8sResourceKind;
+type ImageStreamPayload = boolean | K8sResourceKind;
 
 export type ImageStreamState = {
   accessLoading: ImageStreamPayload;
@@ -103,7 +103,7 @@ export interface DeployImageFormData {
   import?: ImportStrategyData;
 }
 
-export type FileUploadData = {
+type FileUploadData = {
   name: string;
   value: File | '';
   javaArgs?: string;
@@ -142,14 +142,14 @@ export interface GitImportFormData extends BaseFormData {
   import?: ImportStrategyData;
 }
 
-export interface ApplicationData {
+interface ApplicationData {
   initial?: string;
   name: string;
   selectedKey: string;
   isInContext?: boolean;
 }
 
-export interface ImageData {
+interface ImageData {
   selected: string;
   recommended: string;
   isRecommending: boolean;
@@ -187,7 +187,7 @@ export interface GitData {
   secretResource?: K8sResourceKind;
 }
 
-export interface DockerData {
+interface DockerData {
   dockerfilePath?: string;
   dockerfileHasError?: boolean;
 }
@@ -201,7 +201,7 @@ export type DevfileData = {
   devfileProjectType?: string;
 };
 
-export type PacData = {
+type PacData = {
   pacHasError: boolean;
   repository: RepositoryFormValues;
 };
@@ -227,7 +227,7 @@ export interface RouteData {
   labels?: { [name: string]: string };
 }
 
-export interface TLSData {
+interface TLSData {
   termination: TerminationType;
   insecureEdgeTerminationPolicy: InsecureTrafficType | PassthroughInsecureTrafficType;
   certificate: string;
@@ -254,7 +254,7 @@ export interface DetectedStrategyFormData extends DetectedStrategy {
   iconUrl?: string;
 }
 
-export interface ImportStrategyData {
+interface ImportStrategyData {
   loaded?: boolean;
   knativeFuncLoaded?: boolean;
   loadError?: string;
@@ -279,7 +279,7 @@ export interface ServerlessData {
   domainMapping?: string[];
 }
 
-export interface ServerlessScaling {
+interface ServerlessScaling {
   minpods: number | '';
   maxpods: number | '';
   concurrencytarget: number | '';

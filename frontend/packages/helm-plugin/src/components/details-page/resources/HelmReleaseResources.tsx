@@ -9,7 +9,7 @@ import type { HelmRelease } from '../../../types/helm-types';
 import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 
-export interface HelmReleaseResourcesProps {
+interface HelmReleaseResourcesProps {
   customData: HelmRelease;
 }
 

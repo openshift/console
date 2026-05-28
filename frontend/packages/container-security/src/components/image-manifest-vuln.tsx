@@ -57,13 +57,13 @@ export const totalCount = (obj: ImageManifestVuln) => {
   const { highCount = 0, mediumCount = 0, lowCount = 0, unknownCount = 0 } = obj.status;
   return highCount + mediumCount + lowCount + unknownCount;
 };
-export const affectedPodsCount = (obj: ImageManifestVuln) =>
+const affectedPodsCount = (obj: ImageManifestVuln) =>
   Object.keys(obj.status?.affectedPods ?? {}).length;
 
-export const highestSeverityIndex = (obj: ImageManifestVuln) =>
+const highestSeverityIndex = (obj: ImageManifestVuln) =>
   priorityFor(obj.status?.highestSeverity).index;
 
-export const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
+const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (props) => {
   const { t } = useTranslation();
   const queryURL = quayURLFor(props.obj);
   return (
@@ -105,7 +105,7 @@ export const ImageManifestVulnDetails: FC<ImageManifestVulnDetailsProps> = (prop
   );
 };
 
-export const AffectedPods: FC<AffectedPodsProps> = (props) => {
+const AffectedPods: FC<AffectedPodsProps> = (props) => {
   const affectedPodsFor = (pods: PodKind[]) =>
     pods.filter((p) =>
       _.keys(props.obj.status?.affectedPods ?? {}).includes(
@@ -164,7 +164,7 @@ const tableColumnClasses = [
   css('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
-export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
+const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> = ({ obj }) => {
   const { name, namespace } = obj.metadata;
   const queryURL = quayURLFor(obj);
   return (
@@ -204,7 +204,7 @@ export const ImageManifestVulnTableRow: FC<RowFunctionArgs<ImageManifestVuln>> =
   );
 };
 
-export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
+const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   {
     title: t('container-security~Image name'),
     sortField: 'spec.image',
@@ -250,7 +250,7 @@ export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   },
 ];
 
-export const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
+const ImageManifestVulnList: FC<ImageManifestVulnListProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
     <EmptyState
@@ -317,7 +317,7 @@ export const ProjectImageManifestVulnListPage: FC<ImageManifestVulnPageProps> = 
 
 const podKey = (pod: PodKind) => [pod.metadata.namespace, pod.metadata.name].join('/');
 
-export const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
+const ContainerVulnerabilities: FC<ContainerVulnerabilitiesProps> = (props) => {
   const { t } = useTranslation();
   const { loaded, loadError } = props.imageManifestVuln;
 
@@ -436,7 +436,7 @@ export const ImageManifestVulnPodTab: FC<ImageManifestVulnPodTabProps> = (props)
   );
 };
 
-export type ContainerVulnerabilitiesProps = {
+type ContainerVulnerabilitiesProps = {
   pod: PodKind;
   imageManifestVuln: {
     data: ImageManifestVuln[];
@@ -452,15 +452,15 @@ export type ImageManifestVulnPageProps = {
   selector?: { [key: string]: string };
 };
 
-export type ImageManifestVulnListProps = {
+type ImageManifestVulnListProps = {
   data: ImageManifestVuln[];
 };
 
-export type ImageManifestVulnDetailsProps = {
+type ImageManifestVulnDetailsProps = {
   obj: ImageManifestVuln;
 };
 
-export type AffectedPodsProps = {
+type AffectedPodsProps = {
   obj: ImageManifestVuln;
 };
 

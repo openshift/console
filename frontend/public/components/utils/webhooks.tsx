@@ -238,7 +238,7 @@ export type WebhookTriggersProps = {
   resource: K8sResourceKind;
 };
 
-export type WebhookTrigger = {
+type WebhookTrigger = {
   type: string;
   [key: string]: any;
 };

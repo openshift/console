@@ -24,7 +24,7 @@ type BitbucketWebhookRequest = {
   body: BBWebhookBody;
 };
 
-export const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
+const BITBUCKET_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/bitbucket';
 
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;

@@ -35,7 +35,7 @@ import { MOVE_EV_SRC_CONNECTOR_OPERATION } from '../knativeComponentUtils';
 
 import './EventSource.scss';
 
-export type EventSinkProps = {
+type EventSinkProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;

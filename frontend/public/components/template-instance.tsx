@@ -140,7 +140,7 @@ const useTemplateInstanceColumns = (): TableColumn<TemplateInstanceKind>[] => {
   return columns;
 };
 
-export const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
+const TemplateInstanceList: FC<TemplateInstanceListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const columns = useTemplateInstanceColumns();
 

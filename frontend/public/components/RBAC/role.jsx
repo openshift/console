@@ -289,7 +289,7 @@ const BindingsListComponent = (props) => {
   );
 };
 
-export const BindingsForRolePage = (props) => {
+const BindingsForRolePage = (props) => {
   const { name, ns } = useParams();
   const {
     obj: { kind },

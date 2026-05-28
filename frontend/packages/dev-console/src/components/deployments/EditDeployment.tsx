@@ -17,7 +17,7 @@ import type { EditDeploymentData, EditDeploymentFormikValues } from './utils/dep
 import { convertDeploymentToEditForm, convertEditFormToDeployment } from './utils/deployment-utils';
 import { validationSchema } from './utils/deployment-validation-utils';
 
-export interface EditDeploymentProps {
+interface EditDeploymentProps {
   heading: string;
   resource: K8sResourceKind;
   name: string;

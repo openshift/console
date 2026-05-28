@@ -329,4 +329,4 @@ type SecretsPageProps = {
   selector?: any;
 };
 
-export { SecretsList, SecretsPage, SecretsDetailsPage };
+export { SecretsPage, SecretsDetailsPage };

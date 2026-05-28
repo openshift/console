@@ -32,7 +32,7 @@ export type ImageReference =
   | ImageStreamImageReference
   | DockerImageReference;
 
-export type BuildConfigGitSource = {
+type BuildConfigGitSource = {
   type: 'Git';
   git: {
     uri: string;
@@ -41,17 +41,17 @@ export type BuildConfigGitSource = {
   contextDir?: string;
 };
 
-export type BuildConfigDockerfileSource = {
+type BuildConfigDockerfileSource = {
   type: 'Dockerfile';
   dockerfile: string;
 };
 
-export type BuildConfigBinarySource = {
+type BuildConfigBinarySource = {
   type: 'Binary';
   binary?: any;
 };
 
-export type BuildConfigSource = (
+type BuildConfigSource = (
   | BuildConfigGitSource
   | BuildConfigDockerfileSource
   | BuildConfigBinarySource
@@ -61,7 +61,7 @@ export type BuildConfigSource = (
   sourceSecret?: LocalObjectReference;
 };
 
-export type BuildConfigRevision = {
+type BuildConfigRevision = {
   type: 'Source' | 'Dockerfile' | 'Binary' | 'Images';
   git?: {
     author: { email: string; name: string };
@@ -71,7 +71,7 @@ export type BuildConfigRevision = {
   };
 };
 
-export type BuildConfigSourceStrategy = {
+type BuildConfigSourceStrategy = {
   type: 'Source';
   sourceStrategy?: {
     from?: ImageReference;
@@ -95,7 +95,7 @@ export type BuildConfigSourceStrategy = {
   sourceSecret?: LocalObjectReference;
 };
 
-export type BuildConfigDockerStrategy = {
+type BuildConfigDockerStrategy = {
   type: 'Docker';
   dockerStrategy: {
     from?: ImageReference;
@@ -104,28 +104,28 @@ export type BuildConfigDockerStrategy = {
   };
 };
 
-export type BuildConfigStrategy = (BuildConfigSourceStrategy | BuildConfigDockerStrategy) & {
+type BuildConfigStrategy = (BuildConfigSourceStrategy | BuildConfigDockerStrategy) & {
   configMaps?: { configMap: LocalObjectReference; destinationDir: string }[];
 };
 
-export type BuildConfigOutput = {
+type BuildConfigOutput = {
   imageLabels?: { name: string; value: string }[];
   pushSecret?: LocalObjectReference;
   to?: ImageReference;
 };
 
-export type BuildConfigConfigChangeTrigger = {
+type BuildConfigConfigChangeTrigger = {
   type: 'ConfigChange';
 };
 
-export type BuildConfigImageChangeTrigger = {
+type BuildConfigImageChangeTrigger = {
   type: 'ImageChange';
   imageChange?: {
     lastTriggeredImageID?: string;
   };
 };
 
-export type BuildConfigGenericTrigger = {
+type BuildConfigGenericTrigger = {
   type: 'Generic';
   generic: {
     allowEnv?: boolean;
@@ -134,7 +134,7 @@ export type BuildConfigGenericTrigger = {
   };
 };
 
-export type BuildConfigGitHubTrigger = {
+type BuildConfigGitHubTrigger = {
   type: 'GitHub';
   github: {
     allowEnv?: boolean;
@@ -143,7 +143,7 @@ export type BuildConfigGitHubTrigger = {
   };
 };
 
-export type BuildConfigGitLabTrigger = {
+type BuildConfigGitLabTrigger = {
   type: 'GitLab';
   gitlab: {
     allowEnv?: boolean;
@@ -152,7 +152,7 @@ export type BuildConfigGitLabTrigger = {
   };
 };
 
-export type BuildConfigBitbucketTrigger = {
+type BuildConfigBitbucketTrigger = {
   type: 'Bitbucket';
   bitbucket: {
     allowEnv?: boolean;
@@ -169,7 +169,7 @@ export type BuildConfigTrigger =
   | BuildConfigGitLabTrigger
   | BuildConfigBitbucketTrigger;
 
-export type BuildConfigPostCommit = {
+type BuildConfigPostCommit = {
   command?: string[];
   script?: string;
   args?: string[];

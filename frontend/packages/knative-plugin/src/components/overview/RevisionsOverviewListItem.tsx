@@ -12,7 +12,7 @@ import RoutesUrlLink from './RoutesUrlLink';
 
 import './RevisionsOverviewListItem.scss';
 
-export type RevisionsOverviewListItemProps = {
+type RevisionsOverviewListItemProps = {
   revision: K8sResourceKind;
   service: K8sResourceKind;
 };

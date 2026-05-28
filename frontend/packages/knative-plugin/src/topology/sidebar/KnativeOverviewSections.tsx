@@ -101,7 +101,7 @@ export const KnativeOverviewDetails: FC<KnativeOverviewDetailsProps> = ({ item }
   );
 };
 
-export const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
+const KnativeEventSinkPodRing: FC<KnativeOverviewDetailsProps> = ({ item }) => {
   const { revisions, obj } = item as { obj: K8sResourceKind; revisions: K8sResourceKind[] };
   const { pods } = usePodsForRevisions(
     revisions?.map((r) => r.metadata.uid),

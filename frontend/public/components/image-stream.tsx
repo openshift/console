@@ -68,7 +68,7 @@ const getStatusTags = (imageStream: K8sResourceKind): any => {
   return _.keyBy(statusTags, 'tag');
 };
 
-export const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
+const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
   const statusTags = getStatusTags(imageStream);
   return _.filter(imageStream.spec.tags, (tag) => isBuilderTag(tag) && statusTags[tag.name]);
 };
@@ -220,7 +220,7 @@ export const ExampleDockerCommandPopover: FC<ImageStreamManipulationHelpProps> =
   );
 };
 
-export const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
+const ImageStreamsDetails: FC<ImageStreamsDetailsProps> = ({ obj: imageStream }) => {
   const { t } = useTranslation();
 
   const getImportErrors = (): string[] => {
@@ -442,7 +442,7 @@ const useImageStreamColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
+const ImageStreamsList: FC<ImageStreamsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useImageStreamColumns();
 
   return (
@@ -495,7 +495,7 @@ export type ImageStreamManipulationHelpProps = {
   tag?: string;
 };
 
-export type ImageStreamsDetailsProps = {
+type ImageStreamsDetailsProps = {
   obj: K8sResourceKind;
 };
 

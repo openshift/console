@@ -7,7 +7,7 @@ import SecondaryHeading from '@console/shared/src/components/heading/SecondaryHe
 import { ExternalLink } from '@console/shared/src/components/links/ExternalLink';
 import type { DevfileSample } from './devfile-types';
 
-export type DevfileInfoProps = {
+type DevfileInfoProps = {
   devfileSample: DevfileSample;
 };
 

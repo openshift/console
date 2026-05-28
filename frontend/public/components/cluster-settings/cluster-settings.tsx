@@ -124,7 +124,7 @@ import { UpdateStatus } from './cluster-status';
 import { ErrorModal } from '../modals/error-modal';
 import { useOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/useOverlay';
 
-export const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
+const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
 const getMCPByName = (
   machineConfigPools: MachineConfigPoolKind[],
@@ -168,7 +168,7 @@ const getReleaseImageVersion = (obj: K8sResourceKind): string => {
 const calculatePercentage = (numerator: number, denominator: number): number =>
   Math.round((numerator / denominator) * 100);
 
-export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
+const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   const { t } = useTranslation();
   const launchModal = useOverlay();
   const label = cv.spec.channel || t('public~Not configured');
@@ -190,7 +190,7 @@ export const CurrentChannel: FC<CurrentChannelProps> = ({ cv, canUpgrade }) => {
   );
 };
 
-export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
+const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const status = getClusterUpdateStatus(cv);
@@ -228,7 +228,7 @@ export const CurrentVersion: FC<CurrentVersionProps> = ({ cv }) => {
   );
 };
 
-export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
+const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
   const launchModal = useOverlay();
   // assume if 'worker' is editable, others are too
   const workerMachineConfigPoolIsEditable = useAccessReview({
@@ -262,7 +262,7 @@ export const UpdateLink: FC<CurrentVersionProps> = ({ cv, canUpgrade }) => {
   ) : null;
 };
 
-export const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
+const CurrentVersionHeader: FC<CurrentVersionProps> = ({ cv }) => {
   const status = getClusterUpdateStatus(cv);
   const { t } = useTranslation();
   return (
@@ -322,7 +322,7 @@ const ChannelLine: FC<ChannelLineProps> = ({ children, start }) => {
   return <li className={css('co-channel-line', { 'co-channel-start': start })}>{children}</li>;
 };
 
-export const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
+const ChannelName: FC<ChannelNameProps> = ({ children, current }) => {
   return (
     <span
       className={css('co-channel-name', {
@@ -347,7 +347,7 @@ const ChannelPath: FC<ChannelPathProps> = ({ children, current }) => {
   );
 };
 
-export const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
+const ChannelVersion: FC<ChannelVersionProps> = ({ children, current, updateBlocked }) => {
   const test = 'cv-channel-version';
   return (
     <span
@@ -430,7 +430,7 @@ const UpdatesBar: FC<UpdatesBarProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-bar">{children}</div>;
 };
 
-export const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
+const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
   return (
     <div
       className={css('co-cluster-settings__updates-group', {
@@ -443,7 +443,7 @@ export const UpdatesGroup: FC<UpdatesGroupProps> = ({ children, divided }) => {
   );
 };
 
-export const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
+const UpdatesProgress: FC<UpdatesProgressProps> = ({ children }) => {
   return (
     <div className="co-cluster-settings__updates-progress" data-test="cv-updates-progress">
       {children}
@@ -455,7 +455,7 @@ const UpdatesType: FC<UpdatesTypeProps> = ({ children }) => {
   return <div className="co-cluster-settings__updates-type">{children}</div>;
 };
 
-export const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
+const NodesUpdatesGroup: FC<NodesUpdatesGroupProps> = ({
   divided,
   desiredVersion,
   hideIfComplete,
@@ -578,7 +578,7 @@ const OtherNodes: FC<OtherNodesProps> = ({
   );
 };
 
-export const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
+const UpdatesGraph: FC<UpdatesGraphProps> = ({ cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const lastVersion = getLastCompletedUpdate(cv);
   const newestVersion = availableUpdates[0]?.version;
@@ -666,7 +666,7 @@ const MachineConfigPoolsResource: WatchK8sResource = {
   kind: referenceForModel(MachineConfigPoolModel),
 };
 
-export const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
+const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
   onCancel,
   children,
   queryString,
@@ -683,7 +683,7 @@ export const ClusterOperatorsLink: FC<ClusterOperatorsLinkProps> = ({
   </Link>
 );
 
-export const UpdateInProgress: FC<UpdateInProgressProps> = ({
+const UpdateInProgress: FC<UpdateInProgressProps> = ({
   desiredVersion,
   machineConfigPools,
   workerMachineConfigPool,
@@ -855,10 +855,7 @@ export const MachineConfigPoolsArePausedAlert: FC<MachineConfigPoolsArePausedAle
   ) : null;
 };
 
-export const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({
-  cv,
-  machineConfigPools,
-}) => {
+const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({ cv, machineConfigPools }) => {
   const { t } = useTranslation();
 
   if (isClusterExternallyManaged()) {
@@ -880,7 +877,7 @@ export const ClusterSettingsAlerts: FC<ClusterSettingsAlertsProps> = ({
   );
 };
 
-export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
+const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = ({
   obj: cv,
   autoscalers,
 }) => {
@@ -1176,7 +1173,7 @@ export const ClusterVersionDetailsTable: FC<ClusterVersionDetailsTableProps> = (
   );
 };
 
-export const ClusterOperatorTabPage: FC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
+const ClusterOperatorTabPage: FC<ClusterOperatorTabPageProps> = ({ obj: cv }) => (
   <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />
 );
 

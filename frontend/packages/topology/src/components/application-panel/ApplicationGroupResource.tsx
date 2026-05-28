@@ -10,7 +10,7 @@ import TopologyApplicationResourceList from './TopologyApplicationList';
 
 const MAX_RESOURCES = 5;
 
-export type ApplicationGroupResourceProps = {
+type ApplicationGroupResourceProps = {
   title: string;
   resourcesData: K8sResourceKind[];
   group: string;

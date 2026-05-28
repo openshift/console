@@ -62,7 +62,7 @@ export type VolumeMount = {
   subPathExpr?: string;
 };
 
-export type VolumeDevice = {
+type VolumeDevice = {
   devicePath: string;
   name: string;
 };
@@ -117,7 +117,7 @@ export type ResourceList = {
   [resourceName: string]: string;
 };
 
-export type EnvVarSource = {
+type EnvVarSource = {
   fieldRef?: {
     apiVersion?: string;
     fieldPath: string;
@@ -216,7 +216,7 @@ export type Volume = {
   [key: string]: any;
 };
 
-export type PodSpec = {
+type PodSpec = {
   volumes?: Volume[];
   initContainers?: ContainerSpec[];
   containers: ContainerSpec[];
@@ -258,7 +258,7 @@ export type ContainerStatus = {
   started?: boolean;
 };
 
-export type PodCondition = {
+type PodCondition = {
   lastProbeTime?: string;
 } & K8sResourceCondition;
 
@@ -283,7 +283,7 @@ export type PodKind = {
 } & K8sResourceCommon &
   PodTemplate;
 
-export type DeploymentCondition = {
+type DeploymentCondition = {
   lastUpdateTime?: string;
 } & K8sResourceCondition;
 
@@ -502,7 +502,7 @@ export type ConfigMapKind = {
   binaryData?: { [key: string]: string };
 } & K8sResourceCommon;
 
-export type JobTemplate = {
+type JobTemplate = {
   metadata: ObjectMetadata;
   spec: {
     activeDeadlineSeconds?: number;
@@ -595,13 +595,13 @@ export type CustomResourceDefinitionKind = {
   };
 } & K8sResourceCommon;
 
-export type RouteTarget = {
+type RouteTarget = {
   kind: 'Service';
   name: string;
   weight: number;
 };
 
-export type RouteTLS = {
+type RouteTLS = {
   caCertificate?: string;
   certificate?: string;
   destinationCACertificate?: string;
@@ -700,7 +700,7 @@ export type MachineAWSPlacement = {
   region?: string;
 };
 
-export type MachineSpec = {
+type MachineSpec = {
   providerSpec: {
     value?: {
       placement?: MachineAWSPlacement;
@@ -778,7 +778,7 @@ export type Patch = {
   value?: any;
 };
 
-export type RollingUpdate = { maxUnavailable?: number | string; maxSurge?: number | string };
+type RollingUpdate = { maxUnavailable?: number | string; maxSurge?: number | string };
 export type DeploymentUpdateStrategy =
   | {
       type: 'Recreate';
@@ -824,11 +824,11 @@ export enum MachineConfigPoolConditionType {
   Updating = 'Updating',
 }
 
-export type MachineConfigPoolCondition = {
+type MachineConfigPoolCondition = {
   type: keyof typeof MachineConfigPoolConditionType;
 } & K8sResourceCondition;
 
-export type MachineConfigPoolStatus = {
+type MachineConfigPoolStatus = {
   observedGeneration?: number;
   configuration: {
     name: string;
@@ -841,7 +841,7 @@ export type MachineConfigPoolStatus = {
   conditions?: MachineConfigPoolCondition[];
 };
 
-export type MachineConfigPoolSpec = {
+type MachineConfigPoolSpec = {
   machineConfigSelector?: Selector;
   maxUnavailable?: number | string;
   nodeSelector?: Selector;
@@ -858,7 +858,7 @@ export type MachineConfigPoolKind = {
   status?: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
-export type Release = {
+type Release = {
   version: string;
   image: string;
   url?: string;
@@ -938,7 +938,7 @@ export type ClusterOperator = {
   };
 } & K8sResourceCommon;
 
-export type MappingMethodType = 'claim' | 'lookup' | 'add';
+type MappingMethodType = 'claim' | 'lookup' | 'add';
 
 type IdentityProviderType =
   | 'BasicAuth'
@@ -1202,7 +1202,7 @@ export type ConsolePluginKind = K8sResourceCommon & {
   };
 };
 
-export type ConsolePluginProxy = {
+type ConsolePluginProxy = {
   alias: string;
   authorization?: 'UserToken' | 'None';
   caCertificate?: string;
@@ -1284,7 +1284,7 @@ export type EndpointSliceKind = {
   endpoints?: EndpointSlice[];
 } & K8sResourceCommon;
 
-export type RoleRef = {
+type RoleRef = {
   kind: string;
   name: string;
   apiGroup: string;

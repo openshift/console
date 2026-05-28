@@ -9,7 +9,7 @@ import type { Traffic } from '../../types';
 import { getRevisionItems, trafficDataForPatch } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
 
-export interface TrafficSplittingProps {
+interface TrafficSplittingProps {
   service: K8sResourceKind;
   revisions: K8sResourceKind[];
   cancel?: () => void;

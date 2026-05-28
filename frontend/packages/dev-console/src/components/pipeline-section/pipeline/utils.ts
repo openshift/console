@@ -20,10 +20,10 @@ import type { RepositoryFormValues } from '../../import/import-types';
 import { detectGitType } from '../../import/import-validation-utils';
 import { gitUrlRegex } from '../../import/validation-schema';
 
-export const dryRunOpt = { dryRun: 'All' };
-export const gitProviderTypesHosts = ['github.com', 'bitbucket.org', 'gitlab.com'];
+const dryRunOpt = { dryRun: 'All' };
+const gitProviderTypesHosts = ['github.com', 'bitbucket.org', 'gitlab.com'];
 
-export const createRepositoryName = (nameString: string): string => {
+const createRepositoryName = (nameString: string): string => {
   if (nameRegex.test(nameString)) {
     return `git-${nameString}`;
   }

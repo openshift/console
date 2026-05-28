@@ -11,7 +11,7 @@ import type { ProjectListPageProps } from './ProjectListPage';
 import ProjectListPage from './ProjectListPage';
 
 type LazySubTitleRender = (openProjectModal: () => void) => ReactNode;
-export interface CreateProjectListPageProps extends ProjectListPageProps {
+interface CreateProjectListPageProps extends ProjectListPageProps {
   title: string;
   children: LazySubTitleRender;
   onCreate?: (project: K8sResourceKind) => void;

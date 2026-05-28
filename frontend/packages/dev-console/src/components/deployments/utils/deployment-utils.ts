@@ -130,7 +130,7 @@ export const getContainerNames = (containers: ContainerSpec[]) => {
   );
 };
 
-export const getLchImageStreamData = (
+const getLchImageStreamData = (
   resName: string,
   resNamespace: string,
   tagImages?: { containerName: string; to: { [key: string]: string } }[],
@@ -167,7 +167,7 @@ export const getLchImageStreamData = (
   };
 };
 
-export const getLifecycleHookData = (lch: any): LifecycleHookData => {
+const getLifecycleHookData = (lch: any): LifecycleHookData => {
   return {
     failurePolicy: lch?.failurePolicy ?? FailurePolicyType.Abort,
     execNewPod: {
@@ -180,7 +180,7 @@ export const getLifecycleHookData = (lch: any): LifecycleHookData => {
   };
 };
 
-export const getLifecycleHookFormData = (lch: any): LifecycleHookFormData => {
+const getLifecycleHookFormData = (lch: any): LifecycleHookFormData => {
   return {
     lch: getLifecycleHookData(lch),
     exists: !!lch,
@@ -264,10 +264,7 @@ export const getStrategyData = (
   }
 };
 
-export const getStrategy = (
-  deployment: K8sResourceKind,
-  resourceType: Resources,
-): DeploymentStrategy => {
+const getStrategy = (deployment: K8sResourceKind, resourceType: Resources): DeploymentStrategy => {
   const { strategy } = deployment.spec ?? {};
   let type: DeploymentStrategyType;
 
@@ -301,7 +298,7 @@ export const getStrategy = (
   };
 };
 
-export const getTriggersAndImageStreamValues = (
+const getTriggersAndImageStreamValues = (
   deployment: K8sResourceKind,
   resourceType: Resources,
 ): TriggersAndImageStreamFormData => {
@@ -396,7 +393,7 @@ export const convertDeploymentToEditForm = (
   };
 };
 
-export const getUpdatedContainers = (
+const getUpdatedContainers = (
   containers: ContainerSpec[],
   fromImageStreamTag: boolean,
   isi: ImageStreamImageData,
@@ -414,7 +411,7 @@ export const getUpdatedContainers = (
   return newContainers;
 };
 
-export const getUpdatedLchData = (
+const getUpdatedLchData = (
   lch: LifecycleHookData,
   lchName: string,
   lcAction: string,
@@ -456,7 +453,7 @@ export const getUpdatedLchData = (
   };
 };
 
-export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: string) => {
+const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: string) => {
   const { type, imageStreamData } = strategy;
   const newStrategy = _.omit(strategy, [
     'rollingParams',

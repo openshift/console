@@ -22,7 +22,7 @@ import {
 import { ReleaseNotesLink } from '../utils/release-notes-link';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
+const ClusterMoreUpdatesModal: FC<ClusterMoreUpdatesModalProps> = ({ cancel, cv }) => {
   const availableUpdates = getSortedAvailableUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();

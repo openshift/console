@@ -3,7 +3,7 @@ import type {
   CloudShellResource,
 } from '../components/cloud-shell/cloud-shell-utils';
 
-export const getUpdatedComponentTimeout = (
+const getUpdatedComponentTimeout = (
   existingTerminalExecComponents: CloudShellComponent[],
   timeout: string,
   terminalExecResource: CloudShellComponent,
@@ -94,7 +94,7 @@ export const updatedWebTerminalExec = (
   };
 };
 
-export const getUpdatedComponentImage = (
+const getUpdatedComponentImage = (
   existingTerminalToolingComponents: CloudShellComponent[],
   newImage: string,
   terminalToolingResource: CloudShellComponent,

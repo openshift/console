@@ -164,7 +164,7 @@ export const imageRegistryType = (t: TFunction) => {
   };
 };
 
-export const getSortedTags = (imageStream: K8sResourceKind) => {
+const getSortedTags = (imageStream: K8sResourceKind) => {
   return _.isArray(imageStream.status.tags) && imageStream.status.tags.length
     ? imageStream.status.tags.sort(({ tag: a }, { tag: b }) => {
         const v1 = semver.coerce(a);

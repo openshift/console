@@ -360,7 +360,7 @@ const getNamespaceDataViewRows = (rowData, tableColumns, namespaceMetrics, t) =>
   });
 };
 
-export const NamespacesList = (props) => {
+const NamespacesList = (props) => {
   const { t } = useTranslation();
   const dispatch = useConsoleDispatch();
   const { columns, resetAllColumnWidths } = useNamespacesColumns();
@@ -742,7 +742,7 @@ export const ProjectsTable = (props) => {
   );
 };
 
-export const ProjectList = (props) => {
+const ProjectList = (props) => {
   const { t } = useTranslation();
   const dispatch = useConsoleDispatch();
   const canGetNS = useFlag(FLAGS.CAN_GET_NS);
@@ -948,7 +948,7 @@ export const PullSecret = (props) => {
   );
 };
 
-export const NamespaceLineCharts = ({ ns }) => {
+const NamespaceLineCharts = ({ ns }) => {
   const { t } = useTranslation();
   return (
     <Grid hasGutter>
@@ -973,7 +973,7 @@ export const NamespaceLineCharts = ({ ns }) => {
   );
 };
 
-export const TopPodsBarChart = ({ ns }) => {
+const TopPodsBarChart = ({ ns }) => {
   const { t } = useTranslation();
   return (
     <Bar
@@ -998,7 +998,7 @@ const ResourceUsage = ({ ns }) => {
   ) : null;
 };
 
-export const NamespaceSummary = ({ ns }) => {
+const NamespaceSummary = ({ ns }) => {
   const { t } = useTranslation();
   const displayName = getDisplayName(ns);
   const description = getDescription(ns);

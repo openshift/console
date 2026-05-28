@@ -13,7 +13,7 @@ import { ButtonBar } from '../utils/button-bar';
 import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } from './';
 import { IDPNameInput } from './idp-name-input';
 
-export const DroppableFileInput = (props: any) => (
+const DroppableFileInput = (props: any) => (
   <AsyncComponent
     loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
     {...props}

@@ -115,7 +115,7 @@ const useLimitRangeColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
+const LimitRangeList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { columns, resetAllColumnWidths } = useLimitRangeColumns();
 
@@ -184,7 +184,7 @@ const LimitRangeDetailsRows: FC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   );
 };
 
-export const LimitRangeDetailsList = (resource) => {
+const LimitRangeDetailsList = (resource) => {
   const { t } = useTranslation();
   return (
     <PaneBody>
@@ -238,7 +238,7 @@ export const LimitRangeDetailsPage = (props) => {
 export type LimitRangeListPageProps = {
   filterLabel: string;
 };
-export type LimitRangeDetailsRowsProps = {
+type LimitRangeDetailsRowsProps = {
   limit: any;
 };
 export type LimitRangeDetailsRowProps = {

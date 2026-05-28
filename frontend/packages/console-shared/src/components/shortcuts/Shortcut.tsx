@@ -22,7 +22,7 @@ interface ShortcutCommandProps {
   children?: ReactNode;
 }
 
-export const ShortcutCommand: FC<ShortcutCommandProps> = ({ children }) => (
+const ShortcutCommand: FC<ShortcutCommandProps> = ({ children }) => (
   <span className="ocs-shortcut__command">
     <kbd className="co-kbd">{children}</kbd>
   </span>

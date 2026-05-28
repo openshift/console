@@ -16,7 +16,7 @@ import {
 
 const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
-export const getGuidedTour = (): TourDataType => ({
+const getGuidedTour = (): TourDataType => ({
   intro: {
     // t('devconsole~Welcome to the Developer Perspective!')
     heading: '%devconsole~Welcome to the Developer Perspective!%',

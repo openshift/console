@@ -10,7 +10,7 @@ export enum NamespacedPageVariants {
   default = 'default',
 }
 
-export interface NamespacedPageProps {
+interface NamespacedPageProps {
   children?: ReactNode;
   disabled?: boolean;
   hideProjects?: boolean;

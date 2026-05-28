@@ -30,8 +30,8 @@ export type DataPoint<X = Date | number | string> = {
   };
 };
 
-export type PrometheusLabels = { [key: string]: string };
-export type PrometheusValue = [number, string];
+type PrometheusLabels = { [key: string]: string };
+type PrometheusValue = [number, string];
 
 // Only covers range and instant vector responses for now.
 export type PrometheusResult = {
@@ -40,7 +40,7 @@ export type PrometheusResult = {
   value?: PrometheusValue;
 };
 
-export type PrometheusData = {
+type PrometheusData = {
   resultType: 'matrix' | 'vector' | 'scalar' | 'string';
   result: PrometheusResult[];
 };

@@ -65,7 +65,7 @@ const WebTerminalGuidedTourText: FC = () => {
 
 export const webTerminalGuidedTourText = <WebTerminalGuidedTourText />;
 
-export const SearchTourText: FC = () => {
+const SearchTourText: FC = () => {
   const { t } = useTranslation();
   return (
     <>

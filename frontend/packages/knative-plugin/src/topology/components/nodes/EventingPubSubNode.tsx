@@ -22,7 +22,7 @@ import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
 
 import './EventingPubSubNode.scss';
 
-export type EventingPubSubNodeProps = {
+type EventingPubSubNodeProps = {
   element: Node;
   canDrop?: boolean;
   dropTarget?: boolean;

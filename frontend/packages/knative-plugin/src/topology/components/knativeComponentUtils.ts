@@ -40,12 +40,12 @@ import {
 } from '../knative-topology-utils';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
-export const MOVE_PUB_SUB_CONNECTOR_OPERATION = 'movepubsubconnector';
+const MOVE_PUB_SUB_CONNECTOR_OPERATION = 'movepubsubconnector';
 export const CREATE_PUB_SUB_CONNECTOR_OPERATION = 'createpubsubconnector';
-export const MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION = 'moveeventsourcekafkaconnector';
+const MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION = 'moveeventsourcekafkaconnector';
 export const CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION = 'createeventsourcekafkaconnector';
 
-export const nodesEdgeIsDragging = (monitor, props) =>
+const nodesEdgeIsDragging = (monitor, props) =>
   monitor.isDragging() &&
   (monitor.getOperation() === CREATE_CONNECTOR_OPERATION ||
     (monitor.getOperation() === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
@@ -57,7 +57,7 @@ export const nodesEdgeIsDragging = (monitor, props) =>
     (monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_OPERATION &&
       monitor.getItem().getSource()) === props.element);
 
-export const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
+const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
   [TYPE_KNATIVE_SERVICE, TYPE_EVENT_PUB_SUB, TYPE_SINK_URI, TYPE_KAFKA_SINK].includes(
     node.getType(),
@@ -65,13 +65,13 @@ export const canDropEventSourceSinkOnNode = (operation: string, edge: Edge, node
   operation === MOVE_EV_SRC_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
-export const canDropPubSubSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
+const canDropPubSubSinkOnNode = (operation: string, edge: Edge, node: Node): boolean =>
   edge.getSource() !== node &&
   (node.getType() === TYPE_KNATIVE_SERVICE || node.getType() === TYPE_KAFKA_SINK) &&
   operation === MOVE_PUB_SUB_CONNECTOR_OPERATION &&
   !node.getTargetEdges().find((e) => e.getSource() === edge.getSource());
 
-export const isEventPubSubDroppable = (source: Node, target: Node) => {
+const isEventPubSubDroppable = (source: Node, target: Node) => {
   return (
     source.getType() === TYPE_EVENT_PUB_SUB &&
     !source

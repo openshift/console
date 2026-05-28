@@ -127,7 +127,7 @@ const getDataViewRows: GetDataViewRows<JobKind> = (data, columns) => {
   });
 };
 
-export const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
+const JobDetails: FC<JobsDetailsProps> = ({ obj: job }) => {
   const { t } = useTranslation();
   return (
     <>

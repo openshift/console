@@ -199,10 +199,3 @@ export const removeTopologyResourceConnection = (
 
   return removeResourceConnection(source, target);
 };
-
-export const isOperatorBackedNode = (element: Node | GraphElement): boolean => {
-  if (element?.getData()?.resources?.isOperatorBackedService) {
-    return true;
-  }
-  return element?.hasParent() ? isOperatorBackedNode(element.getParent()) : false;
-};

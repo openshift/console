@@ -173,7 +173,7 @@ export const ContainerRow: FC<ContainerRowProps> = ({ pod, container }) => {
 };
 ContainerRow.displayName = 'ContainerRow';
 
-export const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, pod }) => {
+const PodContainerTable: FC<PodContainerTableProps> = ({ heading, containers, pod }) => {
   const { t } = useTranslation();
   return (
     <>

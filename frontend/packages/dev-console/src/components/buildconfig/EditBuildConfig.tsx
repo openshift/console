@@ -16,7 +16,7 @@ import { validationSchema } from './form-utils/validation';
 import type { BuildConfig } from './types';
 import { BuildConfigModel } from './types';
 
-export interface EditBuildConfigProps {
+interface EditBuildConfigProps {
   heading: string;
   namespace: string;
   name: string;

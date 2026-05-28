@@ -25,7 +25,7 @@ import PubSubFilter from '../../pub-sub/form-fields/PubSubFilter';
 import PubSubSubscriber from '../../pub-sub/form-fields/PubSubSubscriber';
 import { convertFormToTriggerYaml, convertYamlToForm } from './subscribe-utils';
 
-export interface SubscribeFormProps {
+interface SubscribeFormProps {
   filterEnabled: boolean;
   source: K8sResourceKind;
   handleCancel?: () => void;

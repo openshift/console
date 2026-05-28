@@ -232,7 +232,7 @@ export const getResources = (): Promise<DiscoveryResources> =>
     });
   });
 
-export type APIResourceList = {
+type APIResourceList = {
   kind: 'APIResourceList';
   apiVersion: 'v1';
   groupVersion: string;

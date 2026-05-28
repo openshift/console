@@ -45,9 +45,9 @@ export const getHostErrorMessage = (host: BareMetalHostKind): string =>
   _.get(host, 'status.errorMessage');
 export const getHostDescription = (host: BareMetalHostKind): string =>
   _.get(host, 'spec.description', '');
-export const isHostPoweredOn = (host: BareMetalHostKind): boolean =>
+const isHostPoweredOn = (host: BareMetalHostKind): boolean =>
   _.get(host, 'status.poweredOn', false);
-export const hasRebootAnnotation = (host: BareMetalHostKind): string =>
+const hasRebootAnnotation = (host: BareMetalHostKind): string =>
   Object.keys(host?.metadata?.annotations || {}).find(
     (annotation) => annotation === ANNOTATION_HOST_RESTART,
   );

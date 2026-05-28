@@ -12,7 +12,7 @@ import { PIPELINE_RUNTIME_LABEL } from '../../../const';
 import type { PipelineKind } from '../../../types/pipeline';
 import type { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 
-export interface BuilderImageSelectorProps {
+interface BuilderImageSelectorProps {
   loadingImageStream: boolean;
   builderImages: NormalizedBuilderImages;
   existingPipeline?: PipelineKind;

@@ -7,7 +7,7 @@ import {
 } from '@console/shared/src/components/status/icons';
 import { getConditionOKCount } from '../../utils/condition-utils';
 
-export type GetConditionsForStatusProps = {
+type GetConditionsForStatusProps = {
   conditions: K8sResourceCondition[];
 };
 

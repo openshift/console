@@ -177,7 +177,7 @@ const useUsersColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const UserList: FC<UserListProps> = (props) => {
+const UserList: FC<UserListProps> = (props) => {
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = useUsersColumns();
   const { data, loaded } = props;

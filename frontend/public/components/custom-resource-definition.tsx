@@ -344,7 +344,7 @@ const getDataViewRows: GetDataViewRows<CustomResourceDefinitionKind> = (data, co
   });
 };
 
-export const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
+const CustomResourceDefinitionsList: FC<CustomResourceDefinitionsListProps> = ({
   data,
   loaded,
   ...props
@@ -403,7 +403,7 @@ export const CustomResourceDefinitionsDetailsPage: FC = (props) => {
   );
 };
 
-export type CustomResourceDefinitionsListProps = {
+type CustomResourceDefinitionsListProps = {
   data: CustomResourceDefinitionKind[];
   loaded: boolean;
 };
@@ -416,6 +416,6 @@ type InstancesProps = {
 CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
 CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';
 
-export type CRDVersionProps = {
+type CRDVersionProps = {
   versions: CRDVersion[];
 };

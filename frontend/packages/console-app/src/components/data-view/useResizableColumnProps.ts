@@ -9,7 +9,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
  * Stored column widths keyed by table then column for easy reading in the configMap.
  * Example: { "core~v1~Pod": { "name": 200, "namespace": 150 } }
  */
-export type ColumnWidthUserSettings = Record<string, Record<string, number>>;
+type ColumnWidthUserSettings = Record<string, Record<string, number>>;
 
 /** Callback when a table column is resized: event, column id, and new width in pixels. */
 type ColumnResizeOnResize = (

@@ -113,7 +113,7 @@ const EnvironmentTab: FC<EnvironmentTabProps> = (props) => (
   />
 );
 
-export const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
+const DaemonSetsList: FC<DaemonSetsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DaemonSetKind>(DaemonSetModel);
 
   return (

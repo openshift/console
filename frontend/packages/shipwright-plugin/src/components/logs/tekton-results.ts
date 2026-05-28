@@ -6,7 +6,7 @@ import { HttpError } from '@console/dynamic-plugin-sdk/src/utils/error/http-erro
 
 // const URL_PREFIX = `/apis/results.tekton.dev/v1alpha2/parents/`;
 
-export type DevConsoleEndpointResponse = {
+type DevConsoleEndpointResponse = {
   statusCode: number;
   headers: Record<string, string[]>;
   body: string;

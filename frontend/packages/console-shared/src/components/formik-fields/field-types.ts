@@ -149,14 +149,14 @@ export interface NameValueFromPair {
   valueFrom: ConfigMapKeyRef | SecretKeyRef;
 }
 
-export interface ConfigMapKeyRef {
+interface ConfigMapKeyRef {
   configMapKeyRef: {
     key: string;
     name: string;
   };
 }
 
-export interface SecretKeyRef {
+interface SecretKeyRef {
   secretKeyRef: {
     key: string;
     name: string;
@@ -181,7 +181,7 @@ export interface RadioGroupFieldProps extends FieldProps {
   helpText?: ReactNode;
 }
 
-export interface RadioGroupOption {
+interface RadioGroupOption {
   value: string;
   label: ReactNode;
   isDisabled?: boolean;
@@ -198,7 +198,7 @@ export interface SelectInputOption {
   hasCheckbox?: boolean;
 }
 
-export interface SelectInputFieldProps extends FieldProps {
+interface SelectInputFieldProps extends FieldProps {
   ariaLabel?: string;
   options: SelectInputOption[];
   isDisabled?: boolean;

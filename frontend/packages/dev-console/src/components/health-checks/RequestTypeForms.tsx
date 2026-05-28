@@ -18,7 +18,7 @@ interface RequestTypeFormProps {
   probeType?: string;
 }
 
-export const renderPortField = (
+const renderPortField = (
   fieldName: string,
   resourceType: Resources,
   viewOnly: boolean,

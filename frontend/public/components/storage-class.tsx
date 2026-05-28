@@ -161,7 +161,7 @@ const useStorageClassColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
+const StorageClassList: FC<StorageClassListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = useStorageClassColumns();
   const isKubevirtPluginActive = useIsKubevirtPluginActive();

@@ -53,7 +53,7 @@ enum FilterType {
   LABEL = 'Label',
 }
 
-export const filterTypeMap = Object.freeze({
+const filterTypeMap = Object.freeze({
   [FilterType.LABEL]: 'labels',
   [FilterType.NAME]: 'name',
 });
@@ -530,11 +530,11 @@ type RowFilterBase<R> = {
   defaultSelected?: string[];
 };
 
-export type RowMatchFilter<R = any> = RowFilterBase<R> & {
+type RowMatchFilter<R = any> = RowFilterBase<R> & {
   isMatch: (obj: R, id: string) => boolean;
 };
 
-export type RowReducerFilter<R = any> = RowFilterBase<R> & {
+type RowReducerFilter<R = any> = RowFilterBase<R> & {
   reducer: (obj: R) => ReactText;
 };
 

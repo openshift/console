@@ -47,7 +47,7 @@ import { LazyActionMenu } from '@console/shared/src/components/actions/LazyActio
 
 const BuildConfigsReference: K8sResourceKindReference = referenceForModel(BuildConfigModel);
 
-export const BuildConfigsDetails: FC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
+const BuildConfigsDetails: FC<BuildConfigsDetailsProps> = ({ obj: buildConfig }) => {
   const hasPipeline = buildConfig.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
   const { t } = useTranslation();
   return (
@@ -293,7 +293,7 @@ const useBuildConfigColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
+const BuildConfigsList: FC<BuildConfigsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useBuildConfigColumns();
   const buildModel = referenceForModel(BuildModel);
   const BUILDCONFIG_TO_BUILD_REFERENCE_LABEL = 'openshift.io/build-config.name';
@@ -424,7 +424,7 @@ type BuildConfigsListProps = {
   namespace: string;
 };
 
-export type BuildConfigsDetailsProps = {
+type BuildConfigsDetailsProps = {
   obj: K8sResourceKind;
 };
 

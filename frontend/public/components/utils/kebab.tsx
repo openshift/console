@@ -19,7 +19,7 @@ import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind } from '../../
 import { ContextSubMenuItem } from '@patternfly/react-topology';
 import { useAccessReview, checkAccess } from './rbac';
 
-export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
+const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenuOption } = {};
   const menuOptions: KebabMenuOption[] = [];
 
@@ -87,7 +87,7 @@ export const KebabItemAccessReview_ = (
 
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
-export const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
+const isKebabSubMenu = (option: KebabMenuOption): option is KebabSubMenuOption => {
   // only a sub menu has children
   return Array.isArray((option as KebabSubMenuOption).children);
 };
@@ -119,7 +119,7 @@ type KebabMenuItemsProps = {
   className?: string;
 };
 
-export const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
+const KebabMenuItems: FC<KebabMenuItemsProps> = ({ options, onClick, focusItem }) => {
   const { t } = useTranslation();
 
   return (
@@ -258,7 +258,7 @@ type KebabSubMenuOption = {
   children: KebabMenuOption[];
 };
 
-export type KebabMenuOption = KebabSubMenuOption | KebabOption;
+type KebabMenuOption = KebabSubMenuOption | KebabOption;
 
 type KebabProps = {
   options: KebabOption[];

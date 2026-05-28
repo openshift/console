@@ -1,7 +1,7 @@
 import type { K8sResourceKind } from '@console/internal/module/k8s';
 
 // HotplugVolumeStatus represents the hotplug status of the volume
-export interface V1HotplugVolumeStatus {
+interface V1HotplugVolumeStatus {
   // AttachPodName is the name of the pod used to attach the volume to the node.
   attachPodName?: string;
   // AttachPodUID is the UID of the pod used to attach the volume to the node.
@@ -9,7 +9,7 @@ export interface V1HotplugVolumeStatus {
 }
 
 // VolumeStatus represents information about the status of volumes attached to the VirtualMachineInstance.
-export interface V1VolumeStatus {
+interface V1VolumeStatus {
   // If the volume is hotplug, this will contain the hotplug status.
   hotplugVolume?: V1HotplugVolumeStatus;
   // Message is a detailed message about the current hotplug volume phase.
@@ -24,12 +24,12 @@ export interface V1VolumeStatus {
   target: string;
 }
 
-export type NodeSelector = {
+type NodeSelector = {
   [key: string]: string;
 };
 
 // https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachineinstancespec
-export type VMISpec = {
+type VMISpec = {
   affinity: any;
   dnsConfig: any;
   dnsPolicy: string;
@@ -48,7 +48,7 @@ export type VMISpec = {
 };
 
 // https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachineinstancestatus
-export type VMIStatus = {
+type VMIStatus = {
   conditions: any[];
   interfaces: any[];
   migrationMethod: string;

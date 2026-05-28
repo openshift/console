@@ -16,7 +16,7 @@ import { EmptyBox } from './utils/status-box';
 import { SectionHeading } from './utils/headings';
 import * as ITOB from 'istextorbinary';
 
-export const MaskedData: FC<{}> = () => {
+const MaskedData: FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <>

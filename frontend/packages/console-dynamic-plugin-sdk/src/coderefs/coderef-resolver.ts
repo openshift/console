@@ -28,15 +28,15 @@ export const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
   isEqual(Object.getOwnPropertyNames(obj), ['$codeRef']) &&
   typeof (obj as EncodedCodeRef).$codeRef === 'string';
 
-export const isExecutableCodeRef = (obj): obj is CodeRef =>
+const isExecutableCodeRef = (obj): obj is CodeRef =>
   isFunction(obj) &&
   isEqual(Object.getOwnPropertySymbols(obj), [codeRefSymbol]) &&
   obj[codeRefSymbol] === true;
 
 const codeRefErrorSymbol = Symbol('error');
-export const isCodeRefError = (ref: CodeRef) => !!ref[codeRefErrorSymbol];
-export const getCodeRefError = (ref: CodeRef) => ref[codeRefErrorSymbol];
-export const setCodeRefError = (ref: CodeRef, e: any) => {
+const isCodeRefError = (ref: CodeRef) => !!ref[codeRefErrorSymbol];
+const getCodeRefError = (ref: CodeRef) => ref[codeRefErrorSymbol];
+const setCodeRefError = (ref: CodeRef, e: any) => {
   ref[codeRefErrorSymbol] = e;
   return ref;
 };

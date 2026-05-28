@@ -309,4 +309,4 @@ const ReplicaSetsPage = (props) => {
   );
 };
 
-export { ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage };
+export { ReplicaSetsPage, ReplicaSetsDetailsPage };

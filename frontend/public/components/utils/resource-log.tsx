@@ -71,10 +71,10 @@ import { isWindowsPod } from '../../module/k8s/pods';
 import { getImpersonate } from '@console/dynamic-plugin-sdk';
 import useToggleLineBuffer from './useToggleLineBuffer';
 
-export const STREAM_EOF = 'eof';
-export const STREAM_LOADING = 'loading';
-export const STREAM_PAUSED = 'paused';
-export const STREAM_ACTIVE = 'streaming';
+const STREAM_EOF = 'eof';
+const STREAM_LOADING = 'loading';
+const STREAM_PAUSED = 'paused';
+const STREAM_ACTIVE = 'streaming';
 
 export const LOG_SOURCE_RESTARTING = 'restarting';
 export const LOG_SOURCE_RUNNING = 'running';

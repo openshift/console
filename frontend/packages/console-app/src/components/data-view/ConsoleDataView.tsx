@@ -33,11 +33,11 @@ import { useConsoleDataViewFilters } from './useConsoleDataViewFilters';
 
 export const initialFiltersDefault: ResourceFilters = { name: '', label: '' };
 
-export const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
+const BodyLoading: FC<{ columns: number }> = ({ columns }) => {
   return <SkeletonTableBody rowsCount={5} columnsCount={columns} />;
 };
 
-export const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
+const BodyEmpty: FC<{ label: string; colSpan: number }> = ({ label, colSpan }) => {
   const { t } = useTranslation();
   return (
     <Tbody>

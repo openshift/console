@@ -17,7 +17,7 @@ const PageBody: FC<PageBodyProps> = ({ children, className, ...props }) => {
   );
 };
 
-export type PageBodyProps = {
+type PageBodyProps = {
   children: ReactNode;
   className?: string;
 };

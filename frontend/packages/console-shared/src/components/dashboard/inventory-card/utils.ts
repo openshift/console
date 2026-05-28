@@ -28,7 +28,7 @@ const VS_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.ERROR]: ['Error'],
 };
 
-export const getStatusGroups = (resources, mapping, mapper, filterType) => {
+const getStatusGroups = (resources, mapping, mapper, filterType) => {
   const groups = {
     [InventoryStatusGroup.UNKNOWN]: {
       statusIDs: [],

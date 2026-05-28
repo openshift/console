@@ -23,7 +23,7 @@ export const defaultPackageSourceMap = {
   [DefaultCatalogSource.CommunityOperators]: OperatorSource.CommunityOperators,
 };
 
-export const defaultClusterCatalogSourceMap = {
+const defaultClusterCatalogSourceMap = {
   [DefaultClusterCatalog.OpenShiftRedHatOperators]: OperatorSource.RedHatOperators,
   [DefaultClusterCatalog.OpenShiftRedHatMarketPlace]: OperatorSource.RedHatMarketplace,
   [DefaultClusterCatalog.OpenShiftCertifiedOperators]: OperatorSource.CertifiedOperators,

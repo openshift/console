@@ -8,7 +8,7 @@ import type { TestFunctionFormikValues } from './types';
 import { InvokeFormat } from './types';
 import { generatePayload, parseResponse } from './utils';
 
-export interface TestFunctionProps {
+interface TestFunctionProps {
   service: ServiceKind;
   cancel?: () => void;
   close?: () => void;

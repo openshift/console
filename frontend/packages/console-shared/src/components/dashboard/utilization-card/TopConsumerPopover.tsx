@@ -117,7 +117,7 @@ export const LimitsBody: FC<LimitsBodyProps> = ({
   );
 };
 
-export const PopoverBody = memo<PopoverBodyProps>(
+const PopoverBody = memo<PopoverBodyProps>(
   ({ humanize, consumers, namespace, isOpen, description, children }) => {
     const { t } = useTranslation();
     const [currentConsumer, setCurrentConsumer] = useState(consumers[0]);
@@ -307,7 +307,7 @@ type PopoverBodyProps = PopoverProps & {
   isOpen: boolean;
 };
 
-export type ConsumerPopoverProps = PopoverProps & {
+type ConsumerPopoverProps = PopoverProps & {
   position?: PopoverPosition;
   title: string;
   current: string;

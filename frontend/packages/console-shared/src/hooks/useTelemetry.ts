@@ -29,7 +29,7 @@ export type TelemetryEventProperties = {
 } & ClusterProperties &
   Record<string, any>;
 
-export interface TelemetryEvent {
+interface TelemetryEvent {
   eventType: string;
   event: TelemetryEventProperties;
 }

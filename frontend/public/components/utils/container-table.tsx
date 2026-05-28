@@ -44,7 +44,7 @@ export const ContainerTable: FC<ContainerTableProps> = ({ containers }) => {
   );
 };
 
-export type ContainerRowProps = {
+type ContainerRowProps = {
   container: ContainerSpec;
 };
 

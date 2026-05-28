@@ -31,13 +31,13 @@ import ImageStreamTagDropdown from './ImageStreamTagDropdown';
 
 import './ImageStream.scss';
 
-export const initialState: ImageStreamState = {
+const initialState: ImageStreamState = {
   loading: false,
   accessLoading: false,
   selectedImageStream: {},
 };
 
-export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamAction) => {
+const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamAction) => {
   const { value } = action;
   switch (action.type) {
     case ImageStreamActions.setLoading:

@@ -240,7 +240,7 @@ type HealthChecksItemProps = {
   };
 };
 
-export const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) => {
+const HealthChecksItem: FC<HealthChecksItemProps> = ({ disabledAlert }) => {
   const { obj, setHealthCheck } = useContext(NodeDashboardContext);
   const [name, namespace] = getNodeMachineNameAndNamespace(obj);
   const { t } = useTranslation();

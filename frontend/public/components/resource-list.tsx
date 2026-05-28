@@ -128,7 +128,7 @@ export const ResourceDetailsPage = (props) => {
   return <ResourceDetailsPage_ {...props} params={params} />;
 };
 
-export type ResourceListPageProps = {
+type ResourceListPageProps = {
   flags: any;
   kindObj: K8sKind;
   kindsInFlight: boolean;
@@ -136,7 +136,7 @@ export type ResourceListPageProps = {
   modelRef: K8sResourceKindReference;
 };
 
-export type ResourceDetailsPageProps = {
+type ResourceDetailsPageProps = {
   kindObj: K8sKind;
   kindsInFlight: boolean;
   params?: any;

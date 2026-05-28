@@ -16,7 +16,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { getLastLanguage } from '../../user-preferences/language/getLastLanguage';
 
-export { QuickStartContext, QuickStartContextProvider } from '@patternfly/quickstarts';
+export { QuickStartContextProvider } from '@patternfly/quickstarts';
 
 export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const params = new URLSearchParams(window.location.search);

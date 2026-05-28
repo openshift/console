@@ -37,7 +37,7 @@ export const SelectedReleaseStatuses = [
   HelmReleaseStatus.Other,
 ];
 
-export const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
+const OtherReleaseStatuses = ['unknown', 'uninstalled', 'superseded', 'uninstalling'];
 
 export const releaseStatus = (status: string) => {
   if (!status) {
@@ -199,11 +199,7 @@ export const getChartVersions = (chartEntries: HelmChartMetaData[], t: TFunction
   return chartVersions;
 };
 
-export const getOriginRedirectURL = (
-  actionOrigin: string,
-  namespace: string,
-  releaseName?: string,
-) => {
+const getOriginRedirectURL = (actionOrigin: string, namespace: string, releaseName?: string) => {
   switch (actionOrigin) {
     case HelmActionOrigins.topology:
       return `/topology/ns/${namespace}`;

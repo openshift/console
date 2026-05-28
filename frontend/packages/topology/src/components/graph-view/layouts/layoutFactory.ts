@@ -11,4 +11,4 @@ const layoutFactory: LayoutFactory = (type: string, graph: Graph): Layout | unde
   return type === COLA_LAYOUT ? new TopologyColaLayout(graph, { layoutOnDrag: false }) : undefined;
 };
 
-export { COLA_LAYOUT, DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory };
+export { DEFAULT_LAYOUT, SUPPORTED_LAYOUTS, layoutFactory };

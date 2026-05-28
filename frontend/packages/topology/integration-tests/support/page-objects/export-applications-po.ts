@@ -5,7 +5,7 @@ export const exportApplication = {
   resourceAddedNotification: '[aria-label="Close Info alert: alert: Resource added"]',
 };
 
-export const buttonDisplayName = (buttonName: string) => {
+const buttonDisplayName = (buttonName: string) => {
   switch (buttonName) {
     case 'View logs': {
       return 'export-view-log-btn';

@@ -37,7 +37,7 @@ import { getResource } from '@console/topology/src/utils/topology-utils';
 import { isServerlessFunction } from '../../knative-topology-utils';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 
-export type KnativeServiceGroupProps = {
+type KnativeServiceGroupProps = {
   element: Node;
   badge?: string;
   badgeColor?: string;

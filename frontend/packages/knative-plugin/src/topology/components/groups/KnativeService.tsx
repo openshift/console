@@ -20,7 +20,7 @@ import KnativeServiceGroup from './KnativeServiceGroup';
 
 import './KnativeService.scss';
 
-export type KnativeServiceProps = {
+type KnativeServiceProps = {
   element: Node;
   highlight?: boolean;
   canDrop?: boolean;

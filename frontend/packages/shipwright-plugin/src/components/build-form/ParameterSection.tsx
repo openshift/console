@@ -9,7 +9,7 @@ import { InputField } from '@console/shared/src/components/formik-fields/InputFi
 import { TextColumnField } from '@console/shared/src/components/formik-fields/text-column-field/TextColumnField';
 import type { BuildFormikValues, BuildParam, ModalParameter } from './types';
 
-export const paramIsRequired = (param: BuildParam): boolean => {
+const paramIsRequired = (param: BuildParam): boolean => {
   return param.type === 'array' ? !param.defaults : !param.default;
 };
 

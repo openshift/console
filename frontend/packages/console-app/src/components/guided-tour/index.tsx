@@ -24,7 +24,7 @@ const IntroductionText: FC = () => {
   );
 };
 
-export const getGuidedTour = (): TourDataType => ({
+const getGuidedTour = (): TourDataType => ({
   intro: {
     // t('console-app~Welcome to the new OpenShift experience!')
     heading: '%console-app~Welcome to the new OpenShift experience!%',

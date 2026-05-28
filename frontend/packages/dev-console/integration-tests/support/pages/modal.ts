@@ -1,4 +1,3 @@
-import { modal } from '@console/cypress-integration-tests/views/modal';
 import { eventSourcePO } from '../pageObjects';
 
 export const editLabels = {
@@ -62,21 +61,6 @@ export const editApplicationGrouping = {
   },
 };
 
-export const deleteApplication = {
-  enterApplication: (appName: string) =>
-    cy.get('#form-input-resourceName-field').clear().type(appName),
-  clickDelete: () => {
-    cy.byTestID('confirm-action').should('be.enabled').click();
-    cy.get('form').should('not.exist');
-  },
-  deleteApp: () => {
-    cy.get('p strong').then((ele) => {
-      deleteApplication.enterApplication(ele.text());
-      modal.submit();
-    });
-  },
-};
-
 export const deleteRevision = {
   verifyMessage: (message: string) => cy.get('[role="dialog"] p').should('contain.text', message),
   clickOK: () => cy.byLegacyTestID('modal-cancel-action').click(),
@@ -94,10 +78,4 @@ export const moveSink = {
   },
   verifyResourceDropDown: () =>
     cy.get(eventSourcePO.sinkBinding.sink.resource.resourceDropdown).should('be.visible'),
-};
-
-export const editPodCount = {
-  enterPodCount: (podCount: string) => {
-    cy.get('input[type="number"]').clear().type(podCount);
-  },
 };

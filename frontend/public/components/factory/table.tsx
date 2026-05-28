@@ -290,7 +290,7 @@ export type RowFunctionArgs<T = any, C = any> = {
   customData?: C;
 };
 
-export type VirtualBodyProps = {
+type VirtualBodyProps = {
   customData?: any;
   Row: FC<RowFunctionArgs>;
   height: number;
@@ -741,7 +741,7 @@ type StandardTableProps = Partial<ComponentProps> & {
   sortBy?: ISortBy;
 };
 
-export type ComponentProps = {
+type ComponentProps = {
   data: any[];
   filters: Filter[];
   selected: boolean;

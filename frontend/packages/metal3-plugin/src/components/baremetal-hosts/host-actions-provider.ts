@@ -88,7 +88,7 @@ const useEditAction = (kindObj: K8sKind, host: BareMetalHostKind) => {
   return action;
 };
 
-export const useSetNodeMaintenanceAction = (
+const useSetNodeMaintenanceAction = (
   host: BareMetalHostKind,
   hasNodeMaintenanceCapability,
   nodeMaintenance,
@@ -116,7 +116,7 @@ export const useSetNodeMaintenanceAction = (
   return action;
 };
 
-export const useRemoveNodeMaintenanceAction = (
+const useRemoveNodeMaintenanceAction = (
   host,
   hasNodeMaintenanceCapability,
   nodeMaintenance,

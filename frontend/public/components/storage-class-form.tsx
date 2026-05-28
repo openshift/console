@@ -731,7 +731,7 @@ const mapDispatchToProps = (): DispatchProps => ({
   watchK8sList: k8sActions.watchK8sList,
 });
 
-export type StorageClassFormProps = StateProps &
+type StorageClassFormProps = StateProps &
   DispatchProps & {
     resources?: {
       [key: string]: WatchK8sResultsObject<K8sResourceCommon | K8sResourceCommon[]>;
@@ -740,17 +740,7 @@ export type StorageClassFormProps = StateProps &
     extensions?: [ResolvedExtension<StorageClassProvisioner>[], boolean, any[]];
   };
 
-export type StorageClassData = {
-  name: string;
-  type: string;
-  description: string;
-  parameters: Parameters;
-  reclaim: string;
-  volumeBindingMode: string;
-  expansion: boolean;
-};
-
-export type StorageClass = K8sResourceCommon & {
+type StorageClass = K8sResourceCommon & {
   provisioner: string;
   parameters: object;
   reclaimPolicy?: string;
@@ -758,7 +748,7 @@ export type StorageClass = K8sResourceCommon & {
   allowVolumeExpansion?: boolean;
 };
 
-export const ConnectedStorageClassForm = connect(
+const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
 )((props: StateProps & DispatchProps) => {

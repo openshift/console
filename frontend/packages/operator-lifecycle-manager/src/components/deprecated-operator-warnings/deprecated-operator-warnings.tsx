@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/api/core-api';
 import type { DeprecatedOperatorWarning, SubscriptionKind } from '../../types';
 
-export enum DeprecatedOperatorType {
+enum DeprecatedOperatorType {
   PackageDeprecated = 'PackageDeprecated',
   ChannelDeprecated = 'ChannelDeprecated',
   VersionDeprecated = 'BundleDeprecated',

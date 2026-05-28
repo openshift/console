@@ -147,7 +147,7 @@ const useServiceMonitorColumns = () => {
   );
 };
 
-export const ServiceMonitorsList = (props) => {
+const ServiceMonitorsList = (props) => {
   const { data, loaded } = props;
   const columns = useServiceMonitorColumns();
 

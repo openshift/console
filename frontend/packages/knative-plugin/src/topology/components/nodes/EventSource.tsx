@@ -16,7 +16,7 @@ import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';
 
 import './EventSource.scss';
 
-export type EventSourceProps = {
+type EventSourceProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;

@@ -26,7 +26,7 @@ import { ChartLegendTooltipStyles } from '@patternfly/react-charts/dist/esm/vict
 
 import { DataPoint } from '.';
 
-export const ChartLegendTooltipContent: FC<
+const ChartLegendTooltipContent: FC<
   ChartLegendTooltipContentProps & {
     stack?: boolean;
     mainDataName?: string;
@@ -183,7 +183,7 @@ export const ChartLegendTooltipContent: FC<
 };
 ChartLegendTooltipContent.displayName = 'ChartLegendTooltipContent';
 
-export const ChartLegendTooltipLabel: FC<ChartLegendTooltipLabelProps> = ({
+const ChartLegendTooltipLabel: FC<ChartLegendTooltipLabelProps> = ({
   index = 0,
   legendData,
   style,

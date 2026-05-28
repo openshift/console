@@ -71,7 +71,7 @@ const isPodWithoutImageId = (pod: PodKind) =>
   pod.status?.phase === 'Pending' &&
   pod.status?.containerStatuses?.some((containerStatus) => !containerStatus.imageID);
 
-export const podCompare = (pod1: PodKind, pod2: PodKind): number => {
+const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   const error1 = isPodError(pod1);
   const error2 = isPodError(pod2);
 

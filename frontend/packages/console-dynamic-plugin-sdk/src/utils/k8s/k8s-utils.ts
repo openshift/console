@@ -177,9 +177,7 @@ const modelKey = (model: K8sModel): string => {
   return model.crd ? getReferenceForModel(model) : model.kind;
 };
 
-export const modelsToMap = (
-  models: K8sModel[],
-): ImmutableMap<K8sResourceKindReference, K8sModel> => {
+const modelsToMap = (models: K8sModel[]): ImmutableMap<K8sResourceKindReference, K8sModel> => {
   return ImmutableMap<K8sResourceKindReference, K8sModel>().withMutations((map) => {
     models.forEach((model) => map.set(modelKey(model), model));
   });
