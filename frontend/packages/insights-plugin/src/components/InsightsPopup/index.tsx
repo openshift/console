@@ -30,7 +30,7 @@ const DataComponent: FC<DataComponentProps> = ({ x, y, datum }) => {
   return <Icon x={x} y={y - 5} fill={legendColorScale[datum.id]} />;
 };
 
-const LabelComponent = ({ clusterID, ...props }) => {
+export const LabelComponent = ({ clusterID, ...props }) => {
   const riskId = props.datum?.id;
   const riskIndex = riskId != null ? riskSorting[riskId] : undefined;
   const totalRisk = Number.isFinite(riskIndex) ? riskIndex + 1 : undefined;
