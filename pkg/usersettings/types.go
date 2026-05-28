@@ -7,7 +7,8 @@ import (
 type UserSettingMeta struct {
 	Username string
 	UID      string
-	// The resource identifier contains "kubeadmin" for the kubeadmin and the user uid otherwise.
+	// ResourceIdentifier contains "kubeadmin" for the real kubeadmin (no UID)
+	// and SHA256(username) as hex for all other users.
 	ResourceIdentifier string
 	OwnerReferences    []meta.OwnerReference
 }
