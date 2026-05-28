@@ -28,10 +28,8 @@ jest.mock('@console/internal/components/utils', () => ({
 
 describe('LabelComponent', () => {
   it('should generate correct href for a valid clusterID and risk level', () => {
-    const { container } = render(
-      <LabelComponent clusterID="cluster-abc" datum={{ id: 'critical' }} />,
-    );
-    const link = container.querySelector('a');
+    render(<LabelComponent clusterID="cluster-abc" datum={{ id: 'critical' }} />);
+    const link = screen.getByRole('link');
     expect(link).toHaveAttribute(
       'href',
       'https://console.redhat.com/openshift/insights/advisor/clusters/cluster-abc?total_risk=4',
@@ -42,8 +40,8 @@ describe('LabelComponent', () => {
     const expected = { low: 1, moderate: 2, important: 3, critical: 4 };
 
     Object.entries(expected).forEach(([riskId, expectedTotalRisk]) => {
-      const { container } = render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
-      const link = container.querySelector('a');
+      render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
+      const link = screen.getByRole('link');
       expect(link).toHaveAttribute(
         'href',
         `https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=${expectedTotalRisk}`,
@@ -51,36 +49,31 @@ describe('LabelComponent', () => {
     });
   });
 
-  it('should not set href when clusterID is empty', () => {
-    const { container } = render(<LabelComponent clusterID="" datum={{ id: 'critical' }} />);
-    const link = container.querySelector('a');
-    expect(link).not.toHaveAttribute('href');
+  it('should not render a link when clusterID is empty', () => {
+    render(<LabelComponent clusterID="" datum={{ id: 'critical' }} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
-  it('should not set href when datum is undefined', () => {
-    const { container } = render(<LabelComponent clusterID="cluster-1" />);
-    const link = container.querySelector('a');
-    expect(link).not.toHaveAttribute('href');
+  it('should not render a link when datum is undefined', () => {
+    render(<LabelComponent clusterID="cluster-1" />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
-  it('should not set href when datum.id is an unknown risk level', () => {
-    const { container } = render(
-      <LabelComponent clusterID="cluster-1" datum={{ id: 'unknown-risk' }} />,
-    );
-    const link = container.querySelector('a');
-    expect(link).not.toHaveAttribute('href');
+  it('should not render a link when datum.id is an unknown risk level', () => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'unknown-risk' }} />);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
   it('should set target="_blank" and rel="noopener noreferrer"', () => {
-    const { container } = render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
-    const link = container.querySelector('a');
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
+    const link = screen.getByRole('link');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('should set tabIndex=0 for keyboard accessibility', () => {
-    const { container } = render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
-    const link = container.querySelector('a');
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: 'low' }} />);
+    const link = screen.getByRole('link');
     expect(link).toHaveAttribute('tabindex', '0');
   });
 });

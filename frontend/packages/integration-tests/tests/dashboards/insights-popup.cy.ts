@@ -56,10 +56,13 @@ describe('Insights Popup on Cluster Dashboard', () => {
   it('severity links include total_risk query parameter', () => {
     cy.get(INSIGHTS_BUTTON).filter('button').click();
     cy.get('.pf-v6-c-popover').within(() => {
-      cy.get('a[href*="total_risk="]').each(($link) => {
-        const href = $link.attr('href');
-        expect(href).to.match(/total_risk=[1-4]/);
-      });
+      cy.get('a[href*="total_risk="]')
+        .should('have.length.greaterThan', 0)
+        .each(($link) => {
+          const href = $link.attr('href');
+          const totalRisk = new URL(href, 'https://placeholder').searchParams.get('total_risk');
+          expect(['1', '2', '3', '4']).to.include(totalRisk);
+        });
     });
   });
 
