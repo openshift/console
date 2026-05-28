@@ -47,7 +47,7 @@ const emptyConfigMap: ConfigMapKind = {
   apiVersion: 'v1',
   kind: 'ConfigMap',
   metadata: {
-    name: `user-settings-1234`,
+    name: `user-settings-ae5deb822e0d71992900471a7199d0d95b8e7c9d05c40a8245a281fd2c1d6684`,
     namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
   },
 };
@@ -61,7 +61,9 @@ const savedDataConfigMap: ConfigMapKind = {
 
 beforeEach(() => {
   jest.resetAllMocks();
-  useSelectorMock.mockImplementation((selector) => selector({ sdkCore: { user: { uid: 'foo' } } }));
+  useSelectorMock.mockImplementation((selector) =>
+    selector({ sdkCore: { user: { uid: 'foo', username: 'testuser' } } }),
+  );
   useFavoritesOptionsMock.mockReturnValue([[], jest.fn(), true]);
 
   // eslint-disable-next-line no-console

@@ -14,29 +14,26 @@ import (
 func newUserSettingMeta(userInfo authenticationv1.UserInfo) (*UserSettingMeta, error) {
 	uid := userInfo.UID
 	name := userInfo.Username
-	resourceIdentifier := name
-	ownerReferences := []meta.OwnerReference{
-		{
-			APIVersion: "user.openshift.io/v1",
-			Kind:       "User",
-			Name:       name,
-			UID:        types.UID(uid),
-		},
-	}
 
-	if uid != "" {
-		resourceIdentifier = string(uid)
-	} else if name == "kube:admin" {
+	var resourceIdentifier string
+	ownerReferences := []meta.OwnerReference{}
+
+	if name == "kube:admin" && uid == "" {
 		resourceIdentifier = "kubeadmin"
-		ownerReferences = []meta.OwnerReference{}
 	} else {
-		// to avoid issues when the username contains special characters like '@'
-		// that are not allowed in kube resource names
-		// we also can't use base64 encoding because only lowercase chars are allowed
-		// in CM names
-		sha256Hash := sha256.New()
-		sha256Hash.Write([]byte(resourceIdentifier))
-		resourceIdentifier = hex.EncodeToString(sha256Hash.Sum(nil))
+		sum := sha256.Sum256([]byte(name))
+		resourceIdentifier = hex.EncodeToString(sum[:])
+
+		if uid != "" {
+			ownerReferences = []meta.OwnerReference{
+				{
+					APIVersion: "user.openshift.io/v1",
+					Kind:       "User",
+					Name:       name,
+					UID:        types.UID(uid),
+				},
+			}
+		}
 	}
 
 	return &UserSettingMeta{
