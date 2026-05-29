@@ -573,6 +573,101 @@ export default class KubernetesClient {
     return response;
   }
 
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    return this.coApi.createClusterCustomObject({ body, group, plural, version });
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    return this.coApi.getClusterCustomObject({ group, name, plural, version });
+  }
+
+  async patchClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+    patch: object,
+  ): Promise<unknown> {
+    return this.coApi.patchClusterCustomObject({
+      body: patch,
+      group,
+      name,
+      plural,
+      version,
+      contentType: k8s.PatchStrategy.MergePatch,
+    } as any);
+  }
+
+  async createPVC(namespace: string, body: k8s.V1PersistentVolumeClaim): Promise<unknown> {
+    return this.k8sApi.createNamespacedPersistentVolumeClaim({ namespace, body });
+  }
+
+  async deletePVC(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedPersistentVolumeClaim({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async getPVC(name: string, namespace: string): Promise<k8s.V1PersistentVolumeClaim> {
+    return this.k8sApi.readNamespacedPersistentVolumeClaim({ name, namespace });
+  }
+
+  async createDeployment(namespace: string, body: k8s.V1Deployment): Promise<unknown> {
+    return this.appsApi.createNamespacedDeployment({ namespace, body });
+  }
+
+  async deleteDeployment(name: string, namespace: string): Promise<void> {
+    try {
+      await this.appsApi.deleteNamespacedDeployment({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async patchDeployment(
+    name: string,
+    namespace: string,
+    patch: object,
+  ): Promise<unknown> {
+    return this.appsApi.patchNamespacedDeployment({
+      name,
+      namespace,
+      body: patch,
+      contentType: k8s.PatchStrategy.JsonPatch,
+    } as any);
+  }
+
   async listCustomResources(
     group: string,
     version: string,
