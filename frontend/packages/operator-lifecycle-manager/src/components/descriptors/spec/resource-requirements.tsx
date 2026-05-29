@@ -115,7 +115,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
 
   return (
     <>
-      <ModalHeader title={props.title} data-test-id="modal-title" />
+      <ModalHeader title={props.title} data-test-id="modal-title" data-test="modal-title" />
       <ModalBody>
         <Form id={formId} onSubmit={(e) => submit(e)}>
           <Grid hasGutter>
@@ -149,6 +149,7 @@ export const ResourceRequirementsModal = (props: ResourceRequirementsModalProps)
           onClick={cancel}
           isDisabled={inProgress}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('public~Cancel')}
         </Button>

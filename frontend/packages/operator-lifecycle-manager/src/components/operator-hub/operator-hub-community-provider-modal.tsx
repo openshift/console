@@ -40,6 +40,7 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
         title={t('olm~Show community Operator')}
         titleIconVariant="info"
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="community-operator-warning-modal-title"
       />
       <ModalBody>
@@ -77,7 +78,12 @@ export const OperatorHubCommunityProviderModal: FC<OperatorHubCommunityProviderM
         >
           {t('olm~Continue')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooter>

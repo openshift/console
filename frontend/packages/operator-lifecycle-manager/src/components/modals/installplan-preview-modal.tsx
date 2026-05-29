@@ -31,6 +31,7 @@ export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, s
           </>
         }
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="installplan-preview-modal-title"
       />
       <ModalBody>

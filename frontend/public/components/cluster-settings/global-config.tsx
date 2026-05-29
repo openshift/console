@@ -53,7 +53,7 @@ export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPageP
 
 const ItemRow = ({ item, showAPIGroup }) => {
   return (
-    <Tr data-test-action={item.label}>
+    <Tr data-test-action={item.label} data-test={`${item.label}-resource-row`}>
       <Td width={30}>
         <Link to={item.path} data-test-id={item.label} data-test={item.label}>
           {item.label}

@@ -39,6 +39,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
         title={t('public~Remove identity provider from OAuth?')}
         labelId="remove-idp-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Trans ns="public">
@@ -63,6 +64,7 @@ const RemoveIdentityProviderModalContent: OverlayComponent<RemoveIdentityProvide
           isDisabled={inProgress}
           onClick={closeOverlay}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('public~Cancel')}
         </Button>

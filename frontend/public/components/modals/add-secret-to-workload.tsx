@@ -184,6 +184,7 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
       <ModalHeader
         title={t('public~Add secret to workload')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="add-secret-to-workload-modal-title"
       />
       <ModalBody>
@@ -287,7 +288,12 @@ export const AddSecretToWorkloadModal: FC<AddSecretToWorkloadModalProps> = (prop
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={props.cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={props.cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

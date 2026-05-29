@@ -22,6 +22,7 @@ const TrafficSplittingModal: FC<Props> = (props) => {
         title={t('knative-plugin~Set traffic distribution')}
         labelId="traffic-splitting-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form id="traffic-splitting-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
@@ -41,7 +42,13 @@ const TrafficSplittingModal: FC<Props> = (props) => {
         >
           {t('knative-plugin~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('knative-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

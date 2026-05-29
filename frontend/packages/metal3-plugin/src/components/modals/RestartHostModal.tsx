@@ -47,6 +47,7 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
       <ModalHeader
         title={t('metal3-plugin~Restart Bare Metal Host')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="restart-host-modal-title"
       />
       <ModalBody>
@@ -63,7 +64,12 @@ const RestartHostModal: OverlayComponent<RestartHostModalProps> = (props) => {
         >
           {t('metal3-plugin~Restart')}
         </Button>
-        <Button variant="link" onClick={closeOverlay} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={closeOverlay}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('metal3-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

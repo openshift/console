@@ -29,6 +29,7 @@ const TestFunctionModal: FC<Props> = (props) => {
         title={t('knative-plugin~Test Serverless Function')}
         labelId="test-function-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody className="kn-test-sf-modal" data-test="test-serverless-function">
         <Form
@@ -64,7 +65,7 @@ const TestFunctionModal: FC<Props> = (props) => {
             <Button
               type="button"
               variant="link"
-              data-test="cancel-action"
+              data-test="modal-cancel-action"
               data-test-id="modal-cancel-action"
               onClick={cancel}
             >

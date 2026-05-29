@@ -173,6 +173,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
       <ModalHeader
         title={t('topology~Export Application')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="export-application-modal-title"
       />
       <ModalBody data-test="export-application-modal">

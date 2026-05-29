@@ -46,6 +46,7 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
         }
         labelId="console-plugin-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Content component={ContentVariants.p}>
@@ -85,7 +86,12 @@ export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

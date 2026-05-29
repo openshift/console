@@ -471,4 +471,114 @@ export default class KubernetesClient {
     const response = await this.k8sApi.listNamespacedPod({ namespace });
     return response.items || [];
   }
+
+  async createPod(namespace: string, body: Partial<k8s.V1Pod>): Promise<void> {
+    await this.k8sApi.createNamespacedPod({ namespace, body: body as k8s.V1Pod });
+  }
+
+  async deletePod(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedPod({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async waitForPodReady(name: string, namespace: string, timeoutMs = 120_000): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const pod = await this.k8sApi.readNamespacedPod({ name, namespace });
+          if (pod?.status?.phase !== 'Running') {
+            return false;
+          }
+          const containers = pod?.status?.containerStatuses;
+          if (!containers || containers.length === 0) {
+            return false;
+          }
+          return containers.every((c) => c.ready === true);
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async createDeployment(namespace: string, body: Partial<k8s.V1Deployment>): Promise<void> {
+    await this.appsApi.createNamespacedDeployment({ namespace, body: body as k8s.V1Deployment });
+  }
+
+  async waitForDeploymentReady(
+    name: string,
+    namespace: string,
+    timeoutMs = 120_000,
+  ): Promise<boolean> {
+    return pollUntil(
+      async () => {
+        try {
+          const dep = await this.appsApi.readNamespacedDeployment({ name, namespace });
+          const ready = dep?.status?.readyReplicas ?? 0;
+          const desired = dep?.spec?.replicas ?? 1;
+          return ready >= desired;
+        } catch {
+          return false;
+        }
+      },
+      timeoutMs,
+      2_000,
+    );
+  }
+
+  async createService(namespace: string, body: k8s.V1Service): Promise<void> {
+    await this.k8sApi.createNamespacedService({ namespace, body });
+  }
+
+  async deleteService(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedService({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async createClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    body: Record<string, unknown>,
+  ): Promise<unknown> {
+    const response = await this.coApi.createClusterCustomObject({ body, group, plural, version });
+    return response;
+  }
+
+  async deleteClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      await this.coApi.deleteClusterCustomObject({ group, name, plural, version });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
+  }
+
+  async getClusterCustomResource(
+    group: string,
+    version: string,
+    plural: string,
+    name: string,
+  ): Promise<unknown> {
+    const response = await this.coApi.getClusterCustomObject({ group, name, plural, version });
+    return response;
+  }
 }

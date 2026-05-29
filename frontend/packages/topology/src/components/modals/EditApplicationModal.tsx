@@ -49,6 +49,7 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
         title={t('topology~Edit application grouping')}
         labelId="edit-application-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form id="edit-application-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
@@ -73,7 +74,12 @@ const EditApplicationForm: FC<FormikProps<FormikValues> & EditApplicationFormPro
         >
           {t('topology~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('topology~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

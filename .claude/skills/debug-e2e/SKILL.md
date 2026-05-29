@@ -1,13 +1,13 @@
 ---
-name: debug-test
+name: debug-e2e
 description: Debug and fix failing Playwright e2e tests with MCP-assisted diagnosis. Use when user says "playwright test failing", "fix e2e test", "debug spec", or provides a failing .spec.ts file, e2e directory, or Playwright tag.
 argument-hint: "<path/to/file.spec.ts | directory/ | @tag>"
 allowed-tools: Read, Write, Edit, Bash(find *), Bash(grep *), Bash(ls *), Bash(npx tsc *), Bash(npx playwright *), Bash(git diff *), Bash(git status), mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_click, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_run_code_unsafe, mcp__plugin_playwright_playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_close, mcp__plugin_playwright_playwright__browser_type, mcp__plugin_playwright_playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_network_requests, AskUserQuestion
 ---
 
-# Debug Test
+# Debug E2E
 
-Debug and fix failing Playwright tests using MCP as the primary diagnostic tool. Works for a single spec, a directory, or a tag. Merged from [openshift-ui-tests-template/debug-test.md](https://github.com/bmaio-redhat/openshift-ui-tests-template/blob/main/.cursor/commands/debug-test.md) and [test-fix-cycle.md](https://github.com/bmaio-redhat/openshift-ui-tests-template/blob/main/.cursor/commands/test-fix-cycle.md).
+Debug and fix failing Playwright tests using MCP as the primary diagnostic tool. Works for a single spec, a directory, or a tag. Merged from [openshift-ui-tests-template/debug-e2e.md](https://github.com/bmaio-redhat/openshift-ui-tests-template/blob/main/.cursor/commands/debug-e2e.md) and [test-fix-cycle.md](https://github.com/bmaio-redhat/openshift-ui-tests-template/blob/main/.cursor/commands/test-fix-cycle.md).
 
 ## Before Starting
 
@@ -16,17 +16,18 @@ Debug and fix failing Playwright tests using MCP as the primary diagnostic tool.
 
 ## Input
 
-- **Spec file**: `/debug-test e2e/tests/console/cluster-settings/upstream-modal.spec.ts`
-- **Test name**: `/debug-test "Verify console login"`
-- **Directory**: `/debug-test e2e/tests/helm/`
-- **Project**: `/debug-test --project=helm`
+- **Spec file**: `/debug-e2e e2e/tests/console/cluster-settings/upstream-modal.spec.ts`
+- **Test name**: `/debug-e2e "Verify console login"`
+- **Directory**: `/debug-e2e e2e/tests/helm/`
+- **Project**: `/debug-e2e --project=helm`
 - **Optional workers**: append `--workers=N` (default: 4)
 
 Examples:
+
 ```text
-/debug-test e2e/tests/console/cluster-settings/upstream-modal.spec.ts
-/debug-test e2e/tests/helm/ --workers=2
-/debug-test --project=topology
+/debug-e2e e2e/tests/console/cluster-settings/upstream-modal.spec.ts
+/debug-e2e e2e/tests/helm/ --workers=2
+/debug-e2e --project=topology
 ```
 
 ## Workflow
@@ -90,15 +91,19 @@ Debug Summary: <target>
 ## Troubleshooting
 
 ### Playwright MCP not connected
+
 If MCP tools fail with "tool not found" or "connection refused": diagnose from error messages alone. Warn: "MCP not available — selector fixes may be inaccurate without live verification." Focus on fixes that don't require live inspection (missing awaits, type errors, obvious selector typos).
 
 ### No cluster reachable
+
 If `npx playwright test` fails with login/connection errors on every test: this is an infrastructure issue, not a test bug. Report it to the user and suggest checking cluster access, `BRIDGE_BASE_ADDRESS`, and `storageState` files.
 
 ### Playwright not installed
+
 If `npx playwright test` fails with "Cannot find module": the Playwright foundation hasn't been set up yet. Tell the user to complete the infrastructure setup first.
 
 ### Flaky test (passes sometimes, fails sometimes)
+
 If a test passes on re-run without any fix: it's flaky. Use MCP to identify the timing-sensitive interaction, then fix with `robustClick()`, `waitForLoadingComplete()`, or a more specific `waitFor()` condition. Never mask flakiness with retries.
 
 ## Rules

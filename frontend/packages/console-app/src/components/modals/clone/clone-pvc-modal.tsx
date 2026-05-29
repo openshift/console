@@ -276,7 +276,12 @@ const ClonePVCModal = (props: ClonePVCModalProps) => {
         >
           {t('console-app~Clone')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('console-app~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

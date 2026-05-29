@@ -31,7 +31,12 @@ const PubSubModal: FC<Props> = ({
   const dirty = values?.formData?.metadata?.name && values?.formData?.spec?.subscriber?.ref?.name;
   return (
     <>
-      <ModalHeader title={labelTitle} labelId="pub-sub-modal-title" data-test-id="modal-title" />
+      <ModalHeader
+        title={labelTitle}
+        labelId="pub-sub-modal-title"
+        data-test-id="modal-title"
+        data-test="modal-title"
+      />
       <ModalBody>
         <Form id="pub-sub-form" onSubmit={handleSubmit} className="pf-v6-u-mr-md">
           <FormSection fullWidth>
@@ -58,7 +63,13 @@ const PubSubModal: FC<Props> = ({
         >
           {t('knative-plugin~Add')}
         </Button>
-        <Button variant="link" onClick={cancel} type="button" data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          type="button"
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('knative-plugin~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

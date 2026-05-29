@@ -103,6 +103,7 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
             : t('public~Edit labels')
         }
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="labels-modal-title"
       />
       <ModalBody>
@@ -153,7 +154,12 @@ const BaseLabelsModal: FC<BaseLabelsModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

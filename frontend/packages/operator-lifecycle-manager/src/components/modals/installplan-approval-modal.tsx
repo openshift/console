@@ -59,6 +59,7 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
       <ModalHeader
         title={t('olm~Change update approval strategy')}
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="installplan-approval-modal-title"
       />
       <ModalBody>
@@ -105,7 +106,12 @@ export const InstallPlanApprovalModal: FC<InstallPlanApprovalModalProps> = ({
         >
           {t('public~Save')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

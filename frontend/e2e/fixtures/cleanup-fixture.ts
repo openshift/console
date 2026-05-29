@@ -23,6 +23,13 @@ export interface CleanupFixture {
     plural: string,
     type?: string,
   ): void;
+  trackClusterCustomResource(
+    name: string,
+    apiGroup: string,
+    apiVersion: string,
+    plural: string,
+    type?: string,
+  ): void;
   readonly count: number;
   executeCleanup(): Promise<void>;
   shouldSkipCleanup(): boolean;
@@ -95,6 +102,22 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       });
     },
 
+    trackClusterCustomResource(
+      name: string,
+      apiGroup: string,
+      apiVersion: string,
+      plural: string,
+      type?: string,
+    ) {
+      resources.push({
+        name,
+        apiGroup,
+        apiVersion,
+        plural,
+        type: type || `ClusterScoped:${plural}`,
+      });
+    },
+
     get count() {
       return resources.length;
     },
@@ -115,7 +138,10 @@ export function createCleanupFixture(testName: string): CleanupFixture {
       }
 
       const namespaces = resources.filter((r) => r.type === 'Namespace');
-      const others = resources.filter((r) => r.type !== 'Namespace');
+      const clusterScoped = resources.filter((r) => r.type?.startsWith('ClusterScoped:'));
+      const others = resources.filter(
+        (r) => r.type !== 'Namespace' && !r.type?.startsWith('ClusterScoped:'),
+      );
 
       // Delete non-namespace resources first
       for (const resource of others) {
@@ -143,6 +169,23 @@ export function createCleanupFixture(testName: string): CleanupFixture {
               resource.name,
             );
           }
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : String(error);
+          if (!msg.includes('404') && !msg.includes('not found')) {
+            console.warn(`[Cleanup] Failed to delete ${resource.type} ${resource.name}: ${msg}`);
+          }
+        }
+      }
+
+      // Delete cluster-scoped resources
+      for (const resource of clusterScoped) {
+        try {
+          await client.deleteClusterCustomResource(
+            resource.apiGroup,
+            resource.apiVersion,
+            resource.plural,
+            resource.name,
+          );
         } catch (error) {
           const msg = error instanceof Error ? error.message : String(error);
           if (!msg.includes('404') && !msg.includes('not found')) {

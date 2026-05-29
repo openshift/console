@@ -73,6 +73,7 @@ const TagsModal = (props: TagsModalProps) => {
         title={t('public~Edit annotations')}
         labelId="annotations-modal-title"
         data-test-id="modal-title"
+        data-test="modal-title"
       />
       <ModalBody>
         <Form onSubmit={submit} id="tags-modal-form">
@@ -108,6 +109,7 @@ const TagsModal = (props: TagsModalProps) => {
           isDisabled={inProgress}
           onClick={props.cancel}
           data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
         >
           {t('public~Cancel')}
         </Button>

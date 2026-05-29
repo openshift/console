@@ -59,15 +59,9 @@ export default defineConfig({
       ]
     : [['list']],
 
-  expect: {
-    timeout: 40_000,
-  },
-
   use: {
     testIdAttribute: 'data-test',
     baseURL,
-    actionTimeout: 60_000,
-    navigationTimeout: 90_000,
     trace: isCI ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: isDebug ? 'on' : 'retain-on-failure',

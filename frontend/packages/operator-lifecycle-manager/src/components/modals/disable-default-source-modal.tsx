@@ -52,6 +52,7 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
         title={t('olm~Disable CatalogSource?')}
         titleIconVariant="warning"
         data-test-id="modal-title"
+        data-test="modal-title"
         labelId="disable-default-source-modal-title"
       />
       <ModalBody>
@@ -73,7 +74,12 @@ const DisableDefaultSourceModal: FC<DisableDefaultSourceModalProps> = ({
         >
           {t('public~Disable')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>

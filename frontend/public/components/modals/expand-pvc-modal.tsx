@@ -101,7 +101,12 @@ const ExpandPVCModal: FC<ExpandPVCModalProps> = ({ resource, kind, close, cancel
         >
           {t('public~Expand')}
         </Button>
-        <Button variant="link" onClick={cancel} data-test-id="modal-cancel-action">
+        <Button
+          variant="link"
+          onClick={cancel}
+          data-test-id="modal-cancel-action"
+          data-test="modal-cancel-action"
+        >
           {t('public~Cancel')}
         </Button>
       </ModalFooterWithAlerts>
