@@ -388,6 +388,10 @@ export default class KubernetesClient {
     }
   }
 
+  async patchSecret(name: string, namespace: string, patch: object[]): Promise<void> {
+    await this.k8sApi.patchNamespacedSecret({ name, namespace, body: patch });
+  }
+
   async deleteSecret(name: string, namespace: string): Promise<void> {
     try {
       await this.k8sApi.deleteNamespacedSecret({ name, namespace });
@@ -470,5 +474,25 @@ export default class KubernetesClient {
   async getPods(namespace: string): Promise<k8s.V1Pod[]> {
     const response = await this.k8sApi.listNamespacedPod({ namespace });
     return response.items || [];
+  }
+
+  async createPod(pod: k8s.V1Pod): Promise<void> {
+    if (!pod.metadata?.namespace) {
+      throw new Error('createPod: pod.metadata.namespace is required');
+    }
+    await this.k8sApi.createNamespacedPod({
+      namespace: pod.metadata.namespace,
+      body: pod,
+    });
+  }
+
+  async deletePod(name: string, namespace: string): Promise<void> {
+    try {
+      await this.k8sApi.deleteNamespacedPod({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
   }
 }

@@ -51,7 +51,7 @@ const UtilizationCard: FC = () => {
   );
 
   return (
-    <Card data-test-id="utilization-card">
+    <Card data-test="utilization-card" data-test-id="utilization-card">
       <CardHeader
         actions={{
           actions: (

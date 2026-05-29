@@ -17,15 +17,16 @@ export const TextFilter: FC<TextFilterProps> = (props) => {
   return (
     <div className="co-text-filter">
       <TextInput
-        {...otherInputProps}
         className="co-text-filter__text-input"
+        data-test="item-filter"
         data-test-id="item-filter"
         aria-label={placeholderText}
         placeholder={placeholderText}
-        ref={ref}
         autoFocus={autoFocus}
         tabIndex={0}
         type="text"
+        {...otherInputProps}
+        ref={ref}
       />
       <span className="co-text-filter__feedback">
         <kbd className="co-kbd co-kbd__filter-input">{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
