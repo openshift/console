@@ -15,6 +15,7 @@ table in [Console dynamic plugins README](./README.md).
 > Initial release for OCP Console 4.22.
 
 - Fix `resolveDynamicModuleMaps` to skip unavailable packages ([OCPBUGS-84338], [#16340])
+- `ConsoleRemotePlugin` warns when using either deprecated or aliased Console provided shared modules ([CONSOLE-5065], [#16376])
 
 ## 4.22.0-prerelease.3 - 2026-04-24
 
@@ -28,7 +29,7 @@ table in [Console dynamic plugins README](./README.md).
 - **Deprecated**: `loadPluginEntry` callback is deprecated in favor of `__load_plugin_entry__`. Migrate by
   building your plugin with `ConsoleRemotePlugin` version 4.22 or later. Runtime support for older plugins
   built for 4.21 or older will be removed in a future version of OCP Console. ([CONSOLE-3769], [#15904])
-- Add warnings for usage of deprecated Console provided shared modules ([CONSOLE-5135], [#16178])
+- `ConsoleRemotePlugin` warns when using deprecated Console provided shared modules ([CONSOLE-5135], [#16178])
 
 ## 4.22.0-prerelease.1 - 2025-01-21
 
@@ -165,3 +166,4 @@ table in [Console dynamic plugins README](./README.md).
 [#16182]: https://github.com/openshift/console/pull/16182
 [#16224]: https://github.com/openshift/console/pull/16224
 [#16340]: https://github.com/openshift/console/pull/16340
+[#16376]: https://github.com/openshift/console/pull/16376
