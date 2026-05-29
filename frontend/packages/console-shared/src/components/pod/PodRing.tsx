@@ -1,12 +1,13 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
+import { Button, Split, SplitItem, Bullseye, Tooltip } from '@patternfly/react-core';
 import { AngleDownIcon, AngleUpIcon, AutomationIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import type { ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import type { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { k8sPatch } from '@console/internal/module/k8s';
+import { useNonScalableImageCheck } from '../../hooks/useNonScalableImageCheck';
 import { useRelatedHPA } from '../../hooks/useRelatedHPA';
 import type { ExtPodKind } from '../../types/pod';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils/pod-ring-utils';
@@ -82,6 +83,7 @@ export const PodRing: FC<PodRingProps> = ({
   } = obj;
   const [hpa] = useRelatedHPA(apiVersion, kind, name, namespace);
   const hpaControlledScaling = !!hpa;
+  const { isNonScalable } = useNonScalableImageCheck(obj);
 
   const isScalingAllowed = isAccessScalingAllowed && !hpaControlledScaling;
 
@@ -126,15 +128,32 @@ export const PodRing: FC<PodRingProps> = ({
         <SplitItem>
           <Bullseye>
             <div>
-              <Button
-                icon={<AngleUpIcon style={{ fontSize: '20' }} />}
-                type="button"
-                variant="plain"
-                aria-label={t('console-shared~Increase the Pod count')}
-                title={t('console-shared~Increase the Pod count')}
-                onClick={() => handleClick(1)}
-                isBlock
-              />
+              {(() => {
+                const scaleUpButton = (
+                  <Button
+                    icon={<AngleUpIcon style={{ fontSize: '20' }} />}
+                    type="button"
+                    variant="plain"
+                    aria-label={t('console-shared~Increase the Pod count')}
+                    title={t('console-shared~Increase the Pod count')}
+                    onClick={() => handleClick(1)}
+                    isBlock
+                  />
+                );
+                // Show tooltip preemptively at >= 1 replica so users see
+                // the non-scalable warning before attempting to scale up
+                return isNonScalable && clickCount >= 1 ? (
+                  <Tooltip
+                    content={t(
+                      'console-shared~This image is not intended to run with more than one replica. Scaling up may cause unexpected behavior.',
+                    )}
+                  >
+                    {scaleUpButton}
+                  </Tooltip>
+                ) : (
+                  scaleUpButton
+                );
+              })()}
               <Button
                 icon={<AngleDownIcon style={{ fontSize: '20' }} />}
                 type="button"

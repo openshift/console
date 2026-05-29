@@ -872,6 +872,8 @@
   "Receive update information from Red Hat.": "Receive update information from Red Hat.",
   "Custom update service": "Custom update service",
   "Please enter a URL.": "Please enter a URL.",
+  "Non-scalable image": "Non-scalable image",
+  "This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.": "This image is not intended to run with more than one replica. Running multiple instances may cause unexpected behavior.",
   "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.": "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.",
   "Create MachineAutoscaler": "Create MachineAutoscaler",
   "This will automatically scale machine set {{ name }}.": "This will automatically scale machine set {{ name }}.",
