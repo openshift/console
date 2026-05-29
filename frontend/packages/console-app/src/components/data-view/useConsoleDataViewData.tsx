@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { useRef, useEffect, useMemo } from 'react';
 import { useDataViewPagination } from '@patternfly/react-data-view';
 import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTable/DataViewTable';
@@ -37,6 +37,7 @@ export const useConsoleDataViewData = <
   columnManagementID,
   customRowData,
   isResizable = true,
+  selection,
 }: {
   columns: TableColumn<TData>[];
   filteredData: TData[];
@@ -46,6 +47,11 @@ export const useConsoleDataViewData = <
   columnManagementID?: string;
   customRowData?: TCustomRowData;
   isResizable?: boolean;
+  selection?: {
+    selectedItems: Set<string>;
+    onSelectAll?: (isSelecting: boolean, filteredItems: TData[]) => void;
+    getItemId: (item: TData) => string;
+  };
 }) => {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -87,43 +93,59 @@ export const useConsoleDataViewData = <
     columnManagementID,
   });
 
-  const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(
-    () =>
-      activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
-        // Filter out custom Console props that aren't valid PatternFly ThProps
-        const { isActionCell, ...validThProps } = props || {};
+  const dataViewColumns = useMemo<ConsoleDataViewColumn<TData>[]>(() => {
+    // Calculate selection state across all filtered items
+    const totalCount = filteredData.length;
 
-        const headerProps: ThProps = {
-          ...validThProps,
-          dataLabel: title,
+    return activeColumns.map(({ id, title, sort, props, resizableProps }, index) => {
+      // Filter out custom Console props that aren't valid PatternFly ThProps
+      const { isActionCell, ...validThProps } = props || {};
+
+      const headerProps: ThProps = {
+        ...validThProps,
+        dataLabel: title,
+      };
+
+      if (sort) {
+        headerProps.sort = {
+          columnIndex: index,
+          sortBy: {
+            index: 0,
+            direction: SortByDirection.asc,
+            defaultDirection: SortByDirection.asc,
+          },
         };
+      }
 
-        if (sort) {
-          headerProps.sort = {
-            columnIndex: index,
-            sortBy: {
-              index: 0,
-              direction: SortByDirection.asc,
-              defaultDirection: SortByDirection.asc,
-            },
-          };
-        }
-
-        return {
-          id,
-          title,
-          sortFunction: sort,
-          props: headerProps,
-          resizableProps: isResizable ? resizableProps : undefined,
-          cell: title ? (
-            <span>{title}</span>
-          ) : (
-            <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
-          ),
+      // Add select-all checkbox to selection column header
+      // Note: onSelect handler is updated later with visibleItems via dataViewColumnsWithSortApplied
+      // The checkbox state is determined by visible items only, not all items
+      if (id === 'select' && selection?.onSelectAll) {
+        headerProps['data-test'] = 'select-all-header';
+        headerProps.select = {
+          onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {
+            // This will be replaced with the actual handler in dataViewColumnsWithSortApplied
+            selection.onSelectAll(isSelecting, filteredData);
+          },
+          isSelected: false, // Will be updated based on visible items
+          isDisabled: totalCount === 0,
         };
-      }),
-    [activeColumns, t, isResizable],
-  );
+      }
+
+      return {
+        id,
+        title,
+        sortFunction: sort,
+        props: headerProps,
+        resizableProps: isResizable ? resizableProps : undefined,
+        cell: title ? (
+          <span>{title}</span>
+        ) : (
+          <span className="pf-v6-u-screen-reader">{t('public~Actions')}</span>
+        ),
+      };
+    });
+  }, [activeColumns, t, isResizable, selection, filteredData]);
 
   const { sortBy, onSort } = useConsoleDataViewSort<TData>({
     columns: dataViewColumns,
@@ -162,37 +184,65 @@ export const useConsoleDataViewData = <
       (pagination.page - 1) * pagination.perPage + pagination.perPage,
     );
 
+  const visibleItems = transformedData.map((item) => item.obj);
   const dataViewRows = getDataViewRows(transformedData, dataViewColumns);
 
-  // This code fixes a sorting issue but should be revisited to add more clarity
+  // Apply sort state and select-all handler updates to columns independently
   const dataViewColumnsWithSortApplied = useMemo(
     () =>
       dataViewColumns.map((column) => {
-        const shouldApplySort =
-          isDataViewConfigurableColumn(column) &&
-          column.sortFunction !== undefined &&
-          column.props.sort;
+        if (!isDataViewConfigurableColumn(column)) {
+          return column;
+        }
 
-        return shouldApplySort
-          ? {
-              ...column,
-              props: {
-                ...column.props,
-                sort: {
-                  ...column.props.sort,
-                  sortBy: {
-                    ...column.props.sort.sortBy,
-                    index: sortBy.index,
-                    direction: sortBy.direction,
-                  },
-                  onSort,
-                },
+        let updatedProps = column.props;
+
+        if (column.sortFunction !== undefined && column.props.sort) {
+          updatedProps = {
+            ...updatedProps,
+            sort: {
+              ...updatedProps.sort,
+              sortBy: {
+                ...updatedProps.sort.sortBy,
+                index: sortBy.index,
+                direction: sortBy.direction,
               },
-            }
-          : column;
+              onSort,
+            },
+          };
+        }
+
+        if (column.id === 'select' && column.props.select && selection?.onSelectAll) {
+          const visibleSelectedCount = visibleItems.filter((item) =>
+            selection.selectedItems.has(selection.getItemId(item)),
+          ).length;
+          const allVisibleSelected =
+            visibleItems.length > 0 && visibleSelectedCount === visibleItems.length;
+          const isIndeterminate =
+            visibleSelectedCount > 0 && visibleSelectedCount < visibleItems.length;
+
+          updatedProps = {
+            ...updatedProps,
+            select: {
+              ...updatedProps.select,
+              onSelect: (_event: FormEvent<HTMLInputElement>, isSelecting: boolean) => {
+                selection.onSelectAll(isSelecting, visibleItems);
+              },
+              isSelected: Boolean(allVisibleSelected),
+              isIndeterminate,
+            },
+          };
+        }
+
+        return updatedProps !== column.props ? { ...column, props: updatedProps } : column;
       }),
-    [dataViewColumns, sortBy.index, sortBy.direction, onSort],
+    [dataViewColumns, sortBy.index, sortBy.direction, onSort, selection, visibleItems],
   );
 
-  return { dataViewRows, dataViewColumns: dataViewColumnsWithSortApplied, pagination };
+  return {
+    dataViewRows,
+    dataViewColumns: dataViewColumnsWithSortApplied,
+    pagination,
+    visibleItems,
+  };
 };

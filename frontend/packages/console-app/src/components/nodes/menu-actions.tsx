@@ -14,8 +14,8 @@ import type {
 } from '@console/internal/module/k8s';
 import { referenceFor } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
-import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { LazyConfigureUnschedulableModalOverlay } from './modals';
+import { markNodesSchedulable } from './nodeSchedulingActions';
 
 const updateCSR = (csr: CertificateSigningRequestKind, type: 'Approved' | 'Denied') => {
   const approvedCSR = {
@@ -66,7 +66,7 @@ export const useNodeActions: ExtensionHook<Action[], NodeKind> = (obj) => {
       actions.push({
         id: 'mark-as-schedulable',
         label: t('console-app~Mark as schedulable'),
-        cta: () => makeNodeSchedulable(obj),
+        cta: () => markNodesSchedulable(obj),
         accessReview: asAccessReview(kindObj, obj, 'patch'),
       });
     } else {

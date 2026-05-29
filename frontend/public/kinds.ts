@@ -23,6 +23,12 @@ export const connectToModel = connect(
 /**
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
+ *
+ * NOTE: This connect() call triggers a reselect dev-mode warning:
+ * "The result function returned its own inputs without modification"
+ * This is a false positive - the mapStateToProps does transform state (finding models, extracting values).
+ * The warning only appears in development and does not affect functionality.
+ * See: https://github.com/reduxjs/reselect/issues/635
  */
 export const connectToPlural = connect(
   (
