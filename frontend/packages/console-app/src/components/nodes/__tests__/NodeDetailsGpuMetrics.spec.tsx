@@ -83,7 +83,7 @@ describe('NodeDetailsGpuMetrics', () => {
     mockUsePrometheusPoll.mockReturnValue([emptyResponse, null, false]);
     render(<NodeDetailsGpuMetrics node={baseNode} />);
     expect(screen.getByText('GPU capacity')).toBeInTheDocument();
-    expect(screen.getByText('GPU allocatable')).toBeInTheDocument();
+    expect(screen.getByText('Allocatable GPUs')).toBeInTheDocument();
     expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
   });
 
@@ -229,6 +229,7 @@ describe('NodeDetailsGpuMetrics', () => {
     render(<NodeDetailsGpuMetrics node={amdNode} />);
     expect(screen.getByText('GPU metrics')).toBeInTheDocument();
     expect(screen.getByText('GPU capacity')).toBeInTheDocument();
+    expect(screen.getByText('Allocatable GPUs')).toBeInTheDocument();
     expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/GPU metrics are not available/)).toBeInTheDocument();
   });

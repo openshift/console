@@ -228,7 +228,7 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
               )}
               {gpuAllocatableStr && (
                 <DescriptionListGroup>
-                  <DescriptionListTerm>{t('console-app~GPU allocatable')}</DescriptionListTerm>
+                  <DescriptionListTerm>{t('console-app~Allocatable GPUs')}</DescriptionListTerm>
                   <DescriptionListDescription>{gpuAllocatableStr}</DescriptionListDescription>
                 </DescriptionListGroup>
               )}
@@ -247,7 +247,7 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
         <div className="co-table-container pf-v6-u-mt-md">
           <table
             className="pf-v6-c-table pf-m-compact pf-m-border-rows"
-            aria-label={t('console-app~GPU metrics per device')}
+            aria-label={t('console-app~Per-device GPU metrics')}
           >
             <thead className="pf-v6-c-table__thead">
               <tr className="pf-v6-c-table__tr">
@@ -255,8 +255,8 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
                 <th className="pf-v6-c-table__th">{t('console-app~Utilization')}</th>
                 <th className="pf-v6-c-table__th">{t('console-app~Temperature')}</th>
                 <th className="pf-v6-c-table__th">{t('console-app~Power usage')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~FB memory used')}</th>
-                <th className="pf-v6-c-table__th">{t('console-app~FB memory free')}</th>
+                <th className="pf-v6-c-table__th">{t('console-app~Framebuffer memory used')}</th>
+                <th className="pf-v6-c-table__th">{t('console-app~Framebuffer memory free')}</th>
               </tr>
             </thead>
             <tbody className="pf-v6-c-table__tbody">
@@ -278,7 +278,7 @@ const NodeDetailsGpuMetrics: FC<NodeDetailsGpuMetricsProps> = ({ node }) => {
       {!isLoading && !hasMetrics && hasCapacity && (
         <p className="text-secondary">
           {t(
-            'console-app~GPU metrics are not available. Ensure DCGM exporter metrics are being scraped and labeled with the node name.',
+            'console-app~GPU metrics are not available. Make sure the NVIDIA DCGM exporter is scraping metrics and labeling them with the node name.',
           )}
         </p>
       )}
