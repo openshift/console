@@ -4,9 +4,6 @@ import ClusterConfigurationCustomField from './ClusterConfigurationCustomField';
 import type { ResolvedClusterConfigurationItem } from './types';
 
 const componentForFieldType = {
-  // WIP:
-  // [ClusterConfigurationFieldType.text]: ClusterConfigurationTextField,
-  // [ClusterConfigurationFieldType.checkbox]: ClusterConfigurationCheckboxField,
   [ClusterConfigurationFieldType.custom]: ClusterConfigurationCustomField,
 };
 
