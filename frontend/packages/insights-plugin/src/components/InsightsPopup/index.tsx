@@ -187,7 +187,7 @@ export const InsightsPopup: FC<PrometheusHealthPopupProps> = ({ responses, k8sRe
   );
 };
 
-export type DataComponentProps = {
+type DataComponentProps = {
   x?: number;
   y?: number;
   datum?: {

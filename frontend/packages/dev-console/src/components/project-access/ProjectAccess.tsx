@@ -31,7 +31,7 @@ import type { UserRoleBinding, RoleBinding } from './project-access-form-utils-t
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
 
-export interface ProjectAccessProps {
+interface ProjectAccessProps {
   namespace: string;
   roleBindings?: { data: RoleBinding[]; loaded: boolean; loadError?: Error };
   roles: { data: Roles; loaded: boolean };

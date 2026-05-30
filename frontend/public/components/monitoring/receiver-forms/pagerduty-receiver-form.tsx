@@ -16,7 +16,7 @@ import {
 
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
 import { SaveAsDefaultCheckbox } from './save-as-default-checkbox';
-import { FormProps } from './receiver-form-props';
+import type { FormProps, SubFormModule } from './receiver-form-props';
 import { AdvancedConfiguration } from './advanced-configuration';
 
 const GLOBAL_FIELDS = [
@@ -28,7 +28,7 @@ const GLOBAL_FIELDS = [
   'pagerduty_severity',
 ];
 
-export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
+const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -239,7 +239,7 @@ export const Form: FC<FormProps> = ({ globals, formValues, dispatchFormChange })
   );
 };
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   const initValues: any = { pagerdutySaveAsDefault: false };
 
   initValues.pagerdutyIntegrationKeyType = _.has(receiverConfig, 'service_key')
@@ -255,11 +255,11 @@ export const getInitialValues = (globals, receiverConfig) => {
   return initValues;
 };
 
-export const isFormInvalid = (formValues): boolean => {
+const isFormInvalid = (formValues): boolean => {
   return !formValues.pagerdutyIntegrationKey;
 };
 
-export const updateGlobals = (globals, formValues) => {
+const updateGlobals = (globals, formValues) => {
   const updatedGlobals = {};
   if (formValues.pagerdutySaveAsDefault && formValues.pagerduty_url) {
     _.set(updatedGlobals, 'pagerduty_url', formValues.pagerduty_url);
@@ -267,7 +267,7 @@ export const updateGlobals = (globals, formValues) => {
   return updatedGlobals;
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   // handle integration key props
   _.unset(receiverConfig, 'routing_key');
   _.unset(receiverConfig, 'service_key');
@@ -292,4 +292,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   });
 
   return receiverConfig;
+};
+
+export const PagerDutyForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

@@ -200,7 +200,7 @@ const TemplateFormField: FC<TemplateFormFieldProps> = ({
   );
 };
 
-export const TemplateForm: FC<TemplateFormProps> = (props) => {
+const TemplateForm: FC<TemplateFormProps> = (props) => {
   const { preselectedNamespace: ns = '', obj } = props;
 
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);

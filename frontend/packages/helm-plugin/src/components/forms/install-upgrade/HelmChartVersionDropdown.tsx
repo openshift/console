@@ -30,7 +30,7 @@ import {
   mergeHelmValuesOnChartVersionChange,
 } from '../../../utils/helm-utils';
 
-export type HelmChartVersionDropdownProps = {
+type HelmChartVersionDropdownProps = {
   chartVersion: string;
   chartName: string;
   helmAction: string;

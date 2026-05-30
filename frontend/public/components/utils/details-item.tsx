@@ -20,7 +20,7 @@ import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../mod
 import { LinkifyExternal } from './link';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
-export const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
+const PropertyPath: FC<{ kind: string; path: string | string[] }> = ({ kind, path }) => {
   const pathArray: string[] = _.toPath(path);
   return (
     <Breadcrumb>

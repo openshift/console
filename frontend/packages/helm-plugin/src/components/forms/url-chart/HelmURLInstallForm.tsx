@@ -20,7 +20,7 @@ import { useHelmReadmeModalLauncher } from '../install-upgrade/HelmReadmeModal';
 import type { HelmURLInstallFormData } from './types';
 import { useSecretResources } from './useSecretResources';
 
-export interface HelmURLInstallFormProps {
+interface HelmURLInstallFormProps {
   chartHasValues: boolean;
   chartMetaDescription: ReactNode;
   chartError: Error | null;

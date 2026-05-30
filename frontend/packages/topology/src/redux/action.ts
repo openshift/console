@@ -4,7 +4,6 @@ import { action } from 'typesafe-actions';
 import type { RootState } from '@console/internal/redux';
 
 export enum Actions {
-  topologyFilters = 'topologyFilters',
   supportedTopologyFilters = 'supportedTopologyFilters',
   supportedTopologyKinds = 'supportedTopologyKinds',
   topologyGraphModel = 'topologyGraphModel',

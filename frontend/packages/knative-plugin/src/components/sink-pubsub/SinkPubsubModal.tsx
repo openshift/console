@@ -11,7 +11,7 @@ import { ResourceDropdownField } from '@console/shared/src/components/formik-fie
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 
-export interface SinkPubsubModalProps {
+interface SinkPubsubModalProps {
   resourceName: string;
   resourceDropdown: WatchK8sResultsObject<K8sResourceKind | K8sResourceKind[]>[];
   labelTitle: string;

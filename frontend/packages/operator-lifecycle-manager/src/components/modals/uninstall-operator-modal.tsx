@@ -664,9 +664,7 @@ const OperandErrorList: FC<OperandErrorListProps> = ({ operandErrors, csvName, c
   );
 };
 
-export const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (
-  props,
-) => {
+const UninstallOperatorModalOverlay: OverlayComponent<UninstallOperatorModalProps> = (props) => {
   return (
     <UninstallOperatorModal {...props} close={props.closeOverlay} cancel={props.closeOverlay} />
   );

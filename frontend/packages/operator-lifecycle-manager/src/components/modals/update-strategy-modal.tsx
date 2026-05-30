@@ -14,7 +14,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import type { ModalComponentProps } from '@console/shared/src/types/modal';
 
-export const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
+const UpdateStrategyModal: FC<UpdateStrategyModalProps> = ({
   cancel,
   close,
   path,

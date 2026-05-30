@@ -118,7 +118,7 @@ const InputField: FC<InputFieldProps> = ({
   );
 };
 
-export const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
+const OperatorHubSubscribeForm: FC<OperatorHubSubscribeFormProps> = (props) => {
   const packageManifest = props.packageManifest?.data?.[0];
   const navigate = useNavigate();
   const handleCancel = useCallback(() => navigate(-1), [navigate]);
@@ -1288,7 +1288,7 @@ export const OperatorHubSubscribePage: FC = () => {
   );
 };
 
-export type OperatorHubSubscribeFormProps = {
+type OperatorHubSubscribeFormProps = {
   loaded: boolean;
   loadError?: any;
   namespace: string;

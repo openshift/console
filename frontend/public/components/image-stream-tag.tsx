@@ -45,7 +45,7 @@ const splitEnv = (nameValue: string) => {
   };
 };
 
-export const SupportedPlatformsTable = (props) => {
+const SupportedPlatformsTable = (props) => {
   const { t } = useTranslation();
   const { submanifests, policy, heading } = props;
 
@@ -84,7 +84,7 @@ export const SupportedPlatformsTable = (props) => {
 
 SupportedPlatformsTable.displayName = 'SupportedPlatformsTable';
 
-export const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
+const ImageStreamTagsDetails: FC<ImageStreamTagsDetailsProps> = ({
   obj: imageStreamTag,
   imageStream,
 }) => {
@@ -327,7 +327,7 @@ type ImageStreamTagHistoryProps = {
   obj: K8sResourceKind;
 };
 
-export type ImageStreamTagsDetailsProps = {
+type ImageStreamTagsDetailsProps = {
   obj: K8sResourceKind;
   imageStream: K8sResourceKind;
 };

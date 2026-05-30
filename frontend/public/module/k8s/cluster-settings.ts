@@ -157,7 +157,7 @@ export const getClusterVersionCondition = (
   return _.find(conditions, { type });
 };
 
-export const isProgressing = (cv: ClusterVersionKind): boolean => {
+const isProgressing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -167,7 +167,7 @@ export const isProgressing = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const invalid = (cv: ClusterVersionKind): boolean => {
+const invalid = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -177,7 +177,7 @@ export const invalid = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
+const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -187,7 +187,7 @@ export const releaseNotAccepted = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
+const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,
@@ -197,7 +197,7 @@ export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
   );
 };
 
-export const updateFailing = (cv: ClusterVersionKind): boolean => {
+const updateFailing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(
     getClusterVersionCondition(
       cv,

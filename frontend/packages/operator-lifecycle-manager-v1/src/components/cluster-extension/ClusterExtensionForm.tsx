@@ -34,7 +34,7 @@ import { CATALOG_LABEL_KEY } from '../../const';
 import { ClusterExtensionModel } from '../../models';
 import { ServiceAccountDropdown } from './ServiceAccountDropdown';
 
-export interface ClusterExtensionFormProps {
+interface ClusterExtensionFormProps {
   formData?: K8sResourceKind;
   onChange?: (data: K8sResourceKind) => void;
 }

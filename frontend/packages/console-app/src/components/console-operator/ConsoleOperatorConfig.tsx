@@ -420,7 +420,7 @@ export const ConsoleOperatorConfigDetailsPage: FC<ComponentProps<typeof DetailsP
   );
 };
 
-export type ConsolePluginTableRow = {
+type ConsolePluginTableRow = {
   name: string;
   version?: string;
   description?: string;

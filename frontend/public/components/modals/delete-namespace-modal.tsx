@@ -25,7 +25,7 @@ import {
 import { OverlayComponent, useOverlay } from '@console/dynamic-plugin-sdk/src/lib-core';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
-export const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
+const DeleteNamespaceModal: OverlayComponent<DeleteNamespaceModalProps> = ({
   kind,
   resource,
   closeOverlay,

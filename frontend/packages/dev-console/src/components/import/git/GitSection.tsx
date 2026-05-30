@@ -70,7 +70,7 @@ export type GitSectionFormData = {
   };
 };
 
-export interface GitSectionProps {
+interface GitSectionProps {
   title?: ReactNode;
   formContextField?: string;
   builderImages?: NormalizedBuilderImages;

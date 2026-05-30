@@ -22,7 +22,7 @@ import { Decorator } from '@console/topology/src/components/graph-view/component
 
 import './SinkUriNode.scss';
 
-export type SinkUriNodeProps = {
+type SinkUriNodeProps = {
   element: Node;
   dragging?: boolean;
   edgeDragging?: boolean;

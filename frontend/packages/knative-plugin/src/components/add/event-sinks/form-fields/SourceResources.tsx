@@ -22,7 +22,7 @@ import { EventingBrokerModel } from '../../../../models';
 import { useChannelModels } from '../../../../utils/fetch-dynamic-eventsources-utils';
 import { craftResourceKey } from '../../../pub-sub/pub-sub-utils';
 
-export interface SourceResourcesProps {
+interface SourceResourcesProps {
   namespace: string;
   isMoveSink?: boolean;
 }

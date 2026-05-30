@@ -22,7 +22,7 @@ import AvailabilityDisplay from './AvailabilityDisplay';
 import DisruptionsAllowed from './DisruptionsAllowed';
 import type { PodDisruptionBudgetKind } from './types';
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'name' },
   { id: 'namespace' },
   { id: 'selector' },

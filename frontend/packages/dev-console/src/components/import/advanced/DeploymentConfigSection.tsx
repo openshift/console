@@ -10,7 +10,7 @@ import { EnvironmentField } from '@console/shared/src/components/formik-fields/E
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
 
-export interface DeploymentConfigSectionProps {
+interface DeploymentConfigSectionProps {
   namespace: string;
   resource?: K8sResourceKind;
   showHeader?: boolean;

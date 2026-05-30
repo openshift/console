@@ -10,7 +10,7 @@ import {
 import type { OLMCatalogItem } from '../types';
 import { normalizeCatalogItem } from '../utils/catalog-item';
 
-export type OLMCatalogItemData = {
+type OLMCatalogItemData = {
   categories: string[];
   latestVersion: string;
 };

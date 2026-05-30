@@ -284,7 +284,7 @@ const useMachineColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
+const MachineList: FC<MachineListProps> = ({ data, loaded, loadError, ...props }) => {
   const { columns, resetAllColumnWidths } = useMachineColumns();
 
   return (
@@ -362,7 +362,7 @@ export const MachineDetailsPage: FC = (props) => (
   />
 );
 
-export type MachineDetailsProps = {
+type MachineDetailsProps = {
   obj: MachineKind;
 };
 

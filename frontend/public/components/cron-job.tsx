@@ -212,11 +212,11 @@ const CronJobDetails: FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
   );
 };
 
-export type CronJobPodsComponentProps = {
+type CronJobPodsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => {
+const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => {
   const { t } = useTranslation();
   const podFilters = useMemo(() => getPodFilters(t), [t]);
 
@@ -277,11 +277,11 @@ export const CronJobPodsComponent: FC<CronJobPodsComponentProps> = ({ obj }) => 
   );
 };
 
-export type CronJobJobsComponentProps = {
+type CronJobJobsComponentProps = {
   obj: K8sResourceKind;
 };
 
-export const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
+const CronJobJobsComponent: FC<CronJobJobsComponentProps> = ({ obj }) => {
   const resources = useK8sWatchResources<{
     jobs: K8sResourceCommon[];
   }>({
@@ -395,7 +395,7 @@ const useCronJobsColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
+const CronJobsList: FC<CronJobsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useCronJobsColumns();
 
   return (

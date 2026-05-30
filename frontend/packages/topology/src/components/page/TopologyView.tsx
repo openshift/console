@@ -64,7 +64,7 @@ interface DispatchProps {
   onSupportedKindsChange?: (supportedKinds: { [key: string]: number }) => void;
 }
 
-export interface TopologyViewProps {
+interface TopologyViewProps {
   model: Model;
   namespace: string;
   viewType: TopologyViewType;
@@ -72,7 +72,7 @@ export interface TopologyViewProps {
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
 
-export const ConnectedTopologyView: FC<ComponentProps> = ({
+const ConnectedTopologyView: FC<ComponentProps> = ({
   model,
   namespace,
   viewType,

@@ -31,5 +31,3 @@ const ClusterConfigurationCheckboxField: FC<ClusterConfigurationCheckboxFieldPro
     </FormHelperText>
   </FormGroup>
 );
-
-export default ClusterConfigurationCheckboxField;

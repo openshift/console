@@ -20,6 +20,5 @@ export {
   k8sPatch,
   k8sKill,
   k8sList,
-  getK8sResourcePath,
   resourceURL,
 } from '@console/dynamic-plugin-sdk/src/utils/k8s';

@@ -40,10 +40,10 @@ import type {
 // Updated to notify the wrapped component when the create connector is being dragged
 //
 
-export const CREATE_CONNECTOR_OPERATION = '#createconnector#';
-export const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
+const CREATE_CONNECTOR_OPERATION = '#createconnector#';
+const CREATE_CONNECTOR_DROP_TYPE = '#createConnector#';
 
-export interface ConnectorChoice {
+interface ConnectorChoice {
   label: string;
 }
 

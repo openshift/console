@@ -15,7 +15,7 @@ export interface RowRendererProps {
   tooltipDeleteRow?: string;
   onDelete: () => void;
 }
-export interface MultiColumnFieldRowProps extends Omit<RowRendererProps, 'fieldName'> {
+interface MultiColumnFieldRowProps extends Omit<RowRendererProps, 'fieldName'> {
   name: string;
   rowIndex: number;
   children?: ReactNode;

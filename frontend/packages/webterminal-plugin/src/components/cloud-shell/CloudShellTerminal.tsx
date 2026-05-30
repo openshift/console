@@ -28,7 +28,7 @@ type StateProps = {
   user: UserInfo;
 };
 
-export type CloudShellTerminalProps = {
+type CloudShellTerminalProps = {
   onCancel?: () => void;
   terminalNumber?: number;
   setWorkspaceName?: (name: string, terminalNumber: number) => void;

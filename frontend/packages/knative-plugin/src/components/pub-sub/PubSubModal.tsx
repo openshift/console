@@ -9,7 +9,7 @@ import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/Mod
 import PubSubFilter from './form-fields/PubSubFilter';
 import PubSubSubscriber from './form-fields/PubSubSubscriber';
 
-export interface PubSubModalProps {
+interface PubSubModalProps {
   filterEnabled: boolean;
   labelTitle: string;
   cancel?: () => void;

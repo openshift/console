@@ -14,10 +14,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 
 export {
-  watchK8sObject,
   watchK8sList,
   stopK8sWatch,
-  getResourcesInFlight,
   receivedResources,
 } from '@console/dynamic-plugin-sdk/src/app/k8s/actions/k8s';
 

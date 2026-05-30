@@ -39,7 +39,7 @@ import { getDataViewRows, tableColumnInfo } from './HelmReleaseListRow';
 
 type HelmReleaseFilters = ResourceFilters & { status: string[] };
 
-export const useHelmReleasesColumns = (): {
+const useHelmReleasesColumns = (): {
   columns: TableColumn<HelmRelease>[];
   resetAllColumnWidths: () => void;
 } => {

@@ -34,7 +34,7 @@ export const Activity: FC<ActivityProps> = ({ timestamp, children }) => {
   );
 };
 
-export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
+const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   eventsData,
   eventsLoaded,
   eventsLoadError,
@@ -115,7 +115,7 @@ export const RecentEventsBodyContent: FC<RecentEventsBodyContentProps> = ({
   );
 };
 
-export const PauseButton: FC<PauseButtonProps> = ({ paused, togglePause }) => {
+const PauseButton: FC<PauseButtonProps> = ({ paused, togglePause }) => {
   const { t } = useTranslation();
   return (
     <Button

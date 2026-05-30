@@ -124,7 +124,7 @@ export const PodCountWidget: FC<WidgetProps> = ({ value, id, onChange }) => {
   );
 };
 
-export const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
+const K8sResourceWidget: FC<K8sResourceWidgetProps> = ({
   value,
   id,
   label,

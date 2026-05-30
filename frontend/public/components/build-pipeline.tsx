@@ -33,7 +33,7 @@ const getJenkinsStatus = (resource: K8sResourceKind) => {
 
 export const getJenkinsLogURL = (resource: K8sResourceKind): string =>
   _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-console-log-url']);
-export const getJenkinsBuildURL = (resource: K8sResourceKind): string =>
+const getJenkinsBuildURL = (resource: K8sResourceKind): string =>
   _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-build-uri']);
 
 const BuildSummaryStatusIcon: FC<BuildSummaryStatusIconProps> = ({ status }) => {
@@ -175,24 +175,24 @@ export type BuildPipelineProps = {
   obj: K8sResourceKind;
 };
 
-export type BuildStageProps = {
+type BuildStageProps = {
   obj: K8sResourceKind;
   stage: BuildStageData;
 };
 
-export type BuildAnimationProps = {
+type BuildAnimationProps = {
   status: string;
 };
 
-export type BuildPipelineSummaryProps = {
+type BuildPipelineSummaryProps = {
   obj: K8sResourceKind;
 };
 
-export type BuildSummaryStatusIconProps = {
+type BuildSummaryStatusIconProps = {
   status: string;
 };
 
-export type BuildStageTimestampProps = {
+type BuildStageTimestampProps = {
   timestamp: string | undefined;
 };
 
@@ -200,15 +200,15 @@ export type BuildPipelineLogLinkProps = {
   obj: K8sResourceKind;
 };
 
-export type BuildSummaryTimestampProps = {
+type BuildSummaryTimestampProps = {
   timestamp: string | undefined;
 };
 
-export type BuildStageNameProps = {
+type BuildStageNameProps = {
   name: string;
 };
 
-export type JenkinsInputUrlProps = {
+type JenkinsInputUrlProps = {
   obj: K8sResourceKind;
   stage: any;
 };

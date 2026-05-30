@@ -12,7 +12,7 @@ import styles from '@patternfly/react-styles/css/components/Tooltip/tooltip';
 import { Tippy } from '../popper/Tippy';
 import './Tooltip.scss';
 
-export enum TooltipPlacement {
+enum TooltipPlacement {
   top = 'top',
   left = 'left',
   right = 'right',

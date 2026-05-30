@@ -210,7 +210,7 @@ export const OperandTableRow: FC<OperandTableRowProps> = ({ obj, showNamespace }
 
 const getOperandNamespace = (obj: ClusterServiceVersionKind): string | null => getNamespace(obj);
 
-export const OperandList: FC<OperandListProps> = (props) => {
+const OperandList: FC<OperandListProps> = (props) => {
   const { t } = useTranslation();
   const { noAPIsFound, showNamespace } = props;
 
@@ -828,7 +828,7 @@ type OperandStatusType = {
   value: string;
 };
 
-export type OperandListProps = {
+type OperandListProps = {
   loaded: boolean;
   kinds?: GroupVersionKind[];
   data: K8sResourceKind[];

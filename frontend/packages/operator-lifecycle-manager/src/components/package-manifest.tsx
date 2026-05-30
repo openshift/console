@@ -111,7 +111,7 @@ const PackageManifestListEmptyMessage = () => {
   );
 };
 
-export const PackageManifestList = (props: PackageManifestListProps) => {
+const PackageManifestList = (props: PackageManifestListProps) => {
   const { customData } = props;
 
   // If the CatalogSource is not present, display PackageManifests along with their CatalogSources (used in PackageManifest Search page)
@@ -203,7 +203,7 @@ export type PackageManifestsPageProps = {
   namespace?: string;
 };
 
-export type PackageManifestListProps = {
+type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];

@@ -32,7 +32,7 @@ const tableColumnInfo = [{ id: 'name' }, { id: 'driver' }, { id: 'deletionPolicy
 
 const defaultSnapshotClassAnnotation = 'snapshot.storage.kubernetes.io/is-default-class';
 
-export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
+const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
   getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
     defaultSnapshotClassAnnotation
   ] === 'true';

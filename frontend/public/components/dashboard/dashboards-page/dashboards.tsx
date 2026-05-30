@@ -24,7 +24,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../../redux';
 
-export const getCardsOnPosition = (
+const getCardsOnPosition = (
   cards: DashboardsCard[],
   position: GridPosition,
 ): OverviewGridCard[] => [
@@ -36,7 +36,7 @@ export const getCardsOnPosition = (
     })),
 ];
 
-export const getPluginTabPages = (
+const getPluginTabPages = (
   tabs: DashboardsTab[],
   cards: DashboardsCard[],
   navSection: string,
@@ -108,7 +108,7 @@ const DashboardsPage_: FC<DashboardsPageProps> = ({ kindsInFlight, k8sModelsLoad
   );
 };
 
-export const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState) => ({
   kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
   k8sModelsLoaded: state.k8s.getIn(['RESOURCES', 'loaded']),
 });

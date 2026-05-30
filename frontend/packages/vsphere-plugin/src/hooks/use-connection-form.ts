@@ -9,7 +9,7 @@ import type { Infrastructure } from '../resources/infrastructure';
 import type { Secret } from '../resources/secret';
 import { useConnectionModels } from './use-connection-models';
 
-export class LoadError extends Error {
+class LoadError extends Error {
   detail: string;
 
   constructor(title: string, detail: string) {

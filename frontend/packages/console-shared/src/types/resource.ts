@@ -27,7 +27,7 @@ export type OverviewItem<T = K8sResourceKind> = {
 
 export type DeploymentStrategy = DEPLOYMENT_STRATEGY.recreate | DEPLOYMENT_STRATEGY.rolling;
 
-export interface ResourceType {
+interface ResourceType {
   request: number | string;
   requestUnit: string;
   defaultRequestUnit: string;

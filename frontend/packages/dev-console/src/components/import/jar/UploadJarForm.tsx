@@ -19,7 +19,7 @@ import IconSection from '../section/IconSection';
 import ResourceSection from '../section/ResourceSection';
 import JarSection from './section/JarSection';
 
-export type UploadJarFormProps = {
+type UploadJarFormProps = {
   namespace: string;
   projects: WatchK8sResultsObject<K8sResourceKind[]>;
   builderImage?: BuilderImage;

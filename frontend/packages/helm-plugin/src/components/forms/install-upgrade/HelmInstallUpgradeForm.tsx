@@ -37,7 +37,7 @@ export type HelmInstallUpgradeFormData = {
   editorType: EditorType;
 };
 
-export interface HelmInstallUpgradeFormProps {
+interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;
   helmActionConfig: HelmActionConfigType;
   chartMetaDescription: ReactNode;

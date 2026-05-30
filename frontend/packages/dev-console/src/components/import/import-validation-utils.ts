@@ -22,7 +22,7 @@ import {
   importFlowPipelineTemplateValidationSchema,
 } from './validation-schema';
 
-export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
+const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
   yup.object().shape({
     webhook: yup
       .object()
@@ -57,7 +57,7 @@ export const pipelinesAccessTokenValidationSchema = (t: TFunction) =>
       ),
   });
 
-export const importFlowRepositoryValidationSchema = (t: TFunction) => {
+const importFlowRepositoryValidationSchema = (t: TFunction) => {
   return yup.object().shape({
     repository: yup
       .object()

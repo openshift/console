@@ -19,7 +19,7 @@ import { useResizeObserver } from '../../hooks/useResizeObserver';
 
 import './MarkdownView.scss';
 
-export type MarkdownExtension = {
+type MarkdownExtension = {
   type: string;
   regex: RegExp;
   replace: (text: string, ...groups: string[]) => string;

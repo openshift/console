@@ -32,7 +32,7 @@ const buildSchema = () =>
 
 const environmentVariablesSchema = () => yup.array();
 
-export const formDataSchema = () =>
+const formDataSchema = () =>
   yup.object({
     name: nameSchema(),
     outputImage: outputImageSchema(),

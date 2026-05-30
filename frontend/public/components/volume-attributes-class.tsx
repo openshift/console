@@ -38,7 +38,7 @@ import { useColumnWidthSettings } from '@console/app/src/components/data-view/us
 
 const [group, version] = VolumeAttributesClassModel.apiVersion.split('/');
 
-export const VolumeAttributesClassGVK: K8sGroupVersionKind = {
+const VolumeAttributesClassGVK: K8sGroupVersionKind = {
   group,
   version,
   kind: VolumeAttributesClassModel.kind,
@@ -140,7 +140,7 @@ const getDataViewRows: GetDataViewRows<VolumeAttributesClassKind, undefined> = (
   });
 };
 
-export const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
+const VolumeAttributesClassList: FC<VolumeAttributesClassListProps> = ({
   data,
   loaded,
   loadError,
@@ -248,7 +248,7 @@ export const VolumeAttributesClassDetailsPage: FC<VolumeAttributesClassDetailsPa
   );
 };
 
-export type VolumeAttributesClassListProps = {
+type VolumeAttributesClassListProps = {
   data: VolumeAttributesClassKind[];
   loaded: boolean;
   loadError?: Error;
@@ -265,6 +265,6 @@ export type VolumeAttributesClassDetailsPageProps = {
   name?: string;
 };
 
-export type VolumeAttributesClassDetailsProps = {
+type VolumeAttributesClassDetailsProps = {
   obj: VolumeAttributesClassKind;
 };

@@ -180,4 +180,4 @@ const ServiceAccountsPage = (props) => (
     omitFilterToolbar={true}
   />
 );
-export { ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage };
+export { ServiceAccountsPage, ServiceAccountsDetailsPage };

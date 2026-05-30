@@ -95,13 +95,13 @@ export const catalogSourceForSubscription = (
       source?.metadata?.namespace === subscription?.spec?.sourceNamespace,
   );
 
-export const installedCSVForSubscription = (
+const installedCSVForSubscription = (
   clusterServiceVersions: ClusterServiceVersionKind[] = [],
   subscription: SubscriptionKind,
 ): ClusterServiceVersionKind =>
   clusterServiceVersions.find((csv) => csv?.metadata?.name === subscription?.status?.installedCSV);
 
-export const packageForSubscription = (
+const packageForSubscription = (
   packageManifests: PackageManifestKind[] = [],
   subscription: SubscriptionKind,
 ): PackageManifestKind =>
@@ -113,7 +113,7 @@ export const packageForSubscription = (
       pkg?.status?.catalogSourceNamespace === subscription?.spec?.sourceNamespace,
   );
 
-export const installPlanForSubscription = (
+const installPlanForSubscription = (
   installPlans: InstallPlanKind[] = [],
   subscription: SubscriptionKind,
 ): InstallPlanKind =>
@@ -129,7 +129,7 @@ export const SourceMissingStatus: FC = () => {
   );
 };
 
-export const SourceUnhealthyStatus: FC = () => {
+const SourceUnhealthyStatus: FC = () => {
   const { t } = useTranslation();
   return (
     <>
@@ -535,7 +535,7 @@ const SubscriptionUpgradeStatus = ({ catalogHealth, subscription }) => {
   );
 };
 
-export const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
+const SubscriptionUpdates: FC<SubscriptionUpdatesProps> = ({
   catalogHealth,
   installedCSV,
   installPlan,
@@ -789,7 +789,7 @@ export type SubscriptionsListProps = {
   operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
 };
 
-export type SubscriptionUpdatesProps = {
+type SubscriptionUpdatesProps = {
   catalogHealth: { healthy?: boolean };
   obj: SubscriptionKind;
   pkg: PackageManifestKind;

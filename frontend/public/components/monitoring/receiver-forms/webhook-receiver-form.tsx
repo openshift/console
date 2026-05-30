@@ -4,7 +4,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SendResolvedAlertsCheckbox } from './send-resolved-alerts-checkbox';
-import { FormProps } from './receiver-form-props';
+import type { FormProps, SubFormModule } from './receiver-form-props';
 import {
   FormGroup,
   FormHelperText,
@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { AdvancedConfiguration } from './advanced-configuration';
 
-export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
+const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -47,22 +47,22 @@ export const Form: FC<FormProps> = ({ formValues, dispatchFormChange }) => {
   );
 };
 
-export const getInitialValues = (globals, receiverConfig) => {
+const getInitialValues = (globals, receiverConfig) => {
   return {
     webhookUrl: receiverConfig?.url || '',
     webhookSendResolved: _.get(receiverConfig, 'send_resolved', globals?.webhook_send_resolved),
   };
 };
 
-export const isFormInvalid = (formValues) => {
+const isFormInvalid = (formValues) => {
   return !formValues.webhookUrl;
 };
 
-export const updateGlobals = () => {
+const updateGlobals = () => {
   return {};
 };
 
-export const createReceiverConfig = (globals, formValues, receiverConfig) => {
+const createReceiverConfig = (globals, formValues, receiverConfig) => {
   _.set(receiverConfig, 'url', formValues.webhookUrl);
 
   if (formValues.webhookSendResolved !== globals.webhook_send_resolved) {
@@ -72,4 +72,12 @@ export const createReceiverConfig = (globals, formValues, receiverConfig) => {
   }
 
   return receiverConfig;
+};
+
+export const WebhookForm: SubFormModule = {
+  Form,
+  getInitialValues,
+  isFormInvalid,
+  updateGlobals,
+  createReceiverConfig,
 };

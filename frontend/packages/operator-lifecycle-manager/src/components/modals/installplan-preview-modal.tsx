@@ -15,7 +15,7 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import type { StepResource } from '../../types';
 import { referenceForStepResource } from '../index';
 
-export const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
+const InstallPlanPreview: FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
   const { t } = useTranslation();
   return (
     <>

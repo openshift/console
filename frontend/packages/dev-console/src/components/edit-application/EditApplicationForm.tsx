@@ -23,7 +23,7 @@ import PipelineSection from '../pipeline-section/pipeline/PipelineSection';
 import type { AppResources } from './edit-application-types';
 import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
 
-export interface EditApplicationFormProps {
+interface EditApplicationFormProps {
   flowType: ApplicationFlowType;
   builderImages?: NormalizedBuilderImages;
   appResources: AppResources;

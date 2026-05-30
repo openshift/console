@@ -29,7 +29,7 @@ export const getRolesWithNameChange = (
   return rolesWithNameChange;
 };
 
-export const getRolesWithSubjectChange = (
+const getRolesWithSubjectChange = (
   newRoles: UserRoleBinding[],
   removeRoles: UserRoleBinding[],
 ): UserRoleBinding[] => {
@@ -55,10 +55,7 @@ export const getRolesToUpdate = (newRoles: UserRoleBinding[], removeRoles: UserR
   ];
 };
 
-export const sendK8sRequest = (
-  verb: string,
-  roleBinding: RoleBinding,
-): Promise<K8sResourceKind> => {
+const sendK8sRequest = (verb: string, roleBinding: RoleBinding): Promise<K8sResourceKind> => {
   switch (verb) {
     case Verb.Create:
       return k8sCreateResource({ model: RoleBindingModel, data: roleBinding });
@@ -75,7 +72,7 @@ export const sendK8sRequest = (
   }
 };
 
-export const generateRoleBindingName = (username: string, role: string): string => {
+const generateRoleBindingName = (username: string, role: string): string => {
   return `${username}-${role}-${generateSecret()}`;
 };
 
@@ -119,7 +116,7 @@ export const getRemovedRoles = (
   return removeRoles;
 };
 
-export const getUpdatedSubjects = (subjects: SubjectType[]) => {
+const getUpdatedSubjects = (subjects: SubjectType[]) => {
   return subjects.map((sub) => {
     if (sub.kind === 'ServiceAccount') {
       delete sub.apiGroup;

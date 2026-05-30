@@ -16,10 +16,10 @@ import './SyncedEditorField.scss';
 
 type FormErrorCallback<ReturnValue = {}> = () => ReturnValue;
 type WithOrWithoutPromise<Type> = Promise<Type> | Type;
-export type SanitizeToForm<YAMLStruct = {}, FormOutput = {}> = (
+type SanitizeToForm<YAMLStruct = {}, FormOutput = {}> = (
   preFormData: YAMLStruct,
 ) => WithOrWithoutPromise<FormOutput | FormErrorCallback<FormOutput>>;
-export type SanitizeToYAML = (preFormData: string) => string;
+type SanitizeToYAML = (preFormData: string) => string;
 
 type EditorContext<SanitizeTo> = {
   name: string;

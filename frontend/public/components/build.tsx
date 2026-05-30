@@ -201,7 +201,7 @@ export const PipelineBuildStrategyAlert: FC<BuildsDetailsProps> = () => {
   );
 };
 
-export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
+const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp, completionTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
@@ -289,7 +289,7 @@ export const BuildsDetails: FC<BuildsDetailsProps> = ({ obj: build }) => {
   );
 };
 
-export const getEnvPath = (props) => {
+const getEnvPath = (props) => {
   const strategyType = getStrategyType(props.obj.spec.strategy.type);
   return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
@@ -468,7 +468,7 @@ const useBuildsColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
+const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useBuildsColumns();
 
   return (
@@ -490,9 +490,9 @@ export const BuildsList: FC<BuildsListProps> = ({ data, loaded, ...props }) => {
 
 BuildsList.displayName = 'BuildsList';
 
-export const buildPhase = (build) => build.status.phase;
+const buildPhase = (build) => build.status.phase;
 
-export const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
+const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
 
 export const BuildsPage: FC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();

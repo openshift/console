@@ -21,7 +21,7 @@ import type { ModalComponentProps } from '@console/shared/src/types/modal';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils/console-plugin';
 import { ModalFooterWithAlerts } from './ModalFooterWithAlerts';
 
-export const ConsolePluginModal = (props: ConsolePluginModalProps) => {
+const ConsolePluginModal = (props: ConsolePluginModalProps) => {
   const { cancel, close, consoleOperatorConfig, csvPluginsCount, pluginName, trusted } = props;
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, pluginName);
@@ -128,7 +128,7 @@ type ConsolePluginModalProviderProps = {
   trusted: boolean;
 };
 
-export type ConsolePluginModalProps = {
+type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
   csvPluginsCount?: number;
   pluginName: string;

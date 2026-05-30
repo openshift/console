@@ -112,6 +112,6 @@ type OpenShiftGettingStartedProps = {
   title?: string;
 };
 
-export type WithStartGuideProps = {
+type WithStartGuideProps = {
   noProjectsAvailable?: boolean;
 };

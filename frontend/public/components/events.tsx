@@ -291,12 +291,12 @@ const Inner: FC<InnerProps> = ({ event, list, cache, index }) => {
   );
 };
 
-export const NoEvents: FC = () => {
+const NoEvents: FC = () => {
   const { t } = useTranslation('public');
   return <ConsoleEmptyState>{t('No events')}</ConsoleEmptyState>;
 };
 
-export const NoMatchingEvents: FC<NoMatchingEventsProps> = ({ allCount }) => {
+const NoMatchingEvents: FC<NoMatchingEventsProps> = ({ allCount }) => {
   const { t } = useTranslation('public');
   return (
     <ConsoleEmptyState title={t('No matching events')}>
@@ -606,7 +606,7 @@ export const EventStreamPage = withStartGuide(
   },
 );
 
-export const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
+const ResourceEventStream_: FC<InternalResourceEventStreamProps> = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },

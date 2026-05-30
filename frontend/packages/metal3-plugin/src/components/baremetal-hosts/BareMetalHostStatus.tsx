@@ -32,7 +32,7 @@ import type { StatusProps } from '../types';
 
 import './status.scss';
 
-export const hostStatusActions = (t: TFunction) => ({
+const hostStatusActions = (t: TFunction) => ({
   [HOST_STATUS_UNMANAGED]: (host: BareMetalHostKind) => (
     <div className="bmh-status-action">
       <Link

@@ -12,7 +12,6 @@ import type { PackageManifestKind } from '../../types';
 import {
   CapabilityLevel,
   InfrastructureFeature,
-  InstalledState,
   OLMAnnotation,
   ValidSubscriptionValue,
 } from './index';
@@ -24,7 +23,7 @@ export const defaultPackageSourceMap = {
   [DefaultCatalogSource.CommunityOperators]: OperatorSource.CommunityOperators,
 };
 
-export const defaultClusterCatalogSourceMap = {
+const defaultClusterCatalogSourceMap = {
   [DefaultClusterCatalog.OpenShiftRedHatOperators]: OperatorSource.RedHatOperators,
   [DefaultClusterCatalog.OpenShiftRedHatMarketPlace]: OperatorSource.RedHatMarketplace,
   [DefaultClusterCatalog.OpenShiftCertifiedOperators]: OperatorSource.CertifiedOperators,
@@ -298,17 +297,6 @@ export const sourceSort = (source: string): number => {
   }
 };
 
-export const installedStateSort = (provider: string): number => {
-  switch (provider) {
-    case InstalledState.Installed:
-      return 0;
-    case InstalledState.NotInstalled:
-      return 1;
-    default:
-      return 3;
-  }
-};
-
 export const capabilityLevelSort = (capability: string): number => {
   switch (capability) {
     case CapabilityLevel.BasicInstall:
@@ -319,23 +307,6 @@ export const capabilityLevelSort = (capability: string): number => {
       return 2;
     case CapabilityLevel.DeepInsights:
       return 3;
-    default:
-      return 5;
-  }
-};
-
-export const infraFeaturesSort = (infrastructure: string): number => {
-  switch (infrastructure) {
-    case InfrastructureFeature.Disconnected:
-      return 0;
-    case InfrastructureFeature.ProxyAware:
-      return 1;
-    case InfrastructureFeature.FIPSMode:
-      return 2;
-    case InfrastructureFeature.TokenAuth:
-      return 3;
-    case InfrastructureFeature.TLSProfiles:
-      return 4;
     default:
       return 5;
   }

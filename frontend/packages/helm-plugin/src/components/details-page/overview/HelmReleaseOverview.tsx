@@ -8,7 +8,7 @@ import PaneBody from '@console/shared/src/components/layout/PaneBody';
 import type { HelmRelease } from '../../../types/helm-types';
 import HelmChartSummary from './HelmChartSummary';
 
-export interface HelmReleaseOverviewProps {
+interface HelmReleaseOverviewProps {
   obj: K8sResourceKind;
   customData: HelmRelease;
 }

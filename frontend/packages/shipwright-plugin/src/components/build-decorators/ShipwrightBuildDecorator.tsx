@@ -31,7 +31,7 @@ type StateProps = {
   };
 };
 
-export const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
+const ConnectedBuildRunDecorator: FC<BuildRunDecoratorProps & StateProps> = ({
   buildRuns,
   resource,
   radius,

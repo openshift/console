@@ -3,7 +3,7 @@ import { Table, Thead, Tr, Th, Td, Tbody } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 
-export const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
+const EndpointRow: FC<EndpointRowProps> = ({ endpoint }) => {
   const { t } = useTranslation('olm');
 
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(
@@ -57,7 +57,7 @@ export const EndpointList: FC<EndpointListProps> = (props) => {
 /**
  * Taken from https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
  */
-export type Endpoint = {
+type Endpoint = {
   port?: string;
   targetPort?: number | string;
   scheme?: string;
@@ -65,7 +65,7 @@ export type Endpoint = {
   interval?: string;
 };
 
-export type EndpointRowProps = {
+type EndpointRowProps = {
   endpoint: Endpoint;
 };
 

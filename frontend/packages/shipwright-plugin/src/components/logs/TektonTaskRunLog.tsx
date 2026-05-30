@@ -10,9 +10,6 @@ import './MultiStreamLogs.scss';
 
 export enum TektonResourceLabel {
   pipeline = 'tekton.dev/pipeline',
-  pipelinerun = 'tekton.dev/pipelineRun',
-  pipelineRunUid = 'tekton.dev/pipelineRunUID',
-  taskrun = 'tekton.dev/taskRun',
   pipelineTask = 'tekton.dev/pipelineTask',
 }
 

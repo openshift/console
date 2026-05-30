@@ -11,7 +11,7 @@ export type ConsoleSample = K8sResourceCommon & {
  * ConsoleSampleSpec is the desired sample for the web console.
  * Samples will appear with their title, descriptions and a badge in a samples catalog.
  */
-export type ConsoleSampleSpec = {
+type ConsoleSampleSpec = {
   /**
    * title is the display name of the sample.
    *
@@ -145,7 +145,7 @@ export type ConsoleSampleGitImportSourceRepository = {
  * ConsoleSampleGitImportSourceService allows the samples author define defaults
  * for the Service created for this sample
  */
-export type ConsoleSampleGitImportSourceService = {
+type ConsoleSampleGitImportSourceService = {
   /**
    * targetPort is the port that the service listens on for HTTP requests.
    * This port will be used for Service created for this sample.
@@ -181,7 +181,7 @@ export type ConsoleSampleContainerImportSource = {
  * ConsoleSampleContainerImportSourceService allows the samples author define defaults
  * for the Service created for this sample
  */
-export type ConsoleSampleContainerImportSourceService = {
+type ConsoleSampleContainerImportSourceService = {
   /**
    * targetPort is the port that the service listens on for HTTP requests.
    * This port will be used for Service created for this sample.

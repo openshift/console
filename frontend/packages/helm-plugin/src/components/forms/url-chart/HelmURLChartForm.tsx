@@ -14,7 +14,7 @@ import { ResourceDropdownField } from '@console/shared/src/components/formik-fie
 import type { HelmURLChartFormData } from './types';
 import { useSecretResources } from './useSecretResources';
 
-export interface HelmURLChartFormProps {
+interface HelmURLChartFormProps {
   namespace: string;
   onNext: () => void;
 }

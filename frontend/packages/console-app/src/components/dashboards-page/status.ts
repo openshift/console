@@ -75,7 +75,7 @@ export const getControlPlaneComponentHealth = (
   return { state: HealthState.ERROR, message: perc.string };
 };
 
-export const getWorstStatus = (
+const getWorstStatus = (
   componentsHealth: SubsystemHealth[],
   t: TFunction,
 ): { state: HealthState; message: string; count: number } => {
@@ -120,9 +120,7 @@ export const getControlPlaneHealth: PrometheusHealthHandler = (
   };
 };
 
-export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperator> = (
-  co,
-) => {
+const getClusterOperatorStatusPriority: GetOperatorStatusPriority<ClusterOperator> = (co) => {
   const status = getClusterOperatorStatus(co);
   if (status === OperatorStatus.Degraded) {
     return { ...healthStateMapping[HealthState.WARNING], title: status };

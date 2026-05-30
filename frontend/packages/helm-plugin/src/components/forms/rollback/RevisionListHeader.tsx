@@ -4,7 +4,7 @@ import type { DataViewTh } from '@patternfly/react-data-view/dist/esm/DataViewTa
 import type { ThProps, SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'input', index: 0 },
   { id: 'revision', index: 1 },
   { id: 'updated', index: 2 },
@@ -19,12 +19,6 @@ export const tableColumnInfo = [
 export const getColumnIndexById = (columnId: string): number => {
   const column = tableColumnInfo.find((col) => col.id === columnId);
   return column?.index ?? 1; // Default to revision column
-};
-
-// Helper function to get column ID by index
-export const getColumnIdByIndex = (index: number): string => {
-  const column = tableColumnInfo.find((col) => col.index === index);
-  return column?.id ?? 'revision'; // Default to revision column
 };
 
 export const useRevisionListColumns = (

@@ -17,7 +17,7 @@ export const useIsCloudShellActive = () => {
   return useConsoleSelector<boolean>(isCloudShellActive);
 };
 
-export const getCloudShellCommand = (state: RootState): string | null =>
+const getCloudShellCommand = (state: RootState): string | null =>
   state.plugins?.webterminal?.[cloudShellReducerName]?.command ?? null;
 
 export const useGetCloudShellCommand = (): string | null => {

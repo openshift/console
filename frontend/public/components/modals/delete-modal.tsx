@@ -32,7 +32,7 @@ import { usePromiseHandler } from '@console/shared/src/hooks/usePromiseHandler';
 import { ModalFooterWithAlerts } from '@console/shared/src/components/modals/ModalFooterWithAlerts';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
-export const DeleteModal = (props: DeleteModalProps) => {
+const DeleteModal = (props: DeleteModalProps) => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(true);
   const [isDeleteOtherResourcesChecked, setIsDeleteOtherResourcesChecked] = useState(true);

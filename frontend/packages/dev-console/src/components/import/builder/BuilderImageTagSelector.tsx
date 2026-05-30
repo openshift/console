@@ -15,7 +15,7 @@ import { useSafeK8s } from '../../../utils/safe-k8s-hook';
 import BuilderImageEnvironments from './BuilderImageEnvironments';
 import ImageStreamInfo from './ImageStreamInfo';
 
-export interface BuilderImageTagSelectorProps {
+interface BuilderImageTagSelectorProps {
   selectedBuilderImage: BuilderImage;
   selectedImageTag: string;
   showImageInfo?: boolean;

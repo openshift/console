@@ -44,7 +44,7 @@ const VolumeAttributesClassDropdownEntry: FC<{
   );
 };
 
-export const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerProps> = ({
+const VolumeAttributesClassDropdownInner: FC<VolumeAttributesClassDropdownInnerProps> = ({
   id,
   loaded,
   loadError,
@@ -237,7 +237,7 @@ export const VolumeAttributesClassDropdown: FC<VolumeAttributesClassDropdownProp
   );
 };
 
-export type VolumeAttributesClassDropdownInnerProps = {
+type VolumeAttributesClassDropdownInnerProps = {
   id?: string;
   loaded?: boolean;
   loadError?: Error;
@@ -270,7 +270,7 @@ type VolumeAttributesClassDropdownItem = {
   resource?: VolumeAttributesClassKind;
 };
 
-export type VolumeAttributesClassDropdownInnerState = {
+type VolumeAttributesClassDropdownInnerState = {
   items: { [key: string]: VolumeAttributesClassDropdownItem };
   name: string;
   selectedKey: string;

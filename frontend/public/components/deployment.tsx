@@ -225,7 +225,7 @@ const getDataViewRows: GetDataViewRows<DeploymentKind> = (data, columns) => {
   return getWorkloadDataViewRows(data, columns, DeploymentModel);
 };
 
-export const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
+const DeploymentsList: FC<DeploymentsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentKind>(DeploymentModel);
 
   return (

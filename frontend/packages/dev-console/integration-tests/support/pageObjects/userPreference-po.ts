@@ -6,7 +6,7 @@ export const userPreferencePO = {
   checkboxPreferredLanguage: '[data-test="checkbox console.preferredLanguage"]',
 };
 
-export const preferenceDropdownDisplayNameToName = (displayName: string) => {
+const preferenceDropdownDisplayNameToName = (displayName: string) => {
   switch (displayName) {
     case 'Perspective': {
       return 'Perspective';

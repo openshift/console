@@ -31,7 +31,7 @@ export const SuccessStatus: FC<StatusComponentProps> = ({ title, ...props }) => 
   return <SdkSuccessStatus {...props} title={title || t('console-shared~Healthy')} />;
 };
 
-export const PendingStatus: FC<StatusComponentProps> = (props) => {
+const PendingStatus: FC<StatusComponentProps> = (props) => {
   const { t } = useTranslation();
   return (
     <GenericStatus

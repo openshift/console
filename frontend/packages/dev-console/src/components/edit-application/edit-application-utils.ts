@@ -69,7 +69,6 @@ export const getFlowTypePageTitle = (flowType: ApplicationFlowType): string => {
 };
 
 export enum BuildSourceType {
-  Git = 'Git',
   Binary = 'Binary',
 }
 
@@ -131,7 +130,7 @@ export const checkIfTriggerExists = (
   });
 };
 
-export const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
+const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   const url = buildConfig?.spec?.source?.git?.uri ?? '';
   const gitData = {
     url,
@@ -188,7 +187,7 @@ export const getKsvcRouteData = (resource: K8sResourceKind) => {
   return routeData;
 };
 
-export const getDefaultLabels = () => {
+const getDefaultLabels = () => {
   return [
     'app',
     'app.kubernetes.io/instance',
@@ -214,7 +213,7 @@ export const getRouteLabels = (
   return filteredRouteLabels;
 };
 
-export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
+const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
     disable: !_.isEmpty(route),
     create: !_.isEmpty(route),
@@ -260,7 +259,7 @@ const getBuildOption = (
   return BuildOptions.DISABLED;
 };
 
-export const getBuildData = (
+const getBuildData = (
   buildConfig: K8sResourceKind,
   shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
@@ -420,7 +419,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
   return userLabels;
 };
 
-export const getCommonInitialValues = (
+const getCommonInitialValues = (
   editAppResource: K8sResourceKind,
   route: K8sResourceKind,
   pipelineData: PipelineKind,
@@ -494,7 +493,7 @@ export const getIconInitialValues = (
   };
 };
 
-export const getGitAndDockerfileInitialValues = (
+const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
   shipwrightBuild: K8sResourceKind,
   pipeline: PipelineKind,
@@ -562,7 +561,7 @@ export const deployImageInitialValues = {
   isSearchingForImage: false,
 };
 
-export const getExternalImageInitialValues = (appResources: AppResources) => {
+const getExternalImageInitialValues = (appResources: AppResources) => {
   const imageStreamList = appResources?.imageStream?.data;
   if (_.isEmpty(imageStreamList)) {
     return {};
@@ -582,7 +581,7 @@ export const getExternalImageInitialValues = (appResources: AppResources) => {
   };
 };
 
-export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
+const getInternalImageInitialValues = (editAppResource: K8sResourceKind) => {
   const imageStreamNamespace = _.get(
     editAppResource,
     'metadata.labels["app.openshift.io/runtime-namespace"]',

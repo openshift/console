@@ -127,7 +127,7 @@ const useGroupColumns = (): {
   return { columns, resetAllColumnWidths };
 };
 
-export const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
+const GroupList: FC<{ data: GroupKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = useGroupColumns();

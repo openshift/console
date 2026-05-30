@@ -26,7 +26,7 @@ const columnClassNames = [
   KEBAB_COLUMN_CLASS,
 ];
 
-export const BuildRunHeader = () => {
+const BuildRunHeader = () => {
   // This function is NOT called as component, so we can not use useTranslation here.
   const t = i18next.t.bind(i18next);
 
@@ -69,7 +69,7 @@ export const BuildRunHeader = () => {
   ];
 };
 
-export const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
+const BuildRunRow: FC<RowFunctionArgs<BuildRun>> = ({ obj: buildRun }) => {
   const kindReference = referenceFor(buildRun);
   const context = { [kindReference]: buildRun };
 

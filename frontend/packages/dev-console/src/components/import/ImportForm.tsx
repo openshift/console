@@ -48,7 +48,7 @@ import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScaling
 import ImportToastContent from './toast/ImportToastContent';
 import WebhookToastContent from './toast/WebhookToastContent';
 
-export interface ImportFormProps {
+interface ImportFormProps {
   namespace: string;
   importData: ImportData;
   contextualSource?: string;
@@ -64,7 +64,7 @@ export interface ImportFormProps {
   };
 }
 
-export interface StateProps {
+interface StateProps {
   activeApplication: string;
 }
 

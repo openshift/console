@@ -6,7 +6,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ConfigurationModel } from '../../models';
 
-export type ConfigurationsOverviewListItemProps = {
+type ConfigurationsOverviewListItemProps = {
   configuration: K8sResourceKind;
 };
 

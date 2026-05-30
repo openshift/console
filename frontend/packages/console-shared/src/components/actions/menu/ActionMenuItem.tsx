@@ -10,7 +10,7 @@ import type { Action, ImpersonateKind } from '@console/dynamic-plugin-sdk';
 import { impersonateStateToProps } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 
-export type ActionMenuItemProps = {
+type ActionMenuItemProps = {
   action: Action;
   component?: ComponentType<DropdownItemProps>;
   autoFocus?: boolean;

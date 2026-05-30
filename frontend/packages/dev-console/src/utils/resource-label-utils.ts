@@ -81,7 +81,7 @@ export const getTriggerAnnotation = (
   ]),
 });
 
-export const getUserAnnotations = (allAnnotations: { [key: string]: string }) => {
+const getUserAnnotations = (allAnnotations: { [key: string]: string }) => {
   const defaultAnnotations = [
     'app.openshift.io/vcs-uri',
     'app.openshift.io/vcs-ref',

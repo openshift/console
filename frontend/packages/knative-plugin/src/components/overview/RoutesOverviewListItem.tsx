@@ -8,7 +8,7 @@ import { RouteModel } from '../../models';
 import { RoutesOverviewListItem } from '../../types';
 import RoutesUrlLink from './RoutesUrlLink';
 
-export type RoutesOverviewListItemProps = {
+type RoutesOverviewListItemProps = {
   routeLink: RoutesOverviewListItem;
   uniqueRoutes?: string[];
   totalPercent?: string;

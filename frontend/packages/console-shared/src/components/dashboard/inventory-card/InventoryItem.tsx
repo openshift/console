@@ -15,7 +15,7 @@ import type { ResolvedExtension } from '@console/dynamic-plugin-sdk/dist/core/li
 import type { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import type { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import type { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import InventoryItemNew, {
   InventoryItemStatus,
@@ -135,7 +135,7 @@ export const InventoryItem = memo<InventoryItemProps>(
   },
 );
 
-export const Status: FC<StatusProps> = ({ groupID, count }) => {
+const Status: FC<StatusProps> = ({ groupID, count }) => {
   const [groupExtensions] = useResolvedExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
@@ -332,11 +332,6 @@ type StatusLinkProps = StatusProps & {
   namespace?: string;
   filterType?: string;
   basePath?: string;
-};
-
-export type ExpandedComponentProps = {
-  resource: K8sResourceKind[];
-  additionalResources?: { [key: string]: K8sResourceKind[] };
 };
 
 type ResourceTitleComponentComponent = {

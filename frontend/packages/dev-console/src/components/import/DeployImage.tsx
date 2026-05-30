@@ -21,7 +21,7 @@ import type { DeployImageFormData } from './import-types';
 import { Resources } from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
-export interface DeployImageProps {
+interface DeployImageProps {
   namespace: string;
   projects?: {
     data: K8sResourceKind[];

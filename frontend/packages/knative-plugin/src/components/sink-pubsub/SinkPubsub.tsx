@@ -11,7 +11,7 @@ import { ServiceModel as KsServiceModel, KafkaSinkModel } from '../../models';
 import { craftResourceKey, sanitizeResourceName } from '../pub-sub/pub-sub-utils';
 import SinkPubsubModal from './SinkPubsubModal';
 
-export interface SinkPubsubProps {
+interface SinkPubsubProps {
   source: K8sResourceKind;
   resourceType: string;
   cancel?: () => void;

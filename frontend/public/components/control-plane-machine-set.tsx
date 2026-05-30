@@ -179,7 +179,7 @@ const ControlPlaneMachineSetDetails: FC<ControlPlaneMachineSetDetailsProps> = ({
   );
 };
 
-export const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
+const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
   <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
 );
 

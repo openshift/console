@@ -172,7 +172,7 @@ export const DeploymentConfigDeprecationAlert: FC = () => {
   );
 };
 
-export const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
+const DeploymentConfigsDetails: FC<{ obj: K8sResourceKind }> = ({ obj: dc }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -301,11 +301,7 @@ const getDataViewRows: GetDataViewRows<DeploymentConfigKind> = (data, columns) =
   return getWorkloadDataViewRows(data, columns, DeploymentConfigModel);
 };
 
-export const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({
-  data,
-  loaded,
-  ...props
-}) => {
+const DeploymentConfigsList: FC<DeploymentConfigsListProps> = ({ data, loaded, ...props }) => {
   const { columns, resetAllColumnWidths } = useWorkloadColumns<DeploymentConfigKind>(
     DeploymentConfigModel,
   );

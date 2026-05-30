@@ -30,7 +30,7 @@ import { ChartLineIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { VictoryPortal } from 'victory-core';
+import { VictoryPortal } from 'victory';
 import type {
   FormatSeriesTitle,
   PrometheusLabels,

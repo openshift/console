@@ -85,7 +85,7 @@ export type PLRTaskRunStep = {
   };
 };
 
-export type TaskRunWorkspace = {
+type TaskRunWorkspace = {
   name: string;
   volumeClaimTemplate?: PersistentVolumeClaimKind;
   persistentVolumeClaim?: {

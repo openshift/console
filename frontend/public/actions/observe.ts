@@ -31,29 +31,26 @@ export enum ActionType {
   ToggleGraphs = 'toggleGraphs',
 }
 
-export const dashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
+const dashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
   action(ActionType.DashboardsPatchVariable, { key, patch, perspective });
 
-export const dashboardsPatchAllVariables = (variables: any, perspective: string) =>
+const dashboardsPatchAllVariables = (variables: any, perspective: string) =>
   action(ActionType.DashboardsPatchAllVariables, { variables, perspective });
 
-export const DashboardsClearVariables = (perspective: string) =>
+const DashboardsClearVariables = (perspective: string) =>
   action(ActionType.DashboardsClearVariables, { perspective });
 
 export const dashboardsSetEndTime = (endTime: number, perspective: string) =>
   action(ActionType.DashboardsSetEndTime, { endTime, perspective });
 
-export const dashboardsSetPollInterval = (pollInterval: number, perspective: string) =>
+const dashboardsSetPollInterval = (pollInterval: number, perspective: string) =>
   action(ActionType.DashboardsSetPollInterval, { pollInterval, perspective });
 
 export const dashboardsSetTimespan = (timespan: number, perspective: string) =>
   action(ActionType.DashboardsSetTimespan, { timespan, perspective });
 
-export const dashboardsVariableOptionsLoaded = (
-  key: string,
-  newOptions: string[],
-  perspective: string,
-) => action(ActionType.DashboardsVariableOptionsLoaded, { key, newOptions, perspective });
+const dashboardsVariableOptionsLoaded = (key: string, newOptions: string[], perspective: string) =>
+  action(ActionType.DashboardsVariableOptionsLoaded, { key, newOptions, perspective });
 
 export const alertingLoading = (
   key: 'alerts' | 'silences' | 'notificationAlerts' | 'devSilences',
@@ -84,50 +81,50 @@ export const alertingErrored = (
     data: { loaded: true, loadError, data: null, perspective },
   });
 
-export const alertingSetRules = (key: 'rules' | 'devRules', rules: Rule[], perspective = 'admin') =>
+const alertingSetRules = (key: 'rules' | 'devRules', rules: Rule[], perspective = 'admin') =>
   action(ActionType.AlertingSetRules, { key, data: rules, perspective });
 
-export const toggleGraphs = () => action(ActionType.ToggleGraphs);
+const toggleGraphs = () => action(ActionType.ToggleGraphs);
 
-export const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
+const queryBrowserAddQuery = () => action(ActionType.QueryBrowserAddQuery);
 
-export const queryBrowserDuplicateQuery = (index: number) =>
+const queryBrowserDuplicateQuery = (index: number) =>
   action(ActionType.QueryBrowserDuplicateQuery, { index });
 
-export const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
+const queryBrowserDeleteAllQueries = () => action(ActionType.QueryBrowserDeleteAllQueries);
 
 export const queryBrowserDeleteAllSeries = () => action(ActionType.QueryBrowserDeleteAllSeries);
 
-export const queryBrowserDismissNamespaceAlert = () =>
+const queryBrowserDismissNamespaceAlert = () =>
   action(ActionType.QueryBrowserDismissNamespaceAlert);
 
-export const queryBrowserDeleteQuery = (index: number) =>
+const queryBrowserDeleteQuery = (index: number) =>
   action(ActionType.QueryBrowserDeleteQuery, { index });
 
 export const queryBrowserPatchQuery = (index: number, patch: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserPatchQuery, { index, patch });
 
-export const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
+const queryBrowserRunQueries = () => action(ActionType.QueryBrowserRunQueries);
 
-export const queryBrowserSetAllExpanded = (isExpanded: boolean) =>
+const queryBrowserSetAllExpanded = (isExpanded: boolean) =>
   action(ActionType.QueryBrowserSetAllExpanded, { isExpanded });
 
-export const queryBrowserSetMetrics = (metrics: string[]) =>
+const queryBrowserSetMetrics = (metrics: string[]) =>
   action(ActionType.QueryBrowserSetMetrics, { metrics });
 
-export const queryBrowserSetPollInterval = (pollInterval: number) =>
+const queryBrowserSetPollInterval = (pollInterval: number) =>
   action(ActionType.QueryBrowserSetPollInterval, { pollInterval });
 
 export const queryBrowserSetTimespan = (timespan: number) =>
   action(ActionType.QueryBrowserSetTimespan, { timespan });
 
-export const queryBrowserToggleAllSeries = (index: number) =>
+const queryBrowserToggleAllSeries = (index: number) =>
   action(ActionType.QueryBrowserToggleAllSeries, { index });
 
-export const queryBrowserToggleIsEnabled = (index: number) =>
+const queryBrowserToggleIsEnabled = (index: number) =>
   action(ActionType.QueryBrowserToggleIsEnabled, { index });
 
-export const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) =>
+const queryBrowserToggleSeries = (index: number, labels: { [key: string]: unknown }) =>
   action(ActionType.QueryBrowserToggleSeries, { index, labels });
 
 export const setAlertCount = (alertCount) => action(ActionType.SetAlertCount, { alertCount });

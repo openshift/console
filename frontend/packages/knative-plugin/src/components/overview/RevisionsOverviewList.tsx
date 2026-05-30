@@ -12,7 +12,7 @@ import { useTrafficSplittingModalLauncher } from '../traffic-splitting/TrafficSp
 import RevisionsOverviewListItem from './RevisionsOverviewListItem';
 import './RevisionsOverviewList.scss';
 
-export type RevisionsOverviewListProps = {
+type RevisionsOverviewListProps = {
   revisions: K8sResourceKind[];
   service: K8sResourceKind;
   hideSectionHeading?: boolean;

@@ -3,7 +3,7 @@ import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel as knServiceModel, RevisionModel } from '../models';
 import type { Traffic, RoutesOverviewListItem } from '../types';
 
-export const filterTrafficBasedOnResource = (resource) => (tr: Traffic) =>
+const filterTrafficBasedOnResource = (resource) => (tr: Traffic) =>
   referenceFor(resource) === referenceForModel(knServiceModel) ||
   (referenceFor(resource) === referenceForModel(RevisionModel) &&
     tr.revisionName === resource.metadata.name);

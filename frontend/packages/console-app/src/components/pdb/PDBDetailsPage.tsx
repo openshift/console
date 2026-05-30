@@ -74,6 +74,6 @@ export type PodDisruptionBudgetDetailsPageProps = {
   match: any;
   kind: string;
 };
-export type PodDisruptionBudgetDetailsProps = {
+type PodDisruptionBudgetDetailsProps = {
   obj: PodDisruptionBudgetKind;
 };

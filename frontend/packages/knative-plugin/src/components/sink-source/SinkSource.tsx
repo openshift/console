@@ -10,7 +10,7 @@ import { SinkType } from '../add/import-types';
 import { craftResourceKey } from '../pub-sub/pub-sub-utils';
 import SinkSourceModal from './SinkSourceModal';
 
-export interface SinkSourceProps {
+interface SinkSourceProps {
   source: K8sResourceKind;
   cancel?: () => void;
   close?: () => void;

@@ -39,7 +39,7 @@ type CSRPopoverContentProps = {
   onPatch?: VoidFunction;
 };
 
-export const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch }) => {
+const CSRPopoverContent: FC<CSRPopoverContentProps> = ({ csr, serverCSR, onPatch }) => {
   const { t } = useTranslation();
   const [inProgress, setInProgress] = useState(false);
   const [error, setError] = useState<string>();

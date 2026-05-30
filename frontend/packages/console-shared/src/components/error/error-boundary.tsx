@@ -13,7 +13,7 @@ type ErrorBoundaryInnerProps = ErrorBoundaryProps & {
 };
 
 /** Needed for tests -- should not be imported by application logic */
-export type ErrorBoundaryState = {
+type ErrorBoundaryState = {
   hasError: boolean;
   error: { message: string; stack: string; name: string };
   errorInfo: { componentStack: string };

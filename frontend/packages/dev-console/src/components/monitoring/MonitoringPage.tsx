@@ -11,7 +11,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from '../projects/CreateProjectListPage';
 import MonitoringEvents from './events/MonitoringEvents';
 
-export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
+const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 
 const handleNamespaceChange = (newNamespace: string, navigate: NavigateFunction): void => {
   if (newNamespace === ALL_NAMESPACES_KEY) {

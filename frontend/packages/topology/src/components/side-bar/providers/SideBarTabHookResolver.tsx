@@ -2,7 +2,7 @@ import type { ReactNode, ReactElement, FC } from 'react';
 import { useMemo, Fragment } from 'react';
 import type { GraphElement } from '@patternfly/react-topology';
 import { isEdge } from '@patternfly/react-topology';
-import { observer } from 'mobx-react-lite';
+import { observer } from 'mobx-react';
 import { useTranslation } from 'react-i18next';
 import type { DetailsTab, DetailsTabSection, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import type { Tab } from '@console/internal/components/utils';

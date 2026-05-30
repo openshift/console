@@ -12,7 +12,7 @@ import { useUserPreference } from '@console/shared/src/hooks/useUserPreference';
 import { ExportModel } from '../../models/gitops-primer';
 import type { ExportAppUserSettings } from './types';
 
-export const ExportAppContext = createContext({});
+const ExportAppContext = createContext({});
 
 export const ExportAppContextProvider = ExportAppContext.Provider;
 

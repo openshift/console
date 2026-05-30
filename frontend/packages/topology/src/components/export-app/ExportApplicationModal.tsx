@@ -236,9 +236,7 @@ export const ExportApplicationModal: FC<ExportApplicationModalProps> = (props) =
   );
 };
 
-export const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (
-  props,
-) => (
+const ExportApplicationModalOverlay: OverlayComponent<ExportApplicationModalProps> = (props) => (
   <Modal
     variant={ModalVariant.small}
     isOpen

@@ -7,7 +7,7 @@ import type { K8sResourceKind } from '@console/internal/module/k8s';
 import { k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkUriModal from './SinkUriModal';
 
-export interface SinkUriProps {
+interface SinkUriProps {
   source: K8sResourceKind;
   eventSourceList: K8sResourceKind[];
   cancel?: () => void;

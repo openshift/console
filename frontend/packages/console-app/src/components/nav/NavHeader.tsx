@@ -9,7 +9,7 @@ import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { usePerspectives } from '@console/shared/src/hooks/usePerspectives';
 
-export type NavHeaderProps = {
+type NavHeaderProps = {
   onPerspectiveSelected: () => void;
   selected?: string;
 };

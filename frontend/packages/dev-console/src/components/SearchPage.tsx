@@ -7,7 +7,7 @@ import { DocumentTitle } from '@console/shared/src/components/document-title/Doc
 import NamespacedPage, { NamespacedPageVariants } from './NamespacedPage';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
-export interface SearchPageProps {
+interface SearchPageProps {
   noProjectsAvailable?: boolean;
 }
 

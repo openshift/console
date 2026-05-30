@@ -226,7 +226,7 @@ const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateBuildConfig = (
+const createOrUpdateBuildConfig = (
   formData: UploadJarFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,

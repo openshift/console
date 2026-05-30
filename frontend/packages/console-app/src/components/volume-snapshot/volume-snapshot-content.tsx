@@ -37,7 +37,7 @@ import { snapshotStatus } from '@console/shared/src/sorts/snapshot';
 
 const kind = referenceForModel(VolumeSnapshotContentModel);
 
-export const tableColumnInfo = [
+const tableColumnInfo = [
   { id: 'name' },
   { id: 'status' },
   { id: 'size' },

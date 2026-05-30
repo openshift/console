@@ -47,8 +47,8 @@ export const makeQuery: MakeQuery = (namespace, labelSelector, fieldSelector, na
   return query;
 };
 
-export const INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL = Symbol('_cachedToArrayResult');
-export const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSONResult');
+const INTERNAL_REDUX_IMMUTABLE_TOARRAY_CACHE_SYMBOL = Symbol('_cachedToArrayResult');
+const INTERNAL_REDUX_IMMUTABLE_TOJSON_CACHE_SYMBOL = Symbol('_cachedToJSONResult');
 
 export const getReduxData = (immutableData, resource: WatchK8sResource) => {
   if (!immutableData) {

@@ -261,7 +261,7 @@ const PVDetails = ({ obj: pv }: { obj: PersistentVolumeKind }) => {
   );
 };
 
-export const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
+const PersistentVolumeList: FC<PersistentVolumeListProps> = ({ data, loaded, ...props }) => {
   const { t } = useTranslation();
   const { columns, resetAllColumnWidths } = usePersistentVolumeColumns();
   const getDataViewRows = useMemo(() => getDataViewRowsCreator(t), [t]);

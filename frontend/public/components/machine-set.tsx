@@ -115,13 +115,13 @@ const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 
 // `spec.replicas` defaults to 1 if not specified. Make sure to differentiate between undefined and 0.
-export const getDesiredReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
+const getDesiredReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.spec?.replicas ?? 1;
 const getReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.replicas || 0;
-export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
+const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.readyReplicas || 0;
-export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
+const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.availableReplicas || 0;
 
 const tableColumnInfo = [
@@ -134,7 +134,7 @@ const tableColumnInfo = [
   { id: '' },
 ];
 
-export const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
+const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }) => {
   const editReplicas = useMachineCountModal({ resource });
   const desiredReplicas = getDesiredReplicas(resource);
   const replicas = getReplicas(resource);
@@ -222,7 +222,7 @@ export const MachineCounts: FC<MachineCountsProps> = ({ resourceKind, resource }
   );
 };
 
-export const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
+const MachineTabPage: FC<MachineTabPageProps> = ({ obj }) => (
   <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />
 );
 
@@ -438,7 +438,7 @@ const MachineSetListContent: FC<MachineSetListProps> = ({ data, loaded, loadErro
   );
 };
 
-export const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
+const MachineSetList: FC<MachineSetListProps> = ({ data, loaded, loadError, ...props }) => {
   const [machines] = useK8sWatchResource<MachineKind[]>(MachinesResource);
   const [nodes] = useK8sWatchResource<NodeKind[]>(NodesResource);
 
@@ -537,7 +537,7 @@ type MachineSetListProps = {
   hideColumnManagement?: boolean;
 };
 
-export type MachineCountsProps = {
+type MachineCountsProps = {
   resourceKind: K8sKind;
   resource: MachineSetKind | MachineDeploymentKind;
 };
@@ -546,7 +546,7 @@ export type MachineTabPageProps = {
   obj: MachineSetKind;
 };
 
-export type MachineSetDetailsProps = {
+type MachineSetDetailsProps = {
   obj: MachineSetKind;
 };
 

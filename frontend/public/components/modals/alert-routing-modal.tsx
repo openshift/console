@@ -35,12 +35,7 @@ const updateAlertRoutingProperty = (
   }
 };
 
-export const AlertRoutingModal: FC<AlertRoutingModalProps> = ({
-  config,
-  secret,
-  cancel,
-  close,
-}) => {
+const AlertRoutingModal: FC<AlertRoutingModalProps> = ({ config, secret, cancel, close }) => {
   const [errorMessage, setErrorMessage] = useState();
   const [inProgress, setInProgress] = useState(false);
   const { t } = useTranslation();

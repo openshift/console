@@ -7,7 +7,7 @@ import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { ConfigMap, ConfigMapFormData, ConfigMapFormInitialValues, KeyValuePair } from './types';
 
-export const initialConfigmapData: ConfigMap = {
+const initialConfigmapData: ConfigMap = {
   apiVersion: 'v1',
   kind: 'ConfigMap',
   metadata: {
@@ -66,7 +66,7 @@ export const getInitialConfigMapFormData = (
   return { ...initialFormData, namespace, name, data, binaryData, immutable };
 };
 
-export const getConfigmapFormData = (
+const getConfigmapFormData = (
   formData: ConfigMapFormData,
   yamlData: ConfigMap,
 ): ConfigMapFormData => {

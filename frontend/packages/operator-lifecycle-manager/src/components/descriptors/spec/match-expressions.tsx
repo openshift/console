@@ -142,7 +142,7 @@ export type MatchExpressionsProps = {
   uid?: string;
 };
 
-export type MatchExpressionProps = {
+type MatchExpressionProps = {
   expression: MatchExpression;
   onChange?: (expression: MatchExpression) => void;
   onClickRemove?: () => void;

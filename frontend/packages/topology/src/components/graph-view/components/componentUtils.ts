@@ -387,11 +387,9 @@ const createConnectorCallback = () => (
 };
 
 export {
-  GraphComponentProps,
   NodeComponentProps,
   EdgeComponentProps,
   EditableDragOperationType,
-  DragNodeObject,
   nodesEdgeIsDragging,
   noRegroupDragSourceSpec,
   nodeDragSourceSpec,
@@ -399,9 +397,7 @@ export {
   graphDropTargetSpec,
   applicationGroupDropTargetSpec,
   edgeDragSourceSpec,
-  noDropTargetSpec,
   createConnectorCallback,
-  REGROUP_OPERATION,
   MOVE_CONNECTOR_DROP_TYPE,
   NODE_DRAG_TYPE,
   EDGE_DRAG_TYPE,

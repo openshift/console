@@ -7,13 +7,9 @@ import { getInfrastructurePlatform } from '@console/shared/src/selectors/infrast
 import { useMaintenanceCapability } from './hooks/useMaintenanceCapability';
 import { ProvisioningModel } from './models';
 
-export const BAREMETAL_FLAG = 'BAREMETAL';
-export const NODE_MAINTENANCE_FLAG = 'NODE_MAINTENANCE';
-export const NODE_MAINTENANCE_ENABLED_FLAG = 'NODE_MAINTENANCE_ENABLED';
+const BAREMETAL_FLAG = 'BAREMETAL';
+const NODE_MAINTENANCE_ENABLED_FLAG = 'NODE_MAINTENANCE_ENABLED';
 export const BMO_ENABLED_FLAG = 'BMO_ENABLED';
-export const NODE_MAINTENANCE_KV_BETA_FLAG = 'NODE_MAINTENANCE_KV_BETA';
-export const NODE_MAINTENANCE_KV_ALPHA_FLAG = 'NODE_MAINTENANCE_KV_ALPHA';
-
 export const useDetectNodeMaintenance = (setFeatureFlag: SetFeatureFlag) => {
   const [model, loading] = useMaintenanceCapability();
   if (!loading) {

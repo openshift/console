@@ -1,12 +1,4 @@
-import { lazy } from 'react';
 import type { LaunchOverlay } from '@console/dynamic-plugin-sdk/src/app/modal-support/OverlayProvider';
-
-// Lazy-loaded OverlayComponent for PubSub Modal
-export const LazyPubSubModalOverlay = lazy(() =>
-  import('./PubSubController' /* webpackChunkName: "pub-sub-connectors" */).then((m) => ({
-    default: m.PubSubModalOverlay,
-  })),
-);
 
 // Module-level reference for non-React contexts (topology connectors)
 // This gets synced via SyncPubSubModalLauncher component

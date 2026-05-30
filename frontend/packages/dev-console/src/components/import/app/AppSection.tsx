@@ -8,7 +8,7 @@ import ApplicationSelector from '@console/topology/src/components/dropdowns/Appl
 import type { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';
 
-export interface AppSectionProps {
+interface AppSectionProps {
   project: ProjectData;
   noProjectsAvailable?: boolean;
   extraMargin?: boolean;

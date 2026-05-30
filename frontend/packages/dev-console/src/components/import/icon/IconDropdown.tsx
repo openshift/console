@@ -10,7 +10,7 @@ import { CustomIconModal } from './CustomIconModal';
 
 import './IconDropdown.scss';
 
-export type IconDropdownProps = {
+type IconDropdownProps = {
   runtimeIcon?: string;
   onRuntimeIconChanged?: (value: string) => void;
   customIcon?: string;

@@ -22,7 +22,7 @@ import { HIDDEN_UI_SCHEMA } from './const';
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
-export const hideAllExistingProperties = (schema: JSONSchema7) => {
+const hideAllExistingProperties = (schema: JSONSchema7) => {
   return _.reduce(
     schema?.properties,
     (acc, _unused, propertyName) => ({

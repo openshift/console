@@ -127,7 +127,7 @@ const HelmPage: FC<{ mock?: boolean; namespace: string | undefined }> = ({ mock,
   );
 };
 
-export const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailable }) => {
+const PageContents: FC<{ noProjectsAvailable?: boolean }> = ({ noProjectsAvailable }) => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [activePerspective] = useActivePerspective();

@@ -162,7 +162,7 @@ export const ConfigureUpdateStrategy: FC<ConfigureUpdateStrategyProps> = ({
   );
 };
 
-export const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
+const ConfigureUpdateStrategyModal: FC<ConfigureUpdateStrategyModalProps> = ({
   deployment,
   cancel,
   close,

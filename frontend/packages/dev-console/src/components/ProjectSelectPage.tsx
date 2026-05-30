@@ -15,7 +15,7 @@ import { getBadgeFromType } from '@console/shared/src/components/badges/badge-fa
 import { DocumentTitle } from '@console/shared/src/components/document-title/DocumentTitle';
 import CreateProjectListPage, { CreateAProjectButton } from './projects/CreateProjectListPage';
 
-export interface ProjectSelectPageProps {
+interface ProjectSelectPageProps {
   kindObj?: K8sKind;
   kindsInFlight?: boolean;
 }

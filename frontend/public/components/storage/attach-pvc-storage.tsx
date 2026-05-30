@@ -22,7 +22,7 @@ import { ContainerSelector } from '../container-selector';
 import { PVCDropdown } from '../utils/pvc-dropdown';
 import { PodTemplate, PersistentVolumeClaimKind, Patch } from '../../module/k8s/types';
 
-export const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
+const AttachStorageForm: FC<AttachStorageFormProps> = (props) => {
   const [obj, setObj] = useState(null);
   const [inProgress, setInProgress] = useState(false);
   const [useContainerSelector, setUseContainerSelector] = useState(false);
@@ -442,7 +442,7 @@ export const AttachStorage = ({ kindObj, kindsInFlight }) => {
   return <AttachStorageForm namespace={params.ns} resourceName={params.name} kindObj={kindObj} />;
 };
 
-export type AttachStorageFormProps = {
+type AttachStorageFormProps = {
   kindObj: K8sKind;
   namespace: string;
   resourceName: string;

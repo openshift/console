@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-export const LINE_PATTERN = /^.*(\n|$)/gm;
+const LINE_PATTERN = /^.*(\n|$)/gm;
 const TRUNCATE_LENGTH = 1024;
 
 export class LineBuffer {

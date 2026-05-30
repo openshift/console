@@ -14,7 +14,7 @@ import {
 
 import { MonitoringResource } from './types';
 
-export const AlertResource: MonitoringResource = {
+const AlertResource: MonitoringResource = {
   kind: 'Alert',
   label: 'Alert',
   plural: '/monitoring/alerts',

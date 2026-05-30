@@ -22,7 +22,7 @@ type PerspectiveAccessReview = {
   missing?: AccessReviewResourceAttributes[];
 };
 
-export type PerspectiveVisibility = {
+type PerspectiveVisibility = {
   state: PerspectiveVisibilityState;
   accessReview?: PerspectiveAccessReview;
 };

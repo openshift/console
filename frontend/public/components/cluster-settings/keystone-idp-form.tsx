@@ -14,7 +14,7 @@ import { addIDP, getOAuthResource as getOAuth, redirectToOAuthPage, mockNames } 
 import { IDPNameInput } from './idp-name-input';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export const DroppableFileInput = (props: any) => (
+const DroppableFileInput = (props: any) => (
   <AsyncComponent
     loader={() => import('../utils/file-input').then((c) => c.DroppableFileInput)}
     {...props}

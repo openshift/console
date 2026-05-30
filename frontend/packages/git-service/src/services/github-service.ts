@@ -29,7 +29,7 @@ type GithubWebhookRequest = {
   body: GHWebhookBody;
 };
 
-export const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
+const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
 export class GithubService extends BaseService {
   private readonly client: Octokit;
 

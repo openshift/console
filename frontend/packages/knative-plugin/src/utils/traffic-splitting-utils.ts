@@ -1,10 +1,5 @@
-import type { WatchK8sResourceWithProp } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import type { K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import type { Traffic } from '../types';
-import {
-  knativeServingResourcesRevision,
-  knativeServingResourcesConfigurations,
-} from './get-knative-resources';
 
 export type RevisionItems = { [name: string]: string };
 
@@ -23,11 +18,4 @@ export const trafficDataForPatch = (traffic: Traffic[], service: K8sResourceKind
     path: '/spec/traffic',
     value: traffic,
   },
-];
-
-export const knativeServingResourcesTrafficSplitting = (
-  namespace: string,
-): WatchK8sResourceWithProp[] => [
-  ...knativeServingResourcesRevision(namespace),
-  ...knativeServingResourcesConfigurations(namespace),
 ];

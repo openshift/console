@@ -30,7 +30,7 @@ type GitlabWebhookRequest = {
   body: GLWebhookBody;
 };
 
-export const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
+const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
 
 const removeLeadingSlash = (str: string) => str?.replace(/^\//, '') || '';
 

@@ -31,7 +31,7 @@ export const quickStartLeaveModalPO = {
   leaveButton: '[data-test="leave button"]',
 };
 
-export const quickStartDisplayNameToName = (displayName: string) => {
+const quickStartDisplayNameToName = (displayName: string) => {
   switch (displayName) {
     case 'Get started with a sample application': {
       return 'sample-application';

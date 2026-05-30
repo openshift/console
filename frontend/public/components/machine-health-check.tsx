@@ -247,6 +247,6 @@ type MachineHealthCheckListProps = {
   hideColumnManagement?: boolean;
 };
 
-export type MachineHealthCheckDetailsProps = {
+type MachineHealthCheckDetailsProps = {
   obj: MachineHealthCheckKind;
 };

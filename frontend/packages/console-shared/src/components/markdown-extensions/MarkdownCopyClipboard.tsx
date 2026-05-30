@@ -11,7 +11,7 @@ type CopyClipboardProps = {
   docContext: HTMLDocument;
 };
 
-export const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
+const CopyClipboard: FC<CopyClipboardProps> = ({ element, rootSelector, docContext }) => {
   const { t } = useTranslation();
   const [showSuccessContent, setShowSuccessContent] = useState<boolean>(false);
   const textToCopy = useMemo(() => {

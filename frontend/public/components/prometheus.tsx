@@ -145,9 +145,7 @@ const usePrometheusColumns = (): TableColumn<K8sResourceKind>[] => {
   );
 };
 
-export const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (
-  props,
-) => {
+const PrometheusInstancesList: FC<{ data: K8sResourceKind[]; loaded: boolean }> = (props) => {
   const { data, loaded } = props;
   const columns = usePrometheusColumns();
 

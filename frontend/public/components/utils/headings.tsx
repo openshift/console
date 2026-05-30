@@ -30,7 +30,7 @@ import { ResourceIcon } from './resource-icon';
 import { ManagedByOperatorLink } from './managed-by';
 import { Action } from '@console/dynamic-plugin-sdk/src/lib-core';
 
-export const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
+const ActionButtons: FC<ActionButtonsProps> = ({ actionButtons }) => (
   <>
     {_.map(actionButtons, (actionButton, i) => {
       if (!_.isEmpty(actionButton)) {
@@ -220,7 +220,7 @@ export const SidebarSectionHeading: FC<SidebarSectionHeadingProps> = ({
   </Title>
 );
 
-export type ActionButtonsProps = {
+type ActionButtonsProps = {
   actionButtons: any[];
 };
 

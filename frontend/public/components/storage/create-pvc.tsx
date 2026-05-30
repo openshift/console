@@ -263,7 +263,7 @@ export const CreatePVCForm: FC<CreatePVCFormProps> = (props) => {
   );
 };
 
-export const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
+const CreatePVCPage: FC<CreatePVCPageProps> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [error, setError] = useState('');
@@ -335,6 +335,6 @@ export type CreatePVCFormProps = {
   onChange: (K8sResourceKind) => void;
 };
 
-export type CreatePVCPageProps = {
+type CreatePVCPageProps = {
   namespace: string;
 };

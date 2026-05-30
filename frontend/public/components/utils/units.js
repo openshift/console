@@ -392,7 +392,7 @@ export const convertToBaseValue = (value) => {
   return null;
 };
 
-export const formatToFractionalDigits = (value, digits) =>
+const formatToFractionalDigits = (value, digits) =>
   Intl.NumberFormat(undefined, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,

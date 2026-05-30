@@ -188,7 +188,7 @@ export const podRingLabel = (
   return podRingLabelData;
 };
 
-export const hpaPodRingLabel = (
+const hpaPodRingLabel = (
   obj: K8sResourceKind,
   hpa: HorizontalPodAutoscalerKind,
   pods: ExtPodKind[],

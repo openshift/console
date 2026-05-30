@@ -40,7 +40,6 @@ export const APPLICATION_USER_PREFERENCE_PREFIX = `${USER_PREFERENCE_PREFIX}.app
 export const LAST_NAMESPACE_NAME_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.lastNamespace`;
 export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-namespace-name`;
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
-export const COMMUNITY_PROVIDERS_WARNING_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.communityProvidersWarning`;
 export const LOG_WRAP_LINES_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.log.wrapLines`;
 export const OVERRIDE_YAML_EDITOR_THEME_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.overrideYAMLEditorTheme`;
 export const CUSTOM_YAML_EDITOR_FONT_SIZE_USER_PREFERENCE_KEY = `${USER_PREFERENCE_PREFIX}.customYAMLEditorFontSize`;
@@ -122,9 +121,6 @@ export enum CLUSTER_TELEMETRY_ANALYTICS {
 
 export const CLUSTER_VERSION_DEFAULT_UPSTREAM_SERVER_URL_PLACEHOLDER =
   'https://api.openshift.com/api/upgrades_info/v1/graph';
-
-export const GETTING_STARTED_USER_PREFERENCE_KEY_CLUSTER_DASHBOARD =
-  'console.clusterDashboard.gettingStarted.expanded';
 
 export const PREFERRED_TELEMETRY_USER_PREFERENCE_KEY = 'telemetry.analytics';
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';

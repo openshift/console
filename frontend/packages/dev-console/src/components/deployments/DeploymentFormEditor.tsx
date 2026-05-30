@@ -11,7 +11,7 @@ import DeploymentStrategySection from './deployment-strategy/DeploymentStrategyS
 import EnvironmentVariablesSection from './EnvironmentVariablesSection';
 import ImagesSection from './images/ImagesSection';
 
-export type EditDeploymentFormEditorProps = {
+type EditDeploymentFormEditorProps = {
   resourceType: Resources;
   resourceObj: K8sResourceKind;
 };

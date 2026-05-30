@@ -116,7 +116,7 @@ const getKeys = (keyMap: Record<string, string> | undefined) => {
   return itemKeys;
 };
 
-export const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
+const NameKeyDropdownPair: FC<NameKeyDropdownPairProps> = ({
   name,
   pairKey,
   configMaps,

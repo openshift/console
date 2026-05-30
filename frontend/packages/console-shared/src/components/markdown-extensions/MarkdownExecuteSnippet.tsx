@@ -13,7 +13,7 @@ type ExecuteSnippetProps = {
   docContext: HTMLDocument;
 };
 
-export const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
+const ExecuteSnippet: FC<ExecuteSnippetProps> = ({ element, rootSelector, docContext }) => {
   const { t } = useTranslation();
   const setCloudShellCommand = useCloudShellCommandDispatch();
   const [showRunning, setShowRunning] = useState<boolean>(false);

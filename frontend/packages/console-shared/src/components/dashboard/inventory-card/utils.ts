@@ -17,12 +17,6 @@ const PVC_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.PROGRESS]: ['Pending'],
 };
 
-const PV_STATUS_GROUP_MAPPING = {
-  [InventoryStatusGroup.NOT_MAPPED]: ['Available', 'Bound'],
-  [InventoryStatusGroup.PROGRESS]: ['Released'],
-  [InventoryStatusGroup.ERROR]: ['Failed'],
-};
-
 const NODE_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
   [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
@@ -34,7 +28,7 @@ const VS_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.ERROR]: ['Error'],
 };
 
-export const getStatusGroups = (resources, mapping, mapper, filterType) => {
+const getStatusGroups = (resources, mapping, mapper, filterType) => {
   const groups = {
     [InventoryStatusGroup.UNKNOWN]: {
       statusIDs: [],
@@ -66,7 +60,5 @@ export const getNodeStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'status');
 export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, (pvc) => pvc.status.phase, 'status');
-export const getPVStatusGroups: StatusGroupMapper = (resources) =>
-  getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'status');
 export const getVSStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, VS_STATUS_GROUP_MAPPING, snapshotStatus, 'status');

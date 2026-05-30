@@ -11,7 +11,7 @@ let moduleErrorModalLauncher: ((props: ErrorModalProps) => void) | null = null;
  * Hook that syncs the error modal launcher to module-level for non-React contexts.
  * Use SyncModalLaunchers component instead of calling this directly.
  */
-export const useSyncErrorModalLauncher = () => {
+const useSyncErrorModalLauncher = () => {
   const errorModalLauncher = useErrorModalLauncher();
 
   useEffect(() => {

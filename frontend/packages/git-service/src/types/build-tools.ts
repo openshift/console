@@ -12,7 +12,7 @@ export interface BuildType {
   files: string[];
 }
 
-export const Maven: BuildTool = {
+const Maven: BuildTool = {
   name: 'Maven',
   type: 'java',
   language: 'java',
@@ -20,7 +20,7 @@ export const Maven: BuildTool = {
   expectedFiles: ['pom.xml'],
 };
 
-export const Gradle: BuildTool = {
+const Gradle: BuildTool = {
   name: 'Gradle',
   type: 'java',
   language: 'java',
@@ -28,7 +28,7 @@ export const Gradle: BuildTool = {
   expectedFiles: ['build.gradle', 'gradlew', 'gradlew.bat'],
 };
 
-export const Golang: BuildTool = {
+const Golang: BuildTool = {
   name: 'Golang',
   type: 'golang',
   language: 'go',
@@ -36,7 +36,7 @@ export const Golang: BuildTool = {
   expectedFiles: ['main.go', 'Gopkg.toml', 'glide.yaml'],
 };
 
-export const Ruby: BuildTool = {
+const Ruby: BuildTool = {
   name: 'Ruby',
   type: 'ruby',
   language: 'ruby',
@@ -44,7 +44,7 @@ export const Ruby: BuildTool = {
   expectedFiles: ['Gemfile', 'Rakefile', 'config.ru'],
 };
 
-export const NodeJS: BuildTool = {
+const NodeJS: BuildTool = {
   name: 'NodeJS',
   type: 'nodejs',
   language: 'javascript',
@@ -52,7 +52,7 @@ export const NodeJS: BuildTool = {
   expectedFiles: ['app.json', 'package.json', 'gulpfile.js', 'Gruntfile.js'],
 };
 
-export const ModernWebApp: BuildTool = {
+const ModernWebApp: BuildTool = {
   name: 'Modern Web App',
   type: 'modern-webapp',
   language: 'javascript',
@@ -60,7 +60,7 @@ export const ModernWebApp: BuildTool = {
   expectedFiles: ['app.json', 'package.json', 'gulpfile.js', 'Gruntfile.js'],
 };
 
-export const PHP: BuildTool = {
+const PHP: BuildTool = {
   name: 'PHP',
   type: 'php',
   language: 'php',
@@ -68,7 +68,7 @@ export const PHP: BuildTool = {
   expectedFiles: ['index.php', 'composer.json'],
 };
 
-export const Python: BuildTool = {
+const Python: BuildTool = {
   name: 'Python',
   type: 'python',
   language: 'python',
@@ -76,7 +76,7 @@ export const Python: BuildTool = {
   expectedFiles: ['requirements.txt', 'setup.py'],
 };
 
-export const Perl: BuildTool = {
+const Perl: BuildTool = {
   name: 'Perl',
   type: 'perl',
   language: 'perl',
@@ -84,7 +84,7 @@ export const Perl: BuildTool = {
   expectedFiles: ['index.pl', 'cpanfile'],
 };
 
-export const Dotnet: BuildTool = {
+const Dotnet: BuildTool = {
   name: 'Dotnet',
   type: 'dotnet',
   language: 'C#',

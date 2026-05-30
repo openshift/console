@@ -28,7 +28,7 @@ const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 2;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
-export const StackChart: FC<AreaChartProps> = ({
+const StackChart: FC<AreaChartProps> = ({
   className,
   data = [],
   formatDate = timeFormatter.format,

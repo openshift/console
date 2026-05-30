@@ -1224,10 +1224,12 @@ export const AuthenticationModel: K8sKind = {
 
 // Export models which have legacy plural URLs that need to be maintained.
 // This is imported by `../module/k8s/k8s-models.ts` and thus `connectToPlural`.
+/** @public - needed for legacy plural URLs */
 export {
   ClusterServiceVersionModel,
   InstallPlanModel,
   SubscriptionModel,
 } from '@console/operator-lifecycle-manager/src/models';
 
+/** @public - needed for legacy plural URLs */
 export { PodDisruptionBudgetModel, EndPointSliceModel } from '@console/app/src/models/index';

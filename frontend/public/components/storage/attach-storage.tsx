@@ -15,7 +15,7 @@ import { ResourceLink } from '../utils/resource-link';
 import { LoadingBox } from '../utils/status-box';
 import { connectToPlural } from '../../kinds';
 
-export type AttachStorageFormProps = {
+type AttachStorageFormProps = {
   kindObj: K8sKind;
   kindsInFlight: any;
 };

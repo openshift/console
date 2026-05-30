@@ -28,10 +28,6 @@ import {
 } from './edit-application-utils';
 import EditApplicationForm from './EditApplicationForm';
 
-export interface StateProps {
-  perspective: string;
-}
-
 const EditApplication: FC<EditApplicationProps> = ({
   namespace,
   appName,

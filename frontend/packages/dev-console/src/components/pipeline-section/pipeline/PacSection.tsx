@@ -12,7 +12,7 @@ import { recommendRepositoryName } from './utils';
 import WebhookSection from './WebhookSection';
 import './PacSection.scss';
 
-export enum PacConfigurationTypes {
+enum PacConfigurationTypes {
   GITHUB = 'github',
   WEBHOOK = 'webhook',
 }

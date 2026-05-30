@@ -289,7 +289,7 @@ const BindingsListComponent = (props) => {
   );
 };
 
-export const BindingsForRolePage = (props) => {
+const BindingsForRolePage = (props) => {
   const { name, ns } = useParams();
   const {
     obj: { kind },
@@ -368,8 +368,6 @@ export const RolesDetailsPage = (props) => {
     />
   );
 };
-
-export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 export const ClusterRoleBindingsDetailsPage = (props) => {
   const pages = [navFactory.details(DetailsForKind), navFactory.editYaml()];
