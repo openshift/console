@@ -19,9 +19,7 @@ export class ClusterDashboardPage extends BasePage {
 
   async waitForStatusCardLoaded(): Promise<void> {
     await this.statusCard.waitFor({ state: 'visible', timeout: 30_000 });
-    // Wait for all health item skeleton loaders to disappear
-    const skeletons = this.statusCard.locator('.skeleton-health');
-    await skeletons.first().waitFor({ state: 'hidden', timeout: 30_000 }).catch(() => {
+    await this.statusCard.locator('.skeleton-health').waitFor({ state: 'hidden', timeout: 30_000 }).catch(() => {
       // Skeletons may have already disappeared
     });
   }
