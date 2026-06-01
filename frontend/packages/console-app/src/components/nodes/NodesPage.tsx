@@ -609,11 +609,15 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     },
     {
       key: 'cpu',
-      query: 'sum by(instance) (instance:node_cpu:rate:sum)',
+      query:
+        'sum by(instance) (instance:node_cpu:rate:sum) or ' +
+        'sum by(instance) (rate(windows_cpu_time_total{mode!="idle"}[3m]))',
     },
     {
       key: 'totalCPU',
-      query: 'sum by(instance) (instance:node_num_cpu:sum)',
+      query:
+        'sum by(instance) (instance:node_num_cpu:sum) or ' +
+        'count by(instance) (windows_cpu_time_total{mode="idle"})',
     },
     {
       key: 'pods',
