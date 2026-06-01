@@ -479,6 +479,14 @@ export default class KubernetesClient {
     }
   }
 
+  async createSecret(namespace: string, body: k8s.V1Secret): Promise<unknown> {
+    return this.k8sApi.createNamespacedSecret({ namespace, body });
+  }
+
+  async getSecret(name: string, namespace: string): Promise<k8s.V1Secret> {
+    return this.k8sApi.readNamespacedSecret({ name, namespace });
+  }
+
   async patchSecret(name: string, namespace: string, patch: object[]): Promise<void> {
     await this.k8sApi.patchNamespacedSecret({ name, namespace, body: patch });
   }
@@ -571,6 +579,24 @@ export default class KubernetesClient {
       version,
     });
     return response;
+  }
+
+  async createDeployment(namespace: string, body: k8s.V1Deployment): Promise<unknown> {
+    return this.appsApi.createNamespacedDeployment({ namespace, body });
+  }
+
+  async getDeployment(name: string, namespace: string): Promise<k8s.V1Deployment> {
+    return this.appsApi.readNamespacedDeployment({ name, namespace });
+  }
+
+  async deleteDeployment(name: string, namespace: string): Promise<void> {
+    try {
+      await this.appsApi.deleteNamespacedDeployment({ name, namespace });
+    } catch (err) {
+      if (!isNotFound(err)) {
+        throw err;
+      }
+    }
   }
 
   async listCustomResources(
