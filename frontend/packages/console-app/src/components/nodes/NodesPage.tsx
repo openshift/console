@@ -585,7 +585,7 @@ const getNodeDataViewRows = (
   });
 };
 
-const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
+export const buildIPToHostnameMap = (nodes: NodeKind[]): Map<string, string> => {
   const ipToHostname = new Map<string, string>();
   nodes.forEach((node) => {
     const internalIP = node.status?.addresses?.find((a) => a.type === 'InternalIP')?.address;
@@ -593,6 +593,22 @@ const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
       ipToHostname.set(internalIP, node.metadata.name);
     }
   });
+  return ipToHostname;
+};
+
+export const resolveInstanceLabel = (
+  instance: string | undefined,
+  ipToHostname: Map<string, string>,
+): string | undefined => {
+  if (instance?.includes(':')) {
+    const ip = instance.split(':')[0];
+    return ipToHostname.get(ip) || instance;
+  }
+  return instance;
+};
+
+const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
+  const ipToHostname = buildIPToHostnameMap(nodes);
 
   const metrics = [
     {
@@ -637,11 +653,10 @@ const fetchNodeMetrics = (nodes: NodeKind[]): Promise<NodeMetrics> => {
     return coFetchJSON(url).then(({ data: { result } }) => {
       return result.reduce((acc, data) => {
         const value = Number(data.value[1]);
-        let instance = data.metric.instance || data.metric.node;
-        if (instance?.includes(':')) {
-          const ip = instance.split(':')[0];
-          instance = ipToHostname.get(ip) || instance;
-        }
+        const instance = resolveInstanceLabel(
+          data.metric.instance || data.metric.node,
+          ipToHostname,
+        );
         return _.set(acc, [key, instance], value);
       }, {});
     });
