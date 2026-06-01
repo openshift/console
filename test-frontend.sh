@@ -37,6 +37,8 @@ if ! yarn run check-cycles; then
   exit 1
 fi
 
+yarn run knip
+
 yarn run gherkin-lint
 
 yarn run lint

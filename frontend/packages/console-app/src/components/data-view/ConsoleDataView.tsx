@@ -375,7 +375,7 @@ export const ConsoleDataView = <
   );
 };
 
-export const SELECTION_COLUMN_WIDTH = '45px';
+const SELECTION_COLUMN_WIDTH = '45px';
 
 export const cellIsStickyProps = {
   isStickyColumn: true,
