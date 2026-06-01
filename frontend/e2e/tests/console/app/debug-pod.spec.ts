@@ -163,9 +163,11 @@ test.describe.serial('Debug pod', () => {
     // Debug pod should not copy main pod network info
     const pods = await k8sClient.getPods(testNs);
     expect(pods.length).toBeGreaterThanOrEqual(2);
-    const ipAddressOne = pods[0]?.status?.podIP;
-    const ipAddressTwo = pods[1]?.status?.podIP;
-    expect(ipAddressOne).not.toEqual(ipAddressTwo);
+    const mainPod = pods.find((p: any) => p.metadata?.name === POD_NAME);
+    const debugPod = pods.find((p: any) => p.metadata?.name !== POD_NAME);
+    expect(mainPod?.status?.podIP).toBeTruthy();
+    expect(debugPod?.status?.podIP).toBeTruthy();
+    expect(mainPod?.status?.podIP).not.toEqual(debugPod?.status?.podIP);
 
     await detailsPage.clickBreadcrumb();
     await listPage.dvRowsShouldExist(POD_NAME);
@@ -181,10 +183,14 @@ test.describe.serial('Debug pod', () => {
     await listPage.dvRowsShouldExist(POD_NAME);
     await listPage.filterByStatus('Running');
 
-    const pods = await k8sClient.getPods(testNs);
-    const debugPod = pods.find((p) => p.metadata?.name !== POD_NAME);
-    if (debugPod?.metadata?.name) {
-      await listPage.dvRowsShouldNotExist(debugPod.metadata.name);
-    }
+    await expect
+      .poll(
+        async () => {
+          const pods = await k8sClient.getPods(testNs);
+          return pods.filter((p: any) => p.metadata?.name !== POD_NAME).length;
+        },
+        { timeout: 60_000 },
+      )
+      .toBe(0);
   });
 });

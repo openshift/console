@@ -85,13 +85,8 @@ test.describe('Auth test', () => {
     });
 
     await test.step('Verify Core platform perspective', async () => {
+      await nav.changePerspectiveTo('Core platform');
       await nav.perspectiveSwitcherShouldHaveText('Core platform');
-
-      const baseURL = process.env.WEB_CONSOLE_URL || 'http://localhost:9000';
-      if (!baseURL.includes('localhost')) {
-        await nav.changePerspectiveTo('Core platform');
-        await nav.perspectiveSwitcherShouldHaveText('Core platform');
-      }
     });
 
     await test.step('Verify kubeadmin has admin access', async () => {

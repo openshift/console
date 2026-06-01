@@ -69,16 +69,19 @@ spec:
     const action = page.locator('[data-test-action="Start Job"]:not([disabled])');
 
     const deadline = Date.now() + 30_000;
+    let found = false;
     while (Date.now() < deadline) {
       await kebab.hover();
       await kebab.click();
       try {
         await action.waitFor({ state: 'visible', timeout: 5_000 });
+        found = true;
         break;
       } catch {
         // Menu may have closed due to table re-render; retry
       }
     }
+    expect(found, 'Kebab action "Start Job" was not visible after retries').toBeTruthy();
     await action.click();
 
     await detailsPage.isLoaded();

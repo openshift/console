@@ -2,6 +2,23 @@ import { test, expect } from '../../../fixtures';
 import { DetailsPage } from '../../../pages/details-page';
 import { MachineConfigPage } from '../../../pages/machine-config-page';
 
+interface MachineConfigFile {
+  path: string;
+  contents: { source: string };
+  mode: number;
+  overwrite: boolean;
+}
+
+interface MachineConfig {
+  spec?: {
+    config?: {
+      storage?: {
+        files?: MachineConfigFile[];
+      };
+    };
+  };
+}
+
 const MC_WITH_CONFIG_FILES = '00-master';
 const MC_WITHOUT_CONFIG_FILES = '99-master-ssh';
 const MC_DETAILS_PAGE_URL = '/k8s/cluster/machineconfiguration.openshift.io~v1~MachineConfig/';
@@ -20,12 +37,12 @@ test.describe('MachineConfig resource details page', () => {
     await expect(mcPage.configFilePath).toBeVisible();
     await expect(mcPage.copyToClipboard.first()).toBeVisible();
 
-    const mcResource: any = await k8sClient.customObjectsApi.getClusterCustomObject({
+    const mcResource = (await k8sClient.customObjectsApi.getClusterCustomObject({
       group: 'machineconfiguration.openshift.io',
       version: 'v1',
       plural: 'machineconfigs',
       name: MC_WITH_CONFIG_FILES,
-    });
+    })) as MachineConfig;
     const fileEntry = mcResource?.spec?.config?.storage?.files?.[0];
     expect(fileEntry).toHaveProperty('contents');
     expect(fileEntry).toHaveProperty('mode');
@@ -34,7 +51,7 @@ test.describe('MachineConfig resource details page', () => {
       contents: { source },
       mode,
       overwrite,
-    } = fileEntry;
+    } = fileEntry!;
     await mcPage.checkConfigFileDetails(mode, overwrite, source);
   });
 

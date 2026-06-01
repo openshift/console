@@ -10,7 +10,11 @@ export class YamlEditorPage extends BasePage {
 
   async setEditorContent(text: string): Promise<void> {
     await this.page.evaluate((content) => {
-      const models = (window as any).monaco.editor.getModels();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const models = (window as any).monaco?.editor?.getModels?.() ?? [];
+      if (!models[0]) {
+        throw new Error('Monaco editor model not available');
+      }
       models[0].setValue(content);
     }, text);
   }

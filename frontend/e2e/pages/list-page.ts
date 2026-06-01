@@ -13,9 +13,9 @@ export class ListPage extends BasePage {
   // --- Resource row helpers (older VirtualizedTable) ---
 
   async rowsShouldExist(resourceName: string): Promise<void> {
-    await expect(
-      this.page.locator('[data-test-rows="resource-row"]').filter({ hasText: resourceName }),
-    ).toBeVisible({ timeout: 60_000 });
+    await expect(this.page.locator(`[data-test-id="${resourceName}"]`)).toBeVisible({
+      timeout: 60_000,
+    });
   }
 
   async rowsShouldNotExist(resourceName: string): Promise<void> {
@@ -57,7 +57,7 @@ export class ListPage extends BasePage {
       );
       if (await filterDropdownToggle.isVisible().catch(() => false)) {
         await this.robustClick(filterDropdownToggle);
-        await this.page.locator(`#${status}`).click();
+        await this.page.locator(`[id="${status}"]`).click();
         await this.robustClick(filterDropdownToggle);
       }
     }
@@ -155,7 +155,7 @@ export class ListPage extends BasePage {
     await this.robustClick(this.page.locator('[data-ouia-component-id="DataViewCheckboxFilter"]'));
   }
 
-  get clickCreateYAMLButton(): Locator {
+  get createYAMLButton(): Locator {
     return this.page.getByTestId('item-create');
   }
 }

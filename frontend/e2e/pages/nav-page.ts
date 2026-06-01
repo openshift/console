@@ -66,13 +66,18 @@ export class NavPage extends BasePage {
   }
 
   async clickNavLink(path: string[]): Promise<void> {
+    if (!path.length) {
+      throw new Error('clickNavLink requires at least one path element');
+    }
     const navItem = this.sidebar.getByText(path[0]);
+    if (path.length === 1) {
+      await this.robustClick(navItem);
+      return;
+    }
     const expanded = await navItem.getAttribute('aria-expanded');
     if (expanded !== 'true') {
       await this.robustClick(navItem);
     }
-    if (path.length === 2) {
-      await this.robustClick(this.sidebar.getByText(path[1]));
-    }
+    await this.robustClick(this.sidebar.getByText(path[1]));
   }
 }
