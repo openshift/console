@@ -38,6 +38,7 @@ export class DetailsPage extends BasePage {
 
   async isLoaded(): Promise<void> {
     await expect(this.skeletonView).toBeHidden({ timeout: 30_000 });
+    await this.reloadIfModelNotFound();
     await this.resourceTitle.waitFor({ state: 'visible', timeout: 30_000 });
     await expect(this.resourceTitle).not.toBeEmpty();
   }

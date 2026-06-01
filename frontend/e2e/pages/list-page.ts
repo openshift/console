@@ -78,6 +78,7 @@ export class ListPage extends BasePage {
   }
 
   async dvRowsShouldBeLoaded(): Promise<void> {
+    await this.reloadIfModelNotFound();
     await expect(this.page.getByTestId('data-view-table')).toBeVisible({ timeout: 60_000 });
   }
 

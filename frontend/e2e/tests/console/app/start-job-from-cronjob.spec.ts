@@ -95,6 +95,7 @@ spec:
     await page.goto(`/k8s/ns/${testNs}/cronjobs`);
     await listPage.dvRowsShouldExist(CRONJOB_NAME);
     await page.goto(`/k8s/ns/${testNs}/cronjobs/${CRONJOB_NAME}/jobs`);
+    await listPage.dvRowsShouldBeLoaded();
     await listPage.dvRowsCountShouldBe(2);
   });
 
@@ -102,6 +103,7 @@ spec:
     const detailsPage = new DetailsPage(page);
 
     await page.goto(`/k8s/ns/${testNs}/cronjobs/${CRONJOB_NAME}/events`);
+    await detailsPage.isLoaded();
     await expect(detailsPage.eventTotals).toHaveText('Showing 2 events', { timeout: 10_000 });
   });
 });
