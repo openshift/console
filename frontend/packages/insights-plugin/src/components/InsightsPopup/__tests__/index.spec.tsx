@@ -36,17 +36,18 @@ describe('LabelComponent', () => {
     );
   });
 
-  it('should compute correct totalRisk for each severity', () => {
-    const expected = { low: 1, moderate: 2, important: 3, critical: 4 };
-
-    Object.entries(expected).forEach(([riskId, expectedTotalRisk]) => {
-      render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
-      const link = screen.getByRole('link');
-      expect(link).toHaveAttribute(
-        'href',
-        `https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=${expectedTotalRisk}`,
-      );
-    });
+  it.each([
+    ['low', 1],
+    ['moderate', 2],
+    ['important', 3],
+    ['critical', 4],
+  ])('should compute totalRisk=%s as %i', (riskId, expectedTotalRisk) => {
+    render(<LabelComponent clusterID="cluster-1" datum={{ id: riskId }} />);
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      `https://console.redhat.com/openshift/insights/advisor/clusters/cluster-1?total_risk=${expectedTotalRisk}`,
+    );
   });
 
   it('should not render a link when clusterID is empty', () => {
