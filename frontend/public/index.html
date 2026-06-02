@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js pf-v6-icon-set-rh-ui">
   <head>
     <base href="[[ .ServerFlags.BasePath ]]" />
     <meta charset="utf-8" />
@@ -51,7 +51,7 @@
       [[ if not (and .ServerFlags.ReleaseVersion (eq (slice .ServerFlags.ReleaseVersion 0 1) "4")) ]]
 
       [[ if ne .ServerFlags.Branding "okd" ]]
-      document.documentElement.classList.add('pf-v6-theme-felt', 'pf-v6-icon-set-rh-ui');
+      document.documentElement.classList.add('pf-v6-theme-felt');
       [[ end ]]
 
       let contrast = localStorage.getItem('bridge/contrast') || 'systemDefault';
