@@ -85,7 +85,9 @@ root.render(<LoadingBox blame="Init" />);
 // Trigger an early authenticated fetch so unauthenticated users are redirected
 // to the login page immediately, before the app shell renders. coFetch's 401
 // interceptor calls authSvc.handle401() which handles the redirect.
-coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`).catch(() => {});
+coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
+  priority: 'high',
+}).catch(() => {});
 
 // TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
 delete process.title;
@@ -459,8 +461,8 @@ window.onunhandledrejection = (promiseRejectionEvent) => {
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
-    // eslint-disable-next-line import/no-unresolved
     // @ts-expect-error file-loader is not a module but it does resolve
+    // eslint-disable-next-line import/no-unresolved
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
       .then(

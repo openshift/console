@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 
 import { cacheResources, getResources as getResources_ } from '../module/k8s/get-resources';
-import { fetchSwagger, CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
+import { CustomResourceDefinitionKind, K8sResourceKind } from '../module/k8s';
 import { makeReduxID } from '../components/utils/k8s-watcher';
 import { CustomResourceDefinitionModel } from '../models';
 import {
@@ -36,15 +36,7 @@ export const getResources = () => (dispatch: Dispatch) => {
       dispatch(receivedResources(resources));
     })
     // eslint-disable-next-line no-console
-    .catch((err) => console.error('Fetching resource failed:', err))
-    .finally(() => {
-      setTimeout(() => {
-        fetchSwagger().catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error('Could not fetch OpenAPI yaml after fetching all resources.', e);
-        });
-      }, 10000);
-    });
+    .catch((err) => console.error('Fetching resource failed:', err));
 };
 
 export const startAPIDiscovery = () => (dispatch) => {

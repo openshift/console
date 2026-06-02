@@ -199,7 +199,7 @@ export const sendActivityTick = (workspaceName: string, namespace: string): void
   );
 };
 
-export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
+export const checkTerminalAvailable = () => coFetch('/api/terminal/available', { priority: 'low' });
 
 export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
   return k8sGet(workspaceModel, name, ns);

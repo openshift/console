@@ -138,7 +138,12 @@ export const getModelExtensionMetadata = (
 };
 
 export const getResources = (): Promise<DiscoveryResources> =>
-  Promise.all([coFetchJSON('/api/api-discovery'), i18nLoading]).then(([res]) => {
+  Promise.all([
+    coFetchJSON('/api/api-discovery', 'GET', {
+      priority: 'high',
+    }),
+    i18nLoading,
+  ]).then(([res]) => {
     const groupVersionMap = res.groups.groups.reduce(
       (acc, { name, versions, preferredVersion: { version } }) => {
         acc[name] = {
