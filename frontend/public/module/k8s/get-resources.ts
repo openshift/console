@@ -13,7 +13,6 @@ import {
 } from '@console/plugin-sdk/src/utils/extension-i18n';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src/constants/common';
 import { coFetchJSON } from '@console/shared/src/utils/console-fetch';
-import { k8sBasePath } from '@console/dynamic-plugin-sdk/src/utils/k8s/k8s';
 import { pluginStore } from '../../plugins';
 import { loading as i18nLoading } from '../../i18n';
 
@@ -139,8 +138,13 @@ export const getModelExtensionMetadata = (
 };
 
 export const getResources = (): Promise<DiscoveryResources> =>
-  coFetchJSON(`${k8sBasePath}/apis`).then((res) => {
-    const groupVersionMap = res.groups.reduce(
+  Promise.all([
+    coFetchJSON('/api/api-discovery', 'GET', {
+      priority: 'high',
+    }),
+    i18nLoading,
+  ]).then(([res]) => {
+    const groupVersionMap = res.groups.groups.reduce(
       (acc, { name, versions, preferredVersion: { version } }) => {
         acc[name] = {
           versions: _.map(versions, 'version'),
@@ -150,89 +154,75 @@ export const getResources = (): Promise<DiscoveryResources> =>
       },
       {},
     );
-    const all = _.flatten<string>(
-      res.groups.map((group) =>
-        group.versions.map((version) => `${k8sBasePath}/apis/${version.groupVersion}`),
-      ),
-    )
-      .concat([`${k8sBasePath}/api/v1`])
-      .map((p) => coFetchJSON(p).catch((err) => err));
+    const data: APIResourceList[] = res.resourceLists;
 
-    // Wait also until the known translation bundles are resolved
-    all.push(i18nLoading);
+    const resourceSet = new Set<string>();
+    const namespacedSet = new Set<string>();
+    data.forEach(
+      (d) =>
+        d.resources &&
+        d.resources.forEach(({ namespaced, name }) => {
+          resourceSet.add(name);
+          namespaced && namespacedSet.add(name);
+        }),
+    );
+    const allResources = [...resourceSet].sort();
 
-    return Promise.all(all).then((data) => {
-      // Drop i18nLoading promise (resolved loaded state)
-      data.pop();
+    const safeResources = [];
+    const adminResources = [];
 
-      const resourceSet = new Set<string>();
-      const namespacedSet = new Set<string>();
-      data.forEach(
-        (d) =>
-          d.resources &&
-          d.resources.forEach(({ namespaced, name }) => {
-            resourceSet.add(name);
-            namespaced && namespacedSet.add(name);
-          }),
-      );
-      const allResources = [...resourceSet].sort();
+    const defineModels = (list: APIResourceList): K8sKind[] => {
+      const metadataExtensions = pluginStore
+        .getExtensions()
+        .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
+      const groupVersionParts = list.groupVersion.split('/');
+      const apiGroup = groupVersionParts.length > 1 ? groupVersionParts[0] : null;
+      const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
+      return list.resources
+        .filter(({ name }) => !name.includes('/'))
+        .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => {
+          return {
+            kind,
+            namespaced,
+            verbs,
+            shortNames,
+            label: kind,
+            plural: name,
+            apiVersion,
+            abbr: kindToAbbr(kind),
+            ...(apiGroup ? { apiGroup } : {}),
+            labelPlural: pluralizeKind(kind),
+            path: name,
+            id: singularName,
+            crd: true,
+            ...getModelExtensionMetadata(metadataExtensions, apiGroup, apiVersion, kind),
+          };
+        });
+    };
 
-      const safeResources = [];
-      const adminResources = [];
+    const models = _.flatten(data.filter((d) => d.resources).map(defineModels));
+    allResources.forEach((r) =>
+      ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r),
+    );
+    const configResources = _.filter(
+      models,
+      (m) => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator',
+    );
+    const clusterOperatorConfigResources = _.filter(
+      models,
+      (m) => m.apiGroup === 'operator.openshift.io',
+    );
 
-      const defineModels = (list: APIResourceList): K8sKind[] => {
-        const metadataExtensions = pluginStore
-          .getExtensions()
-          .filter(isModelMetadata) as LoadedExtension<ModelMetadata>[];
-        const groupVersionParts = list.groupVersion.split('/');
-        const apiGroup = groupVersionParts.length > 1 ? groupVersionParts[0] : null;
-        const apiVersion = groupVersionParts.length > 1 ? groupVersionParts[1] : list.groupVersion;
-        return list.resources
-          .filter(({ name }) => !name.includes('/'))
-          .map(({ name, singularName, namespaced, kind, verbs, shortNames }) => {
-            return {
-              kind,
-              namespaced,
-              verbs,
-              shortNames,
-              label: kind,
-              plural: name,
-              apiVersion,
-              abbr: kindToAbbr(kind),
-              ...(apiGroup ? { apiGroup } : {}),
-              labelPlural: pluralizeKind(kind),
-              path: name,
-              id: singularName,
-              crd: true,
-              ...getModelExtensionMetadata(metadataExtensions, apiGroup, apiVersion, kind),
-            };
-          });
-      };
-
-      const models = _.flatten(data.filter((d) => d.resources).map(defineModels));
-      allResources.forEach((r) =>
-        ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r),
-      );
-      const configResources = _.filter(
-        models,
-        (m) => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator',
-      );
-      const clusterOperatorConfigResources = _.filter(
-        models,
-        (m) => m.apiGroup === 'operator.openshift.io',
-      );
-
-      return {
-        allResources,
-        safeResources,
-        adminResources,
-        configResources,
-        clusterOperatorConfigResources,
-        namespacedSet,
-        models,
-        groupVersionMap,
-      };
-    });
+    return {
+      allResources,
+      safeResources,
+      adminResources,
+      configResources,
+      clusterOperatorConfigResources,
+      namespacedSet,
+      models,
+      groupVersionMap,
+    };
   });
 
 type APIResourceList = {

@@ -55,6 +55,7 @@ const (
 	alertManagerProxyEndpoint             = "/api/alertmanager"
 	alertManagerTenancyProxyEndpoint      = "/api/alertmanager-tenancy"
 	alertmanagerUserWorkloadProxyEndpoint = "/api/alertmanager-user-workload"
+	apiDiscoveryEndpoint                  = "/api/api-discovery"
 	authLoginEndpoint                     = "/auth/login"
 	authLogoutEndpoint                    = "/api/console/logout"
 	catalogdEndpoint                      = "/api/catalogd/"
@@ -356,6 +357,8 @@ func (s *Server) HTTPHandler() (http.Handler, error) {
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandler(k8sProxy.ServeHTTP),
 	))
+
+	handle(apiDiscoveryEndpoint, middleware.WithGZIPEncoding(authHandler(apiDiscoveryHandler(s.K8sProxyConfig))))
 
 	handleFunc(devfileEndpoint, devfile.DevfileHandler)
 	handleFunc(devfileSamplesEndpoint, devfile.DevfileSamplesHandler)
