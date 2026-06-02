@@ -38,8 +38,7 @@ const cleanupOperatorResources = () => {
   );
 };
 
-// Disabled due to createRoot concurrent rendering failures (OCPBUGS-82507)
-xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     cleanupOperatorResources();
