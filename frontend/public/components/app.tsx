@@ -86,7 +86,9 @@ root.render(<LoadingBox blame="Init" />);
 // Trigger an early authenticated fetch so unauthenticated users are redirected
 // to the login page immediately, before the app shell renders. coFetch's 401
 // interceptor calls authSvc.handle401() which handles the redirect.
-coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`).catch(() => {});
+coFetch(`${window.SERVER_FLAGS.basePath}api/kubernetes/api`, {
+  priority: 'high',
+}).catch(() => {});
 
 // TODO: remove when upgrading to @xterm/xterm 7.0.0 - github.com/openshift/console/issues/16486
 delete process.title;

@@ -63,6 +63,7 @@ describe('fetchSwagger', () => {
     expect(result).toEqual(mockDefinitions);
     expect(mockCoFetch).toHaveBeenCalledWith('api/kubernetes/openapi/v2', {
       headers: { Accept: 'application/json' },
+      priority: 'low',
     });
   });
 
@@ -76,7 +77,7 @@ describe('fetchSwagger', () => {
     expect(mockCoFetch).toHaveBeenCalledTimes(2);
     expect(mockCoFetch.mock.calls[1]).toEqual([
       'api/kubernetes/openapi/v2',
-      { headers: { Accept: 'application/json', 'If-None-Match': '"abc123"' } },
+      { headers: { Accept: 'application/json', 'If-None-Match': '"abc123"' }, priority: 'low' },
     ]);
   });
 
@@ -158,7 +159,7 @@ describe('fetchSwagger', () => {
 
     expect(mockCoFetch.mock.calls[1]).toEqual([
       'api/kubernetes/openapi/v2',
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' }, priority: 'low' },
     ]);
   });
 });

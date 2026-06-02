@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useConsoleDispatch } from '@console/shared/src/hooks/useConsoleDispatch';
 import { useConsoleSelector } from '@console/shared/src/hooks/useConsoleSelector';
 import { useUser } from '../useUser';
@@ -18,8 +18,8 @@ jest.mock('@console/shared/src/hooks/useConsoleDispatch', () => ({
   useConsoleDispatch: jest.fn(),
 }));
 
-jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
-  useK8sGet: jest.fn(),
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
 }));
 
 const mockSetUserResource = jest.fn((userResource) => ({
@@ -36,7 +36,7 @@ jest.mock('@console/dynamic-plugin-sdk', () => ({
 
 const mockDispatch = jest.fn();
 const mockUseSelector = useConsoleSelector as jest.Mock;
-const mockUseK8sGet = useK8sGet as jest.Mock;
+const mockUseK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUseDispatch = useConsoleDispatch as jest.Mock;
 
 describe('useUser', () => {
@@ -53,7 +53,7 @@ describe('useUser', () => {
       .mockReturnValueOnce(mockUser) // for getUser
       .mockReturnValueOnce(mockUserResource); // for getUserResource
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -70,7 +70,7 @@ describe('useUser', () => {
 
     mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -84,7 +84,7 @@ describe('useUser', () => {
 
     mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(null); // No userResource in Redux yet
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([mockUserResource, true, null]);
 
     renderHook(() => useUser());
 
@@ -100,7 +100,7 @@ describe('useUser', () => {
 
     mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
@@ -113,10 +113,56 @@ describe('useUser', () => {
 
     mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(mockUserResource);
 
-    mockUseK8sGet.mockReturnValue([mockUserResource, true, null]);
+    mockUseK8sWatchResource.mockReturnValue([mockUserResource, true, null]);
 
     const { result } = renderHook(() => useUser());
 
     expect(result.current.displayName).toBe('Test User'); // Should be trimmed
+  });
+
+  it('should use a static watch resource so useK8sWatchResource can deduplicate across instances', () => {
+    const mockUser = { username: 'user1' };
+
+    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(null);
+    mockUseK8sWatchResource.mockReturnValue([null, false, null]);
+
+    renderHook(() => useUser());
+
+    const watchArg = mockUseK8sWatchResource.mock.calls[0][0];
+    expect(watchArg).toEqual({
+      groupVersionKind: {
+        group: 'user.openshift.io',
+        version: 'v1',
+        kind: 'User',
+      },
+      name: '~',
+    });
+
+    // Render a second instance and verify it receives the same object reference,
+    // which is required for useK8sWatchResource deduplication.
+    mockUseSelector.mockReturnValueOnce(mockUser).mockReturnValueOnce(null);
+    mockUseK8sWatchResource.mockReturnValue([null, false, null]);
+
+    renderHook(() => useUser());
+
+    const watchArg2 = mockUseK8sWatchResource.mock.calls[1][0];
+    expect(watchArg).toBe(watchArg2);
+  });
+
+  it('should update Redux when watch returns new data after impersonation change', () => {
+    const originalUser = { username: 'admin' };
+    const impersonatedUserResource = { fullName: 'Developer User' };
+
+    // Simulate: Redux has no cached user resource (cleared on impersonation change),
+    // and useK8sWatchResource returns the new impersonated user data.
+    mockUseSelector.mockReturnValueOnce(originalUser).mockReturnValueOnce(null);
+    mockUseK8sWatchResource.mockReturnValue([impersonatedUserResource, true, null]);
+
+    renderHook(() => useUser());
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'setUserResource',
+      payload: { userResource: impersonatedUserResource },
+    });
   });
 });

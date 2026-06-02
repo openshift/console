@@ -31,6 +31,7 @@ export const fetchSwagger = async (): Promise<SwaggerDefinitions> => {
         Accept: 'application/json',
         ...(cachedETag && { 'If-None-Match': cachedETag }),
       },
+      priority: 'low',
     });
     if (response.status === 304) {
       return swaggerDefinitions;
