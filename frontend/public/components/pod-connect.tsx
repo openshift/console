@@ -46,6 +46,7 @@ type PodConnectProps = {
   infoMessage?: React.ReactNode;
 };
 
+/** @internal Use PodConnectLoader instead for tree shaking to work */
 export const PodConnect: React.FCC<PodConnectProps> = ({
   obj,
   attach,
