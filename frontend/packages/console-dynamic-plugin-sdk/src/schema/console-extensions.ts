@@ -42,7 +42,7 @@ import type {
   Separator,
   NavSection,
 } from '../extensions/navigation';
-import type { NodeStatus, NodeSubNavTab } from '../extensions/node';
+import type { NodeInventoryExtensionItem, NodeStatus, NodeSubNavTab } from '../extensions/node';
 import type { AlertAction } from '../extensions/notification-alert';
 import type {
   StandaloneRoutePage,
@@ -138,6 +138,7 @@ export type SupportedExtension =
   | ProjectOverviewInventoryItem
   | StorageClassProvisioner
   | DetailsItem
+  | NodeInventoryExtensionItem
   | NodeStatus
   | NodeSubNavTab
   | CreateProjectModal;
