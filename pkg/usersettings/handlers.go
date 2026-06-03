@@ -20,11 +20,11 @@ import (
 const namespace = "openshift-console-user-settings"
 
 type UserSettingsHandler struct {
-	internalProxiedClient *kubernetes.Clientset
+	internalProxiedClient kubernetes.Interface
 	anonClientConfig      *rest.Config
 }
 
-func NewUserSettingsHandler(kubeClient *kubernetes.Clientset, anonymousRoundTripper http.RoundTripper, k8sProxiedEndpoint string) *UserSettingsHandler {
+func NewUserSettingsHandler(kubeClient kubernetes.Interface, anonymousRoundTripper http.RoundTripper, k8sProxiedEndpoint string) *UserSettingsHandler {
 	return &UserSettingsHandler{
 		internalProxiedClient: kubeClient,
 		anonClientConfig: &rest.Config{
@@ -89,13 +89,37 @@ func (h *UserSettingsHandler) getUserSettings(ctx context.Context, userSettingMe
 }
 
 // Create a new user-setting ConfigMap, incl. Role and RoleBinding for the current user.
-// Returns the existing ConfigMap if it is already exist.
+// Returns the existing ConfigMap immediately if it already exists.
+// Migrates data from the most recent old ConfigMap if any exist for this user.
 func (h *UserSettingsHandler) createUserSettings(ctx context.Context, userSettingMeta *UserSettingMeta) (*core.ConfigMap, error) {
+	existing, err := h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
+	if err == nil {
+		return existing, nil
+	}
+	if !apierrors.IsNotFound(err) {
+		return nil, err
+	}
+
+	// OCPBUGS-86564: find old UID-based ConfigMaps that were created before
+	// the switch to stable SHA256(username) naming.
+	oldCMs := h.findOldUserSettingsConfigMaps(ctx, userSettingMeta)
+
+	var migrateFrom *core.ConfigMap
+	for i := range oldCMs {
+		if migrateFrom == nil || oldCMs[i].CreationTimestamp.After(migrateFrom.CreationTimestamp.Time) {
+			migrateFrom = &oldCMs[i]
+		}
+	}
+
+	configMap := createConfigMap(userSettingMeta)
+	if migrateFrom != nil {
+		configMap.Data = migrateFrom.Data
+	}
+
 	role := createRole(userSettingMeta)
 	roleBinding := createRoleBinding(userSettingMeta)
-	configMap := createConfigMap(userSettingMeta)
 
-	_, err := h.internalProxiedClient.RbacV1().Roles(namespace).Create(ctx, role, meta.CreateOptions{})
+	_, err = h.internalProxiedClient.RbacV1().Roles(namespace).Create(ctx, role, meta.CreateOptions{})
 	if err != nil && !apierrors.IsAlreadyExists(err) {
 		h.deleteUserSettings(ctx, userSettingMeta)
 		return nil, err
@@ -109,15 +133,63 @@ func (h *UserSettingsHandler) createUserSettings(ctx context.Context, userSettin
 
 	configMap, err = h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Create(ctx, configMap, meta.CreateOptions{})
 	if err != nil {
-		// Return actual ConfigMap if it is already created
 		if apierrors.IsAlreadyExists(err) {
-			klog.Infof("User settings ConfigMap \"%s\" already exist, will return existing data.", userSettingMeta.getConfigMapName())
+			klog.Infof("User settings ConfigMap %q already exists, will return existing data.", userSettingMeta.getConfigMapName())
+			h.cleanupOldUserSettings(ctx, oldCMs)
 			return h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Get(ctx, userSettingMeta.getConfigMapName(), meta.GetOptions{})
 		}
 		h.deleteUserSettings(ctx, userSettingMeta)
 		return nil, err
 	}
+
+	h.cleanupOldUserSettings(ctx, oldCMs)
+
 	return configMap, nil
+}
+
+// findOldUserSettingsConfigMaps lists ConfigMaps in the user-settings namespace
+// and returns all that are owned by this user but don't match the current
+// naming scheme.
+func (h *UserSettingsHandler) findOldUserSettingsConfigMaps(ctx context.Context, userSettingMeta *UserSettingMeta) []core.ConfigMap {
+	configMaps, err := h.internalProxiedClient.CoreV1().ConfigMaps(namespace).List(ctx, meta.ListOptions{})
+	if err != nil {
+		klog.Warningf("Failed to list ConfigMaps for migration: %v", err)
+		return nil
+	}
+
+	newName := userSettingMeta.getConfigMapName()
+	var old []core.ConfigMap
+	for _, cm := range configMaps.Items {
+		if cm.Name == newName {
+			continue
+		}
+		for _, ref := range cm.OwnerReferences {
+			if ref.Kind == "User" && ref.Name == userSettingMeta.Username {
+				klog.V(4).Infof("Found old user settings ConfigMap %q for migration to %q.", cm.Name, newName)
+				old = append(old, cm)
+				break
+			}
+		}
+	}
+	return old
+}
+
+// cleanupOldUserSettings removes old ConfigMaps and their associated Roles
+// and RoleBindings after a successful migration. Errors are best-effort.
+func (h *UserSettingsHandler) cleanupOldUserSettings(ctx context.Context, oldCMs []core.ConfigMap) {
+	for _, cm := range oldCMs {
+		name := cm.Name
+		if err := h.internalProxiedClient.RbacV1().RoleBindings(namespace).Delete(ctx, name+"-rolebinding", meta.DeleteOptions{}); err != nil && !apierrors.IsNotFound(err) {
+			klog.Warningf("Failed to clean up old user settings RoleBinding %q: %v", name+"-rolebinding", err)
+		}
+		if err := h.internalProxiedClient.RbacV1().Roles(namespace).Delete(ctx, name+"-role", meta.DeleteOptions{}); err != nil && !apierrors.IsNotFound(err) {
+			klog.Warningf("Failed to clean up old user settings Role %q: %v", name+"-role", err)
+		}
+		if err := h.internalProxiedClient.CoreV1().ConfigMaps(namespace).Delete(ctx, name, meta.DeleteOptions{}); err != nil && !apierrors.IsNotFound(err) {
+			klog.Warningf("Failed to clean up old user settings ConfigMap %q: %v", name, err)
+		}
+		klog.V(4).Infof("Cleaned up old user settings resources (old name: %s).", name)
+	}
 }
 
 // Deletes the user-setting ConfigMap, Role and RoleBinding of the current user.

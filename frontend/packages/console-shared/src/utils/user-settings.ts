@@ -1,9 +1,22 @@
+import { createHash } from 'crypto';
 import { resourceURL } from '@console/dynamic-plugin-sdk/src/utils/k8s';
 import { ConfigMapModel } from '@console/internal/models';
 import type { ConfigMapKind } from '@console/internal/module/k8s/types';
 import { coFetch } from '@console/shared/src/utils/console-fetch';
 
 export const USER_SETTING_CONFIGMAP_NAMESPACE = 'openshift-console-user-settings';
+
+export const hashUsernameForSettings = (name: string, uid?: string): string | null => {
+  if (!name) {
+    return null;
+  }
+  if (name === 'kube:admin' && !uid) {
+    return 'kubeadmin';
+  }
+  const hash = createHash('sha256');
+  hash.update(name);
+  return hash.digest('hex');
+};
 
 export const createConfigMap = async (): Promise<ConfigMapKind> => {
   try {
