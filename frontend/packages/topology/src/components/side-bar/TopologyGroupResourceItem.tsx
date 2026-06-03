@@ -24,7 +24,12 @@ const TopologyGroupResourceItem: FC<TopologyGroupResourceItemProps> = ({
   const link = linkForResource ? (
     linkForResource(item)
   ) : (
-    <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
+    <ResourceLink
+      kind={kind}
+      name={name}
+      namespace={resourceNamespace}
+      dataTest={`${name}-${item.kind}`}
+    />
   );
   return (
     <ListItem>
