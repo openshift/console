@@ -117,11 +117,19 @@ export const verifyIDPFileFields = async ({
   const input = await screen.findByLabelText(`${inputLabel} filename`);
   verifyFormElementBasics(input, 'text', '');
 
-  // Verify browse button visible and input element 'type' attribute within its container
-  const browseContainer = screen.getByTestId(`${idPrefix}-file`);
+  // Verify browse button visible and find the hidden file input within its container
+  const browseContainer = screen.getByTestId(idPrefix);
   expect(browseContainer).toBeInTheDocument();
-  const fileInput = within(browseContainer).getByLabelText('Browse...') as HTMLInputElement;
-  verifyFormElementBasics(fileInput, 'file');
+
+  // Verify the browse button is visible
+  const browseButton = within(browseContainer).getByRole('button', { name: 'Browse...' });
+  expect(browseButton).toBeVisible();
+
+  // The new PatternFly FileUpload component hides the actual file input
+  // We need to query by type since it's hidden and has no accessible role/label
+  const fileInput = browseContainer.querySelector('input[type="file"]') as HTMLInputElement;
+  expect(fileInput).toBeTruthy();
+  expect(fileInput.type).toBe('file');
 
   const contentElement = screen.getByLabelText(inputLabel);
   verifyFormElementBasics(contentElement, '', '', isRequired);
