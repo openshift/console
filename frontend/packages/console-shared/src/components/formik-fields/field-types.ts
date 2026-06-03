@@ -21,6 +21,8 @@ export interface FieldProps {
 
 export interface DroppableFileInputFieldProps extends FieldProps {
   onChange?: (fileData: string) => void;
+  helpText?: string;
+  label?: string;
 }
 export interface BaseInputFieldProps extends FieldProps {
   type?: TextInputTypes;

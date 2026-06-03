@@ -252,15 +252,11 @@ export const ConsoleDataView = <
             data-test="data-view-table"
           />
         </InnerScrollContainer>
-        <DataViewToolbar
-          pagination={
-            <Pagination
-              itemCount={filteredData.length}
-              titles={paginationTitles}
-              variant={PaginationVariant.bottom}
-              {...pagination}
-            />
-          }
+        <Pagination
+          itemCount={filteredData.length}
+          titles={paginationTitles}
+          variant={PaginationVariant.bottom}
+          {...pagination}
         />
       </DataView>
     </StatusBox>

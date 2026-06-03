@@ -16,7 +16,10 @@ import HelmReleaseList from './HelmReleaseList';
 import HelmReleaseListPage from './HelmReleaseListPage';
 import RepositoriesPage from './RepositoriesListPage';
 
-const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) => {
+const HelmPage: React.FC<{ mock?: boolean; namespace: string | undefined }> = ({
+  mock,
+  namespace,
+}) => {
   const { t } = useTranslation();
   const isHelmVisible = useFlag('HELM_CHARTS_CATALOG_TYPE');
   const [showTitle, canCreate] = [false, false];
@@ -75,6 +78,9 @@ const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) =>
       // t('helm-plugin~Helm Releases')
       nameKey: 'helm-plugin~Helm Releases',
       component: HelmReleaseList,
+      pageData: {
+        mock,
+      },
     },
     {
       href: 'repositories',
@@ -110,17 +116,19 @@ const HelmPage: React.FC<{ namespace: string | undefined }> = ({ namespace }) =>
       telemetryPrefix="Helm"
     />
   ) : (
-    <HelmReleaseListPage />
+    <HelmReleaseListPage mock={mock} />
   );
 };
 
-export const PageContents: React.FC = () => {
+export const PageContents: React.FC<{ noProjectsAvailable?: boolean }> = ({
+  noProjectsAvailable,
+}) => {
   const { t } = useTranslation();
   const { ns: namespace } = useParams();
   const [activePerspective] = useActivePerspective();
 
   return activePerspective === 'admin' || namespace ? (
-    <HelmPage namespace={namespace} />
+    <HelmPage namespace={namespace} mock={noProjectsAvailable} />
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm')}>
       {(openProjectModal) => (

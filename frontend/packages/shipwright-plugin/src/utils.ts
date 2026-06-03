@@ -193,46 +193,16 @@ const kindToTabMap = {
   [ClusterBuildStrategyModelV1Alpha1.kind]: 'clusterbuildstrategies',
 };
 
-/** convert a resource using a shipwright model to its corresponding k8s model */
-const resourceToModel = (obj: K8sResourceKind): K8sModel => {
-  if (obj?.apiVersion === 'shipwright.io/v1alpha1') {
-    switch (obj?.kind) {
-      case 'Build':
-        return BuildModelV1Alpha1;
-      case 'BuildRun':
-        return BuildRunModelV1Alpha1;
-      case 'BuildStrategy':
-        return BuildStrategyModelV1Alpha1;
-      case 'ClusterBuildStrategy':
-        return ClusterBuildStrategyModelV1Alpha1;
-      default:
-        return null;
-    }
-  }
-  switch (obj?.kind) {
-    case 'Build':
-      return BuildModel;
-    case 'BuildRun':
-      return BuildRunModel;
-    case 'BuildStrategy':
-      return BuildStrategyModel;
-    case 'ClusterBuildStrategy':
-      return ClusterBuildStrategyModel;
-    default:
-      return null;
-  }
-};
-
-export const useShipwrightBreadcrumbsFor = (obj: K8sResourceKind) => {
+export const useShipwrightBreadcrumbsFor = (kindObj: K8sModel) => {
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const params = useParams();
   const location = useLocation();
   return useTabbedTableBreadcrumbsFor(
-    resourceToModel(obj),
+    kindObj ?? ({} as K8sModel),
     location,
     params,
     'k8s',
-    `shipwright.io/${kindToTabMap[obj.kind]}`,
+    kindObj ? `shipwright.io/${kindToTabMap[kindObj.kind]}` : null,
     undefined,
     isAdminPerspective,
   );
