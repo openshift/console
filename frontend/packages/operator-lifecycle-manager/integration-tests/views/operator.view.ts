@@ -44,8 +44,9 @@ export const operator = {
      */
     if (installToNamespace !== GlobalInstalledNamespace) {
       cy.log('configure Operator install for single namespace');
-      // Wait for radio button to be visible before checking to avoid race conditions
-      cy.byTestID('A specific namespace on the cluster-radio-input', { timeout: 30000 })
+      // Under React 18 concurrent rendering, install mode radios mount after async data loads.
+      // Increase timeout to handle deferred rendering.
+      cy.byTestID('A specific namespace on the cluster-radio-input', { timeout: 60000 })
         .should('be.visible')
         .check();
       if (useOperatorRecommendedNamespace) {
@@ -60,7 +61,9 @@ export const operator = {
         });
       }
     } else {
-      cy.byTestID('All namespaces on the cluster-radio-input', { timeout: 30000 }).should(
+      // Under React 18 concurrent rendering, install mode radios mount after async data loads.
+      // Increase timeout to handle deferred rendering.
+      cy.byTestID('All namespaces on the cluster-radio-input', { timeout: 60000 }).should(
         'be.checked',
       );
     }
