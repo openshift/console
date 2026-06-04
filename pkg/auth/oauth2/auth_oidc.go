@@ -2,13 +2,16 @@ package oauth2
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
+	"k8s.io/klog/v2"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/auth/sessions"
@@ -123,8 +126,47 @@ func (o *oidcAuth) DeleteSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
+	logoutURL := o.logoutRedirectURLWithIDTokenHint(w, r)
 	o.DeleteSession(w, r)
+
+	if logoutURL != "" {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"logoutRedirectURL": logoutURL,
+		})
+		return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (o *oidcAuth) logoutRedirectURLWithIDTokenHint(w http.ResponseWriter, r *http.Request) string {
+	baseURL := o.LogoutRedirectURL()
+	if baseURL == "" {
+		return ""
+	}
+
+	ls, err := o.getLoginState(w, r)
+	if err != nil {
+		klog.V(4).Infof("could not retrieve session for id_token_hint: %v", err)
+		return baseURL
+	}
+
+	idToken := ls.AccessToken()
+	if idToken == "" {
+		return baseURL
+	}
+
+	parsed, err := url.Parse(baseURL)
+	if err != nil {
+		klog.Errorf("failed to parse logout redirect URL: %v", err)
+		return baseURL
+	}
+
+	q := parsed.Query()
+	q.Set("id_token_hint", idToken)
+	parsed.RawQuery = q.Encode()
+	return parsed.String()
 }
 
 func (o *oidcAuth) getLoginState(w http.ResponseWriter, r *http.Request) (*sessions.LoginState, error) {

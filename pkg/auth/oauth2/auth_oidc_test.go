@@ -568,6 +568,238 @@ func Test_oidcAuth_getLoginState(t *testing.T) {
 	}
 }
 
+func Test_oidcAuth_logout(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+
+	oidcProvider, providerURL, closePort := startMockProvider(t)
+	defer closePort()
+
+	tests := []struct {
+		name                   string
+		logoutRedirectOverride string
+		initSession            bool
+		wantStatus             int
+		wantIDTokenHint        bool
+		wantJSON               bool
+	}{
+		{
+			name:                   "with session and logout redirect, returns JSON with id_token_hint",
+			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
+			initSession:            true,
+			wantStatus:             http.StatusOK,
+			wantIDTokenHint:        true,
+			wantJSON:               true,
+		},
+		{
+			name:                   "no logout redirect configured, returns 204",
+			logoutRedirectOverride: "",
+			initSession:            true,
+			wantStatus:             http.StatusNoContent,
+			wantIDTokenHint:        false,
+			wantJSON:               false,
+		},
+		{
+			name:                   "no session, returns JSON with base URL (no id_token_hint)",
+			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
+			initSession:            false,
+			wantStatus:             http.StatusOK,
+			wantIDTokenHint:        false,
+			wantJSON:               true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			o, err := newOIDCAuth(
+				context.Background(),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				&oidcConfig{
+					getClient: func() *http.Client {
+						return http.DefaultClient
+					},
+					issuerURL:              providerURL.String(),
+					logoutRedirectOverride: tt.logoutRedirectOverride,
+					clientID:               testClientID,
+					secureCookies:          true,
+					constructOAuth2Config:  testOAuth2ConfigConstructor,
+				},
+				auth.NewMetrics(defaultRestClientConfig),
+			)
+			require.NoError(t, err)
+
+			testCookieFactory := &testCookieFactory{
+				cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				serverStore:   o.sessions.ServerStore(),
+				tokenVerifier: oidcProvider.verifyIDToken,
+				signPayload:   oidcProvider.signPayload,
+			}
+
+			if tt.initSession {
+				token := addIDToken(
+					&oauth2.Token{RefreshToken: testValidRefreshToken},
+					oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`),
+				)
+				req := httptest.NewRequest(http.MethodGet, "/", nil)
+				writer := httptest.NewRecorder()
+				ls, err := o.login(writer, req, token)
+				require.NoError(t, err)
+				testCookieFactory.WithSessionToken(ls.SessionToken())
+				testCookieFactory.WithRefreshToken(testValidRefreshToken)
+			}
+
+			req := httptest.NewRequest(http.MethodPost, "/api/console/logout", nil)
+			req = testCookieFactory.Complete(t, req)
+
+			writer := httptest.NewRecorder()
+			o.logout(writer, req)
+
+			require.Equal(t, tt.wantStatus, writer.Code)
+
+			if tt.wantJSON {
+				require.Equal(t, "application/json", writer.Header().Get("Content-Type"))
+
+				var resp map[string]string
+				err := json.NewDecoder(writer.Body).Decode(&resp)
+				require.NoError(t, err)
+
+				logoutURL := resp["logoutRedirectURL"]
+				require.NotEmpty(t, logoutURL)
+
+				parsed, err := url.Parse(logoutURL)
+				require.NoError(t, err)
+
+				if tt.wantIDTokenHint {
+					hint := parsed.Query().Get("id_token_hint")
+					require.NotEmpty(t, hint, "expected id_token_hint in logout URL")
+					parts := strings.Split(hint, ".")
+					require.Equal(t, 3, len(parts), "id_token_hint should be a valid JWT with 3 parts")
+				} else {
+					require.Empty(t, parsed.Query().Get("id_token_hint"), "expected no id_token_hint")
+				}
+
+				require.Equal(t, "console", parsed.Query().Get("client_id"), "original query params should be preserved")
+			}
+		})
+	}
+}
+
+func Test_oidcAuth_logoutRedirectURLWithIDTokenHint(t *testing.T) {
+	encryptionKey := []byte(randomString(32))
+	authnKey := []byte(randomString(64))
+
+	oidcProvider, providerURL, closePort := startMockProvider(t)
+	defer closePort()
+
+	tests := []struct {
+		name                   string
+		logoutRedirectOverride string
+		initSession            bool
+		wantEmpty              bool
+		wantIDTokenHint        bool
+	}{
+		{
+			name:                   "appends id_token_hint when session and redirect URL exist",
+			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
+			initSession:            true,
+			wantIDTokenHint:        true,
+		},
+		{
+			name:                   "returns empty when no redirect URL configured",
+			logoutRedirectOverride: "",
+			initSession:            true,
+			wantEmpty:              true,
+		},
+		{
+			name:                   "returns base URL without hint when no session",
+			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console",
+			initSession:            false,
+			wantIDTokenHint:        false,
+		},
+		{
+			name:                   "preserves existing query parameters",
+			logoutRedirectOverride: "https://keycloak.example.com/logout?client_id=console&post_logout_redirect_uri=https%3A%2F%2Fconsole.example.com",
+			initSession:            true,
+			wantIDTokenHint:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			o, err := newOIDCAuth(
+				context.Background(),
+				sessions.NewSessionStore(authnKey, encryptionKey, true, "/"),
+				&oidcConfig{
+					getClient: func() *http.Client {
+						return http.DefaultClient
+					},
+					issuerURL:              providerURL.String(),
+					logoutRedirectOverride: tt.logoutRedirectOverride,
+					clientID:               testClientID,
+					secureCookies:          true,
+					constructOAuth2Config:  testOAuth2ConfigConstructor,
+				},
+				auth.NewMetrics(defaultRestClientConfig),
+			)
+			require.NoError(t, err)
+
+			testCookieFactory := &testCookieFactory{
+				cookieCodecs:  securecookie.CodecsFromPairs(authnKey, encryptionKey),
+				serverStore:   o.sessions.ServerStore(),
+				tokenVerifier: oidcProvider.verifyIDToken,
+				signPayload:   oidcProvider.signPayload,
+			}
+
+			if tt.initSession {
+				token := addIDToken(
+					&oauth2.Token{RefreshToken: testValidRefreshToken},
+					oidcProvider.signPayload(`{"sub":"testuser","exp":`+strconv.FormatInt(time.Now().Add(5*time.Minute).Unix(), 10)+`}`),
+				)
+				req := httptest.NewRequest(http.MethodGet, "/", nil)
+				writer := httptest.NewRecorder()
+				ls, err := o.login(writer, req, token)
+				require.NoError(t, err)
+				testCookieFactory.WithSessionToken(ls.SessionToken())
+				testCookieFactory.WithRefreshToken(testValidRefreshToken)
+			}
+
+			req := httptest.NewRequest(http.MethodPost, "/api/console/logout", nil)
+			req = testCookieFactory.Complete(t, req)
+
+			writer := httptest.NewRecorder()
+			got := o.logoutRedirectURLWithIDTokenHint(writer, req)
+
+			if tt.wantEmpty {
+				require.Empty(t, got)
+				return
+			}
+
+			require.NotEmpty(t, got)
+
+			parsed, err := url.Parse(got)
+			require.NoError(t, err)
+
+			if tt.wantIDTokenHint {
+				hint := parsed.Query().Get("id_token_hint")
+				require.NotEmpty(t, hint, "expected id_token_hint query parameter")
+				parts := strings.Split(hint, ".")
+				require.Equal(t, 3, len(parts), "id_token_hint should be a valid JWT")
+			} else {
+				require.Empty(t, parsed.Query().Get("id_token_hint"))
+			}
+
+			if tt.logoutRedirectOverride != "" {
+				expectedBase, _ := url.Parse(tt.logoutRedirectOverride)
+				require.Equal(t, expectedBase.Host, parsed.Host)
+				require.Equal(t, expectedBase.Path, parsed.Path)
+				for key, vals := range expectedBase.Query() {
+					require.Equal(t, vals, parsed.Query()[key], "original query param %q should be preserved", key)
+				}
+			}
+		})
+	}
+}
+
 // TODO: should also test concurrent logins
 func BenchmarkRefreshSession(b *testing.B) {
 	// init the provider

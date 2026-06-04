@@ -122,14 +122,28 @@ export const authSvc = {
     setNext(next);
     clearLocalStorage(clearLocalStorageKeys);
     coFetch(logoutURL, { method: 'POST' })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error('Error logging out', e))
-      .then(() => {
+      .then(async (response) => {
+        let dynamicLogoutURL: string | undefined;
+        try {
+          const data = await response.json();
+          dynamicLogoutURL = data?.logoutRedirectURL;
+        } catch {
+          // Response may be empty (204) for non-OIDC auth — ignore
+        }
+
         if (isKubeAdmin) {
           authSvc.logoutKubeAdmin();
+        } else if (dynamicLogoutURL) {
+          window.location.assign(dynamicLogoutURL);
         } else {
           authSvc.logoutRedirect(next);
         }
+      })
+      // eslint-disable-next-line no-console
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error('Error logging out', e);
+        authSvc.logoutRedirect(next);
       });
   }),
 
