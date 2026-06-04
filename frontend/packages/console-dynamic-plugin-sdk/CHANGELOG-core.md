@@ -17,6 +17,8 @@ table in [Console dynamic plugins README](./README.md).
 ## 4.23.0-prerelease.1 - 2026-05-19
 
 - Add `useToast` hook for showing toast notifications ([CONSOLE-5273], [#16400])
+- Add new extension type `console.node/sub-nav-tab` to allow plugins to add custom sub-tabs to Node details page ([CONSOLE-4946], [#16124])
+- Add exported type `NodeStatus` for existing extension type `console.node/status` ([CONSOLE-3899], [#13493])
 
 ## 4.22.0 - 2026-06-09
 
@@ -216,6 +218,7 @@ table in [Console dynamic plugins README](./README.md).
 [CONSOLE-4796]: https://issues.redhat.com/browse/CONSOLE-4796
 [CONSOLE-4806]: https://issues.redhat.com/browse/CONSOLE-4806
 [CONSOLE-4840]: https://issues.redhat.com/browse/CONSOLE-4840
+[CONSOLE-4946]: https://issues.redhat.com/browse/CONSOLE-4946
 [CONSOLE-4990]: https://issues.redhat.com/browse/CONSOLE-4990
 [CONSOLE-5039]: https://issues.redhat.com/browse/CONSOLE-5039
 [CONSOLE-5050]: https://issues.redhat.com/browse/CONSOLE-5050

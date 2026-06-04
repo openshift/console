@@ -102,17 +102,17 @@ import { useIsKubevirtPluginActive } from '../../utils/kubevirt';
 import { getNodeClientCSRs, isCSRResource } from './csr';
 import GroupsEditorModal from './modals/GroupsEditorModal';
 import NodeUptime from './node-dashboard/NodeUptime';
-import { getNodeGroups } from './NodeGroupUtils';
 import NodeRoles from './NodeRoles';
 import { NodeStatusWithExtensions } from './NodeStatus';
-import {
-  filterVirtualMachineInstancesByNode,
-  useWatchVirtualMachineInstances,
-} from './NodeVmUtils';
 import ClientCSRStatus from './status/CSRStatus';
 import { useCustomNodeActions } from './useCustomNodeActions';
 import type { GetNodeStatusExtensions } from './useNodeStatusExtensions';
 import { useNodeStatusExtensions } from './useNodeStatusExtensions';
+import { getNodeGroups } from './utils/NodeGroupUtils';
+import {
+  filterVirtualMachineInstancesByNode,
+  useWatchVirtualMachineInstances,
+} from './utils/NodeVmUtils';
 
 const nodeColumnInfo = Object.freeze({
   name: {

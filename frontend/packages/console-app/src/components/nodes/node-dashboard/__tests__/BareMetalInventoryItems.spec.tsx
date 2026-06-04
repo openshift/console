@@ -1,17 +1,17 @@
 import { screen } from '@testing-library/react';
+import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import type { NodeKind } from '@console/internal/module/k8s';
+import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
 import {
   metricsFromBareMetalHosts,
   useIsBareMetalPluginActive,
   useWatchBareMetalHost,
-} from '@console/app/src/components/nodes/NodeBareMetalUtils';
-import type { K8sResourceKind } from '@console/dynamic-plugin-sdk/src';
-import type { NodeKind } from '@console/internal/module/k8s';
-import { InventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { renderWithProviders } from '@console/shared/src/test-utils/unit-test-utils';
+} from '../../utils/NodeBareMetalUtils';
 import BareMetalInventoryItems from '../BareMetalInventoryItems';
 import { NodeDashboardContext } from '../NodeDashboardContext';
 
-jest.mock('@console/app/src/components/nodes/NodeBareMetalUtils', () => ({
+jest.mock('../../utils/NodeBareMetalUtils', () => ({
   BareMetalHostModel: {
     apiGroup: 'metal3.io',
     apiVersion: 'v1alpha1',
